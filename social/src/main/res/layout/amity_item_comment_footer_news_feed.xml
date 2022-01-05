@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.amity.socialcloud.uikit.common.common.views.AmityColorShade" />
+    </data>
+
+    <merge
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/cbLike"
+            style="@style/AmityTextStyleBody"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:button="@drawable/amity_ic_like_selector"
+            android:paddingStart="@dimen/amity_padding_xxs"
+            android:text="@string/amity_like"
+            app:checkBoxCheckedColor="@{@color/amityColorPrimary}"
+            app:checkBoxDefaultColor="@{@color/amityColorBase}"
+            app:checkBoxDefaultShade="@{AmityColorShade.SHADE2}" />
+
+        <TextView
+            android:id="@+id/reply"
+            style="@style/AmityTextStyleBody"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_padding_s"
+            android:drawableStart="@drawable/amity_ic_reply"
+            android:drawablePadding="@dimen/amity_padding_xs"
+            android:gravity="center_vertical"
+            android:text="@string/amity_reply"
+            android:textColor="@{@color/amityColorBase}"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/cbLike"
+            app:layout_constraintStart_toEndOf="@id/cbLike"
+            app:layout_constraintTop_toTopOf="@id/cbLike"
+            app:textColorShade="@{AmityColorShade.SHADE2}" />
+
+
+        <ImageButton
+            android:id="@+id/btnCommentAction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_padding_s"
+            android:background="@android:color/transparent"
+            android:src="@drawable/amity_ic_more_horizontal"
+            android:tint="@color/amityColorBase"
+            app:layout_constraintBottom_toBottomOf="@id/reply"
+            app:layout_constraintStart_toEndOf="@id/reply"
+            app:layout_constraintTop_toTopOf="@id/reply" />
+
+    </merge>
+</layout>

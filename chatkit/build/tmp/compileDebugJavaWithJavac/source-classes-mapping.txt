@@ -1,0 +1,111 @@
+com/ekoapp/ekosdk/uikit/chat/DataBinderMapperImpl.java
+ com.ekoapp.ekosdk.uikit.chat.DataBinderMapperImpl
+ com.ekoapp.ekosdk.uikit.chat.DataBinderMapperImpl$InnerBrLookup
+ com.ekoapp.ekosdk.uikit.chat.DataBinderMapperImpl$InnerLayoutIdLookup
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityViewMsgErrorBinding.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityViewMsgErrorBinding
+com/ekoapp/ekosdk/uikit/chat/generated/callback/OnScrollStateChanged.java
+ com.ekoapp.ekosdk.uikit.chat.generated.callback.OnScrollStateChanged
+ com.ekoapp.ekosdk.uikit.chat.generated.callback.OnScrollStateChanged$Listener
+com/ekoapp/ekosdk/uikit/chat/DataBindingInfo.java
+ com.ekoapp.ekosdk.uikit.chat.DataBindingInfo
+androidx/databinding/library/baseAdapters/BR.java
+ androidx.databinding.library.baseAdapters.BR
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityItemAudioMessageSenderBindingImpl.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityItemAudioMessageSenderBindingImpl
+com/ekoapp/ekosdk/uikit/chat/generated/callback/OnLongClickListener.java
+ com.ekoapp.ekosdk.uikit.chat.generated.callback.OnLongClickListener
+ com.ekoapp.ekosdk.uikit.chat.generated.callback.OnLongClickListener$Listener
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityFragmentRecentChatBinding.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityFragmentRecentChatBinding
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityItemImageMsgSenderBindingImpl.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityItemImageMsgSenderBindingImpl
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityEditMsgBarBindingImpl.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityEditMsgBarBindingImpl
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityItemRecentMessageBindingImpl.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityItemRecentMessageBindingImpl
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityChatComposeBarBinding.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityChatComposeBarBinding
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityPopupTextMsgSenderBinding.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityPopupTextMsgSenderBinding
+androidx/databinding/DataBindingComponent.java
+ androidx.databinding.DataBindingComponent
+com/ekoapp/ekosdk/uikit/BR.java
+ com.ekoapp.ekosdk.uikit.BR
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityChatBarBindingImpl.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityChatBarBindingImpl
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityItemRecentMessageBinding.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityItemRecentMessageBinding
+com/ekoapp/ekosdk/uikit/chat/generated/callback/OnClickListener.java
+ com.ekoapp.ekosdk.uikit.chat.generated.callback.OnClickListener
+ com.ekoapp.ekosdk.uikit.chat.generated.callback.OnClickListener$Listener
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityItemImageMsgReceiverBindingImpl.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityItemImageMsgReceiverBindingImpl
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityItemUnknownMessageBindingImpl.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityItemUnknownMessageBindingImpl
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityItemAudioMessageReceiverBindingImpl.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityItemAudioMessageReceiverBindingImpl
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityItemTextMessageReceiverBinding.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityItemTextMessageReceiverBinding
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityChatComposeBarBindingImpl.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityChatComposeBarBindingImpl
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityPopupMsgDeleteBindingImpl.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityPopupMsgDeleteBindingImpl
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityViewMsgDeletedBinding.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityViewMsgDeletedBinding
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityItemAudioMessageReceiverBinding.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityItemAudioMessageReceiverBinding
+com/ekoapp/ekosdk/uikit/chat/BuildConfig.java
+ com.ekoapp.ekosdk.uikit.chat.BuildConfig
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityFragmentChatBinding.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityFragmentChatBinding
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityPopupMsgReportBinding.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityPopupMsgReportBinding
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityViewMsgErrorBindingImpl.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityViewMsgErrorBindingImpl
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityChatBarBinding.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityChatBarBinding
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityItemImageMsgSenderBinding.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityItemImageMsgSenderBinding
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityItemTextMessageReceiverBindingImpl.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityItemTextMessageReceiverBindingImpl
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityViewDateBindingImpl.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityViewDateBindingImpl
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityViewDateBinding.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityViewDateBinding
+com/ekoapp/ekosdk/uikit/chat/BR.java
+ com.ekoapp.ekosdk.uikit.chat.BR
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityItemAudioMessageSenderBinding.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityItemAudioMessageSenderBinding
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityPopupTextMsgSenderBindingImpl.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityPopupTextMsgSenderBindingImpl
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityFragmentRecentChatBindingImpl.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityFragmentRecentChatBindingImpl
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityItemTextMessageSenderBinding.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityItemTextMessageSenderBinding
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityItemUnknownMessageBinding.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityItemUnknownMessageBinding
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityPopupMsgDeleteBinding.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityPopupMsgDeleteBinding
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityActivityEditMessageBindingImpl.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityActivityEditMessageBindingImpl
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityActivityEditMessageBindingImpl$1
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityFragmentChatBindingImpl.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityFragmentChatBindingImpl
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityFragmentChatBindingImpl$1
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityActivityEditMessageBinding.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityActivityEditMessageBinding
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityPopupMsgReportBindingImpl.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityPopupMsgReportBindingImpl
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityItemTextMessageSenderBindingImpl.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityItemTextMessageSenderBindingImpl
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityEditMsgBarBinding.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityEditMsgBarBinding
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityViewMsgDeletedBindingImpl.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityViewMsgDeletedBindingImpl
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityItemImageMsgReceiverBinding.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityItemImageMsgReceiverBinding
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityActivityChatHomeBinding.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityActivityChatHomeBinding
+com/ekoapp/ekosdk/uikit/chat/databinding/AmityActivityChatHomeBindingImpl.java
+ com.ekoapp.ekosdk.uikit.chat.databinding.AmityActivityChatHomeBindingImpl

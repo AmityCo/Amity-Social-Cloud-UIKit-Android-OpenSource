@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.amity.socialcloud.uikit.community.views.newsfeed.AmityPostCommentView
+            android:id="@+id/view_comment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_replies"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_padding_m3"
+            android:nestedScrollingEnabled="false"
+            android:paddingStart="@dimen/amity_padding_xs"
+            android:paddingEnd="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/viewMoreRepliesContainer"
+            app:layout_constraintTop_toBottomOf="@id/view_comment" />
+
+        <LinearLayout
+            android:id="@+id/viewMoreRepliesContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/amity_padding_m1"
+            android:layout_marginStart="@dimen/amity_padding_m3"
+            android:background="@drawable/amity_bg_view_replies"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingVertical="@dimen/amity_padding_xxs"
+            android:paddingHorizontal="@dimen/amity_padding_xs"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="120:30"
+            app:layout_constraintStart_toStartOf="@+id/recycler_view_replies"
+            tools:visibility="visible">
+
+            <TextView
+                android:id="@+id/textview_view_more_replies"
+                style="@style/AmityTextStyleCaptionBold"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:drawableStart="@drawable/amity_view_replies"
+                android:gravity="center"
+                android:text="@string/amity_view_more_replies"
+                android:textColor="@color/amityColorShuttleGray" />
+
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/view_load_progress"
+            android:layout_width="@dimen/amity_thirty"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="@dimen/amity_sixteen"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/amityColorPrimary"
+            android:visibility="gone"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recycler_view_replies"
+            tools:visibility="visible" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

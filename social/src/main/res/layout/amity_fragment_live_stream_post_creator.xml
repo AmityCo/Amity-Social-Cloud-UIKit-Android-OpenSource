@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/amityColorBlack">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.amity.socialcloud.sdk.video.AmityCameraView
+            android:id="@+id/amity_camera"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="H,9:16"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+        </com.amity.socialcloud.sdk.video.AmityCameraView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <TextView
+        android:id="@+id/live_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/amity_rounded_corner_red"
+        android:gravity="center"
+        android:paddingLeft="16dp"
+        android:paddingTop="10dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="10dp"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        tools:text="LIVE  00:00"
+        tools:visibility="visible" />
+
+    <RelativeLayout
+        android:id="@+id/creation_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/amityTranslucentBackground">
+
+
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:visibility="visible"
+            android:id="@+id/icon_close"
+            android:layout_width="@dimen/amity_thirty_six"
+            android:layout_height="@dimen/amity_thirty_six"
+            android:background="@color/amityTranslucentBackground"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/amity_ic_close"
+            app:shapeAppearanceOverlay="@style/AmityCircleImage"
+            amityBackgroundColorAlpha="@{@integer/alpha_fifty}"
+            android:layout_centerInParent="true" />
+
+        <RelativeLayout
+            android:id="@+id/add_thumbnail_container"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_alignParentEnd="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:visibility="visible"
+                android:id="@+id/icon_add_thumbnail"
+                android:layout_width="@dimen/amity_thirty_six"
+                android:layout_height="@dimen/amity_thirty_six"
+                android:background="@color/amityTranslucentBackground"
+                android:layout_alignParentTop="true"
+                android:scaleType="centerInside"
+                android:src="@drawable/amity_ic_magic_wand"
+                app:shapeAppearanceOverlay="@style/AmityCircleImage"
+                amityBackgroundColorAlpha="@{@integer/alpha_fifty}" />
+
+            <RelativeLayout
+                android:visibility="gone"
+                android:id="@+id/thumbnail_container"
+                android:layout_centerInParent="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:layout_centerInParent="true"
+                    android:layout_width="58dp"
+                    android:layout_height="32dp"
+                    android:src="@color/amityColorWhite"
+                    android:scaleType="centerInside"
+                    app:shapeAppearanceOverlay="@style/AmityRoundedCornerImage" />
+
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:layout_margin="1dp"
+                    android:layout_centerInParent="true"
+                    android:id="@+id/thumbnail_imageview"
+                    android:layout_width="56dp"
+                    android:layout_height="28dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/amity_default_stream_thumbnail"
+                    app:shapeAppearanceOverlay="@style/AmityRoundedCornerImage" />
+
+                <ProgressBar
+                    android:id="@+id/thumbnail_progressbar"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_centerInParent="true"
+                    android:indeterminate="true"
+                    android:indeterminateTint="@color/amityColorPrimary" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:visibility="visible"
+            android:id="@+id/icon_swap_cam"
+            android:layout_width="@dimen/amity_thirty_six"
+            android:layout_height="@dimen/amity_thirty_six"
+            android:background="@color/amityTranslucentBackground"
+            android:layout_marginTop="16dp"
+            android:layout_toStartOf="@+id/add_thumbnail_container"
+            android:layout_alignParentTop="true"
+            android:scaleType="centerInside"
+            android:src="@drawable/amity_ic_swap_cam"
+            app:shapeAppearanceOverlay="@style/AmityCircleImage"
+            amityBackgroundColorAlpha="@{@integer/alpha_fifty}" />
+
+        <LinearLayout
+            android:id="@+id/community_container"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="100dp"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/community_avatar"
+                style="@style/AmityCircularAvatarStyle"
+                placeHolder="@{@drawable/amity_ic_default_category_avatar}"
+                android:layout_width="@dimen/amity_twenty_eight"
+                android:layout_height="@dimen/amity_twenty_eight"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/community_title"
+
+                android:layout_marginStart="@dimen/amity_eight"
+                android:layout_gravity="center_vertical"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="@color/amityColorWhite"
+                tools:text="@string/amity_video_stream_finish"
+                style="@style/AmityTextStyleTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+
+        </LinearLayout>
+
+        <ScrollView
+            android:layout_above="@+id/toggle_publish"
+            android:layout_marginTop="170dp"
+            android:layout_marginBottom="100dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/title_edittext"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="60dp"
+                    android:textColorHint="@color/amityColorWhite"
+                    android:textColor="@color/amityColorWhite"
+                    android:background="@android:color/transparent"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/amity_text_size_headline"
+                    android:maxLength="30"
+                    android:hint="@string/amity_video_stream_title_hint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <EditText
+                    android:layout_below="@+id/title_edittext"
+                    android:id="@+id/description_edittext"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="8dp"
+                    android:textColorHint="@color/amityColorWhite"
+                    android:textColor="@color/amityColorWhite"
+                    android:background="@android:color/transparent"
+                    android:textSize="@dimen/amity_text_size_body"
+                    android:hapticFeedbackEnabled="true"
+                    android:hint="@string/amity_video_stream_description_hint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+            </RelativeLayout>
+
+        </ScrollView>
+
+
+
+
+    </RelativeLayout>
+
+
+
+    <Button
+        android:id="@+id/toggle_publish"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="24dp"
+        android:backgroundTint="@color/amityColorWhite"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:paddingTop="8dp"
+        android:textColor="@color/amityColorBlack"
+        android:paddingBottom="8dp"
+        android:visibility="visible"
+        android:text="@string/amity_video_stream_go_live" />
+
+    <TextView
+        android:id="@+id/toggle_stop"
+        android:visibility="gone"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/amity_rounded_corner_border_line_white"
+        android:textSize="@dimen/amity_text_size_body"
+        android:textColor="@color/amityColorWhite"
+        android:text="@string/amity_video_stream_finish"
+        android:layout_marginBottom="24dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:visibility="gone"
+        android:id="@+id/icon_published_swap_cam"
+        android:layout_width="@dimen/amity_thirty_six"
+        android:layout_height="@dimen/amity_thirty_six"
+        android:background="@color/amityTranslucentBackground"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="24dp"
+        android:layout_marginStart="16dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/amity_ic_swap_cam"
+        app:shapeAppearanceOverlay="@style/AmityCircleImage"
+        amityBackgroundColorAlpha="@{@integer/alpha_fifty}" />
+
+
+</RelativeLayout>

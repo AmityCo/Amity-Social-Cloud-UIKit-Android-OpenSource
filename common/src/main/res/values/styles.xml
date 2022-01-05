@@ -1,0 +1,116 @@
+<resources>
+
+    <style name="AmityAlertDialogStyle" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="colorPrimary">@color/amityColorPrimary</item>
+        <item name="materialAlertDialogBodyTextStyle">@style/AmityAlertDialogBodyTextStyl</item>
+    </style>
+
+    <style name="AmityAlertDialogBodyTextStyl" parent="MaterialAlertDialog.MaterialComponents.Body.Text">
+        <item name="android:textColor">@color/amityColorBase</item>
+    </style>
+
+    <style name="AmityIconOutlinedButtonStyle" parent="Widget.MaterialComponents.Button.OutlinedButton.Icon">
+        <item name="iconPadding">0dp</item>
+        <item name="iconGravity">textStart</item>
+        <item name="rippleColor">@android:color/transparent</item>
+        <item name="android:shadowColor">@android:color/transparent</item>
+        <item name="strokeColor">@android:color/transparent</item>
+    </style>
+
+    <style name="AmityAvatarStyle">
+        <item name="amityAvatarWidth">@dimen/amity_avatar_default_height</item>
+        <item name="amityAvatarHeight">@dimen/amity_avatar_default_width</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="AmityImagePreviewToolbarStyle" parent="Widget.MaterialComponents.Toolbar.Primary">
+        <item name="android:background">@color/amityColorBlack</item>
+        <item name="titleTextColor">@color/amityColorWhite</item>
+    </style>
+
+    <style name="AmityImagePreviewTheme" parent="Amity.Base.Theme.AmityApp"/>
+
+    <style name="AmityNewsFeedAvatarStyle">
+        <item name="amityAvatarWidth">@dimen/amity_forty</item>
+        <item name="amityAvatarHeight">@dimen/amity_forty</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="AmityCircleImage">
+        <item name="cornerSize">50%</item>
+        <item name="cornerFamily">rounded</item>
+    </style>
+
+    <style name="AmityRoundedCornerImage">
+        <item name="cornerSize">4dp</item>
+        <item name="cornerFamily">rounded</item>
+    </style>
+
+    <style name="AmitySearchEditTextStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="paddingStart">@dimen/amity_padding_s</item>
+        <item name="android:drawableStart">@drawable/amity_ic_search</item>
+        <item name="android:drawablePadding">@dimen/amity_padding_xs</item>
+        <item name="android:paddingStart">@dimen/amity_padding_m1</item>
+        <item name="android:layout_marginStart">@dimen/amity_padding_m1</item>
+        <item name="android:layout_marginEnd">@dimen/amity_padding_m1</item>
+        <item name="android:hint">@string/amity_search</item>
+        <item name="android:textSize">@dimen/amity_text_size_body</item>
+        <item name="drawableTint">#636768</item>
+    </style>
+
+    <style name="AmityCircularAvatarStyle">
+        <item name="android:scaleType">centerInside</item>
+        <item name="shapeAppearanceOverlay">@style/AmityCircleImage</item>
+    </style>
+
+    <style name="AmityCreatePostImageStyle">
+        <item name="android:scaleType">centerCrop</item>
+        <item name="cornerSize">5dp</item>
+        <item name="cornerFamily">rounded</item>
+    </style>
+
+    <style name="AmityDivider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">?android:attr/listDivider</item>
+    </style>
+
+    <style name="AmityIconButtonStyle">
+        <item name="iconGravity">textStart</item>
+        <item name="shapeAppearanceOverlay">@style/AmityCircleImage</item>
+        <item name="android:padding">0dp</item>
+        <item name="iconPadding">0dp</item>
+        <item name="android:insetLeft">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetRight">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+    </style>
+
+    <style name="AmityImagePickerTheme" parent="Matisse.Zhihu">
+        <item name="colorPrimary">@color/amityColorWhite</item>
+        <item name="colorPrimaryDark">@color/amityColorWhite</item>
+        <item name="toolbar">@style/AmityImagePickerToolbarStyle</item>
+        <item name="album.dropdown.title.color">@color/amityColorBase</item>
+        <item name="album.dropdown.count.color">@color/amityColorBase</item>
+        <item name="album.element.color">@color/amityColorBase</item>
+        <item name="bottomToolbar.preview.textColor">@color/amityColorBase</item>
+        <item name="bottomToolbar.apply.textColor">@color/amityColorBase</item>
+        <item name="item.checkCircle.backgroundColor">@color/amityColorBase</item>
+
+    </style>
+
+    <style name="AmityImagePickerToolbarStyle" parent="Toolbar.Zhihu">
+        <item name="homeAsUpIndicator">@drawable/amity_ic_cross</item>
+
+    </style>
+
+    <style name="AmityBrandedSwitch.control" parent="Theme.AppCompat.Light">
+        <item name="colorControlActivated">@color/amityColorPrimary</item>
+        <item name="colorSwitchThumbNormal">@color/amityColorWhite</item>
+    </style>
+
+</resources>

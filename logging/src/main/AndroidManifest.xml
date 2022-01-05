@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.amity.socialcloud.uikit.logging">
+
+    <application>
+        <provider
+            android:name=".AmityProvider"
+            android:authorities="${applicationId}.UikitLoggingProvider"
+            android:exported="false" />
+    </application>
+
+</manifest>

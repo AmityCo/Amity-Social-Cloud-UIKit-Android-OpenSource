@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="amityColorPrimary">@color/upstraColorPrimary</color>
+    <color name="amityColorSecondary">@color/upstraColorSecondary</color>
+    <color name="amityColorAlert">@color/upstraColorAlert</color>
+    <color name="amityColorHighlight">@color/upstraColorHighlight</color>
+    <color name="amityColorBase">@color/upstraColorBase</color>
+    <color name="amityColorBaseInverse">@color/upstraColorBaseInverse</color>
+    <color name="amityMessageBubble">@color/upstraMessageBubble</color>
+    <color name="amityMessageBubbleInverse">@color/upstraMessageBubbleInverse</color>
+
+    <color name="amityColorWhite">#FFFFFF</color>
+    <color name="amityColorBlack">#000</color>
+    <color name="amityBlueLight">#4A82F2</color>
+    <color name="amityPlaceHolderColor">#EBECEF</color>
+    <color name="amityPlaceHolderDarkColor">#A5A9B5</color>
+    <color name="amityColorRed">#FF305A</color>
+    <color name="amityColorDarkTranslucent">#B3000000</color>
+    <color name="amityColorGrey">#B8B8B8</color>
+    <color name="amityColorGreen">#57CA6A</color>
+
+
+
+    <color name="upstraColorPrimary">#1054DE</color>
+    <color name="upstraColorSecondary">#292B32</color>
+    <color name="upstraColorAlert">#FA4D30</color>
+    <color name="upstraColorHighlight">#1054DE</color>
+    <color name="upstraColorBase">#292B32</color>
+    <color name="upstraColorBaseInverse">#FFFFFF</color>
+    <color name="upstraMessageBubble">#1054DE</color>
+    <color name="upstraMessageBubbleInverse">#EBECEF</color>
+
+    <color name="amityTranslucentBackground">#4D000000</color>
+    <color name="amityTransparentBackground">#00000000</color>
+
+</resources>

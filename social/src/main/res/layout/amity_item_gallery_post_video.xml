@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_margin="4dp"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/item_gallery_post_video_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="H,1:1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/item_gallery_post_video_imageview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:background="@color/amityPlaceHolderColor"
+            android:scaleType="centerCrop"
+            app:shapeAppearance="@style/AmityRoundedImageViewShape" />
+
+        <TextView
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="8dp"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
+            android:paddingTop="1dp"
+            android:paddingBottom="1dp"
+            android:background="@color/amityColorBlack"
+            android:id="@+id/item_gallery_post_video_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:textColor="@color/amityColorWhite"
+            android:textSize="@dimen/amity_text_size_caption" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:visibility="visible"
+            android:layout_width="@dimen/amity_thirty_six"
+            android:layout_height="@dimen/amity_thirty_six"
+            android:background="@color/amityTranslucentBackground"
+            android:scaleType="centerInside"
+            android:src="@drawable/amity_ic_play"
+            app:shapeAppearanceOverlay="@style/AmityCircleImage"
+            amityBackgroundColorAlpha="@{@integer/alpha_fifty}"
+            android:layout_centerInParent="true" />
+
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

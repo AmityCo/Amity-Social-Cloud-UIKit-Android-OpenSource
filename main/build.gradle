@@ -1,0 +1,7 @@
+apply from: "../buildsystem/activity.gradle"
+
+dependencies {
+    api project(path: ':common')
+    api project(path: ':chat')
+    api project(path: ':social')
+}

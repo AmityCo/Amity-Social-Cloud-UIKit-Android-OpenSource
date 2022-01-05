@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+                                                       
+                                                   
+
+    
+
+                 
+                            
+                                                              
+
+                                                                         
+           
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:tag="layout/amity_item_community_selection_list_0" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/avCommunityProfile"
+            style="@style/CircularAvatarStyle"
+            android:tag="binding_1"                    
+                                                            
+            android:layout_width="@dimen/amity_forty"
+            android:layout_height="@dimen/amity_forty"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <FrameLayout
+            android:id="@+id/communityNameContainer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_padding_xs"
+            android:layout_marginEnd="@dimen/amity_padding_xs"
+            app:layout_constraintBottom_toBottomOf="@id/avCommunityProfile"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/avCommunityProfile"
+            app:layout_constraintTop_toTopOf="@id/avCommunityProfile">
+
+            <TextView
+                android:id="@+id/tvCommunityName"
+                style="@style/AmityTextStyleBody"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="@dimen/amity_padding_xxs"
+                android:ellipsize="end"
+                android:gravity="start"
+                android:maxLines="1"
+                android:tag="binding_2"                     
+                android:textColor="@color/amityColorBase"
+                tools:text="Community Name" />
+        </FrameLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+         

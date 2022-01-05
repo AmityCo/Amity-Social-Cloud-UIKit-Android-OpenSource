@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AmityTextStyleHeadline">
+        <item name="android:textSize">@dimen/amity_text_size_headline</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="AmityTextStyleTitleBold">
+        <item name="android:textStyle">bold</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:textSize">@dimen/amity_text_size_title</item>
+    </style>
+
+    <style name="AmityTextStyleTitle">
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:textSize">@dimen/amity_text_size_title</item>
+    </style>
+
+    <style name="AmityTextStyleBodyBold">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/amity_text_size_body</item>
+    </style>
+
+    <style name="AmityTextStyleBody">
+        <item name="android:textSize">@dimen/amity_text_size_body</item>
+    </style>
+
+    <style name="AmityTextStyleCaptionBold">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/amity_text_size_caption</item>
+    </style>
+
+    <style name="AmityTextStyleCaption">
+        <item name="android:textSize">@dimen/amity_text_size_caption</item>
+    </style>
+
+</resources>

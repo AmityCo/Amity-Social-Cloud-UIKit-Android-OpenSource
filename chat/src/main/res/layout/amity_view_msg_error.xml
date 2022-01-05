@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="com.amity.socialcloud.uikit.common.common.views.AmityColorShade" />
+
+        <variable
+            name="viewModel"
+            type="com.amity.socialcloud.uikit.chat.messages.viewModel.AmitySelectableMessageViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            amityTintColor="@{@color/amityColorBase}"
+            amityTintShade="@{AmityColorShade.SHADE2}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{() -> viewModel.onFailedMsgClick()}"
+            android:src="@drawable/amity_ic_error"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

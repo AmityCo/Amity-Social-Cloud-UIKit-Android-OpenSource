@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/containerNewJoiner"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/containerNewJoinerBase"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="#FFA438">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="fitXY"
+            android:layout_marginBottom="@dimen/amity_sixteen"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:src="@drawable/amity_ic_newjoiner_curve"/>
+
+        <TextView
+            android:id="@+id/tvWelcome"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/amity_welcome"
+            style="@style/AmityTextStyleHeadline"
+            android:layout_marginTop="@dimen/amity_thirty_two"
+            android:gravity="center_horizontal|top"
+            android:textColor="@color/upstraColorBaseInverse"
+            android:layout_marginHorizontal="@dimen/amity_sixteen"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <TextView
+            android:id="@+id/tvDisplayName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            style="@style/AmityTextStyleHeadline"
+            android:gravity="center_horizontal|top"
+            android:textColor="@color/upstraColorBaseInverse"
+            android:maxLines="2"
+            android:ellipsize="end"
+            app:layout_constraintStart_toStartOf="@id/tvWelcome"
+            app:layout_constraintEnd_toEndOf="@id/tvWelcome"
+            app:layout_constraintTop_toBottomOf="@id/tvWelcome"/>
+
+        <TextView
+            android:id="@+id/tvDescription"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            style="@style/AmityTextStyleCaption"
+            android:gravity="center_horizontal|top"
+            android:textColor="@color/upstraColorBaseInverse"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:layout_marginTop="@dimen/amity_eight"
+            app:layout_constraintStart_toStartOf="@id/tvWelcome"
+            app:layout_constraintEnd_toEndOf="@id/tvWelcome"
+            app:layout_constraintTop_toBottomOf="@id/tvDisplayName"/>
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivAvatar"
+            android:layout_width="@dimen/amity_seventy_two"
+            android:layout_height="@dimen/amity_seventy_two"
+            android:layout_marginTop="@dimen/amity_sixteen"
+            app:shapeAppearanceOverlay="@style/AmityCircleImage"
+            android:background="#D9E5FC"
+            android:scaleType="centerInside"
+            android:layout_marginBottom="175dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvDescription"/>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="fitXY"
+            android:src="@drawable/amity_ic_newjoiner_cloud"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/tvBlank"/>
+
+        <TextView
+            android:id="@+id/tvBlank"
+            android:layout_width="match_parent"
+            android:layout_height="16dp"
+            android:background="#FFF"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/amity_ic_newjoiner_balloon"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/tvBlank"/>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="fitCenter"
+            android:src="@drawable/amity_ic_newjoiner_illustration"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/amity_welcome_message"
+        style="@style/AmityTextStyleTitle"
+        android:textColor="@color/upstraColorBase"
+        android:layout_marginHorizontal="@dimen/amity_sixteen"
+        android:layout_marginTop="@dimen/amity_thirty_two"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/containerNewJoinerBase"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

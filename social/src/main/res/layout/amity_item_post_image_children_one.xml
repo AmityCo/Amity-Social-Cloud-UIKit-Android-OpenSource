@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/imageContainerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/amity_post_image_content_height">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/imageViewPreviewImageOne"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/ivPlayImageOne"
+        android:visibility="gone"
+        android:layout_width="@dimen/amity_thirty_six"
+        android:layout_height="@dimen/amity_thirty_six"
+        android:background="@color/amityTranslucentBackground"
+        android:scaleType="centerInside"
+        android:src="@drawable/amity_ic_play"
+        app:shapeAppearanceOverlay="@style/AmityCircleImage"
+        amityBackgroundColorAlpha="@{@integer/alpha_fifty}"
+        android:layout_centerInParent="true" />
+
+</RelativeLayout>

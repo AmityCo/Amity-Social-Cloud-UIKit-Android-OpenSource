@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="amity_album">Album</string>
+    <string name="amity_billie_elli">Billie Ellish \u00F4\u0080\u0087\u00BB</string>
+    <string name="amity_camera">Camera</string>
+    <string name="amity_chat">Chat</string>
+    <string name="amity_delete">Delete</string>
+    <string name="amity_edit">Edit</string>
+    <string name="amity_edit_msg">Edit Message</string>
+    <string name="amity_failed_msg">Can\'t send the message</string>
+    <string name="amity_file">File</string>
+    <string name="amity_hold_to_record">Hold to record</string>
+    <string name="amity_location">Location</string>
+    <string name="amity_member_count">(%d)</string>
+    <string name="amity_message_is_too_short">Message is too short.</string>
+    <string name="amity_msg_dltd">Message deleted \u2022</string>
+    <string name="amity_msg_edited">Edited \u2022</string>
+    <string name="amity_no_conversations">No conversations</string>
+    <string name="amity_playback_error">Unable to play message.</string>
+    <string name="amity_report">Report</string>
+    <string name="amity_save">SAVE</string>
+    <string name="amity_settings">Settings</string>
+    <string name="amity_title_directory">Directory</string>
+    <string name="amity_title_recent_chat">Recent</string>
+    <string name="amity_type_message">Type message</string>
+    <string name="amity_unknown_msg">Unknown message type</string>
+    <style name="ChatHomeToolBarStyle" parent="BaseToolBarStyle">
+        <item name="leftDrawableStyle">@style/ChatToolbarLeftDrawableStyle</item>
+        <item name="leftTextViewStyle">@style/ChatToolbarLeftTextStyle</item>
+    </style>
+    <style name="ChatToolbarLeftDrawableStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:visibility">gone</item>
+    </style>
+    <style name="ChatToolbarLeftTextStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/amity_padding_m1</item>
+        <item name="android:textSize">@dimen/amity_text_size_headline</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/amityColorBase</item>
+    </style>
+</resources>

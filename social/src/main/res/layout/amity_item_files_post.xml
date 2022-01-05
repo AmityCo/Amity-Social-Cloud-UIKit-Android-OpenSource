@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.amity.socialcloud.uikit.common.common.views.text.AmityExpandableTextView
+        android:id="@+id/tvFeed"
+        style="@style/AmityNewsFeedItemTextStyle"
+        android:maxLines="@integer/maxLineFileOnlyFeed"
+        android:textColor="@color/amityColorBase"
+        android:layout_marginStart="@dimen/amity_padding_m1"
+        android:layout_marginTop="@dimen/amity_padding_m1"
+        android:layout_marginEnd="@dimen/amity_padding_m1"
+        android:autoLink="web"
+        android:textColorLink="@color/amityColorHighlight"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvAttachment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/amity_padding_m1"
+        android:layout_marginTop="@dimen/amity_padding_xs"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvFeed" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

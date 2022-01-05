@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <import type="com.amity.socialcloud.uikit.common.common.views.AmityColorShade" />
+
+        <variable
+            name="vmImageMessage"
+            type="com.amity.socialcloud.uikit.chat.messages.viewModel.AmityImageMsgViewModel" />
+
+        <variable
+            name="position"
+            type="int" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include
+            android:id="@+id/dateHeader"
+            layout="@layout/amity_view_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="@{vmImageMessage.isDateVisible() ? View.VISIBLE : View.GONE}"
+            app:date="@{vmImageMessage.msgDate}"
+            app:dateFillColor="@{vmImageMessage.dateFillColor}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="@{vmImageMessage.isDeleted() ? View.GONE : View.VISIBLE}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dateHeader">
+
+            <TextView
+                android:id="@+id/tvTimeOutgoing"
+                style="@style/AmityTextStyleCaption"
+                textColorShade="@{AmityColorShade.SHADE2}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/amity_padding_xxs"
+                android:layout_marginEnd="@dimen/amity_padding_xxs"
+                android:text="@{vmImageMessage.msgTime}"
+                android:textColor="@color/amityColorBase"
+                app:layout_constraintEnd_toEndOf="@id/ivMsgOutgoing"
+                app:layout_constraintTop_toBottomOf="@id/ivMsgOutgoing" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/ivMsgOutgoing"
+                android:layout_width="230dp"
+                android:layout_height="228dp"
+                android:layout_marginEnd="@dimen/amity_padding_m1"
+                android:onLongClick="@{() -> vmImageMessage.onLongPress(position)}"
+                android:scaleType="centerCrop"
+                app:imageUrl="@{vmImageMessage.imageUrl}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:placeHolder="@{vmImageMessage.isFailed() ? @drawable/amity_ic_image_failed : @drawable/amity_ic_image}" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:alpha="0.5"
+                android:backgroundTint="@color/amityColorBase"
+                android:visibility="@{vmImageMessage.inSelectionMode || vmImageMessage.uploading ? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toBottomOf="@id/ivMsgOutgoing"
+                app:layout_constraintEnd_toEndOf="@id/ivMsgOutgoing"
+                app:layout_constraintStart_toStartOf="@id/ivMsgOutgoing"
+                app:layout_constraintTop_toTopOf="@id/ivMsgOutgoing"
+                app:roundedCorner="@{true}"
+                app:topRightRadius="@{@dimen/amity_zero}" />
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:id="@+id/progressBar"
+                android:layout_width="@dimen/amity_thirty_six"
+                android:layout_height="@dimen/amity_thirty_six"
+                android:indeterminate="true"
+                android:progress="@{vmImageMessage.uploadProgress}"
+                android:visibility="@{vmImageMessage.uploading &amp; !vmImageMessage.isFailed() ? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toBottomOf="@id/ivMsgOutgoing"
+                app:layout_constraintEnd_toEndOf="@id/ivMsgOutgoing"
+                app:layout_constraintStart_toStartOf="@id/ivMsgOutgoing"
+                app:layout_constraintTop_toTopOf="@id/ivMsgOutgoing"
+                app:trackColor="@color/amityColorWhite"
+                app:trackThickness="@dimen/amity_two" />
+
+            <include
+                layout="@layout/amity_view_msg_error"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/amity_padding_xxs"
+                android:visibility="@{vmImageMessage.isFailed() ? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toBottomOf="@id/ivMsgOutgoing"
+                app:layout_constraintEnd_toStartOf="@id/ivMsgOutgoing"
+                app:layout_constraintTop_toTopOf="@id/ivMsgOutgoing"
+                app:viewModel="@{vmImageMessage}" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <include
+            layout="@layout/amity_view_msg_deleted"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/amity_padding_s"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dateHeader"
+            app:viewModel="@{vmImageMessage}" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <import type="com.amity.socialcloud.uikit.common.common.views.AmityColorShade" />
+
+        <variable
+            name="readOnly"
+            type="Boolean" />
+
+        <variable
+            name="addBottomSpace"
+            type="Boolean" />
+
+        <variable
+            name="edited"
+            type="Boolean" />
+
+        <variable
+            name="avatarUrl"
+            type="String" />
+
+        <variable
+            name="showViewRepliesButton"
+            type="Boolean" />
+
+        <variable
+            name="isReplyComment"
+            type="Boolean" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_comment_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/amity_padding_m1"
+        android:paddingTop="@dimen/amity_padding_xs">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivAvatar"
+            style="@style/AmityCircularAvatarStyle"
+            backgroundColorShade="@{AmityColorShade.SHADE3}"
+            amityBackgroundColor="@{@color/amityColorPrimary}"
+            imageUrl="@{avatarUrl}"
+            placeHolder="@{@drawable/amity_ic_default_profile1}"
+            android:layout_width="@dimen/amity_twenty_eight"
+            android:layout_height="@dimen/amity_twenty_eight"
+            android:layout_marginEnd="@dimen/amity_padding_xs"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvUserName"
+            style="@style/AmityTextStyleBodyBold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_padding_xs"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:drawablePadding="@dimen/amity_padding_xxs"
+            android:textColor="@color/amityColorBase"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintBottom_toBottomOf="@id/ivAvatar"
+            app:layout_constraintStart_toEndOf="@id/ivAvatar"
+            app:layout_constraintTop_toTopOf="@id/ivAvatar"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="Jackie" />
+
+        <TextView
+            android:id="@+id/tvCommentTime"
+            style="@style/AmityTextStyleCaption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="@dimen/amity_padding_xxs"
+            android:textColor="@color/amityColorBase"
+            app:layout_constraintStart_toStartOf="@id/tvUserName"
+            app:layout_constraintTop_toBottomOf="@id/tvUserName"
+            app:textColorShade="@{AmityColorShade.SHADE1}"
+            tools:text="10 min" />
+
+        <TextView
+            android:id="@+id/tvEdited"
+            style="@style/AmityTextStyleCaption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_padding_xxs"
+            android:drawableStart="@drawable/amity_ic_dot_base"
+            android:drawablePadding="@dimen/amity_padding_xxs"
+            android:text="@string/amity_edited"
+            android:textColor="@color/amityColorBase"
+            android:visibility="@{edited ? View.VISIBLE : View.GONE, default=gone}"
+            app:layout_constraintStart_toEndOf="@id/tvCommentTime"
+            app:layout_constraintTop_toTopOf="@id/tvCommentTime"
+            app:textColorShade="@{AmityColorShade.SHADE1}"
+            tools:visibility="visible" />
+
+        <RelativeLayout
+            android:id="@+id/comment_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/tvUserName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvCommentTime">
+
+            <com.amity.socialcloud.uikit.common.common.views.text.AmityExpandableTextView
+                android:id="@+id/tvPostComment"
+                style="@style/AmityTextStyleBody"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/amity_padding_xxs"
+                android:layout_marginBottom="@dimen/amity_padding_xs"
+                android:autoLink="web"
+                android:background="@drawable/amity_bg_comment_bubble"
+                android:maxLines="@integer/maxLineTextOnlyFeed"
+                android:padding="@dimen/amity_padding_s"
+                android:textColor="@color/amityColorBase"
+                android:textColorLink="@color/amityColorHighlight"
+                tools:text="orem ipsum dolor sit amet, consectetur" />
+
+        </RelativeLayout>
+
+
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/cbLike"
+            style="@style/AmityTextStyleBodyBold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:button="@drawable/amity_ic_like_selector"
+            android:enabled="@{readOnly ? false : true}"
+            android:gravity="center_vertical"
+            android:paddingStart="@dimen/amity_padding_xxs"
+            android:paddingEnd="0dp"
+            android:text="@string/amity_like"
+            app:checkBoxCheckedColor="@{@color/amityColorPrimary}"
+            app:checkBoxDefaultColor="@{@color/amityColorBase}"
+            app:checkBoxDefaultShade="@{AmityColorShade.SHADE2}"
+            app:layout_constraintStart_toStartOf="@id/tvUserName"
+            app:layout_constraintTop_toBottomOf="@id/comment_layout" />
+
+        <TextView
+            android:id="@+id/reply"
+            style="@style/AmityTextStyleBodyBold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_ten"
+            android:drawableStart="@drawable/amity_ic_reply"
+            android:drawablePadding="@dimen/amity_padding_xs"
+            android:gravity="center_vertical"
+            android:text="@string/amity_reply"
+            android:textColor="@{@color/upstraColorBase}"
+            android:visibility="@{(isReplyComment || readOnly) ? View.GONE : View.VISIBLE, default=gone}"
+            app:layout_constraintBottom_toBottomOf="@id/cbLike"
+            app:layout_constraintStart_toEndOf="@id/cbLike"
+            app:layout_constraintTop_toTopOf="@id/cbLike"
+            app:textColorShade="@{AmityColorShade.SHADE2}"
+            tools:visibility="visible" />
+
+
+        <ImageButton
+            android:id="@+id/btnCommentAction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_ten"
+            android:background="@android:color/transparent"
+            android:src="@drawable/amity_ic_more_horizontal"
+            android:tint="@color/amityColorBase"
+            app:layout_constraintBottom_toBottomOf="@id/reply"
+            app:layout_constraintStart_toEndOf="@id/reply"
+            app:layout_constraintTop_toTopOf="@id/reply" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/actionGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="@{readOnly ? View.GONE : View.VISIBLE}"
+            app:constraint_referenced_ids="cbLike,btnCommentAction"
+            tools:visibility="visible" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+                                                       
+                                                   
+
+    
+
+                                                                         
+           
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:tag="layout/amity_item_recent_message_0" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivAvatar"
+            style="@style/CircularAvatarStyle"
+            android:tag="binding_1"                    
+                                                            
+            android:layout_width="@dimen/amity_forty"
+            android:layout_height="@dimen/amity_forty"
+            android:layout_marginStart="@dimen/amity_padding_m1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvDisplayName"
+            style="@style/AmityTextStyleTitleBold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_padding_m1"
+            android:drawablePadding="@dimen/amity_padding_xxs"
+            android:maxWidth="147dp"
+            app:layout_constraintBottom_toBottomOf="@id/ivAvatar"
+            app:layout_constraintEnd_toStartOf="@id/tvMemberCount"
+            app:layout_constraintStart_toEndOf="@id/ivAvatar"
+            app:layout_constraintTop_toTopOf="@id/ivAvatar"
+            tools:text="Community" />
+
+
+        <TextView
+            android:id="@+id/tvMemberCount"
+            style="@style/AmityTextStyleCaption"
+            android:tag="binding_2"              
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_padding_xxs"
+            android:layout_marginEnd="@dimen/amity_sixty_two"
+            android:textColor="@color/amityColorBase"
+            app:layout_constraintBottom_toBottomOf="@id/tvDisplayName"
+            app:layout_constraintEnd_toStartOf="@id/tvUnreadCount"
+            app:layout_constraintStart_toEndOf="@id/tvDisplayName"
+            app:layout_constraintTop_toTopOf="@id/tvDisplayName"
+            tools:text="(665)" />
+
+        <TextView
+            android:id="@+id/tvTime"
+            style="@style/AmityTextStyleCaption"
+            android:tag="binding_3"              
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/amity_padding_m1"
+            android:textColor="@color/amityColorBase"
+            app:layout_constraintBottom_toTopOf="@id/tvUnreadCount"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/ivAvatar" />
+
+
+        <TextView
+            android:id="@+id/tvUnreadCount"
+            style="@style/AmityTextStyleCaption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/amity_padding_m1"
+            android:background="@drawable/amity_ic_count"
+            android:backgroundTint="@color/amityColorAlert"
+            android:gravity="center"
+            android:textColor="@color/amityColorWhite"
+            app:layout_constraintBottom_toBottomOf="@id/ivAvatar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvTime"
+            tools:text="64" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+         

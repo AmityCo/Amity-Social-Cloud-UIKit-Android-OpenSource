@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="ToolBarLeftTextStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/amity_text_size_title</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_marginStart">@dimen/amity_padding_m1</item>
+        <item name="android:textColor">@color/amityColorBase</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:layout_marginEnd">@dimen/amity_padding_m1</item>
+    </style>
+
+    <style name="ToolBarRightTextStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/amity_text_size_body</item>
+        <item name="android:textColor">@color/amityColorPrimary</item>
+    </style>
+
+    <style name="ToolBarLeftDrawableStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/amity_padding_m2</item>
+    </style>
+
+    <style name="BaseToolBarStyle">
+        <item name="amityLeftDrawableStyle">@style/ToolBarLeftDrawableStyle</item>
+        <item name="amityLeftTextViewStyle">@style/ToolBarLeftTextStyle</item>
+        <item name="amityRightTextViewStyle">@style/ToolBarRightTextStyle</item>
+    </style>
+</resources>

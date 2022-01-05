@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.amity.socialcloud.uikit.community">
+
+    <application
+        android:networkSecurityConfig="@xml/network_security_config">
+
+
+        <activity
+            android:name=".setting.user.AmityUserSettingsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp"/>
+        <activity
+            android:name=".followers.AmityUserFollowersActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp"/>
+        <activity
+            android:name=".followrequest.AmityFollowRequestsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp"/>
+        <activity
+            android:name=".newsfeed.activity.AmityCommentCreatorActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp"
+            android:windowSoftInputMode="adjustResize"/>
+        <activity
+            android:name=".notificationsettings.pushDetail.AmityCommunityPostNotificationSettingsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+        <activity
+            android:name=".notificationsettings.AmityCommunityNotificationsSettingsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+        <activity
+            android:name=".newsfeed.activity.AmityMyFeedActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+        <activity
+            android:name=".newsfeed.activity.AmityPostEditorActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp"
+            android:windowSoftInputMode="adjustResize"/>
+        <activity
+            android:name=".edit.AmityCommunityProfileActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+        <activity
+            android:name=".profile.activity.AmityEditUserProfileActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+        <activity
+            android:name=".members.AmityCommunityMemberSettingsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+        <activity
+            android:name=".setting.AmityCommunitySettingsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+        <activity
+            android:name=".setting.postreview.AmityPostReviewSettingsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+        <activity
+            android:name=".explore.activity.AmityCategoryCommunityListActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+        <activity
+            android:name=".mycommunity.activity.AmityMyCommunityActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+        <activity
+            android:name=".profile.activity.AmityUserProfileActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+        <activity
+            android:name=".explore.activity.AmityCategoryPickerActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+        <activity
+            android:name=".explore.activity.AmityCategoryListActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+        <activity
+            android:name=".detailpage.AmityCommunityPageActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+        <activity
+            android:name=".home.activity.AmityCommunityHomePageActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+        <activity
+            android:name=".newsfeed.activity.AmityPostTargetPickerActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+        <activity
+            android:name=".newsfeed.activity.AmityPostDetailsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp"
+            android:windowSoftInputMode="adjustResize"/>
+        <activity
+            android:name=".newsfeed.activity.AmityPostCreatorActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp"
+            android:windowSoftInputMode="adjustResize"/>
+        <activity
+            android:name=".newsfeed.activity.AmityPollPostCreatorActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+        <activity
+            android:name=".ui.view.AmityMemberPickerActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+        <activity
+            android:name=".ui.view.AmityCommunityCreatorActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+        <activity
+            android:name=".newsfeed.activity.AmityEditCommentActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp"
+            android:windowSoftInputMode="adjustResize"/>
+        <activity
+            android:name=".newsfeed.activity.AmityCommunityReviewingFeedActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+        <activity
+            android:name=".newsfeed.activity.AmityVideoPlayerActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+        <activity
+            android:name=".newsfeed.activity.AmityLivestreamVideoPlayerActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+        <activity
+            android:name=".newsfeed.activity.AmityVideoPostPlayerActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+        <activity
+            android:name=".newsfeed.activity.AmityLiveStreamPostCreatorActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp.NoActionBar"
+            android:windowSoftInputMode="stateHidden" />
+    </application>
+
+</manifest>

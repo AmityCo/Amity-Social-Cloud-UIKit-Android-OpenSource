@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="com.amity.socialcloud.uikit.common.common.views.AmityColorShade" />
+
+        <variable
+            name="communityCategory"
+            type="com.amity.socialcloud.sdk.social.community.AmityCommunityCategory" />
+
+        <variable
+            name="listener"
+            type="com.amity.socialcloud.uikit.community.explore.listener.AmityCategoryItemClickListener" />
+
+        <variable
+            name="avatarUrl"
+            type="String" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="@{() -> listener.onCategorySelected(communityCategory)}">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivAvatar"
+            style="@style/AmityCircularAvatarStyle"
+            backgroundColorShade="@{AmityColorShade.SHADE3}"
+            amityBackgroundColor="@{@color/amityColorPrimary}"
+            imageUrl="@{avatarUrl}"
+            placeHolder="@{@drawable/amity_ic_default_category_avatar}"
+            android:layout_width="@dimen/amity_forty"
+            android:layout_height="@dimen/amity_forty"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            style="@style/AmityTextStyleBodyBold"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/amity_padding_xs"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@{communityCategory.name}"
+            android:textColor="@color/amityColorBase"
+            app:layout_constraintBottom_toBottomOf="@id/ivAvatar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/ivAvatar"
+            app:layout_constraintTop_toTopOf="@id/ivAvatar" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

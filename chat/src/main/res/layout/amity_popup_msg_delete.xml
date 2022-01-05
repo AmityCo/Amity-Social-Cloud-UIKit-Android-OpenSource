@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.amity.socialcloud.uikit.chat.messages.viewModel.AmitySelectableMessageViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/amityColorBase"
+        android:paddingVertical="@dimen/amity_padding_xs"
+        android:paddingStart="@dimen/amity_padding_s"
+        android:paddingEnd="@dimen/amity_padding_s"
+        app:bottomRightRadius="@{@dimen/amity_zero}"
+        app:roundedCorner="@{true}">
+
+        <TextView
+            style="@style/AmityTextStyleBody"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{() -> viewModel.onDeleteClick()}"
+            android:text="@string/amity_delete"
+            android:textColor="@color/amityColorWhite"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

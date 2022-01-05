@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+                                                        
+
+    
+
+                                                                         
+
+                 
+                            
+                                                                                                   
+           
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/amityColorBase"
+        android:paddingVertical="@dimen/amity_padding_xs"
+        android:paddingStart="@dimen/amity_padding_xs"
+        android:paddingEnd="@dimen/amity_padding_s"
+                                                    
+                                    android:tag="layout/amity_popup_text_msg_sender_0" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+
+        <TextView
+            android:id="@+id/tvEdit"
+            style="@style/AmityTextStyleBody"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="binding_1"                           
+            android:text="@string/amity_edit"
+            android:textColor="@color/amityColorWhite"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/divider"
+            android:tag="binding_2"                    
+                                                         
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="@dimen/amity_padding_s"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tvEdit"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvDelete"
+            style="@style/AmityTextStyleBody"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_padding_s"
+            android:tag="binding_3"                             
+            android:text="@string/amity_delete"
+            android:textColor="@color/amityColorWhite"
+            app:layout_constraintStart_toEndOf="@id/divider"
+            app:layout_constraintTop_toTopOf="@id/tvEdit" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+         

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center_vertical"
+    android:background="@android:color/transparent"
+    android:paddingStart="@dimen/amity_twenty_four"
+    android:paddingEnd="@dimen/amity_twenty_four">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        app:cardCornerRadius="@dimen/amity_eight"
+        app:cardElevation="@dimen/amity_eight"
+        app:cardUseCompatPadding="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/amity_twenty_four"
+            android:layout_marginEnd="@dimen/amity_twenty_four"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/imageview_customize"
+                style="?attr/amityLeftDrawableStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/amity_eighty_four"
+                android:src="@drawable/amity_ic_customize"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textview_customize_title"
+                style="@style/AmityTextStyleHeadline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/amity_thirty_two"
+                android:gravity="center_horizontal"
+                android:lines="2"
+                android:text="@string/amity_customize_community_title"
+                android:textColor="@color/amityColorBase"
+                app:layout_constraintTop_toBottomOf="@+id/imageview_customize" />
+
+            <TextView
+                android:id="@+id/textview_customize_description"
+                style="@style/AmityTextStyleBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/amity_eight"
+                android:ellipsize="end"
+                android:gravity="center_horizontal"
+                android:lines="3"
+                android:text="@string/amity_customize_community_description"
+                app:layout_constraintTop_toBottomOf="@+id/textview_customize_title" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_community_settings"
+                style="@style/AmityMaterialButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/amity_twenty_four"
+                android:gravity="center"
+                android:stateListAnimator="@null"
+                android:text="@string/amity_customize_community_settings"
+                android:textSize="@dimen/amity_text_size_body"
+                app:iconGravity="textStart"
+                app:layout_constraintBottom_toTopOf="@+id/textview_skip"
+                app:layout_constraintTop_toBottomOf="@+id/textview_customize_description" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/textview_skip"
+                style="@style/AmityMaterialTextButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/amity_sixteen"
+                android:layout_marginBottom="@dimen/amity_thirty_two"
+                android:gravity="center"
+                android:text="@string/amity_skip_for_now"
+                android:textSize="@dimen/amity_text_size_title"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</FrameLayout>

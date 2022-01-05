@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.amity.socialcloud.uikit.sample">
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-feature android:name="android.hardware.camera.any" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <application
+        android:name=".AmitySampleApp"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/amity_app_name"
+        android:supportsRtl="true"
+        android:theme="@style/MyTheme">
+        <activity android:name=".TestActivity"/>
+        <activity android:name=".AmityRecentMessageListActivity" />
+        <activity android:name=".AmityMessageListWithCustomUi" />
+        <activity android:name=".AmitySettingActivity" />
+        <activity android:name=".AmityFeatureListActivity" />
+        <activity android:name=".AmityPostCreatorWithOptionsActivity" />
+        <activity android:name=".AmityPostCreatorSettingsActivity" />
+        <activity android:name=".env.EnvironmentActivity"/>
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <service android:name=".AmitySampleFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+    </application>
+
+</manifest>

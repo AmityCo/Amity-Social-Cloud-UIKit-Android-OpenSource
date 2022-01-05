@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="com.amity.socialcloud.uikit.common.common.views.AmityColorShade" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/ivLock"
+            android:layout_width="35dp"
+            android:layout_height="40dp"
+            android:src="@drawable/amity_ic_lock1"
+            amityTintColor="@{@color/amityColorBase}"
+            amityTintShade="@{AmityColorShade.SHADE2}"
+            android:layout_marginTop="@dimen/amity_one_hundred_sixty"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvPrivate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/AmityTextStyleTitleBold"
+            android:text="@string/amity_private_account"
+            android:textColor="@color/amityColorBase"
+            android:layout_marginTop="@dimen/amity_padding_s"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ivLock"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/AmityTextStyleBody"
+            android:text="@string/amity_follow_user"
+            android:textColor="@color/amityColorBase"
+            textColorShade="@{AmityColorShade.SHADE1}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvPrivate"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

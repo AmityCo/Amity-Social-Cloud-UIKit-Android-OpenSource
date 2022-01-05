@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+                                                       
+                                                   
+
+    
+
+                                                                         
+           
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/containerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/amityColorWhite" android:tag="layout/amity_item_create_post_file_0" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools">
+
+        <ProgressBar
+            android:id="@+id/progress"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="0dp"
+            android:background="@drawable/amity_bg_border"
+            android:max="100"
+            android:minHeight="@dimen/amity_fifty_eight"
+            android:padding="0dp"
+            android:progress="0"
+            android:progressBackgroundTint="@android:color/transparent"
+            android:progressTint="#EBECEF"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <ImageView
+            android:id="@+id/ivFileIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_padding_m1"
+            android:src="@drawable/amity_ic_doc_large"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.5" />
+
+
+        <TextView
+            android:id="@+id/tvFileName"
+            style="@style/AmityTextStyleBodyBold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_padding_xs"
+            android:maxLines="1"
+            android:textColor="@color/amityColorBase"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/ivFileIcon"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.2"
+            tools:text="file.pdf" />
+
+        <TextView
+            android:id="@+id/tvFileSize"
+            style="@style/AmityTextStyleCaption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_padding_xs"
+            android:textColor="@color/amityColorBase"
+            app:layout_constraintStart_toEndOf="@id/ivFileIcon"
+            app:layout_constraintTop_toBottomOf="@id/tvFileName"
+            android:tag="binding_1"                  
+            tools:text="1.2 MB" />
+
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivError"
+            android:layout_width="@dimen/amity_twenty_five"
+            android:layout_height="@dimen/amity_twenty_five"
+            android:background="@color/amityColorBase"
+            android:scaleType="centerInside"
+            android:src="@drawable/amity_ic_info"
+            android:tag="binding_2"                              
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/CircleImage" />
+
+        <View
+            android:id="@+id/overlay"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:alpha="0.6"
+            android:background="@color/amityColorWhite"
+            android:minHeight="@dimen/amity_fifty_eight"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/layoutPreparingFile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ProgressBar
+                android:layout_width="@dimen/amity_twenty_four"
+                android:layout_height="@dimen/amity_twenty_four"
+                android:indeterminate="true"
+                android:indeterminateTint="@color/amityColorPrimary" />
+
+            <TextView
+                style="@style/AmityTextStyleCaption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/amity_preparing"
+                android:textColor="@color/amityColorBase" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/ivRemove"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_padding_xs"
+            android:layout_marginEnd="@dimen/amity_padding_m1"
+            android:padding="@dimen/amity_padding_xxs"
+            android:src="@drawable/amity_ic_cross_black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+         

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <com.amity.socialcloud.uikit.common.common.views.text.AmityExpandableTextView
+        android:id="@+id/question_text_view"
+        style="@style/AmityNewsFeedItemTextStyle"
+        android:layout_marginStart="@dimen/amity_padding_m1"
+        android:layout_marginTop="@dimen/amity_padding_m1"
+        android:layout_marginEnd="@dimen/amity_padding_m1"
+        android:autoLink="web"
+        android:maxLines="@integer/maxLineTextOnlyFeed"
+        android:textColor="@color/amityColorBase"
+        android:textColorLink="@color/amityColorHighlight" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/amity_padding_m1"
+        android:layout_marginEnd="@dimen/amity_padding_m1"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/amity_padding_m2"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/status_text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/amityColorBlack"
+                android:textSize="@dimen/amity_text_size_caption"
+                android:textStyle="bold" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/vote_count_text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:textColor="@color/amityColorManatee"
+                android:textSize="@dimen/amity_text_size_caption" />
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/poll_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            android:paddingTop="@dimen/amity_padding_s" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/expand_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/amity_padding_s"
+            android:background="@drawable/amity_bg_poll_add_draft_answer"
+            android:gravity="center"
+            android:paddingTop="@dimen/amity_padding_s"
+            android:paddingBottom="@dimen/amity_padding_s"
+            android:textColor="@color/amityColorShuttleGray"
+            android:textSize="@dimen/amity_text_size_body" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/submit_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:padding="@dimen/amity_padding_s"
+            android:text="@string/amity_poll_submit_vote"
+            android:textColor="@color/amityColorShuttleGray"
+            android:textSize="@dimen/amity_text_size_body"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+</LinearLayout>

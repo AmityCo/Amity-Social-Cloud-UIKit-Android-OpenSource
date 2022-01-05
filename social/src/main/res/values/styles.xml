@@ -1,0 +1,192 @@
+<resources>
+
+    <style name="AmityCommunityHeaderStyle">
+        <item name="amityAvatarStyle">@style/AmityAvatarStyle</item>
+        <item name="amityDisplayNameStyle">@style/AmityCommunityHeaderDisplayNameStyle</item>
+    </style>
+
+    <style name="AmityCommunityHeaderDisplayNameStyle">
+        <item name="amityTextStyle">normal</item>
+        <item name="amityTextColor">@color/amityColorBlack</item>
+    </style>
+
+    <style name="AmityCommunityNameStyle">
+        <item name="amityTextStyle">normal</item>
+        <item name="amityTextColor">@color/amityColorBlack</item>
+    </style>
+
+    <style name="AmityCommunityFollowerStyle">
+        <item name="amityTextStyle">normal</item>
+        <item name="amityTextColor">@color/amityColorWhite</item>
+    </style>
+
+    <style name="AmityRecommendedCommunityStyle">
+        <item name="amityAvatarStyle">@style/AmityAvatarStyle</item>
+        <item name="amityCommunityNameStyle">@style/AmityCommunityNameStyle</item>
+        <item name="amityFollowerStyle">@style/AmityCommunityFollowerStyle</item>
+    </style>
+
+    <style name="AmityTrendingCommunityStyle">
+        <item name="amityAvatarStyle">@style/AmityAvatarStyle</item>
+        <item name="amityCommunityNameStyle">@style/AmityCommunityNameStyle</item>
+        <item name="amityFollowerStyle">@style/AmityCommunityFollowerStyle</item>
+    </style>
+
+    <style name="AmityTrendingCommunityNameStyle">
+        <item name="amityTextStyle">normal</item>
+        <item name="amityTextColor">@color/amityColorBlack</item>
+    </style>
+
+    <style name="AmityTrendingCommunityDescriptionStyle">
+        <item name="amityTextStyle">normal</item>
+        <item name="amityTextColor">@color/amityColorBlack</item>
+    </style>
+
+    <style name="AmityTrendingCommunityFollowerStyle">
+        <item name="amityTextStyle">normal</item>
+    </style>
+
+    <style name="AmityTrendingCommunityFollowButtonStyle">
+        <item name="amityButtonTextColor">@color/amityColorWhite</item>
+        <item name="amityBackgroundColor">@color/amityColorBlack</item>
+        <item name="amityButtonType">solid</item>
+    </style>
+
+    <style name="AmityCHTitleStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/amity_text_size_headline</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_marginStart">@dimen/amity_eighteen</item>
+        <item name="android:layout_marginLeft">@dimen/amity_eighteen</item>
+        <item name="android:layout_marginEnd">@dimen/amity_eighteen</item>
+        <item name="android:layout_marginRight">@dimen/amity_eighteen</item>
+    </style>
+
+    <style name="AmityCommunityCategoryNameStyle">
+        <item name="amityTextStyle">normal</item>
+        <item name="amityTextColor">@color/amityColorBlack</item>
+    </style>
+
+    <style name="AmityCommunitySubCategoryNameStyle">
+        <item name="amityTextStyle">normal</item>
+        <item name="amityTextColor">@color/amityColorBlack</item>
+    </style>
+
+    <style name="AmityBaseButtonStyle" parent="Widget.MaterialComponents.Button">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">@dimen/amity_forty_eight</item>
+        <item name="android:gravity">center</item>
+        <item name="iconGravity">textStart</item>
+    </style>
+
+    <style name="AmityFollowButtonStyle" parent="AmityBaseButtonStyle">
+        <item name="shapeAppearanceOverlay">@style/AmityFollowButtonAppearance</item>
+        <item name="backgroundTint">@color/amity_button_bg_selector</item>
+        <item name="android:textSize">@dimen/amity_text_size_body</item>
+    </style>
+
+    <style name="AmityFollowButtonAppearance">
+        <item name="cornerFamily">cut</item>
+        <item name="cornerRadius">@dimen/amity_six</item>
+        <item name="strokeColor">@color/amityColorBlack</item>
+    </style>
+
+    <style name="AmityEnterCommunityStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/amity_text_size_title</item>
+        <item name="background">@android:color/transparent</item>
+    </style>
+
+    <style name="AmityPublicTextStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/amity_padding_m1</item>
+        <item name="android:layout_marginLeft">@dimen/amity_padding_m1</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="AmityPublicDescriptionTextStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/amity_text_size_body</item>
+        <item name="android:textColor">@color/amityColorBase</item>
+    </style>
+
+    <style name="AmityRadioButtonStyle" parent="AmityRadioButtonSelectorStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">22dp</item>
+    </style>
+
+    <style name="AmitySwitchButtonStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/amity_thirty_eight</item>
+    </style>
+
+    <style name="AmityAlphabetHeaderStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">@dimen/amity_twenty_eight</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textSize">@dimen/amity_text_size_body</item>
+        <item name="android:paddingStart">@dimen/amity_padding_m1</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="AmitySelectMembersSubTitleTextStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/amity_text_size_caption</item>
+    </style>
+
+
+    <style name="AmityFeedPostTimeStyle">
+        <item name="amityTextStyle">normal</item>
+    </style>
+
+    <style name="AmityFeedPostLikeStyle">
+        <item name="android:textSize">@dimen/amity_text_size_caption</item>
+    </style>
+
+    <style name="AmityImagePreviewTheme" parent="Amity.Base.Theme.AmityApp" />
+
+    <style name="AmityNewsFeedItemTextStyle">
+        <item name="android:textSize">@dimen/amity_text_size_body</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/amityColorBase</item>
+        <item name="android:autoLink">web</item>
+        <item name="android:textColorLink">@color/amityColorHighlight</item>
+    </style>
+
+    <style name="AmityCommunityHomeToolBarStyle" parent="BaseToolBarStyle">
+        <item name="amityLeftDrawableStyle">@style/AmityCommunityToolbarLeftDrawableStyle</item>
+        <item name="amityLeftTextViewStyle">@style/AmityCommunityToolbarLeftTextStyle</item>
+    </style>
+
+    <style name="AmityCommunityToolbarLeftDrawableStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:visibility">gone</item>
+    </style>
+
+    <style name="AmityCommunityToolbarLeftTextStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/amity_text_size_headline</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_marginStart">@dimen/amity_padding_m1</item>
+        <item name="android:textColor">@color/amityColorBase</item>
+    </style>
+
+    <style name="AmityRoundedImageViewShape" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">4dp</item>
+    </style>
+
+</resources>

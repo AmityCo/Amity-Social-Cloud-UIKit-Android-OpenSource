@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+                                                       
+                                                   
+
+    
+
+                                                                         
+
+                 
+                            
+                                                                                      
+           
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/lMessage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:focusable="false"
+        tools:context=".editMessage.EkoEditMessageActivity" android:tag="layout/amity_activity_edit_message_0" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools">
+
+        <include
+            android:id="@+id/emToolBar"
+            layout="@layout/amity_edit_msg_bar"
+                                         />
+
+        <View
+            android:id="@+id/divider"
+            android:tag="binding_1"                    
+                                                         
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/amity_fourteen"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/emToolBar" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etMessage"
+            style="@style/AmityTextStyleBody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/amity_padding_m1"
+            android:background="@null"
+            android:tag="binding_2"             
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/divider" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+         

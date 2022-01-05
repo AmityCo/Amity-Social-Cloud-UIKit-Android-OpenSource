@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="com.amity.socialcloud.uikit.common.common.views.AmityColorShade" />
+
+        <variable
+            name="ekoCommunity"
+            type="com.amity.socialcloud.sdk.social.community.AmityCommunity" />
+
+        <variable
+            name="listener"
+            type="com.amity.socialcloud.uikit.community.mycommunity.listener.AmityMyCommunityItemClickListener" />
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="156dp"
+        android:layout_height="194dp"
+        android:background="@color/amityColorWhite"
+        android:onClick="@{() -> listener.onCommunitySelected(ekoCommunity)}"
+        app:cardCornerRadius="@dimen/amity_four"
+        app:rippleColor="@android:color/transparent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/ivAvatar"
+                style="@style/AmityCircularAvatarStyle"
+                backgroundColorShade="@{AmityColorShade.SHADE3}"
+                amityBackgroundColor="@{@color/amityColorPrimary}"
+                imageUrl="@{ekoCommunity.avatar.url}"
+                placeHolder="@{@drawable/amity_ic_default_community_avatar_circular}"
+                android:layout_width="@dimen/amity_forty"
+                android:layout_height="@dimen/amity_forty"
+                android:layout_marginStart="@dimen/amity_padding_s"
+                android:layout_marginTop="@dimen/amity_padding_m1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvCommName"
+                style="@style/AmityTextStyleBodyBold"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/amity_padding_s"
+                android:layout_marginTop="@dimen/amity_padding_xs"
+                android:drawableEnd="@drawable/amity_ic_verified"
+                android:drawablePadding="@dimen/amity_padding_xxs"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:textColor="@color/amityColorBase"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ivAvatar"
+                app:safeText="@{ekoCommunity.displayName}" />
+
+            <TextView
+                android:id="@+id/tvCommCategory"
+                style="@style/AmityTextStyleCaption"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/amityColorBase"
+                app:layout_constraintEnd_toEndOf="@id/tvCommName"
+                app:layout_constraintStart_toStartOf="@id/tvCommName"
+                app:layout_constraintTop_toBottomOf="@id/tvCommName" />
+
+            <TextView
+                android:id="@+id/tvMembersCount"
+                style="@style/AmityTextStyleCaption"
+                textColorShade="@{AmityColorShade.SHADE1}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/amityColorBase"
+                app:layout_constraintStart_toStartOf="@id/tvCommName"
+                app:layout_constraintTop_toBottomOf="@id/tvCommCategory" />
+
+            <TextView
+                style="@style/AmityTextStyleCaption"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/amity_padding_xxs"
+                android:layout_marginEnd="@dimen/amity_padding_s"
+                android:ellipsize="end"
+                android:maxLines="3"
+                android:text="@{ekoCommunity.description}"
+                android:textColor="@color/amityColorBase"
+                app:layout_constraintEnd_toEndOf="@id/tvCommName"
+                app:layout_constraintStart_toStartOf="@id/tvCommName"
+                app:layout_constraintTop_toBottomOf="@id/tvMembersCount" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+
+</layout>

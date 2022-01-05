@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+                                                        
+
+    
+
+                                           
+
+                                                                         
+           
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/amity_padding_m1"
+        android:background="@drawable/amity_bg_view_replies"
+        android:paddingStart="@dimen/amity_padding_xs"
+        android:paddingTop="@dimen/amity_padding_xxs"
+        android:paddingEnd="@dimen/amity_padding_xs"
+        android:paddingBottom="@dimen/amity_padding_xxs" android:tag="layout/amity_item_deleted_news_feed_reply_0" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+
+        <ImageView
+            android:id="@+id/ivRemove"
+            android:layout_width="20dp"
+            android:layout_height="16dp"
+            android:backgroundTint="@color/amityColorManatee"
+            android:src="@drawable/amity_ic_remove"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/tvDltMsg"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvDltMsg"
+            style="@style/AmityTextStyleBody"
+            android:tag="binding_1"              
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_two"
+            android:text="@string/amity_reply_deleted_message"
+            android:textColor="@color/amityColorManatee"
+            app:layout_constraintBottom_toBottomOf="@id/ivRemove"
+            app:layout_constraintEnd_toStartOf="@id/tvDeletionTime"
+            app:layout_constraintStart_toEndOf="@id/ivRemove"
+            app:layout_constraintTop_toTopOf="@id/ivRemove" />
+
+        <TextView
+            android:id="@+id/tvDeletionTime"
+            style="@style/AmityTextStyleCaption"
+            android:tag="binding_2"              
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_padding_xxs"
+            android:layout_marginEnd="@dimen/amity_padding_m1"
+            android:textColor="@color/upstraColorBase"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/ivRemove"
+            app:layout_constraintStart_toEndOf="@id/tvDltMsg"
+            app:layout_constraintTop_toTopOf="@id/ivRemove" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+         

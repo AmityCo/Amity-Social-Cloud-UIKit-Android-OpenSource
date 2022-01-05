@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+                                                       
+                                                   
+
+    
+
+                                                                         
+           
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".explore.activity.EkoCategoryListActivity" android:tag="layout/amity_fragment_category_community_list_0" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools">
+
+        <com.ekoapp.ekosdk.uikit.common.views.list.EkoRecyclerView
+            android:id="@+id/rvCommunity"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="@dimen/amity_padding_m1"
+            android:layout_marginEnd="@dimen/amity_padding_m1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/emptyView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/ivIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/amity_padding_s"
+                android:src="@drawable/amity_ic_xmlid" />
+
+            <TextView
+                android:id="@+id/tvEmptyCommunity"
+                style="@style/AmityTextStyleHeadline"
+                android:tag="binding_1"              
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/amity_padding_s"
+                android:text="@string/amity_empty_category_community"
+                android:textColor="@color/amityColorBase" />
+
+            <TextView
+                android:id="@+id/tvEmptyCommunityMessage"
+                style="@style/AmityTextStyleBody"
+                android:tag="binding_2"              
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/amity_no_comments_found"
+                android:textColor="@color/amityColorBase" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+         

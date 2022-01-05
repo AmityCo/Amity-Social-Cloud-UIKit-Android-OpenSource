@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.amity.socialcloud.uikit.common.common.views.AmityColorShade" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/amity_bg_border"
+        android:padding="@dimen/amity_padding_xs">
+
+        <ImageView
+            android:id="@+id/ivFileIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_padding_m1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/amity_ic_doc_large" />
+
+
+        <TextView
+            android:id="@+id/tvFileName"
+            style="@style/AmityTextStyleBodyBold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_padding_xs"
+            android:maxLines="1"
+            android:textColor="@color/amityColorBase"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/ivFileIcon"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.2"
+            tools:text="file.pdf" />
+
+        <TextView
+            android:id="@+id/tvFileSize"
+            style="@style/AmityTextStyleCaption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_padding_xs"
+            android:textColor="@color/amityColorBase"
+            app:layout_constraintStart_toEndOf="@id/ivFileIcon"
+            app:layout_constraintTop_toBottomOf="@id/tvFileName"
+            app:textColorShade="@{AmityColorShade.SHADE1}"
+            tools:text="1.2 MB" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

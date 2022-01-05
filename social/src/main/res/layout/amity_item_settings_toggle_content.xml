@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="description"
+            type="String" />
+
+        <variable
+            name="isCheck"
+            type="Boolean" />
+
+        <variable
+            name="visibilityDescription"
+            type="Boolean" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/rootView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:background="@color/amityColorWhite">
+
+        <include
+            android:id="@+id/mainSettingsContent"
+            layout="@layout/amity_view_main_settings_content"
+            android:layout_width="@dimen/amity_zero"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toStartOf="@+id/svButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/svButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/amity_padding_s"
+            android:paddingEnd="@dimen/amity_zero"
+            android:theme="@style/AmityBrandedSwitch.control"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

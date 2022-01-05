@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/vote_card_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/amity_padding_s"
+        app:cardCornerRadius="@dimen/amity_four"
+        app:cardElevation="@dimen/amity_zero"
+        app:contentPadding="@dimen/amity_padding_xs"
+        app:rippleColor="@color/upstraMessageBubbleInverse"
+        app:strokeWidth="@dimen/amity_one">
+
+        <CheckBox
+            android:id="@+id/vote_check_box"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/amityColorPrimary"
+            android:clickable="false"
+            android:paddingStart="@dimen/amity_padding_s"
+            android:textColor="@color/amityColorBlack"
+            android:textSize="@dimen/amity_text_size_body"
+            android:textStyle="bold" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+</RelativeLayout>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="amityAvatarStyle" format="reference" />
+    <attr name="amityFollowButtonStyle" format="reference" />
+    <attr name="amityCommunityNameStyle" format="reference" />
+    <attr name="amityFollowerStyle" format="reference" />
+    <declare-styleable name="AmityAvatar">
+        <attr name="amityAvatarHeight" format="dimension" />
+        <attr name="amityAvatarWidth" format="dimension" />
+        <attr name="amityAvatarUrl" format="string"/>
+        <attr name="amityAvatarDrawable" format="reference"/>
+        <attr name="amityAvatarShape">
+            <flag name="circle" value="0"/>
+            <flag name="rectangle" value="1"/>
+        </attr>
+        <attr name="amityAvatarPlaceholderImage" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="AmityExpandableText">
+        <attr name="amityMaxLines" format="integer" />
+    </declare-styleable>
+
+    <declare-styleable name="AmityText">
+        <attr name="amityTextColor" format="color|reference" />
+        <attr name="amityTextStyle">
+            <flag name="bold" value="1"/>
+            <flag name="italic" value="2"/>
+            <flag name="normal" value="0"/>
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="AmityButton">
+        <attr name="amityButtonTextColor" format="color|reference" />
+        <attr name="amityOutlineColor" format="color|reference" />
+        <attr name="amityBackgroundColor" format="color|reference" />
+        <attr name="amityButtonType">
+            <flag name="outlined" value="0"/>
+            <flag name="solid" value="1"/>
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="AmityImage">
+        <attr name="amityTintColor" format="color|reference" />
+    </declare-styleable>
+
+    <declare-styleable name="AmityToolBarStyle">
+        <attr name="amityLeftDrawableStyle" format="reference" />
+        <attr name="amityLeftTextViewStyle" format="reference" />
+        <attr name="amityRightTextViewStyle" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="AmityRippleBackground">
+        <attr name="amityRbColor" format="color" />
+        <attr name="amityRbStrokeWidth" format="dimension" />
+        <attr name="amityRbRadius" format="dimension" />
+        <attr name="amityRbDuration" format="integer" />
+        <attr name="amityRbRippleAmount" format="integer" />
+        <attr name="amityRbScale" format="float" />
+        <attr name="amityRbType" format="enum">
+            <enum name="fillRipple" value="0" />
+            <enum name="strokeRipple" value="1" />
+        </attr>
+    </declare-styleable>
+
+</resources>

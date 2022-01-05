@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/media_gallery_tab_textview"
+    android:background="@drawable/amity_rounded_primary_color_bg"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingStart="12dp"
+    android:paddingTop="8dp"
+    android:paddingEnd="12dp"
+    android:textColor="@color/amityColorWhite"
+    android:paddingBottom="8dp"
+    android:textSize="@dimen/amity_text_size_body"
+    tools:text="Chats">
+
+</TextView>

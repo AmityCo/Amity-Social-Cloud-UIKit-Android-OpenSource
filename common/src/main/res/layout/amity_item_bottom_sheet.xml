@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="menuItem"
+            type="com.amity.socialcloud.uikit.common.model.AmityMenuItem" />
+
+        <variable
+            name="listener"
+            type="com.amity.socialcloud.uikit.common.common.views.bottomsheet.AmityMenuItemClickListener" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/amity_forty"
+        android:onClick="@{() -> listener.onMenuItemClicked(menuItem)}">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            style="@style/AmityTextStyleBodyBold"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="@dimen/amity_padding_m1"
+            android:gravity="center_vertical"
+            android:text="@{menuItem.title}"
+            android:textColor="@{menuItem.isAlertItem ? @color/amityColorAlert : @color/amityColorBase}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

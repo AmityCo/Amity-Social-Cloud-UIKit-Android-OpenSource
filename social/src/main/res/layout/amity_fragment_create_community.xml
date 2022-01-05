@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.text.TextUtils" />
+
+        <import type="android.view.View" />
+
+        <import type="com.amity.socialcloud.uikit.common.common.views.AmityColorShade" />
+
+        <variable
+            name="viewModel"
+            type="com.amity.socialcloud.uikit.community.ui.viewModel.AmityCreateCommunityViewModel" />
+    </data>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:fitsSystemWindows="true"
+        tools:context=".ui.view.AmityCommunityCreatorFragment">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            tools:context=".ui.view.AmityCommunityCreatorActivity">
+
+            <View
+                android:id="@+id/divider1"
+                backgroundColorShade="@{AmityColorShade.SHADE4}"
+                amityBackgroundColor="@{@color/amityColorBase}"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/lAvatar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider1">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/ccAvatar"
+                    android:layout_width="match_parent"
+                    android:layout_height="260dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                <RelativeLayout
+                    android:id="@+id/icCamera"
+                    android:layout_width="match_parent"
+                    android:layout_height="260dp"
+                    android:background="@drawable/amity_bg_avatar_overlay"
+                    app:layout_constraintStart_toStartOf="@id/ccAvatar"
+                    app:layout_constraintTop_toTopOf="@id/ccAvatar">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/amity_forty"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:background="@drawable/amity_bg_transparent_button"
+                        android:paddingHorizontal="@dimen/amity_padding_s"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/amity_ic_avatar_upload_camera" />
+
+                        <TextView
+                            style="@style/AmityTextStyleBodyBold"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/amity_upload_image"
+                            android:textColor="@color/amityColorBaseInverse"
+                            android:paddingStart="@dimen/amity_padding_xs"/>
+
+
+                    </LinearLayout>
+
+
+
+                </RelativeLayout>
+
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/tvCommName"
+                style="@style/AmityTextStyleTitleBold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/amity_padding_m1"
+                android:layout_marginTop="17dp"
+                android:text="@string/amity_community_name"
+                android:textColor="@color/amityColorBase"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/lAvatar" />
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/ccName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/amity_padding_m1"
+                android:layout_marginTop="@dimen/amity_padding_xs"
+                android:background="@android:color/transparent"
+                android:drawableEnd="@drawable/amity_ic_filled_cross"
+                android:hint="@string/amity_cc_hint"
+                android:maxLength="30"
+                android:text="@={viewModel.communityName}"
+                android:textColor="@color/amityColorBase"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvCommName" />
+
+            <TextView
+                style="@style/AmityTextStyleCaption"
+                textColorShade="@{AmityColorShade.SHADE1}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text='@{viewModel.communityName.trim().length() +"/30"}'
+                android:textColor="@color/amityColorBase"
+                app:layout_constraintEnd_toEndOf="@id/ccName"
+                app:layout_constraintTop_toTopOf="@id/tvCommName" />
+
+            <View
+                android:id="@+id/divider2"
+                backgroundColorShade="@{viewModel.nameError ? AmityColorShade.DEFAULT : AmityColorShade.SHADE4}"
+                amityBackgroundColor="@{viewModel.nameError ? @color/amityColorAlert : @color/amityColorBase}"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginHorizontal="@dimen/amity_padding_m1"
+                android:layout_marginTop="@dimen/amity_padding_s"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ccName" />
+
+            <TextView
+                style="@style/AmityTextStyleCaption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/amity_padding_xxs"
+                android:text="@string/amity_error_name"
+                android:textColor="@color/amityColorAlert"
+                android:visibility="@{viewModel.nameError ? View.VISIBLE : View.GONE}"
+                app:layout_constraintStart_toStartOf="@id/divider2"
+                app:layout_constraintTop_toBottomOf="@id/divider2" />
+
+            <TextView
+                android:id="@+id/tv_about"
+                style="@style/AmityTextStyleTitleBold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/amity_thirty_eight"
+                android:text="@string/amity_about"
+                android:textColor="@color/amityColorBase"
+                app:layout_constraintStart_toStartOf="@id/ccName"
+                app:layout_constraintTop_toBottomOf="@id/divider2" />
+
+            <TextView
+                android:id="@+id/tv_count"
+                style="@style/AmityTextStyleCaption"
+                textColorShade="@{AmityColorShade.SHADE1}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text='@{viewModel.description.trim().length() +"/180"}'
+                android:textColor="@color/amityColorBase"
+                app:layout_constraintEnd_toEndOf="@id/ccName"
+                app:layout_constraintTop_toTopOf="@id/tv_about" />
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etDescription"
+                style="@style/AmityEnterCommunityStyle"
+                android:layout_marginTop="@dimen/amity_padding_xs"
+                android:background="@android:color/transparent"
+                android:drawableEnd="@drawable/amity_ic_filled_cross"
+                android:hint="@string/amity_enter_description"
+                android:maxLength="180"
+                android:text="@={viewModel.description}"
+                android:textColor="@color/amityColorBase"
+                app:layout_constraintEnd_toEndOf="@id/ccName"
+                app:layout_constraintStart_toStartOf="@id/ccName"
+                app:layout_constraintTop_toBottomOf="@id/tv_about" />
+
+            <View
+                android:id="@+id/divider3"
+                backgroundColorShade="@{AmityColorShade.SHADE4}"
+                amityBackgroundColor="@{@color/amityColorBase}"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/amity_padding_s"
+                app:layout_constraintEnd_toEndOf="@id/divider2"
+                app:layout_constraintStart_toStartOf="@id/divider2"
+                app:layout_constraintTop_toBottomOf="@id/etDescription" />
+
+            <TextView
+                android:id="@+id/tvCategory"
+                style="@style/AmityTextStyleTitleBold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/amity_padding_m1"
+                android:text="@string/amity_category_required_field"
+                android:textColor="@color/amityColorBase"
+                app:layout_constraintStart_toStartOf="@id/ccName"
+                app:layout_constraintTop_toBottomOf="@id/divider3" />
+
+            <TextView
+                android:id="@+id/category"
+                style="@style/AmityTextStyleBody"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/amity_six"
+                android:layout_marginEnd="@dimen/amity_padding_xs"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@{viewModel.category.name.empty? @string/amity_please_select_category:viewModel.category.name}"
+                android:textColor="@color/amityColorBase"
+                app:layout_constraintEnd_toStartOf="@id/categoryArrow"
+                app:layout_constraintStart_toStartOf="@id/tvCategory"
+                app:layout_constraintTop_toBottomOf="@id/tvCategory" />
+
+            <ImageView
+                android:id="@+id/categoryArrow"
+                android:layout_width="@dimen/amity_twenty_four"
+                android:layout_height="@dimen/amity_twenty_four"
+                android:paddingHorizontal="@dimen/amity_padding_xs"
+                android:paddingVertical="@dimen/amity_six"
+                android:src="@drawable/amity_ic_chevron_right"
+                app:layout_constraintBottom_toBottomOf="@id/category"
+                app:layout_constraintEnd_toEndOf="@id/ccName"
+                app:layout_constraintTop_toTopOf="@id/category" />
+
+            <androidx.constraintlayout.widget.Group
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:constraint_referenced_ids="divider5,tvAdmin,tv_admin_description,btn_admin_switch" />
+
+            <View
+                android:id="@+id/divider4"
+                backgroundColorShade="@{AmityColorShade.SHADE4}"
+                amityBackgroundColor="@{@color/amityColorBase}"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/amity_padding_m1"
+                app:layout_constraintEnd_toEndOf="@id/divider2"
+                app:layout_constraintStart_toStartOf="@id/divider2"
+                app:layout_constraintTop_toBottomOf="@id/category" />
+
+            <TextView
+                android:id="@+id/tvAdmin"
+                style="@style/AmityTextStyleTitleBold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/amity_padding_m1"
+                android:text="@string/amity_only_admin"
+                app:layout_constraintStart_toStartOf="@id/divider4"
+                app:layout_constraintTop_toBottomOf="@id/divider4" />
+
+            <TextView
+                android:id="@+id/tv_admin_description"
+                style="@style/AmityPublicDescriptionTextStyle"
+                textColorShade="@{AmityColorShade.SHADE1}"
+                android:text="@string/amity_admin_description"
+                app:layout_constraintEnd_toStartOf="@id/btn_admin_switch"
+                app:layout_constraintStart_toStartOf="@id/tvAdmin"
+                app:layout_constraintTop_toBottomOf="@id/tvAdmin" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/btn_admin_switch"
+                style="@style/AmitySwitchButtonStyle"
+                android:checked="@{viewModel.isAdmin()}"
+                android:onClick="@{() -> viewModel.changeAdminPost()}"
+                app:layout_constraintEnd_toEndOf="@id/divider2"
+                app:layout_constraintStart_toEndOf="@id/tv_admin_description"
+                app:layout_constraintTop_toTopOf="@id/tvAdmin"
+                app:thumbTint="@color/switch_btn_bg_selector" />
+
+            <View
+                android:id="@+id/divider5"
+                backgroundColorShade="@{AmityColorShade.SHADE4}"
+                amityBackgroundColor="@{@color/amityColorBase}"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/amity_padding_m1"
+                app:layout_constraintEnd_toEndOf="@id/divider2"
+                app:layout_constraintStart_toStartOf="@id/divider2"
+                app:layout_constraintTop_toBottomOf="@id/tv_admin_description" />
+
+            <ImageView
+                android:id="@+id/iv_globe"
+                amityFillColor="@{@color/amityColorBase}"
+                amityFillShade="@{AmityColorShade.SHADE4}"
+                android:layout_width="@dimen/amity_forty"
+                android:layout_height="@dimen/amity_forty"
+                android:layout_marginStart="@dimen/amity_padding_m1"
+                android:layout_marginTop="@dimen/amity_padding_m1"
+                android:padding="@dimen/amity_ten"
+                android:src="@drawable/amity_ic_globe"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider5" />
+
+            <TextView
+                android:id="@+id/tv_public"
+                style="@style/AmityTextStyleTitleBold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/amity_padding_m1"
+                android:text="@string/amity_tv_public"
+                android:textColor="@color/amityColorBase"
+                app:layout_constraintStart_toEndOf="@id/iv_globe"
+                app:layout_constraintTop_toTopOf="@id/iv_globe" />
+
+            <TextView
+                android:id="@+id/tv_public_description"
+                style="@style/AmityPublicDescriptionTextStyle"
+                textColorShade="@{AmityColorShade.SHADE1}"
+                android:text="@string/amity_public_description"
+                app:layout_constraintEnd_toStartOf="@id/rb_public"
+                app:layout_constraintStart_toStartOf="@id/tv_public"
+                app:layout_constraintTop_toBottomOf="@id/tv_public" />
+
+            <RadioButton
+                android:id="@+id/rb_public"
+                style="@style/AmityRadioButtonStyle"
+                android:checked="@{viewModel.isPublic()}"
+                android:onClick="@{() -> viewModel.changePostType(true)}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tv_public_description"
+                app:layout_constraintTop_toTopOf="@id/tv_public" />
+
+            <View
+                android:id="@+id/divider6"
+                backgroundColorShade="@{AmityColorShade.SHADE4}"
+                amityBackgroundColor="@{@color/amityColorBase}"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/amity_padding_m1"
+                app:layout_constraintEnd_toEndOf="@id/divider2"
+                app:layout_constraintStart_toStartOf="@id/divider2"
+                app:layout_constraintTop_toBottomOf="@id/tv_public_description" />
+
+            <ImageView
+                android:id="@+id/iv_lock"
+                amityFillColor="@{@color/amityColorBase}"
+                amityFillShade="@{AmityColorShade.SHADE4}"
+                android:layout_width="@dimen/amity_forty"
+                android:layout_height="@dimen/amity_forty"
+                android:layout_marginTop="@dimen/amity_fifty"
+                android:padding="@dimen/amity_ten"
+                android:src="@drawable/amity_ic_lock1"
+                app:layout_constraintStart_toStartOf="@id/ccName"
+                app:layout_constraintTop_toBottomOf="@id/iv_globe" />
+
+            <TextView
+                android:id="@+id/tv_private"
+                style="@style/AmityTextStyleTitleBold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/amity_padding_m1"
+                android:text="@string/amity_tv_private"
+                android:textColor="@color/amityColorBase"
+                app:layout_constraintStart_toEndOf="@id/iv_lock"
+                app:layout_constraintTop_toTopOf="@id/iv_lock" />
+
+            <TextView
+                android:id="@+id/tv_private_description"
+                style="@style/AmityPublicDescriptionTextStyle"
+                textColorShade="@{AmityColorShade.SHADE1}"
+                android:text="@string/amity_private_description"
+                app:layout_constraintEnd_toStartOf="@id/rb_private"
+                app:layout_constraintStart_toStartOf="@id/tv_private"
+                app:layout_constraintTop_toBottomOf="@id/tv_private" />
+
+            <RadioButton
+                android:id="@+id/rb_private"
+                style="@style/AmityRadioButtonStyle"
+                android:checked="@{!viewModel.isPublic()}"
+                android:onClick="@{() -> viewModel.changePostType(false)}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tv_private_description"
+                app:layout_constraintTop_toTopOf="@id/tv_private" />
+
+
+            <View
+                android:id="@+id/divider7"
+                backgroundColorShade="@{AmityColorShade.SHADE4}"
+                amityBackgroundColor="@{@color/amityColorBase}"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/amity_padding_m1"
+                android:layout_marginBottom="@dimen/amity_padding_m1"
+                app:layout_constraintEnd_toEndOf="@id/divider2"
+                app:layout_constraintStart_toStartOf="@id/divider2"
+                app:layout_constraintTop_toBottomOf="@id/tv_private_description"
+                app:layout_goneMarginBottom="@dimen/amity_padding_m1" />
+
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/groupAddMembers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="@{!viewModel.isPublic() &amp;&amp; viewModel.communityId.empty ? View.VISIBLE : View.GONE}"
+                app:constraint_referenced_ids="tv_add_members,ivAdd,rvAddedMembers, divider7" />
+
+            <TextView
+                android:id="@+id/tv_add_members"
+                style="@style/AmityTextStyleTitleBold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/amity_padding_m1"
+                android:layout_marginTop="@dimen/amity_padding_m1"
+                android:text="@string/amity_add_members"
+                android:textColor="@color/amityColorBase"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider7" />
+
+            <ImageView
+                android:id="@+id/ivAdd"
+                amityFillColor="@{@color/amityColorBase}"
+                amityFillShade="@{AmityColorShade.SHADE4}"
+                android:layout_width="@dimen/amity_forty"
+                android:layout_height="@dimen/amity_forty"
+                android:layout_marginTop="@dimen/amity_padding_xs"
+                android:contentDescription="@string/amity_add_members"
+                android:padding="@dimen/amity_padding_xs"
+                android:src="@drawable/amity_ic_add"
+                android:visibility="@{viewModel.addMemberVisible ? View.VISIBLE : View.GONE}"
+                app:layout_constraintStart_toStartOf="@id/tv_add_members"
+                app:layout_constraintTop_toBottomOf="@id/tv_add_members" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvAddedMembers"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/amity_padding_m1"
+                android:layout_marginTop="@dimen/amity_padding_m1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_add_members" />
+
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/barrier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="rvAddedMembers,ivAdd" />
+
+            <View
+                android:id="@+id/divider8"
+                backgroundColorShade="@{AmityColorShade.SHADE4}"
+                amityBackgroundColor="@{@color/amityColorBase}"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/amity_padding_m1"
+                android:layout_marginBottom="@dimen/amity_padding_xs"
+                app:layout_constraintBottom_toTopOf="@id/btnCreateCommunity"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/barrier" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCreateCommunity"
+                style="@style/AmityMaterialButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/amity_padding_m1"
+                android:layout_marginBottom="@dimen/amity_padding_xs"
+                android:enabled="@{!TextUtils.isEmpty(viewModel.category.name) &amp;&amp; !TextUtils.isEmpty(viewModel.communityName.trim()) &amp;&amp; (viewModel.isPublic() ? true : !viewModel.addMemberVisible)}"
+                android:gravity="center"
+                android:text="@string/amity_create_community"
+                android:textSize="@dimen/amity_text_size_body"
+                android:visibility="@{viewModel.communityId.empty ? View.VISIBLE : View.GONE}"
+                app:icon="@drawable/amity_ic_plus"
+                app:iconGravity="textStart"
+                app:layout_constraintBottom_toTopOf="@id/btnEditCommunity"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEditCommunity"
+                style="@style/AmityMaterialButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/amity_padding_m1"
+                android:layout_marginBottom="@dimen/amity_padding_xs"
+                android:enabled="@{!TextUtils.isEmpty(viewModel.communityName.trim()) &amp;&amp; viewModel.initialStateChanged}"
+                android:gravity="center"
+                android:text="@string/amity_save"
+                android:textSize="@dimen/amity_text_size_body"
+                android:visibility="@{viewModel.communityId.empty ? View.GONE : View.VISIBLE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+</layout>

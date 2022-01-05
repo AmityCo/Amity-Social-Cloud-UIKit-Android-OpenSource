@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Amity.Base.Theme.MaterialThemeBuilder" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:statusBarColor" tools:ignore="NewApi">?attr/colorSurface</item>
+        <item name="android:windowLightStatusBar" tools:ignore="NewApi">true</item>
+        <item name="android:navigationBarColor" tools:ignore="NewApi">
+            ?android:attr/colorBackground
+        </item>
+        <item name="android:windowLightNavigationBar" tools:ignore="NewApi">true</item>
+        <item name="android:navigationBarDividerColor" tools:ignore="NewApi">
+            ?attr/colorControlHighlight
+        </item>
+    </style>
+
+
+    <style name="Amity.Base.Theme.AmityApp" parent="Amity.Base.Theme.MaterialThemeBuilder">
+        <item name="colorPrimary">@color/amityColorPrimary</item>
+        <item name="colorSecondary">@color/amityColorSecondary</item>
+        <item name="android:colorBackground">@color/amityColorWhite</item>
+        <item name="colorSurface">@color/amityColorWhite</item>
+        <!-- <item name="colorOnPrimary">@color/colorSecondary</item>
+         <item name="colorOnSecondary">@color/colorPrimary</item>
+         <item name="colorOnBackground">@color/colorPrimary</item>-->
+        <item name="colorError">@color/amityColorAlert</item>
+        <item name="colorOnError">@color/amityColorWhite</item>
+        <item name="android:actionMenuTextColor">@color/amityColorHighlight</item>
+
+        <item name="materialAlertDialogTheme">@style/AmityAlertDialogTheme</item>
+        <item name="snackbarStyle">@style/AmitySnackBarStyle</item>
+        <item name="searchViewStyle">@style/AmitySearchViewStyle</item>
+        <!--Material shape attributes-->
+        <item name="shapeAppearanceSmallComponent">@style/Amity.ShapeAppearance.Theme.SmallComponent
+        </item>
+        <item name="shapeAppearanceMediumComponent">
+            @style/Amity.ShapeAppearance.Theme.MediumComponent
+        </item>
+        <item name="shapeAppearanceLargeComponent">@style/Amity.ShapeAppearance.Theme.LargeComponent
+        </item>
+        <item name="android:windowLightStatusBar" tools:targetApi="23">true</item>
+        <item name="bottomSheetDialogTheme">@style/Amity.ThemeOverlay.Theme.BottomSheetDialog</item>
+    </style>
+
+    <style name="Amity.Base.Theme.AmityApp.NoActionBar" parent="Amity.Base.Theme.AmityApp">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AmityAppTheme1" parent="Amity.Base.Theme.AmityApp" />
+
+    <style name="AmityAppTheme2" parent="Amity.Base.Theme.AmityApp">
+        <item name="colorPrimary">#ff4081</item>
+        <item name="colorPrimaryVariant">#ff79b0</item>
+        <item name="colorSecondary">#7C4dFF</item>
+        <item name="colorSecondaryVariant">#3f1dcb</item>
+        <item name="android:colorBackground">@color/amityColorWhite</item>
+        <item name="colorSurface">@color/amityColorWhite</item>
+    </style>
+
+    <style name="AmitySearchViewStyle" parent="Widget.AppCompat.SearchView">
+        <item name="searchHintIcon">@null</item>
+        <item name="queryBackground">@android:color/transparent</item>
+    </style>
+
+    <style name="AmityMaterialButtonStyle" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/material_btn_bg_color_selector</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:textColor">@color/material_btn_text_color_selector</item>
+        <item name="iconTint">@color/material_btn_text_color_selector</item>
+    </style>
+
+    <style name="AmityOutlinedButtonStyle" parent="Widget.MaterialComponents.Button.OutlinedButton.Icon">
+        <item name="iconGravity">textStart</item>
+        <item name="textAllCaps">false</item>
+        <item name="strokeColor">@color/amityColorSecondary</item>
+        <item name="android:textColor">@color/amityColorSecondary</item>
+    </style>
+
+    <style name="AmityFabButtonStyle" parent="Widget.MaterialComponents.FloatingActionButton">
+        <item name="backgroundTint">@color/material_fab_bg_color_selector</item>
+        <item name="tint">@color/material_fab_icon_text_color_selector</item>
+    </style>
+
+    <style name="AmityRadioButtonSelectorStyle" parent="Widget.MaterialComponents.CompoundButton.RadioButton">
+        <item name="buttonTint">@color/radio_btn_bg_selector</item>
+    </style>
+
+    <style name="AmityCheckBoxStyle" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
+        <item name="materialThemeOverlay">@style/AmityThemeOverlay.App.CheckBox</item>
+    </style>
+
+    <style name="AmityThemeOverlay.App.CheckBox" parent="">
+        <item name="colorOnSurface">@color/amityColorSecondary</item>
+        <item name="colorSecondary">@color/amityColorPrimary</item>
+    </style>
+
+    <style name="AmityAlertDialogTheme" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="colorSurface">#fff</item>
+        <item name="colorOnSurface">@color/amityColorBase</item>
+        <item name="materialAlertDialogTitleTextStyle">@style/AmityAlertDialogTheme.App.Title.Text
+        </item>
+    </style>
+
+    <style name="AmityAlertDialogTheme.App.Title.Text" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
+        <item name="android:textColor">@color/amityColorBase</item>
+        <item name="android:textAppearance">@style/AmityTextStyleTitleBold</item>
+    </style>
+
+    <style name="AmitySnackBarStyle" parent="Widget.MaterialComponents.Snackbar">
+        <item name="android:layout_margin">@dimen/amity_padding_m1</item>
+        <item name="backgroundTint">#000</item>
+        <item name="amityTextColor">#fff</item>
+    </style>
+
+    <style name="AmityBarTheme" parent="Amity.Base.Theme.AmityApp">
+        <item name="colorPrimary">#fff</item>
+    </style>
+
+    <style name="AmityMaterialTextButtonStyle" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="textAllCaps">false</item>
+        <item name="amityTextStyle">normal</item>
+        <item name="android:textColor">@color/material_btn_bg_color_selector</item>
+    </style>
+</resources>

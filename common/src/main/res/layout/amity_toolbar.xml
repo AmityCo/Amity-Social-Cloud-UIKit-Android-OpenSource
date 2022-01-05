@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="com.amity.socialcloud.uikit.common.common.views.AmityColorShade" />
+
+        <variable
+            name="clickListener"
+            type="com.amity.socialcloud.uikit.common.components.AmityToolBarClickListener" />
+
+        <variable
+            name="leftString"
+            type="String" />
+
+        <variable
+            name="leftDrawable"
+            type="android.graphics.drawable.Drawable" />
+
+        <variable
+            name="rightString"
+            type="String" />
+
+        <variable
+            name="rightStringActive"
+            type="Boolean" />
+
+        <variable
+            name="rightDrawable"
+            type="android.graphics.drawable.Drawable" />
+    </data>
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:contentInsetStart="0dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/toolbar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/ivLeft"
+                style="?attr/amityLeftDrawableStyle"
+                android:onClick="@{() ->  clickListener.leftIconClick()}"
+                android:src="@{leftDrawable}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_left"
+                style="?attr/amityLeftTextViewStyle"
+                android:gravity="center_vertical"
+                android:text="@{leftString}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/tv_right"
+                app:layout_constraintStart_toEndOf="@id/ivLeft"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_right"
+                style="?attr/amityRightTextViewStyle"
+                android:layout_marginEnd="@dimen/amity_padding_m1"
+                android:drawableStart="@{rightDrawable}"
+                android:enabled="@{rightStringActive}"
+                android:gravity="end"
+                android:onClick="@{() -> clickListener.rightIconClick()}"
+                android:text="@{rightString}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tv_left"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.appbar.MaterialToolbar>
+
+
+</layout>

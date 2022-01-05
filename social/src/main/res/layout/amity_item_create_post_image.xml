@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="com.amity.socialcloud.uikit.common.common.views.AmityColorShade" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivPhoto"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivCross"
+            android:layout_width="@dimen/amity_twenty"
+            android:layout_height="@dimen/amity_twenty"
+            android:layout_margin="@dimen/amity_padding_xs"
+            android:background="@color/amityColorBase"
+            android:scaleType="centerInside"
+            android:src="@drawable/amity_ic_cross_white"
+            amityBackgroundColorAlpha="@{@integer/alpha_fifty}"
+            app:layout_constraintEnd_toEndOf="@id/ivPhoto"
+            app:layout_constraintTop_toTopOf="@id/ivPhoto"
+            app:shapeAppearanceOverlay="@style/AmityCircleImage" />
+
+        <ProgressBar
+            android:id="@+id/pbImageUpload"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/amity_padding_xs"
+            android:layout_marginStart="@dimen/amity_padding_m1"
+            android:layout_marginEnd="@dimen/amity_padding_m1"
+            android:max="@integer/maxProgressImageUpload"
+            android:progressBackgroundTint="@color/amityColorWhite"
+            android:progressTint="@color/amityColorPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivError"
+            android:layout_width="@dimen/amity_twenty_five"
+            android:layout_height="@dimen/amity_twenty_five"
+            android:background="@color/amityColorBase"
+            android:scaleType="centerInside"
+            android:src="@drawable/amity_ic_info"
+            amityBackgroundColorAlpha="@{@integer/alpha_fifty}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/AmityCircleImage" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivPlay"
+            android:visibility="gone"
+            android:layout_width="@dimen/amity_thirty_six"
+            android:layout_height="@dimen/amity_thirty_six"
+            android:background="@color/amityTranslucentBackground"
+            android:scaleType="centerInside"
+            android:src="@drawable/amity_ic_play"
+            amityBackgroundColorAlpha="@{@integer/alpha_fifty}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/AmityCircleImage" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

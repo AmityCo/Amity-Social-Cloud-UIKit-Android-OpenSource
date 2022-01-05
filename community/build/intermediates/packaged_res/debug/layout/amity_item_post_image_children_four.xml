@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/amity_post_image_content_height"
+    android:orientation="vertical">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/imageViewPreviewImageOne"
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:paddingBottom="@dimen/amity_padding_xs"
+        android:scaleType="centerCrop" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="108dp"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:paddingRight="@dimen/amity_padding_xxs">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/imageViewPreviewImageTwo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop" />
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:paddingLeft="@dimen/amity_padding_xxs"
+            android:paddingRight="@dimen/amity_padding_xxs">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/imageViewPreviewImageThree"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:paddingLeft="@dimen/amity_padding_xxs">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/imageViewPreviewImageFour"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/textViewRemainingCount"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/amity_bg_image_count"
+                android:gravity="center"
+                android:textAppearance="?textAppearanceHeadline5"
+                android:textColor="@color/amityColorWhite"
+                android:visibility="gone" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
+
+
+
+
+

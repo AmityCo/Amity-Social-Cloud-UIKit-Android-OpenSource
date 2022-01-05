@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="amity_post_image_preview_radius">4dp</dimen>
+    <dimen name="amity_post_image_content_height">336dp</dimen>
+</resources>

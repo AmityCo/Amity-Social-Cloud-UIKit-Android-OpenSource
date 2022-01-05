@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+                                                        
+
+    
+
+                                                                         
+
+                                                   
+
+
+                 
+                            
+                            
+           
+
+    <merge xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout"  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/avProfile"
+            style="@style/CircularAvatarStyle"
+                                                       
+            android:tag="layout/amity_comment_compose_bar_0"
+                                   
+            android:layout_width="@dimen/amity_twenty_eight"
+            android:layout_height="@dimen/amity_twenty_eight"
+            android:layout_marginBottom="@dimen/amity_padding_xxs"
+            android:src="@drawable/amity_ic_default_profile1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+
+        <RelativeLayout
+            android:id="@+id/layoutPostComment"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_padding_xs"
+            android:layout_marginEnd="@dimen/amity_padding_xs"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btnPost"
+            app:layout_constraintStart_toEndOf="@id/avProfile"
+            app:layout_constraintTop_toTopOf="parent" android:tag="layout/amity_comment_compose_bar_1">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etPostComment"
+                style="@style/AmityTextStyleBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:hint="@string/amity_post_comment_hint"
+                android:inputType="textMultiLine"
+                android:maxLines="8"
+                android:minHeight="@dimen/amity_forty"
+                android:paddingStart="@dimen/amity_padding_xs"
+                android:paddingEnd="@dimen/amity_thirty"
+                android:textColor="@color/amityColorBase"
+                android:textColorHint="@color/amityColorBase"
+                android:tag="binding_2"              
+                                                         
+                                           
+                                                              />
+
+            <ImageView
+                android:id="@+id/ivExpand"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/etPostComment"
+                android:layout_alignBottom="@+id/etPostComment"
+                android:layout_marginBottom="@dimen/amity_padding_xxs"
+                android:padding="5dp"
+                android:src="@drawable/amity_ic_expand_comment_box" />
+
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/btnPost"
+            style="@style/AmityTextStyleBody"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:padding="0dp"
+            android:text="@string/amity_post_caps"
+            android:tag="layout/amity_comment_compose_bar_3"           
+                                                                   
+                                                                      
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </merge>
+         

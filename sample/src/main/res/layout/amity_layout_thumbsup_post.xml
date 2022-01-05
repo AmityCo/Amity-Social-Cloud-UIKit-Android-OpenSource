@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/thumbsUpContainer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/amity_ic_thumbsup_background">
+
+    <TextView
+        android:id="@+id/tvTitle"
+        style="@style/AmityTextStyleHeadline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/amity_thirty_two"
+        android:textColor="@color/upstraColorBaseInverse"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:rotation="5"
+        android:src="@drawable/amity_ic_thumsup_arrows"
+        app:layout_constraintEnd_toEndOf="@id/ivReceiver"
+        app:layout_constraintStart_toStartOf="@id/ivSender"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+
+    <ImageView
+        android:id="@+id/ivThumbsUp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/amity_four"
+        android:src="@drawable/amity_ic_thumbsup_illustrations"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/ivSender"
+        android:layout_width="@dimen/amity_sixty_four"
+        android:layout_height="@dimen/amity_sixty_four"
+        android:layout_marginTop="119dp"
+        android:layout_marginEnd="7dp"
+        android:background="#D9E5FC"
+        android:scaleType="centerInside"
+        app:layout_constraintEnd_toStartOf="@id/ivThumbsUp"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"
+        app:shapeAppearanceOverlay="@style/AmityCircleImage" />
+
+    <TextView
+        android:id="@+id/tvSenderName"
+        style="@style/AmityTextStyleCaption"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/amity_eight"
+        android:ellipsize="end"
+        android:gravity="center_horizontal|top"
+        android:maxLines="3"
+        android:textColor="@color/upstraColorBaseInverse"
+        app:layout_constraintEnd_toEndOf="@id/ivSender"
+        app:layout_constraintStart_toStartOf="@id/ivSender"
+        app:layout_constraintTop_toBottomOf="@id/ivSender" />
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvSenderName" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/ivReceiver"
+        android:layout_width="@dimen/amity_sixty_four"
+        android:layout_height="@dimen/amity_sixty_four"
+        android:layout_marginStart="@dimen/amity_eight"
+        android:background="#D9E5FC"
+        android:scaleType="centerInside"
+        app:layout_constraintStart_toEndOf="@id/ivThumbsUp"
+        app:layout_constraintTop_toTopOf="@id/ivSender"
+        app:shapeAppearanceOverlay="@style/AmityCircleImage" />
+
+    <TextView
+        android:id="@+id/tvReceiverName"
+        style="@style/AmityTextStyleCaption"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:gravity="center_horizontal|top"
+        android:maxLines="3"
+        android:textColor="@color/upstraColorBaseInverse"
+        app:layout_constraintEnd_toEndOf="@id/ivReceiver"
+        app:layout_constraintStart_toStartOf="@id/ivReceiver"
+        app:layout_constraintTop_toTopOf="@id/tvSenderName" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

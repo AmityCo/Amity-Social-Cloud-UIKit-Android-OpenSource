@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+                                                       
+                                                   
+
+    
+
+                                                                         
+
+                 
+                     
+                                                                                                     
+           
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".profile.fragment.EkoEditUserProfileFragment" android:tag="layout/amity_fragment_edit_user_profile_0" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools">
+
+
+        <FrameLayout
+            android:id="@+id/avatarView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_padding_m1"
+            android:layout_marginTop="@dimen/amity_padding_m1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/ivAvatar"
+                android:layout_width="@dimen/amity_sixty_four"
+                android:layout_height="@dimen/amity_sixty_four"
+                android:scaleType="centerInside"
+                android:src="@drawable/amity_ic_default_profile2"
+                android:tag="binding_1"                        
+                                                                    
+                app:shapeAppearanceOverlay="@style/CircleImage" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/iv_camera"
+                android:tag="binding_2"                    
+                                                             
+                android:layout_width="@dimen/amity_twenty_eight"
+                android:layout_height="@dimen/amity_twenty_eight"
+                android:layout_gravity="bottom|end"
+                android:scaleType="centerInside"
+                android:src="@drawable/amity_ic_camera"
+                app:shapeAppearanceOverlay="@style/CircleImage"
+                app:strokeColor="@color/amityColorWhite"
+                app:strokeWidth="2dp" />
+        </FrameLayout>
+
+
+        <TextView
+            android:id="@+id/tvDisplayNameLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_padding_m1"
+            android:layout_marginTop="@dimen/amity_padding_m1"
+            android:layout_marginEnd="@dimen/amity_padding_m1"
+            android:text="@string/amity_display_name"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/avatarView"
+                                    android:tag="binding_3"/>
+
+        <TextView
+            android:id="@+id/tvUserNameCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_padding_m1"
+            android:layout_marginTop="@dimen/amity_padding_m1"
+            android:layout_marginEnd="@dimen/amity_padding_m1"
+            android:tag="binding_4"                                                          
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/avatarView"
+            tools:text="100/100" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etDisplayName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_padding_m1"
+            android:layout_marginEnd="@dimen/amity_padding_m1"
+            android:tag="binding_5"          
+            android:textColor="@color/amityColorBase"
+            app:layout_constraintTop_toBottomOf="@id/tvDisplayNameLabel" />
+
+        <TextView
+            android:id="@+id/tvAboutLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_padding_m1"
+            android:layout_marginTop="@dimen/amity_padding_l"
+            android:text="@string/amity_about"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/etDisplayName" />
+
+        <TextView
+            android:id="@+id/tvAboutCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/amity_padding_l"
+            android:layout_marginEnd="@dimen/amity_padding_m1"
+            android:tag="binding_6"                                                 
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/etDisplayName"
+            tools:text="180/180" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etAbout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_padding_m1"
+            android:layout_marginEnd="@dimen/amity_padding_m1"
+            android:maxLength="@integer/maxLimitProfileDescription"
+            android:tag="binding_7"    
+            app:layout_constraintTop_toBottomOf="@id/tvAboutLabel" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+         

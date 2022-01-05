@@ -1,0 +1,272 @@
+{
+  "project_info": {
+    "project_number": "1056361182889",
+    "firebase_url": "https://eko-sdk.firebaseio.com",
+    "project_id": "eko-sdk",
+    "storage_bucket": "eko-sdk.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1056361182889:android:9eb4ba293980221aac1bb8",
+        "android_client_info": {
+          "package_name": "com.amity.sample.ascsdk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1056361182889-nogafise3kmurnls60cm612nisjlonvr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtsRMyP3H1REHoNrK_TrNiwgVh11koWRU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1056361182889-nogafise3kmurnls60cm612nisjlonvr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1056361182889:android:578ce9768ad7ac81ac1bb8",
+        "android_client_info": {
+          "package_name": "com.amity.sample.ascuikit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1056361182889-nogafise3kmurnls60cm612nisjlonvr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtsRMyP3H1REHoNrK_TrNiwgVh11koWRU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1056361182889-nogafise3kmurnls60cm612nisjlonvr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1056361182889:android:1722d6f222e6babeac1bb8",
+        "android_client_info": {
+          "package_name": "com.amity.socialcloud.uikit.sample"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1056361182889-nogafise3kmurnls60cm612nisjlonvr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtsRMyP3H1REHoNrK_TrNiwgVh11koWRU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1056361182889-nogafise3kmurnls60cm612nisjlonvr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1056361182889:android:76f60dbdf272303c",
+        "android_client_info": {
+          "package_name": "com.ekoapp.ekosdk.sdk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1056361182889-nogafise3kmurnls60cm612nisjlonvr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtsRMyP3H1REHoNrK_TrNiwgVh11koWRU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1056361182889-nogafise3kmurnls60cm612nisjlonvr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1056361182889:android:c78c620d46f48d7bac1bb8",
+        "android_client_info": {
+          "package_name": "com.ekoapp.sample"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1056361182889-nogafise3kmurnls60cm612nisjlonvr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtsRMyP3H1REHoNrK_TrNiwgVh11koWRU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1056361182889-nogafise3kmurnls60cm612nisjlonvr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1056361182889:android:145ceb217e9695f8",
+        "android_client_info": {
+          "package_name": "com.ekoapp.sdk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1056361182889-nogafise3kmurnls60cm612nisjlonvr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtsRMyP3H1REHoNrK_TrNiwgVh11koWRU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1056361182889-nogafise3kmurnls60cm612nisjlonvr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1056361182889:android:40d8a8fa62b0e802",
+        "android_client_info": {
+          "package_name": "com.ekoapp.sdk.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1056361182889-nogafise3kmurnls60cm612nisjlonvr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtsRMyP3H1REHoNrK_TrNiwgVh11koWRU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1056361182889-nogafise3kmurnls60cm612nisjlonvr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1056361182889:android:01a3c8f3e5cce342",
+        "android_client_info": {
+          "package_name": "com.ekoapp.simplechat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1056361182889-nogafise3kmurnls60cm612nisjlonvr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtsRMyP3H1REHoNrK_TrNiwgVh11koWRU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1056361182889-nogafise3kmurnls60cm612nisjlonvr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1056361182889:android:dff6edb36a53c23e",
+        "android_client_info": {
+          "package_name": "com.ekoapp.simplechat.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1056361182889-nogafise3kmurnls60cm612nisjlonvr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtsRMyP3H1REHoNrK_TrNiwgVh11koWRU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1056361182889-nogafise3kmurnls60cm612nisjlonvr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.amity.socialcloud.uikit.common.common.views.AmityColorShade" />
+        <import type="com.amity.socialcloud.uikit.common.R" />
+        <import type="android.view.View" />
+        <import type="com.amity.socialcloud.sdk.core.user.AmityFollowStatus"/>
+
+        <variable
+            name="amityUser"
+            type="com.amity.socialcloud.sdk.core.user.AmityUser" />
+
+        <variable
+            name="postCount"
+            type="String" />
+
+        <variable
+            name="isSelf"
+            type="Boolean" />
+
+        <variable
+            name="connectionState"
+            type="com.amity.socialcloud.sdk.core.user.AmityFollowStatus" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivAvatar"
+            backgroundColorShade="@{AmityColorShade.SHADE3}"
+            amityBackgroundColor="@{@color/amityColorPrimary}"
+            imageUrl="@{amityUser.avatar.url}"
+            placeHolder="@{@drawable/amity_ic_default_profile2}"
+            android:layout_width="@dimen/amity_sixty_four"
+            android:layout_height="@dimen/amity_sixty_four"
+            android:layout_marginStart="@dimen/amity_padding_m1"
+            android:scaleType="centerInside"
+            android:src="@drawable/amity_ic_default_profile2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/AmityCircleImage" />
+
+        <TextView
+            android:id="@+id/tvName"
+            style="@style/AmityTextStyleHeadline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_padding_s"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:drawablePadding="@dimen/amity_padding_xxs"
+            android:ellipsize="end"
+            android:maxLines="1"
+            app:safeText="@{amityUser.displayName}"
+            android:textColor="@color/amityColorBase"
+            app:layout_constraintStart_toEndOf="@id/ivAvatar"
+            app:layout_constraintTop_toTopOf="@id/ivAvatar"/>
+
+        <TextView
+            android:id="@+id/tvPostCount"
+            style="@style/AmityTextStyleCaption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/amity_padding_xxs"
+            android:visibility="gone"
+            android:textColor="@color/amityColorBase"
+            app:layout_constraintStart_toStartOf="@id/tvName"
+            app:layout_constraintTop_toBottomOf="@id/tvName"
+            tools:text="0 posts" />
+
+        <TextView
+            android:id="@+id/tvFollowingCount"
+            style="@style/AmityTextStyleCaption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_padding_xs"
+            android:textColor="@color/amityColorBase"
+            app:layout_constraintTop_toTopOf="@id/tvPostCount"
+            app:layout_constraintStart_toEndOf="@id/tvPostCount"
+            tools:text="0 following" />
+
+        <TextView
+            android:id="@+id/tvFollowersCount"
+            style="@style/AmityTextStyleCaption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_padding_xs"
+            android:textColor="@color/amityColorBase"
+            app:layout_constraintTop_toTopOf="@id/tvPostCount"
+            app:layout_constraintStart_toEndOf="@id/tvFollowingCount"
+            tools:text="0 followers" />
+
+        <TextView
+            android:id="@+id/tvDescription"
+            style="@style/AmityTextStyleBody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_padding_m1"
+            android:layout_marginTop="@dimen/amity_padding_s"
+            android:paddingTop="@dimen/amity_padding_xxs"
+            android:text="@{amityUser.description}"
+            android:textColor="@color/amityColorBase"
+            android:visibility="@{amityUser.description.length() > 0 ? View.VISIBLE : View.VISIBLE}"
+            app:layout_constraintStart_toStartOf="@id/ivAvatar"
+            app:layout_constraintTop_toBottomOf="@id/ivAvatar"
+            tools:text="Duis congue eros vitae lectus varius pharetra. Cla ss aptent taciti sociosqu ad litora torquent " />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnProfileDefaultAction"
+            style="@style/AmityOutlinedButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_padding_m1"
+            android:layout_marginTop="@dimen/amity_padding_s"
+            android:layout_marginEnd="@dimen/amity_padding_m1"
+            android:text="@{isSelf ? @string/amity_edit_profile : @string/amity_message}"
+            android:visibility="@{isSelf ? View.VISIBLE : View.GONE}"
+            app:cornerRadius="@dimen/amity_four"
+            app:amityButtonStrokeShade="@{AmityColorShade.SHADE3}"
+            app:icon="@{isSelf ? @drawable/amity_ic_edit_profile : @drawable/amity_ic_chat}"
+            app:iconGravity="textStart"
+            app:iconTint="@color/amityColorBase"
+            app:layout_constraintTop_toBottomOf="@id/tvDescription" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnFollow"
+            style="@style/AmityMaterialButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/amity_padding_s"
+            android:text="@string/amity_follow"
+            android:visibility="@{connectionState == AmityFollowStatus.NONE ? View.VISIBLE : View.GONE, default=gone}"
+            app:icon="@drawable/amity_ic_plus"
+            app:iconGravity="textStart"
+            app:layout_constraintStart_toStartOf="@id/btnProfileDefaultAction"
+            app:layout_constraintEnd_toEndOf="@id/btnProfileDefaultAction"
+            app:layout_constraintTop_toBottomOf="@id/tvDescription"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCancelRequest"
+            style="@style/AmityOutlinedButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/amity_padding_s"
+            android:text="@string/amity_cancel_request"
+            android:visibility="@{connectionState == AmityFollowStatus.PENDING ? View.VISIBLE : View.GONE, default=gone}"
+            app:icon="@drawable/amity_ic_cancel_request"
+            app:iconGravity="textStart"
+            app:iconTint="@color/amityColorBase"
+            app:cornerRadius="@dimen/amity_four"
+            app:amityButtonStrokeShade="@{AmityColorShade.SHADE4}"
+            app:layout_constraintStart_toStartOf="@id/btnProfileDefaultAction"
+            app:layout_constraintEnd_toEndOf="@id/btnProfileDefaultAction"
+            app:layout_constraintTop_toBottomOf="@id/tvDescription"/>
+
+        <LinearLayout
+            android:id="@+id/layoutPendingRequests"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/amity_padding_xs"
+            android:layout_marginHorizontal="@dimen/amity_padding_m1"
+            app:roundedCorner="@{true}"
+            app:colorShade="@{AmityColorShade.SHADE4}"
+            app:fillColor="@{R.color.amityColorBase}"
+            android:gravity="center"
+            android:visibility="gone"
+            android:paddingVertical="@dimen/amity_padding_s"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btnProfileDefaultAction">
+
+            <TextView
+                android:id="@+id/tvPendingRequets"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/amity_pending_requests"
+                android:drawableStart="@drawable/amity_ic_dot"
+                android:drawablePadding="@dimen/amity_six"
+                style="@style/AmityTextStyleBodyBold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/AmityTextStyleCaption"
+                android:text="@string/amity_requests_review"/>
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

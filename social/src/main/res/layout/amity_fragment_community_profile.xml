@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="com.amity.socialcloud.uikit.common.common.views.AmityColorShade" />
+
+        <import type="android.view.View" />
+
+        <variable
+            name="viewModel"
+            type="com.amity.socialcloud.uikit.community.detailpage.AmityCommunityProfileViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/header_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/ivAvatar"
+                android:layout_width="match_parent"
+                android:layout_height="260dp"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/amity_ic_default_community_avatar" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="260dp"
+                android:background="@drawable/amity_bg_avatar_overlay_with_gradient" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="@dimen/amity_padding_m1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvName"
+                    style="@style/AmityTextStyleHeadline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableTint="@color/amityColorBaseInverse"
+                    android:drawablePadding="@dimen/amity_padding_xxs"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:text="Commmunity"
+                    android:textColor="@color/amityColorBaseInverse" />
+
+                <TextView
+                    android:id="@+id/tvCategory"
+                    style="@style/AmityTextStyleBody"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/amity_padding_m1"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:text="Category"
+                    android:textColor="@color/amityColorBaseInverse" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/layoutPostCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/amity_padding_m1">
+
+                <TextView
+                    android:id="@+id/tvPostCount"
+                    style="@style/AmityTextStyleTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="@color/amityColorBase" />
+
+                <TextView
+                    android:id="@+id/tvPostUnit"
+                    style="@style/AmityTextStyleCaption"
+                    textColorShade="@{AmityColorShade.SHADE2}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/amity_posts"
+                    android:textColor="@color/amityColorBase" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="@dimen/amity_twenty_four"
+                android:background="@color/amityPlaceHolderColor"
+                android:layout_gravity="center_vertical" />
+
+            <LinearLayout
+                android:id="@+id/layoutMemberCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/amity_padding_m1">
+
+                <TextView
+                    android:id="@+id/tvMemberCount"
+                    style="@style/AmityTextStyleTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="@color/amityColorBase" />
+
+                <TextView
+                    android:id="@+id/tvMemberUnit"
+                    style="@style/AmityTextStyleCaption"
+                    textColorShade="@{AmityColorShade.SHADE2}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/amity_members"
+                    android:textColor="@color/amityColorBase" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvDescription"
+            style="@style/AmityTextStyleBody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/amity_padding_m1"
+            android:text="description"
+            android:textColor="@color/amityColorBase" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginHorizontal="@dimen/amity_padding_m1">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_chat"
+                    style="@style/AmityOutlinedButtonStyle"
+                    amityButtonStrokeShade="@{AmityColorShade.SHADE3}"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:text="@string/amity_message"
+                    android:visibility="gone"
+                    app:icon="@drawable/amity_ic_conversation"
+                    app:iconGravity="textStart"
+                    app:iconTint="@color/amityColorBase" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_chat_shorten"
+                    style="@style/AmityOutlinedButtonStyle"
+                    android:layout_width="@dimen/amity_forty_eight"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:visibility="gone"
+                    app:icon="@drawable/amity_ic_conversation"
+                    app:iconGravity="textStart"
+                    app:iconTint="@color/amityColorBase" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_edit_profile"
+                    style="@style/AmityOutlinedButtonStyle"
+                    amityButtonStrokeShade="@{AmityColorShade.SHADE3}"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toStartOf="@+id/button_chat"
+                    android:text="@string/amity_edit_profile"
+                    android:visibility="gone"
+                    app:icon="@drawable/amity_ic_create"
+                    app:iconGravity="textStart"
+                    app:iconTint="@color/amityColorBase" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_join"
+                    style="@style/AmityMaterialButtonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/amity_join"
+                    android:visibility="gone"
+                    app:icon="@drawable/amity_ic_plus"
+                    app:iconGravity="textStart" />
+
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_pending_post_banner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background=" @drawable/amity_btn_inactive"
+                android:backgroundTint="@color/amityPlaceHolderColor"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:visibility="gone">
+
+                <TextView
+                    style="@style/AmityTextStyleBody"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="@dimen/amity_padding_xxs"
+                    android:text="@string/amity_pending_posts"
+                    android:textColor="@color/amityColorSecondary"
+                    android:textSize="@dimen/amity_text_size_body"
+                    android:layout_marginTop="@dimen/amity_padding_m1"
+                    app:drawableStartCompat="@drawable/amity_ic_ellipse" />
+
+                <TextView
+                    android:id="@+id/textview_banner_description"
+                    style="@style/AmityTextStyleCaption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/amity_padding_m1"
+                    android:textColor="@color/amityColorShuttleGray" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</layout>
+
+

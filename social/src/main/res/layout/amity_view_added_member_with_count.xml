@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="com.amity.socialcloud.uikit.common.common.views.AmityColorShade" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/amity_forty">
+
+        <include
+            android:id="@+id/layoutAddedMember"
+            layout="@layout/amity_item_added_member"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            app:layout_constraintEnd_toStartOf="@id/layout_icon"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="@id/layoutAddedMember"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/layoutAddedMember"
+            app:layout_constraintTop_toTopOf="@id/layoutAddedMember">
+
+            <TextView
+                android:id="@+id/tvCount"
+                style="@style/AmityTextStyleBody"
+                android:layout_width="42dp"
+                android:layout_height="@dimen/amity_thirty_six"
+                android:layout_marginStart="@dimen/amity_padding_xs"
+                android:gravity="center"
+                android:textColor="@color/amityColorBase"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/ivAdd"
+                amityFillColor="@{@color/amityColorBase}"
+                amityFillShade="@{AmityColorShade.SHADE4}"
+                android:layout_width="@dimen/amity_forty"
+                android:layout_height="@dimen/amity_forty"
+                android:layout_marginStart="@dimen/amity_padding_xs"
+                android:padding="@dimen/amity_padding_s"
+                android:scaleType="centerInside"
+                android:src="@drawable/amity_ic_add"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

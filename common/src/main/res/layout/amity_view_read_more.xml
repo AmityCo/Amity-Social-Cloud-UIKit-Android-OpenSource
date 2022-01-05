@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <import type="com.amity.socialcloud.uikit.common.utils.AmityScreenUtils" />
+
+        <variable
+            name="isSender"
+            type="Boolean" />
+
+    </data>
+
+    <RelativeLayout
+        android:id="@+id/readMoreContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/amity_padding_xs">
+
+        <TextView
+            tools:text = "Hello"
+            android:id="@+id/tvMessage"
+            style="@style/AmityTextStyleBody"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="12"
+            android:textColor="@{isSender ? @color/amityMessageBubbleInverse : @color/amityColorBase}" />
+
+        <TextView
+            android:layout_below="@+id/tvMessage"
+            android:layout_marginTop="4dp"
+            android:gravity="end"
+            android:id="@+id/tvReadMore"
+            style="@style/AmityTextStyleBody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="@string/amity_read_more"
+            android:textColor="@{isSender ? @color/amityMessageBubbleInverse : @color/amityColorHighlight}"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
+
+</layout>

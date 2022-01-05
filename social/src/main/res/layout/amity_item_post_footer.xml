@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.amity.socialcloud.uikit.common.common.views.AmityColorShade" />
+
+        <import type="android.view.View" />
+
+        <variable
+            name="readOnly"
+            type="Boolean" />
+
+        <variable
+            name="showShareButton"
+            type="Boolean" />
+
+        <variable
+            name="showViewAllComment"
+            type="Boolean" />
+
+    </data>
+
+    <merge
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/reactionStatusLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tvNumberOfLikes"
+                style="@style/AmityTextStyleCaption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/amity_padding_m1"
+                android:textColor="@color/amityColorBase"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:textColorShade="@{AmityColorShade.SHADE2}"
+                tools:text="1.8k likes" />
+
+            <TextView
+                android:id="@+id/tvNumberOfComments"
+                style="@style/AmityTextStyleCaption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/amity_padding_m1"
+                android:textColor="@color/amityColorBase"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:textColorShade="@{AmityColorShade.SHADE2}"
+                tools:text="18 comments" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <View
+            android:id="@+id/separator"
+            style="@style/AmityDivider"
+            android:layout_marginStart="@dimen/amity_padding_m1"
+            android:layout_marginTop="@dimen/amity_padding_xs"
+            android:layout_marginEnd="@dimen/amity_padding_m1"
+            android:layout_marginBottom="@dimen/amity_forty"
+            app:layout_constraintTop_toBottomOf="@id/reactionStatusLayout" />
+
+
+        <LinearLayout
+            android:id="@+id/postActionLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_padding_m1"
+            android:layout_marginEnd="@dimen/amity_padding_m1"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="@{readOnly ? View.GONE : View.VISIBLE}"
+            app:layout_constraintTop_toBottomOf="@id/separator">
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/cbLike"
+                style="@style/AmityTextStyleBodyBold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@drawable/amity_ic_like_selector"
+                android:paddingStart="@dimen/amity_padding_xs"
+                android:text="@string/amity_like"
+                app:checkBoxCheckedColor="@{@color/amityColorPrimary}"
+                app:checkBoxDefaultColor="@{@color/amityColorBase}"
+                app:checkBoxDefaultShade="@{AmityColorShade.SHADE2}" />
+
+            <TextView
+                android:id="@+id/cbComment"
+                style="@style/AmityTextStyleBodyBold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/amity_padding_m1"
+                android:drawableStart="@drawable/amity_ic_comment"
+                android:drawablePadding="@dimen/amity_padding_xs"
+                android:gravity="center_vertical"
+                android:text="@string/amity_comment"
+                android:textColor="@{@color/amityColorBase}"
+                app:textColorShade="@{AmityColorShade.SHADE2}" />
+
+            <TextView
+                android:id="@+id/cbShare"
+                style="@style/AmityTextStyleBodyBold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/amity_padding_m1"
+                android:drawableStart="@drawable/amity_ic_share"
+                android:drawablePadding="@dimen/amity_padding_xs"
+                android:gravity="center_vertical"
+                android:text="@string/amity_share"
+                android:textColor="@{@color/amityColorBase}"
+                android:visibility="@{showShareButton? View.VISIBLE: View.GONE}"
+                app:textColorShade="@{AmityColorShade.SHADE2}" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/tvJoinCommunityMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_padding_m1"
+            android:layout_marginTop="@dimen/amity_padding_xs"
+            android:layout_marginEnd="@dimen/amity_padding_m1"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/amity_padding_xs"
+            android:visibility="@{readOnly ? View.VISIBLE : View.GONE}"
+            app:layout_constraintTop_toBottomOf="@id/postActionLayout">
+
+            <TextView
+                style="@style/AmityTextStyleBodyBold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/amity_join_community_message"
+                android:textColor="@color/amityColorBase"
+                app:textColorShade="@{AmityColorShade.SHADE2}" />
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/separator2"
+            style="@style/AmityDivider"
+            android:layout_marginStart="@dimen/amity_padding_m1"
+            android:layout_marginTop="@dimen/amity_padding_xxs"
+            android:layout_marginEnd="@dimen/amity_padding_m1"
+            android:layout_marginBottom="@dimen/amity_padding_xs"
+            app:layout_constraintTop_toBottomOf="@id/tvJoinCommunityMessage" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvCommentFooter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="true"
+            android:nestedScrollingEnabled="true"
+            android:overScrollMode="never"
+            app:layout_constrainedHeight="true"
+            app:layout_constraintBottom_toTopOf="@+id/viewAllCommentContainer"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/separator2"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <LinearLayout
+            android:id="@+id/viewAllCommentContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/amity_padding_xs"
+            android:layout_marginBottom="@dimen/amity_padding_xs"
+            android:orientation="vertical"
+            android:visibility="@{showViewAllComment ? View.VISIBLE : View.GONE, default=gone}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:visibility="visible">
+
+            <View
+                android:id="@+id/separatorViewAllComments"
+                style="@style/AmityDivider"
+                android:visibility="@{showViewAllComment ? View.VISIBLE : View.GONE, default=gone}" />
+
+            <TextView
+                style="@style/AmityTextStyleBodyBold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="@dimen/amity_padding_s"
+                android:text="@string/amity_view_all_comments"
+                android:textColor="@color/amityColorBlack" />
+        </LinearLayout>
+
+    </merge>
+
+</layout>

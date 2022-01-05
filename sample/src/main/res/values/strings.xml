@@ -1,0 +1,20 @@
+<resources>
+    <string name="amity_app_name">ASC</string>
+    <string name="amity_happy_birthday">Happy birthday,</string>
+    <string name="amity_birthday_wish">Send your friend a birthday wish!</string>
+    <string name="amity_welcome_message">Send your friend a welcome message!</string>
+    <string name="amity_welcome">Welcome to the team,</string>
+    <string name="amity_notification_channel">UIKIT_PUSH_NOTIFICATION</string>
+    <string name="amity_notification_channel_description">Notification channel for post and comment push notification</string>
+
+    <string name="dev">Dev</string>
+    <string name="staging">Staging</string>
+    <string name="production">Production</string>
+    <string name="eu">EU</string>
+    <string name="us">US</string>
+    <string name="custom">Custom</string>
+    <string name="enter_api_key">Enter Api Key</string>
+    <string name="enter_url">Enter URL</string>
+    <string name="submit">Submit</string>
+
+</resources>

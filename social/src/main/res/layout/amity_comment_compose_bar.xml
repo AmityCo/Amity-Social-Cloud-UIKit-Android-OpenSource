@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="com.amity.socialcloud.uikit.common.common.views.AmityColorShade" />
+
+        <import type="com.amity.socialcloud.uikit.common.R" />
+
+
+        <variable
+            name="avatarUrl"
+            type="String" />
+    </data>
+
+    <merge xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/avProfile"
+            style="@style/AmityCircularAvatarStyle"
+            backgroundColorShade="@{AmityColorShade.SHADE3}"
+            amityBackgroundColor="@{@color/amityColorPrimary}"
+            imageUrl="@{avatarUrl}"
+            android:layout_width="@dimen/amity_twenty_eight"
+            android:layout_height="@dimen/amity_twenty_eight"
+            android:layout_marginBottom="@dimen/amity_padding_xxs"
+            android:src="@drawable/amity_ic_default_profile1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+
+        <RelativeLayout
+            android:id="@+id/layoutPostComment"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_padding_xs"
+            android:layout_marginEnd="@dimen/amity_padding_xs"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btnPost"
+            app:layout_constraintStart_toEndOf="@id/avProfile"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.amity.socialcloud.uikit.community.views.comment.AmityCommentComposeView
+                android:id="@+id/etPostComment"
+                style="@style/AmityTextStyleBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:maxLines="8"
+                android:minHeight="@dimen/amity_forty"
+                android:paddingStart="@dimen/amity_padding_m1"
+                android:paddingEnd="@dimen/amity_padding_l"
+                app:colorShade="@{AmityColorShade.SHADE4}"
+                app:cornerRadius="@{R.dimen.amity_twenty}"
+                app:fillColor="@{R.color.amityColorBase}"
+                app:roundedCorner="@{true}"
+                app:textColorHintShade="@{AmityColorShade.SHADE2}" />
+
+            <ImageView
+                android:id="@+id/ivExpand"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/etPostComment"
+                android:layout_alignBottom="@+id/etPostComment"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/amity_padding_s"
+                android:layout_marginBottom="@dimen/amity_padding_xxs"
+                android:padding="@dimen/amity_padding_xxs"
+                android:src="@drawable/amity_ic_expand_comment_box" />
+
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/btnPost"
+            style="@style/AmityTextStyleBody"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:padding="0dp"
+            android:text="@string/amity_post_caps"
+            app:buttonDisabledTextColor="@{@color/amityColorHighlight}"
+            app:buttonDisabledTextColorShade="@{AmityColorShade.SHADE2}"
+            app:buttonEnabledTextColor="@{@color/amityColorHighlight}"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </merge>
+</layout>

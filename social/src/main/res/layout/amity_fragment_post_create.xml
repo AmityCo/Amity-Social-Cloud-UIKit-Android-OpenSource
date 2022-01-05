@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".newsfeed.activity.AmityPostCreatorActivity">
+
+        <RelativeLayout
+            android:id="@+id/layout_post_attachments_options"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/amity_bg_post_attachment_options"
+            android:elevation="@dimen/amity_padding_s">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_post_attachments_options"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+
+        <ScrollView
+            android:id="@+id/scrollview_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/layout_post_attachments_options"
+            android:layout_marginBottom="@dimen/amity_padding_s">
+
+            <LinearLayout
+                android:id="@+id/clContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                tools:context=".newsfeed.activity.AmityPostCreatorActivity">
+
+                <com.amity.socialcloud.uikit.community.views.createpost.AmityPostComposeView
+                    android:id="@+id/etPost"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/amity_padding_m1"
+                    android:textColor="@color/amityColorBase" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvAttachment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/amity_padding_m1" />
+            </LinearLayout>
+        </ScrollView>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/layout_post_attachments_options">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_user_mention"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:background="@color/amityColorWhite"
+                android:paddingBottom="@dimen/amity_eight"
+                android:overScrollMode="never"
+                app:layout_constraintHeight_max="280dp"
+                app:layout_constraintDimensionRatio="375:280"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ProgressBar
+            android:id="@+id/pbLoading"
+            android:layout_width="@dimen/amity_padding_l"
+            android:layout_height="@dimen/amity_padding_l"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="@dimen/amity_padding_m1"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/amityMessageBubbleInverse"
+            android:indeterminateTintMode="src_atop"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+</layout>

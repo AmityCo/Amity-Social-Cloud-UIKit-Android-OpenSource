@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/amityPlaceHolderColor" />
+    <corners android:topLeftRadius="0dp"
+        android:topRightRadius="@dimen/amity_padding_s"
+        android:bottomLeftRadius="@dimen/amity_padding_s"
+        android:bottomRightRadius="@dimen/amity_padding_s"/>
+
+</shape>

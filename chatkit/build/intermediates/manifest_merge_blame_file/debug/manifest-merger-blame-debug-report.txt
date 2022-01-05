@@ -1,0 +1,47 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.ekoapp.ekosdk.uikit.chat"
+4    android:versionCode="1"
+5    android:versionName="1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="21"
+8-->/Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml
+9        android:targetSdkVersion="30" />
+9-->/Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml
+10
+11    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+11-->/Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:5:5-71
+11-->/Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:5:22-68
+12
+13    <application>
+13-->/Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:7:5-21:19
+14        <activity
+14-->/Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:8:9-11:56
+15            android:name="com.ekoapp.ekosdk.uikit.chat.editMessage.EkoEditMessageActivity"
+15-->/Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:9:13-63
+16            android:screenOrientation="portrait"
+16-->/Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:10:13-49
+17            android:theme="@style/Base.Theme.EkoApp" />
+17-->/Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:11:13-53
+18        <activity
+18-->/Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:12:9-16:58
+19            android:name="com.ekoapp.ekosdk.uikit.chat.messages.EkoMessageListActivity"
+19-->/Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:13:13-60
+20            android:screenOrientation="portrait"
+20-->/Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:14:13-49
+21            android:theme="@style/Base.Theme.EkoApp"
+21-->/Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:15:13-53
+22            android:windowSoftInputMode="adjustResize" />
+22-->/Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:16:13-55
+23        <activity
+23-->/Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:17:9-20:56
+24            android:name="com.ekoapp.ekosdk.uikit.chat.home.EkoChatHomePageActivity"
+24-->/Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:18:13-57
+25            android:screenOrientation="portrait"
+25-->/Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:19:13-49
+26            android:theme="@style/Base.Theme.EkoApp" />
+26-->/Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:20:13-53
+27    </application>
+28
+29</manifest>

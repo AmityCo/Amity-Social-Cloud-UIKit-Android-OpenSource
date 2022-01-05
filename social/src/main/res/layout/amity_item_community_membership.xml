@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.amity.socialcloud.uikit.common.common.views.AmityColorShade" />
+
+        <import type="android.view.View" />
+
+        <variable
+            name="avatarUrl"
+            type="String" />
+
+        <variable
+            name="isMyUser"
+            type="Boolean" />
+
+        <variable
+            name="isJoined"
+            type="Boolean" />
+
+        <variable
+            name="isBanned"
+            type="Boolean" />
+
+        <variable
+            name="communityMemberShip"
+            type="com.amity.socialcloud.sdk.social.community.AmityCommunityMember" />
+
+        <variable
+            name="listener"
+            type="com.amity.socialcloud.uikit.community.members.AmityMemberClickListener" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivAvatar"
+            amityBackgroundColor="@{@color/amityColorPrimary}"
+            backgroundColorShade="@{AmityColorShade.SHADE3}"
+            imageUrl="@{avatarUrl}"
+            placeHolder="@{@drawable/amity_ic_default_profile_large}"
+            android:layout_width="@dimen/amity_forty"
+            android:layout_height="@dimen/amity_forty"
+            android:layout_marginStart="@dimen/amity_padding_m1"
+            android:onClick="@{() -> listener.onCommunityMembershipSelected(communityMemberShip)}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/AmityCircleImage" />
+
+        <TextView
+            android:id="@+id/tvMemberName"
+            style="@style/AmityTextStyleBodyBold"
+            safeText="@{communityMemberShip.user.displayName}"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="@dimen/amity_padding_xs"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:onClick="@{() -> listener.onCommunityMembershipSelected(communityMemberShip)}"
+            android:textColor="@color/amityColorBase"
+            android:drawablePadding="@dimen/amity_eight"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintBottom_toBottomOf="@id/ivAvatar"
+            app:layout_constraintEnd_toStartOf="@id/ivMore"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toEndOf="@id/ivAvatar"
+            app:layout_constraintTop_toTopOf="@id/ivAvatar" />
+
+        <ImageView
+            android:id="@+id/ivMore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/amity_padding_m1"
+            android:src="@drawable/amity_ic_more_horiz"
+            android:visibility="@{(!isJoined || isMyUser) ? View.GONE : View.VISIBLE}"
+            app:layout_constraintBottom_toBottomOf="@id/ivAvatar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/ivAvatar"
+            tools:ignore="ContentDescription" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

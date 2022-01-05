@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.amity.socialcloud.uikit.common.common.views.AmityColorShade" />
+
+        <variable
+            name="viewModel"
+            type="com.amity.socialcloud.uikit.chat.editMessage.AmityEditMessageViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/lMessage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:focusable="false"
+        tools:context="com.amity.socialcloud.uikit.chat.editMessage.AmityEditMessageActivity">
+
+        <include
+            android:id="@+id/emToolBar"
+            layout="@layout/amity_edit_msg_bar"
+            app:viewModel="@{viewModel}" />
+
+        <View
+            android:id="@+id/divider"
+            backgroundColorShade="@{AmityColorShade.SHADE4}"
+            amityBackgroundColor="@{@color/amityColorBase}"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/amity_fourteen"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/emToolBar" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etMessage"
+            style="@style/AmityTextStyleBody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/amity_padding_m1"
+            android:background="@null"
+            android:text="@={viewModel.message}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/divider" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

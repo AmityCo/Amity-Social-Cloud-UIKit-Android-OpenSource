@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    // text size
+    <dimen name="amity_text_size_headline">20sp</dimen>
+    <dimen name="amity_text_size_title">16sp</dimen>
+    <dimen name="amity_text_size_body">14sp</dimen>
+    <dimen name="amity_text_size_caption">12sp</dimen>
+
+    // padding
+    <dimen name="amity_padding_xxs">4dp</dimen>
+    <dimen name="amity_padding_xs">8dp</dimen>
+    <dimen name="amity_padding_s">12dp</dimen>
+    <dimen name="amity_padding_m1">16dp</dimen>
+    <dimen name="amity_padding_m2">20dp</dimen>
+    <dimen name="amity_padding_m3">24dp</dimen>
+    <dimen name="amity_padding_l">32dp</dimen>
+    <dimen name="amity_padding_xl">64dp</dimen>
+
+    <dimen name="amity_avatar_default_height">64dp</dimen>
+    <dimen name="amity_avatar_default_width">64dp</dimen>
+
+    <dimen name="amity_zero">0dp</dimen>
+    <dimen name="amity_one">1dp</dimen>
+    <dimen name="amity_two">2dp</dimen>
+    <dimen name="amity_four">4dp</dimen>
+    <dimen name="amity_six">6dp</dimen>
+    <dimen name="amity_eight">8dp</dimen>
+    <dimen name="amity_ten">10dp</dimen>
+    <dimen name="amity_fourteen">14dp</dimen>
+    <dimen name="amity_sixteen">16dp</dimen>
+    <dimen name="amity_eighteen">18dp</dimen>
+    <dimen name="amity_twenty">20dp</dimen>
+    <dimen name="amity_twenty_four">24dp</dimen>
+    <dimen name="amity_twenty_five">25dp</dimen>
+    <dimen name="amity_twenty_seven">27dp</dimen>
+    <dimen name="amity_twenty_eight">28dp</dimen>
+    <dimen name="amity_thirty">30dp</dimen>
+    <dimen name="amity_thirty_two">32dp</dimen>
+    <dimen name="amity_thirty_six">36dp</dimen>
+    <dimen name="amity_thirty_eight">38dp</dimen>
+    <dimen name="amity_forty">40dp</dimen>
+    <dimen name="amity_forty_eight">48dp</dimen>
+    <dimen name="amity_fifty">50dp</dimen>
+    <dimen name="amity_fifty_eight">58dp</dimen>
+    <dimen name="amity_sixty_two">62dp</dimen>
+    <dimen name="amity_sixty_four">64dp</dimen>
+    <dimen name="amity_sixty_eight">68dp</dimen>
+    <dimen name="amity_seventy_two">72dp</dimen>
+    <dimen name="amity_eighty">80dp</dimen>
+    <dimen name="amity_eighty_four">84dp</dimen>
+    <dimen name="amity_ninety_five">95dp</dimen>
+    <dimen name="amity_one_hundred_four">104dp</dimen>
+    <dimen name="amity_one_hundred_fourteen">114dp</dimen>
+    <dimen name="amity_one_hundred_twenty">120dp</dimen>
+    <dimen name="amity_one_twenty_five">125dp</dimen>
+    <dimen name="amity_one_hundred_sixty">160dp</dimen>
+    <dimen name="amity_two_hundred_twenty">220dp</dimen>
+    <dimen name="amity_three_hundred_twenty_eight">328dp</dimen>
+
+</resources>

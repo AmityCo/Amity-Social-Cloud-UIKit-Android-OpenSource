@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/communityHome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/amity_sixty_two"
+            android:text="Test News Feed"
+            android:layout_marginStart="36dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/chatHome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/amity_padding_m1"
+            android:text="Test Recent Chat"
+            app:layout_constraintStart_toStartOf="@id/communityHome"
+            app:layout_constraintTop_toBottomOf="@id/communityHome" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/userProfile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/amity_padding_m1"
+            android:text="LoggedIn User Profile"
+            app:layout_constraintStart_toStartOf="@id/communityHome"
+            app:layout_constraintTop_toBottomOf="@id/chatHome" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/textComposebar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/amity_padding_m1"
+            android:text="Text only composebar"
+            app:layout_constraintStart_toStartOf="@id/communityHome"
+            app:layout_constraintTop_toBottomOf="@id/userProfile" />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/customPostCreation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/amity_padding_m1"
+            android:text="Post creator with attachment options"
+            app:layout_constraintStart_toStartOf="@id/communityHome"
+            app:layout_constraintTop_toBottomOf="@id/textComposebar" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

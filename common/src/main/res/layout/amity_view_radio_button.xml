@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RadioButton xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textSize="@dimen/amity_text_size_body"
+    android:textColor="@color/upstraColorBase"
+    android:paddingTop="@dimen/amity_padding_s"
+    android:paddingBottom="@dimen/amity_padding_m2"
+    style="@style/AmityRadioButtonSelectorStyle"
+    android:layoutDirection="rtl"
+    android:textAlignment="textStart"
+    android:layout_gravity="start"/>

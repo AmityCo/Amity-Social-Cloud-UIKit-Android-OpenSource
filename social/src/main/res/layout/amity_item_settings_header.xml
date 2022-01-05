@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/tvHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/amityColorBase"
+        android:textSize="@dimen/amity_text_size_title"
+        android:textStyle="bold"
+        tools:text="Header">
+
+    </TextView>
+</layout>

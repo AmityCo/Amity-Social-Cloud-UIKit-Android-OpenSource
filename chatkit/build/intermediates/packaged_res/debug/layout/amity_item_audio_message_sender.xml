@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+                                                        
+
+    
+
+                                           
+
+                                                                         
+
+                 
+                             
+                                                                                          
+           
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:tag="layout/amity_item_audio_message_sender_0" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+
+        <include
+            android:id="@+id/dateHeader"
+            layout="@layout/amity_view_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+                                                                                         
+                                            
+                                                           
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layoutAudio"
+            android:tag="binding_1"                  
+                                   
+                                                 
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/amity_padding_m1"
+                                                                   
+                                                                                     
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dateHeader">
+
+            <ImageView
+                android:id="@+id/ivPlay"
+                android:layout_width="@dimen/amity_twenty_four"
+                android:layout_height="@dimen/amity_twenty_four"
+                android:layout_margin="@dimen/amity_padding_xs"
+                android:tag="binding_2"                     
+                                                                         
+                                                                                                            
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                style="@style/AmityTextStyleBody"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/amity_ten"
+                android:tag="binding_3"              
+                android:textColor="@color/amityColorWhite"
+                                                                                                               
+                app:layout_constraintBottom_toBottomOf="@id/ivPlay"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/ivPlay" />
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:layout_width="@dimen/amity_eighteen"
+                android:layout_height="@dimen/amity_eighteen"
+                android:layout_marginEnd="@dimen/amity_two"
+                android:indeterminate="true"
+                android:tag="binding_4"                        
+                                                                                       
+                app:indicatorDirectionCircular="clockwise"
+                app:indicatorSize="@dimen/amity_eighteen"
+                app:layout_constraintBottom_toBottomOf="@id/ivPlay"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/ivPlay"
+                app:showAnimationBehavior="inward"
+                app:trackColor="#80FFFFFF"
+                app:trackThickness="@dimen/amity_two" />
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:layout_width="@dimen/amity_eighteen"
+                android:layout_height="@dimen/amity_eighteen"
+                android:layout_marginEnd="@dimen/amity_two"
+                android:indeterminate="true"
+                android:tag="binding_5"                                                
+                app:indicatorDirectionCircular="clockwise"
+                app:indicatorSize="@dimen/amity_eighteen"
+                app:layout_constraintBottom_toBottomOf="@id/ivPlay"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/ivPlay"
+                app:trackColor="@color/amityColorWhite"
+                app:trackThickness="@dimen/amity_two" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:alpha="0.5"
+            android:backgroundTint="@color/amityColorBase"
+            android:tag="binding_6"                                                      
+            app:layout_constraintBottom_toBottomOf="@id/layoutAudio"
+            app:layout_constraintEnd_toEndOf="@id/layoutAudio"
+            app:layout_constraintStart_toStartOf="@id/layoutAudio"
+            app:layout_constraintTop_toTopOf="@id/layoutAudio"
+                                       
+                                                      />
+
+        <include
+            layout="@layout/amity_view_msg_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/amity_padding_xxs"
+                                                                                    
+            app:layout_constraintBottom_toBottomOf="@id/layoutAudio"
+            app:layout_constraintEnd_toStartOf="@id/layoutAudio"
+            app:layout_constraintTop_toTopOf="@id/layoutAudio"
+                                          />
+
+        <TextView
+            android:id="@+id/tvTime"
+            style="@style/AmityTextStyleCaption"
+            android:tag="binding_7"              
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/amity_padding_xxs"
+            android:layout_marginEnd="@dimen/amity_padding_xxs"
+                                                
+            android:textColor="@color/amityColorBase"
+                                                                                     
+            app:layout_constraintEnd_toEndOf="@id/layoutAudio"
+            app:layout_constraintTop_toBottomOf="@id/layoutAudio" />
+
+        <include
+            layout="@layout/amity_view_msg_deleted"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/amity_padding_s"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dateHeader"
+                                          />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+         

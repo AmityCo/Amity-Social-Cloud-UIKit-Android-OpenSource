@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/amity_post_image_content_height"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:paddingRight="@dimen/amity_padding_xxs">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/imageViewPreviewImageOne"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            android:scaleType="centerCrop" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivPlayImageOne"
+            amityBackgroundColorAlpha="@{@integer/alpha_fifty}"
+            android:layout_width="@dimen/amity_thirty_six"
+            android:layout_height="@dimen/amity_thirty_six"
+            android:layout_centerInParent="true"
+            android:visibility="gone"
+            app:shapeAppearanceOverlay="@style/AmityCircleImage"
+            android:background="@color/amityTranslucentBackground"
+            android:scaleType="centerInside"
+            android:src="@drawable/amity_ic_play" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:paddingRight="@dimen/amity_padding_xxs">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/imageViewPreviewImageTwo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivPlayImageTwo"
+            amityBackgroundColorAlpha="@{@integer/alpha_fifty}"
+            android:layout_width="@dimen/amity_thirty_six"
+            android:layout_height="@dimen/amity_thirty_six"
+            android:layout_centerInParent="true"
+            android:visibility="gone"
+            app:shapeAppearanceOverlay="@style/AmityCircleImage"
+            android:background="@color/amityTranslucentBackground"
+            android:scaleType="centerInside"
+            android:src="@drawable/amity_ic_play" />
+
+    </RelativeLayout>
+
+
+</LinearLayout>

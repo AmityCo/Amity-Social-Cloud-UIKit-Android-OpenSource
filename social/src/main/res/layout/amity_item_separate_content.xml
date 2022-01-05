@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/amity_one"
+        android:layout_marginTop="@dimen/amity_padding_xs"
+        android:layout_marginBottom="@dimen/amity_padding_xs"
+        android:background="@color/amityColorAthensGray">
+
+    </View>
+
+</layout>

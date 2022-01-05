@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".explore.fragments.EkoTrendingCommunityFragment">
+
+    <TextView
+        android:id="@+id/trendingLabel"
+        style="@style/AmityTextStyleTitleBold"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/amity_padding_m1"
+        android:layout_marginTop="@dimen/amity_padding_m2"
+        android:text="@string/amity_todays_trending"
+        android:textColor="@color/amityColorBase"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvTrendingCommunity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:overScrollMode="never"
+        app:layout_constraintTop_toBottomOf="@id/trendingLabel" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="com.amity.socialcloud.uikit.common.common.views.AmityColorShade" />
+
+        <variable
+            name="disable"
+            type="Boolean" />
+
+        <variable
+            name="delete"
+            type="Boolean" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layoutRecorder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#B3000000"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <com.amity.socialcloud.uikit.common.components.AmityRippleBackground
+            android:id="@+id/rippleBackGround"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:amityRbColor="@color/amityColorBase"
+            app:amityRbDuration="3000"
+            app:amityRbRippleAmount="2"
+            app:amityRbScale="6">
+
+        </com.amity.socialcloud.uikit.common.components.AmityRippleBackground>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Chronometer
+                android:id="@+id/chronometer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp"
+                app:layout_constraintBottom_toTopOf="@id/tvRelease"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/tvRelease"
+                style="@style/AmityTextStyleCaption"
+                textColorShade="@{AmityColorShade.SHADE3}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/amity_padding_l"
+                android:text="@string/amity_release_to_send"
+                android:textColor="@color/amityColorBase"
+                app:layout_constraintBottom_toTopOf="@id/btnRecordAudio"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/btnRecordAudio"
+                style="@style/AmityCircularAvatarStyle"
+                backgroundColorShade="@{AmityColorShade.SHADE1}"
+                amityBackgroundColor="@{disable ? @color/amityColorBase : @color/amityColorPrimary}"
+                amityTintColor="@{disable ? @color/amityColorBase : @color/amityColorWhite}"
+                amityTintShade="@{disable ? AmityColorShade.SHADE3 : AmityColorShade.DEFAULT}"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_marginBottom="@dimen/amity_padding_m1"
+                android:src="@drawable/amity_ic_voice_message"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/btnDelete"
+                style="@style/AmityCircularAvatarStyle"
+                backgroundColorShade="@{AmityColorShade.DEFAULT}"
+                amityBackgroundColor="@{delete ? @color/amityColorAlert : @color/amityColorBase}"
+                amityTintColor="@{delete ? @color/amityColorWhite : @color/amityColorBase}"
+                amityTintShade="@{delete ? AmityColorShade.DEFAULT : AmityColorShade.SHADE3}"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="@dimen/amity_twenty_seven"
+                android:rotation="@{delete ? -15 : 0}"
+                android:src="@drawable/amity_ic_delete"
+                app:layout_constraintBottom_toBottomOf="@id/btnRecordAudio"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/btnRecordAudio" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </FrameLayout>
+
+</layout>

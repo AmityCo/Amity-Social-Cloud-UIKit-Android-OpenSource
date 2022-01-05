@@ -1,0 +1,20 @@
+apply from: "../buildsystem/activity.gradle"
+apply plugin: 'com.android.library'
+
+android {
+    buildTypes {
+        release {
+            consumerProguardFiles 'amity-proguard-rules.pro'
+        }
+        debug {
+            consumerProguardFiles 'amity-proguard-rules.pro'
+        }
+    }
+}
+
+
+dependencies {
+    api project(path: ':social')
+    api project(path: ':chat')
+    api "com.github.AmityCo.Amity-Social-Cloud-SDK-Android:amity-sdk:$amityMessagingSdkVersion"
+}

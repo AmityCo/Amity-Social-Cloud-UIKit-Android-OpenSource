@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_view_more"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/ivAvatar"
+        style="@style/CircularAvatarStyle"
+        android:layout_width="@dimen/amity_forty"
+        android:layout_height="@dimen/amity_forty" />
+
+    <TextView
+        android:id="@+id/tvName"
+        style="@style/AmityTextStyleCaption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/amity_padding_xxs"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="1"
+        android:text="@string/amity_see_all" />
+
+
+</LinearLayout>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="com.amity.socialcloud.uikit.common.common.views.AmityColorShade" />
+        <variable
+            name="user"
+            type="com.amity.socialcloud.sdk.core.user.AmityUser" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivAvatar"
+            backgroundColorShade="@{AmityColorShade.SHADE3}"
+            amityBackgroundColor="@{@color/amityColorPrimary}"
+            app:imageUrl="@{user.avatar.url}"
+            android:layout_width="@dimen/amity_forty"
+            android:layout_height="@dimen/amity_forty"
+            android:layout_marginTop="@dimen/amity_padding_s"
+            android:layout_marginStart="@dimen/amity_padding_m1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/AmityCircleImage" />
+
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            style="@style/AmityTextStyleBodyBold"
+            maxLines="1"
+            android:ellipsize="end"
+            android:text="@{user.displayName}"
+            android:layout_marginHorizontal="@dimen/amity_padding_xs"
+            app:layout_constraintStart_toEndOf="@id/ivAvatar"
+            app:layout_constraintTop_toTopOf="@id/ivAvatar"
+            app:layout_constraintBottom_toBottomOf="@id/ivAvatar"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <View
+            android:id="@+id/divider"
+            backgroundColorShade="@{AmityColorShade.SHADE4}"
+            amityBackgroundColor="@{@color/amityColorBase}"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginHorizontal="@dimen/amity_padding_m1"
+            android:layout_marginTop="@dimen/amity_padding_s"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ivAvatar" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAccept"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            style="@style/AmityMaterialButtonStyle"
+            android:text="@string/amity_accept"
+            android:layout_marginStart="@dimen/amity_padding_m1"
+            android:layout_marginTop="@dimen/amity_padding_s"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btnDecline"
+            app:layout_constraintTop_toBottomOf="@id/divider"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnDecline"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/amity_decline"
+            style="@style/AmityOutlinedButtonStyle"
+            app:cornerRadius="@dimen/amity_four"
+            android:layout_marginStart="@dimen/amity_padding_s"
+            android:layout_marginEnd="@dimen/amity_padding_m1"
+            app:amityButtonStrokeShade="@{AmityColorShade.SHADE3}"
+            android:layout_marginTop="@dimen/amity_padding_s"
+            app:layout_constraintStart_toEndOf="@id/btnAccept"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/divider"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/amity_padding_xs"
+            amityBackgroundColor="@{@color/amityColorBase}"
+            backgroundColorShade="@{AmityColorShade.SHADE4}"
+            android:layout_marginTop="@dimen/amity_padding_s"
+            app:layout_constraintTop_toBottomOf="@id/btnAccept"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

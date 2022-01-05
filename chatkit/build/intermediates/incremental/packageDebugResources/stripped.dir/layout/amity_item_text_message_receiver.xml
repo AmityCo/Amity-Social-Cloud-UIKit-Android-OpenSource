@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+                                                        
+
+    
+
+                                           
+
+                                                                   
+
+                                                 
+
+                                                                         
+
+                 
+                                
+                                                                                             
+
+                 
+                                   
+                                                                           
+           
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:tag="layout/amity_item_text_message_receiver_0" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+
+        <include
+            android:id="@+id/dateHeader"
+            layout="@layout/amity_view_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+                                                                                            
+                                               
+                                                              
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:tag="binding_1"                                                     
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dateHeader">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/ivAvatar"
+                style="@style/CircularAvatarStyle"
+                android:tag="binding_2"                    
+                                                                
+                android:layout_width="@dimen/amity_forty"
+                android:layout_height="@dimen/amity_forty"
+                android:layout_marginStart="@dimen/amity_padding_m1"
+                android:src="@drawable/amity_ic_user"
+                                                                                                  
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvName"
+                style="@style/AmityTextStyleBody"
+                android:tag="binding_3"              
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/amity_padding_s"
+                                                      
+                android:textColor="@color/amityColorBase"
+                                                                                                  
+                app:layout_constraintStart_toEndOf="@id/ivAvatar"
+                app:layout_constraintTop_toTopOf="@id/ivAvatar" />
+
+            <com.ekoapp.ekosdk.uikit.components.EkoReadMoreTextView
+                android:id="@+id/tvMessageIncoming"
+                android:tag="binding_4"                       
+                                   
+                                               
+                                               
+                                       
+                                                    
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/amity_padding_xxs"
+                android:layout_marginEnd="@dimen/amity_sixty_two"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@id/tvName"
+                app:layout_constraintTop_toBottomOf="@id/tvName"
+                app:layout_goneMarginStart="@dimen/amity_sixty_eight" />
+
+            <TextView
+                android:id="@+id/tvTime"
+                android:tag="binding_5"              
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/amity_padding_xxs"
+                android:layout_marginTop="@dimen/amity_padding_xxs"
+                                                       
+                android:textAppearance="?textAppearanceCaption"
+                android:textColor="@color/amityColorBase"
+                app:layout_constraintStart_toStartOf="@id/tvMessageIncoming"
+                app:layout_constraintTop_toBottomOf="@id/tvMessageIncoming" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:alpha="0.5"
+                android:background="@color/amityColorBase"
+                android:tag="binding_6"                                                         
+                app:layout_constraintBottom_toBottomOf="@id/tvMessageIncoming"
+                app:layout_constraintEnd_toEndOf="@id/tvMessageIncoming"
+                app:layout_constraintStart_toStartOf="@id/tvMessageIncoming"
+                app:layout_constraintTop_toTopOf="@id/tvMessageIncoming" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <include
+            layout="@layout/amity_view_msg_deleted"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_sixty_eight"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dateHeader"
+                                             />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+         

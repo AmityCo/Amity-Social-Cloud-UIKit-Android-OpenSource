@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/actionEditComment"
+        android:title="@string/amity_edit_comment"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/actionDeleteComment"
+        android:title="@string/amity_delete_comment"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/actionUnreportComment"
+        android:title="@string/amity_undo_report"
+        app:showAsAction="always" />
+
+</menu>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/amityPlaceHolderColor"
+        android:paddingLeft="@dimen/amity_padding_m1"
+        android:paddingTop="@dimen/amity_padding_s"
+        android:paddingRight="@dimen/amity_padding_m1"
+        android:paddingBottom="@dimen/amity_padding_s"
+        android:text="@string/amity_pending_posts_description"
+        android:textColor="@color/amityColorBase"
+        android:textSize="@dimen/amity_text_size_caption" />
+</layout>

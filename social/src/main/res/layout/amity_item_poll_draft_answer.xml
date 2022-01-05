@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/amity_padding_s"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/poll_linear_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/amity_bg_poll_draft_answer"
+            android:minHeight="@dimen/amity_forty_eight"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/amity_padding_s"
+            android:paddingRight="@dimen/amity_padding_s">
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/answer_edit_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:background="@color/amityTransparentBackground"
+                android:paddingTop="@dimen/amity_padding_xs"
+                android:paddingBottom="@dimen/amity_padding_xs"
+                android:textColor="@color/amityColorBlack"
+                android:textSize="@dimen/amity_text_size_body" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/remove_image_view"
+                android:layout_width="@dimen/amity_thirty_two"
+                android:layout_height="@dimen/amity_thirty_two"
+                android:layout_marginTop="@dimen/amity_padding_xs"
+                android:paddingTop="@dimen/amity_padding_xs"
+                android:paddingBottom="@dimen/amity_padding_xs"
+                android:src="@drawable/amity_ic_filled_cross" />
+
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/error_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/amity_padding_xxs"
+            android:textColor="@color/amityColorAlert"
+            android:textSize="@dimen/amity_text_size_caption"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+</RelativeLayout>

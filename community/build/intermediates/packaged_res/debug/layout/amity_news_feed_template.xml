@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/templateView"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.ekoapp.ekosdk.uikit.community.views.newsfeed.EkoPostItemHeader
+        android:id="@+id/newsFeedHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_marginStart="@dimen/amity_padding_m1"
+        android:layout_marginEnd="@dimen/amity_padding_m1"
+        android:layout_marginTop="@dimen/amity_padding_m3"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/containerBody"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/newsFeedHeader"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <com.ekoapp.ekosdk.uikit.community.views.newsfeed.EkoPostItemFooter
+        android:id="@+id/newsFeedFooter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_marginTop="@dimen/amity_padding_m1"
+        android:layout_marginBottom="@dimen/amity_padding_m1"
+        app:layout_constraintTop_toBottomOf="@id/containerBody" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/amity_padding_xs"
+        android:background="#EBECEF"
+        app:layout_constraintTop_toBottomOf="@id/newsFeedFooter" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

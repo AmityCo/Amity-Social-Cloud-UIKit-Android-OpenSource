@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvCommunitySearch"
+        android:layout_marginHorizontal="@dimen/amity_padding_m1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <TextView
+        android:id="@+id/tvNoResults"
+        style="@style/AmityTextStyleBodyBold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/amity_text_size_title"
+        android:layout_marginTop="@dimen/amity_forty"
+        android:text="@string/amity_no_results"
+        android:textColor="@color/amityColorBase"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"/>
+
+    <androidx.core.widget.ContentLoadingProgressBar
+        android:id="@+id/progressBar"
+        android:layout_marginTop="@dimen/amity_padding_xl"
+        android:indeterminateTint="@color/amityColorPrimary"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="48dp"
+        android:layout_height="48dp" />
+
+</RelativeLayout>

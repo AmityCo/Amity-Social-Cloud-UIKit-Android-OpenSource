@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="amityColorPrimary">@color/upstraColorPrimary</color>
+    <color name="amityColorSecondary">@color/upstraColorSecondary</color>
+    <color name="amityColorAlert">@color/upstraColorAlert</color>
+    <color name="amityColorHighlight">@color/upstraColorHighlight</color>
+    <color name="amityColorBase">@color/upstraColorBase</color>
+    <color name="amityColorBaseInverse">@color/upstraColorBaseInverse</color>
+    <color name="amityMessageBubble">@color/upstraMessageBubble</color>
+    <color name="amityMessageBubbleInverse">@color/upstraMessageBubbleInverse</color>
+</resources>

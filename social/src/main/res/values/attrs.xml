@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="amityAvatarStyle" format="reference" />
+    <attr name="amityFollowButtonStyle" format="reference" />
+    <attr name="amityCommunityNameStyle" format="reference" />
+    <attr name="amityFollowerStyle" format="reference" />
+    <declare-styleable name="AmityCommunityHeader">
+        <attr name="amityAvatarStyle" />
+        <attr name="amityDisplayNameStyle" format="reference" />
+        <attr name="amityPostCountStyle" format="reference" />
+        <attr name="amityMemberCountStyle" format="reference" />
+        <attr name="amityFollowerPreviewStyle" format="reference" />
+        <attr name="amityDescriptionStyle" format="reference" />
+        <attr name="amityFollowButtonStyle" />
+    </declare-styleable>
+    <declare-styleable name="AmityRecommendedCommunity">
+        <attr name="amityAvatarStyle"/>
+        <attr name="amityCommunityNameStyle" />
+        <attr name="amityFollowerStyle" />
+        <attr name="amityFollowButtonStyle" />
+    </declare-styleable>
+
+    <declare-styleable name="AmityTrendingCommunity">
+        <attr name="amityAvatarStyle"/>
+        <attr name="amityCommunityNameStyle" />
+        <attr name="amityCommunityDescriptionStyle" format="reference" />
+        <attr name="amityFollowerStyle" />
+        <attr name="amityFollowButtonStyle" />
+    </declare-styleable>
+</resources>

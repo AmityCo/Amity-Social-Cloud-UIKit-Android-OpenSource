@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.amity.socialcloud.uikit.community.views.newsfeed.AmityPostCommentView
+            android:id="@+id/view_comment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:id="@+id/viewMoreRepliesContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/amity_sixteen"
+            android:background="@drawable/amity_bg_view_replies"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:layout_marginStart="48dp"
+            android:paddingHorizontal="@dimen/amity_padding_xs"
+            android:paddingVertical="@dimen/amity_padding_xxs"
+            tools:visibility="visible">
+
+            <TextView
+                android:id="@+id/textview_view_more_replies"
+                style="@style/AmityTextStyleCaptionBold"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:drawableStart="@drawable/amity_view_replies"
+                android:gravity="center"
+                android:text="@string/amity_view_replies"
+                android:textColor="@color/amityColorBase" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>

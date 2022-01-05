@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <import type="com.amity.socialcloud.uikit.common.common.views.AmityColorShade" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="@dimen/amity_padding_xs"
+        android:paddingHorizontal="@dimen/amity_padding_m1">
+
+        <ImageView
+            android:id="@+id/ivRemove"
+            android:layout_width="20dp"
+            android:layout_height="16dp"
+            android:src="@drawable/amity_ic_remove"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/tvDltMsg"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvDltMsg"
+            style="@style/AmityTextStyleBody"
+            textColorShade="@{AmityColorShade.SHADE2}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_two"
+            android:text="@string/amity_comment_deleted_message"
+            android:textColor="@color/amityColorBase"
+            app:layout_constraintBottom_toBottomOf="@id/ivRemove"
+            app:layout_constraintEnd_toStartOf="@id/tvDeletionTime"
+            app:layout_constraintStart_toEndOf="@id/ivRemove"
+            app:layout_constraintTop_toTopOf="@id/ivRemove" />
+
+        <TextView
+            android:id="@+id/tvDeletionTime"
+            style="@style/AmityTextStyleCaption"
+            textColorShade="@{AmityColorShade.SHADE2}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_padding_xxs"
+            android:layout_marginEnd="@dimen/amity_padding_m1"
+            android:textColor="@color/amityColorBase"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/ivRemove"
+            app:layout_constraintStart_toEndOf="@id/tvDltMsg"
+            app:layout_constraintTop_toTopOf="@id/ivRemove" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

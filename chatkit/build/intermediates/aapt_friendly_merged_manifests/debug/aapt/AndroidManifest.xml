@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.ekoapp.ekosdk.uikit.chat"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="21"
+        android:targetSdkVersion="30" />
+
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <application>
+        <activity
+            android:name="com.ekoapp.ekosdk.uikit.chat.editMessage.EkoEditMessageActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Base.Theme.EkoApp" />
+        <activity
+            android:name="com.ekoapp.ekosdk.uikit.chat.messages.EkoMessageListActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Base.Theme.EkoApp"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name="com.ekoapp.ekosdk.uikit.chat.home.EkoChatHomePageActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Base.Theme.EkoApp" />
+    </application>
+
+</manifest>

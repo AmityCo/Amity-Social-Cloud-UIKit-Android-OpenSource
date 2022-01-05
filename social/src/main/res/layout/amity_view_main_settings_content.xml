@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/rootView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:background="@color/amityColorWhite">
+
+        <ImageView
+            android:id="@+id/ivIcon"
+            android:layout_width="@dimen/amity_padding_l"
+            android:layout_height="@dimen/amity_padding_l"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvTitle"
+            tools:src="@drawable/amity_ic_pen" />
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="@dimen/amity_zero"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingTop="@dimen/amity_padding_xxs"
+            android:textColor="@color/amityColorBase"
+            android:textSize="@dimen/amity_text_size_body"
+            android:layout_marginStart="@dimen/amity_padding_s"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/ivIcon"
+            app:layout_constraintTop_toTopOf="@id/ivIcon"
+            tools:text="Title" />
+
+        <TextView
+            android:id="@+id/tvDescription"
+            android:layout_width="@dimen/amity_zero"
+            android:layout_height="wrap_content"
+            android:ellipsize="none"
+            android:maxLines="2"
+            android:textColor="@color/amityColorShuttleGray"
+            android:textSize="@dimen/amity_text_size_caption"
+            android:layout_marginTop="@dimen/amity_padding_xxs"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/tvTitle"
+            app:layout_constraintTop_toBottomOf="@id/tvTitle"
+            tools:text="Description" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

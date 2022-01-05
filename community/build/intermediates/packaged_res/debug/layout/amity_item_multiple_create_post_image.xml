@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+                                                        
+
+    
+
+                                                                         
+           
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" android:tag="layout/amity_item_multiple_create_post_image_0" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivPhoto"
+            style="@style/CreatePostImageStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/amity_one_hundred_twenty"
+            android:src="@drawable/amity_ic_avatar_placeholder"
+            android:tag="binding_1"                        
+                                                             
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivCross"
+            android:layout_width="@dimen/amity_twenty"
+            android:layout_height="@dimen/amity_twenty"
+            android:layout_margin="@dimen/amity_padding_xs"
+            android:background="@color/amityColorBase"
+            android:scaleType="centerInside"
+            android:src="@drawable/amity_ic_cross_white"
+            android:tag="binding_2"                              
+            app:layout_constraintEnd_toEndOf="@id/ivPhoto"
+            app:layout_constraintTop_toTopOf="@id/ivPhoto"
+            app:shapeAppearanceOverlay="@style/CircleImage" />
+
+        <ProgressBar
+            android:id="@+id/pbImageUpload"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_width="@dimen/amity_eighty"
+            android:layout_height="@dimen/amity_padding_xs"
+            android:max="@integer/maxProgressImageUpload"
+            android:progressBackgroundTint="@android:color/transparent"
+            android:progressTint="@color/amityColorPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivError"
+            android:layout_width="@dimen/amity_twenty_five"
+            android:layout_height="@dimen/amity_twenty_five"
+            android:background="@color/amityColorBase"
+            android:scaleType="centerInside"
+            android:src="@drawable/amity_ic_info"
+            android:tag="binding_3"                              
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/CircleImage" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+         

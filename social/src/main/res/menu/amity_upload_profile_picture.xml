@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/actionPickPicture"
+        android:title="@string/amity_choose_existing"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/actionTakePicture"
+        android:title="@string/amity_take_photo"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/actionCancel"
+        android:title="@string/amity_cancel"
+        app:showAsAction="always" />
+
+</menu>

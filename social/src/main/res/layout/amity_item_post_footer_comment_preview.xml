@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvCommentFooter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="true"
+            android:overScrollMode="never" />
+
+        <LinearLayout
+            android:id="@+id/viewAllCommentContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/amity_bg_view_more_comments"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <TextView
+                style="@style/AmityTextStyleBodyBold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="@dimen/amity_padding_m1"
+                android:text="@string/amity_view_all_comments"
+                android:textColor="@color/amityColorBlack" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</layout>

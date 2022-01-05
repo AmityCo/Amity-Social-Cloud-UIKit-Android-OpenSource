@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="com.amity.socialcloud.uikit.common.common.views.AmityColorShade" />
+
+        <variable
+            name="avatarUrl"
+            type="String" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/lAddedMemberItem"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/amity_forty">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/amAvatar"
+            backgroundColorShade="@{AmityColorShade.SHADE3}"
+            amityBackgroundColor="@{@color/amityColorPrimary}"
+            android:layout_width="@dimen/amity_twenty_eight"
+            android:layout_height="@dimen/amity_twenty_eight"
+            android:layout_marginStart="@dimen/amity_padding_xs"
+            android:scaleType="centerInside"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/AmityCircleImage" />
+
+        <TextView
+            android:id="@+id/amName"
+            style="@style/AmityTextStyleBody"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_six"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/amityColorBase"
+            app:layout_constraintBottom_toBottomOf="@id/amAvatar"
+            app:layout_constraintEnd_toStartOf="@id/amCross"
+            app:layout_constraintStart_toEndOf="@id/amAvatar"
+            app:layout_constraintTop_toTopOf="@id/amAvatar" />
+
+        <ImageView
+            android:id="@+id/amCross"
+            amityFillColor="@{@color/amityColorBase}"
+            amityFillShade="@{AmityColorShade.SHADE4}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_padding_xs"
+            android:layout_marginEnd="@dimen/amity_padding_xs"
+            android:src="@drawable/amity_ic_filled_cross"
+            app:layout_constraintBottom_toBottomOf="@id/amAvatar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/amName"
+            app:layout_constraintTop_toTopOf="@id/amAvatar" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

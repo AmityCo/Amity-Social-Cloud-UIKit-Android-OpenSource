@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/containerBirthdayMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#6661FF"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tvDate"
+            style="@style/AmityTextStyleCaptionBold"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/amity_padding_m1"
+            android:layout_marginTop="@dimen/amity_twenty_eight"
+            android:gravity="center_horizontal|top"
+            android:textColor="@color/upstraColorBaseInverse"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvBirthday"
+            style="@style/AmityTextStyleHeadline"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/amity_padding_m1"
+            android:gravity="center_horizontal|top"
+            android:text="@string/amity_happy_birthday"
+            android:textColor="@color/upstraColorBaseInverse"
+            app:layout_constraintEnd_toEndOf="@id/tvDate"
+            app:layout_constraintStart_toStartOf="@id/tvDate"
+            app:layout_constraintTop_toBottomOf="@id/tvDate" />
+
+        <TextView
+            android:id="@+id/tvName"
+            style="@style/AmityTextStyleHeadline"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:gravity="center_horizontal|top"
+            android:maxLines="2"
+            android:text=""
+            android:textColor="@color/upstraColorBaseInverse"
+            app:layout_constraintEnd_toEndOf="@id/tvDate"
+            app:layout_constraintStart_toStartOf="@id/tvDate"
+            app:layout_constraintTop_toBottomOf="@id/tvBirthday" />
+
+        <TextView
+            android:id="@+id/tvTitle"
+            style="@style/AmityTextStyleCaption"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/amity_padding_s"
+            android:layout_marginTop="@dimen/amity_padding_xs"
+            android:ellipsize="end"
+            android:gravity="center_horizontal|top"
+            android:maxLines="2"
+            android:textColor="@color/upstraColorBaseInverse"
+            app:layout_constraintEnd_toEndOf="@id/tvDate"
+            app:layout_constraintStart_toStartOf="@id/tvDate"
+            app:layout_constraintTop_toBottomOf="@id/tvName" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivAvatar"
+            android:layout_width="@dimen/amity_seventy_two"
+            android:layout_height="@dimen/amity_seventy_two"
+            android:layout_marginTop="@dimen/amity_padding_m1"
+            android:layout_marginBottom="157dp"
+            android:scaleType="centerInside"
+            android:background="#D9E5FC"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvTitle"
+            app:shapeAppearanceOverlay="@style/AmityCircleImage" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:scaleType="fitXY"
+        android:src="@drawable/amity_ic_birthday_curve"
+        app:layout_constraintBottom_toBottomOf="@id/containerBirthdayMessage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/amity_six"
+        android:src="@drawable/amity_ic_birthday_illustration"
+        app:layout_constraintBottom_toTopOf="@id/tvBirthdayWish"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tvBirthdayWish"
+        style="@style/AmityTextStyleTitleBold"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/amity_thirty_eight"
+        android:gravity="center"
+        android:text="@string/amity_birthday_wish"
+        android:textColor="@color/upstraColorBase"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/containerBirthdayMessage" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

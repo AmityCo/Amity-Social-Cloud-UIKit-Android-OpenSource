@@ -1,0 +1,54 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:id="@+id/rootViewButtonPendingPosts"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/amity_padding_m1"
+        tools:background="@color/amityColorWhite">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/amity_one"
+            android:background="@color/amityColorAthensGray" />
+
+        <LinearLayout
+            android:id="@+id/viewButtonPendingPosts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/amity_padding_s"
+            android:paddingBottom="@dimen/amity_padding_s"
+            android:weightSum="2">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_accept"
+                style="@android:style/Widget.Material.Button"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/amity_forty"
+                android:layout_marginStart="@dimen/amity_padding_m1"
+                android:layout_marginEnd="@dimen/amity_padding_s"
+                android:layout_weight="1"
+                android:background="@drawable/amity_btn_active"
+                android:text="@string/amity_accept"
+                android:textAllCaps="false"
+                android:textColor="@color/amityColorWhite"
+                android:textSize="@dimen/amity_text_size_body" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_decline"
+                style="@android:style/Widget.Material.Button"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/amity_forty"
+                android:layout_marginEnd="@dimen/amity_padding_m1"
+                android:layout_weight="1"
+                android:background="@drawable/amity_btn_inactive"
+                android:text="@string/amity_decline"
+                android:textAllCaps="false"
+                android:textColor="@color/amityColorShuttleGray"
+                android:textSize="@dimen/amity_text_size_body" />
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>

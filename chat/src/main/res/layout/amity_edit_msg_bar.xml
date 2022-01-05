@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="com.amity.socialcloud.uikit.common.common.views.AmityColorShade" />
+
+        <import type="com.amity.socialcloud.uikit.common.common.views.AmityColorPaletteUtil" />
+
+        <variable
+            name="viewModel"
+            type="com.amity.socialcloud.uikit.chat.editMessage.AmityEditMessageViewModel" />
+    </data>
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/amity_thirty_two"
+        app:contentInsetStart="@dimen/amity_zero">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/icCross"
+                android:layout_width="@dimen/amity_fourteen"
+                android:layout_height="@dimen/amity_fourteen"
+                android:layout_marginStart="@dimen/amity_padding_m1"
+                android:src="@drawable/amity_ic_cross"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                style="@style/AmityTextStyleTitleBold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/amity_padding_m1"
+                android:text="@string/amity_edit_msg"
+                app:layout_constraintBottom_toBottomOf="@id/icCross"
+                app:layout_constraintStart_toEndOf="@id/icCross"
+                app:layout_constraintTop_toTopOf="@id/icCross" />
+
+            <TextView
+                android:id="@+id/tvSave"
+                style="@style/AmityTextStyleBody"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/amity_padding_m1"
+                android:enabled="@{viewModel.isSaveEnabled()}"
+                android:onClick="@{() -> viewModel.saveMessage()}"
+                android:text="@string/amity_save"
+                android:textAllCaps="true"
+                android:textColor="@{viewModel.isSaveEnabled() ? viewModel.saveColor : AmityColorPaletteUtil.INSTANCE.getColor(viewModel.saveColor, AmityColorShade.SHADE2)}"
+                app:layout_constraintBottom_toBottomOf="@id/icCross"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/icCross" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.appbar.MaterialToolbar>
+</layout>

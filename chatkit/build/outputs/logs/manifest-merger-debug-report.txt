@@ -1,0 +1,69 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:2:1-23:12
+INJECTED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:2:1-23:12
+INJECTED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:2:1-23:12
+INJECTED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:2:1-23:12
+INJECTED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:2:1-23:12
+INJECTED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:2:1-23:12
+INJECTED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:2:1-23:12
+	package
+		ADDED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:3:5-43
+		INJECTED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml
+		INJECTED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml
+	android:versionName
+		INJECTED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml
+		ADDED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:2:1-23:12
+		INJECTED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml
+	android:versionCode
+		INJECTED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml
+		ADDED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:2:1-23:12
+		INJECTED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:2:11-69
+uses-permission#android.permission.RECORD_AUDIO
+ADDED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:5:5-71
+	android:name
+		ADDED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:5:22-68
+application
+ADDED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:7:5-21:19
+activity#com.ekoapp.ekosdk.uikit.chat.editMessage.EkoEditMessageActivity
+ADDED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:8:9-11:56
+	android:screenOrientation
+		ADDED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:10:13-49
+	android:theme
+		ADDED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:11:13-53
+	android:name
+		ADDED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:9:13-63
+activity#com.ekoapp.ekosdk.uikit.chat.messages.EkoMessageListActivity
+ADDED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:12:9-16:58
+	android:screenOrientation
+		ADDED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:14:13-49
+	android:windowSoftInputMode
+		ADDED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:16:13-55
+	android:theme
+		ADDED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:15:13-53
+	android:name
+		ADDED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:13:13-60
+activity#com.ekoapp.ekosdk.uikit.chat.home.EkoChatHomePageActivity
+ADDED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:17:9-20:56
+	android:screenOrientation
+		ADDED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:19:13-49
+	android:theme
+		ADDED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:20:13-53
+	android:name
+		ADDED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml:18:13-57
+uses-sdk
+INJECTED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml
+INJECTED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml
+INJECTED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml
+INJECTED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml
+		ADDED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml
+		INJECTED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml
+		ADDED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml
+		INJECTED from /Users/trusteko/Documents/GitHub/UpstraUIKitAndroid/chatkit/src/main/AndroidManifest.xml

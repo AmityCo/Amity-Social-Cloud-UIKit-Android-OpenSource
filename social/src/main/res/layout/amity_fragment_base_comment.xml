@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="replyingToUser"
+            type="String" />
+
+        <variable
+            name="showReplyingTo"
+            type="Boolean" />
+
+        <import type="com.amity.socialcloud.uikit.common.common.views.AmityColorShade" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".newsfeed.activity.AmityEditCommentActivity">
+
+        <TextView
+            android:id="@+id/textview_reply_to"
+            style="@style/AmityTextStyleTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:background="@color/amityColorAthensGray"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingStart="@dimen/amity_padding_m1"
+            android:paddingTop="@dimen/amity_ten"
+            android:paddingEnd="@dimen/amity_padding_m1"
+            android:paddingBottom="@dimen/amity_ten"
+            android:text="@{String.format(@string/amity_replying_to, replyingToUser)}"
+            android:textColor="@color/amityColorShuttleGray"
+            android:visibility="@{showReplyingTo ? View.VISIBLE : View.GONE}"
+            tools:text="Replying to A very very very very long name" />
+
+        <com.amity.socialcloud.uikit.community.views.comment.AmityCommentComposeView
+            android:id="@+id/etPostComment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:layout_below="@+id/textview_reply_to"
+            android:background="@android:color/transparent"
+            android:padding="@dimen/amity_padding_m1"
+            app:layout_constraintTop_toBottomOf="@+id/textview_reply_to"
+            app:textColorHintShade="@{AmityColorShade.SHADE2}" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_user_mention"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/amityColorWhite"
+                android:clipToPadding="false"
+                android:overScrollMode="never"
+                android:paddingBottom="@dimen/amity_eight"
+                app:layout_constraintDimensionRatio="375:280"
+                app:layout_constraintHeight_max="280dp"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </RelativeLayout>
+</layout>

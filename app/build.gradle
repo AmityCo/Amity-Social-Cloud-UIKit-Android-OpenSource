@@ -1,0 +1,104 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'io.gitlab.arturbosch.detekt'
+apply from: "../buildsystem/jacoco.gradle"
+
+android {
+    compileSdkVersion rootProject.compileSdkVersion
+    buildToolsVersion "30.0.3"
+
+    defaultConfig {
+        applicationId "com.ekoapp.ekouisdk"
+        minSdkVersion rootProject.minSdkVersion
+        targetSdkVersion rootProject.targetSdkVersion
+        versionCode 1
+        versionName "1.0"
+        multiDexEnabled true
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
+    testOptions {
+        execution 'ANDROIDX_TEST_ORCHESTRATOR'
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled false
+            debuggable true
+            testCoverageEnabled true
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    lintOptions {
+        quiet true
+        xmlReport false
+        checkDependencies false
+        abortOnError true
+        checkAllWarnings true
+        warningsAsErrors true
+
+        disable "GoogleAppIndexingWarning"
+        disable "NewerVersionAvailable"
+        disable "UnusedResources"
+        disable "LogNotTimber", "StringFormatInTimber", "ThrowableNotAtBeginning", "BinaryOperationInTimber",
+                "TimberArgCount", "TimberArgTypes", "TimberTagLength", "TimberExceptionLogging"
+    }
+
+    dexOptions {
+        preDexLibraries false
+        maxProcessCount 4
+        javaMaxHeapSize "2g"
+    }
+
+    // Always show the result of every unit test, even if it passes.
+    testOptions {
+        unitTests.returnDefaultValues = true
+        unitTests {
+            includeAndroidResources = true
+        }
+        unitTests.all {
+            testLogging {
+                events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
+            }
+        }
+
+        //execution 'ANDROIDX_TEST_ORCHESTRATOR'
+    }
+    buildFeatures {
+        dataBinding = true
+    }
+
+}
+
+dependencies {
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk$rootProject.kotlinJDKVersion:$kotlin_version"
+
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    sharedSupportLibraries dependencies
+
+    implementation project(path: ':common')
+    implementation project(path: ':social')
+    implementation project(path: ':chat')
+
+    testImplementation 'junit:junit:4.13'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+}

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="amity_general_search">Search</string>
+    <string name="amity_read_more">...Read&#160;More</string>
+    <string name="amity_feed">Feed</string>
+    <string name="amity_gallery">Gallery</string>
+    <string name="amity_follow">Follow</string>
+    <string name="amity_followers">Followers</string>
+    <string name="amity_search">Search</string>
+    <string name="amity_search_results">Search results</string>
+    <string name="amity_left_icon">left icon</string>
+    <string name="amity_center_icon">center icon</string>
+    <string name="amity_right_icon">right icon</string>
+    <string name="amity_choose_image">Choose Image</string>
+    <string name="amity_edit_post">Edit Post</string>
+    <string name="amity_delete_post">Delete Post</string>
+    <string name="amity_save">Save</string>
+    <string name="amity_saved">Saved.</string>
+    <string name="amity_delete_msg">Delete this message?</string>
+    <string name="amity_dlt_dlg_body">Message will also be permanently removed from your friend\'s devices.</string>
+    <string name="amity_failed_dlg_body">Your message was not sent</string>
+    <string name="amity_cancel">Cancel</string>
+    <string name="amity_day">day</string>
+    <string name="amity_hour">hour</string>
+    <string name="amity_min">min</string>
+    <string name="amity_just_now">just now</string>
+    <string name="amity_save_caps">SAVE</string>
+    <string name="amity_anonymous">Anonymous</string>
+    <string name="amity_edit_profile">Edit Profile</string>
+    <string name="amity_message">Message</string>
+    <string name="amity_display_name">Display Name</string>
+    <string name="amity_report_msg">Report sent.</string>
+    <string name="amity_max_image_selected">Reached max image selection limit</string>
+    <string name="amity_unable_to_delete">Unable to delete the file</string>
+    <string name="amity_try_again">Please try again</string>
+    <string name="amity_image_preview_title">%1$d/%2$d</string>
+    <string name="amity_release_to_send">Release to send</string>
+    <plurals name="amity_number_of_days">
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
+    <plurals name="amity_number_of_hours">
+        <item quantity="one">%d hour</item>
+        <item quantity="other">%d hours</item>
+    </plurals>
+    <plurals name="amity_number_of_mins">
+        <item quantity="one">%d min</item>
+        <item quantity="other">%d mins</item>
+    </plurals>
+    <string name="amity_time">0:%1s</string>
+    <string name="amity_ok">OK</string>
+    <string name="amity_remove_from_community">Remove from community</string>
+    <string name="amity_no_permission_title">Unable to perform this action</string>
+    <string name="amity_no_permission_message">You no longer have permission to make any changes in this community</string>
+    <string name="amity_downloading_file">Downloading file</string>
+    <string name="amity_download_complete">Download complete.</string>
+    <string name="amity_following_count">following</string>
+    <string name="amity_remove_follower">Remove %s from follower?</string>
+    <string name="amity_remove_follower_msg">We won’t notify %s that they’ve been remove from your followers</string>
+</resources>

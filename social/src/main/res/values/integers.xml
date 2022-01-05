@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="category_grid_item">2</integer>
+    <integer name="maxLineTextOnlyFeed">8</integer>
+    <integer name="maxLineImageOnlyFeed">3</integer>
+    <integer name="maxLineFileOnlyFeed">3</integer>
+    <integer name="maxCharacterNewsFeed">30</integer>
+    <integer name="max_character_create_post">30</integer>
+    <integer name="alpha_fifty">128</integer>
+    <integer name="maxProgressImageUpload">100</integer>
+</resources>
