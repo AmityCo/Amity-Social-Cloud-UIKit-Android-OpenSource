@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item
-        android:id="@+id/actionReportPost"
-        android:title="@string/amity_report_has_been_sent"
-        app:showAsAction="always" />
-</menu>
