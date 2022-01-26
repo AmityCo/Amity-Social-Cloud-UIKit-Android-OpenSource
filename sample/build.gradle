@@ -3,7 +3,6 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.gms.google-services'
-apply plugin: 'com.github.sgtsilvio.gradle.android-retrofix'
 
 android {
     compileSdkVersion 30
@@ -14,7 +13,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
-        versionName "2.8.0"
+        versionName "2.9.0"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -75,9 +74,6 @@ dependencies {
 
     implementation 'com.afollestad.material-dialogs:core:3.3.0'
     implementation 'com.afollestad.material-dialogs:input:3.3.0'
-
-    implementation 'net.sourceforge.streamsupport:android-retrostreams:1.7.4'
-    implementation 'net.sourceforge.streamsupport:android-retrofuture:1.7.4'
 
     implementation "com.github.AmityCo.Amity-Social-Cloud-SDK-Android:amity-push-fcm:$amityMessagingSdkVersion"
 }

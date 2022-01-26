@@ -1,4 +1,3 @@
-include ':logging'
 include ':amity-uikit'
 rootProject.name = 'AmityUIKitAndroid'
 //include ':app'

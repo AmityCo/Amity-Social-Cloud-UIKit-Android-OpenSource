@@ -7,11 +7,10 @@ buildscript {
         compileSdkVersion = 30
         kotlinJDKVersion = "8"
         gradleBuildVersion = '4.2.2'
-        detektBuildVersion = "1.9.1"
         kotlin_version = "1.4.21"
         lifecycleExtensionVersion = "2.0.0"
         mockkVersion = "1.10.0"
-        amityMessagingSdkVersion = '5.9.0'
+        amityMessagingSdkVersion = '5.10.0'
         amityRxLifeCycleVersion = '1.1.1'
 
         jacocoVersion = '0.8.5'
@@ -50,7 +49,6 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jacoco:org.jacoco.core:$jacocoVersion"
         classpath 'com.google.gms:google-services:4.3.10'
-        classpath "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:$detektBuildVersion"
         classpath 'gradle.plugin.com.github.sgtsilvio.gradle:android-retrofix:0.4.1'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -65,35 +63,6 @@ allprojects {
         maven {
             url "https://repo.maven.apache.org/maven2/"
         }
-    }
-
-    apply plugin: "io.gitlab.arturbosch.detekt"
-
-    dependencies {
-        detekt "io.gitlab.arturbosch.detekt:detekt-formatting:$detektBuildVersion"
-        detekt "io.gitlab.arturbosch.detekt:detekt-cli:$detektBuildVersion"
-    }
-
-    detekt {
-        toolVersion = "$detektBuildVersion"
-        input = files("$projectDir")
-        parallel = true
-        config = files("$rootDir/detekt.yml")
-        baseline = file("$rootDir/baseline.xml")
-    }
-
-    task detektProjectBaseline(type: io.gitlab.arturbosch.detekt.DetektCreateBaselineTask) {
-        description = "Overrides current baseline."
-        ignoreFailures.set(true)
-        parallel.set(true)
-        buildUponDefaultConfig.set(true)
-        setSource(files(rootDir))
-        config.setFrom(files("$rootDir/detekt.yml"))
-        baseline.set(file("$rootDir/baseline.xml"))
-        include("**/*.kt")
-        include("**/*.kts")
-        exclude("**/resources/**")
-        exclude("**/build/**")
     }
 }
 

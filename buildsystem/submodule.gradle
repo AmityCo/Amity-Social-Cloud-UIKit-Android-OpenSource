@@ -2,7 +2,6 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'io.gitlab.arturbosch.detekt'
 apply from: "../buildsystem/jacoco.gradle"
 
 android {
@@ -54,7 +53,7 @@ android {
         quiet true
         xmlReport false
         checkDependencies false
-        abortOnError true
+        abortOnError false
         checkAllWarnings true
         warningsAsErrors true
 
