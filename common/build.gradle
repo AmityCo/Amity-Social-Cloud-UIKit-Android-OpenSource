@@ -10,7 +10,6 @@ android {
 }
 
 dependencies {
-    implementation project(path: ':logging')
     implementation 'commons-io:commons-io:2.6'
     api 'com.jakewharton.timber:timber:4.7.1'
 }

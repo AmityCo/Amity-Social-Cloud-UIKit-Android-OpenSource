@@ -12,6 +12,7 @@ import com.amity.socialcloud.sdk.chat.AmityChatClient
 import com.amity.socialcloud.uikit.chat.home.AmityChatHomePageActivity
 import com.amity.socialcloud.uikit.chat.messages.AmityMessageListActivity
 import com.amity.socialcloud.uikit.community.home.activity.AmityCommunityHomePageActivity
+import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityCustomPostRankingFeedActivity
 import com.amity.socialcloud.uikit.community.utils.AmityCommunityNavigation
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -23,6 +24,11 @@ class AmityFeatureListActivity : AppCompatActivity() {
         setContentView(R.layout.amity_activity_feature_list)
         communityHome.setOnClickListener {
             val communityIntent = Intent(this, AmityCommunityHomePageActivity::class.java)
+            startActivity(communityIntent)
+        }
+
+        customRankingFeed.setOnClickListener {
+            val communityIntent = Intent(this, AmityCustomPostRankingFeedActivity::class.java)
             startActivity(communityIntent)
         }
 
@@ -48,7 +54,6 @@ class AmityFeatureListActivity : AppCompatActivity() {
             startActivity(Intent(this, AmityPostCreatorSettingsActivity::class.java))
         }
     }
-
 
     private fun presentJoinDialog(callback: InputCallback) {
         MaterialDialog(this).show {

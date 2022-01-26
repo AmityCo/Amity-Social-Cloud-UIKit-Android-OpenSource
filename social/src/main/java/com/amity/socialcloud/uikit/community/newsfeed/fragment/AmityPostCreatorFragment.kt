@@ -74,10 +74,9 @@ class AmityPostCreatorFragment : AmityBaseCreatePostFragment() {
             .subscribe()
         compositeDisposable.add(disposable)
     }
-
-    private fun showPendingPostsDialog(post: AmityPost) {
-        AmityAlertDialogUtil.showDialog(
-            requireContext(),
+    
+    private fun showPendingPostsDialog (post: AmityPost) {
+        AmityAlertDialogUtil.showDialog(requireContext(),
             getString(R.string.amity_create_post_pending_post_title_dialog),
             getString(R.string.amity_create_post_pending_post_message_dialog),
             getString(R.string.amity_ok),
@@ -92,6 +91,7 @@ class AmityPostCreatorFragment : AmityBaseCreatePostFragment() {
                 })
         }
     }
+
 
     private fun handleCreatePostSuccessResponse(post: AmityPost) {
         val resultIntent = Intent("postCreation")
