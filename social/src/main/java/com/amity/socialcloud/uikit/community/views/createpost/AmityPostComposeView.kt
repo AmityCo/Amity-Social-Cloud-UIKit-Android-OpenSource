@@ -54,9 +54,8 @@ class AmityPostComposeView : MentionsEditText {
 
     private fun parseStyle(attrs: AttributeSet) {
         tokenizer = null
-        style = AmityPostComposeViewStyle(context, attrs)
+        style = AmityPostComposeViewStyle(context, attrs).apply { mentionColor = R.color.upstraColorPrimary }
         applyStyle()
-        setMentionConfig()
 
         this.doAfterTextChanged { text ->
             if (!text.isNullOrEmpty() && text.length > CHARACTERS_LIMIT) {
@@ -68,11 +67,11 @@ class AmityPostComposeView : MentionsEditText {
         }
     }
 
-    private fun setMentionConfig() {
+    private fun setMentionConfig(mentionColor: Int) {
         setMentionSpanConfig(
             MentionSpanConfig.Builder()
                 .setMentionTextColor(
-                    ContextCompat.getColor(context, R.color.upstraColorPrimary)
+                    ContextCompat.getColor(context, mentionColor)
                 ).build()
         )
     }
@@ -122,6 +121,7 @@ class AmityPostComposeView : MentionsEditText {
         setBackgroundColor(style.backgroundColor)
         setPadding(style.padding)
         setDefaultPostHint()
+        setMentionConfig(style.mentionColor)
     }
 
     fun setDefaultPostHint() {

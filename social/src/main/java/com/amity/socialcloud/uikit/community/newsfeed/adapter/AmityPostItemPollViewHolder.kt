@@ -26,23 +26,11 @@ class AmityPostItemPollViewHolder(itemView: View) : AmityPostContentViewHolder(i
     override fun bind(post: AmityPost) {
         val context = itemView.context
         val binding = AmityItemPollPostBinding.bind(itemView)
-
+        setPostTextToTextView(binding.questionTextView, post, showFullContent)
         val data = post.getChildren()[0].getData() as AmityPost.Data.POLL
         data.getPoll()
             .distinctUntilChanged()
             .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext {
-                binding.questionTextView.text = it.getQuestion()
-                if (showFullContent) {
-                    binding.questionTextView.showCompleteText()
-                    binding.questionTextView.setOnClickListener(null)
-                } else {
-                    binding.questionTextView.setOnClickListener {
-                        binding.questionTextView.showCompleteText()
-                        binding.questionTextView.setOnClickListener(null)
-                    }
-                }
-            }
             .doOnNext {
                 when {
                     AmityPoll.Status.OPEN == it.getStatus() -> {

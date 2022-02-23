@@ -137,6 +137,7 @@
     <string name="amity_post_characters_limit_error_title">Unable to type text into post</string>
     <string name="amity_comment_characters_limit_error_title">Unable to type text into comment</string>
     <string name="amity_characters_limit_error_msg">You have reached 50,000 characters limit.</string>
+    <string name="amity_characters_limit_dynamic_error_msg">You have reached %,d characters limit.</string>
     <string name="amity_unable_turn_off_post_review_title">Unable to turn off post review</string>
     <string name="amity_unable_turn_on_post_review_title">Unable to turn on post review</string>
     <string name="amity_something_went_wrong_pls_try">Something went wrong. Please try again later.</string>

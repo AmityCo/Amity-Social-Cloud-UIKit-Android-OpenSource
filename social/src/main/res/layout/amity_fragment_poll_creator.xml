@@ -1,248 +1,275 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingLeft="@dimen/amity_padding_m1"
-    android:paddingRight="@dimen/amity_padding_m1"
-    tools:context=".newsfeed.activity.AmityPollPostCreatorActivity">
+    android:layout_height="wrap_content">
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/main_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/amity_padding_m1"
+        android:paddingRight="@dimen/amity_padding_m1"
+        tools:context=".newsfeed.activity.AmityPollPostCreatorActivity">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/amity_padding_m3"
             android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/question_title_text_view"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/amity_poll_question"
-                    android:textColor="@color/amityColorBlack"
-                    android:textSize="@dimen/amity_text_size_title"
-                    android:textStyle="bold" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/question_count_text_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:textColor="@color/amityColorShuttleGray"
-                    android:textSize="@dimen/amity_text_size_caption" />
-
-            </LinearLayout>
-
-            <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/question_edit_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:hint="@string/amity_poll_question_hint"
-                android:paddingTop="@dimen/amity_padding_m1"
-                android:paddingBottom="@dimen/amity_padding_m1"
-                android:textColor="@color/amityColorBlack"
-                android:textSize="@dimen/amity_text_size_body" />
-
-            <View
-                android:id="@+id/question_divider"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/amityColorAthensGray" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/question_error_text_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/amity_padding_xs"
-                android:text="@string/amity_poll_question_error"
-                android:textColor="@color/amityColorAlert"
-                android:textSize="@dimen/amity_text_size_caption"
-                android:visibility="gone" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/amity_padding_m3"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/answer_title_text_view"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/amity_poll_answer"
-                    android:textColor="@color/amityColorBlack"
-                    android:textSize="@dimen/amity_text_size_title"
-                    android:textStyle="bold" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/answer_count_text_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:textColor="@color/amityColorShuttleGray"
-                    android:textSize="@dimen/amity_text_size_caption" />
-
-            </LinearLayout>
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/amity_padding_m1"
-                android:text="@string/amity_poll_answer_hint"
-                android:textColor="@color/amityColorShuttleGray"
-                android:textSize="@dimen/amity_text_size_title" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/answer_recycler_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:nestedScrollingEnabled="false" />
-
-            <LinearLayout
-                android:id="@+id/add_answer_linear_layout"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/amity_forty"
-                android:background="@drawable/amity_bg_poll_add_draft_answer"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="@dimen/amity_twenty_four"
-                    android:layout_height="@dimen/amity_twenty_four"
-                    android:layout_marginEnd="@dimen/amity_padding_xxs"
-                    android:src="@drawable/amity_ic_add" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/amity_poll_add_answer"
-                    android:textColor="@color/amityColorBlack"
-                    android:textSize="@dimen/amity_text_size_body" />
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
                 android:layout_marginTop="@dimen/amity_padding_m3"
-                android:background="@color/amityColorAthensGray" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/amity_padding_m3"
-            android:orientation="horizontal">
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:orientation="vertical">
 
-                <androidx.appcompat.widget.AppCompatTextView
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/amity_poll_multiple_answers"
-                    android:textColor="@color/amityColorBlack"
-                    android:textSize="@dimen/amity_text_size_title"
-                    android:textStyle="bold" />
+                    android:orientation="horizontal">
 
-                <androidx.appcompat.widget.AppCompatTextView
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/question_title_text_view"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/amity_poll_question"
+                        android:textColor="@color/amityColorBlack"
+                        android:textSize="@dimen/amity_text_size_title"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/question_count_text_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:textColor="@color/amityColorShuttleGray"
+                        android:textSize="@dimen/amity_text_size_caption" />
+
+                </LinearLayout>
+
+                <com.amity.socialcloud.uikit.community.views.createpost.AmityPostComposeView
+                    android:id="@+id/question_edit_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
-                    android:hint="@string/amity_poll_multiple_answers_hint"
+                    android:hint="@string/amity_poll_question_hint"
+                    android:paddingTop="@dimen/amity_padding_m1"
+                    android:paddingBottom="@dimen/amity_padding_m1"
                     android:textColor="@color/amityColorBlack"
                     android:textSize="@dimen/amity_text_size_body" />
 
+                <View
+                    android:id="@+id/question_divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/amityColorAthensGray" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/question_error_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/amity_padding_xs"
+                    android:text="@string/amity_poll_question_error"
+                    android:textColor="@color/amityColorAlert"
+                    android:textSize="@dimen/amity_text_size_caption"
+                    android:visibility="gone" />
+
             </LinearLayout>
 
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/multiple_answer_switch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="@dimen/amity_padding_m1"
-            android:background="@color/amityColorAthensGray" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/amity_padding_m3"
-            android:layout_marginBottom="@dimen/amity_padding_m3"
-            android:orientation="vertical">
-
-            <androidx.appcompat.widget.AppCompatTextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/amity_poll_closed_in"
-                android:textColor="@color/amityColorBlack"
-                android:textSize="@dimen/amity_text_size_title"
-                android:textStyle="bold" />
+                android:layout_marginTop="@dimen/amity_padding_m3"
+                android:orientation="vertical">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/amity_padding_m1"
-                android:background="@color/amityTransparentBackground"
-                android:hint="@string/amity_poll_closed_in_hint"
-                android:textColor="@color/amityColorBlack"
-                android:textSize="@dimen/amity_text_size_body" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
-            <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/closed_in_edit_text"
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/answer_title_text_view"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/amity_poll_answer"
+                        android:textColor="@color/amityColorBlack"
+                        android:textSize="@dimen/amity_text_size_title"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/answer_count_text_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:textColor="@color/amityColorShuttleGray"
+                        android:textSize="@dimen/amity_text_size_caption" />
+
+                </LinearLayout>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/amity_padding_m1"
+                    android:text="@string/amity_poll_answer_hint"
+                    android:textColor="@color/amityColorShuttleGray"
+                    android:textSize="@dimen/amity_text_size_title" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/answer_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:nestedScrollingEnabled="false" />
+
+                <LinearLayout
+                    android:id="@+id/add_answer_linear_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/amity_forty"
+                    android:background="@drawable/amity_bg_poll_add_draft_answer"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="@dimen/amity_twenty_four"
+                        android:layout_height="@dimen/amity_twenty_four"
+                        android:layout_marginEnd="@dimen/amity_padding_xxs"
+                        android:src="@drawable/amity_ic_add" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/amity_poll_add_answer"
+                        android:textColor="@color/amityColorBlack"
+                        android:textSize="@dimen/amity_text_size_body" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/amity_padding_m3"
+                    android:background="@color/amityColorAthensGray" />
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/amityTransparentBackground"
-                android:hint="@string/amity_poll_closed_in_dialog"
-                android:inputType="number"
-                android:textColor="@color/amityColorBlack"
-                android:textSize="@dimen/amity_text_size_body" />
+                android:layout_marginTop="@dimen/amity_padding_m3"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/amity_poll_multiple_answers"
+                        android:textColor="@color/amityColorBlack"
+                        android:textSize="@dimen/amity_text_size_title"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:hint="@string/amity_poll_multiple_answers_hint"
+                        android:textColor="@color/amityColorBlack"
+                        android:textSize="@dimen/amity_text_size_body" />
+
+                </LinearLayout>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/multiple_answer_switch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
 
             <View
-                android:id="@+id/closed_in_divider"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginTop="@dimen/amity_padding_m1"
                 android:background="@color/amityColorAthensGray" />
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/closed_in_error_text_view"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/amity_padding_xs"
-                android:text="@string/amity_poll_closed_in_error"
-                android:textColor="@color/amityColorAlert"
-                android:textSize="@dimen/amity_text_size_caption"
-                android:visibility="gone" />
+                android:layout_marginTop="@dimen/amity_padding_m3"
+                android:layout_marginBottom="@dimen/amity_padding_m3"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/amity_poll_closed_in"
+                    android:textColor="@color/amityColorBlack"
+                    android:textSize="@dimen/amity_text_size_title"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/amity_padding_m1"
+                    android:background="@color/amityTransparentBackground"
+                    android:hint="@string/amity_poll_closed_in_hint"
+                    android:textColor="@color/amityColorBlack"
+                    android:textSize="@dimen/amity_text_size_body" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/closed_in_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/amityTransparentBackground"
+                    android:hint="@string/amity_poll_closed_in_dialog"
+                    android:inputType="number"
+                    android:textColor="@color/amityColorBlack"
+                    android:textSize="@dimen/amity_text_size_body" />
+
+                <View
+                    android:id="@+id/closed_in_divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/amity_padding_m1"
+                    android:background="@color/amityColorAthensGray" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/closed_in_error_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/amity_padding_xs"
+                    android:text="@string/amity_poll_closed_in_error"
+                    android:textColor="@color/amityColorAlert"
+                    android:textSize="@dimen/amity_text_size_caption"
+                    android:visibility="gone" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
-    </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
-</androidx.core.widget.NestedScrollView>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_user_mention"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:background="@color/amityColorWhite"
+            android:paddingBottom="@dimen/amity_eight"
+            android:overScrollMode="never"
+            app:layout_constraintHeight_max="280dp"
+            app:layout_constraintDimensionRatio="375:280"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</RelativeLayout>

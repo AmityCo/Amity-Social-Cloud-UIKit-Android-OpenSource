@@ -28,6 +28,10 @@ open class AmityPostContentViewHolder(itemView: View) : RecyclerView.ViewHolder(
 
     internal fun setPostText(data: AmityPost, showCompleteText: Boolean) {
         val tvPost = itemView.findViewById<AmityExpandableTextView>(R.id.tvFeed)
+        setPostTextToTextView(tvPost, data, showCompleteText)
+    }
+    
+    internal fun setPostTextToTextView(tvPost: AmityExpandableTextView, data: AmityPost, showCompleteText: Boolean) {
         tvPost.text = getHighlightTextUserMentions(data)
         if (showCompleteText) {
             tvPost.showCompleteText()

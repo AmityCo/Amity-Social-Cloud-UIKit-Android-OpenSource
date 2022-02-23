@@ -15,9 +15,10 @@ class AmityMyTimelineViewModel : AmityFeedViewModel() {
 
     @ExperimentalPagingApi
     override fun getFeed(onPageLoaded: (posts: PagingData<AmityBasePostItem>) -> Unit): Completable {
-        val feedRepository: AmityFeedRepository = AmitySocialClient.newFeedRepository()
-        return feedRepository
-            .getMyFeed()
+        return AmitySocialClient
+            .newPostRepository()
+            .getPosts()
+            .targetMe()
             .includeDeleted(false)
             .build()
             .getPagingData()

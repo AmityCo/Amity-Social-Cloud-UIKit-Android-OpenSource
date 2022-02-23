@@ -12,7 +12,7 @@ class MentionViewWordTokenizer {
     private object Builder {
         fun create(): WordTokenizerConfig.Builder {
             return WordTokenizerConfig.Builder()
-                .setWordBreakChars(" ")
+                .setWordBreakChars(" \n")
                 .setExplicitChars(AmityUserMention.CHAR_MENTION)
                 .setMaxNumKeywords(1)
                 .setThreshold(1)

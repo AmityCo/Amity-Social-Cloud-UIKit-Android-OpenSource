@@ -1,5 +1,5 @@
 include ':amity-uikit'
-rootProject.name = 'AmityUIKitAndroid'
+rootProject.name = 'UpstraUIKitAndroid'
 //include ':app'
 include ':chat'
 include ':sample'
