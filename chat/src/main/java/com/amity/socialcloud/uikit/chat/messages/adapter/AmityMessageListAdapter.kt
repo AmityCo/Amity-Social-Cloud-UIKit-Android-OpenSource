@@ -213,7 +213,7 @@ open class AmityMessageListAdapter(
 
         }
 
-        override fun onPlayerError(error: ExoPlaybackException) {
+        override fun onPlayerError(error: PlaybackException) {
             super.onPlayerError(error)
             Log.e(TAG, "onPlayerError: ${error.printStackTrace()}")
             playingAmityAudioHolder?.audioMsgBaseViewModel?.buffering?.set(false)

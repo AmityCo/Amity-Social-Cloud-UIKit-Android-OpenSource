@@ -54,8 +54,6 @@
         android:layout_height="match_parent"
         android:background="@color/amityTranslucentBackground">
 
-
-
         <com.google.android.material.imageview.ShapeableImageView
             android:visibility="visible"
             android:id="@+id/icon_close"
@@ -203,7 +201,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
 
-                <EditText
+                <com.amity.socialcloud.uikit.community.views.createpost.AmityPostComposeView
                     android:layout_below="@+id/title_edittext"
                     android:id="@+id/description_edittext"
                     android:layout_marginStart="24dp"
@@ -221,12 +219,7 @@
 
         </ScrollView>
 
-
-
-
     </RelativeLayout>
-
-
 
     <Button
         android:id="@+id/toggle_publish"
@@ -234,15 +227,15 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="24dp"
-        android:backgroundTint="@color/amityColorWhite"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="24dp"
+        android:backgroundTint="@color/amityColorWhite"
         android:paddingTop="8dp"
-        android:textColor="@color/amityColorBlack"
         android:paddingBottom="8dp"
-        android:visibility="visible"
-        android:text="@string/amity_video_stream_go_live" />
+        android:text="@string/amity_video_stream_go_live"
+        android:textColor="@color/amityColorBlack"
+        android:visibility="visible" />
 
     <TextView
         android:id="@+id/toggle_stop"
@@ -277,5 +270,27 @@
         app:shapeAppearanceOverlay="@style/AmityCircleImage"
         amityBackgroundColorAlpha="@{@integer/alpha_fifty}" />
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_alignParentBottom="true"
+        android:elevation="@dimen/amity_two"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_description_user_mention"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/amityColorWhite"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            app:layout_constraintHeight_max="280dp"
+            app:layout_constraintDimensionRatio="375:280"
+            android:paddingBottom="@dimen/amity_eight"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:visibility="gone" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </RelativeLayout>

@@ -40,10 +40,12 @@ class AmityCommunityFeedViewModel(private val savedState: SavedStateHandle) : Am
 
     @ExperimentalPagingApi
     override fun getFeed(onPageLoaded: (posts: PagingData<AmityBasePostItem>) -> Unit): Completable {
-        val feedRepository: AmityFeedRepository = AmitySocialClient.newFeedRepository()
-        return feedRepository.getCommunityFeed(communityId)
-            .feedType(feedType)
-            .includeDeleted(false)
+        return AmitySocialClient.newPostRepository()
+            .getPosts()
+            .targetCommunity(communityId)
+            .apply {
+                includeDeleted(false)
+            }
             .build()
             .getPagingData()
             .map { it.map { post -> createPostItem(post) } }

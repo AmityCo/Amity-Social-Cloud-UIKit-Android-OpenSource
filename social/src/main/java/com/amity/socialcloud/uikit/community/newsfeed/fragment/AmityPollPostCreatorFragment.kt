@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
+import androidx.paging.ExperimentalPagingApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.amity.socialcloud.sdk.social.feed.AmityPoll
 import com.amity.socialcloud.sdk.social.feed.AmityPollAnswer
@@ -21,10 +22,18 @@ import com.amity.socialcloud.uikit.common.utils.AmityAndroidUtil
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.databinding.AmityFragmentPollCreatorBinding
 import com.amity.socialcloud.uikit.community.newsfeed.adapter.AmityPollDraftAnswerAdapter
+import com.amity.socialcloud.uikit.community.newsfeed.adapter.AmityUserMentionAdapter
+import com.amity.socialcloud.uikit.community.newsfeed.adapter.AmityUserMentionPagingDataAdapter
+import com.amity.socialcloud.uikit.community.newsfeed.adapter.AmityUserMentionViewHolder
+import com.amity.socialcloud.uikit.community.newsfeed.model.AmityUserMention
 import com.amity.socialcloud.uikit.community.newsfeed.viewmodel.AmityPollCreatorViewModel
 import com.amity.socialcloud.uikit.community.utils.EXTRA_PARAM_COMMUNITY_ID
 import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
+import com.linkedin.android.spyglass.suggestions.interfaces.SuggestionsVisibilityManager
+import com.linkedin.android.spyglass.tokenization.QueryToken
+import com.linkedin.android.spyglass.tokenization.interfaces.QueryTokenReceiver
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import org.joda.time.Days
 
@@ -35,11 +44,16 @@ private const val MAX_ANSWER_COUNT = 10
 
 internal const val MAX_ANSWER_LENGTH = 200
 
-class AmityPollPostCreatorFragment : AmityBaseFragment() {
+class AmityPollPostCreatorFragment : AmityBaseFragment(), SuggestionsVisibilityManager, QueryTokenReceiver {
 
     private lateinit var binding: AmityFragmentPollCreatorBinding
     private lateinit var adapter: AmityPollDraftAnswerAdapter
     private val viewModel: AmityPollCreatorViewModel by viewModels()
+    private val userMentionAdapter by lazy { AmityUserMentionAdapter() }
+    private val userMentionPagingDataAdapter by lazy { AmityUserMentionPagingDataAdapter() }
+    private val searchDisposable: CompositeDisposable by lazy {
+        CompositeDisposable()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -60,11 +74,18 @@ class AmityPollPostCreatorFragment : AmityBaseFragment() {
         initQuestion()
         initAnswers()
         initTimeFrame()
+        setupUserMention()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.communityId = arguments?.getString(EXTRA_PARAM_COMMUNITY_ID)
+        arguments?.getString(EXTRA_PARAM_COMMUNITY_ID).let {
+            viewModel.observeCommunity(it)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .untilLifecycleEnd(this)
+                    .subscribe()
+        }
     }
 
     private fun highlightLastChar(textView: TextView) {
@@ -214,7 +235,8 @@ class AmityPollPostCreatorFragment : AmityBaseFragment() {
                 closedIn = Days.days(
                     binding.closedInEditText.text?.toString()?.toIntOrNull()
                         ?: DEFAULT_TIME_FRAME_DAYS
-                ).toStandardDuration().millis
+                ).toStandardDuration().millis,
+                    binding.questionEditText.getUserMentions()
             )
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnComplete {
@@ -233,6 +255,73 @@ class AmityPollPostCreatorFragment : AmityBaseFragment() {
             return true
         }
         return false
+    }
+    
+    private fun setupUserMention() {
+        binding.questionEditText.hint = resources.getString(R.string.amity_poll_question_hint)
+        binding.questionEditText.apply {
+            setSuggestionsVisibilityManager(this@AmityPollPostCreatorFragment)
+            setQueryTokenReceiver(this@AmityPollPostCreatorFragment)
+        }
+        binding.recyclerViewUserMention.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerViewUserMention.adapter = userMentionAdapter
+        
+        userMentionAdapter.setListener(object :
+                AmityUserMentionAdapter.AmityUserMentionAdapterListener {
+            override fun onClickUserMention(userMention: AmityUserMention) {
+                insertUserMention(userMention)
+            }
+        })
+        
+        userMentionPagingDataAdapter.setListener(object :
+                AmityUserMentionViewHolder.AmityUserMentionListener {
+            override fun onClickUserMention(userMention: AmityUserMention) {
+                insertUserMention(userMention)
+            }
+        })
+    }
+    
+    private fun insertUserMention(userMention: AmityUserMention) {
+        displaySuggestions(false)
+        searchDisposable.clear()
+        binding.questionEditText.insertMention(userMention)
+    }
+    
+    override fun displaySuggestions(display: Boolean) {
+        if (display) {
+            binding.recyclerViewUserMention.visibility = View.VISIBLE
+        } else {
+            binding.recyclerViewUserMention.visibility = View.GONE
+        }
+    }
+    
+    override fun isDisplayingSuggestions(): Boolean {
+        return binding.recyclerViewUserMention.visibility == View.VISIBLE
+    }
+    
+    @ExperimentalPagingApi
+    override fun onQueryReceived(queryToken: QueryToken): MutableList<String> {
+        if (queryToken.tokenString.startsWith(AmityUserMention.CHAR_MENTION)) {
+            searchDisposable.clear()
+            val disposable = if (viewModel.community?.isPublic() == false) {
+                binding.recyclerViewUserMention.swapAdapter(userMentionPagingDataAdapter, true)
+                viewModel.searchCommunityUsersMention(viewModel.community?.getCommunityId()!!,
+                        queryToken.keywords, onResult = {
+                    userMentionPagingDataAdapter.submitData(lifecycle, it)
+                    displaySuggestions(true)
+                }).subscribe()
+            } else {
+                binding.recyclerViewUserMention.swapAdapter(userMentionAdapter, true)
+                viewModel.searchUsersMention(queryToken.keywords, onResult = {
+                    userMentionAdapter.submitList(it)
+                    displaySuggestions(true)
+                }).subscribe()
+            }
+            searchDisposable.add(disposable)
+        } else {
+            displaySuggestions(false)
+        }
+        return mutableListOf()
     }
 
     class Builder internal constructor() {

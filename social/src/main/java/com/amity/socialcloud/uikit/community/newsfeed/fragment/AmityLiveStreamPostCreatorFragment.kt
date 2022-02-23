@@ -2,6 +2,7 @@ package com.amity.socialcloud.uikit.community.newsfeed.fragment
 
 import android.Manifest
 import android.app.Activity
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
@@ -14,6 +15,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.paging.ExperimentalPagingApi
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.amity.socialcloud.sdk.video.AmityStreamBroadcaster
 import com.amity.socialcloud.sdk.video.AmityStreamBroadcasterConfiguration
 import com.amity.socialcloud.sdk.video.StreamBroadcaster
@@ -22,18 +26,27 @@ import com.amity.socialcloud.sdk.video.model.AmityStreamBroadcasterState
 import com.amity.socialcloud.uikit.common.common.showSnackBar
 import com.amity.socialcloud.uikit.common.common.views.dialog.bottomsheet.AmityBottomSheetDialog
 import com.amity.socialcloud.uikit.common.common.views.dialog.bottomsheet.BottomSheetMenuItem
+import com.amity.socialcloud.uikit.common.utils.AmityAlertDialogUtil
 import com.amity.socialcloud.uikit.common.utils.AmityConstants
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.databinding.AmityFragmentLiveStreamPostCreatorBinding
+import com.amity.socialcloud.uikit.community.newsfeed.adapter.AmityUserMentionAdapter
+import com.amity.socialcloud.uikit.community.newsfeed.adapter.AmityUserMentionPagingDataAdapter
+import com.amity.socialcloud.uikit.community.newsfeed.adapter.AmityUserMentionViewHolder
+import com.amity.socialcloud.uikit.community.newsfeed.model.AmityUserMention
 import com.amity.socialcloud.uikit.community.newsfeed.viewmodel.AmityLiveStreamPostCreatorViewModel
+import com.amity.socialcloud.uikit.community.views.createpost.AmityPostComposeView
 import com.bumptech.glide.Glide
 import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.linkedin.android.spyglass.suggestions.interfaces.SuggestionsVisibilityManager
+import com.linkedin.android.spyglass.tokenization.QueryToken
 import com.trello.rxlifecycle3.components.support.RxFragment
 import com.zhihu.matisse.Matisse
 import com.zhihu.matisse.MimeType
 import com.zhihu.matisse.engine.impl.GlideEngine
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.internal.operators.flowable.FlowableInterval
 import io.reactivex.schedulers.Schedulers
@@ -50,7 +63,7 @@ class AmityLiveStreamPostCreatorFragment : RxFragment() {
     private lateinit var binding: AmityFragmentLiveStreamPostCreatorBinding
 
     private val viewModel: AmityLiveStreamPostCreatorViewModel by viewModels()
-
+    
     private var durationDisposable: Disposable? = null
     private var streamBroadcaster: StreamBroadcaster? = null
     private var broadcasterConfig = AmityStreamBroadcasterConfiguration.Builder()
@@ -62,6 +75,12 @@ class AmityLiveStreamPostCreatorFragment : RxFragment() {
     private var duration = 0L
     private var streamBroadcasterState: AmityStreamBroadcasterState =
         AmityStreamBroadcasterState.IDLE()
+    
+    private val descriptionUserMentionAdapter by lazy { AmityUserMentionAdapter() }
+    private val descriptionUserMentionPagingDataAdapter by lazy { AmityUserMentionPagingDataAdapter() }
+    private val searchDisposable: CompositeDisposable by lazy {
+        CompositeDisposable()
+    }
 
 
     override fun onCreateView(
@@ -77,8 +96,14 @@ class AmityLiveStreamPostCreatorFragment : RxFragment() {
         super.onCreate(savedInstanceState)
         communityId = arguments?.getString(EXTRA_PARAM_COMMUNITY_ID) ?: ""
         viewModel.communityId = communityId
+        viewModel.observeCommunity(communityId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .untilLifecycleEnd(this)
+                .subscribe()
     }
 
+    @ExperimentalPagingApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupStreamBroadcaster()
@@ -105,6 +130,7 @@ class AmityLiveStreamPostCreatorFragment : RxFragment() {
         }
     }
 
+    @ExperimentalPagingApi
     private fun setupStreamBroadcaster() {
         grantCameraPermissions(REQUEST_LIVE_STREAM_CAMERA_PERMISSIONS) {
             setupView()
@@ -120,7 +146,16 @@ class AmityLiveStreamPostCreatorFragment : RxFragment() {
         subscribeBroadcastStatus()
     }
 
+    @ExperimentalPagingApi
     private fun setupView() {
+        binding.descriptionEdittext.run {
+            style.apply {
+                hint = R.string.amity_video_stream_description_hint
+                mentionColor = R.color.amityColorAthensGray
+            }.let { livestreamStyle ->
+                setViewStyle(livestreamStyle)
+            }
+        }
         binding.iconSwapCam.setOnClickListener { streamBroadcaster?.switchCamera() }
         binding.iconPublishedSwapCam.setOnClickListener { streamBroadcaster?.switchCamera() }
         binding.iconClose.setOnClickListener { activity?.finish() }
@@ -134,6 +169,7 @@ class AmityLiveStreamPostCreatorFragment : RxFragment() {
             presentEditThumbnailDialog()
         }
         setupProfile()
+        setupUserMention()
     }
 
     private fun setupProfile() {
@@ -169,6 +205,7 @@ class AmityLiveStreamPostCreatorFragment : RxFragment() {
             .show()
     }
 
+    @ExperimentalPagingApi
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -227,7 +264,9 @@ class AmityLiveStreamPostCreatorFragment : RxFragment() {
         viewModel.createLiveStreamingPost(title = getVideoTitle(),
             description = getVideoDescription(),
             onCreateCompleted = { streamBroadcaster?.startPublish(it) },
-            onCreateFailed = { showErrorDialog() })
+            onCreateFailed = { showErrorDialog() },
+            descriptionUserMentions = binding.descriptionEdittext.getUserMentions()
+        )
             .untilLifecycleEnd(this)
             .subscribe()
     }
@@ -257,6 +296,18 @@ class AmityLiveStreamPostCreatorFragment : RxFragment() {
 
     private fun showErrorDialog() {
 
+    }
+    
+    private fun showErrorDialog(title: String, message: String) {
+        AmityAlertDialogUtil.showDialog(requireContext(), title, message,
+                resources.getString(R.string.amity_done),
+                null,
+                DialogInterface.OnClickListener { dialog, which ->
+                    AmityAlertDialogUtil.checkConfirmDialog(
+                            isPositive = which,
+                            confirmed = dialog::cancel
+                    )
+                })
     }
 
     private fun getVideoDescription(): String {
@@ -396,8 +447,119 @@ class AmityLiveStreamPostCreatorFragment : RxFragment() {
 
         bottomSheet.show(options)
     }
+    
+    @ExperimentalPagingApi
+    private fun setupUserMention() {
+        setupUserMentionComposeView(COMPOSE.DESCRIPTION)
+    }
+    
+    @ExperimentalPagingApi
+    private fun setupUserMentionComposeView(composeView: COMPOSE) {
+        val suggestionView: RecyclerView = getCurrentSuggestionView(composeView)
+        val suggestionAdapter = getSuggestionAdapter(composeView)
+        val suggestionPagingAdapter = getSuggestionPagingAdapter(composeView)
+        getCurrentComposeView(composeView).apply {
+            setSuggestionsVisibilityManager(object: SuggestionsVisibilityManager{
+                override fun displaySuggestions(display: Boolean) {
+                    displaySuggestions(suggestionView, display)
+                }
+                
+                override fun isDisplayingSuggestions(): Boolean {
+                    return isDisplayingSuggestions(suggestionView)
+                }
+            })
+            setQueryTokenReceiver {
+                onQueryReceived(composeView, it)
+            }
+        }
+        suggestionView.layoutManager = LinearLayoutManager(requireContext())
+        suggestionView.adapter = suggestionAdapter
+    
+        suggestionAdapter.setListener(object :
+                AmityUserMentionAdapter.AmityUserMentionAdapterListener {
+            override fun onClickUserMention(userMention: AmityUserMention) {
+                insertUserMention(composeView, userMention)
+            }
+        })
+    
+        suggestionPagingAdapter.setListener(object :
+                AmityUserMentionViewHolder.AmityUserMentionListener {
+            override fun onClickUserMention(userMention: AmityUserMention) {
+                insertUserMention(composeView, userMention)
+            }
+        })
+    }
 
+    private fun insertUserMention(composeView: COMPOSE, userMention: AmityUserMention) {
+        displaySuggestions(getCurrentSuggestionView(composeView), false)
+        searchDisposable.clear()
+        getCurrentComposeView(composeView).insertMention(userMention)
+    }
 
+    private fun displaySuggestions(recyclerView: RecyclerView, display: Boolean) {
+        if (display) {
+            recyclerView.visibility = View.VISIBLE
+        } else {
+            recyclerView.visibility = View.GONE
+        }
+    }
+
+    private fun isDisplayingSuggestions(recyclerView: RecyclerView): Boolean {
+        return recyclerView.visibility == View.VISIBLE
+    }
+
+    @ExperimentalPagingApi
+    private fun onQueryReceived(composeView: COMPOSE, queryToken: QueryToken): MutableList<String> {
+        val suggestionView: RecyclerView = getCurrentSuggestionView(composeView)
+        val suggestionAdapter = getSuggestionAdapter(composeView)
+        val suggestionPagingAdapter = getSuggestionPagingAdapter(composeView)
+        if (queryToken.tokenString.startsWith(AmityUserMention.CHAR_MENTION)) {
+            searchDisposable.clear()
+            val disposable = if (viewModel.community?.isPublic() == false) {
+                suggestionView.swapAdapter(suggestionPagingAdapter, true)
+                viewModel.searchCommunityUsersMention(viewModel.community?.getCommunityId()!!,
+                        queryToken.keywords, onResult = {
+                    suggestionPagingAdapter.submitData(lifecycle, it)
+                    displaySuggestions(suggestionView, true)
+                }).subscribe()
+            } else {
+                suggestionView.swapAdapter(suggestionAdapter, true)
+                viewModel.searchUsersMention(queryToken.keywords, onResult = {
+                    suggestionAdapter.submitList(it)
+                    displaySuggestions(suggestionView, true)
+                }).subscribe()
+            }
+            searchDisposable.add(disposable)
+        } else {
+            displaySuggestions(suggestionView, false)
+        }
+        return mutableListOf()
+    }
+
+    private fun getCurrentComposeView(composeView: COMPOSE): AmityPostComposeView {
+        return when(composeView) {
+            COMPOSE.DESCRIPTION -> binding.descriptionEdittext
+        }
+    }
+    
+    private fun getCurrentSuggestionView(composeView: COMPOSE): RecyclerView {
+        return when(composeView) {
+            COMPOSE.DESCRIPTION -> binding.recyclerViewDescriptionUserMention
+        }
+    }
+    
+    private fun getSuggestionAdapter(composeView: COMPOSE): AmityUserMentionAdapter {
+        return when(composeView) {
+            COMPOSE.DESCRIPTION -> descriptionUserMentionAdapter
+        }
+    }
+    
+    private fun getSuggestionPagingAdapter(composeView: COMPOSE): AmityUserMentionPagingDataAdapter {
+        return when(composeView) {
+            COMPOSE.DESCRIPTION -> descriptionUserMentionPagingDataAdapter
+        }
+    }
+    
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) when (requestCode) {
@@ -409,6 +571,8 @@ class AmityLiveStreamPostCreatorFragment : RxFragment() {
             }
         }
     }
+    
+    internal enum class COMPOSE { DESCRIPTION }
 
     class Builder internal constructor() {
         private var communityId: String? = null
@@ -436,6 +600,8 @@ class AmityLiveStreamPostCreatorFragment : RxFragment() {
         fun newInstance(): Builder {
             return Builder()
         }
+    
+        private const val TITLE_CHAR_LIMIT = 30
     }
 
 }
