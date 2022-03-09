@@ -12,17 +12,20 @@ import com.amity.socialcloud.uikit.common.base.AmityBaseFragment
 import com.amity.socialcloud.uikit.common.common.showSnackBar
 import com.amity.socialcloud.uikit.common.utils.AmityRecyclerViewItemDecoration
 import com.amity.socialcloud.uikit.community.R
+import com.amity.socialcloud.uikit.community.databinding.AmityFragmentCategoryListBinding
 import com.amity.socialcloud.uikit.community.explore.adapter.AmityCategoryListAdapter
 import com.amity.socialcloud.uikit.community.explore.listener.AmityCategoryItemClickListener
 import com.amity.socialcloud.uikit.community.explore.viewmodel.AmityCategoryListViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.amity_fragment_category_list.*
 
 const val ARG_DEFAULT_SELECTION = "default_selection"
 
 abstract class AmityBaseCategoryListFragment internal constructor() : AmityBaseFragment(),
     AmityCategoryItemClickListener {
+
+    private var _binding: AmityFragmentCategoryListBinding? = null
+    private val binding get() = _binding!!
 
     internal lateinit var viewModel: AmityCategoryListViewModel
 
@@ -40,7 +43,8 @@ abstract class AmityBaseCategoryListFragment internal constructor() : AmityBaseF
         savedInstanceState: Bundle?
     ): View? {
         viewModel = ViewModelProvider(requireActivity()).get(AmityCategoryListViewModel::class.java)
-        return inflater.inflate(R.layout.amity_fragment_category_list, container, false)
+        _binding = AmityFragmentCategoryListBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -54,9 +58,9 @@ abstract class AmityBaseCategoryListFragment internal constructor() : AmityBaseF
     private fun initView() {
         val itemDecorSpace =
             AmityRecyclerViewItemDecoration(resources.getDimensionPixelSize(R.dimen.amity_padding_xs))
-        rvCategory.layoutManager = LinearLayoutManager(requireContext())
-        rvCategory.adapter = adapter
-        rvCategory.addItemDecoration(itemDecorSpace)
+        binding.rvCategory.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvCategory.adapter = adapter
+        binding.rvCategory.addItemDecoration(itemDecorSpace)
     }
 
     private fun getCategories() {
@@ -74,6 +78,11 @@ abstract class AmityBaseCategoryListFragment internal constructor() : AmityBaseF
                     adapter.submitList(result)
                 }
             })
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onCategorySelected(category: AmityCommunityCategory) {

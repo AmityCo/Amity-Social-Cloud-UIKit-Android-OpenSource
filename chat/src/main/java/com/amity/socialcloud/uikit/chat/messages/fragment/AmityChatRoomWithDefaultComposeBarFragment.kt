@@ -49,18 +49,14 @@ import com.google.android.material.snackbar.Snackbar
 import com.zhihu.matisse.Matisse
 import com.zhihu.matisse.MimeType
 import com.zhihu.matisse.engine.impl.GlideEngine
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.amity_chat_bar.view.*
-import kotlinx.android.synthetic.main.amity_fragment_chat_with_default_compose_bar.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.File
-import java.util.concurrent.TimeUnit
 
 class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
     AmityAudioRecorderListener, AmityMessageListListener {
@@ -69,7 +65,7 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
 
     private val messageListViewModel: AmityMessageListViewModel by viewModels()
     private lateinit var mAdapter: AmityMessageListAdapter
-    private lateinit var mBinding: AmityFragmentChatWithDefaultComposeBarBinding
+    private lateinit var binding: AmityFragmentChatWithDefaultComposeBarBinding
     private var msgSent = false
     private var viewHolderListener: AmityMessageListAdapter.CustomViewHolderListener? = null
     var recordPermissionGranted = false
@@ -115,10 +111,10 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        mBinding = DataBindingUtil.inflate(inflater, R.layout.amity_fragment_chat_with_default_compose_bar, container, false)
-        mBinding.viewModel = messageListViewModel
-        return mBinding.root
+    ): View {
+        binding = DataBindingUtil.inflate(inflater, R.layout.amity_fragment_chat_with_default_compose_bar, container, false)
+        binding.viewModel = messageListViewModel
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -135,21 +131,23 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
     }
 
     private fun setupComposebar() {
-        etMessage.setShape(
-            null, null, null, null,
-            R.color.amityColorBase, R.color.amityColorBase, AmityColorShade.SHADE4
-        )
-        recordBackground.setShape(
-            null, null, null, null,
-            R.color.amityColorBase, R.color.amityColorBase, AmityColorShade.SHADE4
-        )
-        etMessage.setOnClickListener {
-            messageListViewModel.showComposeBar.set(false)
+        binding.apply {
+            etMessage.setShape(
+                null, null, null, null,
+                R.color.amityColorBase, R.color.amityColorBase, AmityColorShade.SHADE4
+            )
+            recordBackground.setShape(
+                null, null, null, null,
+                R.color.amityColorBase, R.color.amityColorBase, AmityColorShade.SHADE4
+            )
+            etMessage.setOnClickListener {
+                messageListViewModel.showComposeBar.set(false)
+            }
+            etMessage.setOnFocusChangeListener { _, _ ->
+                messageListViewModel.showComposeBar.set(false)
+            }
+            recorderView.setAudioRecorderListener(this@AmityChatRoomWithDefaultComposeBarFragment)
         }
-        etMessage.setOnFocusChangeListener { _, _ ->
-            messageListViewModel.showComposeBar.set(false)
-        }
-        mBinding.recorderView.setAudioRecorderListener(this)
     }
 
     private fun initMessageLoader() {
@@ -179,21 +177,21 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
 
     private fun presentDisconnectedView() {
         if (essentialViewModel.enableConnectionBar) {
-            mBinding.connectionView.visibility = View.VISIBLE
-            mBinding.connectionTexview.setText(R.string.amity_no_internet)
-            mBinding.connectionTexview.setBackgroundColor(resources.getColor(R.color.amityColorGrey))
+            binding.connectionView.visibility = View.VISIBLE
+            binding.connectionTexview.setText(R.string.amity_no_internet)
+            binding.connectionTexview.setBackgroundColor(resources.getColor(R.color.amityColorGrey))
         }
     }
 
     private fun presentReconnectedView() {
         if (essentialViewModel.enableConnectionBar) {
-            mBinding.connectionView.visibility = View.GONE
+            binding.connectionView.visibility = View.GONE
         }
     }
 
     private fun presentChatRefreshLoadingView() {
-        mBinding.loadingView.setBackgroundColor(resources.getColor(R.color.amityTranslucentBackground))
-        mBinding.loadingView.visibility = View.VISIBLE
+        binding.loadingView.setBackgroundColor(resources.getColor(R.color.amityTranslucentBackground))
+        binding.loadingView.visibility = View.VISIBLE
     }
 
     private fun resetMessageLoader() {
@@ -208,11 +206,11 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
     }
 
     override fun onMessageClicked(position: Int) {
-        rvChatList.scrollToPosition(position)
+        binding.rvChatList.scrollToPosition(position)
     }
 
     private fun observeScrollingState(layoutManager: LinearLayoutManager) {
-        rvChatList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        binding.rvChatList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 val firstVisibleItem = layoutManager.findFirstVisibleItemPosition()
@@ -266,14 +264,14 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
     private fun getChannelType() {
         disposable.add(messageListViewModel.getChannelType().take(1).subscribe { ekoChannel ->
             if (ekoChannel.getType() == AmityChannel.Type.STANDARD) {
-                mBinding.chatToolBar.ivAvatar.setImageDrawable(
+                binding.chatToolBar.ivAvatar.setImageDrawable(
                     ContextCompat.getDrawable(
                         requireContext(),
                         R.drawable.amity_ic_group
                     )
                 )
             } else {
-                mBinding.chatToolBar.ivAvatar.setImageDrawable(
+                binding.chatToolBar.ivAvatar.setImageDrawable(
                     ContextCompat.getDrawable(
                         requireContext(),
                         R.drawable.amity_ic_user
@@ -305,17 +303,19 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
     }
 
     private fun initToolBar() {
-        if (essentialViewModel.enableChatToolbar) {
-            (activity as AppCompatActivity).supportActionBar?.displayOptions =
-                ActionBar.DISPLAY_SHOW_CUSTOM
-            (activity as AppCompatActivity).setSupportActionBar(chatToolBar as Toolbar)
+        binding.chatToolBar.apply {
+            if (essentialViewModel.enableChatToolbar) {
+                (activity as AppCompatActivity).supportActionBar?.displayOptions =
+                    ActionBar.DISPLAY_SHOW_CUSTOM
+                (activity as AppCompatActivity).setSupportActionBar(root as Toolbar)
 
-            chatToolBar.ivBack.setOnClickListener {
-                activity?.finish()
+                ivBack.setOnClickListener {
+                    activity?.finish()
+                }
+                root.visibility = View.VISIBLE
+            } else {
+                root.visibility = View.GONE
             }
-            chatToolBar.visibility = View.VISIBLE
-        } else {
-            chatToolBar.visibility = View.GONE
         }
     }
 
@@ -329,34 +329,36 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
             )
         val layoutManager = LinearLayoutManager(activity)
         layoutManager.stackFromEnd = true
-        rvChatList.layoutManager = layoutManager
-        rvChatList.adapter = mAdapter
-        rvChatList.addItemDecoration(
-            AmityRecyclerViewItemDecoration(
-                0,
-                0,
-                resources.getDimensionPixelSize(R.dimen.amity_padding_xs)
+        binding.rvChatList.apply {
+            this.layoutManager = layoutManager
+            adapter = mAdapter
+            addItemDecoration(
+                AmityRecyclerViewItemDecoration(
+                    0,
+                    0,
+                    resources.getDimensionPixelSize(R.dimen.amity_padding_xs)
+                )
             )
-        )
-        rvChatList.itemAnimator = null
-        val percentage = 30F / 100
-        val background = ColorUtils.setAlphaComponent(
-            AmityColorPaletteUtil.getColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.amityColorBase
-                ), AmityColorShade.SHADE4
-            ), (percentage * 255).toInt()
-        )
-        rvChatList.setBackgroundColor(background)
-        observeScrollingState(layoutManager)
-        observeMessages()
+            itemAnimator = null
+            val percentage = 30F / 100
+            val background = ColorUtils.setAlphaComponent(
+                AmityColorPaletteUtil.getColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.amityColorBase
+                    ), AmityColorShade.SHADE4
+                ), (percentage * 255).toInt()
+            )
+            setBackgroundColor(background)
+            observeScrollingState(layoutManager)
+            observeMessages()
+        }
     }
 
     private fun observeMessages() {
         messageListDisposable= messageListViewModel.getAllMessages().subscribe { messageList ->
             mAdapter.submitList(messageList)
-            messageListViewModel.isScrollable.set(rvChatList.computeVerticalScrollRange() > rvChatList.height)
+            messageListViewModel.isScrollable.set(binding.rvChatList.computeVerticalScrollRange() > binding.rvChatList.height)
         }
         messageListViewModel.startReading()
     }
@@ -373,13 +375,13 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
 
     @SuppressLint("ClickableViewAccessibility")
     private fun setRecorderTouchListener() {
-        mBinding.tvRecord.setOnTouchListener { _, event ->
+        binding.tvRecord.setOnTouchListener { _, event ->
             if (isRecorderPermissionGranted()) {
-                mBinding.recorderView.onTouch(event)
+                binding.recorderView.onTouch(event)
                 when (event?.action) {
                     MotionEvent.ACTION_DOWN -> {
                         messageListViewModel.isRecording.set(true)
-                        mBinding.recorderView.circularReveal()
+                        binding.recorderView.circularReveal()
 
                     }
                     MotionEvent.ACTION_UP -> messageListViewModel.isRecording.set(false)
@@ -393,7 +395,7 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
 
 
     private fun hideLoadingView() {
-        loading_view?.visibility = View.GONE
+        binding.loadingView.visibility = View.GONE
     }
 
 
@@ -413,7 +415,7 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
     }
 
     private fun scrollToLastPosition() {
-        rvChatList?.scrollToPosition(mAdapter.itemCount - 1)
+        binding.rvChatList?.scrollToPosition(mAdapter.itemCount - 1)
         isReachBottom = true
     }
 
@@ -427,7 +429,7 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
                     CoroutineScope(Dispatchers.Main).launch {
                         val snackBar =
                             Snackbar.make(
-                                rvChatList,
+                                binding.rvChatList,
                                 R.string.amity_failed_msg,
                                 Snackbar.LENGTH_SHORT
                             )
@@ -445,29 +447,29 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
     }
 
     private fun showAudioRecordUi() {
-        AmityAndroidUtil.hideKeyboard(layoutParent)
+        AmityAndroidUtil.hideKeyboard(binding.layoutParent)
         messageListViewModel.showComposeBar.set(false)
     }
 
     private fun toggleSoftKeyboard() {
         messageListViewModel.isVoiceMsgUi.set(false)
-        if (AmityAndroidUtil.isSoftKeyboardOpen(layoutParent)) {
-            AmityAndroidUtil.hideKeyboard(layoutParent)
+        if (AmityAndroidUtil.isSoftKeyboardOpen(binding.layoutParent)) {
+            AmityAndroidUtil.hideKeyboard(binding.layoutParent)
             Handler(Looper.getMainLooper()).postDelayed({
                 messageListViewModel.showComposeBar.set(true)
             }, 300)
         } else {
             if (messageListViewModel.showComposeBar.get()) {
                 messageListViewModel.showComposeBar.set(false)
-                etMessage.requestFocus()
-                AmityAndroidUtil.showKeyboard(etMessage)
+                binding.etMessage.requestFocus()
+                AmityAndroidUtil.showKeyboard(binding.etMessage)
             } else {
                 messageListViewModel.showComposeBar.set(true)
             }
         }
 
         if (messageListViewModel.keyboardHeight.get() == 0) {
-            val height = AmityAndroidUtil.getKeyboardHeight(layoutParent)
+            val height = AmityAndroidUtil.getKeyboardHeight(binding.layoutParent)
             if (height != null && height > 0) {
                 messageListViewModel.keyboardHeight.set(height)
             }

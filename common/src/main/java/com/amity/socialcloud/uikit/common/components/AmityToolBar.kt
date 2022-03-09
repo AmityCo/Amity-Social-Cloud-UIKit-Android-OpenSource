@@ -14,11 +14,10 @@ import com.amity.socialcloud.uikit.common.common.views.AmityColorPaletteUtil
 import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
 import com.amity.socialcloud.uikit.common.databinding.AmityToolbarBinding
 import com.google.android.material.appbar.MaterialToolbar
-import kotlinx.android.synthetic.main.amity_toolbar.view.*
 
 class AmityToolBar : MaterialToolbar {
 
-    private lateinit var mBinding: AmityToolbarBinding
+    private lateinit var binding: AmityToolbarBinding
 
     constructor(context: Context) : super(context) {
         init()
@@ -38,8 +37,8 @@ class AmityToolBar : MaterialToolbar {
 
     private fun init() {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        mBinding = DataBindingUtil.inflate(inflater, R.layout.amity_toolbar, this, true)
-        mBinding.rightStringActive = false
+        binding = DataBindingUtil.inflate(inflater, R.layout.amity_toolbar, this, true)
+        binding.rightStringActive = false
         toggleRightTextColor(false)
         setContentInsetsRelative(0, 0)
         setUpImageViewLeft()
@@ -47,61 +46,62 @@ class AmityToolBar : MaterialToolbar {
     }
 
     private fun setUpImageViewLeft() {
-        ivLeft.expandViewHitArea()
+        binding.ivLeft.expandViewHitArea()
     }
 
     private fun setUpImageViewRight() {
-        tv_right.expandViewHitArea()
+        binding.tvRight.expandViewHitArea()
     }
 
     fun setLeftString(value: String) {
-        mBinding.leftString = value
+        binding.leftString = value
     }
 
     fun setLeftDrawable(value: Drawable?, color: Int? = null) {
-        mBinding.leftDrawable = value
-        if (color != null && mBinding.leftDrawable != null) {
-            mBinding.leftDrawable!!.colorFilter =
+        binding.leftDrawable = value
+        if (color != null && binding.leftDrawable != null) {
+            binding.leftDrawable!!.colorFilter =
                 PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN)
         }
 
     }
 
     fun setRightString(value: String) {
-        mBinding.rightString = value
+        binding.rightString = value
     }
 
     fun setRightStringActive(value: Boolean) {
-        mBinding.rightStringActive = value
+        binding.rightStringActive = value
         toggleRightTextColor(value)
     }
 
     private fun toggleRightTextColor(value: Boolean) {
         if (value) {
-            tv_right.setTextColor(
+            binding.tvRight.setTextColor(
                 AmityColorPaletteUtil.getColor(
                     ContextCompat.getColor(context, R.color.amityColorHighlight),
                     AmityColorShade.DEFAULT
                 )
             )
         } else {
-            tv_right.setTextColor(
+            binding.tvRight.setTextColor(
                 AmityColorPaletteUtil.getColor(
-                    ContextCompat.getColor(context, R.color.amityColorHighlight), AmityColorShade.SHADE2
+                    ContextCompat.getColor(context, R.color.amityColorHighlight),
+                    AmityColorShade.SHADE2
                 )
             )
         }
     }
 
     fun setRightDrawable(value: Drawable?, color: Int? = null) {
-        mBinding.rightDrawable = value
-        if (color != null && mBinding.rightDrawable != null) {
-            mBinding.rightDrawable!!.colorFilter =
+        binding.rightDrawable = value
+        if (color != null && binding.rightDrawable != null) {
+            binding.rightDrawable!!.colorFilter =
                 PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN)
         }
     }
 
     fun setClickListener(listener: AmityToolBarClickListener) {
-        mBinding.clickListener = listener
+        binding.clickListener = listener
     }
 }

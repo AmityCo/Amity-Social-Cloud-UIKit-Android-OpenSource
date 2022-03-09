@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import com.amity.socialcloud.sdk.AmityCoreClient
 import com.amity.socialcloud.uikit.common.common.showSnackBar
+import com.amity.socialcloud.uikit.sample.databinding.AmityActivityMainBinding
 import com.amity.socialcloud.uikit.sample.env.Environment
 import com.amity.socialcloud.uikit.sample.env.EnvironmentActivity
 import com.amity.socialcloud.uikit.sample.env.SamplePreferences
@@ -13,11 +14,14 @@ import com.google.android.material.snackbar.Snackbar
 import com.trello.rxlifecycle3.components.support.RxAppCompatActivity
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.amity_activity_main.*
 import timber.log.Timber
 
 
 class MainActivity : RxAppCompatActivity() {
+
+    private val binding: AmityActivityMainBinding by lazy {
+        AmityActivityMainBinding.inflate(layoutInflater)
+    }
 
     private val changeEnvContract = registerForActivityResult(
         EnvironmentActivity.ChangeEnvironmentContract()
@@ -37,26 +41,28 @@ class MainActivity : RxAppCompatActivity() {
             registerDevice(userId)
         }
 
-        setContentView(R.layout.amity_activity_main)
+        setContentView(binding.root)
 
-        btnLogin.setOnClickListener {
-            if (etUserId.text.isNotEmpty() && etUserName.text.isNotEmpty()) {
-                registerDevice(etUserId.text.toString().trim(), etUserName.text.toString().trim())
-            } else {
-                findViewById<View>(android.R.id.content).showSnackBar(
-                    "Enter userId and Display Name",
-                    Snackbar.LENGTH_SHORT
-                )
+        binding.apply {
+            btnLogin.setOnClickListener {
+                if (etUserId.text.isNotEmpty() && etUserName.text.isNotEmpty()) {
+                    registerDevice(etUserId.text.toString().trim(), etUserName.text.toString().trim())
+                } else {
+                    findViewById<View>(android.R.id.content).showSnackBar(
+                        "Enter userId and Display Name",
+                        Snackbar.LENGTH_SHORT
+                    )
+                }
             }
-        }
 
-        btnEnv.setOnClickListener {
-            val env = Environment(
-                SamplePreferences.getApiKey().get(),
-                SamplePreferences.getHttpUrl().get(),
-                SamplePreferences.getSocketUrl().get()
-            )
-            changeEnvContract.launch(env)
+            btnEnv.setOnClickListener {
+                val env = Environment(
+                    SamplePreferences.getApiKey().get(),
+                    SamplePreferences.getHttpUrl().get(),
+                    SamplePreferences.getSocketUrl().get()
+                )
+                changeEnvContract.launch(env)
+            }
         }
     }
 

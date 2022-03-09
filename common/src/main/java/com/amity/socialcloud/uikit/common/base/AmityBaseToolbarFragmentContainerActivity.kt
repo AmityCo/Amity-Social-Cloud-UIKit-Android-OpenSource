@@ -10,8 +10,6 @@ import com.amity.socialcloud.uikit.common.R
 import com.amity.socialcloud.uikit.common.components.AmityToolBar
 import com.amity.socialcloud.uikit.common.components.AmityToolBarClickListener
 import com.amity.socialcloud.uikit.common.databinding.AmityActivityBaseToolbarFragmentContainerBinding
-import kotlinx.android.synthetic.main.amity_activity_base_toolbar_fragment_container.*
-
 
 abstract class AmityBaseToolbarFragmentContainerActivity : AppCompatActivity(),
         AmityToolBarClickListener {
@@ -28,14 +26,14 @@ abstract class AmityBaseToolbarFragmentContainerActivity : AppCompatActivity(),
         }
 
         supportActionBar?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
-        setSupportActionBar(toolbar)
-        toolbar?.setClickListener(this)
+        setSupportActionBar(binding.toolbar)
+        binding.toolbar?.setClickListener(this)
 
         initToolbar()
     }
 
     fun getToolBar(): AmityToolBar? {
-        return toolbar
+        return binding.toolbar
     }
 
     fun showToolbarDivider() {

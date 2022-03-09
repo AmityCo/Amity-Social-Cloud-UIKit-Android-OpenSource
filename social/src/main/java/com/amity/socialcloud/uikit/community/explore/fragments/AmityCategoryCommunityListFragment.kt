@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.amity.socialcloud.sdk.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.social.community.AmityCommunityCategory
@@ -22,7 +21,6 @@ import com.amity.socialcloud.uikit.community.explore.listener.AmityCommunityItem
 import com.amity.socialcloud.uikit.community.explore.viewmodel.AmityCategoryCommunityListViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.amity_fragment_category_community_list.*
 
 const val ARG_CATEGORY_ID = "Category_id"
 const val ARG_CATEGORY_NAME = "Category_name"
@@ -33,7 +31,7 @@ class AmityCategoryCommunityListFragment : AmityBaseFragment(),
     private lateinit var adapter: AmityCategoryCommunityListAdapter
     private var categoryId: String? = null
     private var categoryName: String? = null
-    lateinit var mBinding: AmityFragmentCategoryCommunityListBinding
+    lateinit var binding: AmityFragmentCategoryCommunityListBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,14 +42,14 @@ class AmityCategoryCommunityListFragment : AmityBaseFragment(),
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        mBinding = DataBindingUtil.inflate(
+    ): View {
+        binding = DataBindingUtil.inflate(
             inflater,
             R.layout.amity_fragment_category_community_list,
             container,
             false
         )
-        return mBinding.root
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -74,9 +72,9 @@ class AmityCategoryCommunityListFragment : AmityBaseFragment(),
     private fun initView() {
         val itemDecorSpace =
             AmityRecyclerViewItemDecoration(resources.getDimensionPixelSize(R.dimen.amity_padding_xs))
-        rvCommunity.layoutManager = LinearLayoutManager(requireContext())
-        rvCommunity.adapter = adapter
-        rvCommunity.addItemDecoration(itemDecorSpace)
+        binding.rvCommunity.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvCommunity.adapter = adapter
+        binding.rvCommunity.addItemDecoration(itemDecorSpace)
     }
 
     private fun getCategories() {
@@ -98,8 +96,8 @@ class AmityCategoryCommunityListFragment : AmityBaseFragment(),
     }
 
     private fun handleListVisibility() {
-        rvCommunity.visibility = if (adapter.itemCount > 0) View.VISIBLE else View.GONE
-        emptyView.visibility = if (adapter.itemCount > 0) View.GONE else View.VISIBLE
+        binding.rvCommunity.visibility = if (adapter.itemCount > 0) View.VISIBLE else View.GONE
+        binding.emptyView.visibility = if (adapter.itemCount > 0) View.GONE else View.VISIBLE
     }
 
 

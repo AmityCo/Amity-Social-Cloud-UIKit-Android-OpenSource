@@ -14,8 +14,6 @@ import com.amity.socialcloud.uikit.chat.R
 import com.amity.socialcloud.uikit.chat.databinding.AmityActivityEditMessageBinding
 import com.amity.socialcloud.uikit.common.base.AmityBaseActivity
 import io.reactivex.disposables.Disposable
-import kotlinx.android.synthetic.main.amity_activity_edit_message.*
-import kotlinx.android.synthetic.main.amity_edit_msg_bar.view.*
 
 class AmityEditMessageActivity :
     AmityBaseActivity<AmityActivityEditMessageBinding, AmityEditMessageViewModel>() {
@@ -39,20 +37,20 @@ class AmityEditMessageActivity :
         editMessageViewModel.saveColor.set(ContextCompat.getColor(this, R.color.amityColorPrimary))
         setUpToolbar()
         getMessage()
-        lMessage.setOnClickListener {
+        mViewDataBinding.lMessage.setOnClickListener {
             requestFocus()
         }
     }
 
     private fun setUpToolbar() {
         supportActionBar?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
-        setSupportActionBar(emToolBar as Toolbar)
+        setSupportActionBar(mViewDataBinding.emToolBar as Toolbar)
 
-        emToolBar.icCross.setOnClickListener {
+        mViewDataBinding.emToolBar.icCross.setOnClickListener {
             this.finish()
         }
 
-        emToolBar.tvSave.setOnClickListener {
+        mViewDataBinding.emToolBar.tvSave.setOnClickListener {
             editMessageDisposable = editMessageViewModel.saveMessage().subscribe()
             this.finish()
         }
@@ -92,12 +90,12 @@ class AmityEditMessageActivity :
     override fun getBindingVariable(): Int = BR.viewModel
 
     private fun requestFocus() {
-        etMessage.postDelayed({
-            etMessage.requestFocusFromTouch()
-            etMessage.setSelection(etMessage.text?.length ?: 0)
+        mViewDataBinding.etMessage.postDelayed({
+            mViewDataBinding.etMessage.requestFocusFromTouch()
+            mViewDataBinding.etMessage.setSelection(mViewDataBinding.etMessage.text?.length ?: 0)
             val inputManager: InputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            inputManager.showSoftInput(etMessage, 0)
+            inputManager.showSoftInput(mViewDataBinding.etMessage, 0)
         }, 300)
 
     }

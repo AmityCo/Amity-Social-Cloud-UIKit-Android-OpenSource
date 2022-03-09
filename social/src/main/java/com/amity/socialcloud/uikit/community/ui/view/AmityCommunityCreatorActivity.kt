@@ -6,29 +6,33 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.amity.socialcloud.uikit.common.components.AmityToolBarClickListener
 import com.amity.socialcloud.uikit.community.R
-import kotlinx.android.synthetic.main.amity_activity_create_community.*
+import com.amity.socialcloud.uikit.community.databinding.AmityActivityCreateCommunityBinding
 
 class AmityCommunityCreatorActivity : AppCompatActivity(), AmityToolBarClickListener {
+
+    private val binding : AmityActivityCreateCommunityBinding by lazy {
+        AmityActivityCreateCommunityBinding.inflate(layoutInflater)
+    }
 
     private lateinit var mFragment: AmityCommunityCreatorFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.amity_activity_create_community)
+        setContentView(binding.root)
         setUpToolBar()
         loadFragment()
     }
 
     private fun setUpToolBar() {
-        communityToolbar.setLeftDrawable(
+        binding.communityToolbar.setLeftDrawable(
             ContextCompat.getDrawable(this, R.drawable.amity_ic_cross)
         )
-        communityToolbar.setLeftString(getString(R.string.amity_create_community))
+        binding.communityToolbar.setLeftString(getString(R.string.amity_create_community))
 
-        communityToolbar.setClickListener(this)
+        binding.communityToolbar.setClickListener(this)
 
         supportActionBar?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
-        setSupportActionBar(communityToolbar)
+        setSupportActionBar(binding.communityToolbar)
     }
 
     private fun loadFragment() {

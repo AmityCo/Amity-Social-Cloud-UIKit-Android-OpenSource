@@ -33,8 +33,6 @@ import com.trello.rxlifecycle3.components.support.RxFragment
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.amity_fragment_create_community.*
-import kotlinx.android.synthetic.main.amity_item_settings_nav_content.*
 import timber.log.Timber
 
 abstract class AmityCommunityCreateBaseFragment : RxFragment() {
@@ -43,7 +41,7 @@ abstract class AmityCommunityCreateBaseFragment : RxFragment() {
     var disposable = CompositeDisposable()
     private var imageUri: Uri? = null
     lateinit var viewModel: AmityCreateCommunityViewModel
-    internal lateinit var mBinding: AmityFragmentCreateCommunityBinding
+    internal lateinit var binding: AmityFragmentCreateCommunityBinding
 
     private val pickImage = registerForActivityResult(AmityPickImageContract()) { data ->
         if(data != null) {
@@ -53,7 +51,7 @@ abstract class AmityCommunityCreateBaseFragment : RxFragment() {
                 .load(data)
                 .centerCrop()
                 .placeholder(R.drawable.amity_ic_default_community_avatar)
-                .into(ccAvatar)
+                .into(binding.ccAvatar)
         }
     }
 
@@ -62,7 +60,7 @@ abstract class AmityCommunityCreateBaseFragment : RxFragment() {
             if (it) {
                 pickImage.launch(getString(com.amity.socialcloud.uikit.common.R.string.amity_choose_image))
             } else {
-                this.rootView.showSnackBar("Permission denied", Snackbar.LENGTH_SHORT)
+                binding.root.showSnackBar("Permission denied", Snackbar.LENGTH_SHORT)
             }
         }
 
@@ -71,24 +69,24 @@ abstract class AmityCommunityCreateBaseFragment : RxFragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        mBinding = DataBindingUtil.inflate(
+        binding = DataBindingUtil.inflate(
             inflater,
             R.layout.amity_fragment_create_community, container, false
         )
-        mBinding.setLifecycleOwner(this)
-        return mBinding.root
+        binding.setLifecycleOwner(this)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(requireActivity() as AppCompatActivity).get(AmityCreateCommunityViewModel::class.java)
-        mBinding.viewModel = viewModel
+        binding.viewModel = viewModel
 
-        mBinding.category.setOnClickListener {
+        binding.category.setOnClickListener {
             launchCategorySelection(viewModel.category.get()!!)
         }
 
-        mBinding.categoryArrow.setOnClickListener {
+        binding.categoryArrow.setOnClickListener {
             launchCategorySelection(viewModel.category.get()!!)
         }
         addInitialStateChangeListener()
@@ -98,11 +96,11 @@ abstract class AmityCommunityCreateBaseFragment : RxFragment() {
     }
 
     private fun uploadImageAndCreateCommunity() {
-        mBinding.btnCreateCommunity.setOnClickListener {
+        binding.btnCreateCommunity.setOnClickListener {
             viewModel.createIdList()
             uploadImage(false)
         }
-        mBinding.btnEditCommunity.setOnClickListener {
+        binding.btnEditCommunity.setOnClickListener {
             uploadImage(true)
         }
     }
@@ -111,7 +109,7 @@ abstract class AmityCommunityCreateBaseFragment : RxFragment() {
         viewModel.setPropertyChangeCallback()
     }
 
-    fun getBindingVariable(): AmityFragmentCreateCommunityBinding = mBinding
+    fun getBindingVariable(): AmityFragmentCreateCommunityBinding = binding
 
     private fun pickImage() {
         pickImagePermission.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -125,18 +123,18 @@ abstract class AmityCommunityCreateBaseFragment : RxFragment() {
         Glide.with(requireContext())
             .load(R.drawable.amity_ic_default_community_avatar)
             .centerCrop()
-            .into(mBinding.ccAvatar)
+            .into(binding.ccAvatar)
     }
 
     private fun setAvatar() {
 
         renderAvatar()
 
-        mBinding.lAvatar.setOnClickListener {
+        binding.lAvatar.setOnClickListener {
             pickImage()
         }
 
-        ccName.setOnTouchListener(object : View.OnTouchListener {
+        (binding.ccName as View).setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
                 val DRAWABLE_LEFT = 0
                 val DRAWABLE_TOP = 1
@@ -144,7 +142,7 @@ abstract class AmityCommunityCreateBaseFragment : RxFragment() {
                 val DRAWABLE_BOTTOM = 3
 
                 if (event?.action == MotionEvent.ACTION_UP) {
-                    if (event.rawX >= (ccName.right - ccName.compoundDrawables[DRAWABLE_RIGHT].bounds.width())) {
+                    if (event.rawX >= (binding.ccName.right - binding.ccName.compoundDrawables[DRAWABLE_RIGHT].bounds.width())) {
                         viewModel.communityName.set("")
                     }
                 }
@@ -152,7 +150,7 @@ abstract class AmityCommunityCreateBaseFragment : RxFragment() {
             }
         })
 
-        etDescription.setOnTouchListener(object : View.OnTouchListener {
+        (binding.etDescription as View).setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
                 val DRAWABLE_LEFT = 0
                 val DRAWABLE_TOP = 1
@@ -160,7 +158,7 @@ abstract class AmityCommunityCreateBaseFragment : RxFragment() {
                 val DRAWABLE_BOTTOM = 3
 
                 if (event?.action == MotionEvent.ACTION_UP) {
-                    if (event.rawX >= (etDescription.right - etDescription.compoundDrawables[DRAWABLE_RIGHT].bounds.width())) {
+                    if (event.rawX >= (binding.etDescription.right - binding.etDescription.compoundDrawables[DRAWABLE_RIGHT].bounds.width())) {
                         viewModel.description.set("")
                     }
                 }
@@ -228,7 +226,7 @@ abstract class AmityCommunityCreateBaseFragment : RxFragment() {
         if (isEditCommunity) {
             viewModel.initialStateChanged.set(false)
         } else {
-            mBinding.btnCreateCommunity.isEnabled = false
+            binding.btnCreateCommunity.isEnabled = false
         }
 
         if (imageUri != null) {
@@ -246,8 +244,7 @@ abstract class AmityCommunityCreateBaseFragment : RxFragment() {
                             }
                         }
                         is AmityUploadResult.ERROR, AmityUploadResult.CANCELLED -> {
-                            btnCreateCommunity.isEnabled = true
-                            mBinding.btnCreateCommunity.isEnabled = true
+                            binding.btnCreateCommunity.isEnabled = true
                             view?.showSnackBar(getString(R.string.amity_image_upload_error), Snackbar.LENGTH_SHORT)
                         }
                         else -> {
@@ -255,7 +252,7 @@ abstract class AmityCommunityCreateBaseFragment : RxFragment() {
                     }
                 }.doOnError {
                     Timber.e(TAG, "uploadImageAndCreateCommunity: ${it.localizedMessage}")
-                    mBinding.btnCreateCommunity.isEnabled = true
+                    binding.btnCreateCommunity.isEnabled = true
                     viewModel.initialStateChanged.set(true)
                 }.subscribe()
             )

@@ -8,9 +8,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.amity.socialcloud.uikit.common.R
-import kotlinx.android.synthetic.main.amity_activity_image_preview.*
+import com.amity.socialcloud.uikit.common.databinding.AmityActivityImagePreviewBinding
 
 class AmityImagePreviewActivity : AppCompatActivity() {
+    private val binding: AmityActivityImagePreviewBinding by lazy {
+        AmityActivityImagePreviewBinding.inflate(layoutInflater)
+    }
     private lateinit var amityImages: List<AmityPreviewImage>
     private var imagePosition: Int = 0
     private var showImageCount = true
@@ -40,7 +43,7 @@ class AmityImagePreviewActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         window.statusBarColor = ContextCompat.getColor(this, R.color.amityColorSecondary);
 
-        setContentView(R.layout.amity_activity_image_preview)
+        setContentView(binding.root)
         amityImages = intent.getParcelableArrayListExtra(EXTRA_IMAGES) ?: listOf()
         showImageCount = intent.getBooleanExtra(EXTRA_SHOW_IMAGE_COUNT, true)
         imagePosition = intent.getIntExtra(EXTRA_IMAGE_POSITION, 0)
@@ -59,25 +62,25 @@ class AmityImagePreviewActivity : AppCompatActivity() {
                 setToolbarTitle(position)
             }
         }
-        imageViewPages.adapter = imagePreviewAdapter
+        binding.imageViewPages.adapter = imagePreviewAdapter
         imagePreviewAdapter.setItems(amityImages)
-        imageViewPages.setCurrentItem(imagePosition, false)
+        binding.imageViewPages.setCurrentItem(imagePosition, false)
         setToolbarTitle(imagePosition)
 
     }
 
     override fun onResume() {
         super.onResume()
-        imageViewPages.registerOnPageChangeCallback(pageChangeCallback)
+        binding.imageViewPages.registerOnPageChangeCallback(pageChangeCallback)
     }
 
     override fun onPause() {
         super.onPause()
-        imageViewPages.unregisterOnPageChangeCallback(pageChangeCallback)
+        binding.imageViewPages.unregisterOnPageChangeCallback(pageChangeCallback)
     }
 
     private fun initToolbar() {
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.amity_ic_close)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)

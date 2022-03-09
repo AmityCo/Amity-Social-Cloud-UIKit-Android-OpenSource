@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.paging.PagedList
@@ -33,7 +32,6 @@ import com.trello.rxlifecycle3.components.support.RxFragment
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.amity_fragment_select_members_list.*
 
 private const val ARG_MEMBERS_LIST = "ARG_MEMBERS_LIST"
 
@@ -52,7 +50,7 @@ class AmityMemberPickerFragment : RxFragment(), AmitySelectMemberListener,
         CompositeDisposable()
     }
 
-    private lateinit var mBinding: AmityFragmentSelectMembersListBinding
+    private lateinit var binding: AmityFragmentSelectMembersListBinding
 
     companion object {
         fun newInstance(): Builder {
@@ -65,12 +63,12 @@ class AmityMemberPickerFragment : RxFragment(), AmitySelectMemberListener,
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        mBinding = DataBindingUtil.inflate(
+        binding = DataBindingUtil.inflate(
             inflater,
             R.layout.amity_fragment_select_members_list, container, false
         )
-        mBinding.viewModel = mViewModel
-        return mBinding.root
+        binding.viewModel = mViewModel
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -82,7 +80,7 @@ class AmityMemberPickerFragment : RxFragment(), AmitySelectMemberListener,
         handleSelectedMembers()
         setUpMembersListRecyclerView()
 
-        etSearch.setShape(
+        binding.etSearch.setShape(
             null, null, null, null,
             R.color.amityColorBase, null, AmityColorShade.SHADE4
         )
@@ -135,28 +133,32 @@ class AmityMemberPickerFragment : RxFragment(), AmitySelectMemberListener,
         mSelectedMembersAdapter = AmitySelectedMemberAdapter(this)
         val layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        rvSelectedMembers.layoutManager = layoutManager
-        rvSelectedMembers.adapter = mSelectedMembersAdapter
-        rvSelectedMembers.addItemDecoration(
-            AmityRecyclerViewItemDecoration(
-                0,
-                resources.getDimensionPixelSize(R.dimen.amity_padding_m2),
-                0,
-                resources.getDimensionPixelSize(R.dimen.amity_padding_xxs)
+        binding.rvSelectedMembers.apply {
+            this.layoutManager = layoutManager
+            adapter = mSelectedMembersAdapter
+            addItemDecoration(
+                    AmityRecyclerViewItemDecoration(
+                            0,
+                            resources.getDimensionPixelSize(R.dimen.amity_padding_m2),
+                            0,
+                            resources.getDimensionPixelSize(R.dimen.amity_padding_xxs)
+                    )
             )
-        )
+        }
     }
 
     private fun setUpMembersListRecyclerView() {
         mMemberListAdapter = AmityMembersListAdapter(this, mViewModel)
-        rvMembersList.layoutManager = LinearLayoutManager(requireContext())
-        rvMembersList.adapter = mMemberListAdapter
-        rvMembersList.addItemDecoration(
-            AmitySelectMembersItemDecoration(
-                resources.getDimensionPixelSize(R.dimen.amity_eighteen),
-                resources.getDimensionPixelSize(R.dimen.amity_padding_m1)
+        binding.rvMembersList.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = mMemberListAdapter
+            addItemDecoration(
+                    AmitySelectMembersItemDecoration(
+                            resources.getDimensionPixelSize(R.dimen.amity_eighteen),
+                            resources.getDimensionPixelSize(R.dimen.amity_padding_m1)
+                    )
             )
-        )
+        }
         disposable.add(mViewModel.getAllUsers().doOnError {
 
         }.subscribeOn(Schedulers.io())
@@ -168,14 +170,16 @@ class AmityMemberPickerFragment : RxFragment(), AmitySelectMemberListener,
 
     private fun setUpSearchRecyclerView() {
         mSearchResultAdapter = AmitySearchResultAdapter(this)
-        rvSearchResults.layoutManager = LinearLayoutManager(requireContext())
-        rvSearchResults.adapter = mSearchResultAdapter
-        rvSearchResults.addItemDecoration(
-            AmityRecyclerViewItemDecoration(
-                resources.getDimensionPixelSize(R.dimen.amity_padding_m1)
+        binding.rvSearchResults.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = mSearchResultAdapter
+            addItemDecoration(
+                    AmityRecyclerViewItemDecoration(
+                            resources.getDimensionPixelSize(R.dimen.amity_padding_m1)
+                    )
             )
-        )
-        (rvSearchResults.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+            (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+        }
     }
 
     override fun onMemberClicked(member: AmityUser, position: Int) {
@@ -193,7 +197,7 @@ class AmityMemberPickerFragment : RxFragment(), AmitySelectMemberListener,
             mViewModel.selectedMemberSet.add(member.getUserId())
             mViewModel.prepareSelectedMembersList(selectMemberItem, true)
             updateListOnSelection(member.getUserId())
-            rvSelectedMembers.scrollToPosition(mViewModel.selectedMembersList.size - 1)
+            binding.rvSelectedMembers.scrollToPosition(mViewModel.selectedMembersList.size - 1)
         }
     }
 

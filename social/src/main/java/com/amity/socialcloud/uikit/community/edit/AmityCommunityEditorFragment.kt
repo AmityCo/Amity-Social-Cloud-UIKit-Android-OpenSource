@@ -5,7 +5,6 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.amity.socialcloud.sdk.social.community.AmityCommunity
-import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.ui.view.AmityCommunityCreateBaseFragment
 import com.amity.socialcloud.uikit.community.ui.viewModel.AmityCreateCommunityViewModel
 import com.bumptech.glide.Glide
@@ -39,7 +38,7 @@ class AmityCommunityEditorFragment : AmityCommunityCreateBaseFragment() {
             Glide.with(requireContext())
                 .load(viewModel.avatarUrl.get())
                 .centerCrop()
-                .into(mBinding.ccAvatar)
+                .into(binding.ccAvatar)
         }
     }
 

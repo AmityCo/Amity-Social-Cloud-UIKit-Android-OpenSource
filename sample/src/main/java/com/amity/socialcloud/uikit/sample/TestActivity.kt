@@ -7,26 +7,31 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.amity.socialcloud.uikit.community.home.fragments.AmityCommunityHomePageFragment
-import kotlinx.android.synthetic.main.amity_activity_test.*
+import com.amity.socialcloud.uikit.sample.databinding.AmityActivityTestBinding
 
 class TestActivity : AppCompatActivity() {
+
+    private val binding: AmityActivityTestBinding by lazy {
+        AmityActivityTestBinding.inflate(layoutInflater)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.amity_activity_test)
+        setContentView(binding.root)
         setupToolbar()
         initializeFragment()
     }
 
     private fun setupToolbar() {
-        mToolbar.setLeftDrawable(
+        binding.mToolbar.setLeftDrawable(
             ContextCompat.getDrawable(
                 this,
                 com.amity.socialcloud.uikit.community.R.drawable.amity_ic_arrow_back
             )
         )
-        mToolbar.setLeftString("Test Activity")
+        binding.mToolbar.setLeftString("Test Activity")
         supportActionBar?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
-        setSupportActionBar(mToolbar)
+        setSupportActionBar(binding.mToolbar)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

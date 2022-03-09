@@ -41,11 +41,6 @@ import io.reactivex.BackpressureStrategy
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
-import kotlinx.android.synthetic.main.amity_fragment_community_home_page.tabLayout
-import kotlinx.android.synthetic.main.amity_fragment_user_profile_page.appBar
-import kotlinx.android.synthetic.main.amity_fragment_user_profile_page.fabCreatePost
-import kotlinx.android.synthetic.main.amity_fragment_user_profile_page.refreshLayout
-import kotlinx.android.synthetic.main.amity_view_user_profile_header.*
 import timber.log.Timber
 
 const val ARG_USER_ID = "ARG_USER_ID"
@@ -116,15 +111,15 @@ class AmityUserProfilePageFragment : AmityBaseFragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initTabLayout()
-        appBar.setExpanded(true)
+        binding.appBar.setExpanded(true)
         getUserDetails()
-        fabCreatePost.setSafeOnClickListener {
+        binding.fabCreatePost.setSafeOnClickListener {
             navigateToCreatePost()
         }
         setHeaderViewClickListeners()
 
-        refreshLayout.setColorSchemeResources(R.color.amityColorPrimary)
-        refreshLayout.setOnRefreshListener {
+        binding.refreshLayout.setColorSchemeResources(R.color.amityColorPrimary)
+        binding.refreshLayout.setOnRefreshListener {
             refreshFeed()
         }
     }
@@ -132,24 +127,24 @@ class AmityUserProfilePageFragment : AmityBaseFragment(),
     override fun onStart() {
         super.onStart()
         if (!isRefreshing) {
-            refreshLayout?.isRefreshing = true
+            binding.refreshLayout?.isRefreshing = true
             refreshFeed()
         }
         isRefreshing = true
     }
 
     override fun onOffsetChanged(appBarLayout: AppBarLayout?, verticalOffset: Int) {
-        refreshLayout.isEnabled = (verticalOffset == 0)
+        binding.refreshLayout.isEnabled = (verticalOffset == 0)
     }
 
     override fun onResume() {
         super.onResume()
-        appBar.addOnOffsetChangedListener(this)
+        binding.appBar.addOnOffsetChangedListener(this)
     }
 
     override fun onPause() {
         super.onPause()
-        appBar.removeOnOffsetChangedListener(this)
+        binding.appBar.removeOnOffsetChangedListener(this)
     }
 
     private fun navigateToCreatePost() {
@@ -197,7 +192,7 @@ class AmityUserProfilePageFragment : AmityBaseFragment(),
             }
         }
         Handler(Looper.getMainLooper()).postDelayed({
-            refreshLayout?.isRefreshing = false
+            binding.refreshLayout.isRefreshing = false
         }, 1000)
         getFollowInfo()
     }
@@ -282,7 +277,7 @@ class AmityUserProfilePageFragment : AmityBaseFragment(),
                     .subscribe({ result ->
                         binding.userProfileHeader.setUserData(result)
                         currentUser = result
-                        fabCreatePost.visibility =
+                        binding.fabCreatePost.visibility =
                             if (viewModel.isSelfUser()) View.VISIBLE else View.GONE
                     }, {
                         Timber.d(TAG, it.message)
@@ -329,7 +324,7 @@ class AmityUserProfilePageFragment : AmityBaseFragment(),
                 )
             )
         )
-        tabLayout.setAdapter(fragmentStateAdapter)
+        binding.tabLayout.setAdapter(fragmentStateAdapter)
     }
 
     private fun getPostGalleryFragment(): Fragment {

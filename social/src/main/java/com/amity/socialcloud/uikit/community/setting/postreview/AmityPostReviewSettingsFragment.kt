@@ -8,14 +8,16 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.amity.socialcloud.sdk.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.utils.AmityAlertDialogUtil
 import com.amity.socialcloud.uikit.community.R
+import com.amity.socialcloud.uikit.community.databinding.AmityFragmentPostReviewBinding
 import com.amity.socialcloud.uikit.community.setting.AmitySettingsItem
 import com.amity.socialcloud.uikit.community.setting.AmitySettingsItemAdapter
 import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
 import com.trello.rxlifecycle3.components.support.RxFragment
-import kotlinx.android.synthetic.main.amity_fragment_post_review.*
 
-class AmityPostReviewSettingsFragment :
-    RxFragment(R.layout.amity_fragment_post_review) {
+class AmityPostReviewSettingsFragment : RxFragment() {
+
+    private var _binding: AmityFragmentPostReviewBinding? = null
+    private val binding get() = _binding!!
 
     private val settingsListAdapter = AmitySettingsItemAdapter()
     private lateinit var viewModel: AmityPostReviewSettingsViewModel
@@ -69,8 +71,8 @@ class AmityPostReviewSettingsFragment :
     }
 
     private fun setupPostReviewListRecyclerView() {
-        rvPostReview.layoutManager = LinearLayoutManager(context)
-        rvPostReview.adapter = settingsListAdapter
+        binding.rvPostReview.layoutManager = LinearLayoutManager(context)
+        binding.rvPostReview.adapter = settingsListAdapter
         getPostReviewItems()
     }
 
@@ -98,6 +100,11 @@ class AmityPostReviewSettingsFragment :
                 isPositive = which, confirmed = dialog::cancel
             )
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     class Builder internal constructor() {

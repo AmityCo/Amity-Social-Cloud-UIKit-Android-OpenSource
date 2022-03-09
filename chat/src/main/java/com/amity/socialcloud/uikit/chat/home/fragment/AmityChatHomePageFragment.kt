@@ -8,6 +8,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.amity.socialcloud.uikit.chat.R
+import com.amity.socialcloud.uikit.chat.databinding.AmityFragmentChatHomePageBinding
 import com.amity.socialcloud.uikit.chat.directory.fragment.AmityDirectoryFragment
 import com.amity.socialcloud.uikit.chat.home.AmityChatHomePageViewModel
 import com.amity.socialcloud.uikit.chat.home.callback.AmityDirectoryFragmentDelegate
@@ -15,11 +16,13 @@ import com.amity.socialcloud.uikit.chat.home.callback.AmityRecentChatFragmentDel
 import com.amity.socialcloud.uikit.chat.home.callback.AmityRecentChatItemClickListener
 import com.amity.socialcloud.uikit.chat.recent.fragment.AmityRecentChatFragment
 import com.amity.socialcloud.uikit.common.base.AmityFragmentStateAdapter
-import kotlinx.android.synthetic.main.amity_fragment_chat_home_page.*
 
 class AmityChatHomePageFragment private constructor() : Fragment() {
     private lateinit var mViewModel: AmityChatHomePageViewModel
     private lateinit var fragmentStateAdapter: AmityFragmentStateAdapter
+
+    private var _binding: AmityFragmentChatHomePageBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +37,8 @@ class AmityChatHomePageFragment private constructor() : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.amity_fragment_chat_home_page, container, false)
+        _binding = AmityFragmentChatHomePageBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -44,10 +48,10 @@ class AmityChatHomePageFragment private constructor() : Fragment() {
     }
 
     private fun initToolbar() {
-        chatHomeToolBar.setLeftString(getString(R.string.amity_chat))
+        binding.chatHomeToolBar.setLeftString(getString(R.string.amity_chat))
         (activity as AppCompatActivity).supportActionBar?.displayOptions =
             ActionBar.DISPLAY_SHOW_CUSTOM
-        (activity as AppCompatActivity).setSupportActionBar(chatHomeToolBar as Toolbar)
+        (activity as AppCompatActivity).setSupportActionBar(binding.chatHomeToolBar as Toolbar)
         setHasOptionsMenu(true)
     }
 
@@ -60,7 +64,7 @@ class AmityChatHomePageFragment private constructor() : Fragment() {
                 )
             )
         )
-        tabLayout.setAdapter(fragmentStateAdapter)
+        binding.tabLayout.setAdapter(fragmentStateAdapter)
     }
 
     private fun getRecentChatFragment(): Fragment {
@@ -101,6 +105,10 @@ class AmityChatHomePageFragment private constructor() : Fragment() {
         //startActivity(intent)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
     class Builder internal constructor(){
 

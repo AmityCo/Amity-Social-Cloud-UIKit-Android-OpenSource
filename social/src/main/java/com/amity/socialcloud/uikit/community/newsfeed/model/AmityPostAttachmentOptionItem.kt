@@ -2,7 +2,7 @@ package com.amity.socialcloud.uikit.community.newsfeed.model
 
 import android.os.Parcelable
 import com.amity.socialcloud.uikit.community.R
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 sealed class AmityPostAttachmentOptionItem(
     val activeIcon: Int,

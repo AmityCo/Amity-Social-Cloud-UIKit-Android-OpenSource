@@ -12,10 +12,13 @@ import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.data.AmitySelectMemberItem
 import com.amity.socialcloud.uikit.community.databinding.AmityActivitySelectMembersListBinding
 import com.amity.socialcloud.uikit.community.ui.viewModel.AmitySelectMembersViewModel
-import kotlinx.android.synthetic.main.amity_activity_select_members_list.*
 
 class AmityMemberPickerActivity : AmityBaseActivity<AmityActivitySelectMembersListBinding,
         AmitySelectMembersViewModel>(), AmityToolBarClickListener {
+
+    private val binding : AmityActivitySelectMembersListBinding by lazy {
+        AmityActivitySelectMembersListBinding.inflate(layoutInflater)
+    }
 
     private val mViewModel: AmitySelectMembersViewModel by viewModels()
     private lateinit var mFragment: AmityMemberPickerFragment
@@ -49,20 +52,22 @@ class AmityMemberPickerActivity : AmityBaseActivity<AmityActivitySelectMembersLi
     }
 
     private fun setUpToolBar() {
-        smToolBar.setLeftDrawable(
-                ContextCompat.getDrawable(this, R.drawable.amity_ic_arrow_back)
-        )
-        smToolBar.setRightString(getString(R.string.amity_done))
-        smToolBar.setClickListener(this)
+        binding.smToolBar.apply {
+            setLeftDrawable(
+                    ContextCompat.getDrawable(this@AmityMemberPickerActivity, R.drawable.amity_ic_arrow_back)
+            )
+            setRightString(getString(R.string.amity_done))
+            setClickListener(this@AmityMemberPickerActivity)
+        }
         setSelectionCount()
     }
 
     private fun setSelectionCount() {
         mViewModel.leftString.observe(this, Observer {
-            smToolBar.setLeftString(it)
+            binding.smToolBar.setLeftString(it)
         })
         mViewModel.rightStringActive.observe(this, Observer {
-            smToolBar.setRightStringActive(it)
+            binding.smToolBar.setRightStringActive(it)
         })
     }
 

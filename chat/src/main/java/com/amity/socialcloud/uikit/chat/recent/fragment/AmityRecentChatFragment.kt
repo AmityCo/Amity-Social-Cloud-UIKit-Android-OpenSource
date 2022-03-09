@@ -16,23 +16,22 @@ import com.amity.socialcloud.uikit.chat.messages.AmityMessageListActivity
 import com.amity.socialcloud.uikit.chat.recent.adapter.AmityRecentChatAdapter
 import com.amity.socialcloud.uikit.chat.util.AmityRecentItemDecoration
 import io.reactivex.disposables.Disposable
-import kotlinx.android.synthetic.main.amity_fragment_recent_chat.*
 
 class AmityRecentChatFragment private constructor() : Fragment(), AmityRecentChatItemClickListener {
     private lateinit var mViewModel: AmityRecentChatViewModel
 
     private lateinit var mAdapter: AmityRecentChatAdapter
     private lateinit var recentChatDisposable: Disposable
-    private lateinit var mBinding: AmityFragmentRecentChatBinding
+    private lateinit var binding: AmityFragmentRecentChatBinding
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         mViewModel = ViewModelProvider(requireActivity()).get(AmityRecentChatViewModel::class.java)
-        mBinding =
+        binding =
                 DataBindingUtil.inflate(inflater, R.layout.amity_fragment_recent_chat, container, false)
-        return mBinding.root
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -43,25 +42,27 @@ class AmityRecentChatFragment private constructor() : Fragment(), AmityRecentCha
     private fun initRecyclerView() {
         mAdapter = AmityRecentChatAdapter()
         mAdapter.setCommunityChatItemClickListener(this)
-        rvRecentChat.layoutManager = LinearLayoutManager(requireContext())
-        rvRecentChat.adapter = mAdapter
-        rvRecentChat.addItemDecoration(
-                AmityRecentItemDecoration(
-                        requireContext(),
-                        resources.getDimensionPixelSize(R.dimen.amity_padding_m2)
-                )
-        )
+        binding.rvRecentChat.apply {
+            this.layoutManager = LinearLayoutManager(requireContext())
+            this.adapter = mAdapter
+            this.addItemDecoration(
+                    AmityRecentItemDecoration(
+                            requireContext(),
+                            resources.getDimensionPixelSize(R.dimen.amity_padding_m2)
+                    )
+            )
+        }
         getRecentChatData()
     }
 
     private fun getRecentChatData() {
         recentChatDisposable = mViewModel.getRecentChat().subscribe { chatList ->
             if (chatList.isEmpty()) {
-                emptyView.visibility = View.VISIBLE
-                rvRecentChat.visibility = View.GONE
+                binding.emptyView.visibility = View.VISIBLE
+                binding.rvRecentChat.visibility = View.GONE
             } else {
-                emptyView.visibility = View.GONE
-                rvRecentChat.visibility = View.VISIBLE
+                binding.emptyView.visibility = View.GONE
+                binding.rvRecentChat.visibility = View.VISIBLE
                 mAdapter.submitList(chatList)
             }
         }

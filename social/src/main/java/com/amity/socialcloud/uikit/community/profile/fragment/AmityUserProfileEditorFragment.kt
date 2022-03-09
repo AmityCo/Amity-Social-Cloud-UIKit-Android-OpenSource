@@ -26,9 +26,7 @@ import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.amity_fragment_edit_user_profile.*
 import java.io.File
-
 
 class AmityUserProfileEditorFragment : AmityPickerFragment() {
     private var menuItemSaveProfile: MenuItem? = null
@@ -70,8 +68,8 @@ class AmityUserProfileEditorFragment : AmityPickerFragment() {
 
         observeProfileUpdate()
 
-        etDisplayName.filters = arrayOf<InputFilter>(LengthFilter(viewModel.userNameMaxTextLength))
-        etAbout.filters = arrayOf<InputFilter>(LengthFilter(viewModel.aboutMaxTextLength))
+        binding.etDisplayName.filters = arrayOf<InputFilter>(LengthFilter(viewModel.userNameMaxTextLength))
+        binding.etAbout.filters = arrayOf<InputFilter>(LengthFilter(viewModel.aboutMaxTextLength))
     }
 
 

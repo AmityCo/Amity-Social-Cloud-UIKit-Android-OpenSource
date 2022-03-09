@@ -5,12 +5,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.amity.socialcloud.uikit.common.R
-import kotlinx.android.synthetic.main.amity_item_bottom_sheet_menu.view.*
+import com.amity.socialcloud.uikit.common.databinding.AmityItemBottomSheetMenuBinding
 
 class BottomSheetMenuAdapter(private var items: List<BottomSheetMenuItem>) : RecyclerView.Adapter<BottomSheetMenuAdapter.BottomSheetMenuViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BottomSheetMenuViewHolder {
-        return BottomSheetMenuViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.amity_item_bottom_sheet_menu, parent, false))
+        return BottomSheetMenuViewHolder(AmityItemBottomSheetMenuBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
     override fun getItemCount(): Int = items.size
@@ -19,23 +19,23 @@ class BottomSheetMenuAdapter(private var items: List<BottomSheetMenuItem>) : Rec
         holder.bind(items[position])
     }
 
-    class BottomSheetMenuViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+    class BottomSheetMenuViewHolder(val binding: AmityItemBottomSheetMenuBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: BottomSheetMenuItem) {
-            with(view) {
-                bottom_menu_title.text = view.resources.getString(item.titleResId)
+            with(binding) {
+                bottomMenuTitle.text = itemView.resources.getString(item.titleResId)
                 if(item.iconResId != null) {
-                    bottom_menu_icon.setImageResource(item.iconResId)
-                    bottom_menu_icon.visibility = View.VISIBLE
+                    bottomMenuIcon.setImageResource(item.iconResId)
+                    bottomMenuIcon.visibility = View.VISIBLE
                 } else {
-                    bottom_menu_icon.visibility = View.GONE
+                    bottomMenuIcon.visibility = View.GONE
                 }
                 if (item.colorResId != null) {
-                    bottom_menu_title.setTextColor(context.resources.getColor(item.colorResId))
+                    bottomMenuTitle.setTextColor(itemView.resources.getColor(item.colorResId))
                 } else {
-                    bottom_menu_title.setTextColor(context.resources.getColor(R.color.amityColorBlack))
+                    bottomMenuTitle.setTextColor(itemView.resources.getColor(R.color.amityColorBlack))
                 }
-                setOnClickListener { item.action() }
+                root.setOnClickListener { item.action() }
             }
         }
     }
