@@ -10,10 +10,9 @@ import com.amity.socialcloud.sdk.social.community.AmityCommunityCategory
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.databinding.AmityItemCategoryListBinding
 import com.bumptech.glide.Glide
-import kotlinx.android.synthetic.main.amity_item_category_list.view.*
 
 class AmityCommunityCategoryView : ConstraintLayout {
-    private lateinit var mBinding: AmityItemCategoryListBinding
+    private lateinit var binding: AmityItemCategoryListBinding
 
 
     constructor(context: Context) : super(context) {
@@ -37,18 +36,18 @@ class AmityCommunityCategoryView : ConstraintLayout {
             .load(url)
             .placeholder(R.drawable.amity_ic_default_category_avatar)
             .centerCrop()
-            .into(categoryAvatar)
+            .into(binding.categoryAvatar)
     }
 
     fun setCategory(category: AmityCommunityCategory) {
-        tvCategoryName.text = category.getName()
-        mBinding.avatarUrl = category.getAvatar()?.getUrl(AmityImage.Size.SMALL)
+        binding.tvCategoryName.text = category.getName()
+        binding.avatarUrl = category.getAvatar()?.getUrl(AmityImage.Size.SMALL)
     }
 
 
     private fun init() {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        mBinding =
+        binding =
             DataBindingUtil.inflate(inflater, R.layout.amity_item_category_list, this, true)
 
     }

@@ -2,7 +2,9 @@ package com.amity.socialcloud.uikit.community.setting.user
 
 import android.content.DialogInterface
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -10,18 +12,25 @@ import com.amity.socialcloud.sdk.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.common.showSnackBar
 import com.amity.socialcloud.uikit.common.utils.AmityAlertDialogUtil
 import com.amity.socialcloud.uikit.community.R
+import com.amity.socialcloud.uikit.community.databinding.AmityFragmentUserSettingsBinding
 import com.amity.socialcloud.uikit.community.profile.activity.AmityEditUserProfileActivity
 import com.amity.socialcloud.uikit.community.setting.AmitySettingsItem
 import com.amity.socialcloud.uikit.community.setting.AmitySettingsItemAdapter
 import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
 import com.trello.rxlifecycle3.components.support.RxFragment
-import kotlinx.android.synthetic.main.amity_fragment_user_settings.*
 
-class AmityUserSettingsFragment :
-    RxFragment(R.layout.amity_fragment_user_settings) {
+class AmityUserSettingsFragment : RxFragment() {
+
+    private var _binding: AmityFragmentUserSettingsBinding? = null
+    private val binding get() = _binding!!
 
     private val settingsListAdapter = AmitySettingsItemAdapter()
     lateinit var viewModel: AmityUserSettingsViewModel
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        _binding = AmityFragmentUserSettingsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -30,8 +39,8 @@ class AmityUserSettingsFragment :
     }
 
     private fun setUpSettingsRecyclerView() {
-        progressbar.visibility = View.VISIBLE
-        rvUserSettings.apply {
+        binding.progressbar.visibility = View.VISIBLE
+        binding. rvUserSettings.apply {
             adapter = settingsListAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
@@ -49,13 +58,13 @@ class AmityUserSettingsFragment :
     }
 
     private fun showErrorLayout() {
-        rvUserSettings.visibility = View.GONE
-        errorLayout.visibility = View.VISIBLE
+        binding.rvUserSettings.visibility = View.GONE
+        binding.errorLayout.root.visibility = View.VISIBLE
     }
 
     private fun renderItems(items: List<AmitySettingsItem>) {
         settingsListAdapter.setItems(items)
-        progressbar.visibility = View.GONE
+        binding.progressbar.visibility = View.GONE
     }
 
     private fun unfollowUser(userId: String) {
@@ -85,13 +94,13 @@ class AmityUserSettingsFragment :
         if (user.isFlaggedByMe()) {
             viewModel.unReportUser(user)
                 .doOnComplete {
-                    rvUserSettings.showSnackBar(getString(R.string.amity_unreport_sent))
+                    binding.rvUserSettings.showSnackBar(getString(R.string.amity_unreport_sent))
                 }.untilLifecycleEnd(this)
                 .subscribe()
         } else {
             viewModel.reportUser(user)
                 .doOnComplete {
-                    rvUserSettings.showSnackBar(getString(R.string.amity_report_sent))
+                    binding.rvUserSettings.showSnackBar(getString(R.string.amity_report_sent))
                 }.untilLifecycleEnd(this)
                 .subscribe()
         }
@@ -116,6 +125,11 @@ class AmityUserSettingsFragment :
 
     internal fun shareUserProfile(userId: String) {
 
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     class Builder internal constructor() {

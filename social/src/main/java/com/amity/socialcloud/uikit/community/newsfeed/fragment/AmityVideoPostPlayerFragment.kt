@@ -11,6 +11,7 @@ import com.amity.socialcloud.sdk.social.feed.AmityPost
 import com.amity.socialcloud.uikit.common.base.AmityBaseFragment
 import com.amity.socialcloud.uikit.common.utils.safeLet
 import com.amity.socialcloud.uikit.community.R
+import com.amity.socialcloud.uikit.community.databinding.AmityFragmentSocialVideoPlayerBinding
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
@@ -21,18 +22,20 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.amity_fragment_social_video_player.*
 
 internal class AmityVideoPostPlayerFragment : AmityBaseFragment() {
 
+    private var _binding: AmityFragmentSocialVideoPlayerBinding? = null
+    private val binding get() = _binding!!
     private var exoplayer: SimpleExoPlayer? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.amity_fragment_social_video_player, container, false)
+    ): View {
+        _binding = AmityFragmentSocialVideoPlayerBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -51,12 +54,12 @@ internal class AmityVideoPostPlayerFragment : AmityBaseFragment() {
     private fun setupPlayer(context: Context) {
         exoplayer = SimpleExoPlayer.Builder(context).build()
         exoplayer?.playWhenReady = false
-        video_viewer?.player = exoplayer
+        binding.videoViewer.player = exoplayer
     }
 
     private fun prepareVideo(url: String?) {
         safeLet(url, context) { nonNullUrl, nonNullContext ->
-            video_viewer?.requestFocus()
+            binding.videoViewer.requestFocus()
             val dataSourceFactory: DataSource.Factory = DefaultDataSourceFactory(
                 nonNullContext,
                 Util.getUserAgent(nonNullContext, resources.getString(R.string.app_name))
@@ -74,6 +77,11 @@ internal class AmityVideoPostPlayerFragment : AmityBaseFragment() {
         super.onDestroy()
         exoplayer?.stop()
         exoplayer?.release()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     internal class Builder internal constructor() {

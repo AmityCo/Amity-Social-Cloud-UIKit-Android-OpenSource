@@ -33,11 +33,10 @@ import com.google.android.material.appbar.AppBarLayout
 import com.trello.rxlifecycle3.components.support.RxFragment
 import io.reactivex.BackpressureStrategy
 import io.reactivex.subjects.PublishSubject
-import kotlinx.android.synthetic.main.amity_fragment_community_page.*
-
 
 class AmityCommunityPageFragment : RxFragment(),
     AppBarLayout.OnOffsetChangedListener {
+
     private var isCreateCommunity: Boolean = false
 
     private val TAG = AmityCommunityPageFragment::class.java.canonicalName
@@ -111,16 +110,16 @@ class AmityCommunityPageFragment : RxFragment(),
 
     override fun onPause() {
         super.onPause()
-        appBar.removeOnOffsetChangedListener(this)
+        binding.appBar.removeOnOffsetChangedListener(this)
     }
 
     override fun onResume() {
         super.onResume()
-        appBar.addOnOffsetChangedListener(this)
+        binding.appBar.addOnOffsetChangedListener(this)
     }
 
     override fun onOffsetChanged(appBarLayout: AppBarLayout?, verticalOffset: Int) {
-        refreshLayout.isEnabled = (verticalOffset == 0)
+        binding.refreshLayout.isEnabled = (verticalOffset == 0)
     }
 
     private fun setUpView() {
@@ -226,11 +225,11 @@ class AmityCommunityPageFragment : RxFragment(),
 
 
     private fun refreshCommunity() {
-        refreshLayout?.isRefreshing = true
+        binding.refreshLayout?.isRefreshing = true
         refreshProfile()
         refreshFeed()
         Handler(Looper.getMainLooper()).postDelayed({
-            refreshLayout?.isRefreshing = false
+            binding.refreshLayout?.isRefreshing = false
         }, 1000)
     }
 

@@ -4,7 +4,7 @@ import android.net.Uri
 import android.os.Parcelable
 import com.amity.socialcloud.uikit.community.newsfeed.model.FileUploadState
 import com.google.common.base.Objects
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class AmityFileAttachment(

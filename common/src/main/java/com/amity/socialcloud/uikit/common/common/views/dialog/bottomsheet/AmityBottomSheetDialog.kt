@@ -3,9 +3,9 @@ package com.amity.socialcloud.uikit.common.common.views.dialog.bottomsheet
 import android.content.Context
 import android.view.LayoutInflater
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.amity.socialcloud.uikit.common.R
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import kotlinx.android.synthetic.main.amity_bottom_sheet_menu.view.*
 
 class AmityBottomSheetDialog(context: Context, items: List<BottomSheetMenuItem>? = listOf()) {
 
@@ -13,11 +13,12 @@ class AmityBottomSheetDialog(context: Context, items: List<BottomSheetMenuItem>?
     private val adapter = BottomSheetMenuAdapter(items ?: listOf())
 
     init {
-        val view = LayoutInflater.from(context).inflate(R.layout.amity_bottom_sheet_menu, null)
+        val view =
+            LayoutInflater.from(context).inflate(R.layout.amity_bottom_sheet_menu, null, false)
         bottomSheetDialog.setContentView(view)
-        with(view) {
-            bottom_sheet_recyclerview.layoutManager = LinearLayoutManager(context)
-            bottom_sheet_recyclerview.adapter = adapter
+        (view.findViewById<RecyclerView>(R.id.bottom_sheet_recyclerview))?.let {
+            it.layoutManager = LinearLayoutManager(context)
+            it.adapter = adapter
         }
     }
 

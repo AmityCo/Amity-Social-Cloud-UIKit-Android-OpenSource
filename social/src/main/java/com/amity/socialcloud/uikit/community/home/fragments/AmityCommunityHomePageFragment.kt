@@ -27,7 +27,6 @@ import com.amity.socialcloud.uikit.community.search.AmityUserSearchFragment
 import com.amity.socialcloud.uikit.community.setting.AmityCommunitySearchFragment
 import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.PublishSubject
-import kotlinx.android.synthetic.main.amity_fragment_community_home_page.*
 import java.util.concurrent.TimeUnit
 
 
@@ -96,7 +95,7 @@ class AmityCommunityHomePageFragment : Fragment() {
                 )
             )
         )
-        tabLayout.setAdapter(fragmentStateAdapter)
+        binding.tabLayout.setAdapter(fragmentStateAdapter)
     }
 
     private fun getExploreFragment(): Fragment {
@@ -112,7 +111,7 @@ class AmityCommunityHomePageFragment : Fragment() {
             when (event.type) {
                 AmityEventIdentifier.EXPLORE_COMMUNITY -> {
                     //searchMenuItem.expandActionView()
-                    tabLayout.switchTab(1)
+                    binding.tabLayout.switchTab(1)
                 }
                 else -> {
 

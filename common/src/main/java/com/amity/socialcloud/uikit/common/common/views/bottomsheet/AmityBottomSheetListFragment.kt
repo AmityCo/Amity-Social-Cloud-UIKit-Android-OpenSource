@@ -5,13 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.amity.socialcloud.uikit.common.R
+import com.amity.socialcloud.uikit.common.databinding.AmityBottomSheetBinding
 import com.amity.socialcloud.uikit.common.model.AmityMenuItem
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlinx.android.synthetic.main.amity_bottom_sheet.*
 
 @Deprecated("Use AmityBottomSheetDialog instead")
 class AmityBottomSheetListFragment private constructor() : BottomSheetDialogFragment() {
+
+    private var _binding: AmityBottomSheetBinding? = null
+    private val binding get() = _binding!!
 
     private lateinit var itemList: ArrayList<AmityMenuItem>
     private var mListener: AmityMenuItemClickListener? = null
@@ -37,19 +39,25 @@ class AmityBottomSheetListFragment private constructor() : BottomSheetDialogFrag
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.amity_bottom_sheet, container, false)
+        _binding = AmityBottomSheetBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         mAdapter = AmityBottomSheetAdapter(itemList, mListener)
-        rvBottomSheet.layoutManager = LinearLayoutManager(requireContext())
-        rvBottomSheet.adapter = mAdapter
+        binding.rvBottomSheet.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvBottomSheet.adapter = mAdapter
     }
 
     fun setMenuItemClickListener(listener: AmityMenuItemClickListener) {
         mListener = listener
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

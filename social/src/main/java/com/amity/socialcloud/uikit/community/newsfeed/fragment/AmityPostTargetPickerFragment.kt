@@ -22,7 +22,6 @@ import com.amity.socialcloud.uikit.community.utils.EXTRA_PARAM_POST_CREATION_TYP
 import com.bumptech.glide.Glide
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.amity_fragment_post_target_selection.*
 
 class AmityPostTargetPickerFragment : AmityBaseFragment(),
     AmityCreatePostCommunitySelectionListener {
@@ -85,7 +84,7 @@ class AmityPostTargetPickerFragment : AmityBaseFragment(),
             arguments?.getString(EXTRA_PARAM_POST_CREATION_TYPE) ?: POST_CREATION_TYPE_GENERIC
         initRecyclerView()
         initProfileImage()
-        clMyTimeline.setOnClickListener { launchPostCreator() }
+        binding.clMyTimeline.setOnClickListener { launchPostCreator() }
     }
 
     private fun launchPostCreator() {
@@ -109,20 +108,22 @@ class AmityPostTargetPickerFragment : AmityBaseFragment(),
             .load(imageURL)
             .placeholder(R.drawable.amity_ic_default_profile_large)
             .centerCrop()
-            .into(avProfile)
+            .into(binding.avProfile)
     }
 
     private fun initRecyclerView() {
         adapter = AmityCreatePostCommunitySelectionAdapter(this)
-        rvCommunity.layoutManager = LinearLayoutManager(requireContext())
-        rvCommunity.adapter = adapter
-        rvCommunity.addItemDecoration(
-            AmityRecyclerViewItemDecoration(
-                resources.getDimensionPixelSize(R.dimen.amity_padding_xs),
-                0, resources.getDimensionPixelSize(R.dimen.amity_padding_xs)
+        binding.rvCommunity.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            this.adapter = adapter
+            addItemDecoration(
+                    AmityRecyclerViewItemDecoration(
+                            resources.getDimensionPixelSize(R.dimen.amity_padding_xs),
+                            0, resources.getDimensionPixelSize(R.dimen.amity_padding_xs)
+                    )
             )
-        )
-        rvCommunity.hasFixedSize()
+            hasFixedSize()
+        }
         getCommunity()
     }
 

@@ -1,16 +1,25 @@
 package com.amity.socialcloud.uikit.community.followers
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import com.amity.socialcloud.uikit.common.base.AmityFragmentStateAdapter
 import com.amity.socialcloud.uikit.community.R
+import com.amity.socialcloud.uikit.community.databinding.AmityUserFollowerHomeFragmentBinding
 import com.amity.socialcloud.uikit.community.following.AmityUserFollowingFragment
 import com.trello.rxlifecycle3.components.support.RxFragment
-import kotlinx.android.synthetic.main.amity_user_follower_home_fragment.*
 
-class AmityUserFollowerHomeFragment :
-    RxFragment(R.layout.amity_user_follower_home_fragment) {
+class AmityUserFollowerHomeFragment : RxFragment() {
+
+    private var _binding: AmityUserFollowerHomeFragmentBinding? = null
+    private val binding get() = _binding!!
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        _binding = AmityUserFollowerHomeFragmentBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -34,8 +43,13 @@ class AmityUserFollowerHomeFragment :
                     )
                 )
             )
-            followersTabLayout.setAdapter(fragmentStateAdapter)
+            binding.followersTabLayout.setAdapter(fragmentStateAdapter)
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     class Builder internal constructor() {

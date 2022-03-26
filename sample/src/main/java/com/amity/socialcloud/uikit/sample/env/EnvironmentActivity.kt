@@ -12,25 +12,29 @@ import androidx.activity.result.contract.ActivityResultContract
 import com.amity.socialcloud.sdk.AmityCoreClient
 import com.amity.socialcloud.sdk.AmityRegionalEndpoint
 import com.amity.socialcloud.uikit.sample.R
+import com.amity.socialcloud.uikit.sample.databinding.ActivityEnvironmentBinding
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_environment.*
 
 class EnvironmentActivity : AppCompatActivity() {
+
+    private val binding: ActivityEnvironmentBinding by lazy {
+        ActivityEnvironmentBinding.inflate(layoutInflater)
+    }
 
     private var disposable: Disposable? = null
     private lateinit var environment: Environment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_environment)
+        setContentView(binding.root)
         environment = intent.getParcelableExtra(ChangeEnvironmentContract.EXTRA_ENV)!!
         getCurrentEnvironment()
 
-        btnSubmit.setOnClickListener {
-            val newApiKey = etApiKey.text.toString()
-            val newUrl = etUrl.text.toString()
+        binding.btnSubmit.setOnClickListener {
+            val newApiKey = binding.etApiKey.text.toString()
+            val newUrl = binding.etUrl.text.toString()
             if (newApiKey.isEmpty() || newUrl.isEmpty()) {
                 Toast.makeText(this, "Api key or URL can not be blank", Toast.LENGTH_SHORT).show()
             }else {
@@ -40,30 +44,32 @@ class EnvironmentActivity : AppCompatActivity() {
     }
 
     private fun getCurrentEnvironment() {
-        when (getCurrentOption()) {
-            R.id.radioDev -> {
-                environmentGroup.check(R.id.radioDev)
-                setDefaultValues(R.id.radioDev)
-            }
-            R.id.radioStaging -> {
-                environmentGroup.check(R.id.radioStaging)
-                setDefaultValues(R.id.radioStaging)
-            }
-            R.id.radioProduction -> {
-                environmentGroup.check(R.id.radioProduction)
-                setDefaultValues(R.id.radioProduction)
-            }
-            R.id.radioEU -> {
-                environmentGroup.check(R.id.radioEU)
-                setDefaultValues(R.id.radioEU)
-            }
-            R.id.radioUS -> {
-                environmentGroup.check(R.id.radioUS)
-                setDefaultValues(R.id.radioUS)
-            }
-            else -> {
-                environmentGroup.check(R.id.radioCustom)
-                setDefaultValues(R.id.radioCustom)
+        binding.environmentGroup.apply {
+            when (getCurrentOption()) {
+                R.id.radioDev -> {
+                    check(R.id.radioDev)
+                    setDefaultValues(R.id.radioDev)
+                }
+                R.id.radioStaging -> {
+                    check(R.id.radioStaging)
+                    setDefaultValues(R.id.radioStaging)
+                }
+                R.id.radioProduction -> {
+                    check(R.id.radioProduction)
+                    setDefaultValues(R.id.radioProduction)
+                }
+                R.id.radioEU -> {
+                    check(R.id.radioEU)
+                    setDefaultValues(R.id.radioEU)
+                }
+                R.id.radioUS -> {
+                    check(R.id.radioUS)
+                    setDefaultValues(R.id.radioUS)
+                }
+                else -> {
+                    check(R.id.radioCustom)
+                    setDefaultValues(R.id.radioCustom)
+                }
             }
         }
     }
@@ -124,8 +130,8 @@ class EnvironmentActivity : AppCompatActivity() {
                 url = environment.httpUrl
             }
         }
-        etApiKey.setText(apiKey)
-        etUrl.setText(url)
+        binding.etApiKey.setText(apiKey)
+        binding.etUrl.setText(url)
     }
 
     private fun updatePreference(apiKey: String, url: String) {

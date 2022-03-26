@@ -1,7 +1,7 @@
 package com.amity.socialcloud.uikit.sample.env
 
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Environment(

@@ -8,13 +8,17 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager.widget.ViewPager
 import com.amity.socialcloud.uikit.community.R
+import com.amity.socialcloud.uikit.community.databinding.AmityActivityVideoPreviewBinding
 import com.amity.socialcloud.uikit.community.newsfeed.adapter.AmityVideoPostPlayerFragmentAdapter
 import com.amity.socialcloud.uikit.community.newsfeed.viewmodel.AmityVideoPostPlayerViewModel
 import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
 import com.trello.rxlifecycle3.components.support.RxAppCompatActivity
-import kotlinx.android.synthetic.main.amity_activity_video_preview.*
 
 class AmityVideoPostPlayerActivity : RxAppCompatActivity() {
+
+    private val binding by lazy {
+        AmityActivityVideoPreviewBinding.inflate(layoutInflater)
+    }
 
     private lateinit var viewModel: AmityVideoPostPlayerViewModel
     private lateinit var videoFragmentAdapter: AmityVideoPostPlayerFragmentAdapter
@@ -40,7 +44,7 @@ class AmityVideoPostPlayerActivity : RxAppCompatActivity() {
         intent.getStringExtra(EXTRA_PARENT_POST_ID)?.let { viewModel.postId = it }
         viewModel.videoPos = intent.getIntExtra(EXTRA_VIDEO_POSITION, 0)
         window.statusBarColor = ContextCompat.getColor(this, R.color.amityColorSecondary)
-        setContentView(R.layout.amity_activity_video_preview)
+        setContentView(binding.root)
         initToolbar()
         initViewPager()
         getVideoData()
@@ -64,13 +68,13 @@ class AmityVideoPostPlayerActivity : RxAppCompatActivity() {
             override fun onPageScrollStateChanged(state: Int) {
             }
         }
-        videoViewPages.adapter = videoFragmentAdapter
+        binding.videoViewPages.adapter = videoFragmentAdapter
     }
 
     private fun getVideoData() {
         viewModel.getVideoData { videoDataList ->
             videoFragmentAdapter.setItems(videoDataList)
-            videoViewPages.setCurrentItem(viewModel.videoPos, false)
+            binding.videoViewPages.setCurrentItem(viewModel.videoPos, false)
             setToolbarTitle(viewModel.videoPos)
         }
             .untilLifecycleEnd(this)
@@ -79,16 +83,16 @@ class AmityVideoPostPlayerActivity : RxAppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        videoViewPages.addOnPageChangeListener(pageChangeCallback)
+        binding.videoViewPages.addOnPageChangeListener(pageChangeCallback)
     }
 
     override fun onPause() {
         super.onPause()
-        videoViewPages.removeOnPageChangeListener(pageChangeCallback)
+        binding.videoViewPages.removeOnPageChangeListener(pageChangeCallback)
     }
 
     private fun initToolbar() {
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.amity_ic_close)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)

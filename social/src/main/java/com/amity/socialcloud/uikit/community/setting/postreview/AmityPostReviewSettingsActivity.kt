@@ -6,13 +6,11 @@ import android.os.Bundle
 import androidx.appcompat.app.ActionBar
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
-import com.amity.socialcloud.sdk.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.base.AmityBaseActivity
 import com.amity.socialcloud.uikit.common.components.AmityToolBarClickListener
 import com.amity.socialcloud.uikit.community.BR
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.databinding.AmityActivityPostReviewSettingsBinding
-import kotlinx.android.synthetic.main.amity_activity_post_review_settings.*
 
 class AmityPostReviewSettingsActivity :
     AmityBaseActivity<AmityActivityPostReviewSettingsBinding, AmityPostReviewSettingsViewModel>(),
@@ -28,6 +26,10 @@ class AmityPostReviewSettingsActivity :
 
     }
 
+    private val binding : AmityActivityPostReviewSettingsBinding by lazy {
+        AmityActivityPostReviewSettingsBinding.inflate(layoutInflater)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -36,19 +38,19 @@ class AmityPostReviewSettingsActivity :
     }
 
     private fun setUpToolbar() {
-        postReviewToolbar.setLeftDrawable(
+        binding.postReviewToolbar.setLeftDrawable(
             ContextCompat.getDrawable(
                 this,
                 R.drawable.amity_ic_arrow_back
             )
         )
-        postReviewToolbar.setClickListener(this)
+        binding.postReviewToolbar.setClickListener(this)
 
         val titleToolbar = getString(R.string.amity_post_review)
-        postReviewToolbar.setLeftString(titleToolbar)
+        binding.postReviewToolbar.setLeftString(titleToolbar)
 
         supportActionBar?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
-        setSupportActionBar(postReviewToolbar)
+        setSupportActionBar(binding.postReviewToolbar)
     }
 
     private fun loadFragment() {

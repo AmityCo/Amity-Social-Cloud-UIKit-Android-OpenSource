@@ -7,19 +7,23 @@ import androidx.appcompat.app.AppCompatActivity
 import com.amity.socialcloud.sdk.AmityCoreClient
 import com.amity.socialcloud.uikit.common.utils.AmityConstants
 import com.amity.socialcloud.uikit.common.utils.AmityThemeUtil
-import kotlinx.android.synthetic.main.amity_activity_setting.*
+import com.amity.socialcloud.uikit.sample.databinding.AmityActivitySettingBinding
 
 class AmitySettingActivity : AppCompatActivity() {
+
+    private val binding: AmityActivitySettingBinding by lazy {
+        AmityActivitySettingBinding.inflate(layoutInflater)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         AmityThemeUtil.setCurrentTheme(this)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.amity_activity_setting)
+        setContentView(binding.root)
 
-        btnConfirm.setOnClickListener {
+        binding.btnConfirm.setOnClickListener {
             setTheme()
         }
 
-        btnLogout.setOnClickListener {
+        binding.btnLogout.setOnClickListener {
             val sharedPref = getSharedPreferences(AmityConstants.PREF_NAME, Context.MODE_PRIVATE)
             sharedPref?.edit()?.clear()?.apply()
             AmityCoreClient.unregisterDeviceForPushNotification(AmityCoreClient.getUserId()).subscribe()
@@ -30,12 +34,12 @@ class AmitySettingActivity : AppCompatActivity() {
     }
 
     private fun setTheme() {
-        val selectedId = rgTheme.checkedRadioButtonId
+        val selectedId = binding.rgTheme.checkedRadioButtonId
         val sharedPref = this.getSharedPreferences("AMITY_PREF", Context.MODE_PRIVATE)
         with(sharedPref.edit()) {
-            if (selectedId == theme1.id) {
+            if (selectedId == binding.theme1.id) {
                 putInt("THEME", 1)
-            } else if (selectedId == theme2.id) {
+            } else if (selectedId == binding.theme2.id) {
                 putInt("THEME", 2)
             }
             commit()

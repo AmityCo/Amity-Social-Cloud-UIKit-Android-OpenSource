@@ -10,10 +10,12 @@ import android.view.ViewGroup
 import android.view.Window
 import android.widget.FrameLayout
 import androidx.fragment.app.DialogFragment
-import com.amity.socialcloud.uikit.community.R
-import kotlinx.android.synthetic.main.amity_dialog_fragment_community_customize.*
+import com.amity.socialcloud.uikit.community.databinding.AmityDialogFragmentCommunityCustomizeBinding
 
 class AmityCommunityCustomizeDialogFragment : DialogFragment() {
+
+    private var _binding: AmityDialogFragmentCommunityCustomizeBinding? = null
+    private val binding get() = _binding!!
 
     private var listener: AmityCommunityCustomizeDialogFragmentListener? = null
 
@@ -21,12 +23,9 @@ class AmityCommunityCustomizeDialogFragment : DialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(
-            R.layout.amity_dialog_fragment_community_customize,
-            container,
-            false
-        )
+    ): View {
+        _binding = AmityDialogFragmentCommunityCustomizeBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -57,12 +56,12 @@ class AmityCommunityCustomizeDialogFragment : DialogFragment() {
     }
 
     private fun initialListener() {
-        button_community_settings.setOnClickListener {
+        binding.buttonCommunitySettings.setOnClickListener {
             listener?.onClickCommunitySettingsButton()
             dismiss()
         }
 
-        textview_skip.setOnClickListener {
+        binding.textviewSkip.setOnClickListener {
             listener?.onClickSkipButton()
             dismiss()
         }
@@ -70,6 +69,11 @@ class AmityCommunityCustomizeDialogFragment : DialogFragment() {
 
     fun setDialogListener(listener: AmityCommunityCustomizeDialogFragmentListener) {
         this.listener = listener
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     interface AmityCommunityCustomizeDialogFragmentListener {

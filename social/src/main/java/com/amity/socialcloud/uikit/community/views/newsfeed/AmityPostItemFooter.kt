@@ -9,7 +9,6 @@ import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.amity.socialcloud.sdk.AmityCoreClient
 import com.amity.socialcloud.sdk.social.comment.AmityComment
-import com.amity.socialcloud.sdk.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.social.feed.AmityPost
 import com.amity.socialcloud.uikit.common.common.readableNumber
 import com.amity.socialcloud.uikit.common.components.AmityDividerItemDecor
@@ -19,12 +18,10 @@ import com.amity.socialcloud.uikit.community.databinding.AmityItemPostFooterBind
 import com.amity.socialcloud.uikit.community.newsfeed.adapter.AmityFullCommentAdapter
 import com.amity.socialcloud.uikit.community.newsfeed.listener.*
 import com.amity.socialcloud.uikit.social.AmitySocialUISettings
-import kotlinx.android.synthetic.main.amity_item_post_footer.view.*
-
 
 class AmityPostItemFooter : ConstraintLayout {
 
-    private lateinit var mBinding: AmityItemPostFooterBinding
+    private lateinit var binding: AmityItemPostFooterBinding
     private var newsFeedCommentAdapter: AmityFullCommentAdapter? = null
 
     private var commentItemClickListener: AmityPostCommentItemClickListener? = null
@@ -56,15 +53,15 @@ class AmityPostItemFooter : ConstraintLayout {
 
     private fun init() {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        mBinding = AmityItemPostFooterBinding.inflate(inflater, this, true)
-        cbShare.setOnClickListener {
+        binding = AmityItemPostFooterBinding.inflate(inflater, this, true)
+        binding.cbShare.setOnClickListener {
             shareListener?.onShareAction()
         }
     }
 
     private fun setNumberOfComments(commentCount: Int) {
-        tvNumberOfComments.visibility = if (commentCount > 0) View.VISIBLE else View.GONE
-        tvNumberOfComments.text = context.resources.getQuantityString(
+        binding.tvNumberOfComments.visibility = if (commentCount > 0) View.VISIBLE else View.GONE
+        binding.tvNumberOfComments.text = context.resources.getQuantityString(
             R.plurals.amity_feed_number_of_comments,
             commentCount,
             commentCount
@@ -82,7 +79,7 @@ class AmityPostItemFooter : ConstraintLayout {
     }
 
     private fun setLikeClickListener(feed: AmityPost) {
-        cbLike.setOnClickListener {
+        binding.cbLike.setOnClickListener {
             val isLike = feed.getMyReactions().contains("like")
             refreshLikeView(!isLike)
             likeListener?.onLikeAction(!isLike)
@@ -90,7 +87,7 @@ class AmityPostItemFooter : ConstraintLayout {
     }
 
     private fun refreshLikeView(isLike: Boolean) {
-        cbLike.isChecked = isLike
+        binding.cbLike.isChecked = isLike
         setLikeCheckboxText()
     }
 
@@ -119,8 +116,8 @@ class AmityPostItemFooter : ConstraintLayout {
     }
 
     private fun setNumberOfLikes(reactionCount: Int) {
-        tvNumberOfLikes.visibility = if (reactionCount > 0) View.VISIBLE else View.GONE
-        tvNumberOfLikes.text = context.resources.getQuantityString(
+        binding.tvNumberOfLikes.visibility = if (reactionCount > 0) View.VISIBLE else View.GONE
+        binding.tvNumberOfLikes.text = context.resources.getQuantityString(
             R.plurals.amity_feed_number_of_likes,
             reactionCount,
             reactionCount.readableNumber()
@@ -128,10 +125,10 @@ class AmityPostItemFooter : ConstraintLayout {
     }
 
     private fun setLikeCheckboxText() {
-        if (cbLike.isChecked) {
-            cbLike.setText(R.string.amity_liked)
+        if (binding.cbLike.isChecked) {
+            binding.cbLike.setText(R.string.amity_liked)
         } else {
-            cbLike.setText(R.string.amity_like)
+            binding.cbLike.setText(R.string.amity_like)
         }
     }
 
@@ -179,12 +176,12 @@ class AmityPostItemFooter : ConstraintLayout {
         val space16 = resources.getDimensionPixelSize(R.dimen.amity_padding_m1)
         val spaceItemDecoration = AmityRecyclerViewItemDecoration(space8, space16, 0, space16)
         val itemDecor = AmityDividerItemDecor(context)
-        rvCommentFooter.addItemDecoration(spaceItemDecoration)
-        rvCommentFooter.addItemDecoration(itemDecor)
-        rvCommentFooter.layoutManager = LinearLayoutManager(context)
-        rvCommentFooter.adapter = newsFeedCommentAdapter
-        rvCommentFooter.visibility = GONE
-        separator2.visibility = GONE
+        binding.rvCommentFooter.addItemDecoration(spaceItemDecoration)
+        binding.rvCommentFooter.addItemDecoration(itemDecor)
+        binding.rvCommentFooter.layoutManager = LinearLayoutManager(context)
+        binding.rvCommentFooter.adapter = newsFeedCommentAdapter
+        binding.rvCommentFooter.visibility = GONE
+        binding.separator2.visibility = GONE
     }
 
     fun submitComments(commentList: PagedList<AmityComment>?, isScrollable: Boolean = false) {
@@ -194,14 +191,14 @@ class AmityPostItemFooter : ConstraintLayout {
         newsFeedCommentAdapter!!.submitList(commentList)
 
         if (newsFeedCommentAdapter!!.itemCount > 0) {
-            rvCommentFooter.visibility = VISIBLE
-            separator2.visibility = VISIBLE
+            binding.rvCommentFooter.visibility = VISIBLE
+            binding.separator2.visibility = VISIBLE
             if (isScrollable) {
-                rvCommentFooter.smoothScrollToPosition(0)
+                binding.rvCommentFooter.smoothScrollToPosition(0)
             }
         } else {
-            rvCommentFooter.visibility = GONE
-            separator2.visibility = GONE
+            binding.rvCommentFooter.visibility = GONE
+            binding.separator2.visibility = GONE
         }
     }
 
@@ -214,7 +211,7 @@ class AmityPostItemFooter : ConstraintLayout {
     }
 
     fun showViewAllComment(isVisible: Boolean) {
-        mBinding.showViewAllComment = isVisible
+        binding.showViewAllComment = isVisible
     }
 
     fun updateComment(comment: AmityComment) {

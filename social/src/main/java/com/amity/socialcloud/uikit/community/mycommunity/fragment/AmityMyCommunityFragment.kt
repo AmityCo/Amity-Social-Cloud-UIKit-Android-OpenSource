@@ -27,7 +27,6 @@ import com.amity.socialcloud.uikit.community.mycommunity.viewmodel.AmityMyCommun
 import com.amity.socialcloud.uikit.community.ui.view.AmityCommunityCreatorActivity
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.amity_fragment_my_community.*
 
 private const val ARG_SHOW_SEARCH = "ARG_SHOW_SEARCH"
 private const val ARG_SHOW_OPTIONS_MENU = "ARG_SHOW_OPTIONS_MENU"
@@ -69,21 +68,21 @@ class AmityMyCommunityFragment : AmityBaseFragment(),
         initRecyclerView()
         handleEditTextInput()
         if (arguments?.getBoolean(ARG_SHOW_SEARCH) != false) {
-            etSearch.visibility = View.VISIBLE
+            binding.etSearch.visibility = View.VISIBLE
         } else {
-            etSearch.visibility = View.GONE
+            binding.etSearch.visibility = View.GONE
         }
     }
 
     private fun handleEditTextInput() {
-        etSearch.setShape(
+        binding.etSearch.setShape(
             null, null, null, null,
             R.color.amityColorBase, null, AmityColorShade.SHADE4
         )
-        etSearch.setOnEditorActionListener(object : TextView.OnEditorActionListener {
+        binding.etSearch.setOnEditorActionListener(object : TextView.OnEditorActionListener {
             override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
                 if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                    AmityAndroidUtil.hideKeyboard(etSearch)
+                    AmityAndroidUtil.hideKeyboard(binding.etSearch)
                     return true
                 }
                 return false
@@ -122,15 +121,17 @@ class AmityMyCommunityFragment : AmityBaseFragment(),
 
     private fun initRecyclerView() {
         mAdapter = AmityMyCommunityListAdapter(this, false)
-        rvMyCommunities.layoutManager = LinearLayoutManager(requireContext())
-        rvMyCommunities.adapter = mAdapter
-        rvMyCommunities.addItemDecoration(
-            AmityRecyclerViewItemDecoration(
-                resources.getDimensionPixelSize(R.dimen.amity_padding_xs),
-                0, resources.getDimensionPixelSize(R.dimen.amity_padding_xs), 0
+        binding.rvMyCommunities.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            this.adapter = mAdapter
+            addItemDecoration(
+                    AmityRecyclerViewItemDecoration(
+                            resources.getDimensionPixelSize(R.dimen.amity_padding_xs),
+                            0, resources.getDimensionPixelSize(R.dimen.amity_padding_xs), 0
+                    )
             )
-        )
-        rvMyCommunities.setHasFixedSize(true)
+            setHasFixedSize(true)
+        }
 
         disposable.add(viewModel.getCommunityList().subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

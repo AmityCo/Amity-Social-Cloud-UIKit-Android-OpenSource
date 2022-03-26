@@ -1,24 +1,29 @@
 package com.amity.socialcloud.uikit.community.following
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.amity.socialcloud.sdk.core.user.AmityUser
 import com.amity.socialcloud.uikit.community.R
+import com.amity.socialcloud.uikit.community.databinding.AmityUserFollowerHomeFragmentBinding
+import com.amity.socialcloud.uikit.community.databinding.AmityUserFollowingFragmentBinding
 import com.amity.socialcloud.uikit.community.newsfeed.listener.AmityUserClickListener
 import com.amity.socialcloud.uikit.social.AmitySocialUISettings
 import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
 import com.trello.rxlifecycle3.components.support.RxFragment
 import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.PublishSubject
-import kotlinx.android.synthetic.main.amity_user_following_fragment.*
 import java.util.concurrent.TimeUnit
 
-class AmityUserFollowingFragment :
-    RxFragment(R.layout.amity_user_following_fragment) {
+class AmityUserFollowingFragment : RxFragment() {
+
+    private var _binding: AmityUserFollowingFragmentBinding? = null
+    private val binding get() = _binding!!
 
     lateinit var viewModel: AmityUserFollowingViewModel
     private var textChangeDisposable: Disposable? = null
@@ -27,13 +32,18 @@ class AmityUserFollowingFragment :
     }
     private lateinit var followingAdapter: AmityFollowingAdapter
 
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        _binding = AmityUserFollowingFragmentBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(requireActivity()).get(AmityUserFollowingViewModel::class.java)
         setUpRecyclerView()
         subscribeSearchStringChange()
-        refreshLayout.setColorSchemeResources(R.color.amityColorPrimary)
-        refreshLayout.setOnRefreshListener {
+        binding.refreshLayout.setColorSchemeResources(R.color.amityColorPrimary)
+        binding.refreshLayout.setOnRefreshListener {
             refresh()
         }
     }
@@ -45,7 +55,7 @@ class AmityUserFollowingFragment :
             }
         }
         followingAdapter = AmityFollowingAdapter(requireContext(), userClickListener)
-        rvUserFollowing.apply {
+        binding.rvUserFollowing.apply {
             adapter = followingAdapter
             layoutManager = LinearLayoutManager(requireContext())
             setHasFixedSize(true)
@@ -55,19 +65,19 @@ class AmityUserFollowingFragment :
 
     private fun getFollowing() {
         viewModel.getFollowingList {
-            refreshLayout.isRefreshing = false
+            binding.refreshLayout.isRefreshing = false
             followingAdapter.submitList(it)
         }.untilLifecycleEnd(this)
             .subscribe()
     }
 
     private fun refresh() {
-        refreshLayout.isRefreshing = true
+        binding.refreshLayout.isRefreshing = true
         getFollowing()
     }
 
     private fun subscribeSearchStringChange() {
-        etSearch.doAfterTextChanged {
+        binding.etSearch.doAfterTextChanged {
             if (it != null) {
                 textChangeSubject.onNext(it.toString())
             }
@@ -92,6 +102,11 @@ class AmityUserFollowingFragment :
             textChangeDisposable?.dispose()
         }
         super.onDestroy()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     class Builder internal constructor() {

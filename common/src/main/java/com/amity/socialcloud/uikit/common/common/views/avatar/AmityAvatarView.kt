@@ -7,15 +7,13 @@ import androidx.annotation.DrawableRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import com.amity.socialcloud.uikit.common.R
+import com.amity.socialcloud.uikit.common.databinding.AmityComponentAvatarBinding
 import com.bumptech.glide.Glide
-import kotlinx.android.synthetic.main.amity_component_avatar.view.*
 
 class AmityAvatarView : ConstraintLayout {
     lateinit var style: AmityAvatarViewStyle
 
-    init {
-        LayoutInflater.from(context).inflate(R.layout.amity_component_avatar, this, true)
-    }
+    private val binding: AmityComponentAvatarBinding = AmityComponentAvatarBinding.inflate(LayoutInflater.from(context), this, true)
 
     constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(
         context,
@@ -51,21 +49,19 @@ class AmityAvatarView : ConstraintLayout {
 
     private fun applyStyle() {
         background = ContextCompat.getDrawable(context, R.drawable.amity_ic_default_ring)
-        image_avatar.layoutParams.height = style.avatarHeight
-        image_avatar.layoutParams.width = style.avatarWidth
+        binding.imageAvatar.layoutParams.height = style.avatarHeight
+        binding.imageAvatar.layoutParams.width = style.avatarWidth
         if (style.avatarDrawable != -1) {
             Glide.with(context).load(style.avatarDrawable)
-                .into(image_avatar)
+                .into(binding.imageAvatar)
         } else if (style.avatarUrl != null) {
             Glide.with(context)
                 .load(style.avatarUrl)
                 .centerCrop()
-                .into(image_avatar)
+                .into(binding.imageAvatar)
         } else {
-            Glide.with(context).load(R.drawable.amity_ic_avatar_placeholder).into(image_avatar)
+            Glide.with(context).load(R.drawable.amity_ic_avatar_placeholder).into(binding.imageAvatar)
         }
-
-
     }
 
 }

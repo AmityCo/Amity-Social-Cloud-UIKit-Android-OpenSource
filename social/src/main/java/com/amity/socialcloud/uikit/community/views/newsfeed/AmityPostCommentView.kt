@@ -25,7 +25,6 @@ import com.amity.socialcloud.uikit.community.newsfeed.events.CommentEngagementCl
 import com.amity.socialcloud.uikit.community.newsfeed.events.CommentOptionClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.listener.AmityMentionClickableSpan
 import io.reactivex.subjects.PublishSubject
-import kotlinx.android.synthetic.main.amity_item_comment_news_feed.view.*
 import timber.log.Timber
 
 class AmityPostCommentView : ConstraintLayout {
@@ -167,7 +166,7 @@ class AmityPostCommentView : ConstraintLayout {
     }
 
     private fun setText(comment: AmityComment) {
-        tvPostComment.text = getHighlightTextUserMentions(comment)
+        binding.tvPostComment.text = getHighlightTextUserMentions(comment)
     }
 
     private fun getHighlightTextUserMentions(comment: AmityComment): SpannableString {

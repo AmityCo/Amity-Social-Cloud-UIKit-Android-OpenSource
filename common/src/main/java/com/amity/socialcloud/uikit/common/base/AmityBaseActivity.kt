@@ -21,7 +21,7 @@ import com.trello.rxlifecycle3.components.support.RxAppCompatActivity
 abstract class AmityBaseActivity<T : ViewDataBinding, V : AmityBaseViewModel> :
     RxAppCompatActivity() {
 
-    private lateinit var mViewDataBinding: T
+    protected lateinit var mViewDataBinding: T
     private var mViewModel: V? = null
 
     @LayoutRes
