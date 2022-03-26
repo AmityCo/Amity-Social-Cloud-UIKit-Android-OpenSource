@@ -44,7 +44,7 @@ class AmityVideoPostPlayerActivity : RxAppCompatActivity() {
         intent.getStringExtra(EXTRA_PARENT_POST_ID)?.let { viewModel.postId = it }
         viewModel.videoPos = intent.getIntExtra(EXTRA_VIDEO_POSITION, 0)
         window.statusBarColor = ContextCompat.getColor(this, R.color.amityColorSecondary)
-        setContentView(R.layout.amity_activity_video_preview)
+        setContentView(binding.root)
         initToolbar()
         initViewPager()
         getVideoData()

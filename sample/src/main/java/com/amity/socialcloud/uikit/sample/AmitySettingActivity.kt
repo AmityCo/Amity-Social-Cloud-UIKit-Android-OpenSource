@@ -17,7 +17,7 @@ class AmitySettingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         AmityThemeUtil.setCurrentTheme(this)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.amity_activity_setting)
+        setContentView(binding.root)
 
         binding.btnConfirm.setOnClickListener {
             setTheme()
