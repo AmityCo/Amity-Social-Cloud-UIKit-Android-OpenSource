@@ -12,8 +12,8 @@ import com.amity.socialcloud.sdk.social.community.AmityCommunityMember
 import com.amity.socialcloud.sdk.social.community.AmityCommunityMembershipFilter
 import com.amity.socialcloud.sdk.social.community.AmityCommunityMembershipSortOption
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
+import com.amity.socialcloud.uikit.common.model.AmitySelectMemberItem
 import com.amity.socialcloud.uikit.common.utils.AmityConstants
-import com.amity.socialcloud.uikit.community.data.AmitySelectMemberItem
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers

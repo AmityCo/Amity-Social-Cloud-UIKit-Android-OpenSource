@@ -26,5 +26,8 @@
     <string name="amity_playback_error">Unable to play message.</string>
     <string name="amity_connected">Connected</string>
     <string name="amity_no_internet">No internet connection</string>
+    <string name="amity_channel_creation_error">Failed to create a channel</string>
+    <string name="amity_channel_creation_loading">Creating channel, please wait…</string>
+
 
 </resources>

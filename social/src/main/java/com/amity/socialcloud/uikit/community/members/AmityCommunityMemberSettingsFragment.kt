@@ -10,11 +10,11 @@ import com.amity.socialcloud.sdk.core.error.AmityException
 import com.amity.socialcloud.sdk.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.base.AmityBaseFragment
 import com.amity.socialcloud.uikit.common.base.AmityFragmentStateAdapter
+import com.amity.socialcloud.uikit.common.contract.AmityPickMemberContract
 import com.amity.socialcloud.uikit.common.utils.AmityAlertDialogUtil
 import com.amity.socialcloud.uikit.common.utils.AmityConstants
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.databinding.AmityFragmentCommunityMemberSettingsBinding
-import com.amity.socialcloud.uikit.community.utils.AmitySelectMemberContract
 import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
 import timber.log.Timber
 
@@ -29,7 +29,7 @@ class AmityCommunityMemberSettingsFragment : AmityBaseFragment() {
     private val viewModel: AmityCommunityMembersViewModel by activityViewModels()
     private lateinit var memberFragment: AmityMembersFragment
     private lateinit var modFragment: AmityModeratorsFragment
-    private val selectMembers = registerForActivityResult(AmitySelectMemberContract()) {
+    private val selectMembers = registerForActivityResult(AmityPickMemberContract()) {
         viewModel.handleAddRemoveMembers(it, onMembersAdded = {
             viewModel.getCommunityMembers({}, {}, {})
                 .subscribe()

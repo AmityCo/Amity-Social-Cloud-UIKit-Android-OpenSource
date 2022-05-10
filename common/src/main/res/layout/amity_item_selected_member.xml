@@ -14,8 +14,8 @@
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ivAvatar"
             style="@style/AmityCircularAvatarStyle"
-            backgroundColorShade="@{AmityColorShade.SHADE3}"
             amityBackgroundColor="@{@color/amityColorPrimary}"
+            backgroundColorShade="@{AmityColorShade.SHADE3}"
             android:layout_width="@dimen/amity_forty"
             android:layout_height="@dimen/amity_forty"
             app:layout_constraintStart_toStartOf="parent"
@@ -25,10 +25,10 @@
             android:id="@+id/ivCross"
             android:layout_width="@dimen/amity_padding_m1"
             android:layout_height="@dimen/amity_padding_m1"
-            android:alpha="0.5"
+            android:alpha="0.7"
             android:background="@color/amityColorBase"
             android:scaleType="centerInside"
-            android:src="@drawable/amity_ic_cross_white"
+            android:src="@drawable/amity_ic_filled_cross"
             app:layout_constraintEnd_toEndOf="@id/ivAvatar"
             app:layout_constraintTop_toTopOf="@id/ivAvatar"
             app:shapeAppearanceOverlay="@style/AmityCircleImage" />

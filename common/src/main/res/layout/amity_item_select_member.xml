@@ -18,8 +18,8 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/smAvatar"
-            backgroundColorShade="@{AmityColorShade.SHADE3}"
             amityBackgroundColor="@{@color/amityColorPrimary}"
+            backgroundColorShade="@{AmityColorShade.SHADE3}"
             imageUrl="@{avatarUrl}"
             placeHolder="@{@drawable/amity_ic_default_profile_large}"
             android:layout_width="@dimen/amity_forty"
@@ -47,8 +47,9 @@
 
         <TextView
             android:id="@+id/smSubTitle"
-            style="@style/AmitySelectMembersSubTitleTextStyle"
             textColorShade="@{AmityColorShade.SHADE1}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:textColor="@color/amityColorBase"
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="@id/smTitle"

@@ -1,13 +1,13 @@
-package com.amity.socialcloud.uikit.community.ui.adapter
+package com.amity.socialcloud.uikit.common.memberpicker.adapter
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import com.amity.socialcloud.uikit.common.R
 import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewAdapter
-import com.amity.socialcloud.uikit.community.R
-import com.amity.socialcloud.uikit.community.data.AmitySelectMemberItem
-import com.amity.socialcloud.uikit.community.ui.clickListener.AmitySelectedMemberListener
-import com.amity.socialcloud.uikit.community.ui.viewHolder.AmitySelectedMemberViewHolder
-import com.amity.socialcloud.uikit.community.utils.AmitySelectMemberItemDiffCallBack
+import com.amity.socialcloud.uikit.common.memberpicker.AmitySelectMemberItemDiffCallBack
+import com.amity.socialcloud.uikit.common.memberpicker.listener.AmitySelectedMemberListener
+import com.amity.socialcloud.uikit.common.memberpicker.viewholder.AmitySelectedMemberViewHolder
+import com.amity.socialcloud.uikit.common.model.AmitySelectMemberItem
 
 class AmitySelectedMemberAdapter(private val listener: AmitySelectedMemberListener) :
     AmityBaseRecyclerViewAdapter<AmitySelectMemberItem>() {

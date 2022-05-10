@@ -1,14 +1,16 @@
-package com.amity.socialcloud.uikit.community.ui.adapter
+package com.amity.socialcloud.uikit.common.memberpicker.adapter
 
 import android.view.View
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.amity.socialcloud.sdk.core.user.AmityUser
+import com.amity.socialcloud.uikit.common.R
 import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagedAdapter
-import com.amity.socialcloud.uikit.community.R
-import com.amity.socialcloud.uikit.community.ui.clickListener.AmitySelectMemberListener
-import com.amity.socialcloud.uikit.community.ui.viewHolder.AmityMemberListItemViewHolder
+import com.amity.socialcloud.uikit.common.memberpicker.listener.AmitySelectMemberListener
+import com.amity.socialcloud.uikit.common.memberpicker.viewholder.AmityMemberListItemViewHolder
+
+
 
 class AmitySearchResultAdapter(private val listener: AmitySelectMemberListener) :
     AmityBaseRecyclerViewPagedAdapter<AmityUser>(diffCallback) {

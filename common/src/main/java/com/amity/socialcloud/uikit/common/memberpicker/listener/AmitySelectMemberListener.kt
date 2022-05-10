@@ -1,4 +1,4 @@
-package com.amity.socialcloud.uikit.community.ui.clickListener
+package  com.amity.socialcloud.uikit.common.memberpicker.listener
 
 import com.amity.socialcloud.sdk.core.user.AmityUser
 

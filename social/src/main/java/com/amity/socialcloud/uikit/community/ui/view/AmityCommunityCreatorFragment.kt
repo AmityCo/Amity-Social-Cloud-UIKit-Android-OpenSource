@@ -2,21 +2,20 @@ package com.amity.socialcloud.uikit.community.ui.view
 
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
+import com.amity.socialcloud.uikit.common.contract.AmityPickMemberContract
+import com.amity.socialcloud.uikit.common.memberpicker.adapter.AmityAddedMembersAdapter
+import com.amity.socialcloud.uikit.common.memberpicker.listener.AmityAddedMemberClickListener
+import com.amity.socialcloud.uikit.common.model.AmitySelectMemberItem
 import com.amity.socialcloud.uikit.community.R
-import com.amity.socialcloud.uikit.community.data.AmitySelectMemberItem
-import com.amity.socialcloud.uikit.community.ui.adapter.AmityAddedMembersAdapter
-import com.amity.socialcloud.uikit.community.ui.clickListener.AmityAddedMemberClickListener
 import com.amity.socialcloud.uikit.community.utils.AmityAddedMemberItemDecoration
-import com.amity.socialcloud.uikit.community.utils.AmitySelectMemberContract
 
 
 class AmityCommunityCreatorFragment : AmityCommunityCreateBaseFragment(),
     AmityAddedMemberClickListener {
 
     private lateinit var addedMembersAdapter: AmityAddedMembersAdapter
-    private val selectMembers = registerForActivityResult(AmitySelectMemberContract()) { list ->
+    private val selectMembers = registerForActivityResult(AmityPickMemberContract()) { list ->
         viewModel.selectedMembersList.clear()
         viewModel.selectedMembersList.addAll(list ?: arrayListOf())
         setAddMemberVisibility()
@@ -89,7 +88,7 @@ class AmityCommunityCreatorFragment : AmityCommunityCreateBaseFragment(),
         viewModel.addMemberVisible.set(viewModel.selectedMembersList.isEmpty())
     }
 
-    class Builder internal constructor(){
+    class Builder internal constructor() {
         fun build(): AmityCommunityCreatorFragment {
             return AmityCommunityCreatorFragment()
         }

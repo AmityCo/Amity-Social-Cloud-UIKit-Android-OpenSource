@@ -1,7 +1,7 @@
-package com.amity.socialcloud.uikit.community.utils
+package com.amity.socialcloud.uikit.common.memberpicker
 
 import androidx.recyclerview.widget.DiffUtil
-import com.amity.socialcloud.uikit.community.data.AmitySelectMemberItem
+import com.amity.socialcloud.uikit.common.model.AmitySelectMemberItem
 
 class AmitySelectMemberItemDiffCallBack(
     private val oldList: List<AmitySelectMemberItem>,

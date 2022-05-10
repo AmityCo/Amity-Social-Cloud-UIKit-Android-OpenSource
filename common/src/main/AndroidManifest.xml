@@ -2,13 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.amity.socialcloud.uikit.common">
 
-    <uses-feature android:name="android.hardware.camera"
+    <uses-feature
+        android:name="android.hardware.camera"
         android:required="true" />
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
 
     <application
         android:preserveLegacyExternalStorage="true"
@@ -18,6 +19,11 @@
             android:name=".imagepreview.AmityImagePreviewActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AmityImagePreviewTheme" />
+
+        <activity
+            android:name=".memberpicker.AmityMemberPickerActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
 
         <provider
             android:name=".utils.AmityProvider"

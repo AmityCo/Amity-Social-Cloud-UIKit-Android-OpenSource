@@ -13,7 +13,7 @@
 
         <variable
             name="viewModel"
-            type="com.amity.socialcloud.uikit.community.ui.viewModel.AmitySelectMembersViewModel" />
+            type="com.amity.socialcloud.uikit.common.memberpicker.viewmodel.AmityMemberPickerViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

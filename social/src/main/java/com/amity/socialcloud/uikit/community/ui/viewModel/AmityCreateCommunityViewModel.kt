@@ -4,7 +4,6 @@ import android.net.Uri
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableParcelable
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import com.amity.socialcloud.sdk.AmityCoreClient
 import com.amity.socialcloud.sdk.core.file.AmityImage
@@ -13,16 +12,15 @@ import com.amity.socialcloud.sdk.social.AmitySocialClient
 import com.amity.socialcloud.sdk.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.social.community.AmityCommunityRepository
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
-import com.amity.socialcloud.uikit.common.utils.AmityConstants
+import com.amity.socialcloud.uikit.common.model.AmitySelectMemberItem
 import com.amity.socialcloud.uikit.community.data.AmitySelectCategoryItem
-import com.amity.socialcloud.uikit.community.data.AmitySelectMemberItem
-import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
 
 private const val SAVED_COMMUNITY_ID = "SAVED_COMMUNITY_ID"
 
-class AmityCreateCommunityViewModel (private val savedState: SavedStateHandle) : AmityBaseViewModel() {
+class AmityCreateCommunityViewModel(private val savedState: SavedStateHandle) :
+    AmityBaseViewModel() {
 
     val initialStateChanged = ObservableBoolean(false)
     private var initialCommunityName: String = ""
@@ -36,7 +34,7 @@ class AmityCreateCommunityViewModel (private val savedState: SavedStateHandle) :
     val isPublic = ObservableBoolean(true)
     val isAdmin = ObservableBoolean(false)
     val addMemberVisible = ObservableBoolean(true)
-    val category = ObservableParcelable<AmitySelectCategoryItem>(AmitySelectCategoryItem())
+    val category = ObservableParcelable(AmitySelectCategoryItem())
     val nameError = ObservableBoolean(false)
     val selectedMembersList = ArrayList<AmitySelectMemberItem>()
     private val userIdList = ArrayList<String>()
@@ -140,7 +138,8 @@ class AmityCreateCommunityViewModel (private val savedState: SavedStateHandle) :
         isPublic.set(amityCommunity.isPublic())
         category.set(
             AmitySelectCategoryItem(
-                name = amityCommunity.getCategories().joinToString(separator = " ") { it.getName() })
+                name = amityCommunity.getCategories()
+                    .joinToString(separator = " ") { it.getName() })
         )
     }
 

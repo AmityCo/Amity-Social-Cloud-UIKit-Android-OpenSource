@@ -83,7 +83,6 @@ class AmityImagePreviewActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.amity_ic_close)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
     }
 

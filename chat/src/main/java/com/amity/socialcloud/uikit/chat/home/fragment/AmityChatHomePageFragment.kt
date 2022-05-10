@@ -9,13 +9,14 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.amity.socialcloud.uikit.chat.R
 import com.amity.socialcloud.uikit.chat.databinding.AmityFragmentChatHomePageBinding
-import com.amity.socialcloud.uikit.chat.directory.fragment.AmityDirectoryFragment
 import com.amity.socialcloud.uikit.chat.home.AmityChatHomePageViewModel
-import com.amity.socialcloud.uikit.chat.home.callback.AmityDirectoryFragmentDelegate
 import com.amity.socialcloud.uikit.chat.home.callback.AmityRecentChatFragmentDelegate
-import com.amity.socialcloud.uikit.chat.home.callback.AmityRecentChatItemClickListener
+import com.amity.socialcloud.uikit.chat.messages.AmityMessageListActivity
 import com.amity.socialcloud.uikit.chat.recent.fragment.AmityRecentChatFragment
 import com.amity.socialcloud.uikit.common.base.AmityFragmentStateAdapter
+import com.amity.socialcloud.uikit.common.common.showSnackBar
+import com.amity.socialcloud.uikit.common.contract.AmityPickMemberContract
+import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
 
 class AmityChatHomePageFragment private constructor() : Fragment() {
     private lateinit var mViewModel: AmityChatHomePageViewModel
@@ -24,9 +25,25 @@ class AmityChatHomePageFragment private constructor() : Fragment() {
     private var _binding: AmityFragmentChatHomePageBinding? = null
     private val binding get() = _binding!!
 
+    private val selectMembers = registerForActivityResult(AmityPickMemberContract()) { userList ->
+        if (userList.isNotEmpty()) {
+            view?.showSnackBar(msg = getString(R.string.amity_channel_creation_loading))
+            mViewModel.createChat(selectedMembers = userList,
+                onChatCreateSuccess = { channelId: String ->
+                    val chatListIntent =
+                        AmityMessageListActivity.newIntent(requireContext(), channelId)
+                    startActivity(chatListIntent)
+                },
+                onChatCreateFailed = { view?.showSnackBar(msg = getString(R.string.amity_channel_creation_error)) })
+                .untilLifecycleEnd(this.requireView())
+                .subscribe()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mViewModel = ViewModelProvider(requireActivity()).get(AmityChatHomePageViewModel::class.java)
+        mViewModel =
+            ViewModelProvider(requireActivity()).get(AmityChatHomePageViewModel::class.java)
         fragmentStateAdapter = AmityFragmentStateAdapter(
             childFragmentManager,
             requireActivity().lifecycle
@@ -80,29 +97,19 @@ class AmityChatHomePageFragment private constructor() : Fragment() {
 
     }
 
-    private fun getDirectoryFragment(): Fragment {
-        if (mViewModel.directoryFragmentDelegate != null) {
-            return mViewModel.directoryFragmentDelegate!!.directoryFragment()
-        }
-        return AmityDirectoryFragment()
-    }
-
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        //inflater.inflate(R.menu.eko_chat_home, menu)
+        inflater.inflate(R.menu.amity_chat_home, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.search) {
-            // Do nothing
-        } else if (item.itemId == R.id.create) {
+        if (item.itemId == R.id.create) {
             navigateToCreateGroupChat()
         }
         return super.onOptionsItemSelected(item)
     }
 
     private fun navigateToCreateGroupChat() {
-        //val intent = Intent(activity, EkoCreateChatActivity::class.java)
-        //startActivity(intent)
+        selectMembers.launch(arrayListOf())
     }
 
     override fun onDestroyView() {
@@ -110,39 +117,24 @@ class AmityChatHomePageFragment private constructor() : Fragment() {
         _binding = null
     }
 
-    class Builder internal constructor(){
-
-        private var mListener: AmityRecentChatItemClickListener? = null
+    class Builder internal constructor() {
         private var recentChatFragmentDelegate: AmityRecentChatFragmentDelegate? = null
-        private var directoryFragmentDelegate: AmityDirectoryFragmentDelegate? = null
 
         fun build(activity: AppCompatActivity): AmityChatHomePageFragment {
             val fragment = AmityChatHomePageFragment()
-            fragment.mViewModel = ViewModelProvider(activity).get(AmityChatHomePageViewModel::class.java)
-            fragment.mViewModel.recentChatItemClickListener = mListener
-            fragment.mViewModel.recentChatFragmentDelegate = this.recentChatFragmentDelegate
-            fragment.mViewModel.directoryFragmentDelegate = this.directoryFragmentDelegate
+            fragment.mViewModel =
+                ViewModelProvider(activity).get(AmityChatHomePageViewModel::class.java)
             return fragment
-        }
-
-        private fun recentChatItemClickListener(listener: AmityRecentChatItemClickListener): Builder {
-            mListener = listener
-            return this
         }
 
         fun recentChatFragmentDelegate(delegate: AmityRecentChatFragmentDelegate): Builder {
             recentChatFragmentDelegate = delegate
             return this
         }
-
-        private fun directoryFragmentDelegate(delegate: AmityDirectoryFragmentDelegate): Builder {
-            directoryFragmentDelegate = delegate
-            return this
-        }
     }
 
     companion object {
-        fun newInstance() : Builder {
+        fun newInstance(): Builder {
             return Builder()
         }
     }

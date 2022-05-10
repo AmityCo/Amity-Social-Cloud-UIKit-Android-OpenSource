@@ -1,13 +1,13 @@
-package com.amity.socialcloud.uikit.community.ui.viewHolder
+package com.amity.socialcloud.uikit.common.memberpicker.viewholder
 
 import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewAdapter
 import com.amity.socialcloud.uikit.common.common.loadImage
-import com.amity.socialcloud.uikit.community.data.AmitySelectMemberItem
-import com.amity.socialcloud.uikit.community.databinding.AmityItemSelectedMemberBinding
-import com.amity.socialcloud.uikit.community.ui.clickListener.AmitySelectedMemberListener
+import com.amity.socialcloud.uikit.common.databinding.AmityItemSelectedMemberBinding
+import com.amity.socialcloud.uikit.common.memberpicker.listener.AmitySelectedMemberListener
+import com.amity.socialcloud.uikit.common.model.AmitySelectMemberItem
 
 class AmitySelectedMemberViewHolder(
     itemView: View,
