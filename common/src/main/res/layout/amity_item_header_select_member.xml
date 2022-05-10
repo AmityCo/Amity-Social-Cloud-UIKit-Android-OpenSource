@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <import type="com.amity.socialcloud.uikit.common.common.views.AmityColorShade" />
     </data>
 
@@ -13,8 +14,8 @@
         <TextView
             android:id="@+id/tvHeader"
             style="@style/AmityAlphabetHeaderStyle"
-            backgroundColorShade="@{AmityColorShade.SHADE4}"
             amityBackgroundColor="@{@color/amityColorBase}"
+            backgroundColorShade="@{AmityColorShade.SHADE4}"
             textColorShade="@{AmityColorShade.SHADE3}"
             android:textColor="@color/amityColorBase"
             app:layout_constraintEnd_toEndOf="parent"

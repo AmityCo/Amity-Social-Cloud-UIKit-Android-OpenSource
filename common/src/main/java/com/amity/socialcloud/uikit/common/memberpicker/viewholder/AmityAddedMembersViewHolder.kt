@@ -1,4 +1,4 @@
-package com.amity.socialcloud.uikit.community.ui.viewHolder
+package com.amity.socialcloud.uikit.common.memberpicker.viewholder
 
 import android.view.View
 import android.widget.ImageView
@@ -7,13 +7,13 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
+import com.amity.socialcloud.uikit.common.R
 import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewAdapter
 import com.amity.socialcloud.uikit.common.common.loadImage
 import com.amity.socialcloud.uikit.common.common.setShape
 import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
-import com.amity.socialcloud.uikit.community.R
-import com.amity.socialcloud.uikit.community.data.AmitySelectMemberItem
-import com.amity.socialcloud.uikit.community.ui.clickListener.AmityAddedMemberClickListener
+import com.amity.socialcloud.uikit.common.memberpicker.listener.AmityAddedMemberClickListener
+import com.amity.socialcloud.uikit.common.model.AmitySelectMemberItem
 import com.google.android.material.imageview.ShapeableImageView
 
 open class AmityAddedMembersViewHolder(
@@ -30,7 +30,8 @@ open class AmityAddedMembersViewHolder(
     private val layout: ConstraintLayout? = itemView.findViewById(R.id.lAddedMemberItem)
 
     init {
-        val radius = itemView.context.resources.getDimensionPixelSize(R.dimen.amity_twenty_four).toFloat()
+        val radius =
+            itemView.context.resources.getDimensionPixelSize(R.dimen.amity_twenty_four).toFloat()
         layout?.setShape(
             radius, radius, radius, radius, R.color.amityColorBase,
             R.color.amityColorBase, AmityColorShade.SHADE4

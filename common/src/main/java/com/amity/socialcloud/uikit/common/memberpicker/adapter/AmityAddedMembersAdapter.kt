@@ -1,15 +1,16 @@
-package com.amity.socialcloud.uikit.community.ui.adapter
+package com.amity.socialcloud.uikit.common.memberpicker.adapter
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import com.amity.socialcloud.uikit.common.R
 import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewAdapter
-import com.amity.socialcloud.uikit.community.R
-import com.amity.socialcloud.uikit.community.data.AmitySelectMemberItem
-import com.amity.socialcloud.uikit.community.ui.clickListener.AmityAddedMemberClickListener
-import com.amity.socialcloud.uikit.community.ui.viewHolder.AmityAddedMemberWithAddButtonViewHolder
-import com.amity.socialcloud.uikit.community.ui.viewHolder.AmityAddedMembersCountViewHolder
-import com.amity.socialcloud.uikit.community.ui.viewHolder.AmityAddedMembersViewHolder
-import com.amity.socialcloud.uikit.community.utils.AmitySelectMemberItemDiffCallBack
+import com.amity.socialcloud.uikit.common.memberpicker.AmitySelectMemberItemDiffCallBack
+import com.amity.socialcloud.uikit.common.memberpicker.listener.AmityAddedMemberClickListener
+import com.amity.socialcloud.uikit.common.memberpicker.viewholder.AmityAddedMemberWithAddButtonViewHolder
+import com.amity.socialcloud.uikit.common.memberpicker.viewholder.AmityAddedMembersCountViewHolder
+import com.amity.socialcloud.uikit.common.memberpicker.viewholder.AmityAddedMembersViewHolder
+import com.amity.socialcloud.uikit.common.model.AmitySelectMemberItem
+
 
 class AmityAddedMembersAdapter(private val listener: AmityAddedMemberClickListener) :
     AmityBaseRecyclerViewAdapter<AmitySelectMemberItem>() {
@@ -28,7 +29,10 @@ class AmityAddedMembersAdapter(private val listener: AmityAddedMemberClickListen
 
     override fun getViewHolder(view: View, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            R.layout.amity_view_added_member_with_count -> AmityAddedMembersCountViewHolder(view, listener)
+            R.layout.amity_view_added_member_with_count -> AmityAddedMembersCountViewHolder(
+                view,
+                listener
+            )
             R.layout.amity_view_added_member_with_add_icon -> AmityAddedMemberWithAddButtonViewHolder(
                 view,
                 listener

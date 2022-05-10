@@ -45,6 +45,7 @@ class AmityCommunityFeedViewModel(private val savedState: SavedStateHandle) : Am
             .targetCommunity(communityId)
             .apply {
                 includeDeleted(false)
+                feedType(feedType)
             }
             .build()
             .getPagingData()

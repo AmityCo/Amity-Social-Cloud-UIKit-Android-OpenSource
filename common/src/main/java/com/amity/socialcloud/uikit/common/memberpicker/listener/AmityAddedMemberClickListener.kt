@@ -1,6 +1,6 @@
-package com.amity.socialcloud.uikit.community.ui.clickListener
+package  com.amity.socialcloud.uikit.common.memberpicker.listener
 
-import com.amity.socialcloud.uikit.community.data.AmitySelectMemberItem
+import com.amity.socialcloud.uikit.common.model.AmitySelectMemberItem
 
 interface AmityAddedMemberClickListener {
 

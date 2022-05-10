@@ -1,4 +1,5 @@
-package com.amity.socialcloud.uikit.community.ui.view
+package com.amity.socialcloud.uikit.common.memberpicker.fragment
+
 
 import android.app.Activity
 import android.content.Intent
@@ -13,21 +14,21 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.amity.socialcloud.sdk.core.file.AmityImage
 import com.amity.socialcloud.sdk.core.user.AmityUser
+import com.amity.socialcloud.uikit.common.R
 import com.amity.socialcloud.uikit.common.common.setShape
 import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
+import com.amity.socialcloud.uikit.common.databinding.AmityFragmentSelectMembersListBinding
+import com.amity.socialcloud.uikit.common.memberpicker.AmitySelectMembersItemDecoration
+import com.amity.socialcloud.uikit.common.memberpicker.adapter.AmityMembersListAdapter
+import com.amity.socialcloud.uikit.common.memberpicker.adapter.AmitySearchResultAdapter
+import com.amity.socialcloud.uikit.common.memberpicker.adapter.AmitySelectedMemberAdapter
+import com.amity.socialcloud.uikit.common.memberpicker.listener.AmitySelectMemberListener
+import com.amity.socialcloud.uikit.common.memberpicker.listener.AmitySelectedMemberListener
+import com.amity.socialcloud.uikit.common.memberpicker.viewmodel.AmityMemberPickerViewModel
 import com.amity.socialcloud.uikit.common.model.AmityEventIdentifier
+import com.amity.socialcloud.uikit.common.model.AmitySelectMemberItem
 import com.amity.socialcloud.uikit.common.utils.AmityConstants
 import com.amity.socialcloud.uikit.common.utils.AmityRecyclerViewItemDecoration
-import com.amity.socialcloud.uikit.community.R
-import com.amity.socialcloud.uikit.community.data.AmitySelectMemberItem
-import com.amity.socialcloud.uikit.community.databinding.AmityFragmentSelectMembersListBinding
-import com.amity.socialcloud.uikit.community.ui.adapter.AmityMembersListAdapter
-import com.amity.socialcloud.uikit.community.ui.adapter.AmitySearchResultAdapter
-import com.amity.socialcloud.uikit.community.ui.adapter.AmitySelectedMemberAdapter
-import com.amity.socialcloud.uikit.community.ui.clickListener.AmitySelectMemberListener
-import com.amity.socialcloud.uikit.community.ui.clickListener.AmitySelectedMemberListener
-import com.amity.socialcloud.uikit.community.ui.viewModel.AmitySelectMembersViewModel
-import com.amity.socialcloud.uikit.community.utils.AmitySelectMembersItemDecoration
 import com.trello.rxlifecycle3.components.support.RxFragment
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -38,7 +39,7 @@ private const val ARG_MEMBERS_LIST = "ARG_MEMBERS_LIST"
 class AmityMemberPickerFragment : RxFragment(), AmitySelectMemberListener,
     AmitySelectedMemberListener {
 
-    private val mViewModel: AmitySelectMembersViewModel by activityViewModels()
+    private val mViewModel: AmityMemberPickerViewModel by activityViewModels()
     private lateinit var mSelectedMembersAdapter: AmitySelectedMemberAdapter
     private lateinit var mMemberListAdapter: AmityMembersListAdapter
     private lateinit var mSearchResultAdapter: AmitySearchResultAdapter
@@ -137,12 +138,12 @@ class AmityMemberPickerFragment : RxFragment(), AmitySelectMemberListener,
             this.layoutManager = layoutManager
             adapter = mSelectedMembersAdapter
             addItemDecoration(
-                    AmityRecyclerViewItemDecoration(
-                            0,
-                            resources.getDimensionPixelSize(R.dimen.amity_padding_m2),
-                            0,
-                            resources.getDimensionPixelSize(R.dimen.amity_padding_xxs)
-                    )
+                AmityRecyclerViewItemDecoration(
+                    0,
+                    resources.getDimensionPixelSize(R.dimen.amity_padding_m2),
+                    0,
+                    resources.getDimensionPixelSize(R.dimen.amity_padding_xxs)
+                )
             )
         }
     }
@@ -153,10 +154,10 @@ class AmityMemberPickerFragment : RxFragment(), AmitySelectMemberListener,
             layoutManager = LinearLayoutManager(requireContext())
             adapter = mMemberListAdapter
             addItemDecoration(
-                    AmitySelectMembersItemDecoration(
-                            resources.getDimensionPixelSize(R.dimen.amity_eighteen),
-                            resources.getDimensionPixelSize(R.dimen.amity_padding_m1)
-                    )
+                AmitySelectMembersItemDecoration(
+                    resources.getDimensionPixelSize(R.dimen.amity_eighteen),
+                    resources.getDimensionPixelSize(R.dimen.amity_padding_m1)
+                )
             )
         }
         disposable.add(mViewModel.getAllUsers().doOnError {
@@ -174,9 +175,9 @@ class AmityMemberPickerFragment : RxFragment(), AmitySelectMemberListener,
             layoutManager = LinearLayoutManager(requireContext())
             adapter = mSearchResultAdapter
             addItemDecoration(
-                    AmityRecyclerViewItemDecoration(
-                            resources.getDimensionPixelSize(R.dimen.amity_padding_m1)
-                    )
+                AmityRecyclerViewItemDecoration(
+                    resources.getDimensionPixelSize(R.dimen.amity_padding_m1)
+                )
             )
             (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         }

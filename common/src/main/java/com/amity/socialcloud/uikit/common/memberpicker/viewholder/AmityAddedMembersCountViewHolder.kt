@@ -1,17 +1,17 @@
-package com.amity.socialcloud.uikit.community.ui.viewHolder
+package com.amity.socialcloud.uikit.common.memberpicker.viewholder
 
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import com.amity.socialcloud.uikit.common.R
 import com.amity.socialcloud.uikit.common.common.setShape
 import com.amity.socialcloud.uikit.common.common.toCircularShape
 import com.amity.socialcloud.uikit.common.common.views.AmityColorPaletteUtil
 import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
-import com.amity.socialcloud.uikit.community.R
-import com.amity.socialcloud.uikit.community.data.AmitySelectMemberItem
-import com.amity.socialcloud.uikit.community.databinding.AmityViewAddedMemberWithCountBinding
-import com.amity.socialcloud.uikit.community.ui.clickListener.AmityAddedMemberClickListener
+import com.amity.socialcloud.uikit.common.databinding.AmityViewAddedMemberWithCountBinding
+import com.amity.socialcloud.uikit.common.memberpicker.listener.AmityAddedMemberClickListener
+import com.amity.socialcloud.uikit.common.model.AmitySelectMemberItem
 
 class AmityAddedMembersCountViewHolder(
     itemView: View,

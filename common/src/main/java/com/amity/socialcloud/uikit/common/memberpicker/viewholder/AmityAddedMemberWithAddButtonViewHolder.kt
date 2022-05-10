@@ -1,16 +1,16 @@
-package com.amity.socialcloud.uikit.community.ui.viewHolder
+package com.amity.socialcloud.uikit.common.memberpicker.viewholder
 
 import android.view.View
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.amity.socialcloud.uikit.common.R
 import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewAdapter
 import com.amity.socialcloud.uikit.common.common.toCircularShape
 import com.amity.socialcloud.uikit.common.common.views.AmityColorPaletteUtil
 import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
-import com.amity.socialcloud.uikit.community.R
-import com.amity.socialcloud.uikit.community.data.AmitySelectMemberItem
-import com.amity.socialcloud.uikit.community.ui.clickListener.AmityAddedMemberClickListener
+import com.amity.socialcloud.uikit.common.memberpicker.listener.AmityAddedMemberClickListener
+import com.amity.socialcloud.uikit.common.model.AmitySelectMemberItem
 
 class AmityAddedMemberWithAddButtonViewHolder(
     itemView: View,
@@ -23,7 +23,8 @@ class AmityAddedMemberWithAddButtonViewHolder(
     init {
         ivAdd.toCircularShape(
             AmityColorPaletteUtil.getColor(
-                ContextCompat.getColor(itemView.context, R.color.amityColorBase), AmityColorShade.SHADE4
+                ContextCompat.getColor(itemView.context, R.color.amityColorBase),
+                AmityColorShade.SHADE4
             )
         )
     }

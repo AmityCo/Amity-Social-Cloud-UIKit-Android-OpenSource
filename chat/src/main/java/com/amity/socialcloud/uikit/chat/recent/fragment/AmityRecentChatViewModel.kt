@@ -15,7 +15,7 @@ class AmityRecentChatViewModel : AmityBaseViewModel() {
 
     fun getRecentChat(): Flowable<PagedList<AmityChannel>> {
         val channelRepository: AmityChannelRepository = AmityChatClient.newChannelRepository()
-        val types = listOf(AmityChannel.Type.CONVERSATION)
+        val types = listOf(AmityChannel.Type.CONVERSATION, AmityChannel.Type.COMMUNITY)
 
         return channelRepository.getChannels()
             .types(types)

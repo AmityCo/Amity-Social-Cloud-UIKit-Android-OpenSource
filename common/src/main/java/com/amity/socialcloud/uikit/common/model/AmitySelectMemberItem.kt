@@ -1,4 +1,4 @@
-package com.amity.socialcloud.uikit.community.data
+package com.amity.socialcloud.uikit.common.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

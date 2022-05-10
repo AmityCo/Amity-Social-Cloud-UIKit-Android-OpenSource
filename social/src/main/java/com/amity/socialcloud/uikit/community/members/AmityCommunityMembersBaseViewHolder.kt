@@ -11,10 +11,10 @@ import com.amity.socialcloud.sdk.core.error.AmityException
 import com.amity.socialcloud.sdk.core.file.AmityImage
 import com.amity.socialcloud.sdk.core.user.AmityUser
 import com.amity.socialcloud.sdk.social.community.AmityCommunityMember
+import com.amity.socialcloud.uikit.common.model.AmitySelectMemberItem
 import com.amity.socialcloud.uikit.common.utils.AmityAlertDialogUtil
 import com.amity.socialcloud.uikit.common.utils.AmityConstants
 import com.amity.socialcloud.uikit.community.R
-import com.amity.socialcloud.uikit.community.data.AmitySelectMemberItem
 import com.amity.socialcloud.uikit.community.home.activity.AmityCommunityHomePageActivity
 import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
 import com.google.android.material.snackbar.Snackbar

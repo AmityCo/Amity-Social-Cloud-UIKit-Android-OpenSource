@@ -57,4 +57,9 @@
     <string name="amity_following_count">following</string>
     <string name="amity_remove_follower">Remove %s from follower?</string>
     <string name="amity_remove_follower_msg">We won’t notify %s that they’ve been remove from your followers</string>
+    <string name="amity_done">DONE</string>
+    <string name="amity_select_members">Select members</string>
+    <string name="amity_add">Add</string>
+    <string name="amity_selected">Selected</string>
+    <string name="amity_no_user_found">No user found</string>
 </resources>

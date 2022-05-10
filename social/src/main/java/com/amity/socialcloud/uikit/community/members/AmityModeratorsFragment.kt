@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.amity.socialcloud.sdk.core.file.AmityImage
@@ -13,9 +12,9 @@ import com.amity.socialcloud.sdk.social.community.AmityCommunityMember
 import com.amity.socialcloud.uikit.common.base.AmityBaseFragment
 import com.amity.socialcloud.uikit.common.common.setShape
 import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
+import com.amity.socialcloud.uikit.common.model.AmitySelectMemberItem
 import com.amity.socialcloud.uikit.common.utils.AmityRecyclerViewItemDecoration
 import com.amity.socialcloud.uikit.community.R
-import com.amity.socialcloud.uikit.community.data.AmitySelectMemberItem
 import com.amity.socialcloud.uikit.community.databinding.AmityFragmentModeratorsBinding
 import com.amity.socialcloud.uikit.community.profile.activity.AmityUserProfileActivity
 import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd

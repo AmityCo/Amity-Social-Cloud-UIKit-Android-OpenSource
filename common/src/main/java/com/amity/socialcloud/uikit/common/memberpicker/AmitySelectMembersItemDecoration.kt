@@ -1,9 +1,9 @@
-package com.amity.socialcloud.uikit.community.utils
+package com.amity.socialcloud.uikit.common.memberpicker
 
 import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import com.amity.socialcloud.uikit.community.ui.viewHolder.AmityMemberListHeaderViewHolder
+import com.amity.socialcloud.uikit.common.memberpicker.viewholder.AmityMemberListHeaderViewHolder
 
 class AmitySelectMembersItemDecoration(
     private val headerMargin: Int,

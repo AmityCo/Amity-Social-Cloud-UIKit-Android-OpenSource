@@ -113,4 +113,15 @@
         <item name="colorSwitchThumbNormal">@color/amityColorWhite</item>
     </style>
 
+    <style name="AmityAlphabetHeaderStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">@dimen/amity_twenty_eight</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textSize">@dimen/amity_text_size_body</item>
+        <item name="android:paddingStart">@dimen/amity_padding_m1</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+
 </resources>

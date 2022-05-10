@@ -1,4 +1,4 @@
-package com.amity.socialcloud.uikit.community.ui.viewModel
+package com.amity.socialcloud.uikit.common.memberpicker.viewmodel
 
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
@@ -9,14 +9,14 @@ import com.amity.socialcloud.sdk.core.user.AmityUser
 import com.amity.socialcloud.sdk.core.user.AmityUserSortOption
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import com.amity.socialcloud.uikit.common.model.AmityEventIdentifier
-import com.amity.socialcloud.uikit.community.data.AmitySelectMemberItem
+import com.amity.socialcloud.uikit.common.model.AmitySelectMemberItem
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
-class AmitySelectMembersViewModel : AmityBaseViewModel() {
+class AmityMemberPickerViewModel : AmityBaseViewModel() {
 
     val searchString = ObservableField("")
     val selectedMembersList: ArrayList<AmitySelectMemberItem> = arrayListOf()

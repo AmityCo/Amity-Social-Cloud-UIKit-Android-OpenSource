@@ -51,7 +51,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/amity_padding_xs"
             android:layout_marginEnd="@dimen/amity_padding_xs"
-            android:src="@drawable/amity_ic_filled_cross"
+            android:src="@drawable/amity_ic_cross"
             app:layout_constraintBottom_toBottomOf="@id/amAvatar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/amName"
