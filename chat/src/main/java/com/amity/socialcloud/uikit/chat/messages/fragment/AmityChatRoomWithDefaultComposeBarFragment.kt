@@ -33,6 +33,7 @@ import com.amity.socialcloud.uikit.chat.databinding.AmityFragmentChatWithDefault
 import com.amity.socialcloud.uikit.chat.messages.adapter.AmityMessageListAdapter
 import com.amity.socialcloud.uikit.chat.messages.viewModel.AmityChatRoomEssentialViewModel
 import com.amity.socialcloud.uikit.chat.messages.viewModel.AmityMessageListViewModel
+import com.amity.socialcloud.uikit.chat.util.MessageType
 import com.amity.socialcloud.uikit.common.base.AmityPickerFragment
 import com.amity.socialcloud.uikit.common.common.setShape
 import com.amity.socialcloud.uikit.common.common.showSnackBar
@@ -352,6 +353,7 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
             setBackgroundColor(background)
             observeScrollingState(layoutManager)
             observeMessages()
+            recycledViewPool.setMaxRecycledViews(MessageType.MESSAGE_ID_IMAGE_SENDER,0)
         }
     }
 
