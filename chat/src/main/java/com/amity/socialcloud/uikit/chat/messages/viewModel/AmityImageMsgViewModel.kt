@@ -8,6 +8,7 @@ import com.amity.socialcloud.sdk.core.file.AmityFileRepository
 import com.amity.socialcloud.sdk.core.file.AmityImage
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import timber.log.Timber
 import java.io.File
 
 class AmityImageMsgViewModel : AmitySelectableMessageViewModel() {
@@ -47,8 +48,7 @@ class AmityImageMsgViewModel : AmitySelectableMessageViewModel() {
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .doOnNext { uploadInfo ->
-                            if (imageUrl.get().isNullOrEmpty()
-                                && !uploadInfo.getFilePath().isNullOrEmpty()
+                            if (!uploadInfo.getFilePath().isNullOrEmpty()
                             ) {
                                 imageUrl.set(uploadInfo.getFilePath())
                             }
