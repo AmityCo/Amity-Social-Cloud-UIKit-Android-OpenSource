@@ -292,7 +292,7 @@ interface PostViewModel {
             }
 
             if (post.getFeedType() == AmityFeedType.PUBLISHED) {
-                if (post.isFlaggedByMe) {
+                if (post.isFlaggedByMe()) {
                     items.add(unReportPostMenuItem)
                 } else {
                     items.add(reportPostMenuItem)
