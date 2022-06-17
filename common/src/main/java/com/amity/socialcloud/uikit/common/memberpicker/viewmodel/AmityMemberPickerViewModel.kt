@@ -3,7 +3,9 @@ package com.amity.socialcloud.uikit.common.memberpicker.viewmodel
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.PagedList
+import androidx.paging.PagingData
 import com.amity.socialcloud.sdk.AmityCoreClient
 import com.amity.socialcloud.sdk.core.user.AmityUser
 import com.amity.socialcloud.sdk.core.user.AmityUserSortOption
@@ -27,18 +29,20 @@ class AmityMemberPickerViewModel : AmityBaseViewModel() {
     val leftString = MutableLiveData<String>("")
     val rightStringActive = MutableLiveData<Boolean>(false)
 
-    fun getAllUsers(): Flowable<PagedList<AmityUser>> {
+    @OptIn(ExperimentalPagingApi::class)
+    fun getAllUsers(): Flowable<PagingData<AmityUser>> {
         val userRepo = AmityCoreClient.newUserRepository()
         return userRepo.searchUserByDisplayName("")
-            .build().query()
+            .build().getPagingData()
     }
 
-    fun searchUser(onResult: (list: PagedList<AmityUser>) -> Unit): Completable {
+    @OptIn(ExperimentalPagingApi::class)
+    fun searchUser(onResult: (list: PagingData<AmityUser>) -> Unit): Completable {
         val userRepo = AmityCoreClient.newUserRepository()
         return userRepo.searchUserByDisplayName(searchString.get() ?: "")
             .sortBy(AmityUserSortOption.DISPLAYNAME)
             .build()
-            .query()
+            .getPagingData()
             .throttleLatest(1, TimeUnit.SECONDS, true)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

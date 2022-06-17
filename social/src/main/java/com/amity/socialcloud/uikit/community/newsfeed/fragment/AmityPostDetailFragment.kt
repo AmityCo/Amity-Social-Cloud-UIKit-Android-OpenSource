@@ -505,7 +505,7 @@ class AmityPostDetailFragment : AmityBaseFragment(),
             } else {
                 binding.recyclerViewUserMention.swapAdapter(userMentionAdapter, true)
                 viewModel.searchUsersMention(queryToken.keywords, onResult = {
-                    userMentionAdapter.submitList(it)
+                    userMentionAdapter.submitData(lifecycle, it)
                     displaySuggestions(true)
                 })
                     .subscribe()

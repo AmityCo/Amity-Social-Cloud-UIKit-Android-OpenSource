@@ -9,7 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
-import androidx.paging.PagedList
+import androidx.paging.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.amity.socialcloud.sdk.core.file.AmityImage
@@ -165,7 +165,7 @@ class AmityMemberPickerFragment : RxFragment(), AmitySelectMemberListener,
         }.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { list ->
-                mMemberListAdapter.submitPagedList(list, mViewModel.selectedMemberSet)
+                mMemberListAdapter.submitData(lifecycle, list, mViewModel.selectedMemberSet)
             })
     }
 
@@ -180,6 +180,12 @@ class AmityMemberPickerFragment : RxFragment(), AmitySelectMemberListener,
                 )
             )
             (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+        }
+        mSearchResultAdapter.addLoadStateListener { loadState ->
+            if (loadState.source.refresh is LoadState.NotLoading) {
+                prepareSearchMap()
+                mViewModel.isSearchUser.set(mSearchResultAdapter.itemCount > 0)
+            }
         }
     }
 
@@ -228,18 +234,18 @@ class AmityMemberPickerFragment : RxFragment(), AmitySelectMemberListener,
         searchDisposable.clear()
         searchDisposable.add(
             mViewModel.searchUser { list ->
-                mSearchResultAdapter.submitPagedList(list, mViewModel.selectedMemberSet)
-                mViewModel.isSearchUser.set(list.size > 0)
-                prepareSearchMap(list)
+                mSearchResultAdapter.submitData(lifecycle, list, mViewModel.selectedMemberSet)
             }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe()
         )
     }
 
-    private fun prepareSearchMap(list: PagedList<AmityUser>) {
-        for (i in 0 until list.size) {
-            mViewModel.searchMemberMap[list[i]!!.getUserId()] = i
+    private fun prepareSearchMap() {
+        mSearchResultAdapter.snapshot().forEachIndexed { index, user ->
+            user?.getUserId()?.let { userId ->
+                mViewModel.searchMemberMap[userId] = index
+            }
         }
     }
 

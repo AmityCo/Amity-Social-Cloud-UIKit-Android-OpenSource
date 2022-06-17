@@ -525,7 +525,7 @@ class AmityLiveStreamPostCreatorFragment : RxFragment() {
             } else {
                 suggestionView.swapAdapter(suggestionAdapter, true)
                 viewModel.searchUsersMention(queryToken.keywords, onResult = {
-                    suggestionAdapter.submitList(it)
+                    suggestionAdapter.submitData(lifecycle, it)
                     displaySuggestions(suggestionView, true)
                 }).subscribe()
             }

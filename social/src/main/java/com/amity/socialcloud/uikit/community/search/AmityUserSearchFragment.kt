@@ -10,7 +10,9 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.whenStarted
+import androidx.paging.LoadState
 import androidx.paging.PagedList
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.amity.socialcloud.sdk.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.common.views.AmityColorPaletteUtil
@@ -80,6 +82,19 @@ class AmityUserSearchFragment : RxFragment(R.layout.amity_fragment_users_global_
                 AmityColorShade.SHADE3
             )
         )
+        usersAdapter.addLoadStateListener { loadState ->
+            if (loadState.source.refresh is LoadState.NotLoading && loadState.append.endOfPaginationReached && usersAdapter.itemCount < 1) {
+                if (isEmptyList) {
+                    binding.progressBar.hide()
+                    binding.tvNoResults.visibility = View.VISIBLE
+                } else {
+                    isEmptyList = true
+                }
+            } else {
+                binding.progressBar.hide()
+                binding.tvNoResults.visibility = View.GONE
+            }
+        }
     }
 
     override fun onResume() {
@@ -110,19 +125,8 @@ class AmityUserSearchFragment : RxFragment(R.layout.amity_fragment_users_global_
             .subscribe()
     }
 
-    private fun onSearchUserResult(list: PagedList<AmityUser>) {
-        if (list.isEmpty()) {
-            if (isEmptyList) {
-                binding.progressBar.hide()
-                binding.tvNoResults.visibility = View.VISIBLE
-            } else {
-                isEmptyList = true
-            }
-        } else {
-            binding.progressBar.hide()
-            binding.tvNoResults.visibility = View.GONE
-        }
-        usersAdapter.submitList(list)
+    private fun onSearchUserResult(list: PagingData<AmityUser>) {
+        usersAdapter.submitData(lifecycle,list)
     }
 
     override fun onDestroy() {

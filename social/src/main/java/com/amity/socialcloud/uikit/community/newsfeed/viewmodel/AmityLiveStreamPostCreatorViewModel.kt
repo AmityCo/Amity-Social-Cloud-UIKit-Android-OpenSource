@@ -234,14 +234,15 @@ class AmityLiveStreamPostCreatorViewModel :
                 .ignoreElements()
     }
     
+    @OptIn(ExperimentalPagingApi::class)
     fun searchUsersMention(
             keyword: String,
-            onResult: (users: PagedList<AmityUser>) -> Unit
+            onResult: (users: PagingData<AmityUser>) -> Unit
     ): Completable {
         return userRepository.searchUserByDisplayName(keyword)
                 .sortBy(AmityUserSortOption.DISPLAYNAME)
                 .build()
-                .query()
+                .getPagingData()
                 .throttleLatest(1, TimeUnit.SECONDS, true)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

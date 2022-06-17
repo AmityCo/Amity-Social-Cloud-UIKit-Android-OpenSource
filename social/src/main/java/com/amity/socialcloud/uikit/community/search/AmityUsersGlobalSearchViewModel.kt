@@ -1,7 +1,9 @@
 package com.amity.socialcloud.uikit.community.search
 
 import androidx.databinding.ObservableField
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.PagedList
+import androidx.paging.PagingData
 import com.amity.socialcloud.sdk.AmityCoreClient
 import com.amity.socialcloud.sdk.core.user.AmityUser
 import com.amity.socialcloud.sdk.core.user.AmityUserSortOption
@@ -12,16 +14,18 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
+
+@OptIn(ExperimentalPagingApi::class)
 class AmityUsersGlobalSearchViewModel: AmityBaseViewModel() {
 
     var searchString = ObservableField("")
-
-    fun searchUsers(onResult: (list: PagedList<AmityUser>) -> Unit): Completable {
+    
+    fun searchUsers(onResult: (list: PagingData<AmityUser>) -> Unit): Completable {
         val userRepository = AmityCoreClient.newUserRepository()
         return userRepository.searchUserByDisplayName(searchString.get() ?:  "")
             .sortBy(AmityUserSortOption.DISPLAYNAME)
             .build()
-            .query()
+            .getPagingData()
             .throttleLatest(1, TimeUnit.SECONDS, true)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

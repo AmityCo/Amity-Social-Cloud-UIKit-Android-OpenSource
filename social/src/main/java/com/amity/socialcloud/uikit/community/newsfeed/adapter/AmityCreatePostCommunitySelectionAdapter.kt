@@ -8,14 +8,14 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.amity.socialcloud.sdk.core.file.AmityImage
 import com.amity.socialcloud.sdk.social.community.AmityCommunity
-import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagedAdapter
+import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagingDataAdapter
 import com.amity.socialcloud.uikit.common.common.loadImage
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.databinding.AmityItemCommunitySelectionListBinding
 import com.amity.socialcloud.uikit.community.newsfeed.listener.AmityCreatePostCommunitySelectionListener
 
 class AmityCreatePostCommunitySelectionAdapter(private val listener: AmityCreatePostCommunitySelectionListener) :
-    AmityBaseRecyclerViewPagedAdapter<AmityCommunity>(diffCallBack) {
+    AmityBaseRecyclerViewPagingDataAdapter<AmityCommunity>(diffCallBack) {
 
     companion object {
         private val diffCallBack = object : DiffUtil.ItemCallback<AmityCommunity>() {

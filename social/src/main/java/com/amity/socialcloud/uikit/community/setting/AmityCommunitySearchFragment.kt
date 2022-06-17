@@ -10,7 +10,8 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.whenStarted
-import androidx.paging.PagedList
+import androidx.paging.LoadState
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.amity.socialcloud.sdk.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.common.views.AmityColorPaletteUtil
@@ -61,6 +62,19 @@ class AmityCommunitySearchFragment :
 
     private fun initSearchRecyclerView() {
         adapter = AmityMyCommunitiesAdapter(this)
+        adapter.addLoadStateListener { loadState ->
+            if (loadState.source.refresh is LoadState.NotLoading && adapter.itemCount == 0) {
+                if (isEmptyList) {
+                    binding.progressBar.hide()
+                    binding.tvNoResults.visibility = View.VISIBLE
+                } else {
+                    isEmptyList = true
+                }
+            } else {
+                binding.progressBar.hide()
+                binding.tvNoResults.visibility = View.GONE
+            }
+        }
         binding.rvCommunitySearch.apply {
             adapter = this@AmityCommunitySearchFragment.adapter
             layoutManager = LinearLayoutManager(requireContext())
@@ -108,19 +122,8 @@ class AmityCommunitySearchFragment :
             .subscribe()
     }
 
-    private fun onSearchCommunityResult(list: PagedList<AmityCommunity>) {
-        if (list.isEmpty()) {
-            if (isEmptyList) {
-                binding.progressBar.hide()
-                binding.tvNoResults.visibility = View.VISIBLE
-            } else {
-                isEmptyList = true
-            }
-        } else {
-            binding.progressBar.hide()
-            binding.tvNoResults.visibility = View.GONE
-        }
-        adapter.submitList(list)
+    private fun onSearchCommunityResult(list: PagingData<AmityCommunity>) {
+        adapter.submitData(lifecycle, list)
     }
 
     override fun onCommunitySelected(ekoCommunity: AmityCommunity?) {

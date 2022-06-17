@@ -22,12 +22,13 @@ import com.amity.socialcloud.uikit.community.utils.EXTRA_PARAM_POST_CREATION_TYP
 import com.bumptech.glide.Glide
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import timber.log.Timber
 
 class AmityPostTargetPickerFragment : AmityBaseFragment(),
     AmityCreatePostCommunitySelectionListener {
 
     private val viewModel: AmityPostTargetViewModel by viewModels()
-    private lateinit var adapter: AmityCreatePostCommunitySelectionAdapter
+    private lateinit var communityAdapter: AmityCreatePostCommunitySelectionAdapter
     private lateinit var binding: AmityFragmentPostTargetSelectionBinding
     private val TAG = AmityPostTargetPickerFragment::class.java.canonicalName
 
@@ -112,10 +113,15 @@ class AmityPostTargetPickerFragment : AmityBaseFragment(),
     }
 
     private fun initRecyclerView() {
-        adapter = AmityCreatePostCommunitySelectionAdapter(this)
+        communityAdapter = AmityCreatePostCommunitySelectionAdapter(this)
+//        adapter.addLoadStateListener { loadState ->
+//            if (loadState.source.refresh is LoadState.NotLoading) {
+//                handleCommunitySectionVisibility()
+//            }
+//        }
         binding.rvCommunity.apply {
             layoutManager = LinearLayoutManager(requireContext())
-            this.adapter = adapter
+            this.adapter = communityAdapter
             addItemDecoration(
                     AmityRecyclerViewItemDecoration(
                             resources.getDimensionPixelSize(R.dimen.amity_padding_xs),
@@ -131,15 +137,17 @@ class AmityPostTargetPickerFragment : AmityBaseFragment(),
         viewModel.getCommunityList().subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext {
-                adapter.submitList(it)
-                handleCommunitySectionVisibility()
+                communityAdapter.submitData(lifecycle, it)
+                binding.separator.visibility = View.VISIBLE
+                binding.tvCommunityLabel.visibility = View.VISIBLE
+                Timber.e(">>>>>>>>>>>>>adapter: ${communityAdapter.snapshot().size}")
             }.doOnError {
                 Log.e(TAG, "initRecyclerView: ${it.localizedMessage}")
             }.subscribe()
     }
 
     private fun handleCommunitySectionVisibility() {
-        val communitySectionVisibility = if (adapter.itemCount > 0) View.VISIBLE else View.GONE
+        val communitySectionVisibility = if (communityAdapter.itemCount > 0) View.VISIBLE else View.GONE
         binding.separator.visibility = communitySectionVisibility
         binding.tvCommunityLabel.visibility = communitySectionVisibility
     }

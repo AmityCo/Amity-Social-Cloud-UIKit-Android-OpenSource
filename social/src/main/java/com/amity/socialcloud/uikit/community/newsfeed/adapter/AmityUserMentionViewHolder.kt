@@ -6,12 +6,13 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.amity.socialcloud.sdk.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagedAdapter
+import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagingDataAdapter
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.databinding.AmityItemUserMentionBinding
 import com.amity.socialcloud.uikit.community.newsfeed.model.AmityUserMention
 
 class AmityUserMentionViewHolder(itemView: View, private val listener: AmityUserMentionListener) :
-    RecyclerView.ViewHolder(itemView), AmityBaseRecyclerViewPagedAdapter.Binder<AmityUser> {
+    RecyclerView.ViewHolder(itemView), AmityBaseRecyclerViewPagingDataAdapter.Binder<AmityUser> {
 
     private val itemBiding: AmityItemUserMentionBinding? = DataBindingUtil.bind(itemView)
 

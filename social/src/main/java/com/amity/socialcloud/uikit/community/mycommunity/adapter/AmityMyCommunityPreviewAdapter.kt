@@ -3,12 +3,13 @@ package com.amity.socialcloud.uikit.community.mycommunity.adapter
 import android.view.View
 import com.amity.socialcloud.sdk.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagedAdapter
+import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagingDataAdapter
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.mycommunity.listener.AmityMyCommunityItemClickListener
 
 
 class AmityMyCommunityPreviewAdapter(private val listener: AmityMyCommunityItemClickListener) :
-    AmityBaseRecyclerViewPagedAdapter<AmityCommunity>(AmityMyCommunityDiffImpl.diffCallBack) {
+    AmityBaseRecyclerViewPagingDataAdapter<AmityCommunity>(AmityMyCommunityDiffImpl.diffCallBack) {
 
     private val VIEW_ALL_ITEM_POSITION = 8
 

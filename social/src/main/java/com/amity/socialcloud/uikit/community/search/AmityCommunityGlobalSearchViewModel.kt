@@ -1,7 +1,7 @@
 package com.amity.socialcloud.uikit.community.search
 
 import androidx.databinding.ObservableField
-import androidx.paging.PagedList
+import androidx.paging.PagingData
 import com.amity.socialcloud.sdk.social.AmitySocialClient
 import com.amity.socialcloud.sdk.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.social.community.AmityCommunitySortOption
@@ -15,14 +15,14 @@ import java.util.concurrent.TimeUnit
 class AmityCommunityGlobalSearchViewModel: AmityBaseViewModel() {
     var searchString = ObservableField("")
 
-    fun searchCommunity(onResult: (list: PagedList<AmityCommunity>) -> Unit): Completable {
+    fun searchCommunity(onResult: (list: PagingData<AmityCommunity>) -> Unit): Completable {
         val communityRepository = AmitySocialClient.newCommunityRepository()
         return communityRepository.getCommunities()
             .withKeyword(searchString.get() ?: "")
             .sortBy(AmityCommunitySortOption.DISPLAY_NAME)
             .includeDeleted(false)
             .build()
-            .query()
+            .getPagingData()
             .throttleLatest(1, TimeUnit.SECONDS, true)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
