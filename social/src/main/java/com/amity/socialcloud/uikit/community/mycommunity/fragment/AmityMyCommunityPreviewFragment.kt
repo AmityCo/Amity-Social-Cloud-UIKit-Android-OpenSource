@@ -7,6 +7,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.amity.socialcloud.sdk.social.community.AmityCommunity
@@ -79,6 +80,15 @@ class AmityMyCommunityPreviewFragment : AmityBaseFragment(),
         )
         binding.rvMyCommunity.setHasFixedSize(true)
         getCommunityList()
+        adapter.addLoadStateListener { loadState ->
+            if (loadState.source.refresh is LoadState.NotLoading) {
+                if (adapter.itemCount == 0) {
+                    binding.parent.visibility = View.GONE
+                } else {
+                    binding.parent.visibility = View.VISIBLE
+                }
+            }
+        }
     }
 
     private fun getCommunityList() {
@@ -87,8 +97,7 @@ class AmityMyCommunityPreviewFragment : AmityBaseFragment(),
             .observeOn(AndroidSchedulers.mainThread())
             .untilLifecycleEnd(this)
             .doOnNext { list ->
-                adapter.submitList(list)
-                binding.parent.visibility = if (list.size > 0) View.VISIBLE else View.GONE
+                adapter.submitData(lifecycle, list)
             }
             .subscribe()
     }

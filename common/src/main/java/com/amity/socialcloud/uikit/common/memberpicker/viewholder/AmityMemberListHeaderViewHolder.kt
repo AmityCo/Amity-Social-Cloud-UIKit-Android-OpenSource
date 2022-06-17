@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.amity.socialcloud.sdk.core.file.AmityImage
 import com.amity.socialcloud.sdk.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.R
-import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagedAdapter
+import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagingDataAdapter
 import com.amity.socialcloud.uikit.common.memberpicker.listener.AmitySelectMemberListener
 import com.amity.socialcloud.uikit.common.databinding.AmityItemHeaderSelectMemberBinding
 
@@ -17,7 +17,7 @@ class AmityMemberListHeaderViewHolder(
     private val membersSet: HashSet<String>
 ) :
     RecyclerView.ViewHolder(itemView),
-    AmityBaseRecyclerViewPagedAdapter.Binder<AmityUser> {
+    AmityBaseRecyclerViewPagingDataAdapter.Binder<AmityUser> {
 
     private val binding: AmityItemHeaderSelectMemberBinding? = DataBindingUtil.bind(itemView)
 

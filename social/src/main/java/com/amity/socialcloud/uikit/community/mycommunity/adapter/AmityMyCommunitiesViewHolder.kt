@@ -6,13 +6,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.amity.socialcloud.sdk.core.file.AmityImage
 import com.amity.socialcloud.sdk.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagedAdapter
+import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagingDataAdapter
 import com.amity.socialcloud.uikit.community.databinding.AmityItemCommunityBinding
 import com.amity.socialcloud.uikit.community.mycommunity.listener.AmityMyCommunityItemClickListener
 
 class AmityMyCommunitiesViewHolder(
     itemView: View,
     private val listener: AmityMyCommunityItemClickListener
-) : RecyclerView.ViewHolder(itemView), AmityBaseRecyclerViewPagedAdapter.Binder<AmityCommunity> {
+) : RecyclerView.ViewHolder(itemView), AmityBaseRecyclerViewPagingDataAdapter.Binder<AmityCommunity> {
     private val binding: AmityItemCommunityBinding? = DataBindingUtil.bind(itemView)
 
     override fun bind(data: AmityCommunity?, position: Int) {

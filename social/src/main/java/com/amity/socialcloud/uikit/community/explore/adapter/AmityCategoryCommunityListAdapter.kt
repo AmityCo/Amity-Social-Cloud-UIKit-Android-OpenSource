@@ -4,7 +4,7 @@ import android.view.View
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.amity.socialcloud.sdk.social.community.AmityCommunity
-import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagedAdapter
+import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagingDataAdapter
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.explore.listener.AmityCommunityItemClickListener
 
@@ -12,7 +12,7 @@ class AmityCategoryCommunityListAdapter(
     diffUtil: AmityCommunityDiffUtil,
     private val itemClickListener: AmityCommunityItemClickListener
 ) :
-    AmityBaseRecyclerViewPagedAdapter<AmityCommunity>(diffUtil) {
+    AmityBaseRecyclerViewPagingDataAdapter<AmityCommunity>(diffUtil) {
 
 
     override fun getLayoutId(position: Int, obj: AmityCommunity?): Int {

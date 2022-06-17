@@ -2,7 +2,7 @@ package com.amity.socialcloud.uikit.community.mycommunity.viewmodel
 
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
-import androidx.paging.PagedList
+import androidx.paging.PagingData
 import com.amity.socialcloud.sdk.social.AmitySocialClient
 import com.amity.socialcloud.sdk.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.social.community.AmityCommunityFilter
@@ -18,13 +18,14 @@ class AmityMyCommunityListViewModel : AmityBaseViewModel() {
     val searchString = ObservableField("")
     val emptyCommunity = ObservableBoolean(false)
 
-    fun getCommunityList(): Flowable<PagedList<AmityCommunity>> {
+    fun getCommunityList(): Flowable<PagingData<AmityCommunity>> {
         val communityRepository = AmitySocialClient.newCommunityRepository()
         return communityRepository.getCommunities()
             .withKeyword(searchString.get() ?: "")
             .filter(AmityCommunityFilter.MEMBER).sortBy(AmityCommunitySortOption.DISPLAY_NAME)
             .includeDeleted(false)
-            .build().query()
+            .build()
+            .getPagingData()
     }
 
     fun setPropertyChangeCallback() {

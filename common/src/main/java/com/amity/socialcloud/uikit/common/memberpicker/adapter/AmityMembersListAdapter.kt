@@ -1,12 +1,13 @@
 package com.amity.socialcloud.uikit.common.memberpicker.adapter
 
 import android.view.View
-import androidx.paging.PagedList
+import androidx.lifecycle.Lifecycle
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.amity.socialcloud.sdk.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.R
-import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagedAdapter
+import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagingDataAdapter
 import com.amity.socialcloud.uikit.common.memberpicker.listener.AmitySelectMemberListener
 import com.amity.socialcloud.uikit.common.memberpicker.viewholder.AmityMemberListHeaderViewHolder
 import com.amity.socialcloud.uikit.common.memberpicker.viewholder.AmityMemberListItemViewHolder
@@ -16,7 +17,7 @@ class AmityMembersListAdapter(
     private val listener: AmitySelectMemberListener,
     private val viewModel: AmityMemberPickerViewModel
 ) :
-    AmityBaseRecyclerViewPagedAdapter<AmityUser>(diffCallback) {
+    AmityBaseRecyclerViewPagingDataAdapter<AmityUser>(diffCallback) {
 
     private val selectedMemberSet = HashSet<String>()
 
@@ -73,10 +74,10 @@ class AmityMembersListAdapter(
         }
     }
 
-    fun submitPagedList(pagedList: PagedList<AmityUser>?, memberSet: HashSet<String>) {
+    fun submitData(lifecycle: Lifecycle, list: PagingData<AmityUser>, memberSet: HashSet<String>) {
         selectedMemberSet.clear()
         selectedMemberSet.addAll(memberSet)
-        super.submitList(pagedList)
+        super.submitData(lifecycle, list)
     }
 
     fun notifyChange(position: Int, memberSet: HashSet<String>) {

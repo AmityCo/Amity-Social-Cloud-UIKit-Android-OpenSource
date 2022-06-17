@@ -7,7 +7,7 @@ import com.amity.socialcloud.sdk.AmityCoreClient
 import com.amity.socialcloud.sdk.core.file.AmityImage
 import com.amity.socialcloud.sdk.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.R
-import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagedAdapter
+import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagingDataAdapter
 import com.amity.socialcloud.uikit.common.components.setVisibility
 import com.amity.socialcloud.uikit.common.databinding.AmityItemSelectMemberBinding
 import com.amity.socialcloud.uikit.common.memberpicker.listener.AmitySelectMemberListener
@@ -16,7 +16,7 @@ class AmityMemberListItemViewHolder(
     itemView: View,
     private val mClickListener: AmitySelectMemberListener,
     private val membersSet: HashSet<String>
-) : RecyclerView.ViewHolder(itemView), AmityBaseRecyclerViewPagedAdapter.Binder<AmityUser> {
+) : RecyclerView.ViewHolder(itemView), AmityBaseRecyclerViewPagingDataAdapter.Binder<AmityUser> {
 
     private val binding: AmityItemSelectMemberBinding? = DataBindingUtil.bind(itemView)
 

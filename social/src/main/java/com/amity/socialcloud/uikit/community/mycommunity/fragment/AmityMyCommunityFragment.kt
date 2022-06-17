@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.amity.socialcloud.sdk.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.base.AmityBaseFragment
@@ -111,8 +112,7 @@ class AmityMyCommunityFragment : AmityBaseFragment(),
         disposable.add(viewModel.getCommunityList().subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext { list ->
-                viewModel.emptyCommunity.set(list.size == 0)
-                mAdapter.submitList(list)
+                mAdapter.submitData(lifecycle, list)
             }.doOnError {
 
             }.subscribe()
@@ -132,12 +132,16 @@ class AmityMyCommunityFragment : AmityBaseFragment(),
             )
             setHasFixedSize(true)
         }
+        mAdapter.addLoadStateListener { loadState ->
+            if (loadState.source.refresh is LoadState.NotLoading) {
+                viewModel.emptyCommunity.set(mAdapter.itemCount == 0)
+            }
+        }
 
         disposable.add(viewModel.getCommunityList().subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext { list ->
-                viewModel.emptyCommunity.set(list.size == 0)
-                mAdapter.submitList(list)
+                mAdapter.submitData(lifecycle, list)
             }.doOnError {
 
             }.subscribe()

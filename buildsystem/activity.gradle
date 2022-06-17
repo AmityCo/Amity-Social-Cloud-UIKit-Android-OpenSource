@@ -29,9 +29,9 @@ dependencies {
     implementation 'com.github.EkoCommunications:Matisse:0.5.3-5'
 
     //exo player
-    implementation "com.google.android.exoplayer:exoplayer-core:$exoplayerVersion"
-    implementation "com.google.android.exoplayer:extension-okhttp:$exoplayerVersion"
-    implementation "com.google.android.exoplayer:exoplayer-ui:$exoplayerVersion"
+    implementation "com.google.android.exoplayer:exoplayer-core:$amityExoplayerVersion"
+    implementation "com.google.android.exoplayer:extension-okhttp:$amityExoplayerVersion"
+    implementation "com.google.android.exoplayer:exoplayer-ui:$amityExoplayerVersion"
 
     // Amity Rx LifeCycle
     api "com.github.EkoCommunications:AmityRxLifeCycle:$amityRxLifeCycleVersion"

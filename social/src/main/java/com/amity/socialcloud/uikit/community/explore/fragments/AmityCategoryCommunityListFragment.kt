@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.amity.socialcloud.sdk.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.social.community.AmityCommunityCategory
@@ -61,6 +62,11 @@ class AmityCategoryCommunityListFragment : AmityBaseFragment(),
         setupToolBar()
         initView()
         getCategories()
+        adapter.addLoadStateListener { loadState ->
+            if (loadState.source.refresh is LoadState.NotLoading) {
+                handleListVisibility()
+            }
+        }
     }
 
     private fun setupToolBar() {
@@ -89,8 +95,7 @@ class AmityCategoryCommunityListFragment : AmityBaseFragment(),
             }
             .subscribe { result ->
                 run {
-                    adapter.submitList(result)
-                    handleListVisibility()
+                    adapter.submitData(lifecycle, result)
                 }
             })
     }
