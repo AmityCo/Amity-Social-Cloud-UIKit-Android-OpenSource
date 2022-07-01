@@ -10,7 +10,7 @@ buildscript {
         amityKotlinVersion = "1.4.21"
         amityLifecycleExtensionVersion = "2.0.0"
         amityMockkVersion = "1.10.0"
-        amityMessagingSdkVersion = '5.20.0'
+        amityMessagingSdkVersion = '5.21.0'
         amityRxLifeCycleVersion = '1.1.1'
 
         amityJacocoVersion = '0.8.5'
