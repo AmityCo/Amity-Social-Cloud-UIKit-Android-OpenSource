@@ -119,6 +119,14 @@ abstract class AmityFeedFragment : AmityBaseFragment() {
                 }
             }
         })
+        adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                super.onItemRangeInserted(positionStart, itemCount)
+                if (positionStart == 0) {
+                    binding.recyclerViewFeed.smoothScrollToPosition(0)
+                }
+            }
+        })
     }
 
     private fun setupFeedHeaderView() {
