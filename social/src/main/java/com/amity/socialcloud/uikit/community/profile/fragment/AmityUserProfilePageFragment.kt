@@ -59,7 +59,6 @@ class AmityUserProfilePageFragment : AmityBaseFragment(),
     private var refreshEventPublisher = PublishSubject.create<AmityFeedRefreshEvent>()
 
     private val createGenericPost = registerForActivityResult(AmityPostCreatorActivity.AmityCreateCommunityPostActivityContract()) {
-        refreshFeed()
     }
 
     private val createLiveStreamPost = registerForActivityResult(AmityLiveStreamPostCreatorActivity.AmityCreateLiveStreamPostActivityContract()) {
@@ -67,11 +66,9 @@ class AmityUserProfilePageFragment : AmityBaseFragment(),
             val intent = AmityPostDetailsActivity.newIntent(requireContext(), it, null, null)
             startActivity(intent)
         }
-        refreshFeed()
     }
 
     private val createPollPost = registerForActivityResult(AmityPollPostCreatorActivity.AmityPollCreatorActivityContract()) {
-        refreshFeed()
     }
 
     companion object {
