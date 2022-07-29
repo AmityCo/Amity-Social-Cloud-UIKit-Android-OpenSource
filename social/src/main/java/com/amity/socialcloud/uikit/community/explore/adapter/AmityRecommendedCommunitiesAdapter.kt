@@ -6,14 +6,14 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.amity.socialcloud.sdk.social.community.AmityCommunity
-import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagedAdapter
+import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewListAdapter
 import com.amity.socialcloud.uikit.common.common.formatCount
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.databinding.AmityItemRecommCommBinding
 import com.amity.socialcloud.uikit.community.mycommunity.listener.AmityMyCommunityItemClickListener
 
 class AmityRecommendedCommunitiesAdapter(private val listener: AmityMyCommunityItemClickListener) :
-    AmityBaseRecyclerViewPagedAdapter<AmityCommunity>(diffCallBack) {
+    AmityBaseRecyclerViewListAdapter<AmityCommunity>(diffCallBack) {
 
     companion object {
         private val diffCallBack = object : DiffUtil.ItemCallback<AmityCommunity>() {
