@@ -18,7 +18,7 @@ class AmityExploreCommunityViewModel : AmityBaseViewModel() {
     val emptyCategoryList = ObservableBoolean(false)
 
 
-    fun getRecommendedCommunity(onRecommendedCommunitiesLoaded: (PagedList<AmityCommunity>) -> Unit): Completable {
+    fun getRecommendedCommunity(onRecommendedCommunitiesLoaded: (List<AmityCommunity>) -> Unit): Completable {
         return AmitySocialClient.newCommunityRepository()
             .getRecommendedCommunities()
             .subscribeOn(Schedulers.io())
@@ -28,7 +28,7 @@ class AmityExploreCommunityViewModel : AmityBaseViewModel() {
             .ignoreElements()
     }
 
-    fun getTrendingCommunity(onTrendingCommunitiesLoaded: (PagedList<AmityCommunity>) -> Unit): Completable {
+    fun getTrendingCommunity(onTrendingCommunitiesLoaded: (List<AmityCommunity>) -> Unit): Completable {
         return AmitySocialClient.newCommunityRepository()
             .getTrendingCommunities()
             .subscribeOn(Schedulers.io())
