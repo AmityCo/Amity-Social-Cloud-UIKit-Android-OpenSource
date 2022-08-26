@@ -204,6 +204,7 @@ interface PostViewModel {
                         AmitySocialUISettings.postSharingSettings.privateCommunityPostSharingTarget
                 }
             }
+            else -> {}
         }
 
         if (possibleTargets.contains(AmityPostSharingTarget.MyFeed)

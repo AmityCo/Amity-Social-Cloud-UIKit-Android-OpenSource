@@ -51,6 +51,7 @@ class AmityPostItemAttachmentViewHolder(itemView: View) : AmityPostContentViewHo
                             files.add(ekoFile)
                         }
                     }
+                    else -> {}
                 }
             }
             this.files = files

@@ -175,6 +175,7 @@ interface CommentViewModel {
 
                     }
                 }
+                else -> {}
             }
             if (comment.isFlaggedByMe()) {
                 items.add(unReportCommentMenuItem)

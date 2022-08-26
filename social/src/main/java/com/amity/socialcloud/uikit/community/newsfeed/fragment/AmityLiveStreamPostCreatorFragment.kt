@@ -251,6 +251,7 @@ class AmityLiveStreamPostCreatorFragment : RxFragment() {
                     is AmityStreamBroadcasterState.CONNECTED -> {
                         onStreamConnected()
                     }
+                    else -> {}
                 }
             }
             ?.subscribe()

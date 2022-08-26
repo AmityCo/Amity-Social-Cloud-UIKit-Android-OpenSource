@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
+import androidx.paging.CombinedLoadStates
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
@@ -27,8 +28,11 @@ import com.amity.socialcloud.uikit.community.newsfeed.model.AmityMediaGalleryTar
 import com.amity.socialcloud.uikit.community.newsfeed.model.TARGET_USER
 import com.amity.socialcloud.uikit.community.newsfeed.viewmodel.AmityMediaPostViewModel
 import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
+import io.reactivex.BackpressureStrategy
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.PublishSubject
+import java.util.concurrent.TimeUnit
 
 class AmityMediaPostFragment : AmityBaseFragment() {
 
@@ -36,6 +40,7 @@ class AmityMediaPostFragment : AmityBaseFragment() {
     private lateinit var adapter: AmityPostGalleryAdapter
     private lateinit var binding: AmityFragmentMediaPostBinding
     private var isObservingClickEvent = false
+    private val emptyStatePublisher = PublishSubject.create<Boolean>()
 
 
     override fun onCreateView(
@@ -77,17 +82,28 @@ class AmityMediaPostFragment : AmityBaseFragment() {
         adapter.addLoadStateListener { loadStates ->
             when (val refreshState = loadStates.mediator?.refresh) {
                 is LoadState.NotLoading -> {
-                    handleLoadedState(adapter.itemCount)
+                    handleLoadedState(adapter.itemCount, loadStates)
                 }
                 is LoadState.Error -> {
                     handleErrorState(AmityError.from(refreshState.error))
                 }
+                else -> {}
             }
         }
         if (!isObservingClickEvent) {
             observePostGalleryClickEvents()
             isObservingClickEvent = true
         }
+        emptyStatePublisher.toFlowable(BackpressureStrategy.BUFFER)
+            .debounce(300, TimeUnit.MILLISECONDS, Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .untilLifecycleEnd(this)
+            .doOnNext { shouldShowEmptyState ->
+                if (shouldShowEmptyState) {
+                    handleEmptyState()
+                }
+            }
+            .subscribe()
     }
 
     @ExperimentalPagingApi
@@ -97,16 +113,28 @@ class AmityMediaPostFragment : AmityBaseFragment() {
             .subscribe()
     }
 
-    private fun handleLoadedState(itemCount: Int) {
+    private fun handleLoadedState(itemCount: Int,  loadStates: CombinedLoadStates) {
         binding.postGalleryProgressBar.visibility = View.GONE
         binding.postGalleryEmptyView.visibility = View.GONE
         binding.postGalleryRecyclerview.visibility = View.VISIBLE
-        if (itemCount == 0) {
-            handleEmptyState()
+        if (loadStates.source.refresh is LoadState.NotLoading
+            && loadStates.append.endOfPaginationReached
+            && itemCount < 1
+        ) {
+            if (!emptyStatePublisher.hasComplete()) {
+                emptyStatePublisher.onNext(true)
+            }
+        } else if (loadStates.source.refresh is LoadState.NotLoading
+            && loadStates.append.endOfPaginationReached
+            && itemCount > 0) {
+            if (!emptyStatePublisher.hasComplete()) {
+                emptyStatePublisher.onNext(false)
+            }
         }
     }
 
     private fun handleErrorState(error: AmityError) {
+        binding.postGalleryProgressBar.visibility = View.GONE
         if (error == AmityError.PERMISSION_DENIED) {
             handleErrorState(getPrivateProfileView())
         }
