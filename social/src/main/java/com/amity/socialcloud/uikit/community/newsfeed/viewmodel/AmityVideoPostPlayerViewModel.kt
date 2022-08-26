@@ -45,6 +45,7 @@ class AmityVideoPostPlayerViewModel(private val savedState: SavedStateHandle) :
                             is AmityPost.Data.VIDEO -> {
                                 videoDataList.add(postData)
                             }
+                            else -> {}
                         }
                     }
                 }

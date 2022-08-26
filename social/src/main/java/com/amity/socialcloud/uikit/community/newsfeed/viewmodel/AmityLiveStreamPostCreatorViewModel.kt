@@ -210,6 +210,7 @@ class AmityLiveStreamPostCreatorViewModel :
                 onUploadCompleted.invoke()
                 thumbnailId = uploadResult.getFile().getFileId()
             }
+            else -> {}
         }
     }
     

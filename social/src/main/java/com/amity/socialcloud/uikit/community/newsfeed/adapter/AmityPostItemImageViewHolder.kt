@@ -35,6 +35,7 @@ class AmityPostItemImageViewHolder(itemView: View): AmityPostContentViewHolder(i
                                 images.add(ekoImage)
                             }
                         }
+                        else -> {}
                     }
                 }
                 initAdapter(post.getPostId())

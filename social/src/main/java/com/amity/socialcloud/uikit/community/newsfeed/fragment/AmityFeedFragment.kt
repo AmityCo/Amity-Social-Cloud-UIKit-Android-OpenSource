@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -36,6 +37,11 @@ import com.amity.socialcloud.uikit.community.utils.AmityCommunityNavigation
 import com.amity.socialcloud.uikit.social.AmitySocialUISettings
 import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
 import com.google.android.material.snackbar.Snackbar
+import io.reactivex.BackpressureStrategy
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.PublishSubject
+import java.util.concurrent.TimeUnit
 
 
 abstract class AmityFeedFragment : AmityBaseFragment() {
@@ -48,6 +54,8 @@ abstract class AmityFeedFragment : AmityBaseFragment() {
     private var isObservingClickEvent = false
 
     internal open val showProgressBarOnLaunched = true
+
+    private val emptyStatePublisher = PublishSubject.create<Boolean>()
 
     private val postEditContact =
         registerForActivityResult(AmityPostEditorActivity.AmityEditPostActivityContract()) {
@@ -95,8 +103,7 @@ abstract class AmityFeedFragment : AmityBaseFragment() {
         adapter.addLoadStateListener { loadStates ->
             when (val refreshState = loadStates.mediator?.refresh) {
                 is LoadState.NotLoading -> {
-                    binding.progressBar.visibility = View.GONE
-                    handleLoadedState(adapter.itemCount)
+                    handleLoadedState(adapter.itemCount, loadStates)
                 }
                 is LoadState.Error -> {
                     isFirstLoad = false
@@ -127,6 +134,17 @@ abstract class AmityFeedFragment : AmityBaseFragment() {
                 }
             }
         })
+
+        emptyStatePublisher.toFlowable(BackpressureStrategy.BUFFER)
+            .debounce(300, TimeUnit.MILLISECONDS, Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .untilLifecycleEnd(this)
+            .doOnNext { shouldShowEmptyState ->
+                if (shouldShowEmptyState) {
+                    handleEmptyState(getEmptyView(getInflater()))
+                }
+            }
+            .subscribe()
     }
 
     private fun setupFeedHeaderView() {
@@ -155,7 +173,7 @@ abstract class AmityFeedFragment : AmityBaseFragment() {
         return listOf(dividerItemDecoration)
     }
 
-    private fun handleLoadedState(itemCount: Int) {
+    private fun handleLoadedState(itemCount: Int, loadStates: CombinedLoadStates) {
         isFirstLoad = false
         binding.emptyViewContainer.visibility = View.GONE
         binding.recyclerViewFeed.visibility = View.VISIBLE
@@ -163,8 +181,19 @@ abstract class AmityFeedFragment : AmityBaseFragment() {
             binding.recyclerViewFeed.scrollToPosition(0)
             isRefreshing = false
         }
-        if (itemCount == 0) {
-            handleEmptyState(getEmptyView(getInflater()))
+        if (loadStates.source.refresh is LoadState.NotLoading
+            && loadStates.append.endOfPaginationReached
+            && itemCount < 1
+        ) {
+            if (!emptyStatePublisher.hasComplete()) {
+                emptyStatePublisher.onNext(true)
+            }
+        } else if (loadStates.source.refresh is LoadState.NotLoading
+            && loadStates.append.endOfPaginationReached
+            && itemCount > 0) {
+            if (!emptyStatePublisher.hasComplete()) {
+                emptyStatePublisher.onNext(false)
+            }
         }
         getViewModel().feedLoadStatePublisher.onNext(AmityFeedLoadStateEvent.LOADED(itemCount))
     }
@@ -185,10 +214,13 @@ abstract class AmityFeedFragment : AmityBaseFragment() {
         if (isFirstLoad) {
             return
         }
-        binding.emptyViewContainer.removeAllViews()
-        binding.emptyViewContainer.addView(emptyView)
+        if( binding.emptyViewContainer.childCount == 0) {
+            binding.emptyViewContainer.removeAllViews()
+            binding.emptyViewContainer.addView(emptyView)
+        }
         binding.emptyViewContainer.visibility = View.VISIBLE
         binding.recyclerViewFeed.visibility = View.GONE
+        binding.progressBar.visibility = View.GONE
     }
 
     abstract fun getEmptyView(inflater: LayoutInflater): View
@@ -370,6 +402,7 @@ abstract class AmityFeedFragment : AmityBaseFragment() {
                             is AmityComment.Reference.POST -> {
                                 navigateToPostDetails(reference.getPostId())
                             }
+                            else -> {}
                         }
                     }
                 }
@@ -388,6 +421,7 @@ abstract class AmityFeedFragment : AmityBaseFragment() {
                             is AmityComment.Reference.POST -> {
                                 navigateToPostDetails(reference.getPostId())
                             }
+                            else -> {}
                         }
                     }
                 }

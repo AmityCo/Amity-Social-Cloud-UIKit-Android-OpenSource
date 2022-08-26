@@ -73,6 +73,7 @@ class AmityCreatePostViewModel : AmityBaseViewModel() {
             is AmityPost.Data.IMAGE -> prepareImagePost(post)
             is AmityPost.Data.VIDEO -> prepareVideoPost(post)
             is AmityPost.Data.FILE -> prepareFilePost(post)
+            else -> {}
         }
     }
 
@@ -112,6 +113,7 @@ class AmityCreatePostViewModel : AmityBaseViewModel() {
                 is AmityPost.Data.IMAGE -> setupImagePost(postChildren)
                 is AmityPost.Data.VIDEO -> setupVideoPost(postChildren)
                 is AmityPost.Data.FILE -> setupFilePost(postChildren)
+                else -> {}
             }
         }
     }

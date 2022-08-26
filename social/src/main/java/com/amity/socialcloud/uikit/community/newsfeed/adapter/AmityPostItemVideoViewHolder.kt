@@ -45,6 +45,7 @@ class AmityPostItemVideoViewHolder(itemView: View) : AmityPostContentViewHolder(
                             images.add(image)
                         }
                     }
+                    else -> {}
                 }
             }
             initAdapter(post.getPostId())

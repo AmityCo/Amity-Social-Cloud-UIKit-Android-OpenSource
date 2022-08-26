@@ -129,6 +129,7 @@ class AmityPostFooterPostEngagementViewHolder(
                     }
                 }
             }
+            else -> {}
         }
     }
 

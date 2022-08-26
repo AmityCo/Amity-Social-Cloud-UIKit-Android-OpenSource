@@ -164,6 +164,7 @@ class AmityPostHeaderViewHolder(
                         userClickPublisher.onNext(it)
                     }
                 }
+                else -> {}
             }
         }
 

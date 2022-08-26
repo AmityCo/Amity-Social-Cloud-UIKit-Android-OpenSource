@@ -3,12 +3,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/post_gallery_progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/amity_one_hundred_fourteen"
+        android:indeterminate="true" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
         <androidx.recyclerview.widget.RecyclerView
+            android:background="@color/amityColorWhite"
             android:id="@+id/post_gallery_recyclerview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -67,13 +76,5 @@
         android:visibility="gone">
 
     </FrameLayout>
-
-    <com.google.android.material.progressindicator.CircularProgressIndicator
-        android:id="@+id/post_gallery_progress_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/amity_one_hundred_fourteen"
-        android:indeterminate="true" />
 
 </RelativeLayout>

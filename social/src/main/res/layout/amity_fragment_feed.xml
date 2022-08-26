@@ -3,6 +3,15 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent">
 
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"
+        android:layout_marginTop="@dimen/amity_padding_xl"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -16,6 +25,7 @@
             android:visibility="gone"/>
 
         <androidx.recyclerview.widget.RecyclerView
+            android:background="@color/amityColorWhite"
             android:id="@+id/recycler_view_feed"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -31,14 +41,7 @@
         android:nestedScrollingEnabled="true"
         android:visibility="gone"/>
 
-    <com.google.android.material.progressindicator.CircularProgressIndicator
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:indeterminate="true"
-        android:layout_centerHorizontal="true"
-        android:visibility="gone"
-        android:layout_marginTop="@dimen/amity_padding_xl"/>
+
 
 
 </RelativeLayout>
