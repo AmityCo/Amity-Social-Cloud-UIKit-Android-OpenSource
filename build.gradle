@@ -30,7 +30,14 @@ buildscript {
     }
 }
 
+plugins {
+    id "maven-publish"
+    id "digital.wup.android-maven-publish" version "3.6.2"
+}
+
 allprojects {
+    group = 'com.noom.amity'
+    version = '1.0.0'
     repositories {
         google()
         mavenCentral()
@@ -42,6 +49,7 @@ allprojects {
 }
 
 apply from: "buildsystem/dependencies.gradle"
+apply from: file('publish.gradle')
 
 task clean(type: Delete) {
     delete rootProject.buildDir
