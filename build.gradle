@@ -33,11 +33,11 @@ buildscript {
 allprojects {
     repositories {
         google()
-        maven { url 'https://jitpack.io' }
         mavenCentral()
         maven {
             url "https://repo.maven.apache.org/maven2/"
         }
+        maven { url 'https://jitpack.io' }
     }
 }
 
