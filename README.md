@@ -17,6 +17,14 @@ The script generates and publishes a Github package for each module in the proje
 For authentication we use the existing setup that's already part of [Android Build Setup](https://github.com/noom/mobile-handbook/blob/master/android/build-setup.md#setup-github-packages "Android Build Setup") in the mobile handbook. This means that every Android engineer should already have authentication set up.
 **Note: ** The linked setup is focused on the consumer so the token that you create with it will only have the scope `read:packages`. This token will work just fine when consuming the fork from the main Android project.  If you also want to publish new packages, you will need to extend the scope to `write:packages`.
 
+### Git setup
+Note that there are two different git remotes: `fork` and `origin`.
+- `origin` points to the original Github repo
+- `fork` points to this Github repo
+
+The `fork` remote is set as default so executing `git pull` will attempt to pull the changes from the `fork` remote.
+When we want to pull the changes from `origin` we can do so with `git pull origin`.
+
 ## General
 Our UI Kits include user interfaces to enable fast integration of standard
 Amity Chat and Amity Social features into new or existing applications.
