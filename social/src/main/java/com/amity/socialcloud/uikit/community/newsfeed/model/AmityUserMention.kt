@@ -36,7 +36,7 @@ class AmityUserMention private constructor() : Mentionable {
         return 0
     }
 
-    override fun writeToParcel(dest: Parcel?, flags: Int) {
+    override fun writeToParcel(dest: Parcel, flags: Int) {
         dest?.writeParcelable(user, 0)
     }
 

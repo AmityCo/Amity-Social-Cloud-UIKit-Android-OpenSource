@@ -2,6 +2,7 @@ package com.amity.socialcloud.uikit.common.base
 
 import android.Manifest
 import android.net.Uri
+import android.os.Build
 import androidx.activity.result.contract.ActivityResultContracts
 import com.amity.socialcloud.uikit.common.R
 import com.amity.socialcloud.uikit.common.common.showSnackBar
@@ -69,9 +70,11 @@ abstract class AmityPickerFragment : AmityBaseFragment() {
     abstract fun onPhotoClicked(file: File?)
 
     fun pickImage() {
-
-        pickImagePermission.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            pickImagePermission.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            pickImagePermission.launch(Manifest.permission.READ_MEDIA_IMAGES)
+        }
     }
 
     fun pickFile() {
@@ -80,13 +83,17 @@ abstract class AmityPickerFragment : AmityBaseFragment() {
     }
 
     fun takePicture() {
-
-        cameraPermission.launch(
+        val permissions = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
             arrayOf(
                 Manifest.permission.CAMERA,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
             )
-        )
+        } else {
+            arrayOf(
+                Manifest.permission.CAMERA
+            )
+        }
+        cameraPermission.launch(permissions)
     }
 
 }

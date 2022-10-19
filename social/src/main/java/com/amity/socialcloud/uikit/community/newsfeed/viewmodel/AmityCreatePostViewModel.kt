@@ -4,7 +4,6 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.ExperimentalPagingApi
-import androidx.paging.PagedList
 import androidx.paging.PagingData
 import com.amity.socialcloud.sdk.AmityCoreClient
 import com.amity.socialcloud.sdk.core.AmityFile
@@ -294,7 +293,10 @@ class AmityCreatePostViewModel : AmityBaseViewModel() {
         val textData = post!!.getData() as AmityPost.Data.TEXT
         return deleteImageOrFileInPost()
             .andThen(Completable.defer {
-                updateParentPost(postText, textData, userMentions)
+                val attachments = post?.getChildren()
+                        ?.map { it.getData() }
+                        ?: emptyList()
+                updateParentPost(postText, textData, attachments, userMentions)
             })
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -305,13 +307,35 @@ class AmityCreatePostViewModel : AmityBaseViewModel() {
     private fun updateParentPost(
         postText: String,
         textData: AmityPost.Data.TEXT,
+        attachments: List<AmityPost.Data>,
         userMentions: List<AmityMentionMetadata.USER>
     ): Completable {
-        val postTextEditor = textData.edit().text(postText)
-        postTextEditor
+        val videos = attachments.mapNotNull {
+            it as? AmityPost.Data.VIDEO
+        }.filter {
+            it.getThumbnailImage()?.getFileId()?.let(deletedImageIds::contains) ?: true
+        }.map {
+            it.getVideo().blockingGet()
+        }
+        val images = attachments
+                .mapNotNull { (it as? AmityPost.Data.IMAGE)?.getImage() }
+                .filter { !deletedImageIds.contains(it.getFileId()) }
+        val files = attachments
+                .mapNotNull { (it as? AmityPost.Data.FILE)?.getFile() }
+                .filter { !deletedFileIds.contains(it.getFileId()) }
+        val postEditor = if (videos.isNotEmpty()) {
+            textData.edit().attachments(videos).text(postText)
+        } else if (images.isNotEmpty()) {
+            textData.edit().attachments(images).text(postText)
+        } else if (files.isNotEmpty()) {
+	        textData.edit().attachments(files).text(postText)
+        } else {
+            textData.edit().text(postText)
+        }
+        postEditor
             .metadata(AmityMentionMetadataCreator(userMentions).create())
             .mentionUsers(userMentions.map { it.getUserId() })
-        return postTextEditor
+        return postEditor
             .build()
             .apply()
     }
