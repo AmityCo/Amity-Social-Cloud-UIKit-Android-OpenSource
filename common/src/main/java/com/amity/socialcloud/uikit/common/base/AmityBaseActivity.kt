@@ -87,18 +87,25 @@ abstract class AmityBaseActivity<T : ViewDataBinding, V : AmityBaseViewModel> :
     }
 
     fun requestPermission(permission: String, requestCode: Int) {
-        ActivityCompat.requestPermissions(
-            this, arrayOf(
-                permission
-            ), requestCode
-        )
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            ActivityCompat.requestPermissions(
+                this, arrayOf(
+                    permission
+                ), requestCode
+            )
+        } else{
+            requestPermissions(arrayOf(permission), requestCode)
+        }
     }
 
     fun requestPermission(permission: Array<String>, requestCode: Int) {
-        ActivityCompat.requestPermissions(
-            this,
-            permission, requestCode
-        )
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            ActivityCompat.requestPermissions(
+                    this, permission, requestCode
+            )
+        } else{
+            requestPermissions(permission, requestCode)
+        }
     }
 
 

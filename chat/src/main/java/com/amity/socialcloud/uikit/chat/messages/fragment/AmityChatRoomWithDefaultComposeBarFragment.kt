@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -76,10 +77,21 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
     private var isReachBottom = true
 
 
-    private val requiredPermissions = arrayOf(
-        Manifest.permission.RECORD_AUDIO,
-        Manifest.permission.WRITE_EXTERNAL_STORAGE
-    )
+    private val requiredPermissions = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+        arrayOf(
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
+    } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+        arrayOf(
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.READ_MEDIA_AUDIO
+        )
+    } else {
+        arrayOf(
+                Manifest.permission.RECORD_AUDIO
+        )
+    }
 
     private val recordPermission =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
@@ -494,7 +506,11 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
                     .forResult(AmityConstants.PICK_IMAGES)
             }
         }else {
-            pickMultipleImagesPermission.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                pickMultipleImagesPermission.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                pickMultipleImagesPermission.launch(Manifest.permission.READ_MEDIA_IMAGES)
+            }
         }
     }
 

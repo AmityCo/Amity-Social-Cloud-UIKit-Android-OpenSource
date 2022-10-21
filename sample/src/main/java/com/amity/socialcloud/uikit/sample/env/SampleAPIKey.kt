@@ -23,7 +23,7 @@ object SampleAPIKey {
                 return "b0ecee0c39dca1651d628b1c535d15dbd30ad9b0eb3c3a2f"
             }
             STAGING -> {
-                return "b3bee858328ef4344a308e4a5a091688d05fdee2be353a2b"
+                return "b0efe90c3bdda2304d628918520c1688845889e4bc363d2c"
             }
             PRODUCTION_SG -> {
                 return "b3bee90c39d9a5644831d84e5a0d1688d100ddebef3c6e78"

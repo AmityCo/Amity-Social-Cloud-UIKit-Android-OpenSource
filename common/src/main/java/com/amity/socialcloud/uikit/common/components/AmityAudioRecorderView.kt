@@ -228,7 +228,11 @@ class AmityAudioRecorderView : ConstraintLayout {
 
         if (recordedTime < 1000) {
             audioFile?.delete()
-            mListener?.showMessage()
+            try {
+                mListener?.showMessage()
+            } catch(e: Exception) {
+                Log.e("EkoAudioRecorderView", "stopRecording: Recorded time is less than 1 second")
+            }
         } else {
             if (!fileSent) {
                 mListener?.onFileRecorded(audioFile)

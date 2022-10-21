@@ -204,12 +204,12 @@ class AmityCommunityHomePageFragment : Fragment() {
         searchView.setOnQueryTextListener(queryTextListener)
 
         searchMenuItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
-            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+            override fun onMenuItemActionExpand(item: MenuItem): Boolean {
                 viewModel.isSearchMode.set(true)
                 return true
             }
 
-            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+            override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
                 viewModel.isSearchMode.set(false)
                 return true
             }
