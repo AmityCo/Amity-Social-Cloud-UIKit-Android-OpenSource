@@ -8,6 +8,23 @@ To make the sample buildable, several changes were made:
 
 The above changes made the sample buildable which enables us to verify that things work as we're developing them, without having to integrate the library with the main project.
 
+## Github packages setup
+This repo is published and consumed via [Github Packages](https://github.com/features/packages "Github Packages"). Created packages can be found [here](https://github.com/orgs/noom/packages?repo_name=Amity-Social-Cloud-UIKit-Android-OpenSource "here").
+
+The publishing script is defined in [publish.gradle](/publish.gradle) script in the root of the project and is greatly inspired by [this blog](https://apiumhub.com/tech-blog-barcelona/publishing-multi-module-android-libraries/#Publishing_multi_module_Android_libraries).
+The script generates and publishes a Github package for each module in the project, while excluding the "android application" module (`sample`). It covers both java and android library modules while also attaching the source code. This allows the consumer of the library to be able to browse the source code. The script can be executed by running the associated `publish` task from the IDE GUI or with `./gradlew publish` from the terminal.
+
+For authentication we use the existing setup that's already part of [Android Build Setup](https://github.com/noom/mobile-handbook/blob/master/android/build-setup.md#setup-github-packages "Android Build Setup") in the mobile handbook. This means that every Android engineer should already have authentication set up.
+**Note: ** The linked setup is focused on the consumer so the token that you create with it will only have the scope `read:packages`. This token will work just fine when consuming the fork from the main Android project.  If you also want to publish new packages, you will need to extend the scope to `write:packages`.
+
+### Git setup
+Note that there are two different git remotes: `fork` and `origin`.
+- `origin` points to the original Github repo
+- `fork` points to this Github repo
+
+The `fork` remote is set as default so executing `git pull` will attempt to pull the changes from the `fork` remote.
+When we want to pull the changes from `origin` we can do so with `git pull origin`.
+
 ## General
 Our UI Kits include user interfaces to enable fast integration of standard
 Amity Chat and Amity Social features into new or existing applications.
