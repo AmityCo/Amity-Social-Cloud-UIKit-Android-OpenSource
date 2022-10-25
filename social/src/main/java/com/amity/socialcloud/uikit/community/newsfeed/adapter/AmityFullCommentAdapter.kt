@@ -2,8 +2,7 @@ package com.amity.socialcloud.uikit.community.newsfeed.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.paging.PagedListAdapter
-import androidx.recyclerview.widget.DiffUtil
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.amity.socialcloud.sdk.core.user.AmityUser
 import com.amity.socialcloud.sdk.social.comment.AmityComment
@@ -25,7 +24,7 @@ class AmityFullCommentAdapter(
     private val commentEngagementClickPublisher: PublishSubject<CommentEngagementClickEvent>,
     private val commentOptionClickPublisher: PublishSubject<CommentOptionClickEvent>,
     var isReadOnly: Boolean = false,
-) : PagedListAdapter<AmityComment, RecyclerView.ViewHolder>(PostCommentDiffUtil()) {
+) : PagingDataAdapter<AmityComment, RecyclerView.ViewHolder>(PostCommentDiffUtil()) {
 
     private val FULL_COMMENT_TYPE = Random().nextInt()
     private val DELETE_COMMENT_TYPE = Random().nextInt()

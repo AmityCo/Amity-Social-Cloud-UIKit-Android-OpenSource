@@ -1,4 +1,3 @@
-
 package com.amity.socialcloud.uikit.community.newsfeed.fragment
 
 import android.os.Bundle
@@ -40,13 +39,17 @@ import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.*
 
 class AmityCommentListFragment : RxFragment() {
 
     lateinit var binding: AmityFragmentCommentListBinding
     private val userClickPublisher = PublishSubject.create<AmityUser>()
-    private val commentEngagementClickPublisher = PublishSubject.create<CommentEngagementClickEvent>()
+    private val commentEngagementClickPublisher =
+        PublishSubject.create<CommentEngagementClickEvent>()
     private val commentContentClickPublisher = PublishSubject.create<CommentContentClickEvent>()
     private val commentOptionClickPublisher = PublishSubject.create<CommentOptionClickEvent>()
     private val adapter = AmityFullCommentAdapter(
@@ -106,11 +109,13 @@ class AmityCommentListFragment : RxFragment() {
             .parentId(null)
             .sortBy(AmityCommentSortOption.LAST_CREATED)
             .build()
-            .query()
+            .getPagingData()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext {
-                adapter.submitList(it)
+                CoroutineScope(Dispatchers.IO).launch {
+                    adapter.submitData(it)
+                }
             }
             .untilLifecycleEnd(this, commentDisposer)
             .subscribe()
@@ -233,7 +238,7 @@ class AmityCommentListFragment : RxFragment() {
                 }
             }
     }
-    
+
     private fun showDeleteReplyWarning(comment: AmityComment) {
         val deleteConfirmationDialogFragment = AmityAlertDialogFragment
             .newInstance(
@@ -247,7 +252,7 @@ class AmityCommentListFragment : RxFragment() {
                 override fun onClickPositiveButton() {
                     deleteComment(comment.getCommentId())
                 }
-                
+
                 override fun onClickNegativeButton() {
                     // do nothing
                 }
@@ -295,13 +300,14 @@ class AmityCommentListFragment : RxFragment() {
 
         private var isReadOnly: Boolean = false
         private var commentListRefreshEvents = Flowable.never<AmityCommentRefreshEvent>()
-        private var commentItemListener : AmityCommentItemListener = object: AmityCommentItemListener{
-            override fun onClickReply(comment: AmityComment, fragment: Fragment) {
-                // to refer to global as default
+        private var commentItemListener: AmityCommentItemListener =
+            object : AmityCommentItemListener {
+                override fun onClickReply(comment: AmityComment, fragment: Fragment) {
+                    // to refer to global as default
+                }
             }
-        }
 
-        internal fun readOnlyMode(isEnable: Boolean) : Builder {
+        internal fun readOnlyMode(isEnable: Boolean): Builder {
             return apply { this.isReadOnly = isEnable }
         }
 
