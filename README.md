@@ -15,7 +15,7 @@ The publishing script is defined in [publish.gradle](/publish.gradle) script in 
 The script generates and publishes a Github package for each module in the project, while excluding the "android application" module (`sample`). It covers both java and android library modules while also attaching the source code. This allows the consumer of the library to be able to browse the source code. The script can be executed by running the associated `publish` task from the IDE GUI or with `./gradlew publish` from the terminal.
 
 For authentication we use the existing setup that's already part of [Android Build Setup](https://github.com/noom/mobile-handbook/blob/master/android/build-setup.md#setup-github-packages "Android Build Setup") in the mobile handbook. This means that every Android engineer should already have authentication set up.
-**Note: ** The linked setup is focused on the consumer so the token that you create with it will only have the scope `read:packages`. This token will work just fine when consuming the fork from the main Android project.  If you also want to publish new packages, you will need to extend the scope to `write:packages`.
+**Note:** The linked setup is focused on the consumer so the token that you create with it will only have the scope `read:packages`. This token will work just fine when consuming the fork from the main Android project.  If you also want to publish new packages, you will need to extend the scope to `write:packages`.
 
 ### Git setup
 Note that there are two different git remotes: `fork` and `origin`.
