@@ -1,0 +1,54 @@
+subprojects {
+  apply plugin: "maven-publish"
+  apply plugin: "digital.wup.android-maven-publish"
+
+  afterEvaluate {
+    // task that generates sources file(.jar) for java modules
+    if (plugins.hasPlugin("java")) {
+      task jvmSourcesJar(type: Jar) {
+        archiveClassifier.set("sources")
+        from sourceSets.main.allSource
+      }
+    }
+
+    // task that generates sources file(.jar) for android library modules
+    if (plugins.hasPlugin("android-library")) {
+      task androidSourcesJar(type: Jar) {
+        archiveClassifier.set("sources")
+        from android.sourceSets.main.java.srcDirs
+      }
+    }
+
+    // this check will detect android application modules and won't include them into publishing
+    // in our project the goal is to avoid publishing the "sample" module
+    if (!plugins.hasPlugin("android")) {
+      publishing {
+        repositories {
+          maven {
+            name = "AmityFork"
+            url = uri("https://maven.pkg.github.com/noom/Amity-Social-Cloud-UIKit-Android-OpenSource")
+            credentials {
+              username = System.getenv("NOOM_GITHUB_PACKAGES_USERNAME")
+                ?: System.getenv("GITHUB_PACKAGES_USERNAME")
+
+              password = System.getenv("NOOM_GITHUB_PACKAGES_TOKEN")
+                ?: System.getenv("GITHUB_PACKAGES_TOKEN")
+            }
+          }
+        }
+
+        publications {
+          amityUiKit(MavenPublication) {
+            artifactId = "$project.name"
+            if (plugins.hasPlugin("java")) {
+              from components.java
+            } else if (plugins.hasPlugin("android-library")) {
+              artifact(androidSourcesJar)
+              from components.android
+            }
+          }
+        }
+      }
+    }
+  }
+}

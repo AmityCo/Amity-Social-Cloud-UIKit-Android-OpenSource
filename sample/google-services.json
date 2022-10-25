@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1078476870041",
+    "project_id": "amity-android-sample",
+    "storage_bucket": "amity-android-sample.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1078476870041:android:8a7408e629a9751d550308",
+        "android_client_info": {
+          "package_name": "com.noom.amity.sample"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1078476870041-prnfmo773kv3rdrg02id7istfsmelse4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCAjE_P-DXfDeDLUp9NoFDmqfDwhOeP60U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1078476870041-prnfmo773kv3rdrg02id7istfsmelse4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
