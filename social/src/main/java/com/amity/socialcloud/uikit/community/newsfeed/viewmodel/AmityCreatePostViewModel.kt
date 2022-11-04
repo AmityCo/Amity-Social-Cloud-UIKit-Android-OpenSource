@@ -310,10 +310,11 @@ class AmityCreatePostViewModel : AmityBaseViewModel() {
         attachments: List<AmityPost.Data>,
         userMentions: List<AmityMentionMetadata.USER>
     ): Completable {
+        val firstAttachment = attachments.firstOrNull()
         val videos = attachments.mapNotNull {
             it as? AmityPost.Data.VIDEO
         }.filter {
-            it.getThumbnailImage()?.getFileId()?.let(deletedImageIds::contains) ?: true
+            !(it.getThumbnailImage()?.getFileId()?.let(deletedImageIds::contains) ?: false)
         }.map {
             it.getVideo().blockingGet()
         }
@@ -323,14 +324,19 @@ class AmityCreatePostViewModel : AmityBaseViewModel() {
         val files = attachments
                 .mapNotNull { (it as? AmityPost.Data.FILE)?.getFile() }
                 .filter { !deletedFileIds.contains(it.getFileId()) }
-        val postEditor = if (videos.isNotEmpty()) {
-            textData.edit().attachments(videos).text(postText)
-        } else if (images.isNotEmpty()) {
-            textData.edit().attachments(images).text(postText)
-        } else if (files.isNotEmpty()) {
-	        textData.edit().attachments(files).text(postText)
-        } else {
-            textData.edit().text(postText)
+        val postEditor = when (firstAttachment) {
+            is AmityPost.Data.VIDEO -> {
+                textData.edit().attachments(videos).text(postText)
+            }
+            is AmityPost.Data.IMAGE -> {
+                textData.edit().attachments(images).text(postText)
+            }
+            is AmityPost.Data.FILE -> {
+                textData.edit().attachments(files).text(postText)
+            }
+            else -> {
+                textData.edit().text(postText)
+            }
         }
         postEditor
             .metadata(AmityMentionMetadataCreator(userMentions).create())

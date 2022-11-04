@@ -7,6 +7,7 @@ import com.amity.socialcloud.sdk.social.AmitySocialClient
 import com.amity.socialcloud.sdk.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import com.amity.socialcloud.uikit.community.setting.AmitySettingsItem
+import com.ekoapp.ekosdk.community.update.AmityCommunityPostSettings
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Completable
 import io.reactivex.Flowable
@@ -113,7 +114,7 @@ class AmityPostReviewSettingsViewModel(private val savedState: SavedStateHandle)
     private fun getNeedApprovalState(communityId: String): Flowable<Boolean> {
         return AmitySocialClient.newCommunityRepository()
             .getCommunity(communityId)
-            .map { it.isPostReviewEnabled() }
+            .map { it.getPostSettings() == AmityCommunityPostSettings.ADMIN_REVIEW_POST_REQUIRED }
     }
 
     private fun getReversionSource(): Flowable<Boolean> {
@@ -128,9 +129,14 @@ class AmityPostReviewSettingsViewModel(private val savedState: SavedStateHandle)
         communityId: String,
         isEnable: Boolean
     ): Single<AmityCommunity> {
+        val postSettings = if (isEnable) {
+            AmityCommunityPostSettings.ADMIN_REVIEW_POST_REQUIRED
+        } else {
+            AmityCommunityPostSettings.ANYONE_CAN_POST
+        }
         return AmitySocialClient.newCommunityRepository()
             .updateCommunity(communityId)
-            .isPostReviewEnabled(isEnable)
+            .postSettings(postSettings)
             .build()
             .update()
     }
