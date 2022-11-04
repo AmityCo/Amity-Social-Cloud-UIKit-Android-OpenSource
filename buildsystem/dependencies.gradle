@@ -4,13 +4,13 @@
 buildscript {
     ext {
         amityMinSdkVersion = 21
-        amityTargetSdkVersion = 30
-        amityCompileSdkVersion = 31
+        amityTargetSdkVersion = 33
+        amityCompileSdkVersion = 33
         amityKotlinJDKVersion = "8"
         amityKotlinVersion = "1.4.21"
         amityLifecycleExtensionVersion = "2.0.0"
         amityMockkVersion = "1.10.0"
-        amityMessagingSdkVersion = '5.27.1'
+        amityMessagingSdkVersion = '5.30.0'
         amityRxLifeCycleVersion = '1.1.1'
 
         amityJacocoVersion = '0.8.5'
