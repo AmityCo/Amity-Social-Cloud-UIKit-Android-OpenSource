@@ -1,7 +1,9 @@
 package com.amity.socialcloud.uikit.community.setting.postreview
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -31,6 +33,15 @@ class AmityPostReviewSettingsFragment : RxFragment() {
         fun newInstance(community: AmityCommunity): Builder {
             return Builder().communityId(community.getCommunityId())
         }
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = AmityFragmentPostReviewBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -88,7 +99,7 @@ class AmityPostReviewSettingsFragment : RxFragment() {
     private fun renderItems(items: List<AmitySettingsItem>) {
         settingsListAdapter.setItems(items)
     }
-    
+
     private fun errorDialog(title: Int, description: Int) {
         AmityAlertDialogUtil.showDialog(requireContext(),
             getString(title),

@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.paging.PagedList
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.amity.socialcloud.sdk.AmityCoreClient
 import com.amity.socialcloud.sdk.social.comment.AmityComment
@@ -18,6 +19,9 @@ import com.amity.socialcloud.uikit.community.databinding.AmityItemPostFooterBind
 import com.amity.socialcloud.uikit.community.newsfeed.adapter.AmityFullCommentAdapter
 import com.amity.socialcloud.uikit.community.newsfeed.listener.*
 import com.amity.socialcloud.uikit.social.AmitySocialUISettings
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class AmityPostItemFooter : ConstraintLayout {
 
@@ -184,11 +188,13 @@ class AmityPostItemFooter : ConstraintLayout {
         binding.separator2.visibility = GONE
     }
 
-    fun submitComments(commentList: PagedList<AmityComment>?, isScrollable: Boolean = false) {
+    fun submitComments(commentList: PagingData<AmityComment>, isScrollable: Boolean = false) {
         if (newsFeedCommentAdapter == null) {
             createAdapter()
         }
-        newsFeedCommentAdapter!!.submitList(commentList)
+        CoroutineScope(Dispatchers.IO).launch {
+            newsFeedCommentAdapter!!.submitData(commentList)
+        }
 
         if (newsFeedCommentAdapter!!.itemCount > 0) {
             binding.rvCommentFooter.visibility = VISIBLE

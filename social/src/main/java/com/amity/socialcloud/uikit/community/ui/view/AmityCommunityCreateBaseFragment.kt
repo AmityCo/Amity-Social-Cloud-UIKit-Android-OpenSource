@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -112,7 +113,11 @@ abstract class AmityCommunityCreateBaseFragment : RxFragment() {
     fun getBindingVariable(): AmityFragmentCreateCommunityBinding = binding
 
     private fun pickImage() {
-        pickImagePermission.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            pickImagePermission.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            pickImagePermission.launch(Manifest.permission.READ_MEDIA_IMAGES)
+        }
     }
 
     private fun launchCategorySelection(preSelectedCategoryAmity: AmitySelectCategoryItem) {

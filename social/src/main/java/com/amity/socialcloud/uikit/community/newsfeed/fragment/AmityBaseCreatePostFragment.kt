@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
@@ -502,23 +503,38 @@ abstract class AmityBaseCreatePostFragment : AmityBaseFragment(),
     }
 
     private fun grantStoragePermission(requestCode: Int, onPermissionGrant: () -> Unit) {
-        if (hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+        val requiredPermissions = emptyList<String>().toMutableList()
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            requiredPermissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            when(requestCode){
+                REQUEST_STORAGE_PERMISSION_IMAGE_UPLOAD -> requiredPermissions.add(Manifest.permission.READ_MEDIA_IMAGES)
+                REQUEST_STORAGE_PERMISSION_VIDEO_UPLOAD -> requiredPermissions.add(Manifest.permission.READ_MEDIA_VIDEO)
+            }
+        }
+        val hasRequiredPermission = requiredPermissions.fold(true) { acc, permission ->
+            acc && hasPermission(permission)
+        }
+        if (hasRequiredPermission) {
             onPermissionGrant()
         } else {
-            requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, requestCode)
+            requestPermission(requiredPermissions.toTypedArray(), requestCode)
         }
     }
 
     private fun grantCameraPermission(requestCode: Int, onPermissionGrant: () -> Unit) {
-        if (hasPermission(Manifest.permission.CAMERA) && hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+        val requiredPermissions = mutableListOf(Manifest.permission.CAMERA)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            requiredPermissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        }
+        val hasRequiredPermission = requiredPermissions.fold(true) { acc, permission ->
+            acc && hasPermission(permission)
+        }
+        if (hasRequiredPermission) {
             onPermissionGrant()
         } else {
-            requestPermission(
-                arrayOf(
-                    Manifest.permission.CAMERA,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                ), requestCode
-            )
+            requestPermission(requiredPermissions.toTypedArray(), requestCode)
         }
     }
 
@@ -782,10 +798,13 @@ abstract class AmityBaseCreatePostFragment : AmityBaseFragment(),
                 }
             }
             AmityConstants.CAPTURE_VIDEO -> {
-                photoFile?.also {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    data?.data
+                } else {
+                    photoFile?.let(Uri::fromFile)
+                }?.let { contentUri ->
                     setupImageAdapter()
                     val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
-                    val contentUri = Uri.fromFile(photoFile)
                     mediaScanIntent.data = contentUri
                     activity?.sendBroadcast(mediaScanIntent)
                     val videos = viewModel.addMedia(listOf(contentUri), PostMedia.Type.VIDEO)
@@ -1015,7 +1034,9 @@ abstract class AmityBaseCreatePostFragment : AmityBaseFragment(),
                 Intent(MediaStore.ACTION_VIDEO_CAPTURE).also { takePictureIntent ->
                     // Ensure that there's a camera activity to handle the intent
                     takePictureIntent.resolveActivity(requireActivity().packageManager)?.also {
-                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
+                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
+                        }
                         startActivityForResult(takePictureIntent, AmityConstants.CAPTURE_VIDEO)
                     }
                 }

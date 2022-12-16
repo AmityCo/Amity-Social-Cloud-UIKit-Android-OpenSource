@@ -63,21 +63,30 @@ open class AmityBaseFragment : RxFragment() {
     }
 
     fun requestPermission(permission: String, requestCode: Int) {
-        (activity as? Activity)?.let {
-            ActivityCompat.requestPermissions(
-                    it, arrayOf(
-                    permission
-            ), requestCode
-            )
+        (activity as? Activity)?.let { activity ->
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                ActivityCompat.requestPermissions(
+                    activity,
+                    arrayOf(permission),
+                    requestCode
+                )
+            } else{
+                requestPermissions(arrayOf(permission), requestCode)
+            }
         }
     }
 
     fun requestPermission(permission: Array<String>, requestCode: Int) {
-        (activity as? Activity)?.let {
-            ActivityCompat.requestPermissions(
-                    it,
-                    permission, requestCode
-            )
+        (activity as? Activity)?.let { activity ->
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                ActivityCompat.requestPermissions(
+                    activity,
+                    permission,
+                    requestCode
+                )
+            } else{
+                requestPermissions(permission, requestCode)
+            }
         }
 
     }
