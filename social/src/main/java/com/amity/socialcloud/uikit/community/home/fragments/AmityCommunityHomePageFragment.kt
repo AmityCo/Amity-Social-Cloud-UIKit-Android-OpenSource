@@ -22,6 +22,7 @@ import com.amity.socialcloud.uikit.common.utils.AmityAndroidUtil
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.databinding.AmityFragmentCommunityHomePageBinding
 import com.amity.socialcloud.uikit.community.explore.fragments.AmityCommunityExplorerFragment
+import com.amity.socialcloud.uikit.community.me.MeFragment
 import com.amity.socialcloud.uikit.community.newsfeed.fragment.AmityNewsFeedFragment
 import com.amity.socialcloud.uikit.community.search.AmityUserSearchFragment
 import com.amity.socialcloud.uikit.community.setting.AmityCommunitySearchFragment
@@ -92,6 +93,10 @@ class AmityCommunityHomePageFragment : Fragment() {
                 AmityFragmentStateAdapter.AmityPagerModel(
                     getString(R.string.amity_title_explore),
                     getExploreFragment()
+                ),
+                AmityFragmentStateAdapter.AmityPagerModel(
+                    getString(R.string.amity_title_me),
+                    getMeFragment()
                 )
             )
         )
@@ -104,6 +109,10 @@ class AmityCommunityHomePageFragment : Fragment() {
 
     private fun getNewsFeedFragment(): Fragment {
         return AmityNewsFeedFragment.newInstance().build()
+    }
+
+    private fun getMeFragment(): Fragment {
+        return MeFragment()
     }
 
     private fun addViewModelListeners() {

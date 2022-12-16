@@ -10,6 +10,7 @@
     <string name="amity_following">Following</string>
     <string name="amity_title_news_feed">Newsfeed</string>
     <string name="amity_title_explore">Explore</string>
+    <string name="amity_title_me">Me</string>
     <string name="amity_community">Community</string>
     <string name="amity_create_community">Create Community</string>
     <string name="amity_cc_hint">Name your community</string>
