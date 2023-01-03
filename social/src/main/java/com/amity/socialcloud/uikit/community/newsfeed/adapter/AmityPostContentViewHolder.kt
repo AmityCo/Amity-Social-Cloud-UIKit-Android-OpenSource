@@ -1,20 +1,16 @@
 package com.amity.socialcloud.uikit.community.newsfeed.adapter
 
-import android.text.Spannable
-import android.text.SpannableString
+import android.text.method.LinkMovementMethod
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.amity.socialcloud.sdk.core.mention.AmityMentionMetadataGetter
-import com.amity.socialcloud.sdk.core.mention.AmityMentionee
 import com.amity.socialcloud.sdk.social.feed.AmityPost
 import com.amity.socialcloud.uikit.common.common.views.text.AmityExpandableTextView
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.newsfeed.events.PollVoteClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.events.PostContentClickEvent
-import com.amity.socialcloud.uikit.community.newsfeed.listener.AmityMentionClickableSpan
+import com.amity.socialcloud.uikit.social.AmitySocialUISettings
 import io.reactivex.subjects.PublishSubject
-import timber.log.Timber
 
 open class AmityPostContentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -30,9 +26,11 @@ open class AmityPostContentViewHolder(itemView: View) : RecyclerView.ViewHolder(
         val tvPost = itemView.findViewById<AmityExpandableTextView>(R.id.tvFeed)
         setPostTextToTextView(tvPost, data, showCompleteText)
     }
-    
+
     internal fun setPostTextToTextView(tvPost: AmityExpandableTextView, data: AmityPost, showCompleteText: Boolean) {
-        tvPost.text = getHighlightTextUserMentions(data)
+        tvPost.text = AmitySocialUISettings.postMarkupProcessor.toSpannedText(data)
+        tvPost.movementMethod = LinkMovementMethod.getInstance()
+
         if (showCompleteText) {
             tvPost.showCompleteText()
             tvPost.tag = tvPost.getVisibleLineCount()
@@ -46,36 +44,5 @@ open class AmityPostContentViewHolder(itemView: View) : RecyclerView.ViewHolder(
         tvPost.isVisible = tvPost.text.isNotEmpty()
 
         tvPost.setExpandOnlyOnReadMoreClick(true)
-
-        tvPost.setOnClickListener {
-            if (tvPost.isReadMoreClicked()) {
-                tvPost.showCompleteText()
-                tvPost.tag = tvPost.getVisibleLineCount()
-            } else {
-                postContentClickPublisher.onNext(PostContentClickEvent.Text(data))
-            }
-
-        }
-    }
-
-    private fun getHighlightTextUserMentions(post: AmityPost): SpannableString {
-        val postText = (post.getData() as? AmityPost.Data.TEXT)?.getText() ?: ""
-        val spannable = SpannableString(postText)
-        if (spannable.isNotEmpty() && post.getMetadata() != null) {
-            val mentionUserIds = post.getMentionees().map { (it as? AmityMentionee.USER)?.getUserId() }
-            val mentionedUsers = AmityMentionMetadataGetter(post.getMetadata()!!).getMentionedUsers()
-            val mentions = mentionedUsers.filter { mentionUserIds.contains(it.getUserId()) }
-            mentions.forEach { mentionUserItem ->
-                try {
-                    spannable.setSpan(AmityMentionClickableSpan(mentionUserItem.getUserId()),
-                        mentionUserItem.getIndex(),
-                        mentionUserItem.getIndex().plus(mentionUserItem.getLength()).inc(),
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                } catch (exception: IndexOutOfBoundsException) {
-                    Timber.e("AmityPostContentViewHolder", "Highlight text user mentions crashes")
-                }
-            }
-        }
-        return spannable
     }
 }

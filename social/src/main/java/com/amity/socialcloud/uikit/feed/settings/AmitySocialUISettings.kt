@@ -6,6 +6,7 @@ import com.amity.socialcloud.uikit.feed.settings.AmityDefaultPostViewHolders
 import com.amity.socialcloud.uikit.feed.settings.AmityPostRenderer
 import com.amity.socialcloud.uikit.feed.settings.AmityPostShareClickListener
 import com.amity.socialcloud.uikit.feed.settings.AmityPostSharingSettings
+import com.amity.socialcloud.uikit.markup.PostMarkupProcessor
 
 object AmitySocialUISettings {
 
@@ -19,6 +20,12 @@ object AmitySocialUISettings {
 
     private var postViewHolders: MutableMap<String, AmityPostRenderer> =
         AmityDefaultPostViewHolders.getDefaultMap()
+
+    lateinit var postMarkupProcessor: PostMarkupProcessor
+
+    fun init(markupProcessor: PostMarkupProcessor) {
+        postMarkupProcessor = markupProcessor
+    }
 
     fun registerPostRenderers(renderers: List<AmityPostRenderer>) {
         renderers.forEach { renderer ->

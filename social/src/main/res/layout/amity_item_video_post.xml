@@ -10,7 +10,6 @@
         android:layout_marginStart="@dimen/amity_padding_m1"
         android:layout_marginTop="@dimen/amity_padding_m1"
         android:layout_marginEnd="@dimen/amity_padding_m1"
-        android:autoLink="web"
         android:maxLines="@integer/maxLineImageOnlyFeed"
         android:textColor="@color/amityColorBase"
         android:textColorLink="@color/amityColorHighlight"
