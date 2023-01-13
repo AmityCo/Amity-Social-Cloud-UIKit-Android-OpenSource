@@ -44,7 +44,7 @@ class AmityEditMessageActivity :
 
     private fun setUpToolbar() {
         supportActionBar?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
-        setSupportActionBar(mViewDataBinding.emToolBar as Toolbar)
+        setSupportActionBar(mViewDataBinding.emToolBar.toolbarEditMessage as Toolbar)
 
         mViewDataBinding.emToolBar.icCross.setOnClickListener {
             this.finish()
