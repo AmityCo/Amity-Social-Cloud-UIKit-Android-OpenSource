@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <style name="HomeScreenTabTextAppearance" parent="TextAppearance.Design.Tab">
+    <item name="fontFamily">sans-serif</item>
+    <item name="android:fontFamily">sans-serif</item>
+    <item name="textAllCaps">false</item>
+    <item name="android:textColor">#191717</item>
+  </style>
+</resources>
