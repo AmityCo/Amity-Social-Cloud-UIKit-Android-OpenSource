@@ -53,7 +53,6 @@ class AmityNewsFeedFragment : AmityBaseFragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val fragmentTransaction = childFragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.myCommunityContainer, getMyCommunityPreviewFragment())
         fragmentTransaction.replace(R.id.globalFeedContainer, getGlobalFeed())
         fragmentTransaction.commit()
 

@@ -37,21 +37,9 @@
                     app:contentScrim="@color/amityColorWhite"
                     app:layout_scrollFlags="scroll|exitUntilCollapsed"
                     app:scrimAnimationDuration="0">
-
-                    <FrameLayout
-                        android:id="@+id/myCommunityContainer"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/amity_padding_m1"
-                        android:paddingBottom="@dimen/amity_padding_m1"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed" />
-
                 </com.google.android.material.appbar.CollapsingToolbarLayout>
 
             </com.google.android.material.appbar.AppBarLayout>
-
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
