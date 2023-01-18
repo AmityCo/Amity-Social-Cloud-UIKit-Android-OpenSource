@@ -6,4 +6,9 @@
     <item name="textAllCaps">false</item>
     <item name="android:textColor">#191717</item>
   </style>
+
+  <style name="PostHeaderLabelUsername" parent="AmityTextStyleBodyBold"/>
+  <style name="PostHeaderLabelCommunityName" parent="AmityTextStyleBodyBold"/>
+  <style name="PostHeaderLabelAuthor" parent="AmityTextStyleCaptionBold"/>
+  <style name="PostHeaderLabelPostTime" parent="AmityTextStyleCaption"/>
 </resources>

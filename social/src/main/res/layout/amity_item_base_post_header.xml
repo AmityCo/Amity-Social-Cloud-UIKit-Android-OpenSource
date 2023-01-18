@@ -36,7 +36,7 @@
 
             <com.amity.socialcloud.uikit.common.common.views.text.AmityTextView
                 android:id="@+id/userName"
-                style="@style/AmityTextStyleBodyBold"
+                style="@style/PostHeaderLabelUsername"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:drawablePadding="@dimen/amity_padding_xxs"
@@ -50,7 +50,7 @@
 
             <com.amity.socialcloud.uikit.common.common.views.text.AmityTextView
                 android:id="@+id/communityName"
-                style="@style/AmityTextStyleBodyBold"
+                style="@style/PostHeaderLabelCommunityName"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:drawablePadding="@dimen/amity_padding_xxs"
@@ -88,7 +88,7 @@
 
             <TextView
                 android:id="@+id/tvPostBy"
-                style="@style/AmityTextStyleCaptionBold"
+                style="@style/PostHeaderLabelAuthor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/amity_padding_xxs"
