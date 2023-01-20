@@ -22,104 +22,80 @@
             android:layout_height="@dimen/amity_forty"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:src="@drawable/amity_ic_default_profile_large"
             android:layout_marginStart="@dimen/amity_padding_m1"/>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/layoutPostedBy"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/amity_padding_xxs"
+        <com.amity.socialcloud.uikit.common.common.views.text.AmityTextView
+            android:id="@+id/userName"
+            style="@style/PostHeaderLabelUsername"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
             android:layout_marginBottom="@dimen/amity_padding_xxs"
-            app:layout_constraintEnd_toStartOf="@+id/btnFeedAction"
+            android:drawablePadding="@dimen/amity_padding_xxs"
+            android:ellipsize="end"
+            android:maxLines="3"
+            android:textAlignment="textStart"
+            android:textColor="@color/amityColorBase"
             app:layout_constraintStart_toEndOf="@id/avatarView"
-            app:layout_constraintTop_toTopOf="@id/avatarView">
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Thailand" />
 
-            <com.amity.socialcloud.uikit.common.common.views.text.AmityTextView
-                android:id="@+id/userName"
-                style="@style/PostHeaderLabelUsername"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:drawablePadding="@dimen/amity_padding_xxs"
-                android:ellipsize="end"
-                android:maxLines="3"
-                android:textAlignment="textStart"
-                android:textColor="@color/amityColorBase"
-                app:flow_horizontalAlign="start"
-                app:layout_constraintStart_toStartOf="parent"
-                tools:text="Thailand" />
+        <com.amity.socialcloud.uikit.common.common.views.text.AmityTextView
+            android:id="@+id/postedInLabel"
+            style="@style/PostHeaderLabelPostedIn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:layout_marginTop="2dp"
+            android:layout_marginStart="8dp"
+            app:layout_constraintTop_toBottomOf="@id/userName"
+            app:layout_constraintStart_toEndOf="@id/avatarView"
+            android:text="@string/amity_post_header_label_posted_in" />
 
-            <com.amity.socialcloud.uikit.common.common.views.text.AmityTextView
-                android:id="@+id/communityName"
-                style="@style/PostHeaderLabelCommunityName"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:drawablePadding="@dimen/amity_padding_xxs"
-                android:ellipsize="end"
-                android:paddingStart="@dimen/amity_padding_xxs"
-                android:paddingEnd="@dimen/amity_padding_xxs"
-                android:textColor="@color/amityColorBase"
-                app:layout_constraintStart_toEndOf="@+id/userName"
-                tools:text="Thailand" />
-
-            <androidx.constraintlayout.helper.widget.Flow
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:constraint_referenced_ids="userName,communityName"
-                app:flow_horizontalAlign="start"
-                app:flow_horizontalBias="0"
-                app:flow_horizontalGap="0dp"
-                app:flow_horizontalStyle="packed"
-                app:flow_wrapMode="chain"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_chainStyle="packed"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <com.amity.socialcloud.uikit.common.common.views.text.AmityTextView
+            android:id="@+id/communityName"
+            style="@style/PostHeaderLabelCommunityName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:drawablePadding="@dimen/amity_padding_xxs"
+            android:ellipsize="end"
+            app:layout_constraintBaseline_toBaselineOf="@+id/postedInLabel"
+            android:layout_marginStart="4dp"
+            android:textColor="@color/amityColorBase"
+            tools:drawableEnd="@drawable/amity_ic_verified"
+            app:layout_constraintTop_toBottomOf="@id/userName"
+            app:layout_constraintStart_toEndOf="@id/postedInLabel"
+            tools:text="Asia" />
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/amity_padding_xxs"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="2dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             app:layout_constraintLeft_toRightOf="@id/avatarView"
-            app:layout_constraintTop_toBottomOf="@id/layoutPostedBy">
-
-            <TextView
-                android:id="@+id/tvPostBy"
-                style="@style/PostHeaderLabelAuthor"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/amity_padding_xxs"
-                android:drawablePadding="@dimen/amity_four"
-                android:gravity="center_vertical"
-                android:text="@string/amity_moderator"
-                android:textColor="@color/amityColorBase"
-                app:textColorShade="@{AmityColorShade.SHADE1}"
-                app:drawableTintColor="@{@color/amityColorBase}"
-                app:drawableTintShade="@{AmityColorShade.SHADE1}"
-                app:drawableEndCompat="@drawable/amity_ic_dot_base"
-                app:drawableStartCompat="@drawable/amity_ic_moderator"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/communityName">
 
             <TextView
                 android:id="@+id/feedPostTime"
-                style="@style/AmityTextStyleCaption"
+                style="@style/PostHeaderLabelPostTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="bottom"
                 android:textColor="@color/amityColorBase"
                 app:textColorShade="@{AmityColorShade.SHADE1}"
-                android:layout_marginStart="@dimen/amity_four"
+                tools:text="1 Week ago"
                 app:layout_constraintBottom_toBottomOf="@id/tvPostBy"
                 app:layout_constraintLeft_toRightOf="@id/tvPostBy"
                 app:layout_constraintTop_toTopOf="@id/tvPostBy" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvEdited"
-                style="@style/AmityTextStyleCaption"
+                style="@style/PostHeaderLabelEdited"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/amity_four"
@@ -129,6 +105,7 @@
                 android:textColor="@color/amityColorBase"
                 app:textColorShade="@{AmityColorShade.SHADE1}"
                 android:visibility="gone"
+                tools:visibility="visible"
                 app:drawableStartCompat="@drawable/amity_ic_dot_base"
                 app:layout_constraintBottom_toBottomOf="@id/feedPostTime"
                 app:layout_constraintLeft_toRightOf="@id/feedPostTime"

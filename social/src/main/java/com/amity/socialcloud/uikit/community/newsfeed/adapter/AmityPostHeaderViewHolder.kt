@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.newsfeed.adapter
 
+import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -16,6 +17,11 @@ import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.databinding.AmityItemBasePostHeaderBinding
 import com.amity.socialcloud.uikit.community.newsfeed.events.PostOptionClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.model.AmityBasePostHeaderItem
+import com.amity.socialcloud.uikit.user.UserType.*
+import com.amity.socialcloud.uikit.user.labelSuffix
+import com.amity.socialcloud.uikit.user.labelTextColor
+import com.amity.socialcloud.uikit.user.userMeta
+import com.amity.socialcloud.uikit.user.userType
 import io.reactivex.subjects.PublishSubject
 
 class AmityPostHeaderViewHolder(
@@ -39,7 +45,6 @@ class AmityPostHeaderViewHolder(
         renderCreatorName(post)
         renderEditBadge(post)
         renderTimeStamp(post)
-        renderModBadge(post)
         renderTarget(post, data.showTarget)
         renderPostOption(data.showOptions)
     }
@@ -56,6 +61,7 @@ class AmityPostHeaderViewHolder(
         )
     }
 
+    @SuppressLint("SetTextI18n")
     private fun renderCreatorName(post: AmityPost) {
         val postedUser = post.getPostedUser()
         val banIcon = if (postedUser?.isGlobalBan() == true) {
@@ -63,7 +69,11 @@ class AmityPostHeaderViewHolder(
         } else {
             null
         }
-        binding.userName.text = postedUser?.getDisplayName() ?: ""
+        val type = post.getPostedUser()?.userMeta()?.userType() ?: Client
+
+        val suffix = type.labelSuffix(itemView.context) ?: ""
+        binding.userName.text = postedUser?.getDisplayName() + suffix
+        binding.userName.setTextColor(type.labelTextColor(itemView.context))
         binding.userName.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, banIcon, null)
     }
 
@@ -108,11 +118,13 @@ class AmityPostHeaderViewHolder(
             }
             binding.communityName.text = text
             binding.communityName.visibility = View.VISIBLE
+            binding.postedInLabel.visibility = View.VISIBLE
 
         } else {
             arrowIcon = null
             binding.communityName.text = ""
             binding.communityName.visibility = View.GONE
+            binding.postedInLabel.visibility = View.GONE
         }
         val isOfficial = (post.getTarget() as? AmityPost.Target.COMMUNITY)?.getCommunity()?.isOfficial() ?: false
         val officialBadgeIcon = if (isOfficial) {
@@ -120,16 +132,9 @@ class AmityPostHeaderViewHolder(
         } else {
             null
         }
+        // Noom customisation: arrow is disabled
+        arrowIcon = null
         binding.communityName.setCompoundDrawablesWithIntrinsicBounds(arrowIcon, null, officialBadgeIcon, null)
-    }
-
-    private fun renderModBadge(post: AmityPost) {
-        val roles = (post.getTarget() as? AmityPost.Target.COMMUNITY)?.getPostedMember()?.getRoles()
-        if (isCommunityModerator(roles)) {
-            binding.tvPostBy.visibility = View.VISIBLE
-        } else {
-            binding.tvPostBy.visibility = View.GONE
-        }
     }
 
     private fun isCommunityModerator(roles: AmityRoles?): Boolean {
