@@ -131,6 +131,9 @@ class AmityPostFooterPostEngagementViewHolder(
             }
             else -> {}
         }
+
+        // sharing is disabled for now
+        binding.cbShare.visibility = View.GONE
     }
 
 }

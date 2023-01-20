@@ -61,6 +61,8 @@ class AmityPostItemFooter : ConstraintLayout {
         binding.cbShare.setOnClickListener {
             shareListener?.onShareAction()
         }
+        // TODO(brane): sharing is disabled for now
+        binding.cbShare.visibility = View.GONE
     }
 
     private fun setNumberOfComments(commentCount: Int) {
