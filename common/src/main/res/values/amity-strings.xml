@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Exposed to be overridden by consumer app (Noom) -->
+<resources>
+  <string name="amity_post_header_label_posted_in">Posted in:</string>
+  <string name="amity_username_suffix_coach"> - Noom Coach</string>
+  <string name="amity_username_suffix_writer"> - Noom Writer</string>
+  <string name="amity_username_suffix_team"> - Noom Team</string>
+</resources>

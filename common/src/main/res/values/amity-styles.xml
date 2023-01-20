@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Exposed to be overridden by consumer app (Noom) -->
+<resources>
+  <style name="HomeScreenTabTextAppearance" parent="TextAppearance.Design.Tab"/>
+
+  <style name="PostHeaderLabelUsername"/>
+  <style name="PostHeaderLabelCommunityName"/>
+  <style name="PostHeaderLabelPostedIn"/>
+  <style name="PostHeaderLabelPostTime"/>
+  <style name="PostHeaderLabelEdited"/>
+
+  <style name="PostFooterLabelLikeCount"/>
+  <style name="PostFooterLabelCommentsCount"/>
+  <style name="PostFooterLabelEngagementLike"/>
+  <style name="PostFooterLabelEngagementComment"/>
+</resources>

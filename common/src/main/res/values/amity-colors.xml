@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Exposed to be overridden by consumer app (Noom) -->
+<resources>
+  <color name="home_tab_color_selected">#000000</color>
+  <color name="home_tab_color_unselected">#FFFFFF</color>
+  <color name="home_tab_color_indicator">#FF0099</color>
+
+  <color name="post_header_username_regular">#191717</color>
+  <color name="post_header_username_highlighted">#FB513B</color>
+
+  <color name="post_footer_like_checked">#123AAA</color>
+  <color name="post_footer_like_unchecked">#123123</color>
+</resources>
