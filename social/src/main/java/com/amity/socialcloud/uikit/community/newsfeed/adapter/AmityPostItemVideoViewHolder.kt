@@ -54,15 +54,13 @@ class AmityPostItemVideoViewHolder(itemView: View) : AmityPostContentViewHolder(
     }
 
     private fun initAdapter(parentPostId: String) {
-        if (adapter == null) {
-            adapter = AmityPostImageChildrenAdapter(parentPostId, videoClickListener)
-            adapter?.setMediaType(PostMedia.Type.VIDEO)
-            imageRecyclerView.addItemDecoration(itemDecor)
-            val layoutManager = LinearLayoutManager(itemView.context)
-            layoutManager.orientation = LinearLayoutManager.HORIZONTAL
-            imageRecyclerView.layoutManager = layoutManager
-            imageRecyclerView.adapter = adapter
-        }
+        adapter = AmityPostImageChildrenAdapter(parentPostId, videoClickListener)
+        adapter?.setMediaType(PostMedia.Type.VIDEO)
+        imageRecyclerView.addItemDecoration(itemDecor)
+        val layoutManager = LinearLayoutManager(itemView.context)
+        layoutManager.orientation = LinearLayoutManager.HORIZONTAL
+        imageRecyclerView.layoutManager = layoutManager
+        imageRecyclerView.adapter = adapter
     }
 
     private fun submitImages(images: List<AmityImage>) {
