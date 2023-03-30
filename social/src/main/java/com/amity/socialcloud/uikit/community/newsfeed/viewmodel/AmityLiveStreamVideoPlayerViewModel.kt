@@ -1,12 +1,12 @@
 package com.amity.socialcloud.uikit.community.newsfeed.viewmodel
 
-import com.amity.socialcloud.sdk.video.AmityVideoClient
-import com.amity.socialcloud.sdk.video.stream.AmityStream
-import com.amity.socialcloud.sdk.video.stream.AmityWatcherData
+import com.amity.socialcloud.sdk.api.video.AmityVideoClient
+import com.amity.socialcloud.sdk.model.video.stream.AmityStream
+import com.amity.socialcloud.sdk.model.video.stream.AmityWatcherData
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
-import io.reactivex.Completable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 
 class AmityLiveStreamVideoPlayerViewModel :

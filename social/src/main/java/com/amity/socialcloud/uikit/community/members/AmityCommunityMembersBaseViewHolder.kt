@@ -7,10 +7,10 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.amity.socialcloud.sdk.core.error.AmityException
-import com.amity.socialcloud.sdk.core.file.AmityImage
-import com.amity.socialcloud.sdk.core.user.AmityUser
-import com.amity.socialcloud.sdk.social.community.AmityCommunityMember
+import com.amity.socialcloud.sdk.model.core.error.AmityException
+import com.amity.socialcloud.sdk.model.core.file.AmityImage
+import com.amity.socialcloud.sdk.model.core.user.AmityUser
+import com.amity.socialcloud.sdk.model.social.member.AmityCommunityMember
 import com.amity.socialcloud.uikit.common.model.AmitySelectMemberItem
 import com.amity.socialcloud.uikit.common.utils.AmityAlertDialogUtil
 import com.amity.socialcloud.uikit.common.utils.AmityConstants
@@ -18,9 +18,8 @@ import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.home.activity.AmityCommunityHomePageActivity
 import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
 import com.google.android.material.snackbar.Snackbar
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.rxkotlin.toObservable
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 abstract class AmityCommunityMembersBaseViewHolder(
     itemView: View, private val context: Context,

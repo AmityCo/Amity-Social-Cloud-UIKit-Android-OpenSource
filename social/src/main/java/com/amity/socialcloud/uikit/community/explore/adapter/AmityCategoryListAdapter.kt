@@ -3,16 +3,16 @@ package com.amity.socialcloud.uikit.community.explore.adapter
 import android.view.View
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.amity.socialcloud.sdk.social.community.AmityCommunityCategory
-import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagedAdapter
+import com.amity.socialcloud.sdk.model.social.category.AmityCommunityCategory
+import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagingDataAdapter
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.explore.listener.AmityCategoryItemClickListener
 
 class AmityCategoryListAdapter(
     diffUtil: AmityCategoryListDiffUtil,
     private val itemClickListener: AmityCategoryItemClickListener?
-) :
-    AmityBaseRecyclerViewPagedAdapter<AmityCommunityCategory>(diffUtil), AmityCategorySelectionListener {
+) : AmityBaseRecyclerViewPagingDataAdapter<AmityCommunityCategory>(diffUtil),
+    AmityCategorySelectionListener {
 
     constructor(
         diffUtil: AmityCategoryListDiffUtil,
@@ -22,7 +22,6 @@ class AmityCategoryListAdapter(
     ) : this(diffUtil, itemClickListener) {
         selectedCategory = preSelectedCategory
         this.modeSelection = modeSelection
-
     }
 
     private var selectedCategory: String? = null
@@ -36,10 +35,10 @@ class AmityCategoryListAdapter(
     }
 
     override fun getViewHolder(view: View, viewType: Int): RecyclerView.ViewHolder {
-        if (viewType == R.layout.amity_item_community_category_list)
-            return AmityCategoryItemViewHolder(view, itemClickListener)
+        return if (viewType == R.layout.amity_item_community_category_list)
+            AmityCategoryItemViewHolder(view, itemClickListener)
         else
-            return AmityCategoryItemTypeSelectorViewHolder(view, itemClickListener, this)
+            AmityCategoryItemTypeSelectorViewHolder(view, itemClickListener, this)
     }
 
     override fun setSelection(selectedCategory: String?) {

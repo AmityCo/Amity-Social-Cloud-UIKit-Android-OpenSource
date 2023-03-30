@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.amity.socialcloud.sdk.core.file.AmityImage
-import com.amity.socialcloud.sdk.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.core.file.AmityImage
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.base.AmityBaseFragment
 import com.amity.socialcloud.uikit.common.utils.AmityRecyclerViewItemDecoration
 import com.amity.socialcloud.uikit.community.R
@@ -20,8 +20,8 @@ import com.amity.socialcloud.uikit.community.newsfeed.listener.AmityCreatePostCo
 import com.amity.socialcloud.uikit.community.newsfeed.viewmodel.AmityPostTargetViewModel
 import com.amity.socialcloud.uikit.community.utils.EXTRA_PARAM_POST_CREATION_TYPE
 import com.bumptech.glide.Glide
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
 import timber.log.Timber
 
 class AmityPostTargetPickerFragment : AmityBaseFragment(),

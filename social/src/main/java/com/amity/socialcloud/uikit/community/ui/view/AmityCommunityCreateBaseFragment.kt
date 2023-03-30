@@ -15,8 +15,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import com.amity.socialcloud.sdk.core.error.AmityException
-import com.amity.socialcloud.sdk.core.file.AmityUploadResult
+import com.amity.socialcloud.sdk.model.core.error.AmityException
+import com.amity.socialcloud.sdk.model.core.file.upload.AmityUploadResult
 import com.amity.socialcloud.uikit.common.common.showSnackBar
 import com.amity.socialcloud.uikit.common.contract.AmityPickImageContract
 import com.amity.socialcloud.uikit.common.utils.AmityAlertDialogUtil
@@ -30,10 +30,10 @@ import com.amity.socialcloud.uikit.community.home.activity.AmityCommunityHomePag
 import com.amity.socialcloud.uikit.community.ui.viewModel.AmityCreateCommunityViewModel
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
-import com.trello.rxlifecycle3.components.support.RxFragment
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
+import com.trello.rxlifecycle4.components.support.RxFragment
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import timber.log.Timber
 
 abstract class AmityCommunityCreateBaseFragment : RxFragment() {

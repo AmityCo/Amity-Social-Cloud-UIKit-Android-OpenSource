@@ -1,8 +1,8 @@
 package com.amity.socialcloud.uikit.community.newsfeed.adapter
 
 import android.view.View
-import com.amity.socialcloud.sdk.AmityCoreClient
-import com.amity.socialcloud.sdk.social.feed.AmityPost
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.common.readableNumber
 import com.amity.socialcloud.uikit.common.utils.AmityConstants
 import com.amity.socialcloud.uikit.community.R
@@ -10,7 +10,7 @@ import com.amity.socialcloud.uikit.community.databinding.AmityItemPostFooterPost
 import com.amity.socialcloud.uikit.community.newsfeed.events.PostEngagementClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.model.AmityBasePostFooterItem
 import com.amity.socialcloud.uikit.social.AmitySocialUISettings
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.rxjava3.subjects.PublishSubject
 
 class AmityPostFooterPostEngagementViewHolder(
     private val binding: AmityItemPostFooterPostEngagementBinding,

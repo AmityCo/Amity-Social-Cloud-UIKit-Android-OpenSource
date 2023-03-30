@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.amity.socialcloud.sdk.social.community.AmityCommunityCategory
+import com.amity.socialcloud.sdk.model.social.category.AmityCommunityCategory
 import com.amity.socialcloud.uikit.common.base.AmityBaseFragment
 import com.amity.socialcloud.uikit.common.common.showSnackBar
 import com.amity.socialcloud.uikit.common.utils.AmityRecyclerViewItemDecoration
@@ -16,8 +16,8 @@ import com.amity.socialcloud.uikit.community.databinding.AmityFragmentCategoryLi
 import com.amity.socialcloud.uikit.community.explore.adapter.AmityCategoryListAdapter
 import com.amity.socialcloud.uikit.community.explore.listener.AmityCategoryItemClickListener
 import com.amity.socialcloud.uikit.community.explore.viewmodel.AmityCategoryListViewModel
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 const val ARG_DEFAULT_SELECTION = "default_selection"
 
@@ -67,17 +67,16 @@ abstract class AmityBaseCategoryListFragment internal constructor() : AmityBaseF
         disposable.add(viewModel.getCategories()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
+            .doOnNext {
+                adapter.submitData(lifecycle, it)
+            }
             .doOnError {
                 run {
                     it.message?.let { view?.showSnackBar(it) }
                 }
-
             }
-            .subscribe { result ->
-                run {
-                    adapter.submitList(result)
-                }
-            })
+            .subscribe()
+        )
     }
 
     override fun onDestroyView() {

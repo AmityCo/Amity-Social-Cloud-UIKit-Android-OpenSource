@@ -6,13 +6,15 @@
     <data>
 
         <import type="com.amity.socialcloud.uikit.common.common.views.AmityColorShade" />
+
         <import type="com.amity.socialcloud.uikit.common.R" />
+
         <import type="android.view.View" />
-        <import type="com.amity.socialcloud.sdk.core.user.AmityFollowStatus"/>
+        <import type="com.amity.socialcloud.sdk.model.core.follow.AmityFollowStatus" />
 
         <variable
             name="amityUser"
-            type="com.amity.socialcloud.sdk.core.user.AmityUser" />
+            type="com.amity.socialcloud.sdk.model.core.user.AmityUser" />
 
         <variable
             name="postCount"
@@ -24,7 +26,7 @@
 
         <variable
             name="connectionState"
-            type="com.amity.socialcloud.sdk.core.user.AmityFollowStatus" />
+            type="com.amity.socialcloud.sdk.model.core.follow.AmityFollowStatus" />
 
     </data>
 
@@ -35,8 +37,8 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ivAvatar"
-            backgroundColorShade="@{AmityColorShade.SHADE3}"
             amityBackgroundColor="@{@color/amityColorPrimary}"
+            backgroundColorShade="@{AmityColorShade.SHADE3}"
             imageUrl="@{amityUser.avatar.url}"
             placeHolder="@{@drawable/amity_ic_default_profile2}"
             android:layout_width="@dimen/amity_sixty_four"
@@ -59,10 +61,10 @@
             android:drawablePadding="@dimen/amity_padding_xxs"
             android:ellipsize="end"
             android:maxLines="1"
-            app:safeText="@{amityUser.displayName}"
             android:textColor="@color/amityColorBase"
             app:layout_constraintStart_toEndOf="@id/ivAvatar"
-            app:layout_constraintTop_toTopOf="@id/ivAvatar"/>
+            app:layout_constraintTop_toTopOf="@id/ivAvatar"
+            app:safeText="@{amityUser.displayName}" />
 
         <TextView
             android:id="@+id/tvPostCount"
@@ -70,8 +72,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/amity_padding_xxs"
-            android:visibility="gone"
             android:textColor="@color/amityColorBase"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="@id/tvName"
             app:layout_constraintTop_toBottomOf="@id/tvName"
             tools:text="0 posts" />
@@ -83,8 +85,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/amity_padding_xs"
             android:textColor="@color/amityColorBase"
-            app:layout_constraintTop_toTopOf="@id/tvPostCount"
             app:layout_constraintStart_toEndOf="@id/tvPostCount"
+            app:layout_constraintTop_toTopOf="@id/tvPostCount"
             tools:text="0 following" />
 
         <TextView
@@ -94,8 +96,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/amity_padding_xs"
             android:textColor="@color/amityColorBase"
-            app:layout_constraintTop_toTopOf="@id/tvPostCount"
             app:layout_constraintStart_toEndOf="@id/tvFollowingCount"
+            app:layout_constraintTop_toTopOf="@id/tvPostCount"
             tools:text="0 followers" />
 
         <TextView
@@ -123,8 +125,8 @@
             android:layout_marginEnd="@dimen/amity_padding_m1"
             android:text="@{isSelf ? @string/amity_edit_profile : @string/amity_message}"
             android:visibility="@{isSelf ? View.VISIBLE : View.GONE}"
-            app:cornerRadius="@dimen/amity_four"
             app:amityButtonStrokeShade="@{AmityColorShade.SHADE3}"
+            app:cornerRadius="@dimen/amity_four"
             app:icon="@{isSelf ? @drawable/amity_ic_edit_profile : @drawable/amity_ic_chat}"
             app:iconGravity="textStart"
             app:iconTint="@color/amityColorBase"
@@ -140,9 +142,9 @@
             android:visibility="@{connectionState == AmityFollowStatus.NONE ? View.VISIBLE : View.GONE, default=gone}"
             app:icon="@drawable/amity_ic_plus"
             app:iconGravity="textStart"
-            app:layout_constraintStart_toStartOf="@id/btnProfileDefaultAction"
             app:layout_constraintEnd_toEndOf="@id/btnProfileDefaultAction"
-            app:layout_constraintTop_toBottomOf="@id/tvDescription"/>
+            app:layout_constraintStart_toStartOf="@id/btnProfileDefaultAction"
+            app:layout_constraintTop_toBottomOf="@id/tvDescription" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCancelRequest"
@@ -152,45 +154,45 @@
             android:layout_marginTop="@dimen/amity_padding_s"
             android:text="@string/amity_cancel_request"
             android:visibility="@{connectionState == AmityFollowStatus.PENDING ? View.VISIBLE : View.GONE, default=gone}"
+            app:amityButtonStrokeShade="@{AmityColorShade.SHADE4}"
+            app:cornerRadius="@dimen/amity_four"
             app:icon="@drawable/amity_ic_cancel_request"
             app:iconGravity="textStart"
             app:iconTint="@color/amityColorBase"
-            app:cornerRadius="@dimen/amity_four"
-            app:amityButtonStrokeShade="@{AmityColorShade.SHADE4}"
-            app:layout_constraintStart_toStartOf="@id/btnProfileDefaultAction"
             app:layout_constraintEnd_toEndOf="@id/btnProfileDefaultAction"
-            app:layout_constraintTop_toBottomOf="@id/tvDescription"/>
+            app:layout_constraintStart_toStartOf="@id/btnProfileDefaultAction"
+            app:layout_constraintTop_toBottomOf="@id/tvDescription" />
 
         <LinearLayout
             android:id="@+id/layoutPendingRequests"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="@dimen/amity_padding_xs"
             android:layout_marginHorizontal="@dimen/amity_padding_m1"
-            app:roundedCorner="@{true}"
+            android:layout_marginTop="@dimen/amity_padding_xs"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingVertical="@dimen/amity_padding_s"
+            android:visibility="gone"
             app:colorShade="@{AmityColorShade.SHADE4}"
             app:fillColor="@{R.color.amityColorBase}"
-            android:gravity="center"
-            android:visibility="gone"
-            android:paddingVertical="@dimen/amity_padding_s"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btnProfileDefaultAction">
+            app:layout_constraintTop_toBottomOf="@id/btnProfileDefaultAction"
+            app:roundedCorner="@{true}">
 
             <TextView
                 android:id="@+id/tvPendingRequets"
+                style="@style/AmityTextStyleBodyBold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/amity_pending_requests"
                 android:drawableStart="@drawable/amity_ic_dot"
                 android:drawablePadding="@dimen/amity_six"
-                style="@style/AmityTextStyleBodyBold" />
+                android:text="@string/amity_pending_requests" />
 
             <TextView
+                style="@style/AmityTextStyleCaption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/AmityTextStyleCaption"
-                android:text="@string/amity_requests_review"/>
+                android:text="@string/amity_requests_review" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

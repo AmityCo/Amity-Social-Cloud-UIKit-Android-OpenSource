@@ -1,14 +1,14 @@
 package com.amity.socialcloud.uikit.community.followers
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.paging.PagedList
-import com.amity.socialcloud.sdk.AmityCoreClient
-import com.amity.socialcloud.sdk.core.user.AmityFollowRelationship
-import com.amity.socialcloud.sdk.core.user.AmityFollowStatusFilter
+import androidx.paging.PagingData
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.model.core.follow.AmityFollowRelationship
+import com.amity.socialcloud.sdk.model.core.follow.AmityFollowStatusFilter
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
-import io.reactivex.Completable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 private const val SAVED_USER_ID = "SAVED_FOLLOWER_USER_ID"
 
@@ -24,7 +24,7 @@ class AmityUserFollowerViewModel (private val savedState: SavedStateHandle): Ami
         savedState.get<String>(SAVED_USER_ID)?.let { userId = it }
     }
 
-    fun getFollowersList(onSuccess: (PagedList<AmityFollowRelationship>) -> Unit): Completable {
+    fun getFollowersList(onSuccess: (PagingData<AmityFollowRelationship>) -> Unit): Completable {
         val query = if (isSelf()) {
             AmityCoreClient.newUserRepository().relationship()
                 .me()

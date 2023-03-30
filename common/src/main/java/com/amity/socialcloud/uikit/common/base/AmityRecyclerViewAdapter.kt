@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.common.base
 
+import android.annotation.SuppressLint
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 
@@ -14,6 +15,7 @@ abstract class AmityRecyclerViewAdapter<T, H : AmityViewHolder<T>>
         holder.bind(getItem(position))
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun submitList(listItems: List<T>, diffCallBack: DiffUtil.Callback? = null) {
         val diffResult = diffCallBack?.let { DiffUtil.calculateDiff(diffCallBack) }
         list.clear()

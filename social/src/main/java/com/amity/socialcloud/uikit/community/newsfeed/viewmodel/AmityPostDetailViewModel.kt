@@ -2,7 +2,7 @@ package com.amity.socialcloud.uikit.community.newsfeed.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.amity.socialcloud.sdk.social.feed.AmityPost
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
 
 private const val SAVED_POST_ID = "SAVED_POST_ID"
 class AmityPostDetailViewModel(private val savedState: SavedStateHandle) : ViewModel() , UserViewModel, PostViewModel, CommentViewModel {

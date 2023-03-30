@@ -5,13 +5,13 @@ import android.util.Log
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
-import com.amity.socialcloud.sdk.AmityCoreClient
-import com.amity.socialcloud.sdk.chat.message.AmityMessage
-import com.amity.socialcloud.sdk.core.file.AmityFileRepository
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.api.core.file.AmityFileRepository
+import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
 import com.amity.socialcloud.uikit.chat.R
 import com.amity.socialcloud.uikit.common.model.AmityEventIdentifier
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 class AmityAudioMsgViewModel : AmitySelectableMessageViewModel() {
 

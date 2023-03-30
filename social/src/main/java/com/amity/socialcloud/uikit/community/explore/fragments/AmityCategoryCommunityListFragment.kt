@@ -9,8 +9,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.amity.socialcloud.sdk.social.community.AmityCommunity
-import com.amity.socialcloud.sdk.social.community.AmityCommunityCategory
+import com.amity.socialcloud.sdk.model.social.category.AmityCommunityCategory
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.base.AmityBaseFragment
 import com.amity.socialcloud.uikit.common.common.showSnackBar
 import com.amity.socialcloud.uikit.common.utils.AmityRecyclerViewItemDecoration
@@ -20,15 +20,15 @@ import com.amity.socialcloud.uikit.community.detailpage.AmityCommunityPageActivi
 import com.amity.socialcloud.uikit.community.explore.adapter.AmityCategoryCommunityListAdapter
 import com.amity.socialcloud.uikit.community.explore.listener.AmityCommunityItemClickListener
 import com.amity.socialcloud.uikit.community.explore.viewmodel.AmityCategoryCommunityListViewModel
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 const val ARG_CATEGORY_ID = "Category_id"
 const val ARG_CATEGORY_NAME = "Category_name"
 
 class AmityCategoryCommunityListFragment : AmityBaseFragment(),
     AmityCommunityItemClickListener {
-    private  val viewModel: AmityCategoryCommunityListViewModel by viewModels()
+    private val viewModel: AmityCategoryCommunityListViewModel by viewModels()
     private lateinit var adapter: AmityCategoryCommunityListAdapter
     private var categoryId: String? = null
     private var categoryName: String? = null
@@ -87,17 +87,14 @@ class AmityCategoryCommunityListFragment : AmityBaseFragment(),
         disposable.add(viewModel.getCommunityByCategory(categoryId!!)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .doOnError {
-                run {
-                    it.message?.let { view?.showSnackBar(it) }
-                }
-
+            .doOnNext {
+                adapter.submitData(lifecycle, it)
             }
-            .subscribe { result ->
-                run {
-                    adapter.submitData(lifecycle, result)
-                }
-            })
+            .doOnError {
+                it.message?.let { message -> view?.showSnackBar(message) }
+            }
+            .subscribe()
+        )
     }
 
     private fun handleListVisibility() {

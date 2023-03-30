@@ -12,7 +12,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.paging.ExperimentalPagingApi
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.amity.socialcloud.sdk.social.feed.AmityPost
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.base.AmityBaseFragment
 import com.amity.socialcloud.uikit.common.common.views.dialog.AmityAlertDialogFragment
 import com.amity.socialcloud.uikit.common.utils.AmityOptionMenuColorUtil
@@ -27,7 +27,7 @@ import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
 import com.linkedin.android.spyglass.suggestions.interfaces.SuggestionsVisibilityManager
 import com.linkedin.android.spyglass.tokenization.QueryToken
 import com.linkedin.android.spyglass.tokenization.interfaces.QueryTokenReceiver
-import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 
 const val ID_MENU_ITEM_COMMENT: Int = 144
 
@@ -73,7 +73,7 @@ abstract class AmityCommentBaseFragment: AmityBaseFragment(),
         setHasOptionsMenu(true)
         addEditCommentViewTextWatcher()
         if (viewModel.getReply() != null) {
-            binding.replyingToUser = viewModel.getReply()?.getUser()?.getDisplayName()
+            binding.replyingToUser = viewModel.getReply()?.getCreator()?.getDisplayName()
             binding.showReplyingTo = true
         }
         setupPost()

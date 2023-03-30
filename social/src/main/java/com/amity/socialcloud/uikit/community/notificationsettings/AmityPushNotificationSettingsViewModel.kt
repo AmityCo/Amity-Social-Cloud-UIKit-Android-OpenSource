@@ -1,15 +1,16 @@
 package com.amity.socialcloud.uikit.community.notificationsettings
 
 import androidx.lifecycle.SavedStateHandle
-import com.amity.socialcloud.sdk.social.AmitySocialClient
+import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.setting.AmitySettingsItem
-import io.reactivex.BackpressureStrategy
-import io.reactivex.Completable
-import io.reactivex.Flowable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.BackpressureStrategy
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjava3.subjects.PublishSubject
 
 private const val SAVED_COMMUNITY_ID = "SAVED_NOTIFICATION_SETTINGS_COMMUNITY_ID"
 
@@ -75,7 +76,7 @@ class AmityPushNotificationSettingsViewModel(private val savedState: SavedStateH
     }
 
     private fun getAllNotificationDataSource(value: Boolean): Flowable<Boolean> {
-        return getReversionSource().startWith(value)
+        return getReversionSource().startWith(Single.just(value))
     }
 
     private fun getReversionSource(): Flowable<Boolean> {

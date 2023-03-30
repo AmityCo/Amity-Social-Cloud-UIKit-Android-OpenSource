@@ -7,10 +7,10 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.amity.socialcloud.sdk.AmityCoreClient
-import com.amity.socialcloud.sdk.core.user.AmityFollowRelationship
-import com.amity.socialcloud.sdk.core.user.AmityUser
-import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagedAdapter
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.model.core.follow.AmityFollowRelationship
+import com.amity.socialcloud.sdk.model.core.user.AmityUser
+import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagingDataAdapter
 import com.amity.socialcloud.uikit.common.common.views.bottomsheet.AmityBottomSheetListFragment
 import com.amity.socialcloud.uikit.common.common.views.bottomsheet.AmityMenuItemClickListener
 import com.amity.socialcloud.uikit.common.model.AmityMenuItem
@@ -21,16 +21,24 @@ import com.amity.socialcloud.uikit.community.followers.AmityFollowersBaseViewHol
 import com.amity.socialcloud.uikit.community.followers.AmityFollowersItemViewModel
 import com.amity.socialcloud.uikit.community.newsfeed.listener.AmityUserClickListener
 
-class AmityFollowingAdapter(private val context: Context, private val listener: AmityUserClickListener) :
-    AmityBaseRecyclerViewPagedAdapter<AmityFollowRelationship>(userDiffUtil) {
+class AmityFollowingAdapter(
+    private val context: Context,
+    private val listener: AmityUserClickListener
+) : AmityBaseRecyclerViewPagingDataAdapter<AmityFollowRelationship>(userDiffUtil) {
 
     companion object {
         val userDiffUtil = object : DiffUtil.ItemCallback<AmityFollowRelationship>() {
 
-            override fun areItemsTheSame(oldItem: AmityFollowRelationship, newItem: AmityFollowRelationship): Boolean =
+            override fun areItemsTheSame(
+                oldItem: AmityFollowRelationship,
+                newItem: AmityFollowRelationship
+            ): Boolean =
                 oldItem.getSourceUser()?.getUserId() == newItem.getSourceUser()?.getUserId()
 
-            override fun areContentsTheSame(oldItem: AmityFollowRelationship, newItem: AmityFollowRelationship): Boolean =
+            override fun areContentsTheSame(
+                oldItem: AmityFollowRelationship,
+                newItem: AmityFollowRelationship
+            ): Boolean =
                 oldItem == newItem
         }
     }
@@ -48,7 +56,9 @@ class AmityFollowingAdapter(private val context: Context, private val listener: 
         private val context: Context,
         itemViewModel: AmityFollowersItemViewModel,
         private val clickListener: AmityUserClickListener
-    ) : AmityFollowersBaseViewHolder(itemView, context, itemViewModel), Binder<AmityFollowRelationship> {
+    ) : AmityFollowersBaseViewHolder(itemView, context, itemViewModel),
+        Binder<AmityFollowRelationship> {
+
         private val binding: AmityItemUserFollowerBinding? = DataBindingUtil.bind(itemView)
 
         override fun bind(data: AmityFollowRelationship?, position: Int) {
@@ -72,7 +82,8 @@ class AmityFollowingAdapter(private val context: Context, private val listener: 
                         null
                     }
                     tvMemberName.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                        null, null, banIcon, null)
+                        null, null, banIcon, null
+                    )
                 }
                 binding?.ivMore?.setOnClickListener {
                     showBottomSheet(data.getTargetUser()!!)
@@ -87,13 +98,15 @@ class AmityFollowingAdapter(private val context: Context, private val listener: 
                 items.add(
                     AmityMenuItem(
                         AmityConstants.ID_UN_REPORT_USER,
-                    context.getString(R.string.amity_un_report_user))
+                        context.getString(R.string.amity_un_report_user)
+                    )
                 )
-            }else {
+            } else {
                 items.add(
                     AmityMenuItem(
                         AmityConstants.ID_REPORT_USER,
-                    context.getString(R.string.amity_report_user))
+                        context.getString(R.string.amity_report_user)
+                    )
                 )
             }
 
@@ -102,7 +115,7 @@ class AmityFollowingAdapter(private val context: Context, private val listener: 
             fragment.setMenuItemClickListener(object : AmityMenuItemClickListener {
                 override fun onMenuItemClicked(menuItem: AmityMenuItem) {
                     fragment.dismiss()
-                    when(menuItem.id) {
+                    when (menuItem.id) {
                         AmityConstants.ID_REPORT_USER -> sendReportUser(user, true)
                         AmityConstants.ID_UN_REPORT_USER -> sendReportUser(user, false)
                     }

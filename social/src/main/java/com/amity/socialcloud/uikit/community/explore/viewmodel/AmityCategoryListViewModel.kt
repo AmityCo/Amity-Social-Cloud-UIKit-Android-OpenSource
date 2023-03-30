@@ -1,15 +1,14 @@
 package com.amity.socialcloud.uikit.community.explore.viewmodel
 
-import androidx.paging.PagedList
 import androidx.paging.PagingData
-import com.amity.socialcloud.sdk.social.AmitySocialClient
-import com.amity.socialcloud.sdk.social.community.AmityCommunity
-import com.amity.socialcloud.sdk.social.community.AmityCommunityCategory
-import com.amity.socialcloud.sdk.social.community.AmityCommunityCategorySortOption
-import com.amity.socialcloud.sdk.social.community.AmityCommunityRepository
+import com.amity.socialcloud.sdk.api.social.AmitySocialClient
+import com.amity.socialcloud.sdk.api.social.category.query.AmityCommunityCategorySortOption
+import com.amity.socialcloud.sdk.api.social.community.AmityCommunityRepository
+import com.amity.socialcloud.sdk.model.social.category.AmityCommunityCategory
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import com.amity.socialcloud.uikit.community.explore.listener.AmityCategoryItemClickListener
-import io.reactivex.Flowable
+import io.reactivex.rxjava3.core.Flowable
 
 class AmityCategoryListViewModel : AmityBaseViewModel() {
 
@@ -17,7 +16,7 @@ class AmityCategoryListViewModel : AmityBaseViewModel() {
     private val communityRepository: AmityCommunityRepository =
         AmitySocialClient.newCommunityRepository()
 
-    fun getCategories(): Flowable<PagedList<AmityCommunityCategory>> {
+    fun getCategories(): Flowable<PagingData<AmityCommunityCategory>> {
         return communityRepository.getCategories()
             .sortBy(AmityCommunityCategorySortOption.NAME)
             .includeDeleted(false)
@@ -31,6 +30,6 @@ class AmityCategoryListViewModel : AmityBaseViewModel() {
             .categoryId(parentCategoryId)
             .includeDeleted(false)
             .build()
-            .getPagingData()
+            .query()
     }
 }

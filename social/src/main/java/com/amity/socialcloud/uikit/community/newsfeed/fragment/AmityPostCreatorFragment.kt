@@ -5,17 +5,17 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import com.amity.socialcloud.sdk.social.feed.AmityPost
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.utils.AmityAlertDialogUtil
 import com.amity.socialcloud.uikit.common.utils.AmityAndroidUtil
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.newsfeed.model.AmityPostAttachmentOptionItem
 import com.amity.socialcloud.uikit.community.newsfeed.util.AmityNewsFeedEvents
 import com.amity.socialcloud.uikit.community.utils.EXTRA_PARAM_COMMUNITY_ID
-import com.amity.socialcloud.uikit.community.utils.EXTRA_PARAM_POST_ID
 import com.amity.socialcloud.uikit.community.utils.EXTRA_PARAM_POST_ATTACHMENT_OPTIONS
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import com.amity.socialcloud.uikit.community.utils.EXTRA_PARAM_POST_ID
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 class AmityPostCreatorFragment : AmityBaseCreatePostFragment() {
 

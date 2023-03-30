@@ -1,7 +1,7 @@
 package com.amity.socialcloud.uikit.community.newsfeed.adapter
 
 import android.view.View
-import com.amity.socialcloud.sdk.core.file.AmityImage
+import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.newsfeed.listener.AmityPostImageClickListener
 import com.amity.socialcloud.uikit.community.newsfeed.listener.AmityPostMediaClickListener

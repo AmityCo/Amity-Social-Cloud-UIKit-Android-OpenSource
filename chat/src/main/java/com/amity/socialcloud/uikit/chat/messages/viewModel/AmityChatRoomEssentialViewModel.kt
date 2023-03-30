@@ -2,7 +2,7 @@ package com.amity.socialcloud.uikit.chat.messages.viewModel
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.amity.socialcloud.uikit.chat.messages.adapter.AmityMessageListAdapter
+import com.amity.socialcloud.uikit.chat.messages.adapter.AmityMessagePagingAdapter
 import com.amity.socialcloud.uikit.chat.messages.composebar.AmityChatRoomComposeBar
 
 private const val SAVED_CHANNEL_ID = "SAVED_CHANNEL_ID"
@@ -30,5 +30,5 @@ class AmityChatRoomEssentialViewModel(private val savedState: SavedStateHandle) 
         }
 
     var composeBar: AmityChatRoomComposeBar = AmityChatRoomComposeBar.DEFAULT
-    var customViewHolder: AmityMessageListAdapter.CustomViewHolderListener? = null
+    var customViewHolder: AmityMessagePagingAdapter.CustomViewHolderListener? = null
 }

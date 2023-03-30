@@ -1,6 +1,6 @@
 package com.amity.socialcloud.uikit.community.newsfeed.events
 
-import com.amity.socialcloud.sdk.core.error.AmityError
+import com.amity.socialcloud.sdk.model.core.error.AmityError
 
 sealed class AmityFeedLoadStateEvent {
 

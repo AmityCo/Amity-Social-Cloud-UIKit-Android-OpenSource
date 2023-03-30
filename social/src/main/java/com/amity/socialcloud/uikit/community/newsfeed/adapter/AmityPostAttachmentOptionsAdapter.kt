@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import com.amity.socialcloud.uikit.common.base.AmityRecyclerViewAdapter
 import com.amity.socialcloud.uikit.community.databinding.AmityItemPostAttachmentOptionBinding
 import com.amity.socialcloud.uikit.community.newsfeed.model.AmityPostAttachmentOptionItem
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.rxjava3.subjects.PublishSubject
 
 class AmityPostAttachmentOptionsAdapter(private val postAttachmentOptionClickEventPublisher: PublishSubject<AmityPostAttachmentOptionItem>)
     : AmityRecyclerViewAdapter<AmityPostAttachmentOptionItem, AmityPostAttachmentOptionViewHolder>() {

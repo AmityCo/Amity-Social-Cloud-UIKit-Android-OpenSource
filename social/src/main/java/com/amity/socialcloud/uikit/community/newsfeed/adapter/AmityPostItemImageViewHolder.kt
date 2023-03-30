@@ -3,15 +3,14 @@ package com.amity.socialcloud.uikit.community.newsfeed.adapter
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.amity.socialcloud.sdk.core.file.AmityImage
-import com.amity.socialcloud.sdk.social.feed.AmityPost
+import com.amity.socialcloud.sdk.model.core.file.AmityImage
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.base.AmitySpacesItemDecoration
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.newsfeed.events.PostContentClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.listener.AmityPostImageClickListener
-import com.amity.socialcloud.uikit.community.newsfeed.model.AmityBasePostContentItem
 
-class AmityPostItemImageViewHolder(itemView: View): AmityPostContentViewHolder(itemView) {
+class AmityPostItemImageViewHolder(itemView: View) : AmityPostContentViewHolder(itemView) {
 
 
     private val imageRecyclerView = itemView.findViewById<RecyclerView>(R.id.rvImages)
@@ -25,33 +24,34 @@ class AmityPostItemImageViewHolder(itemView: View): AmityPostContentViewHolder(i
     }
 
     override fun bind(post: AmityPost) {
-            setPostText(post, showFullContent)
-            val images = mutableListOf<AmityImage>()
-            if (!post.getChildren().isNullOrEmpty()) {
-                post.getChildren().forEach {
-                    when (val postData = it.getData()) {
-                        is AmityPost.Data.IMAGE -> {
-                            postData.getImage()?.let { ekoImage ->
-                                images.add(ekoImage)
-                            }
+        setPostText(post, showFullContent)
+        val images = mutableListOf<AmityImage>()
+        if (post.getChildren().isNotEmpty()) {
+            post.getChildren().forEach {
+                when (val postData = it.getData()) {
+                    is AmityPost.Data.IMAGE -> {
+                        postData.getImage()?.let { ekoImage ->
+                            images.add(ekoImage)
                         }
-                        else -> {}
                     }
+                    else -> {}
                 }
-                initAdapter(post.getPostId())
-                submitImages(images)
             }
+            initAdapter(post.getPostId())
+            submitImages(images)
+        }
     }
 
     private fun initAdapter(parentPostId: String) {
         if (adapter == null) {
-            adapter = AmityPostImageChildrenAdapter(parentPostId, imageClickListener)
+            adapter = AmityPostImageChildrenAdapter(imageClickListener)
             imageRecyclerView.addItemDecoration(itemDecor)
             val layoutManager = LinearLayoutManager(itemView.context)
             layoutManager.orientation = LinearLayoutManager.HORIZONTAL
             imageRecyclerView.layoutManager = layoutManager
             imageRecyclerView.adapter = adapter
         }
+        adapter?.setParentPostId(parentPostId)
     }
 
     private fun submitImages(images: List<AmityImage>) {

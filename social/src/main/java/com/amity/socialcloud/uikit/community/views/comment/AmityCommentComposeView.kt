@@ -1,12 +1,11 @@
 package com.amity.socialcloud.uikit.community.views.comment
 
 import android.content.Context
-import android.content.DialogInterface
 import android.graphics.Rect
 import android.util.AttributeSet
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
-import com.amity.socialcloud.sdk.core.mention.AmityMentionMetadata
+import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadata
 import com.amity.socialcloud.uikit.common.utils.AmityAlertDialogUtil
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.newsfeed.model.AmityUserMention
@@ -39,7 +38,8 @@ class AmityCommentComposeView : MentionsEditText {
         if (getUserMentions().size >= MENTIONS_LIMIT) {
             showErrorDialog(
                 context.resources.getString(R.string.amity_mention_error_title),
-                context.resources.getString(R.string.amity_mention_error_msg))
+                context.resources.getString(R.string.amity_mention_error_msg)
+            )
         } else {
             super.insertMention(mention)
             append(" ")
@@ -62,21 +62,23 @@ class AmityCommentComposeView : MentionsEditText {
                 getText().delete(CHARACTERS_LIMIT, getText().length)
                 showErrorDialog(
                     context.resources.getString(R.string.amity_comment_characters_limit_error_title),
-                    context.resources.getString(R.string.amity_characters_limit_error_msg))
+                    context.resources.getString(R.string.amity_characters_limit_error_msg)
+                )
             }
         }
     }
 
     private fun showErrorDialog(title: String, message: String) {
-        AmityAlertDialogUtil.showDialog(context, title, message,
+        AmityAlertDialogUtil.showDialog(
+            context, title, message,
             context.resources.getString(R.string.amity_done),
-            null,
-            DialogInterface.OnClickListener { dialog, which ->
-                AmityAlertDialogUtil.checkConfirmDialog(
-                    isPositive = which,
-                    confirmed = dialog::cancel
-                )
-            })
+            null
+        ) { dialog, which ->
+            AmityAlertDialogUtil.checkConfirmDialog(
+                isPositive = which,
+                confirmed = dialog::cancel
+            )
+        }
     }
 
     private fun setMentionConfig() {

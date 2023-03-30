@@ -2,7 +2,7 @@ package com.amity.socialcloud.uikit.community.explore.activity
 
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.amity.socialcloud.sdk.social.community.AmityCommunityCategory
+import com.amity.socialcloud.sdk.model.social.category.AmityCommunityCategory
 import com.amity.socialcloud.uikit.common.base.AmityBaseToolbarFragmentContainerActivity
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.explore.fragments.AmityCategoryListFragment

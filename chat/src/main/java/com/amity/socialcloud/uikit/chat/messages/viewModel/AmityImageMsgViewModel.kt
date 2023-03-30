@@ -2,18 +2,17 @@ package com.amity.socialcloud.uikit.chat.messages.viewModel
 
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
-import com.amity.socialcloud.sdk.AmityCoreClient
-import com.amity.socialcloud.sdk.chat.message.AmityMessage
-import com.amity.socialcloud.sdk.core.file.AmityFileRepository
-import com.amity.socialcloud.sdk.core.file.AmityImage
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import timber.log.Timber
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.api.core.file.AmityFileRepository
+import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
+import com.amity.socialcloud.sdk.model.core.file.AmityImage
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
 import java.io.File
 
 class AmityImageMsgViewModel : AmitySelectableMessageViewModel() {
 
-    val imageUrl = ObservableField<String>("")
+    val imageUrl = ObservableField("")
     val uploading = ObservableBoolean(false)
     val uploadProgress = ObservableField(0)
 

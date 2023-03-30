@@ -76,11 +76,6 @@ dependencies {
 
     testImplementation "io.mockk:mockk:$rootProject.amityMockkVersion"
 
-    // Rx Dependencies
-    implementation "io.reactivex.rxjava2:rxjava:2.2.19"
-    implementation "io.reactivex.rxjava2:rxandroid:2.1.1"
-    implementation "io.reactivex.rxjava2:rxkotlin:2.4.0"
-
     testImplementation "org.mockito:mockito-inline:3.5.13"
 
     androidTestImplementation "org.mockito:mockito-inline:3.5.13"

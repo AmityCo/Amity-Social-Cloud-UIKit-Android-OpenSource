@@ -2,8 +2,8 @@ package com.amity.socialcloud.uikit.chat.messages.viewHolder
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import com.amity.socialcloud.sdk.AmityCoreClient
-import com.amity.socialcloud.sdk.chat.message.AmityMessage
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
 import com.amity.socialcloud.uikit.chat.R
 import com.amity.socialcloud.uikit.chat.messages.viewModel.AmityChatMessageBaseViewModel
 import com.amity.socialcloud.uikit.common.utils.AmityDateUtils
@@ -24,23 +24,23 @@ abstract class AmityChatMessageBaseViewHolder(
                 item?.getCreatedAt()?.millis ?: 0
             )
         )
-        itemBaseViewModel.isDeleted.set(item?.isDeleted() ?: false)
+        if (itemBaseViewModel.isDeleted.get() != item?.isDeleted()) {
+            itemBaseViewModel.isDeleted.set(item?.isDeleted() ?: false)
+        }
         itemBaseViewModel.isFailed.set(item?.getState() == AmityMessage.State.FAILED)
         if (item != null) {
             itemBaseViewModel.sender.set(getSenderName(item))
-            itemBaseViewModel.isSelf.set(item.getUserId() == AmityCoreClient.getUserId())
-
-            val difference = item.getEditedAt().millis - item.getCreatedAt().millis
-            itemBaseViewModel.isEdited.set(difference / 1000 > 1)
+            itemBaseViewModel.isSelf.set(item.getCreatorId() == AmityCoreClient.getUserId())
+            itemBaseViewModel.isEdited.set(item.isEdited())
             setMessage(item)
         }
     }
 
     private fun getSenderName(item: AmityMessage): String {
-        return if (item.getUserId() == AmityCoreClient.getUserId()) {
+        return if (item.getCreatorId() == AmityCoreClient.getUserId()) {
             "ME"
         } else {
-            item.getUser()?.getDisplayName() ?: itemView.context.getString(R.string.amity_anonymous)
+            item.getCreator()?.getDisplayName() ?: itemView.context.getString(R.string.amity_anonymous)
         }
     }
 }

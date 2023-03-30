@@ -3,7 +3,7 @@ package com.amity.socialcloud.uikit.community.notificationsettings
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.notificationsettings.pushDetail.AmityCommunityPostNotificationSettingsActivity
 import com.amity.socialcloud.uikit.community.setting.AmitySettingsItem
-import io.reactivex.Flowable
+import io.reactivex.rxjava3.core.Flowable
 
 class AmityPushNotificationMenuCreatorImpl(private val fragment: AmityCommunityNotificationSettingsFragment): AmityPushNotificationMenuCreator {
 

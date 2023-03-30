@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <queries>
         <intent>
@@ -29,15 +30,16 @@
         android:label="@string/amity_app_name"
         android:supportsRtl="true"
         android:theme="@style/MyTheme">
-        <activity android:name=".TestActivity"/>
+        <activity android:name=".TestActivity" />
         <activity android:name=".AmityRecentMessageListActivity" />
         <activity android:name=".AmityMessageListWithCustomUi" />
         <activity android:name=".AmitySettingActivity" />
         <activity android:name=".AmityFeatureListActivity" />
         <activity android:name=".AmityPostCreatorWithOptionsActivity" />
         <activity android:name=".AmityPostCreatorSettingsActivity" />
-        <activity android:name=".env.EnvironmentActivity"/>
-        <activity android:name=".MainActivity"
+        <activity android:name=".env.EnvironmentActivity" />
+        <activity
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -46,7 +48,8 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".AmitySampleFirebaseMessagingService"
+        <service
+            android:name=".AmitySampleFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

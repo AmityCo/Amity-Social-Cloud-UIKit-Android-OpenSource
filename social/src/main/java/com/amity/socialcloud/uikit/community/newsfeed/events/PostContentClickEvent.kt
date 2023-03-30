@@ -1,9 +1,9 @@
 package com.amity.socialcloud.uikit.community.newsfeed.events
 
-import com.amity.socialcloud.sdk.core.AmityFile
-import com.amity.socialcloud.sdk.core.file.AmityImage
-import com.amity.socialcloud.sdk.social.feed.AmityPost
-import com.amity.socialcloud.sdk.video.stream.AmityStream
+import com.amity.socialcloud.sdk.model.core.file.AmityFile
+import com.amity.socialcloud.sdk.model.core.file.AmityImage
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
+import com.amity.socialcloud.sdk.model.video.stream.AmityStream
 
 sealed class PostContentClickEvent {
 

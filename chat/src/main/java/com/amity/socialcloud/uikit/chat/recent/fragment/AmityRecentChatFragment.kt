@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.amity.socialcloud.uikit.chat.R
 import com.amity.socialcloud.uikit.chat.databinding.AmityFragmentRecentChatBinding
@@ -15,7 +16,7 @@ import com.amity.socialcloud.uikit.chat.home.callback.AmityRecentChatItemClickLi
 import com.amity.socialcloud.uikit.chat.messages.AmityMessageListActivity
 import com.amity.socialcloud.uikit.chat.recent.adapter.AmityRecentChatAdapter
 import com.amity.socialcloud.uikit.chat.util.AmityRecentItemDecoration
-import io.reactivex.disposables.Disposable
+import io.reactivex.rxjava3.disposables.Disposable
 
 class AmityRecentChatFragment private constructor() : Fragment(), AmityRecentChatItemClickListener {
     private lateinit var mViewModel: AmityRecentChatViewModel
@@ -25,18 +26,19 @@ class AmityRecentChatFragment private constructor() : Fragment(), AmityRecentCha
     private lateinit var binding: AmityFragmentRecentChatBinding
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         mViewModel = ViewModelProvider(requireActivity()).get(AmityRecentChatViewModel::class.java)
         binding =
-                DataBindingUtil.inflate(inflater, R.layout.amity_fragment_recent_chat, container, false)
+            DataBindingUtil.inflate(inflater, R.layout.amity_fragment_recent_chat, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecyclerView()
+        initListener()
     }
 
     private fun initRecyclerView() {
@@ -46,27 +48,37 @@ class AmityRecentChatFragment private constructor() : Fragment(), AmityRecentCha
             this.layoutManager = LinearLayoutManager(requireContext())
             this.adapter = mAdapter
             this.addItemDecoration(
-                    AmityRecentItemDecoration(
-                            requireContext(),
-                            resources.getDimensionPixelSize(R.dimen.amity_padding_m2)
-                    )
+                AmityRecentItemDecoration(
+                    requireContext(),
+                    resources.getDimensionPixelSize(R.dimen.amity_padding_m2)
+                )
             )
         }
         getRecentChatData()
     }
 
     private fun getRecentChatData() {
-        recentChatDisposable = mViewModel.getRecentChat().subscribe { chatList ->
-            if (chatList.isEmpty()) {
-                binding.emptyView.visibility = View.VISIBLE
-                binding.rvRecentChat.visibility = View.GONE
-            } else {
-                binding.emptyView.visibility = View.GONE
-                binding.rvRecentChat.visibility = View.VISIBLE
-                mAdapter.submitList(chatList)
+        recentChatDisposable = mViewModel.getRecentChat()
+            .doOnNext { chatList ->
+                mAdapter.submitData(lifecycle, chatList)
+            }.subscribe()
+    }
+
+    private fun initListener() {
+        mAdapter.addLoadStateListener { loadState ->
+            loadState.run {
+                if (source.append is LoadState.NotLoading
+                    && source.append.endOfPaginationReached
+                    && mAdapter.itemCount == 0
+                ) {
+                    binding.emptyView.visibility = View.VISIBLE
+                    binding.rvRecentChat.visibility = View.GONE
+                } else {
+                    binding.emptyView.visibility = View.GONE
+                    binding.rvRecentChat.visibility = View.VISIBLE
+                }
             }
         }
-
     }
 
     override fun onRecentChatItemClick(channelId: String) {
@@ -90,7 +102,8 @@ class AmityRecentChatFragment private constructor() : Fragment(), AmityRecentCha
 
         fun build(activity: AppCompatActivity): AmityRecentChatFragment {
             val fragment = AmityRecentChatFragment()
-            fragment.mViewModel = ViewModelProvider(activity).get(AmityRecentChatViewModel::class.java)
+            fragment.mViewModel =
+                ViewModelProvider(activity).get(AmityRecentChatViewModel::class.java)
             fragment.mViewModel.recentChatItemClickListener = mListener
             return fragment
         }

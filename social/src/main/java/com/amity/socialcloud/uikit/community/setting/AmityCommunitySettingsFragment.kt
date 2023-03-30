@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.amity.socialcloud.sdk.core.error.AmityError
+import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.uikit.common.utils.AmityAlertDialogUtil
 import com.amity.socialcloud.uikit.common.utils.AmityAlertDialogUtil.checkConfirmDialog
 import com.amity.socialcloud.uikit.community.R
@@ -18,7 +18,7 @@ import com.amity.socialcloud.uikit.community.notificationsettings.AmityCommunity
 import com.amity.socialcloud.uikit.community.setting.postreview.AmityPostReviewSettingsActivity
 import com.amity.socialcloud.uikit.community.utils.EXTRA_PARAM_COMMUNITY_ID
 import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
-import com.trello.rxlifecycle3.components.support.RxFragment
+import com.trello.rxlifecycle4.components.support.RxFragment
 import java.util.*
 
 class AmityCommunitySettingsFragment : RxFragment() {

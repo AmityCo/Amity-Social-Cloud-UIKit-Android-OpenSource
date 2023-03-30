@@ -5,17 +5,17 @@ import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableParcelable
 import androidx.lifecycle.SavedStateHandle
-import com.amity.socialcloud.sdk.AmityCoreClient
-import com.amity.socialcloud.sdk.core.file.AmityImage
-import com.amity.socialcloud.sdk.core.file.AmityUploadResult
-import com.amity.socialcloud.sdk.social.AmitySocialClient
-import com.amity.socialcloud.sdk.social.community.AmityCommunity
-import com.amity.socialcloud.sdk.social.community.AmityCommunityRepository
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.api.social.AmitySocialClient
+import com.amity.socialcloud.sdk.api.social.community.AmityCommunityRepository
+import com.amity.socialcloud.sdk.model.core.file.AmityImage
+import com.amity.socialcloud.sdk.model.core.file.upload.AmityUploadResult
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import com.amity.socialcloud.uikit.common.model.AmitySelectMemberItem
 import com.amity.socialcloud.uikit.community.data.AmitySelectCategoryItem
-import io.reactivex.Flowable
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.core.Single
 
 private const val SAVED_COMMUNITY_ID = "SAVED_COMMUNITY_ID"
 
@@ -28,8 +28,8 @@ class AmityCreateCommunityViewModel(private val savedState: SavedStateHandle) :
     private var initialIsPublic = true
     var initialCategory = ""
     val avatarUrl = ObservableField("")
-    val communityId = ObservableField<String>("")
-    val communityName = ObservableField<String>(initialCommunityName)
+    val communityId = ObservableField("")
+    val communityName = ObservableField(initialCommunityName)
     val description = ObservableField("")
     val isPublic = ObservableBoolean(true)
     val isAdmin = ObservableBoolean(false)
@@ -63,7 +63,7 @@ class AmityCreateCommunityViewModel(private val savedState: SavedStateHandle) :
 
     fun uploadProfilePicture(uri: Uri): Flowable<AmityUploadResult<AmityImage>> {
         val fileRepository = AmityCoreClient.newFileRepository()
-        return fileRepository.uploadImage(uri).isFullImage(true).build().transfer()
+        return fileRepository.uploadImage(uri)
     }
 
     fun setCategory(categoryAmity: AmitySelectCategoryItem) {
@@ -117,7 +117,8 @@ class AmityCreateCommunityViewModel(private val savedState: SavedStateHandle) :
         return builder.displayName(communityName.get()!!.trim())
             .isPublic(isPublic.get())
             .description(description.get()?.trim() ?: "")
-            .build().update()
+            .build()
+            .apply()
     }
 
     fun getCommunityDetail(): Flowable<AmityCommunity> {

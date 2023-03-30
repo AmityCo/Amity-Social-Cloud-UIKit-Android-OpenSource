@@ -11,10 +11,10 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.text.bold
 import androidx.databinding.DataBindingUtil
-import com.amity.socialcloud.sdk.core.user.AmityFollowStatus
-import com.amity.socialcloud.sdk.core.user.AmityMyFollowInfo
-import com.amity.socialcloud.sdk.core.user.AmityUser
-import com.amity.socialcloud.sdk.core.user.AmityUserFollowInfo
+import com.amity.socialcloud.sdk.model.core.follow.AmityFollowStatus
+import com.amity.socialcloud.sdk.model.core.follow.AmityMyFollowInfo
+import com.amity.socialcloud.sdk.model.core.follow.AmityUserFollowInfo
+import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.common.views.AmityColorPaletteUtil
 import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
 import com.amity.socialcloud.uikit.community.R
@@ -52,7 +52,12 @@ class AmityUserProfileHeaderView : ConstraintLayout {
         } else {
             null
         }
-        headerBinding.tvName.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, banIcon, null)
+        headerBinding.tvName.setCompoundDrawablesRelativeWithIntrinsicBounds(
+            null,
+            null,
+            banIcon,
+            null
+        )
     }
 
     fun setMyFollowInfo(followInfo: AmityMyFollowInfo) {

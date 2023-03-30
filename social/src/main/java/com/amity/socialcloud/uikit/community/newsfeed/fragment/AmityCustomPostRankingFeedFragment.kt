@@ -6,13 +6,12 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.amity.socialcloud.uikit.community.databinding.AmityViewCustomPostRankingFeedEmptyBinding
-import com.amity.socialcloud.uikit.community.databinding.AmityViewGlobalFeedEmptyBinding
 import com.amity.socialcloud.uikit.community.newsfeed.events.AmityFeedRefreshEvent
 import com.amity.socialcloud.uikit.community.newsfeed.viewmodel.AmityCustomPostRankingFeedViewModel
 import com.amity.socialcloud.uikit.community.newsfeed.viewmodel.AmityGlobalFeedViewModel
 import com.amity.socialcloud.uikit.feed.settings.AmityPostShareClickListener
 import com.amity.socialcloud.uikit.social.AmitySocialUISettings
-import io.reactivex.Flowable
+import io.reactivex.rxjava3.core.Flowable
 
 class AmityCustomPostRankingFeedFragment : AmityFeedFragment() {
 

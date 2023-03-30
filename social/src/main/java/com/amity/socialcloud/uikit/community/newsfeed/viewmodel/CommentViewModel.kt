@@ -1,19 +1,19 @@
 package com.amity.socialcloud.uikit.community.newsfeed.viewmodel
 
-import com.amity.socialcloud.sdk.AmityCoreClient
-import com.amity.socialcloud.sdk.core.error.AmityError
-import com.amity.socialcloud.sdk.core.mention.AmityMentionMetadata
-import com.amity.socialcloud.sdk.core.mention.AmityMentionMetadataCreator
-import com.amity.socialcloud.sdk.core.permission.AmityPermission
-import com.amity.socialcloud.sdk.social.AmitySocialClient
-import com.amity.socialcloud.sdk.social.comment.AmityComment
-import com.amity.socialcloud.sdk.social.feed.AmityPost
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.api.social.AmitySocialClient
+import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadata
+import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataCreator
+import com.amity.socialcloud.sdk.model.core.error.AmityError
+import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
+import com.amity.socialcloud.sdk.model.social.comment.AmityComment
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.common.views.dialog.bottomsheet.BottomSheetMenuItem
 import com.amity.socialcloud.uikit.common.utils.AmityConstants
 import com.amity.socialcloud.uikit.community.R
-import io.reactivex.Completable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 interface CommentViewModel {
 
@@ -27,7 +27,7 @@ interface CommentViewModel {
         onError: () -> Unit,
         onBanned: () -> Unit
     ): Completable {
-        val commentCreator = AmitySocialClient.newCommentRepository().createComment(commentId)
+        val commentCreator = AmitySocialClient.newCommentRepository().createComment()
             .post(postId)
             .parentId(parentId)
             .with()
@@ -60,7 +60,7 @@ interface CommentViewModel {
         onSuccess: () -> Unit,
         onError: () -> Unit,
     ): Completable {
-        return AmitySocialClient.newCommentRepository().deleteComment(commentId)
+        return AmitySocialClient.newCommentRepository().softDeleteComment(commentId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnComplete {
@@ -127,15 +127,21 @@ interface CommentViewModel {
         deleteReply: () -> Unit,
     ): List<BottomSheetMenuItem> {
         val items = arrayListOf<BottomSheetMenuItem>()
-        val editCommentMenuItem = BottomSheetMenuItem(null, null, R.string.amity_edit_comment, editComment)
-        val deleteCommentMenuItem = BottomSheetMenuItem(null, null, R.string.amity_delete_comment, deleteComment)
-        val reportCommentMenuItem = BottomSheetMenuItem(null, null, R.string.amity_report, reportComment)
-        val unReportCommentMenuItem = BottomSheetMenuItem(null, null, R.string.amity_undo_report, unReportComment)
-        val editReplyMenuItem = BottomSheetMenuItem(null, null, R.string.amity_edit_reply, editReply)
-        val deleteReplyMenuItem = BottomSheetMenuItem(null, null, R.string.amity_delete_reply, deleteReply)
+        val editCommentMenuItem =
+            BottomSheetMenuItem(null, null, R.string.amity_edit_comment, editComment)
+        val deleteCommentMenuItem =
+            BottomSheetMenuItem(null, null, R.string.amity_delete_comment, deleteComment)
+        val reportCommentMenuItem =
+            BottomSheetMenuItem(null, null, R.string.amity_report, reportComment)
+        val unReportCommentMenuItem =
+            BottomSheetMenuItem(null, null, R.string.amity_undo_report, unReportComment)
+        val editReplyMenuItem =
+            BottomSheetMenuItem(null, null, R.string.amity_edit_reply, editReply)
+        val deleteReplyMenuItem =
+            BottomSheetMenuItem(null, null, R.string.amity_delete_reply, deleteReply)
 
-        if (comment.getUserId() == AmityCoreClient.getUserId()) {
-            if(comment.getParentId() == null) {
+        if (comment.getCreatorId() == AmityCoreClient.getUserId()) {
+            if (comment.getParentId() == null) {
                 items.add(editCommentMenuItem)
                 items.add(deleteCommentMenuItem)
             } else {
@@ -143,36 +149,31 @@ interface CommentViewModel {
                 items.add(deleteReplyMenuItem)
             }
         } else {
-            val reference: AmityComment.Reference = comment.getReference()
-            when (reference) {
+            when (val reference: AmityComment.Reference = comment.getReference()) {
                 is AmityComment.Reference.POST -> {
-                    val post = AmitySocialClient.newFeedRepository().getPost(reference.getPostId())
-                        .blockingFirst(null)
-                    post?.let {
-                        val target = post.getTarget()
-                        when (target) {
-                            is AmityPost.Target.COMMUNITY -> {
-                                val hasDeletePermission =
-                                    AmityCoreClient.hasPermission(AmityPermission.DELETE_COMMUNITY_COMMENT)
-                                        .atCommunity(target.getCommunity()?.getCommunityId() ?: "")
-                                        .check()
-                                        .blockingFirst(false)
-                                if (hasDeletePermission) {
-                                    items.add(deleteCommentMenuItem)
-                                }
-                            }
-                            else -> {
-                                val hasDeletePermission =
-                                    AmityCoreClient.hasPermission(AmityPermission.DELETE_USER_FEED_COMMENT)
-                                        .atGlobal()
-                                        .check()
-                                        .blockingFirst(false)
-                                if (hasDeletePermission) {
-                                    items.add(deleteCommentMenuItem)
-                                }
+                    val post = AmitySocialClient.newPostRepository().getPost(reference.getPostId())
+                        .blockingFirst()
+                    when (val target = post.getTarget()) {
+                        is AmityPost.Target.COMMUNITY -> {
+                            val hasDeletePermission =
+                                AmityCoreClient.hasPermission(AmityPermission.DELETE_COMMUNITY_COMMENT)
+                                    .atCommunity(target.getCommunity()?.getCommunityId() ?: "")
+                                    .check()
+                                    .blockingFirst(false)
+                            if (hasDeletePermission) {
+                                items.add(deleteCommentMenuItem)
                             }
                         }
-
+                        else -> {
+                            val hasDeletePermission =
+                                AmityCoreClient.hasPermission(AmityPermission.DELETE_USER_FEED_COMMENT)
+                                    .atGlobal()
+                                    .check()
+                                    .blockingFirst(false)
+                            if (hasDeletePermission) {
+                                items.add(deleteCommentMenuItem)
+                            }
+                        }
                     }
                 }
                 else -> {}

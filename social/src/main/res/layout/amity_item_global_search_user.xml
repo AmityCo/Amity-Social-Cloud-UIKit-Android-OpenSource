@@ -3,10 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <import type="com.amity.socialcloud.uikit.common.common.views.AmityColorShade" />
+
         <variable
             name="amityUser"
-            type="com.amity.socialcloud.sdk.core.user.AmityUser" />
+            type="com.amity.socialcloud.sdk.model.core.user.AmityUser" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -15,8 +17,8 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ivAvatar"
-            backgroundColorShade="@{AmityColorShade.SHADE3}"
             amityBackgroundColor="@{@color/amityColorPrimary}"
+            backgroundColorShade="@{AmityColorShade.SHADE3}"
             imageUrl="@{amityUser.avatar.url}"
             placeHolder="@{@drawable/amity_ic_default_profile_large}"
             android:layout_width="@dimen/amity_forty"
@@ -27,22 +29,22 @@
 
         <TextView
             android:id="@+id/tvDisplayName"
+            style="@style/AmityTextStyleBodyBold"
+            safeText="@{amityUser.displayName}"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            safeText="@{amityUser.displayName}"
-            style="@style/AmityTextStyleBodyBold"
             android:layout_marginStart="@dimen/amity_padding_xs"
+            android:drawablePadding="@dimen/amity_padding_xxs"
             android:ellipsize="end"
             android:gravity="center_vertical"
             android:maxLines="1"
-            app:layout_constrainedWidth="true"
-            app:layout_constraintHorizontal_bias="0"
-            android:drawablePadding="@dimen/amity_padding_xxs"
             android:textColor="@color/amityColorBase"
-            app:layout_constraintTop_toTopOf="@id/ivAvatar"
+            app:layout_constrainedWidth="true"
             app:layout_constraintBottom_toBottomOf="@id/ivAvatar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toEndOf="@id/ivAvatar"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintTop_toTopOf="@id/ivAvatar" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

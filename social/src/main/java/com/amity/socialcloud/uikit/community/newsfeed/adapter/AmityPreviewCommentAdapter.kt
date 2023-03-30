@@ -4,8 +4,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.amity.socialcloud.sdk.core.user.AmityUser
-import com.amity.socialcloud.sdk.social.comment.AmityComment
+import com.amity.socialcloud.sdk.model.core.user.AmityUser
+import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.uikit.community.databinding.AmityItemDeletedRootCommentBinding
 import com.amity.socialcloud.uikit.community.databinding.AmityItemPreviewCommentBinding
 import com.amity.socialcloud.uikit.community.newsfeed.diffutil.PostCommentDiffUtil
@@ -14,7 +14,7 @@ import com.amity.socialcloud.uikit.community.newsfeed.events.CommentEngagementCl
 import com.amity.socialcloud.uikit.community.newsfeed.events.CommentOptionClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.viewholder.DeletedCommentViewHolder
 import com.amity.socialcloud.uikit.community.newsfeed.viewholder.PreviewCommentViewHolder
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.rxjava3.subjects.PublishSubject
 import java.util.*
 
 

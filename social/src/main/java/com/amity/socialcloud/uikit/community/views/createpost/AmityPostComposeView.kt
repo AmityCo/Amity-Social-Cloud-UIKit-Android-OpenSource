@@ -1,13 +1,12 @@
 package com.amity.socialcloud.uikit.community.views.createpost
 
 import android.content.Context
-import android.content.DialogInterface
 import android.graphics.Rect
 import android.util.AttributeSet
 import androidx.core.content.ContextCompat
 import androidx.core.view.setPadding
 import androidx.core.widget.doAfterTextChanged
-import com.amity.socialcloud.sdk.core.mention.AmityMentionMetadata
+import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadata
 import com.amity.socialcloud.uikit.common.utils.AmityAlertDialogUtil
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.newsfeed.model.AmityUserMention
@@ -40,7 +39,8 @@ class AmityPostComposeView : MentionsEditText {
         if (getUserMentions().size >= MENTIONS_LIMIT) {
             showErrorDialog(
                 context.resources.getString(R.string.amity_mention_error_title),
-                context.resources.getString(R.string.amity_mention_error_msg))
+                context.resources.getString(R.string.amity_mention_error_msg)
+            )
         } else {
             super.insertMention(mention)
             append(" ")
@@ -54,7 +54,9 @@ class AmityPostComposeView : MentionsEditText {
 
     private fun parseStyle(attrs: AttributeSet) {
         tokenizer = null
-        style = AmityPostComposeViewStyle(context, attrs).apply { mentionColor = R.color.upstraColorPrimary }
+        style = AmityPostComposeViewStyle(context, attrs).apply {
+            mentionColor = R.color.upstraColorPrimary
+        }
         applyStyle()
 
         this.doAfterTextChanged { text ->
@@ -62,7 +64,8 @@ class AmityPostComposeView : MentionsEditText {
                 getText().delete(CHARACTERS_LIMIT, getText().length)
                 showErrorDialog(
                     context.resources.getString(R.string.amity_post_characters_limit_error_title),
-                    context.resources.getString(R.string.amity_characters_limit_error_msg))
+                    context.resources.getString(R.string.amity_characters_limit_error_msg)
+                )
             }
         }
     }
@@ -77,15 +80,16 @@ class AmityPostComposeView : MentionsEditText {
     }
 
     private fun showErrorDialog(title: String, message: String) {
-        AmityAlertDialogUtil.showDialog(context, title, message,
+        AmityAlertDialogUtil.showDialog(
+            context, title, message,
             context.resources.getString(R.string.amity_done),
-            null,
-            DialogInterface.OnClickListener { dialog, which ->
-                AmityAlertDialogUtil.checkConfirmDialog(
-                    isPositive = which,
-                    confirmed = dialog::cancel
-                )
-            })
+            null
+        ) { dialog, which ->
+            AmityAlertDialogUtil.checkConfirmDialog(
+                isPositive = which,
+                confirmed = dialog::cancel
+            )
+        }
     }
 
     fun setViewStyle(style: AmityPostComposeViewStyle) {

@@ -27,7 +27,7 @@
 
         <variable
             name="communityMemberShip"
-            type="com.amity.socialcloud.sdk.social.community.AmityCommunityMember" />
+            type="com.amity.socialcloud.sdk.model.social.member.AmityCommunityMember" />
 
         <variable
             name="listener"

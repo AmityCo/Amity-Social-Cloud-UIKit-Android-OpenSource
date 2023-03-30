@@ -4,13 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import com.amity.socialcloud.uikit.chat.messages.adapter.AmityMessageListAdapter
+import com.amity.socialcloud.uikit.chat.messages.adapter.AmityMessagePagingAdapter
 import com.amity.socialcloud.uikit.chat.messages.composebar.AmityChatRoomComposeBar
 import com.amity.socialcloud.uikit.chat.messages.fragment.AmityChatRoomFragment
 import com.amity.socialcloud.uikit.chat.messages.viewHolder.AmityChatMessageBaseViewHolder
 import com.amity.socialcloud.uikit.chat.util.MessageType
 
-class AmityMessageListWithCustomUi : AppCompatActivity(), AmityMessageListAdapter.CustomViewHolderListener {
+class AmityMessageListWithCustomUi : AppCompatActivity(),
+    AmityMessagePagingAdapter.CustomViewHolderListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val channelId = intent.getStringExtra("CHANNEL_ID") ?: ""

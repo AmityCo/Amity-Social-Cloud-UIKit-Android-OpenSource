@@ -5,10 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import androidx.paging.PagedList
+import androidx.paging.PagingData
+import androidx.paging.map
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.amity.socialcloud.sdk.core.file.AmityImage
-import com.amity.socialcloud.sdk.social.community.AmityCommunityMember
+import com.amity.socialcloud.sdk.model.core.file.AmityImage
+import com.amity.socialcloud.sdk.model.social.member.AmityCommunityMember
 import com.amity.socialcloud.uikit.common.base.AmityBaseFragment
 import com.amity.socialcloud.uikit.common.common.setShape
 import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
@@ -78,19 +79,22 @@ class AmityMembersFragment : AmityBaseFragment(), AmityMemberClickListener {
         viewModel.getCommunityMembers(
             onCommunityLoaded = { adapter.setUserIsJoined(it.isJoined()) },
             onMembersLoaded = {
-                viewModel.emptyMembersList.set(it.size == 0)
-                adapter.submitList(it)
-                if (!viewModel.emptyMembersList.get()) {
-                    prepareSelectedMembersList(it)
-                }
+                adapter.submitData(lifecycle, it)
+                prepareSelectedMembersList(it)
+
+                // TODO: 23/2/23 handle empty members list
+//                viewModel.emptyMembersList.set(it.size == 0)
+//                if (!viewModel.emptyMembersList.get()) {
+//                    prepareSelectedMembersList(it)
+//                }
             },
             onMembersLoadFailed = {})
             .untilLifecycleEnd(this, memberDisposer)
             .subscribe()
     }
 
-    private fun prepareSelectedMembersList(list: PagedList<AmityCommunityMember>) {
-        list.forEach {
+    private fun prepareSelectedMembersList(list: PagingData<AmityCommunityMember>) {
+        list.map {
             val ekoUser = it.getUser()
             if (ekoUser != null) {
                 val selectMemberItem = AmitySelectMemberItem(

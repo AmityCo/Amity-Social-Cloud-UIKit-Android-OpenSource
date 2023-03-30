@@ -4,7 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import androidx.databinding.DataBindingUtil
-import com.amity.socialcloud.sdk.chat.message.AmityMessage
+import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
 import com.amity.socialcloud.uikit.chat.R
 import com.amity.socialcloud.uikit.chat.databinding.AmityItemTextMessageReceiverBinding
 import com.amity.socialcloud.uikit.chat.databinding.AmityPopupMsgReportBinding

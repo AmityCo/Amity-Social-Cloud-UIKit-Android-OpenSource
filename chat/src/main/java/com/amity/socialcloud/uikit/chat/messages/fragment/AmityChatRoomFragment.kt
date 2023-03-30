@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.amity.socialcloud.uikit.chat.R
-import com.amity.socialcloud.uikit.chat.messages.adapter.AmityMessageListAdapter
+import com.amity.socialcloud.uikit.chat.messages.adapter.AmityMessagePagingAdapter
 import com.amity.socialcloud.uikit.chat.messages.composebar.AmityChatRoomComposeBar
 import com.amity.socialcloud.uikit.chat.messages.viewModel.AmityChatRoomEssentialViewModel
 
@@ -62,7 +62,7 @@ class AmityChatRoomFragment : Fragment(R.layout.amity_fragment_chat_room) {
         private var enableChatToolbar = true
         private var enableConnectionBar = true
         private var composeBar: AmityChatRoomComposeBar = AmityChatRoomComposeBar.DEFAULT
-        private var customViewHolder: AmityMessageListAdapter.CustomViewHolderListener? = null
+        private var customViewHolder: AmityMessagePagingAdapter.CustomViewHolderListener? = null
 
         fun enableChatToolbar(enable: Boolean): Builder {
             this.enableChatToolbar = enable
@@ -79,7 +79,7 @@ class AmityChatRoomFragment : Fragment(R.layout.amity_fragment_chat_room) {
             return this
         }
 
-        fun customViewHolder(customViewHolder: AmityMessageListAdapter.CustomViewHolderListener): Builder {
+        fun customViewHolder(customViewHolder: AmityMessagePagingAdapter.CustomViewHolderListener): Builder {
             this.customViewHolder = customViewHolder
             return this
         }

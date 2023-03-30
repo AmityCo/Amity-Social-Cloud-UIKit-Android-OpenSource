@@ -2,8 +2,8 @@ package com.amity.socialcloud.uikit.community.mycommunity.adapter
 
 import android.view.View
 import androidx.databinding.DataBindingUtil
-import com.amity.socialcloud.sdk.core.file.AmityImage
-import com.amity.socialcloud.sdk.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.core.file.AmityImage
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.common.loadImage
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.databinding.AmityItemMyCommunityBinding

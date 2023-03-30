@@ -6,8 +6,8 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.amity.socialcloud.sdk.core.file.AmityImage
-import com.amity.socialcloud.sdk.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.core.file.AmityImage
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagingDataAdapter
 import com.amity.socialcloud.uikit.common.common.loadImage
 import com.amity.socialcloud.uikit.community.R
@@ -20,23 +20,27 @@ class AmityCreatePostCommunitySelectionAdapter(private val listener: AmityCreate
     companion object {
         private val diffCallBack = object : DiffUtil.ItemCallback<AmityCommunity>() {
 
-            override fun areItemsTheSame(oldItem: AmityCommunity, newItem: AmityCommunity): Boolean =
-                oldItem.getCommunityId() == newItem.getCommunityId()
+            override fun areItemsTheSame(
+                oldItem: AmityCommunity,
+                newItem: AmityCommunity
+            ): Boolean = oldItem.getCommunityId() == newItem.getCommunityId()
 
-            override fun areContentsTheSame(oldItem: AmityCommunity, newItem: AmityCommunity): Boolean =
-                oldItem.getAvatar()?.getUrl() == newItem.getAvatar()?.getUrl()
-                        && oldItem.getChannelId() == newItem.getChannelId()
-                        && oldItem.getCommunityId() == newItem.getCommunityId()
-                        && oldItem.getCreatedAt() == newItem.getCreatedAt()
-                        && oldItem.getDescription() == newItem.getDescription()
-                        && oldItem.getDisplayName() == newItem.getDisplayName()
-                        && oldItem.getMemberCount() == newItem.getMemberCount()
-                        && oldItem.getPostCount() == newItem.getPostCount()
-                        && oldItem.getUpdatedAt() == newItem.getUpdatedAt()
-                        && oldItem.getUserId() == newItem.getUserId()
-                        && oldItem.isJoined() == newItem.isJoined()
-                        && oldItem.isOfficial() == newItem.isOfficial()
-                        && oldItem.isPublic() == newItem.isPublic()
+            override fun areContentsTheSame(
+                oldItem: AmityCommunity,
+                newItem: AmityCommunity
+            ): Boolean = oldItem.getAvatar()?.getUrl() == newItem.getAvatar()?.getUrl()
+                    && oldItem.getChannelId() == newItem.getChannelId()
+                    && oldItem.getCommunityId() == newItem.getCommunityId()
+                    && oldItem.getCreatedAt() == newItem.getCreatedAt()
+                    && oldItem.getDescription() == newItem.getDescription()
+                    && oldItem.getDisplayName() == newItem.getDisplayName()
+                    && oldItem.getMemberCount() == newItem.getMemberCount()
+                    && oldItem.getPostCount() == newItem.getPostCount()
+                    && oldItem.getUpdatedAt() == newItem.getUpdatedAt()
+                    && oldItem.getCreatorId() == newItem.getCreatorId()
+                    && oldItem.isJoined() == newItem.isJoined()
+                    && oldItem.isOfficial() == newItem.isOfficial()
+                    && oldItem.isPublic() == newItem.isPublic()
         }
     }
 

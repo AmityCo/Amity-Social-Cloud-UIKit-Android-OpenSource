@@ -1,6 +1,6 @@
 package com.amity.socialcloud.uikit.community.setting.user
 
-import com.amity.socialcloud.sdk.core.user.AmityUser
+import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.setting.AmitySettingsItem
 

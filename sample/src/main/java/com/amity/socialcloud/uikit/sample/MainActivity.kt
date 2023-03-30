@@ -3,7 +3,9 @@ package com.amity.socialcloud.uikit.sample
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import com.amity.socialcloud.sdk.AmityCoreClient
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.core.session.AccessTokenRenewal
+import com.amity.socialcloud.sdk.model.core.session.SessionHandler
 import com.amity.socialcloud.uikit.common.common.showSnackBar
 import com.amity.socialcloud.uikit.sample.databinding.AmityActivityMainBinding
 import com.amity.socialcloud.uikit.sample.env.Environment
@@ -11,9 +13,9 @@ import com.amity.socialcloud.uikit.sample.env.EnvironmentActivity
 import com.amity.socialcloud.uikit.sample.env.SamplePreferences
 import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
 import com.google.android.material.snackbar.Snackbar
-import com.trello.rxlifecycle3.components.support.RxAppCompatActivity
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import com.trello.rxlifecycle4.components.support.RxAppCompatActivity
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
 import timber.log.Timber
 
 
@@ -30,6 +32,7 @@ class MainActivity : RxAppCompatActivity() {
             SamplePreferences.getApiKey().set(it.apiKey)
             SamplePreferences.getHttpUrl().set(it.httpUrl)
             SamplePreferences.getSocketUrl().set(it.socketUrl)
+            SamplePreferences.getMqttBroker().set(it.mqttBroker)
         }
     }
 
@@ -38,6 +41,9 @@ class MainActivity : RxAppCompatActivity() {
 
         val userId = AmityCoreClient.getUserId()
         if (userId.isNotEmpty()) {
+            binding.etUserId.setText(userId)
+            binding.etUserName.setText(userId)
+
             registerDevice(userId)
         }
 
@@ -46,7 +52,10 @@ class MainActivity : RxAppCompatActivity() {
         binding.apply {
             btnLogin.setOnClickListener {
                 if (etUserId.text.isNotEmpty() && etUserName.text.isNotEmpty()) {
-                    registerDevice(etUserId.text.toString().trim(), etUserName.text.toString().trim())
+                    registerDevice(
+                        etUserId.text.toString().trim(),
+                        etUserName.text.toString().trim()
+                    )
                 } else {
                     findViewById<View>(android.R.id.content).showSnackBar(
                         "Enter userId and Display Name",
@@ -59,18 +68,23 @@ class MainActivity : RxAppCompatActivity() {
                 val env = Environment(
                     SamplePreferences.getApiKey().get(),
                     SamplePreferences.getHttpUrl().get(),
-                    SamplePreferences.getSocketUrl().get()
+                    SamplePreferences.getSocketUrl().get(),
+                    SamplePreferences.getMqttBroker().get()
                 )
                 changeEnvContract.launch(env)
             }
         }
     }
 
-    private fun registerDevice(userId: String, displayname: String? = "") {
-        AmityCoreClient.login(userId)
+    private fun registerDevice(userId: String, displayName: String? = "") {
+        AmityCoreClient.login(userId, object : SessionHandler {
+            override fun sessionWillRenewAccessToken(renewal: AccessTokenRenewal) {
+                renewal.renew()
+            }
+        })
             .apply {
-                if(!displayname.isNullOrEmpty()) {
-                    displayName(displayname)
+                if (!displayName.isNullOrEmpty()) {
+                    displayName(displayName)
                 }
             }
             .build()
@@ -90,7 +104,7 @@ class MainActivity : RxAppCompatActivity() {
     }
 
     private fun registerForPushNotifications() {
-        AmityCoreClient.registerDeviceForPushNotification()
+        AmityCoreClient.registerPushNotification()
             .subscribeOn(Schedulers.io())
             .doOnComplete {
                 Timber.e("registerForPushNotifications: success for userId ${AmityCoreClient.getUserId()}")

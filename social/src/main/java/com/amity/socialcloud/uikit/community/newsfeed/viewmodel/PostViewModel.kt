@@ -1,35 +1,34 @@
 package com.amity.socialcloud.uikit.community.newsfeed.viewmodel
 
 import androidx.paging.ExperimentalPagingApi
-import androidx.paging.PagedList
 import androidx.paging.PagingData
-import com.amity.socialcloud.sdk.AmityCoreClient
-import com.amity.socialcloud.sdk.core.error.AmityError
-import com.amity.socialcloud.sdk.core.permission.AmityPermission
-import com.amity.socialcloud.sdk.core.user.AmityUser
-import com.amity.socialcloud.sdk.core.user.AmityUserSortOption
-import com.amity.socialcloud.sdk.social.AmitySocialClient
-import com.amity.socialcloud.sdk.social.community.AmityCommunityMember
-import com.amity.socialcloud.sdk.social.feed.AmityFeedType
-import com.amity.socialcloud.sdk.social.feed.AmityPoll
-import com.amity.socialcloud.sdk.social.feed.AmityPost
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.api.core.user.search.AmityUserSortOption
+import com.amity.socialcloud.sdk.api.social.AmitySocialClient
+import com.amity.socialcloud.sdk.model.core.error.AmityError
+import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
+import com.amity.socialcloud.sdk.model.core.user.AmityUser
+import com.amity.socialcloud.sdk.model.social.feed.AmityFeedType
+import com.amity.socialcloud.sdk.model.social.member.AmityCommunityMember
+import com.amity.socialcloud.sdk.model.social.member.AmityCommunityMembership
+import com.amity.socialcloud.sdk.model.social.poll.AmityPoll
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.common.views.dialog.bottomsheet.BottomSheetMenuItem
 import com.amity.socialcloud.uikit.common.utils.AmityConstants
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.feed.settings.AmityPostSharingTarget
 import com.amity.socialcloud.uikit.social.AmitySocialUISettings
-import com.ekoapp.ekosdk.community.membership.query.AmityCommunityMembership
-import io.reactivex.Completable
-import io.reactivex.Flowable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
 interface PostViewModel {
 
     fun shouldShowPostOptions(post: AmityPost): Boolean {
         return (post.getFeedType() == AmityFeedType.PUBLISHED && !isPostReadOnly(post))
-                || (post.getFeedType() == AmityFeedType.REVIEWING && post.getPostedUserId() == AmityCoreClient.getUserId())
+                || (post.getFeedType() == AmityFeedType.REVIEWING && post.getCreatorId() == AmityCoreClient.getUserId())
     }
 
     fun isPostReadOnly(post: AmityPost): Boolean {
@@ -46,7 +45,7 @@ interface PostViewModel {
         onLoaded: (AmityPost) -> Unit,
         onError: () -> Unit
     ): Flowable<AmityPost> {
-        return AmitySocialClient.newFeedRepository().getPost(postId)
+        return AmitySocialClient.newPostRepository().getPost(postId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext {
@@ -140,7 +139,7 @@ interface PostViewModel {
         onAlreadyApproved: () -> Unit,
         onError: () -> Unit,
     ): Completable {
-        return AmitySocialClient.newFeedRepository()
+        return AmitySocialClient.newPostRepository()
             .reviewPost(postId)
             .approve()
             .subscribeOn(Schedulers.io())
@@ -159,7 +158,7 @@ interface PostViewModel {
         onAlreadyDeclined: () -> Unit,
         onError: () -> Unit
     ): Completable {
-        return AmitySocialClient.newFeedRepository()
+        return AmitySocialClient.newPostRepository()
             .reviewPost(postId)
             .decline()
             .subscribeOn(Schedulers.io())
@@ -180,8 +179,10 @@ interface PostViewModel {
         shareToExternal: () -> Unit,
     ): List<BottomSheetMenuItem> {
         val items = arrayListOf<BottomSheetMenuItem>()
-        val myFeed = BottomSheetMenuItem(null, null, R.string.amity_share_to_my_timeline, shareToMyFeed)
-        val groupFeed = BottomSheetMenuItem(null, null, R.string.amity_share_to_group, shareToGroupFeed)
+        val myFeed =
+            BottomSheetMenuItem(null, null, R.string.amity_share_to_my_timeline, shareToMyFeed)
+        val groupFeed =
+            BottomSheetMenuItem(null, null, R.string.amity_share_to_group, shareToGroupFeed)
         val external = BottomSheetMenuItem(null, null, R.string.amity_more_options, shareToExternal)
         var possibleTargets = listOf<AmityPostSharingTarget>()
         val target = post.getTarget()
@@ -208,8 +209,8 @@ interface PostViewModel {
         }
 
         if (possibleTargets.contains(AmityPostSharingTarget.MyFeed)
-            || (possibleTargets.contains(AmityPostSharingTarget.OriginFeed) && ((target as? AmityPost.Target.USER)?.getUser()
-                ?.getUserId() ?: "" == AmityCoreClient.getUserId()))
+            || (possibleTargets.contains(AmityPostSharingTarget.OriginFeed) && (((target as? AmityPost.Target.USER)?.getUser()
+                ?.getUserId() ?: "") == AmityCoreClient.getUserId()))
         ) {
             items.add(myFeed)
         }
@@ -239,13 +240,17 @@ interface PostViewModel {
     ): List<BottomSheetMenuItem> {
         val items = arrayListOf<BottomSheetMenuItem>()
         val editPostMenuItem = BottomSheetMenuItem(null, null, R.string.amity_edit_post, editPost)
-        val deletePostMenuItem = BottomSheetMenuItem(null, null, R.string.amity_delete_post, deletePost)
+        val deletePostMenuItem =
+            BottomSheetMenuItem(null, null, R.string.amity_delete_post, deletePost)
         val reportPostMenuItem = BottomSheetMenuItem(null, null, R.string.amity_report, reportPost)
-        val unReportPostMenuItem = BottomSheetMenuItem(null, null, R.string.amity_undo_report, unReportPost)
-        val closePollMenuItem = BottomSheetMenuItem(null, null, R.string.amity_close_poll, closePoll)
-        val deletePollMenuItem = BottomSheetMenuItem(null, null, R.string.amity_delete_poll, deletePoll)
+        val unReportPostMenuItem =
+            BottomSheetMenuItem(null, null, R.string.amity_undo_report, unReportPost)
+        val closePollMenuItem =
+            BottomSheetMenuItem(null, null, R.string.amity_close_poll, closePoll)
+        val deletePollMenuItem =
+            BottomSheetMenuItem(null, null, R.string.amity_delete_poll, deletePoll)
 
-        if (post.getPostedUserId() == AmityCoreClient.getUserId()) {
+        if (post.getCreatorId() == AmityCoreClient.getUserId()) {
             if (post.getChildren().getOrNull(0)?.getType() == AmityPost.DataType.POLL) {
                 val data = post.getChildren()[0].getData() as AmityPost.Data.POLL
                 if (data.getPoll().blockingFirst().getStatus() == AmityPoll.Status.OPEN) {
@@ -316,7 +321,7 @@ interface PostViewModel {
         return AmityCoreClient.newUserRepository().searchUserByDisplayName(keyword)
             .sortBy(AmityUserSortOption.DISPLAYNAME)
             .build()
-            .getPagingData()
+            .query()
             .throttleLatest(1, TimeUnit.SECONDS, true)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -327,15 +332,17 @@ interface PostViewModel {
     }
 
     @ExperimentalPagingApi
-    fun searchCommunityUsersMention(communityId: String,
-                                    keyword: String,
-                                    onResult: (users: PagingData<AmityCommunityMember>) -> Unit): Completable {
+    fun searchCommunityUsersMention(
+        communityId: String,
+        keyword: String,
+        onResult: (users: PagingData<AmityCommunityMember>) -> Unit
+    ): Completable {
         return AmitySocialClient.newCommunityRepository()
             .membership(communityId)
             .searchMembers(keyword)
             .membershipFilter(listOf(AmityCommunityMembership.MEMBER))
             .build()
-            .getPagingData()
+            .query()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext {
@@ -348,7 +355,7 @@ interface PostViewModel {
         return if (post.getType() == AmityPost.DataType.LIVE_STREAM) {
             false
         } else {
-            return if (!post.getChildren().isNullOrEmpty()) {
+            return if (post.getChildren().isNotEmpty()) {
                 post.getChildren()[0].getType() != AmityPost.DataType.LIVE_STREAM
             } else {
                 true

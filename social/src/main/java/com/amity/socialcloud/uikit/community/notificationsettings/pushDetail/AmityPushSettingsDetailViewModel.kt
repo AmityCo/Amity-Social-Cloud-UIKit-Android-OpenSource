@@ -1,25 +1,25 @@
 package com.amity.socialcloud.uikit.community.notificationsettings.pushDetail
 
 import androidx.lifecycle.MutableLiveData
-import com.amity.socialcloud.sdk.core.permission.AmityRoles
-import com.amity.socialcloud.sdk.core.permission.AmityRolesFilter
-import com.amity.socialcloud.sdk.social.AmitySocialClient
-import com.amity.socialcloud.sdk.social.community.AmityCommunityNotificationEvent
-import com.amity.socialcloud.sdk.social.community.AmityCommunityNotificationSettings
+import com.amity.socialcloud.sdk.api.social.AmitySocialClient
+import com.amity.socialcloud.sdk.model.core.notification.AmityRolesFilter
+import com.amity.socialcloud.sdk.model.core.role.AmityRoles
+import com.amity.socialcloud.sdk.model.social.notification.AmityCommunityNotificationEvent
+import com.amity.socialcloud.sdk.model.social.notification.AmityCommunityNotificationSettings
 import com.amity.socialcloud.uikit.common.utils.AmityConstants
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.notificationsettings.AmityPushNotificationBaseViewModel
 import com.amity.socialcloud.uikit.community.setting.AmitySettingsItem
-import io.reactivex.Completable
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 class AmityPushSettingsDetailViewModel : AmityPushNotificationBaseViewModel() {
     var communityId = ""
     var settingType = ""
     private val map = HashMap<String, AmityCommunityNotificationEvent>()
-    val initialStateChanged = MutableLiveData<Boolean>(false)
+    val initialStateChanged = MutableLiveData(false)
     var initialReactPost = -1
     var initialNewPost = -1
     var initialReactComment = -1
@@ -382,7 +382,12 @@ class AmityPushSettingsDetailViewModel : AmityPushNotificationBaseViewModel() {
         val isEnable = event != R.string.amity_notification_off
         val rolesFilter = if (event == R.string.amity_only_moderator) {
             AmityRolesFilter.ONLY(
-                AmityRoles(listOf(AmityConstants.MODERATOR_ROLE, AmityConstants.COMMUNITY_MODERATOR_ROLE))
+                AmityRoles(
+                    listOf(
+                        AmityConstants.MODERATOR_ROLE,
+                        AmityConstants.COMMUNITY_MODERATOR_ROLE
+                    )
+                )
             )
         } else {
             AmityRolesFilter.All

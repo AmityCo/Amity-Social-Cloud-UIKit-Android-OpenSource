@@ -1,7 +1,7 @@
 package com.amity.socialcloud.uikit.community.newsfeed.diffutil
 
 import androidx.recyclerview.widget.DiffUtil
-import com.amity.socialcloud.sdk.social.comment.AmityComment
+import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.uikit.common.utils.AmityConstants
 
 class PostCommentDiffUtil : DiffUtil.ItemCallback<AmityComment>() {
@@ -13,8 +13,8 @@ class PostCommentDiffUtil : DiffUtil.ItemCallback<AmityComment>() {
     override fun areContentsTheSame(oldItem: AmityComment, newItem: AmityComment): Boolean {
         return oldItem.getCommentId() == newItem.getCommentId()
                 && oldItem.isDeleted() == newItem.isDeleted()
-                && oldItem.getUser()?.getDisplayName() == newItem.getUser()?.getDisplayName()
-                && oldItem.getUser()?.getAvatar()?.getUrl() == newItem.getUser()?.getAvatar()?.getUrl()
+                && oldItem.getCreator()?.getDisplayName() == newItem.getCreator()?.getDisplayName()
+                && oldItem.getCreator()?.getAvatar()?.getUrl() == newItem.getCreator()?.getAvatar()?.getUrl()
                 && oldItem.getReactionCount() == newItem.getReactionCount()
                 && (oldItem.getMyReactions().contains(AmityConstants.POST_REACTION) == oldItem.getMyReactions().contains(AmityConstants.POST_REACTION))
                 && oldItem.getEditedAt() == newItem.getEditedAt()

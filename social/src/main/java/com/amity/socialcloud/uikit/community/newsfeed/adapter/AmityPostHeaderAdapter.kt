@@ -4,13 +4,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.amity.socialcloud.sdk.core.user.AmityUser
-import com.amity.socialcloud.sdk.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.core.user.AmityUser
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.newsfeed.events.PostOptionClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.model.AmityBasePostHeaderItem
-import io.reactivex.subjects.BehaviorSubject
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.rxjava3.subjects.PublishSubject
 
 class AmityPostHeaderAdapter(private val userClickPublisher: PublishSubject<AmityUser>,
 							 private val communityClickPublisher: PublishSubject<AmityCommunity>,
@@ -67,8 +66,8 @@ class AmityPostHeaderAdapter(private val userClickPublisher: PublishSubject<Amit
 			val oldItem = oldList[oldItemPosition]
 			val newItem =  newList[newItemPosition]
 			return oldItem == newItem
-					&& oldItem.post.getPostedUser()?.getDisplayName() == newItem.post.getPostedUser()?.getDisplayName()
-					&& oldItem.post.getPostedUser()?.getAvatar()?.getUrl() == newItem.post.getPostedUser()?.getAvatar()?.getUrl()
+					&& oldItem.post.getCreator()?.getDisplayName() == newItem.post.getCreator()?.getDisplayName()
+					&& oldItem.post.getCreator()?.getAvatar()?.getUrl() == newItem.post.getCreator()?.getAvatar()?.getUrl()
 		}
 	}
 

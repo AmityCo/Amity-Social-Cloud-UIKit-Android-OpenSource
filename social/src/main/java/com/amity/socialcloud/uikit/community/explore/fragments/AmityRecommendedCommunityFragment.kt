@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.amity.socialcloud.sdk.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.base.AmityBaseFragment
 import com.amity.socialcloud.uikit.common.utils.AmityExceptionCatchLinearLayoutManager
 import com.amity.socialcloud.uikit.community.R
@@ -71,7 +71,7 @@ class AmityRecommendedCommunityFragment : AmityBaseFragment(),
 
     private fun getRecommendedCommunity() {
         viewModel.getRecommendedCommunity {
-            viewModel.emptyRecommendedList.set(it.size == 0)
+            viewModel.emptyRecommendedList.set(it.isEmpty())
             adapter.submitList(it)
         }.untilLifecycleEnd(this)
             .subscribe()

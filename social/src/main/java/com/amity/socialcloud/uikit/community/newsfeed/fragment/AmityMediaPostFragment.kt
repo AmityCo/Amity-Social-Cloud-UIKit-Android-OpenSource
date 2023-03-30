@@ -10,10 +10,10 @@ import androidx.paging.CombinedLoadStates
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
-import com.amity.socialcloud.sdk.core.AmityVideo
-import com.amity.socialcloud.sdk.core.error.AmityError
-import com.amity.socialcloud.sdk.core.file.AmityImage
-import com.amity.socialcloud.sdk.social.feed.AmityPost
+import com.amity.socialcloud.sdk.model.core.error.AmityError
+import com.amity.socialcloud.sdk.model.core.file.AmityImage
+import com.amity.socialcloud.sdk.model.core.file.AmityVideo
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.base.AmityBaseFragment
 import com.amity.socialcloud.uikit.common.imagepreview.AmityImagePreviewActivity
 import com.amity.socialcloud.uikit.common.imagepreview.AmityPreviewImage
@@ -28,10 +28,10 @@ import com.amity.socialcloud.uikit.community.newsfeed.model.AmityMediaGalleryTar
 import com.amity.socialcloud.uikit.community.newsfeed.model.TARGET_USER
 import com.amity.socialcloud.uikit.community.newsfeed.viewmodel.AmityMediaPostViewModel
 import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
-import io.reactivex.BackpressureStrategy
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.BackpressureStrategy
+import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjava3.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
 
 class AmityMediaPostFragment : AmityBaseFragment() {

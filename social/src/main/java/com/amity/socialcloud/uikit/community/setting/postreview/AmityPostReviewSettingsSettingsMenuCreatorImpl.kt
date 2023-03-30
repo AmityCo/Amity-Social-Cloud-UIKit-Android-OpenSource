@@ -2,7 +2,7 @@ package com.amity.socialcloud.uikit.community.setting.postreview
 
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.setting.AmitySettingsItem
-import io.reactivex.Flowable
+import io.reactivex.rxjava3.core.Flowable
 
 class AmityPostReviewSettingsSettingsMenuCreatorImpl(private val fragment: AmityPostReviewSettingsFragment) : AmityPostReviewSettingsMenuCreator {
 

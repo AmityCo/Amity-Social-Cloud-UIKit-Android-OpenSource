@@ -1,18 +1,18 @@
 package com.amity.socialcloud.uikit.community.profile.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
-import com.amity.socialcloud.sdk.AmityCoreClient
-import com.amity.socialcloud.sdk.core.user.AmityFollowStatus
-import com.amity.socialcloud.sdk.core.user.AmityMyFollowInfo
-import com.amity.socialcloud.sdk.core.user.AmityUser
-import com.amity.socialcloud.sdk.core.user.AmityUserFollowInfo
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.model.core.follow.AmityFollowStatus
+import com.amity.socialcloud.sdk.model.core.follow.AmityMyFollowInfo
+import com.amity.socialcloud.sdk.model.core.follow.AmityUserFollowInfo
+import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import com.amity.socialcloud.uikit.community.profile.listener.AmityEditUserProfileClickListener
 import com.amity.socialcloud.uikit.community.profile.listener.AmityFeedFragmentDelegate
-import io.reactivex.Completable
-import io.reactivex.Flowable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 private const val SAVED_USER_ID = "SAVED_USER_ID"
 

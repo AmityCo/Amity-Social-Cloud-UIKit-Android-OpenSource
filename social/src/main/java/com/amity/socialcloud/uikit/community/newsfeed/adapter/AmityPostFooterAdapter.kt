@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.amity.socialcloud.sdk.core.user.AmityUser
+import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.utils.AmityConstants
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.databinding.AmityItemPostFooterCommentPreviewBinding
@@ -14,7 +14,7 @@ import com.amity.socialcloud.uikit.community.databinding.AmityItemPostFooterPost
 import com.amity.socialcloud.uikit.community.newsfeed.diffutil.PostCommentDiffUtil
 import com.amity.socialcloud.uikit.community.newsfeed.events.*
 import com.amity.socialcloud.uikit.community.newsfeed.model.AmityBasePostFooterItem
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.rxjava3.subjects.PublishSubject
 import java.util.*
 
 

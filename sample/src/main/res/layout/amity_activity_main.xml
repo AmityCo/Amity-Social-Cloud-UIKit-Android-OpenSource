@@ -13,14 +13,18 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/amity_padding_l"
         android:layout_marginTop="64dp"
-        android:hint="Enter user id" />
+        android:hint="Enter user id"
+        android:inputType="text"
+        android:maxLines="1" />
 
     <EditText
         android:id="@+id/etUserName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/amity_padding_l"
-        android:hint="Enter Display Name" />
+        android:hint="Enter Display Name"
+        android:inputType="text"
+        android:maxLines="1" />
 
 
     <Button

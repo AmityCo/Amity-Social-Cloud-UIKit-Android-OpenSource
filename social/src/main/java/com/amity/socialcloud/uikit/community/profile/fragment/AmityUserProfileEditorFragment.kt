@@ -12,8 +12,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
-import com.amity.socialcloud.sdk.core.file.AmityImage
-import com.amity.socialcloud.sdk.core.user.AmityUser
+import com.amity.socialcloud.sdk.model.core.file.AmityImage
+import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.base.AmityPickerFragment
 import com.amity.socialcloud.uikit.common.common.showSnackBar
 import com.amity.socialcloud.uikit.common.common.views.dialog.AmityBottomSheetDialogFragment
@@ -24,8 +24,8 @@ import com.amity.socialcloud.uikit.community.databinding.AmityFragmentEditUserPr
 import com.amity.socialcloud.uikit.community.profile.viewmodel.AmityEditUserProfileViewModel
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
 import java.io.File
 
 class AmityUserProfileEditorFragment : AmityPickerFragment() {

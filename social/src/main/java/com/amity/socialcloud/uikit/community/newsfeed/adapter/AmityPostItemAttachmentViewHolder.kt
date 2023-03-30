@@ -4,13 +4,13 @@ import android.net.Uri
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.amity.socialcloud.sdk.core.AmityFile
-import com.amity.socialcloud.sdk.social.feed.AmityPost
+import com.amity.socialcloud.sdk.model.core.file.AmityFile
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.base.AmitySpacesItemDecoration
 import com.amity.socialcloud.uikit.common.common.AmityFileUtils
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.domain.model.AmityFileAttachment
-import com.amity.socialcloud.uikit.community.newsfeed.events.*
+import com.amity.socialcloud.uikit.community.newsfeed.events.PostContentClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.listener.AmityPostFileItemClickListener
 import com.amity.socialcloud.uikit.community.newsfeed.model.FileUploadState
 

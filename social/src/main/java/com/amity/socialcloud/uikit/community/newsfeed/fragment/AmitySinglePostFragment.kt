@@ -6,9 +6,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
-import com.amity.socialcloud.sdk.core.user.AmityUser
-import com.amity.socialcloud.sdk.social.community.AmityCommunity
-import com.amity.socialcloud.sdk.social.feed.AmityPost
+import com.amity.socialcloud.sdk.model.core.user.AmityUser
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.community.newsfeed.events.AmityFeedRefreshEvent
 import com.amity.socialcloud.uikit.community.newsfeed.events.PostEngagementClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.listener.AmityCommunityClickListener
@@ -18,7 +18,7 @@ import com.amity.socialcloud.uikit.community.newsfeed.viewmodel.AmitySinglePostV
 import com.amity.socialcloud.uikit.feed.settings.AmityPostShareClickListener
 import com.amity.socialcloud.uikit.social.AmitySocialUISettings
 import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
-import io.reactivex.Flowable
+import io.reactivex.rxjava3.core.Flowable
 
 
 class AmitySinglePostFragment : AmityFeedFragment() {

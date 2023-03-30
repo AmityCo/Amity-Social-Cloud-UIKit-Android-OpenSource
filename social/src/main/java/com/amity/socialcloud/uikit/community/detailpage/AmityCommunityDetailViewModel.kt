@@ -1,14 +1,13 @@
 package com.amity.socialcloud.uikit.community.detailpage
 
 import androidx.lifecycle.SavedStateHandle
-import com.amity.socialcloud.sdk.social.AmitySocialClient
-import com.amity.socialcloud.sdk.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.api.social.AmitySocialClient
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import com.amity.socialcloud.uikit.community.newsfeed.viewmodel.PermissionViewModel
-import io.reactivex.Completable
-import io.reactivex.Flowable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 
 class AmityCommunityDetailViewModel(private val savedState: SavedStateHandle): AmityBaseViewModel(), PermissionViewModel {

@@ -1,15 +1,11 @@
 package com.amity.socialcloud.uikit.community.search
 
 import android.content.Context
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.amity.socialcloud.sdk.core.user.AmityUser
-import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagedAdapter
+import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagingDataAdapter
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.databinding.AmityItemGlobalSearchUserBinding

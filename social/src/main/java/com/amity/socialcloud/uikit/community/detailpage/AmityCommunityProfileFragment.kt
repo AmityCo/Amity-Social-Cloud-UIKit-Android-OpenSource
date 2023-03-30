@@ -10,9 +10,9 @@ import androidx.core.graphics.BlendModeCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.paging.ExperimentalPagingApi
-import com.amity.socialcloud.sdk.core.file.AmityImage
-import com.amity.socialcloud.sdk.social.community.AmityCommunity
-import com.amity.socialcloud.sdk.social.feed.AmityFeedType
+import com.amity.socialcloud.sdk.model.core.file.AmityImage
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.feed.AmityFeedType
 import com.amity.socialcloud.uikit.common.common.formatCount
 import com.amity.socialcloud.uikit.common.common.readableNumber
 import com.amity.socialcloud.uikit.community.R
@@ -25,9 +25,9 @@ import com.amity.socialcloud.uikit.community.setting.AmityCommunitySettingsActiv
 import com.amity.socialcloud.uikit.community.utils.EXTRA_PARAM_POST_ID
 import com.bumptech.glide.Glide
 import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
-import com.trello.rxlifecycle3.components.support.RxFragment
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import com.trello.rxlifecycle4.components.support.RxFragment
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
 import timber.log.Timber
 import java.util.*
 

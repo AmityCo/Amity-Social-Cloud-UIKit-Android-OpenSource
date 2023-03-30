@@ -1,12 +1,12 @@
 package com.amity.socialcloud.uikit.community.newsfeed.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
-import com.amity.socialcloud.sdk.social.AmitySocialClient
-import com.amity.socialcloud.sdk.social.feed.AmityPost
+import com.amity.socialcloud.sdk.api.social.AmitySocialClient
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
-import io.reactivex.Completable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 private const val SAVED_VIDEO_POST_ID = "SAVED_VIDEO_POST_ID"
 private const val SAVED_VIDEO_POSITION = "SAVED_VIDEO_POSITION"
@@ -34,19 +34,17 @@ class AmityVideoPostPlayerViewModel(private val savedState: SavedStateHandle) :
     }
 
     fun getVideoData(onVideoDataReady: (List<AmityPost.Data.VIDEO>) -> Unit): Completable {
-        return AmitySocialClient.newFeedRepository()
+        return AmitySocialClient.newPostRepository()
             .getPost(postId)
             .firstOrError()
             .map {
                 val videoDataList = mutableListOf<AmityPost.Data.VIDEO>()
-                if (!it.getChildren().isNullOrEmpty()) {
-                    it.getChildren().forEach { childPost ->
-                        when (val postData = childPost.getData()) {
-                            is AmityPost.Data.VIDEO -> {
-                                videoDataList.add(postData)
-                            }
-                            else -> {}
+                it.getChildren().forEach { childPost ->
+                    when (val postData = childPost.getData()) {
+                        is AmityPost.Data.VIDEO -> {
+                            videoDataList.add(postData)
                         }
+                        else -> {}
                     }
                 }
                 this.videoDataList = videoDataList

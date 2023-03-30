@@ -8,12 +8,12 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
-import com.amity.socialcloud.sdk.chat.message.AmityMessage
+import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
 import com.amity.socialcloud.uikit.chat.BR
 import com.amity.socialcloud.uikit.chat.R
 import com.amity.socialcloud.uikit.chat.databinding.AmityActivityEditMessageBinding
 import com.amity.socialcloud.uikit.common.base.AmityBaseActivity
-import io.reactivex.disposables.Disposable
+import io.reactivex.rxjava3.disposables.Disposable
 
 class AmityEditMessageActivity :
     AmityBaseActivity<AmityActivityEditMessageBinding, AmityEditMessageViewModel>() {

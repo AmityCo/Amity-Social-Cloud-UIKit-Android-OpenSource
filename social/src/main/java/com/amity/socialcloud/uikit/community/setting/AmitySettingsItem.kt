@@ -2,7 +2,7 @@ package com.amity.socialcloud.uikit.community.setting
 
 import androidx.annotation.DimenRes
 import com.amity.socialcloud.uikit.community.R
-import io.reactivex.Flowable
+import io.reactivex.rxjava3.core.Flowable
 
 sealed class AmitySettingsItem {
     class Header(val title: Int) : AmitySettingsItem()

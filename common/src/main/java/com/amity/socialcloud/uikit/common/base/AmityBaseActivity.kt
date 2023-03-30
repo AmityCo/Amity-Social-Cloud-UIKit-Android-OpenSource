@@ -11,7 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import com.amity.socialcloud.uikit.common.utils.AmityThemeUtil
-import com.trello.rxlifecycle3.components.support.RxAppCompatActivity
+import com.trello.rxlifecycle4.components.support.RxAppCompatActivity
 
 /**
  * Base activity to be extended by all activities of application.

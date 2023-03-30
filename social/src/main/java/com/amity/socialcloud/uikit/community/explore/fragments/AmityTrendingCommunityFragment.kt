@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
-import com.amity.socialcloud.sdk.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.base.AmityBaseFragment
 import com.amity.socialcloud.uikit.common.utils.AmityExceptionCatchLinearLayoutManager
 import com.amity.socialcloud.uikit.common.utils.AmityRecyclerViewItemDecoration
@@ -61,7 +61,7 @@ class AmityTrendingCommunityFragment : AmityBaseFragment(),
 
     private fun getTrendingCommunity() {
         viewModel.getTrendingCommunity {
-            viewModel.emptyTrendingList.set(it.size == 0)
+            viewModel.emptyTrendingList.set(it.isEmpty())
             adapter.submitList(it)
         }.untilLifecycleEnd(this)
             .subscribe()

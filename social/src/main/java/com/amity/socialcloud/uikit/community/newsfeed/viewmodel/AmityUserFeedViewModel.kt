@@ -4,15 +4,14 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.PagingData
 import androidx.paging.map
-import com.amity.socialcloud.sdk.social.AmitySocialClient
-import com.amity.socialcloud.sdk.social.feed.AmityFeedRepository
-import com.amity.socialcloud.sdk.social.feed.AmityPost
+import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.uikit.community.newsfeed.model.AmityBasePostItem
-import io.reactivex.Completable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 private const val SAVED_USER_ID = "SAVED_USER_ID"
+
 class AmityUserFeedViewModel(private val savedState: SavedStateHandle) : AmityFeedViewModel() {
 
     init {
@@ -24,15 +23,16 @@ class AmityUserFeedViewModel(private val savedState: SavedStateHandle) : AmityFe
             savedState.set(SAVED_USER_ID, value)
             field = value
         }
+
     @ExperimentalPagingApi
     override fun getFeed(onPageLoaded: (posts: PagingData<AmityBasePostItem>) -> Unit): Completable {
-        return  AmitySocialClient
+        return AmitySocialClient
             .newPostRepository()
             .getPosts()
             .targetUser(userId)
             .includeDeleted(false)
             .build()
-            .getPagingData()
+            .query()
             .map { it.map { post -> createPostItem(post) } }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

@@ -1,14 +1,15 @@
 package com.amity.socialcloud.uikit.community.newsfeed.adapter
 
-import com.amity.socialcloud.sdk.social.AmitySocialClient
-import com.amity.socialcloud.sdk.social.comment.AmityComment
-import com.amity.socialcloud.sdk.social.comment.AmityCommentLoader
-import com.amity.socialcloud.sdk.social.comment.AmityCommentSortOption
-import io.reactivex.BackpressureStrategy
-import io.reactivex.Completable
-import io.reactivex.Flowable
-import io.reactivex.functions.BiFunction
-import io.reactivex.subjects.PublishSubject
+
+import com.amity.socialcloud.sdk.api.social.AmitySocialClient
+import com.amity.socialcloud.sdk.api.social.comment.query.AmityCommentLoader
+import com.amity.socialcloud.sdk.api.social.comment.query.AmityCommentSortOption
+import com.amity.socialcloud.sdk.model.social.comment.AmityComment
+import io.reactivex.rxjava3.core.BackpressureStrategy
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.subjects.PublishSubject
 
 
 private const val COMMENT_PREVIEW_SIZE = 3
@@ -48,22 +49,22 @@ class AmityCommentReplyLoader(comment: AmityComment) {
     fun getComments(): Flowable<List<AmityComment>> {
         return Flowable.combineLatest(
             loader.getResult(),
-            commentsSubject.toFlowable(BackpressureStrategy.BUFFER).startWith(mutableListOf<AmityComment>()),
-            BiFunction { loadedResult, publishingResult ->
-                if(publishingResult.size > publishingComments.size) {
-                    publishingComments = publishingResult
-                } else {
-                    loadedComments = loadedResult
-                    publishingComments = loadedComments.take(publishingSize)
-                }
-                showLoadMoreButtonSubject.onNext(shouldShowLoadMoreButton())
-                publishingComments
+            commentsSubject.toFlowable(BackpressureStrategy.BUFFER)
+                .startWith(Single.just(mutableListOf()))
+        ) { loadedResult, publishingResult ->
+            if (publishingResult.size > publishingComments.size) {
+                publishingComments = publishingResult
+            } else {
+                loadedComments = loadedResult
+                publishingComments = loadedComments.take(publishingSize)
             }
-        )
+            showLoadMoreButtonSubject.onNext(shouldShowLoadMoreButton())
+            publishingComments
+        }
     }
 
-    fun load(isReload : Boolean = false): Completable {
-        if(!selfLoad && !shouldShowLoadMoreButton()) {
+    fun load(isReload: Boolean = false): Completable {
+        if (!selfLoad && !shouldShowLoadMoreButton()) {
             showLoadMoreButtonSubject.onNext(shouldShowLoadMoreButton())
             return Completable.complete()
         }
@@ -71,7 +72,8 @@ class AmityCommentReplyLoader(comment: AmityComment) {
         isLoading = true
         showLoadMoreButtonSubject.onNext(shouldShowLoadMoreButton())
 
-        val targetSize = if(isReload) COMMENT_PREVIEW_SIZE else publishingSize + TYPICAL_REPLY_PAGE_SIZE
+        val targetSize =
+            if (isReload) COMMENT_PREVIEW_SIZE else publishingSize + TYPICAL_REPLY_PAGE_SIZE
         if (loadedComments.size >= targetSize) {
             publishingSize = targetSize
             isLoading = false
@@ -80,7 +82,7 @@ class AmityCommentReplyLoader(comment: AmityComment) {
         } else {
             return loader.load().concatWith(Completable.defer {
                 val keepLoading = loader.hasMore() && loadedComments.size < targetSize
-                if(keepLoading) {
+                if (keepLoading) {
                     selfLoad = true
                     load()
                 } else {
@@ -96,7 +98,7 @@ class AmityCommentReplyLoader(comment: AmityComment) {
         }
     }
 
-    private fun shouldShowLoadMoreButton() : Boolean {
+    private fun shouldShowLoadMoreButton(): Boolean {
         return !isLoading && (loadedComments.size > publishingComments.size || loader.hasMore())
     }
 

@@ -2,17 +2,17 @@ package com.amity.socialcloud.uikit.community.search
 
 import androidx.databinding.ObservableField
 import androidx.paging.PagingData
-import com.amity.socialcloud.sdk.social.AmitySocialClient
-import com.amity.socialcloud.sdk.social.community.AmityCommunity
-import com.amity.socialcloud.sdk.social.community.AmityCommunitySortOption
+import com.amity.socialcloud.sdk.api.social.AmitySocialClient
+import com.amity.socialcloud.sdk.api.social.community.query.AmityCommunitySortOption
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import com.amity.socialcloud.uikit.common.model.AmityEventIdentifier
-import io.reactivex.Completable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
-class AmityCommunityGlobalSearchViewModel: AmityBaseViewModel() {
+class AmityCommunityGlobalSearchViewModel : AmityBaseViewModel() {
     var searchString = ObservableField("")
 
     fun searchCommunity(onResult: (list: PagingData<AmityCommunity>) -> Unit): Completable {
@@ -22,11 +22,11 @@ class AmityCommunityGlobalSearchViewModel: AmityBaseViewModel() {
             .sortBy(AmityCommunitySortOption.DISPLAY_NAME)
             .includeDeleted(false)
             .build()
-            .getPagingData()
+            .query()
             .throttleLatest(1, TimeUnit.SECONDS, true)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext{
+            .doOnNext {
                 onResult.invoke(it)
             }
             .ignoreElements()

@@ -3,14 +3,14 @@ package com.amity.socialcloud.uikit.community.profile.viewmodel
 import android.net.Uri
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import com.amity.socialcloud.sdk.AmityCoreClient
-import com.amity.socialcloud.sdk.core.file.AmityImage
-import com.amity.socialcloud.sdk.core.file.AmityUploadResult
-import com.amity.socialcloud.sdk.core.user.AmityUser
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.model.core.file.AmityImage
+import com.amity.socialcloud.sdk.model.core.file.upload.AmityUploadResult
+import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import com.amity.socialcloud.uikit.common.model.AmityEventIdentifier
-import io.reactivex.Flowable
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.core.Single
 
 class AmityEditUserProfileViewModel : AmityBaseViewModel() {
     var profileImage: AmityImage? = null
@@ -23,7 +23,7 @@ class AmityEditUserProfileViewModel : AmityBaseViewModel() {
 
     val displayName = MutableLiveData<String>().apply { value = "" }
     val about = MutableLiveData<String>().apply { value = "" }
-    val hasProfileUpdate = MutableLiveData<Boolean>(false)
+    val hasProfileUpdate = MutableLiveData(false)
     val mediatorLiveData = MediatorLiveData<String>().apply {
         addSource(displayName) { value ->
             setValue(value)
@@ -40,13 +40,13 @@ class AmityEditUserProfileViewModel : AmityBaseViewModel() {
         if (profileImage != null) {
             updateUserBuilder.avatar(profileImage!!)
         }
-        return updateUserBuilder.build().update()
+        return updateUserBuilder.build().apply()
     }
 
     fun uploadProfilePicture(uri: Uri): Flowable<AmityUploadResult<AmityImage>> {
         updating = true
         checkProfileUpdate()
-        return AmityCoreClient.newFileRepository().uploadImage(uri).isFullImage(true).build().transfer()
+        return AmityCoreClient.newFileRepository().uploadImage(uri)
     }
 
     fun updateImageUploadStatus(ekoImageUpload: AmityUploadResult<AmityImage>) {
@@ -66,7 +66,7 @@ class AmityEditUserProfileViewModel : AmityBaseViewModel() {
     }
 
     fun getUser(): Single<AmityUser>? {
-        return AmityCoreClient.getCurrentUser()?.firstOrError()
+        return AmityCoreClient.getCurrentUser().firstOrError()
     }
 
 

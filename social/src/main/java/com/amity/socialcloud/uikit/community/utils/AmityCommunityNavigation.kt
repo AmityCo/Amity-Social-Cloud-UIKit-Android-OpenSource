@@ -2,10 +2,10 @@ package com.amity.socialcloud.uikit.community.utils
 
 import android.content.Context
 import android.content.Intent
-import com.amity.socialcloud.sdk.core.file.AmityImage
-import com.amity.socialcloud.sdk.social.comment.AmityComment
-import com.amity.socialcloud.sdk.social.community.AmityCommunity
-import com.amity.socialcloud.sdk.social.feed.AmityPost
+import com.amity.socialcloud.sdk.model.core.file.AmityImage
+import com.amity.socialcloud.sdk.model.social.comment.AmityComment
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.imagepreview.AmityImagePreviewActivity
 import com.amity.socialcloud.uikit.common.imagepreview.AmityPreviewImage
 import com.amity.socialcloud.uikit.community.detailpage.AmityCommunityPageActivity

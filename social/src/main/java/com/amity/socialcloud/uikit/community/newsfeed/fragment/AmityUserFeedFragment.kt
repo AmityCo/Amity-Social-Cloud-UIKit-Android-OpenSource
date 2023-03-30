@@ -6,9 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import com.amity.socialcloud.sdk.core.error.AmityError
-import com.amity.socialcloud.sdk.core.user.AmityUser
-import com.amity.socialcloud.sdk.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.core.error.AmityError
+import com.amity.socialcloud.sdk.model.core.user.AmityUser
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.community.databinding.AmityViewOtherUserTimelineEmptyBinding
 import com.amity.socialcloud.uikit.community.databinding.AmityViewPrivateUserProfileBinding
 import com.amity.socialcloud.uikit.community.newsfeed.events.AmityFeedRefreshEvent
@@ -17,7 +17,7 @@ import com.amity.socialcloud.uikit.community.newsfeed.listener.AmityUserClickLis
 import com.amity.socialcloud.uikit.community.newsfeed.viewmodel.AmityUserFeedViewModel
 import com.amity.socialcloud.uikit.feed.settings.AmityPostShareClickListener
 import com.amity.socialcloud.uikit.social.AmitySocialUISettings
-import io.reactivex.Flowable
+import io.reactivex.rxjava3.core.Flowable
 
 class AmityUserFeedFragment : AmityFeedFragment() {
 

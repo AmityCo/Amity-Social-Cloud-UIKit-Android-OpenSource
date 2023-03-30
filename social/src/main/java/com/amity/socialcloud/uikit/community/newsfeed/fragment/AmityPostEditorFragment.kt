@@ -5,11 +5,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import com.amity.socialcloud.sdk.core.mention.AmityMentionMetadata
-import com.amity.socialcloud.sdk.core.mention.AmityMentionMetadataGetter
-import com.amity.socialcloud.sdk.core.mention.AmityMentionee
-import com.amity.socialcloud.sdk.core.user.AmityUser
-import com.amity.socialcloud.sdk.social.feed.AmityPost
+import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadata
+import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
+import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionee
+import com.amity.socialcloud.sdk.model.core.user.AmityUser
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.newsfeed.adapter.AmityCreatePostMediaAdapter
 import com.amity.socialcloud.uikit.community.newsfeed.model.AmityUserMention

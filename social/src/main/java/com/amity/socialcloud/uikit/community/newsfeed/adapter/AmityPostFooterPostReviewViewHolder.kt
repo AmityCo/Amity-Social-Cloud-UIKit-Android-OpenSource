@@ -3,7 +3,7 @@ package com.amity.socialcloud.uikit.community.newsfeed.adapter
 import com.amity.socialcloud.uikit.community.databinding.AmityItemPostFooterPostReviewBinding
 import com.amity.socialcloud.uikit.community.newsfeed.events.PostReviewClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.model.AmityBasePostFooterItem
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.rxjava3.subjects.PublishSubject
 
 class AmityPostFooterPostReviewViewHolder (
     private val binding: AmityItemPostFooterPostReviewBinding,

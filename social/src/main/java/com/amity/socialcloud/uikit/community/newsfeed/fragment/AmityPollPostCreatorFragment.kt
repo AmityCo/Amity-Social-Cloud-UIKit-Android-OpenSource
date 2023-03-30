@@ -15,8 +15,8 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import androidx.paging.ExperimentalPagingApi
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.amity.socialcloud.sdk.social.feed.AmityPoll
-import com.amity.socialcloud.sdk.social.feed.AmityPollAnswer
+import com.amity.socialcloud.sdk.model.social.poll.AmityPoll
+import com.amity.socialcloud.sdk.model.social.poll.AmityPollAnswer
 import com.amity.socialcloud.uikit.common.base.AmityBaseFragment
 import com.amity.socialcloud.uikit.common.utils.AmityAndroidUtil
 import com.amity.socialcloud.uikit.community.R
@@ -32,9 +32,9 @@ import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
 import com.linkedin.android.spyglass.suggestions.interfaces.SuggestionsVisibilityManager
 import com.linkedin.android.spyglass.tokenization.QueryToken
 import com.linkedin.android.spyglass.tokenization.interfaces.QueryTokenReceiver
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import org.joda.time.Days
 
 private const val DEFAULT_TIME_FRAME_DAYS = 30

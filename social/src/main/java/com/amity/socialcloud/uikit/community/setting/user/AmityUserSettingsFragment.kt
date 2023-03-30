@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.amity.socialcloud.sdk.core.user.AmityUser
+import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.common.showSnackBar
 import com.amity.socialcloud.uikit.common.utils.AmityAlertDialogUtil
 import com.amity.socialcloud.uikit.community.R
@@ -17,7 +17,7 @@ import com.amity.socialcloud.uikit.community.profile.activity.AmityEditUserProfi
 import com.amity.socialcloud.uikit.community.setting.AmitySettingsItem
 import com.amity.socialcloud.uikit.community.setting.AmitySettingsItemAdapter
 import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
-import com.trello.rxlifecycle3.components.support.RxFragment
+import com.trello.rxlifecycle4.components.support.RxFragment
 
 class AmityUserSettingsFragment : RxFragment() {
 

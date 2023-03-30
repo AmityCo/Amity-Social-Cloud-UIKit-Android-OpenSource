@@ -8,7 +8,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,14 +22,16 @@ import androidx.core.graphics.ColorUtils
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.paging.filter
+import androidx.paging.map
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.amity.socialcloud.sdk.AmityCoreClient
-import com.amity.socialcloud.sdk.chat.channel.AmityChannel
-import com.amity.socialcloud.sdk.core.file.AmityImage
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.model.chat.channel.AmityChannel
+import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.uikit.chat.R
 import com.amity.socialcloud.uikit.chat.databinding.AmityFragmentChatWithTextComposeBarBinding
-import com.amity.socialcloud.uikit.chat.messages.adapter.AmityMessageListAdapter
+import com.amity.socialcloud.uikit.chat.messages.adapter.AmityMessagePagingAdapter
 import com.amity.socialcloud.uikit.chat.messages.viewModel.AmityChatRoomEssentialViewModel
 import com.amity.socialcloud.uikit.chat.messages.viewModel.AmityMessageListViewModel
 import com.amity.socialcloud.uikit.common.base.AmityPickerFragment
@@ -44,20 +45,18 @@ import com.amity.socialcloud.uikit.common.model.AmityEventIdentifier
 import com.amity.socialcloud.uikit.common.utils.AmityAndroidUtil
 import com.amity.socialcloud.uikit.common.utils.AmityConstants
 import com.amity.socialcloud.uikit.common.utils.AmityRecyclerViewItemDecoration
-import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
 import com.google.android.material.snackbar.Snackbar
 import com.zhihu.matisse.Matisse
 import com.zhihu.matisse.MimeType
 import com.zhihu.matisse.engine.impl.GlideEngine
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.File
-import java.lang.IllegalStateException
 
 
 class AmityChatRoomWithTextComposeBarFragment() : AmityPickerFragment(),
@@ -66,28 +65,30 @@ class AmityChatRoomWithTextComposeBarFragment() : AmityPickerFragment(),
     private lateinit var essentialViewModel: AmityChatRoomEssentialViewModel
     private val messageListViewModel: AmityMessageListViewModel by viewModels()
 
-    private lateinit var mAdapter: AmityMessageListAdapter
+    private lateinit var mAdapter: AmityMessagePagingAdapter
     private lateinit var binding: AmityFragmentChatWithTextComposeBarBinding
     private var msgSent = false
-    private var viewHolderListener: AmityMessageListAdapter.CustomViewHolderListener? = null
+    private var viewHolderListener: AmityMessagePagingAdapter.CustomViewHolderListener? = null
     private var messageListDisposable: Disposable? = null
     private var currentCount = 0
     private var isImagePermissionGranted = false
     private var isReachBottom = true
 
-    private val pickMultipleImagesPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-        if (it) {
-            isImagePermissionGranted = true
-            pickMultipleImages()
-        } else {
-            isImagePermissionGranted = false
-            view?.showSnackBar("Permission denied", Snackbar.LENGTH_SHORT)
+    private val pickMultipleImagesPermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+            if (it) {
+                isImagePermissionGranted = true
+                pickMultipleImages()
+            } else {
+                isImagePermissionGranted = false
+                view?.showSnackBar("Permission denied", Snackbar.LENGTH_SHORT)
+            }
         }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        essentialViewModel = ViewModelProvider(requireActivity()).get(AmityChatRoomEssentialViewModel::class.java)
+        essentialViewModel =
+            ViewModelProvider(requireActivity()).get(AmityChatRoomEssentialViewModel::class.java)
         messageListViewModel.channelID = essentialViewModel.channelId
         viewHolderListener = essentialViewModel.customViewHolder
     }
@@ -96,7 +97,12 @@ class AmityChatRoomWithTextComposeBarFragment() : AmityPickerFragment(),
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.amity_fragment_chat_with_text_compose_bar, container, false)
+        binding = DataBindingUtil.inflate(
+            inflater,
+            R.layout.amity_fragment_chat_with_text_compose_bar,
+            container,
+            false
+        )
         binding.viewModel = messageListViewModel
         return binding.root
     }
@@ -109,19 +115,19 @@ class AmityChatRoomWithTextComposeBarFragment() : AmityPickerFragment(),
         setupComposebar()
         observeViewModelEvents()
         initMessageLoader()
-        observeRefreshStatus()
-        observeConnectionStatus()
+//        observeRefreshStatus()
+//        observeConnectionStatus()
     }
 
     private fun setupComposebar() {
         binding.apply {
             etMessage.setShape(
-                    null, null, null, null,
-                    R.color.amityColorBase, R.color.amityColorBase, AmityColorShade.SHADE4
+                null, null, null, null,
+                R.color.amityColorBase, R.color.amityColorBase, AmityColorShade.SHADE4
             )
             recordBackground.setShape(
-                    null, null, null, null,
-                    R.color.amityColorBase, R.color.amityColorBase, AmityColorShade.SHADE4
+                null, null, null, null,
+                R.color.amityColorBase, R.color.amityColorBase, AmityColorShade.SHADE4
             )
             etMessage.setOnClickListener {
                 messageListViewModel.showComposeBar.set(false)
@@ -133,17 +139,18 @@ class AmityChatRoomWithTextComposeBarFragment() : AmityPickerFragment(),
     }
 
     private fun initMessageLoader() {
-        messageListViewModel.messageLoader.load()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnComplete { hideLoadingView() }
-            .untilLifecycleEnd(this)
-            .subscribe()
+//        messageListViewModel.messageLoader.load()
+//            .subscribeOn(Schedulers.io())
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .doOnComplete { hideLoadingView() }
+//            .untilLifecycleEnd(this)
+//            .subscribe()
     }
 
+    /*
     private fun observeRefreshStatus() {
         messageListViewModel.observeRefreshStatus { resetMessageLoader() }
-            .doOnError {  }
+            .doOnError { }
             .untilLifecycleEnd(this)
             .subscribe()
     }
@@ -156,6 +163,7 @@ class AmityChatRoomWithTextComposeBarFragment() : AmityPickerFragment(),
             .untilLifecycleEnd(this)
             .subscribe()
     }
+     */
 
     private fun presentDisconnectedView() {
         if (essentialViewModel.enableConnectionBar) {
@@ -177,14 +185,14 @@ class AmityChatRoomWithTextComposeBarFragment() : AmityPickerFragment(),
     }
 
     private fun resetMessageLoader() {
-        messageListViewModel.channelID = essentialViewModel.channelId
-        messageListViewModel.messageLoader.load()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe { presentChatRefreshLoadingView() }
-            .doOnComplete { hideLoadingView() }
-            .untilLifecycleEnd(this)
-            .subscribe()
+//        messageListViewModel.channelID = essentialViewModel.channelId
+//        messageListViewModel.messageLoader.load()
+//            .subscribeOn(Schedulers.io())
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .doOnSubscribe { presentChatRefreshLoadingView() }
+//            .doOnComplete { hideLoadingView() }
+//            .untilLifecycleEnd(this)
+//            .subscribe()
     }
 
     override fun onResume() {
@@ -205,14 +213,14 @@ class AmityChatRoomWithTextComposeBarFragment() : AmityPickerFragment(),
                 val isAlmostReachedTop = firstVisibleItem <= PAGINATION_PRELOAD_THRESHOLD
                 val isScrollingUp = dy < 0
                 if (isAlmostReachedTop && isScrollingUp) {
-                    if (messageListViewModel.messageLoader.hasMore()) {
-                        Log.e("MML", "Load more")
-                        messageListViewModel.messageLoader.load()
-                            .subscribeOn(Schedulers.io())
-                            .subscribe()
-                    } else {
-                        Log.e("MML", "Last page reached")
-                    }
+//                    if (messageListViewModel.messageLoader.hasMore()) {
+//                        Log.e("MML", "Load more")
+//                        messageListViewModel.messageLoader.load()
+//                            .subscribeOn(Schedulers.io())
+//                            .subscribe()
+//                    } else {
+//                        Log.e("MML", "Last page reached")
+//                    }
                 }
             }
 
@@ -244,7 +252,7 @@ class AmityChatRoomWithTextComposeBarFragment() : AmityPickerFragment(),
 
     private fun getChannelType() {
         disposable.add(messageListViewModel.getChannelType().take(1).subscribe { ekoChannel ->
-            if (ekoChannel.getType() == AmityChannel.Type.STANDARD) {
+            if (ekoChannel.getChannelType() == AmityChannel.Type.STANDARD) {
                 binding.chatToolBar.ivAvatar.setImageDrawable(
                     ContextCompat.getDrawable(
                         requireContext(),
@@ -259,22 +267,23 @@ class AmityChatRoomWithTextComposeBarFragment() : AmityPickerFragment(),
                     )
                 )
             }
-            if (ekoChannel.getType() == AmityChannel.Type.CONVERSATION) {
-                disposable.add(messageListViewModel.getDisplayName()
-                    .filter {
-                        it.size > 1
-                    }.subscribe { list ->
-                        for (user in list) {
-                            if (user.getUserId() != AmityCoreClient.getUserId()) {
-                                CoroutineScope(Dispatchers.Main).launch {
-                                    messageListViewModel.title.set(user.getUser()?.getDisplayName())
-                                    messageListViewModel.avatarUrl
-                                        .set(user.getUser()?.getAvatar()?.getUrl(AmityImage.Size.SMALL))
-                                }
-                            }
-                        }
-                    })
 
+            if (ekoChannel.getChannelType() == AmityChannel.Type.CONVERSATION) {
+                disposable.add(
+                    messageListViewModel.getDisplayName()
+                        .doOnNext { channelMembers ->
+                            channelMembers.filter {
+                                it.getUserId() != AmityCoreClient.getUserId()
+                            }.map { channelMember ->
+                                val title = channelMember.getUser()?.getDisplayName()
+                                val avatarUrl = channelMember.getUser()?.getAvatar()
+                                    ?.getUrl(AmityImage.Size.SMALL)
+
+                                messageListViewModel.title.set(title)
+                                messageListViewModel.avatarUrl.set(avatarUrl)
+                            }
+                        }.subscribe()
+                )
             } else {
                 messageListViewModel.title.set(ekoChannel.getDisplayName())
                 messageListViewModel.avatarUrl
@@ -287,7 +296,7 @@ class AmityChatRoomWithTextComposeBarFragment() : AmityPickerFragment(),
         binding.chatToolBar.apply {
             if (essentialViewModel.enableChatToolbar) {
                 (activity as AppCompatActivity).supportActionBar?.displayOptions =
-                        ActionBar.DISPLAY_SHOW_CUSTOM
+                    ActionBar.DISPLAY_SHOW_CUSTOM
                 (activity as AppCompatActivity).setSupportActionBar(root as Toolbar)
 
                 ivBack.setOnClickListener {
@@ -302,33 +311,34 @@ class AmityChatRoomWithTextComposeBarFragment() : AmityPickerFragment(),
 
     private fun initRecyclerView() {
         mAdapter =
-            AmityMessageListAdapter(
+            AmityMessagePagingAdapter(
                 messageListViewModel,
                 viewHolderListener,
                 this,
                 activity?.baseContext!!
             )
-        val layoutManager = LinearLayoutManager(activity)
-        layoutManager.stackFromEnd = true
+        val layoutManager = LinearLayoutManager(activity).apply {
+            this.reverseLayout = true
+        }
         binding.rvChatList.apply {
             this.layoutManager = layoutManager
             this.adapter = mAdapter
             this.addItemDecoration(
-                    AmityRecyclerViewItemDecoration(
-                            0,
-                            0,
-                            resources.getDimensionPixelSize(R.dimen.amity_padding_xs)
-                    )
+                AmityRecyclerViewItemDecoration(
+                    0,
+                    0,
+                    resources.getDimensionPixelSize(R.dimen.amity_padding_xs)
+                )
             )
             this.itemAnimator = null
             val percentage = 30F / 100
             val background = ColorUtils.setAlphaComponent(
-                    AmityColorPaletteUtil.getColor(
-                            ContextCompat.getColor(
-                                    requireContext(),
-                                    R.color.amityColorBase
-                            ), AmityColorShade.SHADE4
-                    ), (percentage * 255).toInt()
+                AmityColorPaletteUtil.getColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.amityColorBase
+                    ), AmityColorShade.SHADE4
+                ), (percentage * 255).toInt()
             )
             this.setBackgroundColor(background)
         }
@@ -337,8 +347,8 @@ class AmityChatRoomWithTextComposeBarFragment() : AmityPickerFragment(),
     }
 
     private fun observeMessages() {
-        messageListDisposable= messageListViewModel.getAllMessages().subscribe { messageList ->
-            mAdapter.submitList(messageList)
+        messageListDisposable = messageListViewModel.getAllMessages().subscribe { messageList ->
+            mAdapter.submitData(lifecycle, messageList)
             messageListViewModel.isScrollable.set(binding.rvChatList.computeVerticalScrollRange() > binding.rvChatList.height)
         }
         messageListViewModel.startReading()
@@ -355,11 +365,11 @@ class AmityChatRoomWithTextComposeBarFragment() : AmityPickerFragment(),
     }
 
     private fun hideLoadingView() {
-        binding.loadingView?.visibility = View.GONE
+        binding.loadingView.visibility = View.GONE
     }
 
     private fun scrollToLastPosition() {
-        binding.rvChatList?.scrollToPosition(mAdapter.itemCount - 1)
+        binding.rvChatList.scrollToPosition(0)
         isReachBottom = true
     }
 
@@ -435,7 +445,7 @@ class AmityChatRoomWithTextComposeBarFragment() : AmityPickerFragment(),
                     .theme(com.amity.socialcloud.uikit.common.R.style.AmityImagePickerTheme)
                     .forResult(AmityConstants.PICK_IMAGES)
             }
-        }else {
+        } else {
             pickMultipleImagesPermission.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         }
     }
@@ -547,7 +557,7 @@ class AmityChatRoomWithTextComposeBarFragment() : AmityPickerFragment(),
 
         private var enableChatToolbar = true
         private var enableConnectionBar = true
-        private var customViewHolder: AmityMessageListAdapter.CustomViewHolderListener? = null
+        private var customViewHolder: AmityMessagePagingAdapter.CustomViewHolderListener? = null
 
         fun enableChatToolbar(enable: Boolean): Builder {
             this.enableChatToolbar = enable
@@ -559,13 +569,14 @@ class AmityChatRoomWithTextComposeBarFragment() : AmityPickerFragment(),
             return this
         }
 
-        fun customViewHolder(customViewHolder: AmityMessageListAdapter.CustomViewHolderListener) : Builder {
+        fun customViewHolder(customViewHolder: AmityMessagePagingAdapter.CustomViewHolderListener): Builder {
             this.customViewHolder = customViewHolder
             return this
         }
 
         fun build(activity: AppCompatActivity): AmityChatRoomWithTextComposeBarFragment {
-            val essentialViewModel = ViewModelProvider(activity).get(AmityChatRoomEssentialViewModel::class.java)
+            val essentialViewModel =
+                ViewModelProvider(activity).get(AmityChatRoomEssentialViewModel::class.java)
             essentialViewModel.channelId = channelId
             essentialViewModel.enableChatToolbar = enableChatToolbar
             essentialViewModel.enableConnectionBar = enableConnectionBar

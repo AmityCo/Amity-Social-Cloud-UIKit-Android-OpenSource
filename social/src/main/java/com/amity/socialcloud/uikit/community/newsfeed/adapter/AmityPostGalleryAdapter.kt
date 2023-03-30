@@ -5,13 +5,12 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.amity.socialcloud.sdk.social.feed.AmityPost
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.community.databinding.AmityItemGalleryPostImageBinding
 import com.amity.socialcloud.uikit.community.databinding.AmityItemGalleryPostUnknownBinding
 import com.amity.socialcloud.uikit.community.databinding.AmityItemGalleryPostVideoBinding
-import com.amity.socialcloud.uikit.community.newsfeed.adapter.AmityPostListAdapter.Companion.POST_COMPARATOR
 import com.amity.socialcloud.uikit.community.newsfeed.events.PostGalleryClickEvent
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.rxjava3.subjects.PublishSubject
 
 class AmityPostGalleryAdapter(private val postClickPublisher: PublishSubject<PostGalleryClickEvent>) :
     PagingDataAdapter<AmityPost, RecyclerView.ViewHolder>(POST_GALLERY_COMPARATOR) {

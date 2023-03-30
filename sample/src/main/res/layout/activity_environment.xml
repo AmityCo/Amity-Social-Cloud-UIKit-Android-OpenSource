@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -10,9 +8,9 @@
         android:id="@+id/environmentGroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="32dp"
         android:layout_marginHorizontal="32dp"
+        android:layout_marginTop="32dp"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -21,49 +19,49 @@
             android:id="@+id/radioDev"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="onRadioButtonClicked"
             android:paddingHorizontal="16dp"
-            android:text="@string/dev"
-            android:onClick="onRadioButtonClicked"/>
+            android:text="@string/dev" />
 
         <com.google.android.material.radiobutton.MaterialRadioButton
             android:id="@+id/radioStaging"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="onRadioButtonClicked"
             android:paddingHorizontal="16dp"
-            android:text="@string/staging"
-            android:onClick="onRadioButtonClicked"/>
+            android:text="@string/staging" />
 
         <com.google.android.material.radiobutton.MaterialRadioButton
             android:id="@+id/radioProduction"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="onRadioButtonClicked"
             android:paddingHorizontal="16dp"
-            android:text="@string/production"
-            android:onClick="onRadioButtonClicked"/>
+            android:text="@string/production" />
 
         <com.google.android.material.radiobutton.MaterialRadioButton
             android:id="@+id/radioEU"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="onRadioButtonClicked"
             android:paddingHorizontal="16dp"
-            android:text="@string/eu"
-            android:onClick="onRadioButtonClicked"/>
+            android:text="@string/eu" />
 
         <com.google.android.material.radiobutton.MaterialRadioButton
             android:id="@+id/radioUS"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="onRadioButtonClicked"
             android:paddingHorizontal="16dp"
-            android:text="@string/us"
-            android:onClick="onRadioButtonClicked"/>
+            android:text="@string/us" />
 
         <com.google.android.material.radiobutton.MaterialRadioButton
             android:id="@+id/radioCustom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="onRadioButtonClicked"
             android:paddingHorizontal="16dp"
-            android:text="@string/custom"
-            android:onClick="onRadioButtonClicked"/>
+            android:text="@string/custom" />
 
     </RadioGroup>
 
@@ -71,23 +69,34 @@
         android:id="@+id/etApiKey"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="@string/enter_api_key"
-        android:layout_marginTop="16dp"
         android:layout_marginHorizontal="32dp"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"
+        android:hint="@string/enter_api_key"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/environmentGroup"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/environmentGroup" />
 
     <EditText
         android:id="@+id/etUrl"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="@string/enter_url"
-        android:layout_marginTop="16dp"
         android:layout_marginHorizontal="32dp"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"
+        android:hint="@string/enter_url"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/etApiKey"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/etApiKey" />
+
+    <EditText
+        android:id="@+id/etMqttBroker"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="32dp"
+        android:layout_marginTop="16dp"
+        android:hint="@string/enter_mqtt_broker"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/etUrl" />
 
     <Button
         android:id="@+id/btnSubmit"
@@ -95,8 +104,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="@string/submit"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/etUrl"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/etMqttBroker" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

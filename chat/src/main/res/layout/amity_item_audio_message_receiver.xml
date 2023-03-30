@@ -45,7 +45,7 @@
                 style="@style/AmityCircularAvatarStyle"
                 backgroundColorShade="@{AmityColorShade.SHADE3}"
                 amityBackgroundColor="@{@color/amityColorPrimary}"
-                imageUrl="@{vmAudioMsg.amityMessage.user.avatar.url}"
+                imageUrl="@{vmAudioMsg.amityMessage.creator.avatar.url}"
                 android:layout_width="@dimen/amity_forty"
                 android:layout_height="@dimen/amity_forty"
                 android:layout_marginStart="@dimen/amity_padding_m1"

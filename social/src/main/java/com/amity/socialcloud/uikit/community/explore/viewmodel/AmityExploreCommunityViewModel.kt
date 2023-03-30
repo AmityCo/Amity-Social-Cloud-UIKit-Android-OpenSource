@@ -1,15 +1,15 @@
 package com.amity.socialcloud.uikit.community.explore.viewmodel
 
 import androidx.databinding.ObservableBoolean
-import androidx.paging.PagedList
-import com.amity.socialcloud.sdk.social.AmitySocialClient
-import com.amity.socialcloud.sdk.social.community.AmityCommunity
-import com.amity.socialcloud.sdk.social.community.AmityCommunityCategory
-import com.amity.socialcloud.sdk.social.community.AmityCommunityCategorySortOption
+import androidx.paging.PagingData
+import com.amity.socialcloud.sdk.api.social.AmitySocialClient
+import com.amity.socialcloud.sdk.api.social.category.query.AmityCommunityCategorySortOption
+import com.amity.socialcloud.sdk.model.social.category.AmityCommunityCategory
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
-import io.reactivex.Completable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 class AmityExploreCommunityViewModel : AmityBaseViewModel() {
 
@@ -38,7 +38,7 @@ class AmityExploreCommunityViewModel : AmityBaseViewModel() {
             .ignoreElements()
     }
 
-    fun getCommunityCategory(onCommunityCategoriesLoaded: (PagedList<AmityCommunityCategory>) -> Unit): Completable {
+    fun getCommunityCategory(onCommunityCategoriesLoaded: (PagingData<AmityCommunityCategory>) -> Unit): Completable {
         val communityRepository = AmitySocialClient.newCommunityRepository()
         return communityRepository.getCategories()
             .sortBy(AmityCommunityCategorySortOption.NAME)

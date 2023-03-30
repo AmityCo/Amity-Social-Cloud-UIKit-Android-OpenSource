@@ -43,7 +43,7 @@
                 style="@style/AmityCircularAvatarStyle"
                 backgroundColorShade="@{AmityColorShade.SHADE3}"
                 amityBackgroundColor="@{@color/amityColorPrimary}"
-                imageUrl="@{vmImageMessage.amityMessage.user.avatar.url}"
+                imageUrl="@{vmImageMessage.amityMessage.creator.avatar.url}"
                 android:layout_width="@dimen/amity_forty"
                 android:layout_height="@dimen/amity_forty"
                 android:layout_marginStart="@dimen/amity_padding_m1"

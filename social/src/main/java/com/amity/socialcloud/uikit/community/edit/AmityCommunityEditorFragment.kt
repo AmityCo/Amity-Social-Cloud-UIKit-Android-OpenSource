@@ -4,12 +4,12 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import com.amity.socialcloud.sdk.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.community.ui.view.AmityCommunityCreateBaseFragment
 import com.amity.socialcloud.uikit.community.ui.viewModel.AmityCreateCommunityViewModel
 import com.bumptech.glide.Glide
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 class AmityCommunityEditorFragment : AmityCommunityCreateBaseFragment() {
 

@@ -5,12 +5,11 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.paging.PagedList
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.amity.socialcloud.sdk.AmityCoreClient
-import com.amity.socialcloud.sdk.social.comment.AmityComment
-import com.amity.socialcloud.sdk.social.feed.AmityPost
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.model.social.comment.AmityComment
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.common.readableNumber
 import com.amity.socialcloud.uikit.common.components.AmityDividerItemDecor
 import com.amity.socialcloud.uikit.common.utils.AmityRecyclerViewItemDecoration

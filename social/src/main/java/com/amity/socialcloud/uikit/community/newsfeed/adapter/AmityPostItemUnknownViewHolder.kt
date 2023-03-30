@@ -3,11 +3,10 @@ package com.amity.socialcloud.uikit.community.newsfeed.adapter
 import android.view.View
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import com.amity.socialcloud.sdk.social.feed.AmityPost
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.common.views.AmityColorPaletteUtil
 import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
 import com.amity.socialcloud.uikit.community.R
-import com.amity.socialcloud.uikit.community.newsfeed.model.AmityBasePostContentItem
 
 class AmityPostItemUnknownViewHolder(itemView: View) : AmityPostContentViewHolder(itemView) {
 

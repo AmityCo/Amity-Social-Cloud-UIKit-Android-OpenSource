@@ -8,15 +8,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.amity.socialcloud.sdk.core.user.AmityUser
+import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.databinding.AmityUserFollowerFragmentBinding
 import com.amity.socialcloud.uikit.community.newsfeed.listener.AmityUserClickListener
 import com.amity.socialcloud.uikit.social.AmitySocialUISettings
 import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
-import com.trello.rxlifecycle3.components.support.RxFragment
-import io.reactivex.disposables.Disposable
-import io.reactivex.subjects.PublishSubject
+import com.trello.rxlifecycle4.components.support.RxFragment
+import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
 
 class AmityUserFollowerFragment : RxFragment() {
@@ -26,11 +26,15 @@ class AmityUserFollowerFragment : RxFragment() {
     lateinit var viewModel: AmityUserFollowerViewModel
     private var textChangeDisposable: Disposable? = null
     private val textChangeSubject: PublishSubject<String> by lazy {
-        PublishSubject.create<String>()
+        PublishSubject.create()
     }
     private lateinit var followerAdapter: AmityFollowerAdapter
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = AmityUserFollowerFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -47,15 +51,20 @@ class AmityUserFollowerFragment : RxFragment() {
     }
 
     private fun setupRecyclerView() {
-        val userClickListener = object: AmityUserClickListener {
+        val userClickListener = object : AmityUserClickListener {
             override fun onClickUser(user: AmityUser) {
-                AmitySocialUISettings.globalUserClickListener.onClickUser(this@AmityUserFollowerFragment, user)
+                AmitySocialUISettings.globalUserClickListener.onClickUser(
+                    this@AmityUserFollowerFragment,
+                    user
+                )
             }
         }
 
-        followerAdapter = AmityFollowerAdapter(requireContext(),
+        followerAdapter = AmityFollowerAdapter(
+            requireContext(),
             userClickListener,
-            viewModel.isSelf())
+            viewModel.isSelf()
+        )
         binding.rvUserFollowers.apply {
             adapter = followerAdapter
             layoutManager = LinearLayoutManager(requireContext())
@@ -67,7 +76,7 @@ class AmityUserFollowerFragment : RxFragment() {
     private fun getFollowers() {
         viewModel.getFollowersList {
             binding.refreshLayout.isRefreshing = false
-            followerAdapter.submitList(it)
+            followerAdapter.submitData(lifecycle, it)
         }.untilLifecycleEnd(this)
             .subscribe()
     }

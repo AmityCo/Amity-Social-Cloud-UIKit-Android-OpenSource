@@ -11,7 +11,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.paging.ExperimentalPagingApi
-import com.amity.socialcloud.sdk.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.base.AmityFragmentStateAdapter
 import com.amity.socialcloud.uikit.common.common.setSafeOnClickListener
 import com.amity.socialcloud.uikit.common.common.views.dialog.bottomsheet.AmityBottomSheetDialog
@@ -30,36 +30,38 @@ import com.amity.socialcloud.uikit.community.setting.AmityCommunitySettingsActiv
 import com.amity.socialcloud.uikit.community.ui.view.AmityCommunityCustomizeDialogFragment
 import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
 import com.google.android.material.appbar.AppBarLayout
-import com.trello.rxlifecycle3.components.support.RxFragment
-import io.reactivex.BackpressureStrategy
-import io.reactivex.subjects.PublishSubject
+import com.trello.rxlifecycle4.components.support.RxFragment
+import io.reactivex.rxjava3.core.BackpressureStrategy
+import io.reactivex.rxjava3.subjects.PublishSubject
 
 class AmityCommunityPageFragment : RxFragment(),
     AppBarLayout.OnOffsetChangedListener {
 
     private var isCreateCommunity: Boolean = false
 
-    private val TAG = AmityCommunityPageFragment::class.java.canonicalName
     private lateinit var binding: AmityFragmentCommunityPageBinding
     private lateinit var viewModel: AmityCommunityDetailViewModel
     private lateinit var fragmentStateAdapter: AmityFragmentStateAdapter
     private var refreshEventPublisher = PublishSubject.create<AmityFeedRefreshEvent>()
 
-    private val createGenericPost = registerForActivityResult(AmityPostCreatorActivity.AmityCreateCommunityPostActivityContract()) {
-        refreshFeed()
-    }
-
-    private val createLiveStreamPost = registerForActivityResult(AmityLiveStreamPostCreatorActivity.AmityCreateLiveStreamPostActivityContract()) {
-        it?.let {
-            val intent = AmityPostDetailsActivity.newIntent(requireContext(), it, null, null)
-            startActivity(intent)
+    private val createGenericPost =
+        registerForActivityResult(AmityPostCreatorActivity.AmityCreateCommunityPostActivityContract()) {
+            refreshFeed()
         }
-        refreshFeed()
-    }
 
-    private val createPollPost = registerForActivityResult(AmityPollPostCreatorActivity.AmityPollCreatorActivityContract()) {
-        refreshFeed()
-    }
+    private val createLiveStreamPost =
+        registerForActivityResult(AmityLiveStreamPostCreatorActivity.AmityCreateLiveStreamPostActivityContract()) {
+            it?.let {
+                val intent = AmityPostDetailsActivity.newIntent(requireContext(), it, null, null)
+                startActivity(intent)
+            }
+            refreshFeed()
+        }
+
+    private val createPollPost =
+        registerForActivityResult(AmityPollPostCreatorActivity.AmityPollCreatorActivityContract()) {
+            refreshFeed()
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,7 +101,7 @@ class AmityCommunityPageFragment : RxFragment(),
 
     private fun observeCommunity() {
         viewModel.getCommunity {
-            if(it.isJoined()) {
+            if (it.isJoined()) {
                 binding.fabCreatePost.visibility = View.VISIBLE
             } else {
                 binding.fabCreatePost.visibility = View.GONE
@@ -130,8 +132,9 @@ class AmityCommunityPageFragment : RxFragment(),
 
     private fun setUpProfile() {
         binding.appBar.setExpanded(true)
-        val communityProfileFragment = AmityCommunityProfileFragment.newInstance(viewModel.communityId!!)
-            .build(requireActivity() as AppCompatActivity)
+        val communityProfileFragment =
+            AmityCommunityProfileFragment.newInstance(viewModel.communityId!!)
+                .build(requireActivity() as AppCompatActivity)
         childFragmentManager.beginTransaction()
             .replace(R.id.profile_container, communityProfileFragment)
             .commit()
@@ -225,11 +228,11 @@ class AmityCommunityPageFragment : RxFragment(),
 
 
     private fun refreshCommunity() {
-        binding.refreshLayout?.isRefreshing = true
+        binding.refreshLayout.isRefreshing = true
         refreshProfile()
         refreshFeed()
         Handler(Looper.getMainLooper()).postDelayed({
-            binding.refreshLayout?.isRefreshing = false
+            binding.refreshLayout.isRefreshing = false
         }, 1000)
     }
 

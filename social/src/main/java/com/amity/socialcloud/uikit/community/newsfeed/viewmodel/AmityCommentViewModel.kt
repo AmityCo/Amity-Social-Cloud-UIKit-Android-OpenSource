@@ -1,26 +1,27 @@
 package com.amity.socialcloud.uikit.community.newsfeed.viewmodel
 
+
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.ExperimentalPagingApi
-import androidx.paging.PagedList
 import androidx.paging.PagingData
-import com.amity.socialcloud.sdk.AmityCoreClient
-import com.amity.socialcloud.sdk.core.mention.AmityMentionMetadata
-import com.amity.socialcloud.sdk.core.mention.AmityMentionMetadataCreator
-import com.amity.socialcloud.sdk.core.user.AmityUser
-import com.amity.socialcloud.sdk.core.user.AmityUserRepository
-import com.amity.socialcloud.sdk.core.user.AmityUserSortOption
-import com.amity.socialcloud.sdk.social.AmitySocialClient
-import com.amity.socialcloud.sdk.social.comment.AmityComment
-import com.amity.socialcloud.sdk.social.comment.AmityCommentRepository
-import com.amity.socialcloud.sdk.social.community.AmityCommunityMember
-import com.amity.socialcloud.sdk.social.feed.AmityPost
-import com.amity.socialcloud.sdk.social.post.AmityPostRepository
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.api.core.user.AmityUserRepository
+import com.amity.socialcloud.sdk.api.core.user.search.AmityUserSortOption
+import com.amity.socialcloud.sdk.api.social.AmitySocialClient
+import com.amity.socialcloud.sdk.api.social.comment.AmityCommentRepository
+import com.amity.socialcloud.sdk.api.social.post.AmityPostRepository
+import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadata
+import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataCreator
+import com.amity.socialcloud.sdk.model.core.error.AmityError
+import com.amity.socialcloud.sdk.model.core.user.AmityUser
+import com.amity.socialcloud.sdk.model.social.comment.AmityComment
+import com.amity.socialcloud.sdk.model.social.member.AmityCommunityMember
+import com.amity.socialcloud.sdk.model.social.member.AmityCommunityMembership
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
-import com.ekoapp.ekosdk.community.membership.query.AmityCommunityMembership
-import io.reactivex.Completable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
 class AmityCommentViewModel : AmityBaseViewModel() {
@@ -60,13 +61,12 @@ class AmityCommentViewModel : AmityBaseViewModel() {
     }
 
     fun addComment(
-        commentId: String,
         commentText: String,
         userMentions: List<AmityMentionMetadata.USER>,
         onSuccess: (AmityComment) -> Unit,
         onError: (Throwable) -> Unit
     ): Completable {
-        val commentCreator = AmitySocialClient.newCommentRepository().createComment(commentId)
+        val commentCreator = AmitySocialClient.newCommentRepository().createComment()
             .post(postId)
         if (reply != null) {
             commentCreator.parentId(reply?.getCommentId())
@@ -79,7 +79,9 @@ class AmityCommentViewModel : AmityBaseViewModel() {
         }
         return textCommentCreator.build().send()
             .map {
-                AmitySocialClient.newFeedRepository().getPost(postId).ignoreElements()
+                AmitySocialClient.newPostRepository()
+                    .getPost(postId)
+                    .ignoreElements()
                     .onErrorComplete()
                     .subscribe()
                 it
@@ -87,12 +89,19 @@ class AmityCommentViewModel : AmityBaseViewModel() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSuccess(onSuccess)
+            .doOnError {
+                if (AmityError.from(it) == AmityError.BAN_WORD_FOUND) {
+
+                    // TODO: 21/2/23 delete a comment
+//                    viewModel.deleteComment().subscribe()
+                }
+            }
             .doOnError(onError)
             .ignoreElement()
     }
 
     fun deleteComment(commentId: String): Completable {
-        return commentRepository.deleteComment(commentId)
+        return commentRepository.softDeleteComment(commentId)
     }
 
     fun checkForCommentUpdate() {
@@ -134,7 +143,7 @@ class AmityCommentViewModel : AmityBaseViewModel() {
         return userRepository.searchUserByDisplayName(keyword)
             .sortBy(AmityUserSortOption.DISPLAYNAME)
             .build()
-            .getPagingData()
+            .query()
             .throttleLatest(1, TimeUnit.SECONDS, true)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -155,7 +164,7 @@ class AmityCommentViewModel : AmityBaseViewModel() {
             .searchMembers(keyword)
             .membershipFilter(listOf(AmityCommunityMembership.MEMBER))
             .build()
-            .getPagingData()
+            .query()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext {
@@ -182,7 +191,7 @@ class AmityCommentViewModel : AmityBaseViewModel() {
     fun observeComment(onResult: (comment: AmityComment) -> Unit): Completable? {
         return comment?.getCommentId()?.let { commentId ->
             commentRepository
-                .observeComment(commentId)
+                .getComment(commentId)
                 .firstOrError()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
