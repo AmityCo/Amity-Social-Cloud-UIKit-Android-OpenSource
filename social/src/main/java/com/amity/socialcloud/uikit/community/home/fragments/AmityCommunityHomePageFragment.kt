@@ -25,8 +25,8 @@ import com.amity.socialcloud.uikit.community.explore.fragments.AmityCommunityExp
 import com.amity.socialcloud.uikit.community.newsfeed.fragment.AmityNewsFeedFragment
 import com.amity.socialcloud.uikit.community.search.AmityUserSearchFragment
 import com.amity.socialcloud.uikit.community.setting.AmityCommunitySearchFragment
-import io.reactivex.disposables.Disposable
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
 
 

@@ -12,7 +12,7 @@ import com.amity.socialcloud.uikit.community.databinding.AmityActivityVideoPrevi
 import com.amity.socialcloud.uikit.community.newsfeed.adapter.AmityVideoPostPlayerFragmentAdapter
 import com.amity.socialcloud.uikit.community.newsfeed.viewmodel.AmityVideoPostPlayerViewModel
 import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
-import com.trello.rxlifecycle3.components.support.RxAppCompatActivity
+import com.trello.rxlifecycle4.components.support.RxAppCompatActivity
 
 class AmityVideoPostPlayerActivity : RxAppCompatActivity() {
 

@@ -4,7 +4,7 @@ import com.amity.socialcloud.uikit.common.base.AmityViewHolder
 import com.amity.socialcloud.uikit.community.databinding.AmityItemPostAttachmentOptionBinding
 import com.amity.socialcloud.uikit.community.newsfeed.model.AmityPostAttachmentOptionItem
 import com.bumptech.glide.Glide
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.rxjava3.subjects.PublishSubject
 
 class AmityPostAttachmentOptionViewHolder(private val binding: AmityItemPostAttachmentOptionBinding,
                                           private val postAttachmentOptionClickEventPublisher: PublishSubject<AmityPostAttachmentOptionItem>

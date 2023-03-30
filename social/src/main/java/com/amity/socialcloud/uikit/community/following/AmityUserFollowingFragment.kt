@@ -8,16 +8,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.amity.socialcloud.sdk.core.user.AmityUser
+import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.uikit.community.R
-import com.amity.socialcloud.uikit.community.databinding.AmityUserFollowerHomeFragmentBinding
 import com.amity.socialcloud.uikit.community.databinding.AmityUserFollowingFragmentBinding
 import com.amity.socialcloud.uikit.community.newsfeed.listener.AmityUserClickListener
 import com.amity.socialcloud.uikit.social.AmitySocialUISettings
 import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
-import com.trello.rxlifecycle3.components.support.RxFragment
-import io.reactivex.disposables.Disposable
-import io.reactivex.subjects.PublishSubject
+import com.trello.rxlifecycle4.components.support.RxFragment
+import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
 
 class AmityUserFollowingFragment : RxFragment() {
@@ -32,14 +31,19 @@ class AmityUserFollowingFragment : RxFragment() {
     }
     private lateinit var followingAdapter: AmityFollowingAdapter
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = AmityUserFollowingFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(requireActivity()).get(AmityUserFollowingViewModel::class.java)
+        viewModel =
+            ViewModelProvider(requireActivity()).get(AmityUserFollowingViewModel::class.java)
         setUpRecyclerView()
         subscribeSearchStringChange()
         binding.refreshLayout.setColorSchemeResources(R.color.amityColorPrimary)
@@ -49,9 +53,12 @@ class AmityUserFollowingFragment : RxFragment() {
     }
 
     private fun setUpRecyclerView() {
-        val userClickListener = object: AmityUserClickListener {
+        val userClickListener = object : AmityUserClickListener {
             override fun onClickUser(user: AmityUser) {
-                AmitySocialUISettings.globalUserClickListener.onClickUser(this@AmityUserFollowingFragment, user)
+                AmitySocialUISettings.globalUserClickListener.onClickUser(
+                    this@AmityUserFollowingFragment,
+                    user
+                )
             }
         }
         followingAdapter = AmityFollowingAdapter(requireContext(), userClickListener)
@@ -66,7 +73,7 @@ class AmityUserFollowingFragment : RxFragment() {
     private fun getFollowing() {
         viewModel.getFollowingList {
             binding.refreshLayout.isRefreshing = false
-            followingAdapter.submitList(it)
+            followingAdapter.submitData(lifecycle, it)
         }.untilLifecycleEnd(this)
             .subscribe()
     }
@@ -114,13 +121,14 @@ class AmityUserFollowingFragment : RxFragment() {
 
         fun build(activity: AppCompatActivity): AmityUserFollowingFragment {
             val fragment = AmityUserFollowingFragment()
-            fragment.viewModel = ViewModelProvider(activity).get(AmityUserFollowingViewModel::class.java)
+            fragment.viewModel =
+                ViewModelProvider(activity).get(AmityUserFollowingViewModel::class.java)
             fragment.viewModel.userId = userId
             return fragment
         }
 
         internal fun setUserId(userId: String): Builder {
-            this.userId =  userId
+            this.userId = userId
             return this
         }
     }

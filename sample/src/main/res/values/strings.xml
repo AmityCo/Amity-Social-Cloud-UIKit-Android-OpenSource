@@ -15,6 +15,7 @@
     <string name="custom">Custom</string>
     <string name="enter_api_key">Enter Api Key</string>
     <string name="enter_url">Enter URL</string>
+    <string name="enter_mqtt_broker">Enter Mqtt broker</string>
     <string name="submit">Submit</string>
 
 </resources>

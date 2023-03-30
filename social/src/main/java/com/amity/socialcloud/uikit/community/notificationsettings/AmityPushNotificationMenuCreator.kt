@@ -1,7 +1,7 @@
 package com.amity.socialcloud.uikit.community.notificationsettings
 
 import com.amity.socialcloud.uikit.community.setting.AmitySettingsItem
-import io.reactivex.Flowable
+import io.reactivex.rxjava3.core.Flowable
 
 interface AmityPushNotificationMenuCreator {
     fun createAllNotificationsMenu(communityId : String, isToggled: Flowable<Boolean>): AmitySettingsItem.ToggleContent

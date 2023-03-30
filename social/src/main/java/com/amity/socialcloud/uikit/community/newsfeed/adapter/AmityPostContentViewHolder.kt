@@ -5,15 +5,15 @@ import android.text.SpannableString
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.amity.socialcloud.sdk.core.mention.AmityMentionMetadataGetter
-import com.amity.socialcloud.sdk.core.mention.AmityMentionee
-import com.amity.socialcloud.sdk.social.feed.AmityPost
+import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
+import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionee
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.common.views.text.AmityExpandableTextView
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.newsfeed.events.PollVoteClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.events.PostContentClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.listener.AmityMentionClickableSpan
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.rxjava3.subjects.PublishSubject
 import timber.log.Timber
 
 open class AmityPostContentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

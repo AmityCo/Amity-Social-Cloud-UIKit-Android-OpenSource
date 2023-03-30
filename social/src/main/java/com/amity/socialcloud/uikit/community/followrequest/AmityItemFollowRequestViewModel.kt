@@ -1,10 +1,11 @@
 package com.amity.socialcloud.uikit.community.followrequest
 
-import com.amity.socialcloud.sdk.AmityCoreClient
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.model.core.error.AmityException
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
-import io.reactivex.Completable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 class AmityItemFollowRequestViewModel : AmityBaseViewModel() {
 
@@ -19,8 +20,10 @@ class AmityItemFollowRequestViewModel : AmityBaseViewModel() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnComplete(onSuccess)
-            .doOnError{
-                onError.invoke()
+            .doOnError {
+                if (it is AmityException) {
+                    onError.invoke()
+                }
             }
     }
 
@@ -36,7 +39,9 @@ class AmityItemFollowRequestViewModel : AmityBaseViewModel() {
             .observeOn(AndroidSchedulers.mainThread())
             .doOnComplete(onSuccess)
             .doOnError {
-                onError.invoke()
+                if (it is AmityException) {
+                    onError.invoke()
+                }
             }
     }
 }

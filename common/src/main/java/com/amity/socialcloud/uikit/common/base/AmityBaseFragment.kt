@@ -1,15 +1,14 @@
 package com.amity.socialcloud.uikit.common.base
 
 import android.app.Activity
-import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.trello.rxlifecycle3.components.support.RxFragment
-import io.reactivex.disposables.CompositeDisposable
+import com.trello.rxlifecycle4.components.support.RxFragment
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 
 open class AmityBaseFragment : RxFragment() {
     protected var disposable: CompositeDisposable = CompositeDisposable()
@@ -53,8 +52,8 @@ open class AmityBaseFragment : RxFragment() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             context?.let {
                 val status = ContextCompat.checkSelfPermission(
-                        it,
-                        permission
+                    it,
+                    permission
                 )
                 return (status == PackageManager.PERMISSION_GRANTED)
             }
@@ -70,7 +69,7 @@ open class AmityBaseFragment : RxFragment() {
                     arrayOf(permission),
                     requestCode
                 )
-            } else{
+            } else {
                 requestPermissions(arrayOf(permission), requestCode)
             }
         }
@@ -84,7 +83,7 @@ open class AmityBaseFragment : RxFragment() {
                     permission,
                     requestCode
                 )
-            } else{
+            } else {
                 requestPermissions(permission, requestCode)
             }
         }

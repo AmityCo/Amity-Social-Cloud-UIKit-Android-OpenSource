@@ -1,7 +1,7 @@
 package com.amity.socialcloud.uikit.community.mycommunity.adapter
 
 import androidx.recyclerview.widget.DiffUtil
-import com.amity.socialcloud.sdk.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 
 object AmityMyCommunityDiffImpl {
     val diffCallBack = object : DiffUtil.ItemCallback<AmityCommunity>() {

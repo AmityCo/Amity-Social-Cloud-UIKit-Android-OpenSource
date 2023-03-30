@@ -3,18 +3,18 @@ package com.amity.socialcloud.uikit.community.newsfeed.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.PagingData
-import com.amity.socialcloud.sdk.social.AmitySocialClient
-import com.amity.socialcloud.sdk.social.feed.AmityPost
+import com.amity.socialcloud.sdk.api.social.AmitySocialClient
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import com.amity.socialcloud.uikit.community.newsfeed.adapter.AmityPostGalleryAdapter
 import com.amity.socialcloud.uikit.community.newsfeed.events.PostGalleryClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.model.TARGET_COMMUNITY
 import com.amity.socialcloud.uikit.community.newsfeed.model.TARGET_USER
-import io.reactivex.BackpressureStrategy
-import io.reactivex.Completable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.BackpressureStrategy
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjava3.subjects.PublishSubject
 
 private const val SAVED_TARGET_TYPE = "SAVED_TARGET_TYPE"
 private const val SAVED_TARGET_ID = "SAVED_TARGET_ID"
@@ -83,7 +83,7 @@ class AmityMediaPostViewModel(private val savedState: SavedStateHandle) : AmityB
             .includeDeleted(includeDelete)
             .types(listOf(AmityPost.DataType.sealedOf(postType)))
             .build()
-            .getPagingData()
+            .query()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext { onPageLoaded.invoke(it) }
@@ -98,7 +98,7 @@ class AmityMediaPostViewModel(private val savedState: SavedStateHandle) : AmityB
             .includeDeleted(includeDelete)
             .types(listOf(AmityPost.DataType.sealedOf(postType)))
             .build()
-            .getPagingData()
+            .query()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext { onPageLoaded.invoke(it) }

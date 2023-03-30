@@ -4,25 +4,22 @@ import android.net.Uri
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
-import androidx.paging.PagedList
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.RecyclerView
-import com.amity.socialcloud.sdk.AmityCoreClient
-import com.amity.socialcloud.sdk.chat.AmityChatClient
-import com.amity.socialcloud.sdk.chat.AmityMessageRepository
-import com.amity.socialcloud.sdk.chat.channel.AmityChannel
-import com.amity.socialcloud.sdk.chat.channel.AmityChannelMember
-import com.amity.socialcloud.sdk.chat.channel.AmityChannelRepository
-import com.amity.socialcloud.sdk.chat.message.AmityMessage
-import com.amity.socialcloud.sdk.chat.message.AmityMessageLoader
-import com.amity.socialcloud.sdk.core.AmityConnectionState
+import com.amity.socialcloud.sdk.api.chat.AmityChatClient
+import com.amity.socialcloud.sdk.api.chat.channel.AmityChannelRepository
+import com.amity.socialcloud.sdk.api.chat.message.AmityMessageRepository
+import com.amity.socialcloud.sdk.api.chat.message.query.AmityMessageQuery
+import com.amity.socialcloud.sdk.model.chat.channel.AmityChannel
+import com.amity.socialcloud.sdk.model.chat.member.AmityChannelMember
+import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
 import com.amity.socialcloud.uikit.common.components.AmityChatComposeBarClickListener
 import com.amity.socialcloud.uikit.common.model.AmityEventIdentifier
-import io.reactivex.Completable
-import io.reactivex.Flowable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.observers.DisposableCompletableObserver
-import io.reactivex.schedulers.Schedulers
-import org.joda.time.DateTime
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.observers.DisposableCompletableObserver
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 class AmityMessageListViewModel : AmityChatMessageBaseViewModel() {
 
@@ -32,11 +29,11 @@ class AmityMessageListViewModel : AmityChatMessageBaseViewModel() {
     var channelID: String = ""
         set(value) {
             field = value
-            messageLoader = AmityChatClient.newMessageRepository()
+
+            messageQuery = AmityChatClient.newMessageRepository()
                 .getMessages(value)
                 .parentId(null)
                 .build()
-                .loader()
         }
     var isRVScrolling = false
     val isScrollable = ObservableBoolean(false)
@@ -47,7 +44,7 @@ class AmityMessageListViewModel : AmityChatMessageBaseViewModel() {
     val isRecording = ObservableBoolean(false)
     var hasScrolled = false
 
-    lateinit var messageLoader: AmityMessageLoader
+    lateinit var messageQuery: AmityMessageQuery
 
     fun toggleRecordingView() {
         isVoiceMsgUi.set(!isVoiceMsgUi.get())
@@ -61,7 +58,7 @@ class AmityMessageListViewModel : AmityChatMessageBaseViewModel() {
         return channelRepository.getChannel(channelID)
     }
 
-    fun getDisplayName(): Flowable<PagedList<AmityChannelMember>> {
+    fun getDisplayName(): Flowable<PagingData<AmityChannelMember>> {
         val channelRepository: AmityChannelRepository = AmityChatClient.newChannelRepository()
         return channelRepository.membership(channelID).getMembers().build().query()
     }
@@ -72,17 +69,15 @@ class AmityMessageListViewModel : AmityChatMessageBaseViewModel() {
     }
 
     fun startReading() {
-        val channelRepository: AmityChannelRepository = AmityChatClient.newChannelRepository()
-        channelRepository.membership(channelID).startReading()
+        AmityChatClient.newSubChannelRepository().startReading(channelID)
     }
 
     fun stopReading() {
-        val channelRepository: AmityChannelRepository = AmityChatClient.newChannelRepository()
-        channelRepository.membership(channelID).stopReading()
+        AmityChatClient.newSubChannelRepository().stopReading(channelID)
     }
 
-    fun getAllMessages(): Flowable<List<AmityMessage>> {
-        return messageLoader.getResult()
+    fun getAllMessages(): Flowable<PagingData<AmityMessage>> {
+        return messageQuery.query()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }
@@ -152,37 +147,6 @@ class AmityMessageListViewModel : AmityChatMessageBaseViewModel() {
         }
     }
 
-    fun observeRefreshStatus(onRefreshNeeded: () -> Unit): Completable {
-        return Flowable.combineLatest(
-            reconnectedStateFlowable.map { DateTime.now() },
-            disconnectedStateFlowable.map { DateTime.now() },
-            { reconnectedTime, disconnectedTime ->
-                disconnectedTime.plusSeconds(RECONNECTION_DELAY_SECONDS).isBefore(reconnectedTime)
-            })
-            .filter { it }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext { onRefreshNeeded.invoke() }
-            .ignoreElements()
-    }
-
-    fun observeConnectionStatus(
-        onDisconnected: () -> Unit,
-        onReconnected: () -> Unit
-    ): Completable {
-        return connectionStateFlowable
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext {
-                if (it == AmityConnectionState.CONNECTED) {
-                    onReconnected.invoke()
-                } else if (it == AmityConnectionState.DISCONNECTED) {
-                    onDisconnected.invoke()
-                }
-            }
-            .ignoreElements()
-    }
-
     fun onRVScrollStateChanged(rv: RecyclerView, newState: Int) {
         isScrollable.set(rv.computeVerticalScrollRange() > rv.height)
         isRVScrolling = if (isScrollable.get()) {
@@ -195,15 +159,6 @@ class AmityMessageListViewModel : AmityChatMessageBaseViewModel() {
             hasScrolled = true
         }
     }
-
-    private val reconnectedStateFlowable = AmityCoreClient.getConnectionState()
-        .filter { it == AmityConnectionState.CONNECTED }
-
-
-    private val disconnectedStateFlowable = AmityCoreClient.getConnectionState()
-        .filter { it == AmityConnectionState.DISCONNECTED }
-
-    private val connectionStateFlowable = AmityCoreClient.getConnectionState()
 }
 
 private const val RECONNECTION_DELAY_SECONDS = 3

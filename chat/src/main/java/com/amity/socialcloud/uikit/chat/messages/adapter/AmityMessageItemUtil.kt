@@ -2,8 +2,8 @@ package com.amity.socialcloud.uikit.chat.messages.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.amity.socialcloud.sdk.AmityCoreClient
-import com.amity.socialcloud.sdk.chat.message.AmityMessage
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
 import com.amity.socialcloud.uikit.chat.R
 import com.amity.socialcloud.uikit.chat.messages.viewHolder.*
 import com.amity.socialcloud.uikit.chat.messages.viewModel.AmityAudioMsgViewModel
@@ -18,7 +18,7 @@ class AmityMessageItemUtil {
         inflater: LayoutInflater,
         parent: ViewGroup,
         itemType: Int,
-        viewHolderListener: AmityMessageListAdapter.CustomViewHolderListener?,
+        viewHolderListener: AmityMessagePagingAdapter.CustomViewHolderListener?,
         messageItemListener: AmityMessageItemListener?,
         audioPlayListener: AmityAudioPlayListener
     ): AmityChatMessageBaseViewHolder {
@@ -81,7 +81,7 @@ class AmityMessageItemUtil {
     private fun getReceiverTextMsgViewHolder(
         inflater: LayoutInflater, parent: ViewGroup,
         itemType: Int,
-        viewHolderListener: AmityMessageListAdapter.CustomViewHolderListener?
+        viewHolderListener: AmityMessagePagingAdapter.CustomViewHolderListener?
     ): AmityChatMessageBaseViewHolder {
         return if (viewHolderListener?.getViewHolder(inflater, parent, itemType) != null) {
             viewHolderListener.getViewHolder(inflater, parent, itemType)!!
@@ -99,7 +99,7 @@ class AmityMessageItemUtil {
     private fun getSenderTextMsgViewHolder(
         inflater: LayoutInflater, parent: ViewGroup,
         itemType: Int,
-        viewHolderListener: AmityMessageListAdapter.CustomViewHolderListener?,
+        viewHolderListener: AmityMessagePagingAdapter.CustomViewHolderListener?,
         messageItemListener: AmityMessageItemListener?,
     ): AmityChatMessageBaseViewHolder {
         return if (viewHolderListener?.getViewHolder(inflater, parent, itemType) != null) {
@@ -123,7 +123,7 @@ class AmityMessageItemUtil {
     private fun getReceiverImageMsgViewHolder(
         inflater: LayoutInflater, parent: ViewGroup,
         itemType: Int,
-        viewHolderListener: AmityMessageListAdapter.CustomViewHolderListener?
+        viewHolderListener: AmityMessagePagingAdapter.CustomViewHolderListener?
     ): AmityChatMessageBaseViewHolder {
         return if (viewHolderListener?.getViewHolder(inflater, parent, itemType) != null) {
             viewHolderListener.getViewHolder(inflater, parent, itemType)!!
@@ -142,7 +142,7 @@ class AmityMessageItemUtil {
     private fun getSenderImageMsgViewHolder(
         inflater: LayoutInflater, parent: ViewGroup,
         itemType: Int,
-        viewHolderListener: AmityMessageListAdapter.CustomViewHolderListener?
+        viewHolderListener: AmityMessagePagingAdapter.CustomViewHolderListener?
     ): AmityChatMessageBaseViewHolder {
         return if (viewHolderListener?.getViewHolder(inflater, parent, itemType) != null) {
             viewHolderListener.getViewHolder(inflater, parent, itemType)!!
@@ -160,7 +160,7 @@ class AmityMessageItemUtil {
     private fun getReceiverAudioMsgViewHolder(
         inflater: LayoutInflater, parent: ViewGroup,
         itemType: Int,
-        viewHolderListener: AmityMessageListAdapter.CustomViewHolderListener?,
+        viewHolderListener: AmityMessagePagingAdapter.CustomViewHolderListener?,
         audioPlayListener: AmityAudioPlayListener
     ): AmityChatMessageBaseViewHolder {
         return if (viewHolderListener?.getViewHolder(inflater, parent, itemType) != null) {
@@ -179,7 +179,7 @@ class AmityMessageItemUtil {
     private fun getSenderAudioMsgViewHolder(
         inflater: LayoutInflater, parent: ViewGroup,
         itemType: Int,
-        viewHolderListener: AmityMessageListAdapter.CustomViewHolderListener?,
+        viewHolderListener: AmityMessagePagingAdapter.CustomViewHolderListener?,
         audioPlayListener: AmityAudioPlayListener
     ): AmityChatMessageBaseViewHolder {
         return if (viewHolderListener?.getViewHolder(inflater, parent, itemType) != null) {
@@ -208,7 +208,7 @@ class AmityMessageItemUtil {
     private fun getSenderCustomMessageViewHolder(
         inflater: LayoutInflater, parent: ViewGroup,
         itemType: Int,
-        viewHolderListener: AmityMessageListAdapter.CustomViewHolderListener?
+        viewHolderListener: AmityMessagePagingAdapter.CustomViewHolderListener?
     ): AmityChatMessageBaseViewHolder {
         return if (viewHolderListener?.getViewHolder(inflater, parent, itemType) != null) {
             viewHolderListener.getViewHolder(inflater, parent, itemType)!!
@@ -225,7 +225,7 @@ class AmityMessageItemUtil {
     private fun getReceiverCustomMessageViewHolder(
         inflater: LayoutInflater, parent: ViewGroup,
         itemType: Int,
-        viewHolderListener: AmityMessageListAdapter.CustomViewHolderListener?
+        viewHolderListener: AmityMessagePagingAdapter.CustomViewHolderListener?
     ): AmityChatMessageBaseViewHolder {
         return if (viewHolderListener?.getViewHolder(inflater, parent, itemType) != null) {
             viewHolderListener.getViewHolder(inflater, parent, itemType)!!
@@ -243,7 +243,7 @@ class AmityMessageItemUtil {
         if (message == null) {
             return MessageType.MESSAGE_ID_UNKNOWN
         }
-        return getContentType(message, message.getUserId() == AmityCoreClient.getUserId())
+        return getContentType(message, message.getCreatorId() == AmityCoreClient.getUserId())
     }
 
     private fun getContentType(message: AmityMessage, isSelf: Boolean): Int {

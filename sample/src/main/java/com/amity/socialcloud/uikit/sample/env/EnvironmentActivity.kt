@@ -3,19 +3,18 @@ package com.amity.socialcloud.uikit.sample.env
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContract
-
-import com.amity.socialcloud.sdk.AmityCoreClient
-import com.amity.socialcloud.sdk.AmityRegionalEndpoint
+import androidx.appcompat.app.AppCompatActivity
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.api.core.endpoint.AmityEndpoint
 import com.amity.socialcloud.uikit.sample.R
 import com.amity.socialcloud.uikit.sample.databinding.ActivityEnvironmentBinding
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 class EnvironmentActivity : AppCompatActivity() {
 
@@ -35,10 +34,16 @@ class EnvironmentActivity : AppCompatActivity() {
         binding.btnSubmit.setOnClickListener {
             val newApiKey = binding.etApiKey.text.toString()
             val newUrl = binding.etUrl.text.toString()
-            if (newApiKey.isEmpty() || newUrl.isEmpty()) {
-                Toast.makeText(this, "Api key or URL can not be blank", Toast.LENGTH_SHORT).show()
-            }else {
-                updatePreference(newApiKey, newUrl)
+            val newMqttBroker = binding.etMqttBroker.text.toString()
+
+            if (newApiKey.isEmpty() || newUrl.isEmpty() || newMqttBroker.isEmpty()) {
+                Toast.makeText(
+                    this,
+                    "Api key, URL or MQTT Broker can not be blank",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                updatePreference(newApiKey, newUrl, newMqttBroker)
             }
         }
     }
@@ -74,22 +79,22 @@ class EnvironmentActivity : AppCompatActivity() {
         }
     }
 
-    private fun getCurrentOption() : Int {
-        return when(environment.httpUrl) {
+    private fun getCurrentOption(): Int {
+        return when (environment.httpUrl) {
             SampleUrl.get(SampleEnv.DEV) -> {
-                if(environment.apiKey == SampleAPIKey.get(SampleEnv.DEV)) R.id.radioDev else R.id.radioCustom
+                if (environment.apiKey == SampleAPIKey.get(SampleEnv.DEV)) R.id.radioDev else R.id.radioCustom
             }
             SampleUrl.get(SampleEnv.STAGING) -> {
-                if(environment.apiKey == SampleAPIKey.get(SampleEnv.STAGING)) R.id.radioStaging else R.id.radioCustom
+                if (environment.apiKey == SampleAPIKey.get(SampleEnv.STAGING)) R.id.radioStaging else R.id.radioCustom
             }
-            AmityRegionalEndpoint.SG -> {
-                if(environment.apiKey == SampleAPIKey.get(SampleEnv.PRODUCTION_SG)) R.id.radioProduction else R.id.radioCustom
+            AmityEndpoint.SG.httpEndpoint -> {
+                if (environment.apiKey == SampleAPIKey.get(SampleEnv.PRODUCTION_SG)) R.id.radioProduction else R.id.radioCustom
             }
-            AmityRegionalEndpoint.EU -> {
-                if(environment.apiKey == SampleAPIKey.get(SampleEnv.PRODUCTION_EU)) R.id.radioEU else R.id.radioCustom
+            AmityEndpoint.EU.httpEndpoint -> {
+                if (environment.apiKey == SampleAPIKey.get(SampleEnv.PRODUCTION_EU)) R.id.radioEU else R.id.radioCustom
             }
-            AmityRegionalEndpoint.US -> {
-                if(environment.apiKey == SampleAPIKey.get(SampleEnv.PRODUCTION_US)) R.id.radioUS else R.id.radioCustom
+            AmityEndpoint.US.httpEndpoint -> {
+                if (environment.apiKey == SampleAPIKey.get(SampleEnv.PRODUCTION_US)) R.id.radioUS else R.id.radioCustom
             }
             else -> {
                 R.id.radioCustom
@@ -104,44 +109,54 @@ class EnvironmentActivity : AppCompatActivity() {
     private fun setDefaultValues(id: Int) {
         var apiKey = ""
         var url = ""
-        when(id) {
+        var mqttBroker = ""
+        when (id) {
             R.id.radioDev -> {
                 apiKey = SampleAPIKey.get(SampleEnv.DEV)
                 url = SampleUrl.get(SampleEnv.DEV)
+                mqttBroker = SampleBroker.get(SampleEnv.DEV)
             }
             R.id.radioStaging -> {
                 apiKey = SampleAPIKey.get(SampleEnv.STAGING)
                 url = SampleUrl.get(SampleEnv.STAGING)
+                mqttBroker = SampleBroker.get(SampleEnv.STAGING)
             }
             R.id.radioProduction -> {
                 apiKey = SampleAPIKey.get(SampleEnv.PRODUCTION_SG)
                 url = SampleUrl.get(SampleEnv.PRODUCTION_SG)
+                mqttBroker = SampleBroker.get(SampleEnv.PRODUCTION_SG)
             }
             R.id.radioEU -> {
                 apiKey = SampleAPIKey.get(SampleEnv.PRODUCTION_EU)
-                url = AmityRegionalEndpoint.EU
+                url = AmityEndpoint.EU.httpEndpoint
+                mqttBroker = AmityEndpoint.EU.mqttEndpoint
             }
             R.id.radioUS -> {
                 apiKey = SampleAPIKey.get(SampleEnv.PRODUCTION_US)
-                url = AmityRegionalEndpoint.US
+                url = AmityEndpoint.US.httpEndpoint
+                mqttBroker = AmityEndpoint.US.mqttEndpoint
             }
             R.id.radioCustom -> {
                 apiKey = environment.apiKey
                 url = environment.httpUrl
+                mqttBroker = environment.mqttBroker
             }
         }
+
         binding.etApiKey.setText(apiKey)
         binding.etUrl.setText(url)
+        binding.etMqttBroker.setText(mqttBroker)
     }
 
-    private fun updatePreference(apiKey: String, url: String) {
+    private fun updatePreference(apiKey: String, url: String, mqttBroker: String) {
         environment.apply {
             this.apiKey = apiKey
             this.httpUrl = url
             this.socketUrl = url
+            this.mqttBroker = mqttBroker
         }
 
-        disposable = AmityCoreClient.setup(apiKey, url, url)
+        disposable = AmityCoreClient.setup(apiKey, AmityEndpoint.CUSTOM(url, url, url))
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnComplete {
@@ -161,7 +176,7 @@ class EnvironmentActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
-    class ChangeEnvironmentContract: ActivityResultContract<Environment, Environment?>() {
+    class ChangeEnvironmentContract : ActivityResultContract<Environment, Environment?>() {
 
         companion object {
             const val EXTRA_ENV = "EXTRA_ENV"

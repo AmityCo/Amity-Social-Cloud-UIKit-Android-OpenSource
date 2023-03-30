@@ -2,21 +2,23 @@ package com.amity.socialcloud.uikit.community.detailpage
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.paging.ExperimentalPagingApi
-import com.amity.socialcloud.sdk.core.permission.AmityPermission
-import com.amity.socialcloud.sdk.social.AmitySocialClient
-import com.amity.socialcloud.sdk.social.community.AmityCommunity
-import com.amity.socialcloud.sdk.social.feed.AmityFeedType
+import com.amity.socialcloud.sdk.api.social.AmitySocialClient
+import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunityPostSettings
+import com.amity.socialcloud.sdk.model.social.feed.AmityFeedType
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import com.amity.socialcloud.uikit.community.data.CommunityProfileData
 import com.amity.socialcloud.uikit.community.data.PostReviewBannerData
 import com.amity.socialcloud.uikit.community.newsfeed.adapter.AmityPostCountAdapter
 import com.amity.socialcloud.uikit.community.newsfeed.viewmodel.PermissionViewModel
-import io.reactivex.BackpressureStrategy
-import io.reactivex.Completable
-import io.reactivex.Flowable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.BackpressureStrategy
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjava3.subjects.BehaviorSubject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -60,7 +62,7 @@ class AmityCommunityProfileViewModel(private val savedState: SavedStateHandle) :
             .feedType(AmityFeedType.REVIEWING)
             .includeDeleted(false)
             .build()
-            .getPagingData()
+            .query()
             .map {
                 CoroutineScope(Dispatchers.IO).launch {
                     adapter.submitData(it)
@@ -82,7 +84,7 @@ class AmityCommunityProfileViewModel(private val savedState: SavedStateHandle) :
 
         val adapter = AmityPostCountAdapter()
         val hasPendingPostPublisher = BehaviorSubject.create<Boolean>()
-        adapter.addLoadStateListener { combinedLoadStates ->
+        adapter.addLoadStateListener {
             hasPendingPostPublisher.onNext(adapter.itemCount > 0)
         }
 
@@ -92,8 +94,8 @@ class AmityCommunityProfileViewModel(private val savedState: SavedStateHandle) :
 
         return Flowable.combineLatest(
             communitySource,
-            hasPendingPosts(adapter, hasPendingPostPublisher).startWith(false),
-            getReviewingFeedPostCount().startWith(0),
+            hasPendingPosts(adapter, hasPendingPostPublisher).startWith(Single.just(false)),
+            getReviewingFeedPostCount().startWith(Single.just(0)),
             hasCommunityPermission(
                 communitySource, getCommunityPermissionSource(
                     communityId!!,
@@ -105,41 +107,41 @@ class AmityCommunityProfileViewModel(private val savedState: SavedStateHandle) :
                     communityId!!,
                     AmityPermission.EDIT_COMMUNITY
                 )
-            ),
-            { community, hasPendingPosts, postCount, isReviewer, canEditCommunity ->
-                var shouldRefreshHasPendingPost = false
+            )
+        ) { community, hasPendingPosts, postCount, isReviewer, canEditCommunity ->
+            var shouldRefreshHasPendingPost = false
 
-                lastPostCount?.let {
-                    if ((postCount == 0 && it > 0) || (postCount > 0 && it == 0)) {
-                        shouldRefreshHasPendingPost = true
-                    }
+            lastPostCount?.let {
+                if ((postCount == 0 && it > 0) || (postCount > 0 && it == 0)) {
+                    shouldRefreshHasPendingPost = true
                 }
-                lastPostCount = postCount
+            }
+            lastPostCount = postCount
 
-                lastJoinedState?.let {
-                    if (it != community.isJoined()) {
-                        shouldRefreshHasPendingPost = true
-                    }
+            lastJoinedState?.let {
+                if (it != community.isJoined()) {
+                    shouldRefreshHasPendingPost = true
                 }
-                lastJoinedState = community.isJoined()
+            }
+            lastJoinedState = community.isJoined()
 
-                lastReviewEnabledState?.let {
-                    if (it != community.isPostReviewEnabled()) {
-                        shouldRefreshHasPendingPost = true
-                    }
+            lastReviewEnabledState?.let {
+                if (it != isPostReviewEnabled(community)) {
+                    shouldRefreshHasPendingPost = true
                 }
+            }
 
-                lastReviewEnabledState = community.isPostReviewEnabled()
+            lastReviewEnabledState = isPostReviewEnabled(community)
 
-                if (shouldRefreshHasPendingPost) {
-                    adapter.refresh()
-                }
+            if (shouldRefreshHasPendingPost) {
+                adapter.refresh()
+            }
 
-                val shouldShowBanner =
-                    hasPendingPosts && community.isJoined() && community.isPostReviewEnabled()
-                val bannerData = PostReviewBannerData(isReviewer, postCount, shouldShowBanner)
-                CommunityProfileData(community, canEditCommunity, bannerData)
-            })
+            val shouldShowBanner =
+                hasPendingPosts && community.isJoined() && isPostReviewEnabled(community)
+            val bannerData = PostReviewBannerData(isReviewer, postCount, shouldShowBanner)
+            CommunityProfileData(community, canEditCommunity, bannerData)
+        }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext {
@@ -151,6 +153,9 @@ class AmityCommunityProfileViewModel(private val savedState: SavedStateHandle) :
             .ignoreElements()
     }
 
+    private fun isPostReviewEnabled(community: AmityCommunity): Boolean {
+        return community.getPostSettings() == AmityCommunityPostSettings.ADMIN_REVIEW_POST_REQUIRED
+    }
 }
 
 private const val SAVED_COMMUNITY_ID = "SAVED_COMMUNITY_ID"

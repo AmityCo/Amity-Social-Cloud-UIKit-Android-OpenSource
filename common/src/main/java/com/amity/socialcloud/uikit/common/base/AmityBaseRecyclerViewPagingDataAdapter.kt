@@ -3,12 +3,11 @@ package com.amity.socialcloud.uikit.common.base
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.NonNull
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 
-abstract class AmityBaseRecyclerViewPagingDataAdapter<T: Any>(@NonNull diffCallBack: DiffUtil.ItemCallback<T>) :
+abstract class AmityBaseRecyclerViewPagingDataAdapter<T : Any>(diffCallBack: DiffUtil.ItemCallback<T>) :
     PagingDataAdapter<T, RecyclerView.ViewHolder>(diffCallBack) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =

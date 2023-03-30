@@ -7,11 +7,11 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.amity.socialcloud.sdk.AmityCoreClient
-import com.amity.socialcloud.sdk.core.file.AmityImage
-import com.amity.socialcloud.sdk.core.user.AmityUser
-import com.amity.socialcloud.sdk.social.community.AmityCommunityMember
-import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagedAdapter
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.model.core.file.AmityImage
+import com.amity.socialcloud.sdk.model.core.user.AmityUser
+import com.amity.socialcloud.sdk.model.social.member.AmityCommunityMember
+import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagingDataAdapter
 import com.amity.socialcloud.uikit.common.common.views.bottomsheet.AmityBottomSheetListFragment
 import com.amity.socialcloud.uikit.common.common.views.bottomsheet.AmityMenuItemClickListener
 import com.amity.socialcloud.uikit.common.model.AmityMenuItem
@@ -19,15 +19,14 @@ import com.amity.socialcloud.uikit.common.utils.AmityConstants
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.databinding.AmityItemCommunityMembershipBinding
 import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 class AmityCommunityMembersAdapter(
     private val context: Context,
     private val listener: AmityMemberClickListener,
     private val communityMemberViewModel: AmityCommunityMembersViewModel
-) :
-    AmityBaseRecyclerViewPagedAdapter<AmityCommunityMember>(diffCallBack) {
+) : AmityBaseRecyclerViewPagingDataAdapter<AmityCommunityMember>(diffCallBack) {
 
     private var isJoined: Boolean = false
 
@@ -61,14 +60,13 @@ class AmityCommunityMembersAdapter(
     inner class AmityMembershipViewHolder(
         itemView: View, private val context: Context,
         private val itemViewModel: AmityMembershipItemViewModel
-    ) :
-        AmityCommunityMembersBaseViewHolder(
-            itemView,
-            context,
-            itemViewModel,
-            communityMemberViewModel
-        ),
-        Binder<AmityCommunityMember> {
+    ) : AmityCommunityMembersBaseViewHolder(
+        itemView,
+        context,
+        itemViewModel,
+        communityMemberViewModel
+    ), Binder<AmityCommunityMember> {
+
         private val binding: AmityItemCommunityMembershipBinding? = DataBindingUtil.bind(itemView)
 
         override fun bind(data: AmityCommunityMember?, position: Int) {
@@ -87,7 +85,8 @@ class AmityCommunityMembersAdapter(
                         null
                     }
                     tvMemberName.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                        null, null, banIcon, null)
+                        null, null, banIcon, null
+                    )
 
 
                     ivMore.setOnClickListener {

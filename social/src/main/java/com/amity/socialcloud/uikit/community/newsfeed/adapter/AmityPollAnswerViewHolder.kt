@@ -2,7 +2,7 @@ package com.amity.socialcloud.uikit.community.newsfeed.adapter
 
 import android.content.Context
 import android.view.View
-import com.amity.socialcloud.sdk.social.feed.AmityPollAnswer
+import com.amity.socialcloud.sdk.model.social.poll.AmityPollAnswer
 import com.amity.socialcloud.uikit.common.base.AmityViewHolder
 import com.google.android.material.card.MaterialCardView
 

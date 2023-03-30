@@ -5,12 +5,12 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.amity.socialcloud.sdk.chat.channel.AmityChannel
-import com.amity.socialcloud.sdk.core.file.AmityImage
+import com.amity.socialcloud.sdk.model.chat.channel.AmityChannel
+import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.uikit.chat.R
 import com.amity.socialcloud.uikit.chat.databinding.AmityItemRecentMessageBinding
 import com.amity.socialcloud.uikit.chat.home.callback.AmityRecentChatItemClickListener
-import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagedAdapter
+import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagingDataAdapter
 import com.amity.socialcloud.uikit.common.common.views.AmityColorPaletteUtil
 import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
 import com.amity.socialcloud.uikit.common.utils.AmityDateUtils
@@ -20,7 +20,7 @@ import com.google.android.material.imageview.ShapeableImageView
 class AmityRecentChatViewHolder(
     itemView: View,
     private val listener: AmityRecentChatItemClickListener?
-) : RecyclerView.ViewHolder(itemView), AmityBaseRecyclerViewPagedAdapter.Binder<AmityChannel> {
+) : RecyclerView.ViewHolder(itemView), AmityBaseRecyclerViewPagingDataAdapter.Binder<AmityChannel> {
 
     private val binding: AmityItemRecentMessageBinding? = DataBindingUtil.bind(itemView)
 
@@ -38,7 +38,7 @@ class AmityRecentChatViewHolder(
             }
             setUpAvatarView(data)
             setupUnreadCount(data)
-            binding?.tvTime?.text = AmityDateUtils.getMessageTime(data.getLastActivity()!!.millis)
+            binding?.tvTime?.text = AmityDateUtils.getMessageTime(data.getLastActivity().millis)
             memberCount.text =
                 String.format(
                     itemView.context.getString(R.string.amity_member_count),
@@ -55,7 +55,7 @@ class AmityRecentChatViewHolder(
     }
 
     private fun setUpAvatarView(data: AmityChannel) {
-        val defaultAvatar: Int = when (data.getType()) {
+        val defaultAvatar: Int = when (data.getChannelType()) {
             AmityChannel.Type.STANDARD -> {
                 //setupNameView(data)
                 R.drawable.amity_ic_default_avatar_group_chat
@@ -88,7 +88,7 @@ class AmityRecentChatViewHolder(
 
     private fun setupNameView(data: AmityChannel) {
         var leftDrawable = R.drawable.amity_ic_community_public
-        if (data.getType() == AmityChannel.Type.PRIVATE)
+        if (data.getChannelType() == AmityChannel.Type.PRIVATE)
             leftDrawable = R.drawable.amity_ic_community_private
         val rightDrawable = 0
 //        if (data.verified)
@@ -98,9 +98,9 @@ class AmityRecentChatViewHolder(
     }
 
     private fun setupUnreadCount(data: AmityChannel) {
-        if (data.getUnreadCount() > 0) {
+        if (data.getDefaultSubChannelUnreadCount() > 0) {
             unreadCount.visibility = View.VISIBLE
-            unreadCount.text = data.getUnreadCount().toString()
+            unreadCount.text = data.getDefaultSubChannelUnreadCount().toString()
         } else {
             unreadCount.visibility = View.GONE
         }

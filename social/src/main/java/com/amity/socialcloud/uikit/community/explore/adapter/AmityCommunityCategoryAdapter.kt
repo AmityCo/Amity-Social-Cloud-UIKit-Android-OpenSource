@@ -4,15 +4,15 @@ import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.amity.socialcloud.sdk.core.file.AmityImage
-import com.amity.socialcloud.sdk.social.community.AmityCommunityCategory
-import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagedAdapter
+import com.amity.socialcloud.sdk.model.core.file.AmityImage
+import com.amity.socialcloud.sdk.model.social.category.AmityCommunityCategory
+import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagingDataAdapter
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.databinding.AmityItemCommunityCategoryBinding
 import com.amity.socialcloud.uikit.community.explore.listener.AmityCategoryItemClickListener
 
 class AmityCommunityCategoryAdapter(private val listener: AmityCategoryItemClickListener) :
-    AmityBaseRecyclerViewPagedAdapter<AmityCommunityCategory>(diffCallBack) {
+    AmityBaseRecyclerViewPagingDataAdapter<AmityCommunityCategory>(diffCallBack) {
 
     companion object {
         private val diffCallBack = object : DiffUtil.ItemCallback<AmityCommunityCategory>() {

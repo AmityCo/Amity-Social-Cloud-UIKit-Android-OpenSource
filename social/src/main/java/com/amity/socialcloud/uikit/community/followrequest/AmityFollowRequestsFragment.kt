@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.databinding.FragmentAmityFollowRequestsBinding
 import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
-import com.trello.rxlifecycle3.components.support.RxFragment
+import com.trello.rxlifecycle4.components.support.RxFragment
 
 class AmityFollowRequestsFragment : RxFragment() {
 
@@ -20,14 +20,19 @@ class AmityFollowRequestsFragment : RxFragment() {
     lateinit var viewModel: AmityFollowRequestsViewModel
     lateinit var followRequestsAdapter: AmityFollowRequestsAdapter
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentAmityFollowRequestsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(requireActivity()).get(AmityFollowRequestsViewModel::class.java)
+        viewModel =
+            ViewModelProvider(requireActivity()).get(AmityFollowRequestsViewModel::class.java)
         setUpRecyclerView()
         binding.refreshLayout.setColorSchemeResources(R.color.amityColorPrimary)
         binding.refreshLayout.setOnRefreshListener {
@@ -49,7 +54,7 @@ class AmityFollowRequestsFragment : RxFragment() {
             onSuccess = {
                 binding.refreshLayout.isRefreshing = false
                 binding.errorLayout.root.visibility = View.GONE
-                followRequestsAdapter.submitList(it)
+                followRequestsAdapter.submitData(lifecycle, it)
             },
             onError = {
                 binding.errorLayout.root.visibility = View.VISIBLE
@@ -73,7 +78,8 @@ class AmityFollowRequestsFragment : RxFragment() {
 
         fun build(activity: AppCompatActivity): AmityFollowRequestsFragment {
             val fragment = AmityFollowRequestsFragment()
-            fragment.viewModel = ViewModelProvider(activity).get(AmityFollowRequestsViewModel::class.java)
+            fragment.viewModel =
+                ViewModelProvider(activity).get(AmityFollowRequestsViewModel::class.java)
             fragment.viewModel.userId = userId
             return fragment
         }

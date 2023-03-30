@@ -3,12 +3,11 @@ package com.amity.socialcloud.uikit.community.newsfeed.fragment
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import com.amity.socialcloud.sdk.core.error.AmityError
-import com.amity.socialcloud.sdk.social.comment.AmityComment
+import com.amity.socialcloud.sdk.model.core.error.AmityError
+import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.uikit.common.common.showSnackBar
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.newsfeed.viewmodel.AmityCommentViewModel
-import org.amity.types.ObjectId
 
 class AmityCommentCreatorFragment : AmityCommentBaseFragment() {
 
@@ -26,14 +25,16 @@ class AmityCommentCreatorFragment : AmityCommentBaseFragment() {
     }
 
     private fun addComment() {
-        val commentId = ObjectId.get().toHexString()
-        val addComment = viewModel.addComment(commentId, binding.etPostComment.getTextCompose(),
-            binding.etPostComment.getUserMentions(), onSuccess = {
+        val addComment = viewModel.addComment(binding.etPostComment.getTextCompose(),
+            binding.etPostComment.getUserMentions(),
+            onSuccess = {
                 activity?.setResult(AppCompatActivity.RESULT_OK)
                 backPressFragment()
-            }, onError = {
+            },
+            onError = {
                 if (AmityError.from(it) == AmityError.BAN_WORD_FOUND) {
-                    viewModel.deleteComment(commentId).subscribe()
+                    // TODO: 21/2/23 delete a comment
+//                    viewModel.deleteComment().subscribe()
                 }
                 updateCommentMenu(true)
                 if (viewModel.getReply() != null) {

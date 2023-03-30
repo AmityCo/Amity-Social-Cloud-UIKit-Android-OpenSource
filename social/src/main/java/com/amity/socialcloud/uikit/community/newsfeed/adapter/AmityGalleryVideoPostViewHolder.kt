@@ -1,15 +1,12 @@
 package com.amity.socialcloud.uikit.community.newsfeed.adapter
 
 import androidx.recyclerview.widget.RecyclerView
-import com.amity.socialcloud.sdk.core.AmityVideo
-import com.amity.socialcloud.sdk.core.file.AmityImage
-import com.amity.socialcloud.sdk.social.feed.AmityPost
+import com.amity.socialcloud.sdk.model.core.file.AmityImage
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.community.databinding.AmityItemGalleryPostVideoBinding
 import com.amity.socialcloud.uikit.community.newsfeed.events.PostGalleryClickEvent
 import com.bumptech.glide.Glide
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.rxjava3.subjects.PublishSubject
 
 class AmityGalleryVideoPostViewHolder constructor(
     private val binding: AmityItemGalleryPostVideoBinding,

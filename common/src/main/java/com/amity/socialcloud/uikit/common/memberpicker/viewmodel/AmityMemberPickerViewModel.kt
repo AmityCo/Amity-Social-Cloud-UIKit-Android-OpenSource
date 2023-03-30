@@ -4,18 +4,17 @@ import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.ExperimentalPagingApi
-import androidx.paging.PagedList
 import androidx.paging.PagingData
-import com.amity.socialcloud.sdk.AmityCoreClient
-import com.amity.socialcloud.sdk.core.user.AmityUser
-import com.amity.socialcloud.sdk.core.user.AmityUserSortOption
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.api.core.user.search.AmityUserSortOption
+import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import com.amity.socialcloud.uikit.common.model.AmityEventIdentifier
 import com.amity.socialcloud.uikit.common.model.AmitySelectMemberItem
-import io.reactivex.Completable
-import io.reactivex.Flowable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
 class AmityMemberPickerViewModel : AmityBaseViewModel() {
@@ -33,7 +32,8 @@ class AmityMemberPickerViewModel : AmityBaseViewModel() {
     fun getAllUsers(): Flowable<PagingData<AmityUser>> {
         val userRepo = AmityCoreClient.newUserRepository()
         return userRepo.searchUserByDisplayName("")
-            .build().getPagingData()
+            .build()
+            .query()
     }
 
     @OptIn(ExperimentalPagingApi::class)
@@ -42,7 +42,7 @@ class AmityMemberPickerViewModel : AmityBaseViewModel() {
         return userRepo.searchUserByDisplayName(searchString.get() ?: "")
             .sortBy(AmityUserSortOption.DISPLAYNAME)
             .build()
-            .getPagingData()
+            .query()
             .throttleLatest(1, TimeUnit.SECONDS, true)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

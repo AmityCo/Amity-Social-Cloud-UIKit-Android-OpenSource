@@ -8,7 +8,7 @@
 
         <variable
             name="ekoCommunity"
-            type="com.amity.socialcloud.sdk.social.community.AmityCommunity" />
+            type="com.amity.socialcloud.sdk.model.social.community.AmityCommunity" />
 
         <variable
             name="listener"

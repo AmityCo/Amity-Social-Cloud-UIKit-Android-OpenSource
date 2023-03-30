@@ -4,11 +4,12 @@ import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.amity.socialcloud.sdk.core.file.AmityImage
-import com.amity.socialcloud.sdk.core.permission.AmityRoles
-import com.amity.socialcloud.sdk.core.user.AmityUser
-import com.amity.socialcloud.sdk.social.community.AmityCommunity
-import com.amity.socialcloud.sdk.social.feed.AmityPost
+import com.amity.socialcloud.sdk.model.core.file.AmityImage
+import com.amity.socialcloud.sdk.model.core.role.AmityRoles
+
+import com.amity.socialcloud.sdk.model.core.user.AmityUser
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.common.readableFeedPostTime
 import com.amity.socialcloud.uikit.common.components.setImageUrl
 import com.amity.socialcloud.uikit.common.utils.AmityConstants
@@ -16,7 +17,7 @@ import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.databinding.AmityItemBasePostHeaderBinding
 import com.amity.socialcloud.uikit.community.newsfeed.events.PostOptionClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.model.AmityBasePostHeaderItem
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.rxjava3.subjects.PublishSubject
 
 class AmityPostHeaderViewHolder(
     itemView: View,
@@ -45,7 +46,7 @@ class AmityPostHeaderViewHolder(
     }
 
     private fun renderAvatar(post: AmityPost) {
-        val avatarURL = post.getPostedUser()?.getAvatar()?.getUrl(AmityImage.Size.SMALL)
+        val avatarURL = post.getCreator()?.getAvatar()?.getUrl(AmityImage.Size.SMALL)
         setImageUrl(
             binding.avatarView,
             avatarURL,
@@ -57,7 +58,7 @@ class AmityPostHeaderViewHolder(
     }
 
     private fun renderCreatorName(post: AmityPost) {
-        val postedUser = post.getPostedUser()
+        val postedUser = post.getCreator()
         val banIcon = if (postedUser?.isGlobalBan() == true) {
             ContextCompat.getDrawable(itemView.context, R.drawable.amity_ic_ban)
         } else {
@@ -89,8 +90,8 @@ class AmityPostHeaderViewHolder(
 
     private fun renderTarget(post: AmityPost, showTarget: Boolean) {
         val target = post.getTarget()
-        val isTargetingOwnFeed = if (target is AmityPost.Target.USER) target.getUser()
-            ?.getUserId() ?: "" == post.getPostedUserId() else false
+        val isTargetingOwnFeed = if (target is AmityPost.Target.USER) (target.getUser()
+            ?.getUserId() ?: "") == post.getCreatorId() else false
         val shouldShowTarget = showTarget && !isTargetingOwnFeed
         var arrowIcon: Drawable? = null
         if (shouldShowTarget) {
@@ -114,17 +115,24 @@ class AmityPostHeaderViewHolder(
             binding.communityName.text = ""
             binding.communityName.visibility = View.GONE
         }
-        val isOfficial = (post.getTarget() as? AmityPost.Target.COMMUNITY)?.getCommunity()?.isOfficial() ?: false
+        val isOfficial =
+            (post.getTarget() as? AmityPost.Target.COMMUNITY)?.getCommunity()?.isOfficial() ?: false
         val officialBadgeIcon = if (isOfficial) {
             ContextCompat.getDrawable(context, R.drawable.amity_ic_verified)
         } else {
             null
         }
-        binding.communityName.setCompoundDrawablesWithIntrinsicBounds(arrowIcon, null, officialBadgeIcon, null)
+        binding.communityName.setCompoundDrawablesWithIntrinsicBounds(
+            arrowIcon,
+            null,
+            officialBadgeIcon,
+            null
+        )
     }
 
     private fun renderModBadge(post: AmityPost) {
-        val roles = (post.getTarget() as? AmityPost.Target.COMMUNITY)?.getPostedMember()?.getRoles()
+        val roles =
+            (post.getTarget() as? AmityPost.Target.COMMUNITY)?.getCreatorMember()?.getRoles()
         if (isCommunityModerator(roles)) {
             binding.tvPostBy.visibility = View.VISIBLE
         } else {
@@ -140,13 +148,13 @@ class AmityPostHeaderViewHolder(
 
     private fun setupListener(post: AmityPost) {
         binding.avatarView.setOnClickListener {
-            post.getPostedUser()?.let {
+            post.getCreator()?.let {
                 userClickPublisher.onNext(it)
             }
         }
 
         binding.userName.setOnClickListener {
-            post.getPostedUser()?.let {
+            post.getCreator()?.let {
                 userClickPublisher.onNext(it)
             }
         }

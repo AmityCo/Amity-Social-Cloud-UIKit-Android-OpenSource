@@ -3,11 +3,9 @@ package com.amity.socialcloud.uikit.community.newsfeed.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.amity.socialcloud.uikit.community.newsfeed.events.AmityCommentRefreshEvent
-import com.amity.socialcloud.uikit.community.newsfeed.events.AmityCommentReplyIntentEvent
 import com.amity.socialcloud.uikit.community.newsfeed.events.CommentEngagementClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.listener.AmityCommentItemListener
-import io.reactivex.Flowable
-import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.rxjava3.core.Flowable
 
 private const val SAVED_POST_ID = "SAVED_POST_ID"
 class AmityCommentListViewModel(private val savedState: SavedStateHandle) : ViewModel() , CommentViewModel {

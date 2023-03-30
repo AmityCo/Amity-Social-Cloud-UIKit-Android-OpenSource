@@ -3,7 +3,7 @@ package com.amity.socialcloud.uikit.community.newsfeed.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
-import com.amity.socialcloud.sdk.social.community.AmityCommunityMember
+import com.amity.socialcloud.sdk.model.social.member.AmityCommunityMember
 import com.amity.socialcloud.uikit.community.databinding.AmityItemUserMentionBinding
 import com.amity.socialcloud.uikit.community.newsfeed.diffutil.CommunityMemberDiffUtil
 import com.amity.socialcloud.uikit.community.newsfeed.model.AmityUserMention

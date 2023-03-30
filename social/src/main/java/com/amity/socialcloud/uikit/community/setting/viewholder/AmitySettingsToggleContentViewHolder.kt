@@ -10,8 +10,8 @@ import com.amity.socialcloud.uikit.common.components.setVisibility
 import com.amity.socialcloud.uikit.community.databinding.AmityItemSettingsToggleContentBinding
 import com.amity.socialcloud.uikit.community.setting.AmitySettingsItem
 import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 class AmitySettingsToggleContentViewHolder(val context: Context, itemView: View) : RecyclerView.ViewHolder(itemView),
         AmityBaseRecyclerViewAdapter.IBinder<AmitySettingsItem> {

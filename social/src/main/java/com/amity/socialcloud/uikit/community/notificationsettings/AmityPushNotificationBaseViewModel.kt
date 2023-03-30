@@ -1,17 +1,17 @@
 package com.amity.socialcloud.uikit.community.notificationsettings
 
-import com.amity.socialcloud.sdk.AmityCoreClient
-import com.amity.socialcloud.sdk.core.permission.AmityRolesFilter
-import com.amity.socialcloud.sdk.core.user.AmityUserNotificationModule
-import com.amity.socialcloud.sdk.core.user.AmityUserNotificationSettings
-import com.amity.socialcloud.sdk.social.AmitySocialClient
-import com.amity.socialcloud.sdk.social.community.AmityCommunityNotificationEvent
-import com.amity.socialcloud.sdk.social.community.AmityCommunityNotificationSettings
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.api.social.AmitySocialClient
+import com.amity.socialcloud.sdk.model.core.notification.AmityRolesFilter
+import com.amity.socialcloud.sdk.model.core.notification.AmityUserNotificationModule
+import com.amity.socialcloud.sdk.model.core.notification.AmityUserNotificationSettings
+import com.amity.socialcloud.sdk.model.social.notification.AmityCommunityNotificationEvent
+import com.amity.socialcloud.sdk.model.social.notification.AmityCommunityNotificationSettings
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import com.amity.socialcloud.uikit.common.utils.AmityConstants
-import io.reactivex.Completable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 open class AmityPushNotificationBaseViewModel : AmityBaseViewModel() {
 

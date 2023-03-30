@@ -1,9 +1,8 @@
 package com.amity.socialcloud.uikit.community.newsfeed.adapter
 
 import android.view.ViewGroup
-import android.widget.CompoundButton
-import com.amity.socialcloud.sdk.social.feed.AmityPoll
-import com.amity.socialcloud.sdk.social.feed.AmityPollAnswer
+import com.amity.socialcloud.sdk.model.social.poll.AmityPoll
+import com.amity.socialcloud.sdk.model.social.poll.AmityPollAnswer
 import com.amity.socialcloud.uikit.common.base.AmityRecyclerViewAdapter
 import com.google.android.material.card.MaterialCardView
 
@@ -20,7 +19,11 @@ class AmityPollAnswerAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AmityPollAnswerViewHolder {
         return when (viewType) {
-            SINGLE_ANSWER_VIEW_TYPE -> AmityPollSingleAnswerViewHolder(parent.context, isEnabled, voteCallback)
+            SINGLE_ANSWER_VIEW_TYPE -> AmityPollSingleAnswerViewHolder(
+                parent.context,
+                isEnabled,
+                voteCallback
+            )
             else -> AmityPollMultipleAnswersViewHolder(parent.context, isEnabled, voteCallback)
         }
     }

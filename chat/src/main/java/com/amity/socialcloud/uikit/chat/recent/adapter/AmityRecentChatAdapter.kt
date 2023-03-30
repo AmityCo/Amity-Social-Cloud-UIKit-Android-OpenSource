@@ -3,12 +3,13 @@ package com.amity.socialcloud.uikit.chat.recent.adapter
 import android.view.View
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.amity.socialcloud.sdk.chat.channel.AmityChannel
+import com.amity.socialcloud.sdk.model.chat.channel.AmityChannel
 import com.amity.socialcloud.uikit.chat.R
 import com.amity.socialcloud.uikit.chat.home.callback.AmityRecentChatItemClickListener
-import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagedAdapter
+import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagingDataAdapter
 
-class AmityRecentChatAdapter : AmityBaseRecyclerViewPagedAdapter<AmityChannel>(diffCallBack) {
+class AmityRecentChatAdapter : AmityBaseRecyclerViewPagingDataAdapter<AmityChannel>(diffCallBack) {
+
     private var recentChatItemClickListener: AmityRecentChatItemClickListener? = null
 
     companion object {

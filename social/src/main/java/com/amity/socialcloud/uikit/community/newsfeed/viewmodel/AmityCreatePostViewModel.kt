@@ -1,39 +1,41 @@
 package com.amity.socialcloud.uikit.community.newsfeed.viewmodel
 
+
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.PagingData
-import com.amity.socialcloud.sdk.AmityCoreClient
-import com.amity.socialcloud.sdk.core.AmityFile
-import com.amity.socialcloud.sdk.core.AmityVideo
-import com.amity.socialcloud.sdk.core.file.AmityFileInfo
-import com.amity.socialcloud.sdk.core.file.AmityImage
-import com.amity.socialcloud.sdk.core.file.AmityUploadResult
-import com.amity.socialcloud.sdk.core.mention.AmityMentionMetadata
-import com.amity.socialcloud.sdk.core.mention.AmityMentionMetadataCreator
-import com.amity.socialcloud.sdk.core.user.AmityUser
-import com.amity.socialcloud.sdk.core.user.AmityUserRepository
-import com.amity.socialcloud.sdk.core.user.AmityUserSortOption
-import com.amity.socialcloud.sdk.social.AmitySocialClient
-import com.amity.socialcloud.sdk.social.community.AmityCommunity
-import com.amity.socialcloud.sdk.social.community.AmityCommunityMember
-import com.amity.socialcloud.sdk.social.feed.AmityFeedType
-import com.amity.socialcloud.sdk.social.feed.AmityPost
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.api.core.user.AmityUserRepository
+import com.amity.socialcloud.sdk.api.core.user.search.AmityUserSortOption
+import com.amity.socialcloud.sdk.api.social.AmitySocialClient
+import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadata
+import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataCreator
+import com.amity.socialcloud.sdk.model.core.content.AmityContentFeedType
+import com.amity.socialcloud.sdk.model.core.file.AmityFile
+import com.amity.socialcloud.sdk.model.core.file.AmityFileInfo
+import com.amity.socialcloud.sdk.model.core.file.AmityImage
+import com.amity.socialcloud.sdk.model.core.file.AmityVideo
+import com.amity.socialcloud.sdk.model.core.file.upload.AmityUploadResult
+import com.amity.socialcloud.sdk.model.core.user.AmityUser
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.feed.AmityFeedType
+import com.amity.socialcloud.sdk.model.social.member.AmityCommunityMember
+import com.amity.socialcloud.sdk.model.social.member.AmityCommunityMembership
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import com.amity.socialcloud.uikit.common.common.AmityFileUtils
 import com.amity.socialcloud.uikit.common.model.AmityEventIdentifier
 import com.amity.socialcloud.uikit.community.domain.model.AmityFileAttachment
 import com.amity.socialcloud.uikit.community.newsfeed.model.FileUploadState
 import com.amity.socialcloud.uikit.community.newsfeed.model.PostMedia
-import com.ekoapp.ekosdk.community.membership.query.AmityCommunityMembership
-import io.reactivex.Completable
-import io.reactivex.Flowable
-import io.reactivex.Observable
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -125,7 +127,7 @@ class AmityCreatePostViewModel : AmityBaseViewModel() {
         return userRepository.searchUserByDisplayName(keyword)
             .sortBy(AmityUserSortOption.DISPLAYNAME)
             .build()
-            .getPagingData()
+            .query()
             .throttleLatest(1, TimeUnit.SECONDS, true)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -146,7 +148,7 @@ class AmityCreatePostViewModel : AmityBaseViewModel() {
             .searchMembers(keyword)
             .membershipFilter(listOf(AmityCommunityMembership.MEMBER))
             .build()
-            .getPagingData()
+            .query()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext {
@@ -294,8 +296,8 @@ class AmityCreatePostViewModel : AmityBaseViewModel() {
         return deleteImageOrFileInPost()
             .andThen(Completable.defer {
                 val attachments = post?.getChildren()
-                        ?.map { it.getData() }
-                        ?: emptyList()
+                    ?.map { it.getData() }
+                    ?: emptyList()
                 updateParentPost(postText, textData, attachments, userMentions)
             })
             .subscribeOn(Schedulers.io())
@@ -319,20 +321,20 @@ class AmityCreatePostViewModel : AmityBaseViewModel() {
             it.getVideo().blockingGet()
         }
         val images = attachments
-                .mapNotNull { (it as? AmityPost.Data.IMAGE)?.getImage() }
-                .filter { !deletedImageIds.contains(it.getFileId()) }
+            .mapNotNull { (it as? AmityPost.Data.IMAGE)?.getImage() }
+            .filter { !deletedImageIds.contains(it.getFileId()) }
         val files = attachments
-                .mapNotNull { (it as? AmityPost.Data.FILE)?.getFile() }
-                .filter { !deletedFileIds.contains(it.getFileId()) }
+            .mapNotNull { (it as? AmityPost.Data.FILE)?.getFile() }
+            .filter { !deletedFileIds.contains(it.getFileId()) }
         val postEditor = when (firstAttachment) {
             is AmityPost.Data.VIDEO -> {
-                textData.edit().attachments(videos).text(postText)
+                textData.edit().videoAttachments(videos).text(postText)
             }
             is AmityPost.Data.IMAGE -> {
-                textData.edit().attachments(images).text(postText)
+                textData.edit().imageAttachments(images).text(postText)
             }
             is AmityPost.Data.FILE -> {
-                textData.edit().attachments(files).text(postText)
+                textData.edit().fileAttachments(files).text(postText)
             }
             else -> {
                 textData.edit().text(postText)
@@ -460,8 +462,6 @@ class AmityCreatePostViewModel : AmityBaseViewModel() {
             PostMedia.Type.IMAGE -> {
                 return fileRepository
                     .uploadImage(postMedia.url)
-                    .uploadId(postMedia.uploadId!!)
-                    .isFullImage(true).build().transfer()
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnNext { updateMediaUploadStatus(postMedia, it) }
@@ -469,9 +469,7 @@ class AmityCreatePostViewModel : AmityBaseViewModel() {
             }
             PostMedia.Type.VIDEO -> {
                 return fileRepository
-                    .uploadVideo(postMedia.url)
-                    .uploadId(postMedia.uploadId!!)
-                    .build().transfer()
+                    .uploadVideo(postMedia.url, AmityContentFeedType.POST)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnNext { updateMediaUploadStatus(postMedia, it) }
@@ -485,10 +483,7 @@ class AmityCreatePostViewModel : AmityBaseViewModel() {
 
 
     fun uploadFile(attachment: AmityFileAttachment): Flowable<AmityUploadResult<AmityFile>> {
-        return fileRepository
-            .uploadFile(attachment.uri)
-            .uploadId(attachment.uploadId!!)
-            .build().transfer()
+        return fileRepository.uploadFile(attachment.uri)
     }
 
     private fun deleteImageOrFileInPost(
@@ -619,7 +614,7 @@ class AmityCreatePostViewModel : AmityBaseViewModel() {
                         0,
                         postMedia.type
                     )
-                    var firstTimeFailedToUpload =
+                    val firstTimeFailedToUpload =
                         !uploadFailedMediaMap.containsKey(updatedFeedImage.url.toString())
                     uploadFailedMediaMap[updatedFeedImage.url.toString()] = firstTimeFailedToUpload
                     updateList(updatedFeedImage)

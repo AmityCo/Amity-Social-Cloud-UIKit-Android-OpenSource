@@ -1,24 +1,23 @@
 package com.amity.socialcloud.uikit.community.newsfeed.viewmodel
 
 import androidx.paging.ExperimentalPagingApi
-import androidx.paging.PagedList
 import androidx.paging.PagingData
-import com.amity.socialcloud.sdk.AmityCoreClient
-import com.amity.socialcloud.sdk.core.mention.AmityMentionMetadata
-import com.amity.socialcloud.sdk.core.mention.AmityMentionMetadataCreator
-import com.amity.socialcloud.sdk.core.user.AmityUser
-import com.amity.socialcloud.sdk.core.user.AmityUserRepository
-import com.amity.socialcloud.sdk.core.user.AmityUserSortOption
-import com.amity.socialcloud.sdk.social.AmitySocialClient
-import com.amity.socialcloud.sdk.social.community.AmityCommunity
-import com.amity.socialcloud.sdk.social.community.AmityCommunityMember
-import com.amity.socialcloud.sdk.social.feed.AmityPoll
-import com.amity.socialcloud.sdk.social.feed.AmityPollAnswer
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.api.core.user.AmityUserRepository
+import com.amity.socialcloud.sdk.api.core.user.search.AmityUserSortOption
+import com.amity.socialcloud.sdk.api.social.AmitySocialClient
+import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadata
+import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataCreator
+import com.amity.socialcloud.sdk.model.core.user.AmityUser
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.member.AmityCommunityMember
+import com.amity.socialcloud.sdk.model.social.member.AmityCommunityMembership
+import com.amity.socialcloud.sdk.model.social.poll.AmityPoll
+import com.amity.socialcloud.sdk.model.social.poll.AmityPollAnswer
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
-import com.ekoapp.ekosdk.community.membership.query.AmityCommunityMembership
-import io.reactivex.Completable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
 class AmityPollCreatorViewModel : AmityBaseViewModel() {
@@ -61,53 +60,54 @@ class AmityPollCreatorViewModel : AmityBaseViewModel() {
                     .ignoreElement()
             }
     }
-    
+
     @ExperimentalPagingApi
     fun searchCommunityUsersMention(
-            communityId: String,
-            keyword: String,
-            onResult: (users: PagingData<AmityCommunityMember>) -> Unit
+        communityId: String,
+        keyword: String,
+        onResult: (users: PagingData<AmityCommunityMember>) -> Unit
     ): Completable {
         return AmitySocialClient.newCommunityRepository()
-                .membership(communityId)
-                .searchMembers(keyword)
-                .membershipFilter(listOf(AmityCommunityMembership.MEMBER))
-                .build()
-                .getPagingData()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext {
-                    onResult.invoke(it)
-                }
-                .ignoreElements()
+            .membership(communityId)
+            .searchMembers(keyword)
+            .membershipFilter(listOf(AmityCommunityMembership.MEMBER))
+            .build()
+            .query()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnNext {
+                onResult.invoke(it)
+            }
+            .ignoreElements()
     }
-    
-    @OptIn(ExperimentalPagingApi::class)
+
     fun searchUsersMention(
-            keyword: String,
-            onResult: (users: PagingData<AmityUser>) -> Unit
+        keyword: String,
+        onResult: (users: PagingData<AmityUser>) -> Unit
     ): Completable {
         return userRepository.searchUserByDisplayName(keyword)
-                .sortBy(AmityUserSortOption.DISPLAYNAME)
-                .build()
-                .getPagingData()
-                .throttleLatest(1, TimeUnit.SECONDS, true)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext {
-                    onResult.invoke(it)
-                }
-                .ignoreElements()
+            .sortBy(AmityUserSortOption.DISPLAYNAME)
+            .build()
+            .query()
+            .throttleLatest(1, TimeUnit.SECONDS, true)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnNext {
+                onResult.invoke(it)
+            }
+            .ignoreElements()
     }
-    
+
     fun observeCommunity(communityId: String?): Completable {
         this.communityId = communityId
-        return communityId?.let {communityRepository.getCommunity(communityId)
+        return communityId?.let {
+            communityRepository.getCommunity(communityId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext {
                     this.community = it
                 }
-                .ignoreElements() } ?: Completable.complete()
+                .ignoreElements()
+        } ?: Completable.complete()
     }
 }

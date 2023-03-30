@@ -2,17 +2,17 @@ package com.amity.socialcloud.uikit.community.newsfeed.adapter
 
 import android.content.Context
 import android.view.View
-import com.amity.socialcloud.sdk.core.file.AmityImage
-import com.amity.socialcloud.sdk.social.feed.AmityPost
-import com.amity.socialcloud.sdk.video.stream.AmityStream
+import com.amity.socialcloud.sdk.model.core.file.AmityImage
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
+import com.amity.socialcloud.sdk.model.video.stream.AmityStream
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.databinding.AmityItemLivestreamPostBinding
 import com.amity.socialcloud.uikit.community.newsfeed.events.PostContentClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.listener.AmityPostLivestreamClickListener
 import com.bumptech.glide.Glide
 import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 class AmityPostItemLivestreamViewHolder(itemView: View) : AmityPostContentViewHolder(itemView) {
 

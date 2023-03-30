@@ -8,7 +8,7 @@
 
         <variable
             name="communityCategory"
-            type="com.amity.socialcloud.sdk.social.community.AmityCommunityCategory" />
+            type="com.amity.socialcloud.sdk.model.social.category.AmityCommunityCategory" />
 
         <variable
             name="listener"

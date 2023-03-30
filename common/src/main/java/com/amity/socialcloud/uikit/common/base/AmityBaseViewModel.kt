@@ -2,14 +2,14 @@ package com.amity.socialcloud.uikit.common.base
 
 import androidx.databinding.Observable
 import androidx.lifecycle.ViewModel
-import com.amity.socialcloud.sdk.AmityCoreClient
-import com.amity.socialcloud.sdk.core.permission.AmityPermission
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
 import com.amity.socialcloud.uikit.common.model.AmityEventIdentifier
 import com.amity.socialcloud.uikit.common.model.AmityEventType
 import com.amity.socialcloud.uikit.common.utils.AmityEvent
-import io.reactivex.Flowable
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.disposables.Disposable
 
 /**
  * Base viewModel to be extended by all viewModels of application.

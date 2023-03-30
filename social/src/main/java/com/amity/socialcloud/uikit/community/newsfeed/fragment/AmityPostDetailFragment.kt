@@ -1,8 +1,6 @@
 package com.amity.socialcloud.uikit.community.newsfeed.fragment
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.*
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
@@ -14,10 +12,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.paging.ExperimentalPagingApi
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.amity.socialcloud.sdk.core.file.AmityImage
-import com.amity.socialcloud.sdk.social.comment.AmityComment
-import com.amity.socialcloud.sdk.social.feed.AmityFeedType
-import com.amity.socialcloud.sdk.social.feed.AmityPost
+import com.amity.socialcloud.sdk.model.core.file.AmityImage
+import com.amity.socialcloud.sdk.model.social.comment.AmityComment
+import com.amity.socialcloud.sdk.model.social.feed.AmityFeedType
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.base.AmityBaseFragment
 import com.amity.socialcloud.uikit.common.common.expandViewHitArea
 import com.amity.socialcloud.uikit.common.common.showSnackBar
@@ -43,9 +41,9 @@ import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
 import com.linkedin.android.spyglass.suggestions.interfaces.SuggestionsVisibilityManager
 import com.linkedin.android.spyglass.tokenization.QueryToken
 import com.linkedin.android.spyglass.tokenization.interfaces.QueryTokenReceiver
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import org.amity.types.ObjectId
 import java.util.*
 
@@ -89,7 +87,8 @@ class AmityPostDetailFragment : AmityBaseFragment(),
             inflater,
             R.layout.amity_fragment_base_post_detail,
             container,
-            false)
+            false
+        )
 
         getInstanceState(savedInstanceState)
         return binding.root
@@ -228,7 +227,7 @@ class AmityPostDetailFragment : AmityBaseFragment(),
         val commentItemListener = object : AmityCommentItemListener {
             override fun onClickReply(comment: AmityComment, fragment: Fragment) {
                 replyTo = comment
-                binding.replyingToUser = comment.getUser()?.getDisplayName()
+                binding.replyingToUser = comment.getCreator()?.getDisplayName()
                 showReplyTo()
             }
         }
@@ -275,7 +274,7 @@ class AmityPostDetailFragment : AmityBaseFragment(),
                 .subscribe()
         }
 
-        binding.commentComposeBar.setCommentExpandClickListener(View.OnClickListener {
+        binding.commentComposeBar.setCommentExpandClickListener {
             AmityAndroidUtil.hideKeyboard(binding.commentComposeBar.getCommentEditText())
             val bundle = Bundle()
             bundle.putParcelable(EXTRA_PARAM_COMMENT_REPLY_TO, replyTo)
@@ -285,7 +284,7 @@ class AmityPostDetailFragment : AmityBaseFragment(),
                 binding.commentComposeBar.getCommentEditText().getTextCompose()
             )
             addCommentContract.launch(bundle)
-        })
+        }
 
         binding.imageviewCloseReply.setOnClickListener {
             hideReplyTo()
@@ -386,7 +385,7 @@ class AmityPostDetailFragment : AmityBaseFragment(),
                 R.string.amity_delete_post_warning_message,
                 R.string.amity_delete, R.string.amity_cancel
             )
-        deleteConfirmationDialogFragment.show(childFragmentManager, AmityAlertDialogFragment.TAG);
+        deleteConfirmationDialogFragment.show(childFragmentManager, AmityAlertDialogFragment.TAG)
         deleteConfirmationDialogFragment.listener =
             object : AmityAlertDialogFragment.IAlertDialogActionListener {
                 override fun onClickPositiveButton() {
@@ -406,7 +405,7 @@ class AmityPostDetailFragment : AmityBaseFragment(),
                 R.string.amity_close_poll_message,
                 R.string.amity_close, R.string.amity_cancel
             )
-        closeConfirmationDialogFragment.show(childFragmentManager, AmityAlertDialogFragment.TAG);
+        closeConfirmationDialogFragment.show(childFragmentManager, AmityAlertDialogFragment.TAG)
         closeConfirmationDialogFragment.listener =
             object : AmityAlertDialogFragment.IAlertDialogActionListener {
                 override fun onClickPositiveButton() {
@@ -427,7 +426,7 @@ class AmityPostDetailFragment : AmityBaseFragment(),
                 R.string.amity_delete_poll_message,
                 R.string.amity_delete_poll, R.string.amity_cancel
             )
-        deleteConfirmationDialogFragment.show(childFragmentManager, AmityAlertDialogFragment.TAG);
+        deleteConfirmationDialogFragment.show(childFragmentManager, AmityAlertDialogFragment.TAG)
         deleteConfirmationDialogFragment.listener =
             object : AmityAlertDialogFragment.IAlertDialogActionListener {
                 override fun onClickPositiveButton() {

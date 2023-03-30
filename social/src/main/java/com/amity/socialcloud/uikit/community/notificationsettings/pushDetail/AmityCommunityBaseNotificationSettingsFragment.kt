@@ -1,14 +1,12 @@
 package com.amity.socialcloud.uikit.community.notificationsettings.pushDetail
 
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.amity.socialcloud.sdk.social.community.AmityCommunityNotificationEvent
+import com.amity.socialcloud.sdk.model.social.notification.AmityCommunityNotificationEvent
 import com.amity.socialcloud.uikit.common.utils.AmityAlertDialogUtil
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.databinding.AmityFragmentPushSettingsDetailsBinding
@@ -16,7 +14,7 @@ import com.amity.socialcloud.uikit.community.setting.AmitySettingsItem
 import com.amity.socialcloud.uikit.community.setting.AmitySettingsItemAdapter
 import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
 import com.google.android.material.snackbar.Snackbar
-import com.trello.rxlifecycle3.components.support.RxFragment
+import com.trello.rxlifecycle4.components.support.RxFragment
 
 open class AmityCommunityBaseNotificationSettingsFragment internal constructor() :
     RxFragment(R.layout.amity_fragment_push_settings_details) {
@@ -124,17 +122,18 @@ open class AmityCommunityBaseNotificationSettingsFragment internal constructor()
     }
 
     private fun errorDialog(title: Int, description: Int) {
-        AmityAlertDialogUtil.showDialog(requireContext(),
+        AmityAlertDialogUtil.showDialog(
+            requireContext(),
             getString(title),
             getString(description),
             getString(R.string.amity_ok),
-            null,
-            DialogInterface.OnClickListener { dialog, which ->
-                AmityAlertDialogUtil.checkConfirmDialog(isPositive = which, confirmed = {
-                    dialog.cancel()
-                    revertState()
-                })
+            null
+        ) { dialog, which ->
+            AmityAlertDialogUtil.checkConfirmDialog(isPositive = which, confirmed = {
+                dialog.cancel()
+                revertState()
             })
+        }
     }
 
     private fun showSnackBar() {

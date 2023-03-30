@@ -6,18 +6,15 @@ import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.amity.socialcloud.sdk.core.user.AmityFollowRelationship
-import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagedAdapter
+import com.amity.socialcloud.sdk.model.core.follow.AmityFollowRelationship
+import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagingDataAdapter
 import com.amity.socialcloud.uikit.common.common.showSnackBar
 import com.amity.socialcloud.uikit.common.utils.AmityAlertDialogUtil
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.databinding.AmityItemFollowRequestBinding
-import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
 
 class AmityFollowRequestsAdapter(private val context: Context) :
-    AmityBaseRecyclerViewPagedAdapter<AmityFollowRelationship>(
-        diffCallBack
-    ) {
+    AmityBaseRecyclerViewPagingDataAdapter<AmityFollowRelationship>(diffCallBack) {
 
     override fun getLayoutId(position: Int, obj: AmityFollowRelationship?): Int =
         R.layout.amity_item_follow_request
@@ -32,6 +29,7 @@ class AmityFollowRequestsAdapter(private val context: Context) :
         private val itemViewModel: AmityItemFollowRequestViewModel
     ) : RecyclerView.ViewHolder(itemView),
         Binder<AmityFollowRelationship> {
+
         private val binding: AmityItemFollowRequestBinding? = DataBindingUtil.bind(itemView)
 
         override fun bind(data: AmityFollowRelationship?, position: Int) {
@@ -47,7 +45,6 @@ class AmityFollowRequestsAdapter(private val context: Context) :
                             onError = {
                                 showErrorDialog()
                             })
-                            .untilLifecycleEnd(itemView)
                             .subscribe()
                     }
 
@@ -59,7 +56,6 @@ class AmityFollowRequestsAdapter(private val context: Context) :
                             onError = {
                                 showErrorDialog()
                             })
-                            .untilLifecycleEnd(itemView)
                             .subscribe()
                     }
                 }
@@ -67,15 +63,17 @@ class AmityFollowRequestsAdapter(private val context: Context) :
         }
 
         private fun showErrorDialog() {
-            AmityAlertDialogUtil.showDialog(context,
-                context.getString(R.string.amity_request_error),
-                context.getString(R.string.amity_request_withdrawn),
-                context.getString(R.string.amity_ok), null,
-                DialogInterface.OnClickListener { dialog, which ->
-                    if (which == DialogInterface.BUTTON_POSITIVE) {
-                        dialog.cancel()
-                    }
-                })
+            AmityAlertDialogUtil.showDialog(
+                context = context,
+                title = context.getString(R.string.amity_request_error),
+                msg = context.getString(R.string.amity_request_withdrawn),
+                positiveButton = context.getString(R.string.amity_ok),
+                negativeButton = null
+            ) { dialog, which ->
+                if (which == DialogInterface.BUTTON_POSITIVE) {
+                    dialog.cancel()
+                }
+            }
         }
 
     }

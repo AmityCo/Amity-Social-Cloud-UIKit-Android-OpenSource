@@ -1,8 +1,7 @@
 package com.amity.socialcloud.uikit.community.newsfeed.diffutil
 
 import androidx.recyclerview.widget.DiffUtil
-import com.amity.socialcloud.sdk.core.user.AmityUser
-import com.amity.socialcloud.sdk.social.community.AmityCommunityMember
+import com.amity.socialcloud.sdk.model.social.member.AmityCommunityMember
 
 class CommunityMemberDiffUtil : DiffUtil.ItemCallback<AmityCommunityMember>() {
 

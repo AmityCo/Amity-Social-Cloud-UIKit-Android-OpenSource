@@ -7,7 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import com.amity.socialcloud.sdk.social.community.AmityCommunityCategory
+import androidx.paging.LoadState
+import com.amity.socialcloud.sdk.model.social.category.AmityCommunityCategory
 import com.amity.socialcloud.uikit.common.base.AmityBaseFragment
 import com.amity.socialcloud.uikit.common.common.expandViewHitArea
 import com.amity.socialcloud.uikit.common.utils.AmityExceptionCatchGridLayoutManager
@@ -43,6 +44,8 @@ class AmityCategoryPreviewFragment : AmityBaseFragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initializeRecyclerView()
+        initListener()
+
         binding.ivMore.expandViewHitArea()?.setOnClickListener {
             val intent = Intent(requireContext(), AmityCategoryListActivity::class.java)
             startActivity(intent)
@@ -55,7 +58,8 @@ class AmityCategoryPreviewFragment : AmityBaseFragment(),
 
     private fun initializeRecyclerView() {
         communityCategoryAdapter = AmityCommunityCategoryAdapter(this)
-        binding.rvCommunityCategory.layoutManager = AmityExceptionCatchGridLayoutManager(requireContext(), 2)
+        binding.rvCommunityCategory.layoutManager =
+            AmityExceptionCatchGridLayoutManager(requireContext(), 2)
         binding.rvCommunityCategory.adapter = communityCategoryAdapter
         binding.rvCommunityCategory.addItemDecoration(
             AmityRecyclerViewItemDecoration(
@@ -67,10 +71,22 @@ class AmityCategoryPreviewFragment : AmityBaseFragment(),
 
     private fun getCategories() {
         viewModel.getCommunityCategory {
-            viewModel.emptyCategoryList.set(it.size == 0)
-            communityCategoryAdapter.submitList(it)
-        }.untilLifecycleEnd(this)
+            communityCategoryAdapter.submitData(lifecycle, it)
+        }
+            .untilLifecycleEnd(this)
             .subscribe()
+    }
+
+    private fun initListener() {
+        communityCategoryAdapter.addLoadStateListener { loadState ->
+            loadState.run {
+                if (source.append is LoadState.NotLoading
+                    && source.append.endOfPaginationReached
+                ) {
+                    viewModel.emptyCategoryList.set(communityCategoryAdapter.itemCount == 0)
+                }
+            }
+        }
     }
 
     override fun onCategorySelected(category: AmityCommunityCategory) {
@@ -78,7 +94,7 @@ class AmityCategoryPreviewFragment : AmityBaseFragment(),
         startActivity(intent)
     }
 
-    class Builder internal constructor(){
+    class Builder internal constructor() {
         fun build(): AmityCategoryPreviewFragment {
             return AmityCategoryPreviewFragment()
         }

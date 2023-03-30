@@ -1,31 +1,31 @@
 package com.amity.socialcloud.uikit.community.members
 
+
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
-import androidx.paging.PagedList
-import com.amity.socialcloud.sdk.AmityCoreClient
-import com.amity.socialcloud.sdk.core.permission.AmityPermission
-import com.amity.socialcloud.sdk.social.AmitySocialClient
-import com.amity.socialcloud.sdk.social.community.AmityCommunity
-import com.amity.socialcloud.sdk.social.community.AmityCommunityMember
-import com.amity.socialcloud.sdk.social.community.AmityCommunityMembershipFilter
-import com.amity.socialcloud.sdk.social.community.AmityCommunityMembershipSortOption
+import androidx.paging.PagingData
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.api.social.AmitySocialClient
+import com.amity.socialcloud.sdk.api.social.member.query.AmityCommunityMembershipSortOption
+import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.member.AmityCommunityMember
+import com.amity.socialcloud.sdk.model.social.member.AmityCommunityMembershipFilter
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import com.amity.socialcloud.uikit.common.model.AmitySelectMemberItem
 import com.amity.socialcloud.uikit.common.utils.AmityConstants
-import io.reactivex.Completable
-import io.reactivex.Flowable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.BiFunction
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.functions.BiFunction
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 class AmityCommunityMembersViewModel : AmityBaseViewModel() {
 
     var communityId: String = ""
     var community: AmityCommunity? = null
     val searchString = ObservableField("")
-    val emptyMembersList = ObservableBoolean(false)
     val selectMembersList = ArrayList<AmitySelectMemberItem>()
     val membersSet = HashSet<String>()
     val isJoined = ObservableBoolean(false)
@@ -37,7 +37,7 @@ class AmityCommunityMembersViewModel : AmityBaseViewModel() {
 
     fun getCommunityMembers(
         onCommunityLoaded: (AmityCommunity) -> Unit,
-        onMembersLoaded: (PagedList<AmityCommunityMember>) -> Unit,
+        onMembersLoaded: (PagingData<AmityCommunityMember>) -> Unit,
         onMembersLoadFailed: () -> Unit
     ): Completable {
         return getCommunity()
@@ -77,7 +77,7 @@ class AmityCommunityMembersViewModel : AmityBaseViewModel() {
             hasPermissionAtCommunity(AmityPermission.EDIT_COMMUNITY_USER, communityId),
             BiFunction { community, hasEditPermission ->
                 if (community.isJoined()) {
-                    if (AmityCoreClient.getUserId() == community.getUserId()) {
+                    if (AmityCoreClient.getUserId() == community.getCreatorId()) {
                         return@BiFunction true
                     } else {
                         return@BiFunction hasEditPermission
@@ -92,7 +92,7 @@ class AmityCommunityMembersViewModel : AmityBaseViewModel() {
             .ignoreElement()
     }
 
-    fun getCommunityModerators(onModeratorsLoaded: (PagedList<AmityCommunityMember>) -> Unit): Completable {
+    fun getCommunityModerators(onModeratorsLoaded: (PagingData<AmityCommunityMember>) -> Unit): Completable {
         return AmitySocialClient.newCommunityRepository()
             .membership(communityId)
             .getMembers()

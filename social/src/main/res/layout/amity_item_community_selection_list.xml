@@ -7,7 +7,7 @@
 
         <variable
             name="community"
-            type="com.amity.socialcloud.sdk.social.community.AmityCommunity" />
+            type="com.amity.socialcloud.sdk.model.social.community.AmityCommunity" />
 
         <import type="com.amity.socialcloud.uikit.common.common.views.AmityColorShade" />
     </data>

@@ -10,7 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.amity.socialcloud.sdk.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.base.AmityBaseFragment
 import com.amity.socialcloud.uikit.common.utils.AmityRecyclerViewItemDecoration
 import com.amity.socialcloud.uikit.community.R
@@ -21,8 +21,8 @@ import com.amity.socialcloud.uikit.community.mycommunity.adapter.AmityMyCommunit
 import com.amity.socialcloud.uikit.community.mycommunity.listener.AmityMyCommunityItemClickListener
 import com.amity.socialcloud.uikit.community.mycommunity.viewmodel.AmityMyCommunityListViewModel
 import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 class AmityMyCommunityPreviewFragment : AmityBaseFragment(),
     AmityMyCommunityItemClickListener {

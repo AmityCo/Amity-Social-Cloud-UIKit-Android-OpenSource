@@ -1,23 +1,18 @@
 package com.amity.socialcloud.uikit.community.newsfeed.adapter
 
 import android.view.View
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.res.ResourcesCompat
 import androidx.paging.PagedList
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.amity.socialcloud.sdk.core.user.AmityUser
-import com.amity.socialcloud.sdk.social.comment.AmityComment
+import com.amity.socialcloud.sdk.model.core.user.AmityUser
+import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.uikit.common.common.toPagedList
-import com.amity.socialcloud.uikit.common.components.AmityDividerItemDecor
-import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.databinding.AmityItemPostFooterCommentPreviewBinding
 import com.amity.socialcloud.uikit.community.newsfeed.events.CommentContentClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.events.CommentEngagementClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.events.CommentOptionClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.events.PostEngagementClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.model.AmityBasePostFooterItem
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.rxjava3.subjects.PublishSubject
 
 private const val MAXIMUM_COMMENTS_TO_SHOW = 2
 

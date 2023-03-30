@@ -2,9 +2,8 @@ package com.amity.socialcloud.uikit.community.newsfeed.adapter
 
 import android.content.Context
 import android.content.res.ColorStateList
-import android.widget.CompoundButton
 import androidx.core.content.ContextCompat
-import com.amity.socialcloud.sdk.social.feed.AmityPollAnswer
+import com.amity.socialcloud.sdk.model.social.poll.AmityPollAnswer
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.databinding.AmityItemPollSingleAnswerBinding
 import com.google.android.material.card.MaterialCardView

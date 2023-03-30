@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
-import com.amity.socialcloud.sdk.core.user.AmityUser
-import com.amity.socialcloud.sdk.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.core.user.AmityUser
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.model.AmityEventIdentifier
 import com.amity.socialcloud.uikit.community.databinding.AmityViewGlobalFeedEmptyBinding
 import com.amity.socialcloud.uikit.community.home.fragments.AmityCommunityHomeViewModel
@@ -19,7 +19,7 @@ import com.amity.socialcloud.uikit.community.newsfeed.viewmodel.AmityGlobalFeedV
 import com.amity.socialcloud.uikit.community.ui.view.AmityCommunityCreatorActivity
 import com.amity.socialcloud.uikit.feed.settings.AmityPostShareClickListener
 import com.amity.socialcloud.uikit.social.AmitySocialUISettings
-import io.reactivex.Flowable
+import io.reactivex.rxjava3.core.Flowable
 
 class AmityGlobalFeedFragment : AmityFeedFragment() {
 

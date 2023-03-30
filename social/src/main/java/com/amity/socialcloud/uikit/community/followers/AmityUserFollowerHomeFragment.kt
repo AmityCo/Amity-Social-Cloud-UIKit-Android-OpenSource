@@ -9,7 +9,7 @@ import com.amity.socialcloud.uikit.common.base.AmityFragmentStateAdapter
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.databinding.AmityUserFollowerHomeFragmentBinding
 import com.amity.socialcloud.uikit.community.following.AmityUserFollowingFragment
-import com.trello.rxlifecycle3.components.support.RxFragment
+import com.trello.rxlifecycle4.components.support.RxFragment
 
 class AmityUserFollowerHomeFragment : RxFragment() {
 

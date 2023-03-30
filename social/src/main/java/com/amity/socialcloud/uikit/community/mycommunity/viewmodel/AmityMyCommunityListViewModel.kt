@@ -3,14 +3,14 @@ package com.amity.socialcloud.uikit.community.mycommunity.viewmodel
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.paging.PagingData
-import com.amity.socialcloud.sdk.social.AmitySocialClient
-import com.amity.socialcloud.sdk.social.community.AmityCommunity
-import com.amity.socialcloud.sdk.social.community.AmityCommunityFilter
-import com.amity.socialcloud.sdk.social.community.AmityCommunitySortOption
+import com.amity.socialcloud.sdk.api.social.AmitySocialClient
+import com.amity.socialcloud.sdk.api.social.community.query.AmityCommunitySortOption
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunityFilter
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import com.amity.socialcloud.uikit.common.model.AmityEventIdentifier
 import com.amity.socialcloud.uikit.community.mycommunity.listener.AmityMyCommunityItemClickListener
-import io.reactivex.Flowable
+import io.reactivex.rxjava3.core.Flowable
 
 class AmityMyCommunityListViewModel : AmityBaseViewModel() {
 
@@ -25,7 +25,7 @@ class AmityMyCommunityListViewModel : AmityBaseViewModel() {
             .filter(AmityCommunityFilter.MEMBER).sortBy(AmityCommunitySortOption.DISPLAY_NAME)
             .includeDeleted(false)
             .build()
-            .getPagingData()
+            .query()
     }
 
     fun setPropertyChangeCallback() {

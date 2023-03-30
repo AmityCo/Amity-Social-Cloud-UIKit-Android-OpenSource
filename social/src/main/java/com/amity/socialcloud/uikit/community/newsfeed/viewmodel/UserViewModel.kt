@@ -1,8 +1,8 @@
 package com.amity.socialcloud.uikit.community.newsfeed.viewmodel
 
-import com.amity.socialcloud.sdk.AmityCoreClient
-import com.amity.socialcloud.sdk.core.user.AmityUser
-import io.reactivex.Flowable
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.model.core.user.AmityUser
+import io.reactivex.rxjava3.core.Flowable
 
 interface UserViewModel {
 

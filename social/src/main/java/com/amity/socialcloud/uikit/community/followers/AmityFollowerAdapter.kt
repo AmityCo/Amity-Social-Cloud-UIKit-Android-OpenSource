@@ -8,10 +8,10 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.amity.socialcloud.sdk.AmityCoreClient
-import com.amity.socialcloud.sdk.core.user.AmityFollowRelationship
-import com.amity.socialcloud.sdk.core.user.AmityUser
-import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagedAdapter
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.model.core.follow.AmityFollowRelationship
+import com.amity.socialcloud.sdk.model.core.user.AmityUser
+import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagingDataAdapter
 import com.amity.socialcloud.uikit.common.common.showSnackBar
 import com.amity.socialcloud.uikit.common.common.views.bottomsheet.AmityBottomSheetListFragment
 import com.amity.socialcloud.uikit.common.common.views.bottomsheet.AmityMenuItemClickListener
@@ -27,8 +27,7 @@ class AmityFollowerAdapter(
     private val context: Context,
     private val listener: AmityUserClickListener,
     private val isSelf: Boolean
-) :
-    AmityBaseRecyclerViewPagedAdapter<AmityFollowRelationship>(userDiffUtil) {
+) : AmityBaseRecyclerViewPagingDataAdapter<AmityFollowRelationship>(userDiffUtil) {
 
     companion object {
         val userDiffUtil = object : DiffUtil.ItemCallback<AmityFollowRelationship>() {
@@ -63,6 +62,7 @@ class AmityFollowerAdapter(
         private val isSelf: Boolean
     ) : AmityFollowersBaseViewHolder(itemView, context, itemViewModel),
         Binder<AmityFollowRelationship> {
+
         private val binding: AmityItemUserFollowerBinding? = DataBindingUtil.bind(itemView)
 
         override fun bind(data: AmityFollowRelationship?, position: Int) {
@@ -86,7 +86,8 @@ class AmityFollowerAdapter(
                         null
                     }
                     tvMemberName.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                        null, null, banIcon, null)
+                        null, null, banIcon, null
+                    )
                 }
                 binding?.ivMore?.setOnClickListener {
                     showBottomSheet(data.getSourceUser()!!)

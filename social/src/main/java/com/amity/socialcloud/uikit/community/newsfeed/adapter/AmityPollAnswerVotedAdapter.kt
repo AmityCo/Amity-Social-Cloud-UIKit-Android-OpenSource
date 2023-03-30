@@ -1,7 +1,7 @@
 package com.amity.socialcloud.uikit.community.newsfeed.adapter
 
 import android.view.ViewGroup
-import com.amity.socialcloud.sdk.social.feed.AmityPollAnswer
+import com.amity.socialcloud.sdk.model.social.poll.AmityPollAnswer
 import com.amity.socialcloud.uikit.common.base.AmityRecyclerViewAdapter
 
 private const val MAX_ITEM_COUNT = 2

@@ -1,7 +1,7 @@
 package com.amity.socialcloud.uikit.feed.settings
 
 import android.content.Context
-import com.amity.socialcloud.sdk.social.feed.AmityPost
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
 
 interface AmityPostShareClickListener {
 

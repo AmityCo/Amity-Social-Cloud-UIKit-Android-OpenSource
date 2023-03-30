@@ -3324,8 +3324,8 @@
     <ID>UnusedImports:AmityCommunityBaseNotificationSettingsFragment.kt$import androidx.appcompat.app.AppCompatActivity</ID>
     <ID>UnusedImports:AmityFollowersBaseViewHolder.kt$import android.content.DialogInterface</ID>
     <ID>UnusedImports:AmityFollowersBaseViewHolder.kt$import com.amity.socialcloud.uikit.common.utils.AmityAlertDialogUtil</ID>
-    <ID>UnusedImports:AmityFollowersBaseViewHolder.kt$import io.reactivex.android.schedulers.AndroidSchedulers</ID>
-    <ID>UnusedImports:AmityFollowersBaseViewHolder.kt$import io.reactivex.schedulers.Schedulers</ID>
+    <ID>UnusedImports:AmityFollowersBaseViewHolder.kt$import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers</ID>
+    <ID>UnusedImports:AmityFollowersBaseViewHolder.kt$import io.reactivex.rxjava3.schedulers.Schedulers</ID>
     <ID>UnusedImports:AmityMessageListActivity.kt$import com.amity.socialcloud.uikit.chat.messages.fragment.AmityChatRoomWithTextComposeBarFragment</ID>
     <ID>UnusedImports:AmityMessageListViewModel.kt$import com.amity.socialcloud.uikit.common.common.isNotEmptyOrBlank</ID>
     <ID>UnusedImports:AmitySampleApp.kt$import android.view.View</ID>

@@ -41,15 +41,15 @@ import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.linkedin.android.spyglass.suggestions.interfaces.SuggestionsVisibilityManager
 import com.linkedin.android.spyglass.tokenization.QueryToken
-import com.trello.rxlifecycle3.components.support.RxFragment
+import com.trello.rxlifecycle4.components.support.RxFragment
 import com.zhihu.matisse.Matisse
 import com.zhihu.matisse.MimeType
 import com.zhihu.matisse.engine.impl.GlideEngine
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
-import io.reactivex.internal.operators.flowable.FlowableInterval
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.internal.operators.flowable.FlowableInterval
+import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
 

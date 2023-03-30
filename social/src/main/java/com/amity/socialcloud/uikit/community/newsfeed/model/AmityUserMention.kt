@@ -2,8 +2,8 @@ package com.amity.socialcloud.uikit.community.newsfeed.model
 
 import android.os.Parcel
 import android.os.Parcelable
-import com.amity.socialcloud.sdk.core.file.AmityImage
-import com.amity.socialcloud.sdk.core.user.AmityUser
+import com.amity.socialcloud.sdk.model.core.file.AmityImage
+import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.linkedin.android.spyglass.mentions.Mentionable
 import com.linkedin.android.spyglass.mentions.Mentionable.MentionDisplayMode
 import java.util.*

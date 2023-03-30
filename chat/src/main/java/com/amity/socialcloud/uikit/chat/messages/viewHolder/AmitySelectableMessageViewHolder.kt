@@ -3,15 +3,15 @@ package com.amity.socialcloud.uikit.chat.messages.viewHolder
 import android.content.Context
 import android.content.DialogInterface
 import android.view.View
-import com.amity.socialcloud.sdk.chat.message.AmityMessage
+import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
 import com.amity.socialcloud.uikit.chat.R
 import com.amity.socialcloud.uikit.chat.messages.viewModel.AmitySelectableMessageViewModel
 import com.amity.socialcloud.uikit.common.model.AmityEventIdentifier
 import com.amity.socialcloud.uikit.common.utils.AmityAlertDialogUtil
 import com.google.android.material.snackbar.Snackbar
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.observers.DisposableCompletableObserver
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.observers.DisposableCompletableObserver
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -64,27 +64,27 @@ abstract class AmitySelectableMessageViewHolder(
     private fun showDeleteDialog() {
         AmityAlertDialogUtil.showDialog(context, context.getString(R.string.amity_delete_msg),
             context.getString(R.string.amity_dlt_dlg_body), context.getString(R.string.amity_delete),
-            context.getString(R.string.amity_cancel),
-            DialogInterface.OnClickListener { dialog, which ->
-                if (which == DialogInterface.BUTTON_POSITIVE) {
-                    deleteMessage()
-                } else {
-                    dialog.cancel()
-                }
-            })
+            context.getString(R.string.amity_cancel)
+        ) { dialog, which ->
+            if (which == DialogInterface.BUTTON_POSITIVE) {
+                deleteMessage()
+            } else {
+                dialog.cancel()
+            }
+        }
     }
 
     private fun showFailedMessageDialog() {
         AmityAlertDialogUtil.showDialog(context, context.getString(R.string.amity_delete_msg),
             context.getString(R.string.amity_failed_dlg_body), context.getString(R.string.amity_delete),
-            context.getString(R.string.amity_cancel),
-            DialogInterface.OnClickListener { dialog, which ->
-                if (which == DialogInterface.BUTTON_POSITIVE) {
-                    deleteMessage()
-                } else {
-                    dialog.cancel()
-                }
-            })
+            context.getString(R.string.amity_cancel)
+        ) { dialog, which ->
+            if (which == DialogInterface.BUTTON_POSITIVE) {
+                deleteMessage()
+            } else {
+                dialog.cancel()
+            }
+        }
     }
 
     private fun deleteMessage() {
@@ -104,12 +104,12 @@ abstract class AmitySelectableMessageViewHolder(
     private fun showDeleteFailedDialog() {
         AmityAlertDialogUtil.showDialog(context, context.getString(R.string.amity_unable_to_delete),
             context.getString(R.string.amity_try_again), context.getString(R.string.amity_ok),
-            null,
-            DialogInterface.OnClickListener { dialog, which ->
-                if (which == DialogInterface.BUTTON_POSITIVE) {
-                    dialog.cancel()
-                }
-            })
+            null
+        ) { dialog, which ->
+            if (which == DialogInterface.BUTTON_POSITIVE) {
+                dialog.cancel()
+            }
+        }
     }
 
     private fun reportMessage() {

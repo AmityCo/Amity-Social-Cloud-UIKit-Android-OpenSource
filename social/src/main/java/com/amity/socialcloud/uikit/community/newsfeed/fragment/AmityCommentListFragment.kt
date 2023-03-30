@@ -5,17 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.amity.socialcloud.sdk.core.user.AmityUser
-import com.amity.socialcloud.sdk.social.AmitySocialClient
-import com.amity.socialcloud.sdk.social.comment.AmityComment
-import com.amity.socialcloud.sdk.social.comment.AmityCommentSortOption
-import com.amity.socialcloud.uikit.common.base.createFragmentViewModel
+import com.amity.socialcloud.sdk.api.social.AmitySocialClient
+import com.amity.socialcloud.sdk.api.social.comment.query.AmityCommentSortOption
+import com.amity.socialcloud.sdk.model.core.user.AmityUser
+import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.uikit.common.common.showSnackBar
 import com.amity.socialcloud.uikit.common.common.views.dialog.AmityAlertDialogFragment
 import com.amity.socialcloud.uikit.common.common.views.dialog.bottomsheet.AmityBottomSheetDialog
@@ -30,15 +27,14 @@ import com.amity.socialcloud.uikit.community.newsfeed.events.CommentEngagementCl
 import com.amity.socialcloud.uikit.community.newsfeed.events.CommentOptionClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.listener.AmityCommentItemListener
 import com.amity.socialcloud.uikit.community.newsfeed.viewmodel.AmityCommentListViewModel
-import com.amity.socialcloud.uikit.community.newsfeed.viewmodel.AmityGlobalFeedViewModel
 import com.amity.socialcloud.uikit.social.AmitySocialUISettings
 import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
-import com.trello.rxlifecycle3.components.support.RxFragment
-import io.reactivex.BackpressureStrategy
-import io.reactivex.Flowable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.PublishSubject
+import com.trello.rxlifecycle4.components.support.RxFragment
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.BackpressureStrategy
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -109,7 +105,7 @@ class AmityCommentListFragment : RxFragment() {
             .parentId(null)
             .sortBy(AmityCommentSortOption.LAST_CREATED)
             .build()
-            .getPagingData()
+            .query()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext {
@@ -226,7 +222,7 @@ class AmityCommentListFragment : RxFragment() {
                 R.string.amity_delete_comment_warning_message,
                 R.string.amity_delete, R.string.amity_cancel
             )
-        deleteConfirmationDialogFragment.show(childFragmentManager, AmityAlertDialogFragment.TAG);
+        deleteConfirmationDialogFragment.show(childFragmentManager, AmityAlertDialogFragment.TAG)
         deleteConfirmationDialogFragment.listener =
             object : AmityAlertDialogFragment.IAlertDialogActionListener {
                 override fun onClickPositiveButton() {
@@ -246,7 +242,7 @@ class AmityCommentListFragment : RxFragment() {
                 R.string.amity_delete_reply_warning_message,
                 R.string.amity_delete, R.string.amity_cancel
             )
-        deleteConfirmationDialogFragment.show(childFragmentManager, AmityAlertDialogFragment.TAG);
+        deleteConfirmationDialogFragment.show(childFragmentManager, AmityAlertDialogFragment.TAG)
         deleteConfirmationDialogFragment.listener =
             object : AmityAlertDialogFragment.IAlertDialogActionListener {
                 override fun onClickPositiveButton() {

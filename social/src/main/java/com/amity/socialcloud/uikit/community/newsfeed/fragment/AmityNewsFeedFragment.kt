@@ -19,8 +19,8 @@ import com.amity.socialcloud.uikit.community.mycommunity.fragment.AmityMyCommuni
 import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityPostTargetPickerActivity
 import com.amity.socialcloud.uikit.community.newsfeed.events.AmityFeedRefreshEvent
 import com.google.android.material.appbar.AppBarLayout
-import io.reactivex.BackpressureStrategy
-import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.rxjava3.core.BackpressureStrategy
+import io.reactivex.rxjava3.subjects.BehaviorSubject
 
 class AmityNewsFeedFragment : AmityBaseFragment(),
     AppBarLayout.OnOffsetChangedListener {

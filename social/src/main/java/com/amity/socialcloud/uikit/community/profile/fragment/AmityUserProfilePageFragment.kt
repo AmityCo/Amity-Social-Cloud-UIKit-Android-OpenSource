@@ -12,8 +12,8 @@ import androidx.core.graphics.BlendModeCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.amity.socialcloud.sdk.core.user.AmityFollowStatus
-import com.amity.socialcloud.sdk.core.user.AmityUser
+import com.amity.socialcloud.sdk.model.core.follow.AmityFollowStatus
+import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.base.AmityBaseFragment
 import com.amity.socialcloud.uikit.common.base.AmityFragmentStateAdapter
 import com.amity.socialcloud.uikit.common.common.setSafeOnClickListener
@@ -37,10 +37,10 @@ import com.amity.socialcloud.uikit.community.profile.viewmodel.AmityUserProfileV
 import com.amity.socialcloud.uikit.community.setting.user.AmityUserSettingsActivity
 import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
 import com.google.android.material.appbar.AppBarLayout
-import io.reactivex.BackpressureStrategy
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.BackpressureStrategy
+import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjava3.subjects.PublishSubject
 import timber.log.Timber
 
 const val ARG_USER_ID = "ARG_USER_ID"

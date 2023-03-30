@@ -14,7 +14,7 @@ import com.amity.socialcloud.uikit.community.notificationsettings.pushDetail.Ami
 import com.amity.socialcloud.uikit.community.setting.AmitySettingsItem
 import com.amity.socialcloud.uikit.community.setting.AmitySettingsItemAdapter
 import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
-import com.trello.rxlifecycle3.components.support.RxFragment
+import com.trello.rxlifecycle4.components.support.RxFragment
 
 class AmityCommunityNotificationSettingsFragment : RxFragment() {
 

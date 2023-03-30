@@ -1,7 +1,7 @@
 package com.amity.socialcloud.uikit.community.newsfeed.listener
 
-import com.amity.socialcloud.sdk.core.file.AmityImage
+import com.amity.socialcloud.sdk.model.core.file.AmityImage
 
 interface AmityPostImageClickListener : AmityPostMediaClickListener {
-    fun onClickImage(mages: List<AmityImage>, position: Int)
+    fun onClickImage(images: List<AmityImage>, position: Int)
 }

@@ -1,6 +1,6 @@
 package com.amity.socialcloud.uikit.community.members
 
-import com.amity.socialcloud.sdk.social.community.AmityCommunityMember
+import com.amity.socialcloud.sdk.model.social.member.AmityCommunityMember
 
 interface AmityMemberClickListener {
 

@@ -2,7 +2,7 @@ package com.amity.socialcloud.uikit.chat.messages.viewHolder
 
 import android.view.View
 import androidx.databinding.DataBindingUtil
-import com.amity.socialcloud.sdk.chat.message.AmityMessage
+import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
 import com.amity.socialcloud.uikit.chat.databinding.AmityItemUnknownMessageBinding
 import com.amity.socialcloud.uikit.chat.messages.viewModel.AmityUnknownMsgViewModel
 

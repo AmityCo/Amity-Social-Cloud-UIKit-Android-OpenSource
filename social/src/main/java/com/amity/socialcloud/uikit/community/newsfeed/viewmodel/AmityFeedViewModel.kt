@@ -2,9 +2,9 @@ package com.amity.socialcloud.uikit.community.newsfeed.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.paging.PagingData
-import com.amity.socialcloud.sdk.core.user.AmityUser
-import com.amity.socialcloud.sdk.social.community.AmityCommunity
-import com.amity.socialcloud.sdk.social.feed.AmityPost
+import com.amity.socialcloud.sdk.model.core.user.AmityUser
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.utils.AmityConstants
 import com.amity.socialcloud.uikit.community.newsfeed.adapter.AmityPostListAdapter
 import com.amity.socialcloud.uikit.community.newsfeed.events.*
@@ -17,12 +17,12 @@ import com.amity.socialcloud.uikit.community.newsfeed.model.AmityBasePostItem
 import com.amity.socialcloud.uikit.feed.settings.AmityDefaultPostViewHolders
 import com.amity.socialcloud.uikit.feed.settings.AmityPostShareClickListener
 import com.amity.socialcloud.uikit.social.AmitySocialUISettings
-import io.reactivex.BackpressureStrategy
-import io.reactivex.Completable
-import io.reactivex.Flowable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.BackpressureStrategy
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjava3.subjects.PublishSubject
 import java.util.*
 
 abstract class AmityFeedViewModel : ViewModel() , UserViewModel, PostViewModel, CommentViewModel, PermissionViewModel {
@@ -217,17 +217,14 @@ abstract class AmityFeedViewModel : ViewModel() , UserViewModel, PostViewModel, 
             .ignoreElements()
     }
 
-    fun getPollVoteClickEvents(onReceivedEvent: (PollVoteClickEvent) -> Unit) : Completable {
+    fun getPollVoteClickEvents(onReceivedEvent: (PollVoteClickEvent) -> Completable) : Completable {
         return pollVoteClickPublisher.toFlowable(BackpressureStrategy.BUFFER)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext {
+            .flatMapCompletable {
                 onReceivedEvent.invoke(it)
             }
             .doOnError {
 
             }
-            .ignoreElements()
     }
 
     fun getCommentEngagementClickEvents(onReceivedEvent: (CommentEngagementClickEvent) -> Unit) : Completable {

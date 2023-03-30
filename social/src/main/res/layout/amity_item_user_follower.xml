@@ -8,7 +8,7 @@
 
         <variable
             name="user"
-            type="com.amity.socialcloud.sdk.core.user.AmityUser" />
+            type="com.amity.socialcloud.sdk.model.core.user.AmityUser" />
         <variable
             name="isSelf"
             type="Boolean" />

@@ -4,17 +4,16 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.PagingData
 import androidx.paging.map
-import com.amity.socialcloud.sdk.core.permission.AmityPermission
-import com.amity.socialcloud.sdk.social.AmitySocialClient
-import com.amity.socialcloud.sdk.social.feed.AmityFeedRepository
-import com.amity.socialcloud.sdk.social.feed.AmityFeedType
-import com.amity.socialcloud.sdk.social.feed.AmityPost
+import com.amity.socialcloud.sdk.api.social.AmitySocialClient
+import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
+import com.amity.socialcloud.sdk.model.social.feed.AmityFeedType
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.community.newsfeed.model.AmityBasePostFooterItem
 import com.amity.socialcloud.uikit.community.newsfeed.model.AmityBasePostItem
-import io.reactivex.Completable
-import io.reactivex.Flowable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 private const val SAVED_COMMUNITY_ID = "SAVED_COMMUNITY_ID"
 private const val SAVED_FEED_TYPE = "SAVED_FEED_TYPE"
@@ -48,7 +47,7 @@ class AmityCommunityFeedViewModel(private val savedState: SavedStateHandle) : Am
                 feedType(feedType)
             }
             .build()
-            .getPagingData()
+            .query()
             .map { it.map { post -> createPostItem(post) } }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -68,24 +67,26 @@ class AmityCommunityFeedViewModel(private val savedState: SavedStateHandle) : Am
         var isReadyToRender = false
         var isRefreshNeeded = false
         var lastJoinedState: Boolean? = null
-        return Flowable.zip(communitySource, reviewPermissionSource,
-            { community, hasReviewPermission ->
-                lastJoinedState?.let {
-                    if (lastJoinedState != community.isJoined()) {
+        return Flowable.zip(
+            communitySource,
+            reviewPermissionSource
+        ) { community, hasReviewPermission ->
+            lastJoinedState?.let {
+                if (lastJoinedState != community.isJoined()) {
+                    isRefreshNeeded = true
+                }
+            }
+            lastJoinedState = community.isJoined()
+
+            this.latestReviewPermissionState?.let {
+                if (this.latestReviewPermissionState != hasReviewPermission) {
+                    if (feedType == AmityFeedType.REVIEWING) {
                         isRefreshNeeded = true
                     }
                 }
-                lastJoinedState = community.isJoined()
-
-                this.latestReviewPermissionState?.let {
-                    if (this.latestReviewPermissionState != hasReviewPermission) {
-                        if (feedType == AmityFeedType.REVIEWING) {
-                            isRefreshNeeded = true
-                        }
-                    }
-                }
-                this.latestReviewPermissionState = hasReviewPermission
-            })
+            }
+            this.latestReviewPermissionState = hasReviewPermission
+        }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext {

@@ -1,11 +1,11 @@
 package com.amity.socialcloud.uikit.chat.home
 
-import com.amity.socialcloud.sdk.chat.AmityChatClient
+import com.amity.socialcloud.sdk.api.chat.AmityChatClient
 import com.amity.socialcloud.uikit.chat.home.callback.AmityRecentChatFragmentDelegate
 import com.amity.socialcloud.uikit.chat.home.callback.AmityRecentChatItemClickListener
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import com.amity.socialcloud.uikit.common.model.AmitySelectMemberItem
-import io.reactivex.Completable
+import io.reactivex.rxjava3.core.Completable
 
 private const val MAX_CHANNEL_NAME_LENGTH = 90
 
@@ -20,9 +20,8 @@ class AmityChatHomePageViewModel : AmityBaseViewModel() {
         onChatCreateFailed: () -> Unit
     ): Completable {
         return AmityChatClient.newChannelRepository()
-            .createChannel()
-            .communityType()
-            .withDisplayName(displayName = createChatDisplayName(selectedMembers = selectedMembers))
+            .createChannel(displayName = createChatDisplayName(selectedMembers = selectedMembers))
+            .community()
             .userIds(userIds = selectedMembers.map { it.id })
             .build()
             .create()

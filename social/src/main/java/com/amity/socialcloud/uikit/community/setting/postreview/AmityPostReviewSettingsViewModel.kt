@@ -1,22 +1,23 @@
 package com.amity.socialcloud.uikit.community.setting.postreview
 
 import androidx.lifecycle.SavedStateHandle
-import com.amity.socialcloud.sdk.AmityCoreClient
-import com.amity.socialcloud.sdk.core.permission.AmityPermission
-import com.amity.socialcloud.sdk.social.AmitySocialClient
-import com.amity.socialcloud.sdk.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.api.social.AmitySocialClient
+import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunityPostSettings
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import com.amity.socialcloud.uikit.community.setting.AmitySettingsItem
-import com.ekoapp.ekosdk.community.update.AmityCommunityPostSettings
-import io.reactivex.BackpressureStrategy
-import io.reactivex.Completable
-import io.reactivex.Flowable
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.BackpressureStrategy
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjava3.subjects.PublishSubject
 
-class AmityPostReviewSettingsViewModel(private val savedState: SavedStateHandle) : AmityBaseViewModel() {
+class AmityPostReviewSettingsViewModel(private val savedState: SavedStateHandle) :
+    AmityBaseViewModel() {
 
     var communityId: String? = null
         set(value) {
@@ -44,7 +45,7 @@ class AmityPostReviewSettingsViewModel(private val savedState: SavedStateHandle)
     private fun getItemsBasedOnPermissions(
         menuCreator: AmityPostReviewSettingsMenuCreator
     ): Single<List<AmitySettingsItem>> {
-        
+
         return hasEditCommunityPermission(communityId!!)
             .map { hasEditPermission ->
                 val settingsItems = mutableListOf<AmitySettingsItem>()
@@ -59,18 +60,18 @@ class AmityPostReviewSettingsViewModel(private val savedState: SavedStateHandle)
                 settingsItems
             }
     }
-    
-    private fun hasEditCommunityPermission(communityId: String) : Single<Boolean> {
+
+    private fun hasEditCommunityPermission(communityId: String): Single<Boolean> {
         return Flowable.combineLatest(
             AmitySocialClient.newCommunityRepository().getCommunity(communityId),
-            hasPermissionAtCommunity(AmityPermission.EDIT_COMMUNITY, communityId),
-            { community, hasEditPermission ->
-                if (AmityCoreClient.getUserId() == community.getUserId()) {
-                    true
-                } else {
-                    hasEditPermission
-                }
-            }).firstOrError()
+            hasPermissionAtCommunity(AmityPermission.EDIT_COMMUNITY, communityId)
+        ) { community, hasEditPermission ->
+            if (AmityCoreClient.getUserId() == community.getCreatorId()) {
+                true
+            } else {
+                hasEditPermission
+            }
+        }.firstOrError()
     }
 
     fun toggleDecision(
@@ -108,7 +109,8 @@ class AmityPostReviewSettingsViewModel(private val savedState: SavedStateHandle)
     private fun getNeedPostApprovalDataSource(communityId: String): Flowable<Boolean> {
         return Flowable.combineLatest(
             getNeedApprovalState(communityId),
-            getReversionSource().startWith(false), { isToggled, reversionTriggered -> isToggled })
+            getReversionSource().startWith(Single.just(false))
+        ) { isToggled, _ -> isToggled }
     }
 
     private fun getNeedApprovalState(communityId: String): Flowable<Boolean> {
@@ -138,7 +140,7 @@ class AmityPostReviewSettingsViewModel(private val savedState: SavedStateHandle)
             .updateCommunity(communityId)
             .postSettings(postSettings)
             .build()
-            .update()
+            .apply()
     }
 
 }

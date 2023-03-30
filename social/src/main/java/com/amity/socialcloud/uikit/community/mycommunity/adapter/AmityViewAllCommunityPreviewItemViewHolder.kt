@@ -2,7 +2,7 @@ package com.amity.socialcloud.uikit.community.mycommunity.adapter
 
 import android.view.View
 import android.widget.LinearLayout
-import com.amity.socialcloud.sdk.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.common.setBackgroundColor
 import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
 import com.amity.socialcloud.uikit.community.R

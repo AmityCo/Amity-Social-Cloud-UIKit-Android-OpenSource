@@ -3,8 +3,8 @@ package com.amity.socialcloud.uikit.community.newsfeed.adapter
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.amity.socialcloud.sdk.core.file.AmityImage
-import com.amity.socialcloud.sdk.social.feed.AmityPost
+import com.amity.socialcloud.sdk.model.core.file.AmityImage
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.base.AmitySpacesItemDecoration
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.newsfeed.events.PostContentClickEvent
@@ -37,7 +37,7 @@ class AmityPostItemVideoViewHolder(itemView: View) : AmityPostContentViewHolder(
     override fun bind(post: AmityPost) {
         setPostText(post, showFullContent)
         val images = mutableListOf<AmityImage>()
-        if (!post.getChildren().isNullOrEmpty()) {
+        if (post.getChildren().isNotEmpty()) {
             post.getChildren().forEach {
                 when (val postData = it.getData()) {
                     is AmityPost.Data.VIDEO -> {
@@ -54,13 +54,16 @@ class AmityPostItemVideoViewHolder(itemView: View) : AmityPostContentViewHolder(
     }
 
     private fun initAdapter(parentPostId: String) {
-        adapter = AmityPostImageChildrenAdapter(parentPostId, videoClickListener)
-        adapter?.setMediaType(PostMedia.Type.VIDEO)
-        imageRecyclerView.addItemDecoration(itemDecor)
-        val layoutManager = LinearLayoutManager(itemView.context)
-        layoutManager.orientation = LinearLayoutManager.HORIZONTAL
-        imageRecyclerView.layoutManager = layoutManager
-        imageRecyclerView.adapter = adapter
+        if (adapter == null) {
+            adapter = AmityPostImageChildrenAdapter(videoClickListener)
+            adapter?.setMediaType(PostMedia.Type.VIDEO)
+            imageRecyclerView.addItemDecoration(itemDecor)
+            val layoutManager = LinearLayoutManager(itemView.context)
+            layoutManager.orientation = LinearLayoutManager.HORIZONTAL
+            imageRecyclerView.layoutManager = layoutManager
+            imageRecyclerView.adapter = adapter
+        }
+        adapter?.setParentPostId(parentPostId)
     }
 
     private fun submitImages(images: List<AmityImage>) {
