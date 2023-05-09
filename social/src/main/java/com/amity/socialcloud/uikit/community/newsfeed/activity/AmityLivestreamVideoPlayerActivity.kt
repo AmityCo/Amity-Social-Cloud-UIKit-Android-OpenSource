@@ -31,8 +31,8 @@ open class AmityLivestreamVideoPlayerActivity : RxAppCompatActivity() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         binding.videoPlayer.stop()
+        super.onDestroy()
     }
 
     override fun onResume() {
@@ -41,8 +41,8 @@ open class AmityLivestreamVideoPlayerActivity : RxAppCompatActivity() {
     }
 
     override fun onPause() {
-        super.onPause()
         binding.videoPlayer.pause()
+        super.onPause()
     }
 
     private fun getVideoURL() {
