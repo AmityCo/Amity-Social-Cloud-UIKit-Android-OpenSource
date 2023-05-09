@@ -17,8 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            app:controller_layout_id="@layout/amity_playback_control_view" />
+            android:layout_centerVertical="true" />
 
         <TextView
             android:id="@+id/live_textview"

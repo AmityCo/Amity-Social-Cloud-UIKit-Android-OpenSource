@@ -12,8 +12,8 @@ import com.amity.socialcloud.uikit.common.base.AmityBaseFragment
 import com.amity.socialcloud.uikit.common.utils.safeLet
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.databinding.AmityFragmentSocialVideoPlayerBinding
+import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
@@ -27,7 +27,7 @@ internal class AmityVideoPostPlayerFragment : AmityBaseFragment() {
 
     private var _binding: AmityFragmentSocialVideoPlayerBinding? = null
     private val binding get() = _binding!!
-    private var exoplayer: SimpleExoPlayer? = null
+    private var exoplayer: ExoPlayer? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,7 +52,7 @@ internal class AmityVideoPostPlayerFragment : AmityBaseFragment() {
     }
 
     private fun setupPlayer(context: Context) {
-        exoplayer = SimpleExoPlayer.Builder(context).build()
+        exoplayer = ExoPlayer.Builder(context).build()
         exoplayer?.playWhenReady = false
         binding.videoViewer.player = exoplayer
     }

@@ -7,14 +7,14 @@ buildscript {
         amityTargetSdkVersion = 33
         amityCompileSdkVersion = 33
         amityKotlinJDKVersion = "8"
-        amityKotlinVersion = "1.4.21"
+        amityKotlinVersion = "1.6.20"
         amityLifecycleExtensionVersion = "2.0.0"
         amityMockkVersion = "1.10.0"
-        amityMessagingSdkVersion = '6.6.0'
+        amityMessagingSdkVersion = '6.7.0'
         amityRxLifeCycleVersion = '1.1.2-beta01'
 
         amityJacocoVersion = '0.8.5'
-        amityExoplayerVersion = '2.16.1'
+        amityExoplayerVersion = '2.18.5'
         // Will contain all support library dependencies
         sharedSupportLibraries = { dependencyHandler ->
             delegate = dependencyHandler
