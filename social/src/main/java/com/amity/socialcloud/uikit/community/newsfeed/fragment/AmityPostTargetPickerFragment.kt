@@ -37,7 +37,10 @@ class AmityPostTargetPickerFragment : AmityBaseFragment(),
             AmityPostCreatorActivity
                 .AmityCreateCommunityPostActivityContract()
         ) {
-            getCommunity()
+            if(it != null){
+                getCommunity()
+                handleBackPress()
+            }
         }
 
     private val createLiveStreamPost =
@@ -50,14 +53,20 @@ class AmityPostTargetPickerFragment : AmityBaseFragment(),
                     AmityPostDetailsActivity.newIntent(requireContext(), createdPostId, null, null)
                 startActivity(intent)
             }
-            getCommunity()
+            if(createdPostId != null){
+                getCommunity()
+                handleBackPress()
+            }
         }
 
     private val createPollPost = registerForActivityResult(
         AmityPollPostCreatorActivity
             .AmityPollCreatorActivityContract()
     ) {
-        getCommunity()
+        if(it != null){
+            getCommunity()
+            handleBackPress()
+        }
     }
 
     companion object {
@@ -123,10 +132,10 @@ class AmityPostTargetPickerFragment : AmityBaseFragment(),
             layoutManager = LinearLayoutManager(requireContext())
             this.adapter = communityAdapter
             addItemDecoration(
-                    AmityRecyclerViewItemDecoration(
-                            resources.getDimensionPixelSize(R.dimen.amity_padding_xs),
-                            0, resources.getDimensionPixelSize(R.dimen.amity_padding_xs)
-                    )
+                AmityRecyclerViewItemDecoration(
+                    resources.getDimensionPixelSize(R.dimen.amity_padding_xs),
+                    0, resources.getDimensionPixelSize(R.dimen.amity_padding_xs)
+                )
             )
             hasFixedSize()
         }
