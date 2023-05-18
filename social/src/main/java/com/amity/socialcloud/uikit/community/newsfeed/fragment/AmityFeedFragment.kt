@@ -255,6 +255,7 @@ abstract class AmityFeedFragment : AmityBaseFragment() {
             observeCommentEngagementClickEvents()
             observeCommentContentClickEvents()
             observeCommentOptionClickEvents()
+            observeReactionCountClickEvents()
             isObservingClickEvent = true
         }
     }
@@ -303,6 +304,10 @@ abstract class AmityFeedFragment : AmityBaseFragment() {
         )
             .untilLifecycleEnd(this)
             .subscribe()
+    }
+
+    internal open fun observeReactionCountClickEvents() {
+        //  do nothing on feed screen
     }
 
     private fun observePostContentClickEvents() {

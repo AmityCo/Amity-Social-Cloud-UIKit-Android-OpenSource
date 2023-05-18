@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
+import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityReactionListActivity
 import com.amity.socialcloud.uikit.community.newsfeed.events.AmityFeedRefreshEvent
 import com.amity.socialcloud.uikit.community.newsfeed.events.PostEngagementClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.listener.AmityCommunityClickListener
@@ -39,6 +40,23 @@ class AmitySinglePostFragment : AmityFeedFragment() {
 
     override fun navigateToPostDetails(postId: String) {
         // do not navigate
+    }
+
+    override fun observeReactionCountClickEvents() {
+        getViewModel().getReactionCountClickEvents(
+            onReceivedEvent = { event ->
+                getViewModel().sendPendingReactions()
+
+                val reactionIntent = AmityReactionListActivity.newIntent(
+                    context = requireContext(),
+                    referenceType = event.referenceType,
+                    referenceId = event.referenceId
+                )
+                requireContext().startActivity(reactionIntent)
+            }
+        )
+            .untilLifecycleEnd(this)
+            .subscribe()
     }
 
     override fun deletePost(post: AmityPost) {
@@ -90,7 +108,8 @@ class AmitySinglePostFragment : AmityFeedFragment() {
         lateinit var postId: String
         private var userClickListener: AmityUserClickListener? = null
         private var communityClickListener: AmityCommunityClickListener? = null
-        private var postShareClickListener: AmityPostShareClickListener = AmitySocialUISettings.postShareClickListener
+        private var postShareClickListener: AmityPostShareClickListener =
+            AmitySocialUISettings.postShareClickListener
         private var postItemListener: AmityPostItemListener = object : AmityPostItemListener {
             override fun onClickComment(post: AmityPost, fragment: Fragment) {
 
@@ -104,7 +123,7 @@ class AmitySinglePostFragment : AmityFeedFragment() {
             if (postId.isNotEmpty()) {
                 viewModel.postId = postId
             }
-            if(userClickListener == null) {
+            if (userClickListener == null) {
                 userClickListener = object : AmityUserClickListener {
                     override fun onClickUser(user: AmityUser) {
                         AmitySocialUISettings.globalUserClickListener.onClickUser(fragment, user)
@@ -113,10 +132,13 @@ class AmitySinglePostFragment : AmityFeedFragment() {
             }
             viewModel.userClickListener = userClickListener!!
 
-            if(communityClickListener == null) {
+            if (communityClickListener == null) {
                 communityClickListener = object : AmityCommunityClickListener {
                     override fun onClickCommunity(community: AmityCommunity) {
-                        AmitySocialUISettings.globalCommunityClickListener.onClickCommunity(fragment, community)
+                        AmitySocialUISettings.globalCommunityClickListener.onClickCommunity(
+                            fragment,
+                            community
+                        )
                     }
                 }
             }
@@ -135,18 +157,18 @@ class AmitySinglePostFragment : AmityFeedFragment() {
             return apply { this.postShareClickListener = postShareClickListener }
         }
 
-        internal fun postId(postId : String) : Builder {
+        internal fun postId(postId: String): Builder {
             return apply {
                 this.postId = postId
             }
         }
 
-        internal fun postItemListener(postItemListener: AmityPostItemListener) : Builder {
-            return apply {  this.postItemListener = postItemListener }
+        internal fun postItemListener(postItemListener: AmityPostItemListener): Builder {
+            return apply { this.postItemListener = postItemListener }
         }
 
         internal fun feedRefreshEvents(feedRefreshEvents: Flowable<AmityFeedRefreshEvent>): Builder {
-            return apply {  this.feedRefreshEvents = feedRefreshEvents }
+            return apply { this.feedRefreshEvents = feedRefreshEvents }
         }
 
     }

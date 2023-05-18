@@ -8,6 +8,7 @@ import com.amity.socialcloud.uikit.common.utils.AmityConstants
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.databinding.AmityItemPostFooterPostEngagementBinding
 import com.amity.socialcloud.uikit.community.newsfeed.events.PostEngagementClickEvent
+import com.amity.socialcloud.uikit.community.newsfeed.events.ReactionCountClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.model.AmityBasePostFooterItem
 import com.amity.socialcloud.uikit.social.AmitySocialUISettings
 import io.reactivex.rxjava3.subjects.PublishSubject
@@ -15,18 +16,25 @@ import io.reactivex.rxjava3.subjects.PublishSubject
 class AmityPostFooterPostEngagementViewHolder(
     private val binding: AmityItemPostFooterPostEngagementBinding,
     private val postEngagementClickPublisher: PublishSubject<PostEngagementClickEvent>,
+    private val reactionCountClickPublisher: PublishSubject<ReactionCountClickEvent>,
 ) : AmityPostFooterViewHolder(binding.root) {
 
     override fun bind(data: AmityBasePostFooterItem, position: Int) {
         binding.executePendingBindings()
         val postEngagementData = data as AmityBasePostFooterItem.POST_ENGAGEMENT
-        setNumberOfLikes(postEngagementData.post.getReactionMap().getCount(AmityConstants.POST_REACTION))
-        val isReactedByMe = postEngagementData.post.getMyReactions().contains(AmityConstants.POST_REACTION)
-        setUpLikeView(isReactedByMe, postEngagementData.post.getReactionMap().getCount(AmityConstants.POST_REACTION), postEngagementData.post)
+        setNumberOfReactions(postEngagementData.post.getReactionCount())
+        val isReactedByMe =
+            postEngagementData.post.getMyReactions().contains(AmityConstants.POST_REACTION)
+        setUpLikeView(
+            isReactedByMe,
+            postEngagementData.post.getReactionCount(),
+            postEngagementData.post
+        )
         setNumberOfComments(postEngagementData.post.getCommentCount())
         setReadOnlyMode(postEngagementData.isReadOnly)
         setShareOption(postEngagementData.post)
         setCommentListener(postEngagementData.post)
+        setReactionCountListener(postEngagementData.post)
     }
 
     private fun setCommentListener(post: AmityPost) {
@@ -35,6 +43,12 @@ class AmityPostFooterPostEngagementViewHolder(
         }
         binding.tvNumberOfComments.setOnClickListener {
             postEngagementClickPublisher.onNext(PostEngagementClickEvent.Comment(post))
+        }
+    }
+
+    private fun setReactionCountListener(post: AmityPost) {
+        binding.tvNumberOfReactions.setOnClickListener {
+            reactionCountClickPublisher.onNext(ReactionCountClickEvent.Post(post))
         }
     }
 
@@ -47,9 +61,9 @@ class AmityPostFooterPostEngagementViewHolder(
         )
     }
 
-    private fun setNumberOfLikes(reactionCount: Int) {
-        binding.tvNumberOfLikes.visibility = if (reactionCount > 0) View.VISIBLE else View.GONE
-        binding.tvNumberOfLikes.text = binding.root.resources.getQuantityString(
+    private fun setNumberOfReactions(reactionCount: Int) {
+        binding.tvNumberOfReactions.visibility = if (reactionCount > 0) View.VISIBLE else View.GONE
+        binding.tvNumberOfReactions.text = binding.root.resources.getQuantityString(
             R.plurals.amity_feed_number_of_likes,
             reactionCount,
             reactionCount.readableNumber()
@@ -79,12 +93,12 @@ class AmityPostFooterPostEngagementViewHolder(
         binding.cbLike.setOnClickListener {
             var displayReactionCount = reactionCount + 1
             var reactionEvent = PostEngagementClickEvent.Reaction(post, true)
-            if(!convertedValue) {
+            if (!convertedValue) {
                 displayReactionCount = Math.max(reactionCount - 1, 0)
                 reactionEvent = PostEngagementClickEvent.Reaction(post, false)
             }
             postEngagementClickPublisher.onNext(reactionEvent)
-            setNumberOfLikes(displayReactionCount)
+            setNumberOfReactions(displayReactionCount)
             setUpLikeView(convertedValue, displayReactionCount, post)
         }
     }

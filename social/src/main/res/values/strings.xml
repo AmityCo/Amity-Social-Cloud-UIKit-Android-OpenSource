@@ -163,12 +163,12 @@
     <string name="amity_add_comment_error_message">Unable to add comment</string>
     <string name="amity_update_comment_error_message">Unable to update comment</string>
     <plurals name="amity_feed_number_of_likes">
-        <item quantity="one">%s Like</item>
-        <item quantity="other">%s Likes</item>
+        <item quantity="one">%s like</item>
+        <item quantity="other">%s likes</item>
     </plurals>
     <plurals name="amity_feed_number_of_comments">
-        <item quantity="one">%d Comment</item>
-        <item quantity="other">%d Comments</item>
+        <item quantity="one">%d comment</item>
+        <item quantity="other">%d comments</item>
     </plurals>
     <string name="amity_share_to_my_timeline">Share to My Timeline</string>
     <string name="amity_share_to_group">Share to Group</string>
@@ -186,6 +186,7 @@
     <string name="amity_notifications_description">Turn on to receive push notifications from this community.</string>
     <string name="amity_new_posts">New posts</string>
     <string name="amity_new_posts_description">Receive notifications when someone create new posts in the community.</string>
+    <string name="amity_reactions">Reactions</string>
     <string name="amity_reacts_post">Reacts posts</string>
     <string name="amity_reacts_post_description">Receive notifications when someone make a reaction to your posts in this community.</string>
     <string name="amity_reacts_comments">Reacts Comments</string>
@@ -234,6 +235,8 @@
     <string name="amity_pending_posts">Pending posts</string>
     <string name="amity_no_pending_posts">No pending posts</string>
     <string name="amity_pending_posts_description">Decline pending post will permanently delete the selected post from community.</string>
+    <string name="amity_title_no_reactions">Sorry, we couldn\'t show the content</string>
+    <string name="amity_content_no_reactions">Please try again or contact the administrator for more information</string>
 
     <plurals name="amity_community_banner_number_of_pending_posts">
         <item quantity="one">%s post need approval</item>
@@ -295,7 +298,6 @@
     <string name="amity_general_stop">Stop</string>
 
 
-
     <string name="amity_poll_question">Poll question*</string>
     <string name="amity_poll_question_hint">What’s your poll question?</string>
     <string name="amity_poll_question_error">You have reached 500 characters limit.</string>
@@ -340,5 +342,6 @@
     <string name="amity_close_poll_message">Schedule you’ve set will be removed and poll will be closed immediately.</string>
     <string name="amity_delete_poll">Delete Poll</string>
     <string name="amity_close_poll">Close Poll</string>
+    <string name="amity_reaction_separator">•</string>
 
 </resources>

@@ -20,11 +20,9 @@ import com.amity.socialcloud.uikit.common.utils.AmityConstants
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.databinding.AmityFragmentCommentListBinding
 import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityEditCommentActivity
+import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityReactionListActivity
 import com.amity.socialcloud.uikit.community.newsfeed.adapter.AmityFullCommentAdapter
-import com.amity.socialcloud.uikit.community.newsfeed.events.AmityCommentRefreshEvent
-import com.amity.socialcloud.uikit.community.newsfeed.events.CommentContentClickEvent
-import com.amity.socialcloud.uikit.community.newsfeed.events.CommentEngagementClickEvent
-import com.amity.socialcloud.uikit.community.newsfeed.events.CommentOptionClickEvent
+import com.amity.socialcloud.uikit.community.newsfeed.events.*
 import com.amity.socialcloud.uikit.community.newsfeed.listener.AmityCommentItemListener
 import com.amity.socialcloud.uikit.community.newsfeed.viewmodel.AmityCommentListViewModel
 import com.amity.socialcloud.uikit.social.AmitySocialUISettings
@@ -48,11 +46,14 @@ class AmityCommentListFragment : RxFragment() {
         PublishSubject.create<CommentEngagementClickEvent>()
     private val commentContentClickPublisher = PublishSubject.create<CommentContentClickEvent>()
     private val commentOptionClickPublisher = PublishSubject.create<CommentOptionClickEvent>()
+    private var reactionCountClickPublisher = PublishSubject.create<ReactionCountClickEvent>()
+
     private val adapter = AmityFullCommentAdapter(
         userClickPublisher,
         commentContentClickPublisher,
         commentEngagementClickPublisher,
-        commentOptionClickPublisher
+        commentOptionClickPublisher,
+        reactionCountClickPublisher
     )
     lateinit var viewModel: AmityCommentListViewModel
     private val commentDisposer = UUID.randomUUID().toString()
@@ -148,6 +149,21 @@ class AmityCommentListFragment : RxFragment() {
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext {
                 showCommentOptions(it.comment)
+            }
+            .untilLifecycleEnd(this)
+            .subscribe()
+
+        reactionCountClickPublisher.toFlowable(BackpressureStrategy.BUFFER)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnNext { event ->
+                val reactionIntent = AmityReactionListActivity.newIntent(
+                    context = requireContext(),
+                    referenceType = event.referenceType,
+                    referenceId = event.referenceId
+                )
+                requireContext().startActivity(reactionIntent)
+
             }
             .untilLifecycleEnd(this)
             .subscribe()

@@ -13,7 +13,7 @@ import com.amity.socialcloud.uikit.community.newsfeed.model.AmityBasePostItem
 import com.amity.socialcloud.uikit.community.newsfeed.view.AmityBasePostView
 import io.reactivex.rxjava3.subjects.PublishSubject
 
-class AmityPostViewHolder constructor(
+class AmityPostViewHolder(
     itemView: View,
     private val userClickPublisher: PublishSubject<AmityUser>,
     private val communityClickPublisher: PublishSubject<AmityCommunity>,
@@ -24,7 +24,8 @@ class AmityPostViewHolder constructor(
     private val pollVoteClickPublisher: PublishSubject<PollVoteClickEvent>,
     private val commentEngagementClickPublisher: PublishSubject<CommentEngagementClickEvent>,
     private val commentContentClickPublisher: PublishSubject<CommentContentClickEvent>,
-    private val commentOptionClickPublisher: PublishSubject<CommentOptionClickEvent>
+    private val commentOptionClickPublisher: PublishSubject<CommentOptionClickEvent>,
+    private val reactionCountClickPublisher: PublishSubject<ReactionCountClickEvent>
 ) : RecyclerView.ViewHolder(itemView), AmityBaseRecyclerViewAdapter.IBinder<AmityBasePostItem> {
 
     private val headerAdapter = AmityPostHeaderAdapter(
@@ -54,7 +55,8 @@ class AmityPostViewHolder constructor(
         postReviewClickPublisher,
         commentContentClickPublisher,
         commentEngagementClickPublisher,
-        commentOptionClickPublisher
+        commentOptionClickPublisher,
+        reactionCountClickPublisher
     )
 
     private var concatAdapter: ConcatAdapter? = null
@@ -69,7 +71,8 @@ class AmityPostViewHolder constructor(
 //            val config = ConcatAdapter.Config.Builder().apply {
 //                this.setIsolateViewTypes(false)
 //            }.build()
-            concatAdapter = ConcatAdapter(headerAdapter,
+            concatAdapter = ConcatAdapter(
+                headerAdapter,
                 contentAdapter,
                 dummyAdapter,
                 footerAdapter
