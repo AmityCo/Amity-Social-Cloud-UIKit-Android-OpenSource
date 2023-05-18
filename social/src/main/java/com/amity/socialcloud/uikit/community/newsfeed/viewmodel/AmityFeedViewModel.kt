@@ -25,7 +25,8 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.PublishSubject
 import java.util.*
 
-abstract class AmityFeedViewModel : ViewModel() , UserViewModel, PostViewModel, CommentViewModel, PermissionViewModel {
+abstract class AmityFeedViewModel : ViewModel(), UserViewModel, PostViewModel, CommentViewModel,
+    PermissionViewModel {
 
     lateinit var userClickListener: AmityUserClickListener
     lateinit var communityClickListener: AmityCommunityClickListener
@@ -40,9 +41,11 @@ abstract class AmityFeedViewModel : ViewModel() , UserViewModel, PostViewModel, 
     private val postOptionClickPublisher = PublishSubject.create<PostOptionClickEvent>()
     private val postReviewClickPublisher = PublishSubject.create<PostReviewClickEvent>()
     private val pollVoteClickPublisher = PublishSubject.create<PollVoteClickEvent>()
-    private val commentEngagementClickPublisher = PublishSubject.create<CommentEngagementClickEvent>()
+    private val commentEngagementClickPublisher =
+        PublishSubject.create<CommentEngagementClickEvent>()
     private val commentContentClickPublisher = PublishSubject.create<CommentContentClickEvent>()
     private val commentOptionClickPublisher = PublishSubject.create<CommentOptionClickEvent>()
+    private val reactionCountClickPublisher = PublishSubject.create<ReactionCountClickEvent>()
 
     val feedDisposable = UUID.randomUUID().toString()
 
@@ -51,7 +54,7 @@ abstract class AmityFeedViewModel : ViewModel() , UserViewModel, PostViewModel, 
 
     abstract fun getFeed(onPageLoaded: (posts: PagingData<AmityBasePostItem>) -> Unit): Completable
 
-    fun createFeedAdapter() : AmityPostListAdapter {
+    fun createFeedAdapter(): AmityPostListAdapter {
         return AmityPostListAdapter(
             userClickPublisher,
             communityClickPublisher,
@@ -62,7 +65,8 @@ abstract class AmityFeedViewModel : ViewModel() , UserViewModel, PostViewModel, 
             pollVoteClickPublisher,
             commentEngagementClickPublisher,
             commentContentClickPublisher,
-            commentOptionClickPublisher
+            commentOptionClickPublisher,
+            reactionCountClickPublisher
         )
     }
 
@@ -80,7 +84,13 @@ abstract class AmityFeedViewModel : ViewModel() , UserViewModel, PostViewModel, 
     ): List<AmityBasePostHeaderItem> {
         val showHeader = AmitySocialUISettings.getViewHolder(getDataType(post)).enableHeader()
         return if (showHeader) {
-            listOf(AmityBasePostHeaderItem(post = post, showTarget = false, showOptions =  shouldShowPostOptions(post)))
+            listOf(
+                AmityBasePostHeaderItem(
+                    post = post,
+                    showTarget = false,
+                    showOptions = shouldShowPostOptions(post)
+                )
+            )
         } else {
             emptyList()
         }
@@ -142,7 +152,7 @@ abstract class AmityFeedViewModel : ViewModel() , UserViewModel, PostViewModel, 
         }
     }
 
-    fun getUserClickEvents(onReceivedEvent: (AmityUser) -> Unit) : Completable {
+    fun getUserClickEvents(onReceivedEvent: (AmityUser) -> Unit): Completable {
         return userClickPublisher.toFlowable(BackpressureStrategy.BUFFER)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -155,7 +165,7 @@ abstract class AmityFeedViewModel : ViewModel() , UserViewModel, PostViewModel, 
             .ignoreElements()
     }
 
-    fun getCommunityClickEvents(onReceivedEvent: (AmityCommunity) -> Unit) : Completable {
+    fun getCommunityClickEvents(onReceivedEvent: (AmityCommunity) -> Unit): Completable {
         return communityClickPublisher.toFlowable(BackpressureStrategy.BUFFER)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -165,7 +175,7 @@ abstract class AmityFeedViewModel : ViewModel() , UserViewModel, PostViewModel, 
             .ignoreElements()
     }
 
-    fun getPostEngagementClickEvents(onReceivedEvent: (PostEngagementClickEvent) -> Unit) : Completable {
+    fun getPostEngagementClickEvents(onReceivedEvent: (PostEngagementClickEvent) -> Unit): Completable {
         return postEngagementClickPublisher.toFlowable(BackpressureStrategy.BUFFER)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -178,7 +188,20 @@ abstract class AmityFeedViewModel : ViewModel() , UserViewModel, PostViewModel, 
             .ignoreElements()
     }
 
-    fun getPostContentClickEvents(onReceivedEvent: (PostContentClickEvent) -> Unit) : Completable {
+    fun getReactionCountClickEvents(onReceivedEvent: (ReactionCountClickEvent) -> Unit): Completable {
+        return reactionCountClickPublisher.toFlowable(BackpressureStrategy.BUFFER)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnNext {
+                onReceivedEvent.invoke(it)
+            }
+            .doOnError {
+
+            }
+            .ignoreElements()
+    }
+
+    fun getPostContentClickEvents(onReceivedEvent: (PostContentClickEvent) -> Unit): Completable {
         return postContentClickPublisher.toFlowable(BackpressureStrategy.BUFFER)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -191,7 +214,7 @@ abstract class AmityFeedViewModel : ViewModel() , UserViewModel, PostViewModel, 
             .ignoreElements()
     }
 
-    fun getPostOptionClickEvents(onReceivedEvent: (PostOptionClickEvent) -> Unit) : Completable {
+    fun getPostOptionClickEvents(onReceivedEvent: (PostOptionClickEvent) -> Unit): Completable {
         return postOptionClickPublisher.toFlowable(BackpressureStrategy.BUFFER)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -204,7 +227,7 @@ abstract class AmityFeedViewModel : ViewModel() , UserViewModel, PostViewModel, 
             .ignoreElements()
     }
 
-    fun getPostReviewClickEvents(onReceivedEvent: (PostReviewClickEvent) -> Unit) : Completable {
+    fun getPostReviewClickEvents(onReceivedEvent: (PostReviewClickEvent) -> Unit): Completable {
         return postReviewClickPublisher.toFlowable(BackpressureStrategy.BUFFER)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -217,7 +240,7 @@ abstract class AmityFeedViewModel : ViewModel() , UserViewModel, PostViewModel, 
             .ignoreElements()
     }
 
-    fun getPollVoteClickEvents(onReceivedEvent: (PollVoteClickEvent) -> Completable) : Completable {
+    fun getPollVoteClickEvents(onReceivedEvent: (PollVoteClickEvent) -> Completable): Completable {
         return pollVoteClickPublisher.toFlowable(BackpressureStrategy.BUFFER)
             .flatMapCompletable {
                 onReceivedEvent.invoke(it)
@@ -227,7 +250,7 @@ abstract class AmityFeedViewModel : ViewModel() , UserViewModel, PostViewModel, 
             }
     }
 
-    fun getCommentEngagementClickEvents(onReceivedEvent: (CommentEngagementClickEvent) -> Unit) : Completable {
+    fun getCommentEngagementClickEvents(onReceivedEvent: (CommentEngagementClickEvent) -> Unit): Completable {
         return commentEngagementClickPublisher.toFlowable(BackpressureStrategy.BUFFER)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -240,7 +263,7 @@ abstract class AmityFeedViewModel : ViewModel() , UserViewModel, PostViewModel, 
             .ignoreElements()
     }
 
-    fun getCommentContentClickEvents(onReceivedEvent: (CommentContentClickEvent) -> Unit) : Completable {
+    fun getCommentContentClickEvents(onReceivedEvent: (CommentContentClickEvent) -> Unit): Completable {
         return commentContentClickPublisher.toFlowable(BackpressureStrategy.BUFFER)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -253,7 +276,7 @@ abstract class AmityFeedViewModel : ViewModel() , UserViewModel, PostViewModel, 
             .ignoreElements()
     }
 
-    fun getCommentOptionClickEvents(onReceivedEvent: (CommentOptionClickEvent) -> Unit) : Completable {
+    fun getCommentOptionClickEvents(onReceivedEvent: (CommentOptionClickEvent) -> Unit): Completable {
         return commentOptionClickPublisher.toFlowable(BackpressureStrategy.BUFFER)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -266,7 +289,7 @@ abstract class AmityFeedViewModel : ViewModel() , UserViewModel, PostViewModel, 
             .ignoreElements()
     }
 
-    fun getRefreshEvents(onReceivedEvent: (AmityFeedRefreshEvent) -> Unit) : Completable {
+    fun getRefreshEvents(onReceivedEvent: (AmityFeedRefreshEvent) -> Unit): Completable {
         return feedRefreshEvents
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -290,7 +313,7 @@ abstract class AmityFeedViewModel : ViewModel() , UserViewModel, PostViewModel, 
             val isAdding = it.isAdding
             val isReactedByMe = it.post.getMyReactions().contains(AmityConstants.POST_REACTION)
             if (isAdding && !isReactedByMe) {
-               addPostReaction(post = it.post)
+                addPostReaction(post = it.post)
                     .subscribe()
             } else if (!isAdding && isReactedByMe) {
                 removePostReaction(post = it.post)

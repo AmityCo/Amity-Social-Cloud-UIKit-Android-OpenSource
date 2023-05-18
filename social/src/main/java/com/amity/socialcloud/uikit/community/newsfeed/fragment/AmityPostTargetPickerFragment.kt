@@ -132,10 +132,10 @@ class AmityPostTargetPickerFragment : AmityBaseFragment(),
             layoutManager = LinearLayoutManager(requireContext())
             this.adapter = communityAdapter
             addItemDecoration(
-                AmityRecyclerViewItemDecoration(
-                    resources.getDimensionPixelSize(R.dimen.amity_padding_xs),
-                    0, resources.getDimensionPixelSize(R.dimen.amity_padding_xs)
-                )
+                    AmityRecyclerViewItemDecoration(
+                            resources.getDimensionPixelSize(R.dimen.amity_padding_xs),
+                            0, resources.getDimensionPixelSize(R.dimen.amity_padding_xs)
+                    )
             )
             hasFixedSize()
         }
