@@ -248,6 +248,7 @@ class AmityPostDetailFragment : AmityBaseFragment(),
     }
 
     private fun setupComposeBar(post: AmityPost) {
+        binding.viewBottom.visibility = if (isJoined(post)) View.VISIBLE else View.INVISIBLE
         binding.commentComposeBar.getPostButton().setOnClickListener {
             val commentId = ObjectId.get().toHexString()
             viewModel.addComment(
