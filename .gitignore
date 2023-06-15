@@ -99,3 +99,8 @@ captures/
 *.ipr
 *~
 *.swp
+
+# API key
+sample/src/main/java/com/amity/socialcloud/uikit/sample/env/SampleAPIKey.kt
+sample/src/main/java/com/amity/socialcloud/uikit/sample/env/SampleBroker.kt
+sample/src/main/java/com/amity/socialcloud/uikit/sample/env/SampleUrl.kt
