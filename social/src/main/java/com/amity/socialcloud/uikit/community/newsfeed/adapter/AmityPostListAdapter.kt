@@ -21,7 +21,8 @@ class AmityPostListAdapter(
     private val pollVoteClickPublisher: PublishSubject<PollVoteClickEvent>,
     private val commentEngagementClickPublisher: PublishSubject<CommentEngagementClickEvent>,
     private val commentContentClickPublisher: PublishSubject<CommentContentClickEvent>,
-    private val commentOptionClickPublisher: PublishSubject<CommentOptionClickEvent>
+    private val commentOptionClickPublisher: PublishSubject<CommentOptionClickEvent>,
+    private val reactionCountClickPublisher: PublishSubject<ReactionCountClickEvent>
 ) : PagingDataAdapter<AmityBasePostItem, AmityPostViewHolder>(POST_COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AmityPostViewHolder {
@@ -38,7 +39,8 @@ class AmityPostListAdapter(
             pollVoteClickPublisher,
             commentEngagementClickPublisher,
             commentContentClickPublisher,
-            commentOptionClickPublisher
+            commentOptionClickPublisher,
+            reactionCountClickPublisher
         )
     }
 
@@ -48,7 +50,10 @@ class AmityPostListAdapter(
 
     companion object {
         val POST_COMPARATOR = object : DiffUtil.ItemCallback<AmityBasePostItem>() {
-            override fun areItemsTheSame(oldItem: AmityBasePostItem, newItem: AmityBasePostItem): Boolean {
+            override fun areItemsTheSame(
+                oldItem: AmityBasePostItem,
+                newItem: AmityBasePostItem
+            ): Boolean {
                 return oldItem.post.getPostId() == newItem.post.getPostId()
             }
 

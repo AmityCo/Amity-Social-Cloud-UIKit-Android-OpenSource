@@ -2,7 +2,7 @@ package com.amity.socialcloud.uikit.community.newsfeed.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.paging.PagedListAdapter
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
@@ -12,6 +12,7 @@ import com.amity.socialcloud.uikit.community.newsfeed.diffutil.PostCommentDiffUt
 import com.amity.socialcloud.uikit.community.newsfeed.events.CommentContentClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.events.CommentEngagementClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.events.CommentOptionClickEvent
+import com.amity.socialcloud.uikit.community.newsfeed.events.ReactionCountClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.viewholder.DeletedCommentViewHolder
 import com.amity.socialcloud.uikit.community.newsfeed.viewholder.PreviewCommentViewHolder
 import io.reactivex.rxjava3.subjects.PublishSubject
@@ -23,8 +24,9 @@ class AmityPreviewCommentAdapter(
     private val commentContentClickPublisher: PublishSubject<CommentContentClickEvent>,
     private val commentEngagementClickPublisher: PublishSubject<CommentEngagementClickEvent>,
     private val commentOptionClickPublisher: PublishSubject<CommentOptionClickEvent>,
+    private val reactionCountClickPublisher: PublishSubject<ReactionCountClickEvent>,
     var isReadOnly: Boolean = false,
-) : PagedListAdapter<AmityComment, RecyclerView.ViewHolder>(PostCommentDiffUtil()) {
+) : PagingDataAdapter<AmityComment, RecyclerView.ViewHolder>(PostCommentDiffUtil()) {
 
     private val PREVIEW_COMMENT_TYPE = Random().nextInt()
     private val DELETE_COMMENT_TYPE = Random().nextInt()
@@ -42,11 +44,18 @@ class AmityPreviewCommentAdapter(
         when (viewType) {
             PREVIEW_COMMENT_TYPE -> {
                 val itemBinding = AmityItemPreviewCommentBinding.inflate(
-                    LayoutInflater.from(parent.getContext()),
+                    LayoutInflater.from(parent.context),
                     parent,
                     false
                 )
-                return PreviewCommentViewHolder(itemBinding, userClickPublisher, commentContentClickPublisher, commentEngagementClickPublisher, commentOptionClickPublisher)
+                return PreviewCommentViewHolder(
+                    itemBinding,
+                    userClickPublisher,
+                    commentContentClickPublisher,
+                    commentEngagementClickPublisher,
+                    commentOptionClickPublisher,
+                    reactionCountClickPublisher
+                )
             }
             else -> {
                 val itemBinding = AmityItemDeletedRootCommentBinding.inflate(

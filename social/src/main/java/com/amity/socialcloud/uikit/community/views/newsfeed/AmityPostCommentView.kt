@@ -5,6 +5,7 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -22,6 +23,7 @@ import com.amity.socialcloud.uikit.community.databinding.AmityItemCommentNewsFee
 import com.amity.socialcloud.uikit.community.newsfeed.events.CommentContentClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.events.CommentEngagementClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.events.CommentOptionClickEvent
+import com.amity.socialcloud.uikit.community.newsfeed.events.ReactionCountClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.listener.AmityMentionClickableSpan
 import io.reactivex.rxjava3.subjects.PublishSubject
 import timber.log.Timber
@@ -34,6 +36,7 @@ class AmityPostCommentView : ConstraintLayout {
     private var commentEngagementClickPublisher =
         PublishSubject.create<CommentEngagementClickEvent>()
     private var commentOptionClickPublisher = PublishSubject.create<CommentOptionClickEvent>()
+    private var reactionCountClickPublisher = PublishSubject.create<ReactionCountClickEvent>()
 
     constructor(context: Context) : super(context) {
         init()
@@ -61,7 +64,7 @@ class AmityPostCommentView : ConstraintLayout {
         binding.avatarUrl = comment.getCreator()?.getAvatar()?.getUrl(AmityImage.Size.SMALL)
         binding.tvUserName.text =
             comment.getCreator()?.getDisplayName() ?: context.getString(R.string.amity_anonymous)
-        binding.tvCommentTime.text = comment.getCreatedAt()?.millis?.readableFeedPostTime(context)
+        binding.tvCommentTime.text = comment.getCreatedAt().millis.readableFeedPostTime(context)
         binding.edited = comment.isEdited()
         binding.isReplyComment = !comment.getParentId().isNullOrEmpty()
 
@@ -81,7 +84,7 @@ class AmityPostCommentView : ConstraintLayout {
         val isReactedByMe = comment.getMyReactions().contains(AmityConstants.POST_REACTION)
         setUpLikeView(
             isReactedByMe,
-            comment.getReactionMap().getCount(AmityConstants.POST_REACTION),
+            comment.getReactionCount(),
             comment
         )
         setReadOnlyMode(isReadOnly!!)
@@ -120,21 +123,25 @@ class AmityPostCommentView : ConstraintLayout {
         binding.btnCommentAction.setOnClickListener {
             commentOptionClickPublisher.onNext(CommentOptionClickEvent(comment))
         }
+
+        binding.tvNumberOfReactions.setOnClickListener {
+            reactionCountClickPublisher.onNext(ReactionCountClickEvent.Comment(comment))
+        }
     }
 
     private fun setUpLikeView(isReactedByMe: Boolean, reactionCount: Int, comment: AmityComment) {
-        refreshLikeView(isReactedByMe, reactionCount)
+        refreshLikeView(isReactedByMe)
         setLikeClickListener(isReactedByMe, reactionCount, comment)
     }
 
-    private fun refreshLikeView(isLike: Boolean, reactionCount: Int) {
+    private fun refreshLikeView(isLike: Boolean) {
         binding.cbLike.isChecked = isLike
-        setLikeCheckboxText(reactionCount)
+        setLikeCheckboxText()
     }
 
-    private fun setLikeCheckboxText(reactionCount: Int) {
-        if (reactionCount > 0) {
-            binding.cbLike.text = reactionCount.readableNumber()
+    private fun setLikeCheckboxText() {
+        if (binding.cbLike.isChecked) {
+            binding.cbLike.setText(R.string.amity_liked)
         } else {
             binding.cbLike.setText(R.string.amity_like)
         }
@@ -154,6 +161,7 @@ class AmityPostCommentView : ConstraintLayout {
                 reactionEvent = CommentEngagementClickEvent.Reaction(comment, false)
             }
             commentEngagementClickPublisher.onNext(reactionEvent)
+            setNumberOfReactions(displayReactionCount)
             setUpLikeView(convertedValue, displayReactionCount, comment)
         }
     }
@@ -163,12 +171,14 @@ class AmityPostCommentView : ConstraintLayout {
         userClickPublisher: PublishSubject<AmityUser>,
         commentContentClickPublisher: PublishSubject<CommentContentClickEvent>,
         commentEngagementClickPublisher: PublishSubject<CommentEngagementClickEvent>,
-        commentOptionClickPublisher: PublishSubject<CommentOptionClickEvent>
+        commentOptionClickPublisher: PublishSubject<CommentOptionClickEvent>,
+        reactionCountClickPublisher: PublishSubject<ReactionCountClickEvent>
     ) {
         this.userClickPublisher = userClickPublisher
         this.commentContentClickPublisher = commentContentClickPublisher
         this.commentEngagementClickPublisher = commentEngagementClickPublisher
         this.commentOptionClickPublisher = commentOptionClickPublisher
+        this.reactionCountClickPublisher = reactionCountClickPublisher
     }
 
     private fun handleBottomSpace() {
@@ -183,6 +193,12 @@ class AmityPostCommentView : ConstraintLayout {
 
     private fun setText(comment: AmityComment) {
         binding.tvPostComment.text = getHighlightTextUserMentions(comment)
+        setNumberOfReactions(comment.getReactionCount())
+    }
+
+    private fun setNumberOfReactions(reactionCount: Int) {
+        binding.reactionCountLayout.visibility = if (reactionCount > 0) View.VISIBLE else View.GONE
+        binding.tvNumberOfReactions.text = reactionCount.readableNumber()
     }
 
     private fun getHighlightTextUserMentions(comment: AmityComment): SpannableString {

@@ -27,15 +27,19 @@
             android:id="@+id/reactionStatusLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:ignore="MissingConstraints">
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
-                android:id="@+id/tvNumberOfLikes"
+                android:id="@+id/tvNumberOfReactions"
                 style="@style/AmityTextStyleCaption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/amity_padding_m1"
-                android:textColor="@color/amityColorBase"
+                android:drawablePadding="@dimen/amity_padding_xs"
+                android:gravity="center_vertical"
+                android:textColor="@{@color/amityColorBase}"
+                app:drawableStartCompat="@drawable/amity_ic_reaction_count"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:textColorShade="@{AmityColorShade.SHADE2}"
@@ -48,6 +52,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/amity_padding_m1"
                 android:textColor="@color/amityColorBase"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:textColorShade="@{AmityColorShade.SHADE2}"
@@ -83,7 +88,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:button="@drawable/amity_ic_like_selector"
-                android:paddingStart="@dimen/amity_padding_xs"
+                android:paddingHorizontal="@dimen/amity_padding_xs"
                 android:text="@string/amity_like"
                 app:checkBoxCheckedColor="@{@color/amityColorPrimary}"
                 app:checkBoxDefaultColor="@{@color/amityColorBase}"
@@ -95,11 +100,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/amity_padding_m1"
-                android:drawableStart="@drawable/amity_ic_comment"
                 android:drawablePadding="@dimen/amity_padding_xs"
                 android:gravity="center_vertical"
                 android:text="@string/amity_comment"
                 android:textColor="@{@color/amityColorBase}"
+                app:drawableStartCompat="@drawable/amity_ic_comment"
                 app:textColorShade="@{AmityColorShade.SHADE2}" />
 
             <TextView
@@ -108,12 +113,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/amity_padding_m1"
-                android:drawableStart="@drawable/amity_ic_share"
                 android:drawablePadding="@dimen/amity_padding_xs"
                 android:gravity="center_vertical"
                 android:text="@string/amity_share"
                 android:textColor="@{@color/amityColorBase}"
                 android:visibility="@{showShareButton? View.VISIBLE: View.GONE}"
+                app:drawableStartCompat="@drawable/amity_ic_share"
                 app:textColorShade="@{AmityColorShade.SHADE2}" />
         </LinearLayout>
 

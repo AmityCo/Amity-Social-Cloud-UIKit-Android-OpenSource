@@ -1,21 +1,25 @@
 package com.amity.socialcloud.uikit.community.newsfeed.viewholder
 
 import android.view.View
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
-import com.amity.socialcloud.uikit.common.common.toPagedList
 import com.amity.socialcloud.uikit.community.databinding.AmityItemFullCommentBinding
 import com.amity.socialcloud.uikit.community.newsfeed.adapter.AmityCommentReplyLoader
 import com.amity.socialcloud.uikit.community.newsfeed.adapter.AmityReplyCommentAdapter
 import com.amity.socialcloud.uikit.community.newsfeed.events.CommentContentClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.events.CommentEngagementClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.events.CommentOptionClickEvent
+import com.amity.socialcloud.uikit.community.newsfeed.events.ReactionCountClickEvent
 import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.PublishSubject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.*
 
 
@@ -24,7 +28,8 @@ class FullCommentViewHolder(
     private val userClickPublisher: PublishSubject<AmityUser>,
     private val commentContentClickPublisher: PublishSubject<CommentContentClickEvent>,
     private val commentEngagementClickPublisher: PublishSubject<CommentEngagementClickEvent>,
-    private val commentOptionClickPublisher: PublishSubject<CommentOptionClickEvent>
+    private val commentOptionClickPublisher: PublishSubject<CommentOptionClickEvent>,
+    private val reactionCountClickPublisher: PublishSubject<ReactionCountClickEvent>
 ) : RecyclerView.ViewHolder(binding.root) {
 
     private val replyDisposer = UUID.randomUUID().toString()
@@ -34,7 +39,8 @@ class FullCommentViewHolder(
         userClickPublisher,
         commentContentClickPublisher,
         commentEngagementClickPublisher,
-        commentOptionClickPublisher
+        commentOptionClickPublisher,
+        reactionCountClickPublisher
     )
 
     fun bind(comment: AmityComment?, loader: AmityCommentReplyLoader, isReadOnly: Boolean) {
@@ -44,7 +50,8 @@ class FullCommentViewHolder(
                 userClickPublisher,
                 commentContentClickPublisher,
                 commentEngagementClickPublisher,
-                commentOptionClickPublisher
+                commentOptionClickPublisher,
+                reactionCountClickPublisher
             )
             renderLoadMoreButton(comment, loader)
             renderReplies(loader, isReadOnly)
@@ -62,7 +69,9 @@ class FullCommentViewHolder(
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext {
-                replyAdapter.submitList(it.toPagedList(it.size))
+                CoroutineScope(Dispatchers.IO).launch {
+                    replyAdapter.submitData(PagingData.from(it))
+                }
             }
             .doOnError {
                 // do nothing

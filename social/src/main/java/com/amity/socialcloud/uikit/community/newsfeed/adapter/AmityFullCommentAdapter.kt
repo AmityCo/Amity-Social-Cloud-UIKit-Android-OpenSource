@@ -12,6 +12,7 @@ import com.amity.socialcloud.uikit.community.newsfeed.diffutil.PostCommentDiffUt
 import com.amity.socialcloud.uikit.community.newsfeed.events.CommentContentClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.events.CommentEngagementClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.events.CommentOptionClickEvent
+import com.amity.socialcloud.uikit.community.newsfeed.events.ReactionCountClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.viewholder.DeletedCommentViewHolder
 import com.amity.socialcloud.uikit.community.newsfeed.viewholder.FullCommentViewHolder
 import io.reactivex.rxjava3.subjects.PublishSubject
@@ -23,6 +24,7 @@ class AmityFullCommentAdapter(
     private val commentContentClickPublisher: PublishSubject<CommentContentClickEvent>,
     private val commentEngagementClickPublisher: PublishSubject<CommentEngagementClickEvent>,
     private val commentOptionClickPublisher: PublishSubject<CommentOptionClickEvent>,
+    private val reactionCountClickPublisher: PublishSubject<ReactionCountClickEvent>,
     var isReadOnly: Boolean = false,
 ) : PagingDataAdapter<AmityComment, RecyclerView.ViewHolder>(PostCommentDiffUtil()) {
 
@@ -47,7 +49,14 @@ class AmityFullCommentAdapter(
                     parent,
                     false
                 )
-                return FullCommentViewHolder(itemBinding, userClickPublisher, commentContentClickPublisher, commentEngagementClickPublisher, commentOptionClickPublisher)
+                return FullCommentViewHolder(
+                    itemBinding,
+                    userClickPublisher,
+                    commentContentClickPublisher,
+                    commentEngagementClickPublisher,
+                    commentOptionClickPublisher,
+                    reactionCountClickPublisher
+                )
             }
             else -> {
                 val itemBinding = AmityItemDeletedRootCommentBinding.inflate(
@@ -65,7 +74,7 @@ class AmityFullCommentAdapter(
             val comment = getItem(position)
             comment?.let {
                 var loader = loaderMap.get(it.getCommentId())
-                if(loader == null) {
+                if (loader == null) {
                     loader = AmityCommentReplyLoader(it)
                     loaderMap.put(it.getCommentId(), loader)
                 }

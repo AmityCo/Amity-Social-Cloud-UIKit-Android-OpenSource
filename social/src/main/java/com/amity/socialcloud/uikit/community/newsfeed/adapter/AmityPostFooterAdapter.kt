@@ -24,7 +24,8 @@ class AmityPostFooterAdapter(
     private val postReviewClickPublisher: PublishSubject<PostReviewClickEvent>,
     private val commentContentClickPublisher: PublishSubject<CommentContentClickEvent>,
     private val commentEngagementClickPublisher: PublishSubject<CommentEngagementClickEvent>,
-    private val commentOptionClickPublisher: PublishSubject<CommentOptionClickEvent>
+    private val commentOptionClickPublisher: PublishSubject<CommentOptionClickEvent>,
+    private val reactionCountClickPublisher: PublishSubject<ReactionCountClickEvent>
 ) : RecyclerView.Adapter<AmityPostFooterViewHolder>() {
 
     private val list: ArrayList<AmityBasePostFooterItem> = arrayListOf()
@@ -39,16 +40,20 @@ class AmityPostFooterAdapter(
         return when (viewType) {
             POST_ENGAGEMENT -> {
                 val itemBinding = DataBindingUtil.inflate<AmityItemPostFooterPostEngagementBinding>(
-                    LayoutInflater.from(parent.getContext()),
+                    LayoutInflater.from(parent.context),
                     R.layout.amity_item_post_footer_post_engagement,
                     parent,
                     false
                 )
-                AmityPostFooterPostEngagementViewHolder(itemBinding, postEngagementClickPublisher)
+                AmityPostFooterPostEngagementViewHolder(
+                    itemBinding,
+                    postEngagementClickPublisher,
+                    reactionCountClickPublisher
+                )
             }
             COMMENT_PREVIEW -> {
                 val itemBinding = AmityItemPostFooterCommentPreviewBinding.inflate(
-                    LayoutInflater.from(parent.getContext()),
+                    LayoutInflater.from(parent.context),
                     parent,
                     false
                 )
@@ -58,7 +63,8 @@ class AmityPostFooterAdapter(
                     postEngagementClickPublisher,
                     commentContentClickPublisher,
                     commentEngagementClickPublisher,
-                    commentOptionClickPublisher
+                    commentOptionClickPublisher,
+                    reactionCountClickPublisher
                 )
             }
             POST_REVIEW -> {
@@ -71,7 +77,7 @@ class AmityPostFooterAdapter(
             }
             else -> {
                 val itemBinding = DataBindingUtil.inflate<AmityItemPostFooterPostEngagementBinding>(
-                    LayoutInflater.from(parent.getContext()),
+                    LayoutInflater.from(parent.context),
                     R.layout.amity_item_post_footer_post_engagement,
                     parent,
                     false
@@ -79,6 +85,7 @@ class AmityPostFooterAdapter(
                 AmityPostFooterPostEngagementViewHolder(
                     itemBinding,
                     postEngagementClickPublisher,
+                    reactionCountClickPublisher,
                 )
             }
         }
