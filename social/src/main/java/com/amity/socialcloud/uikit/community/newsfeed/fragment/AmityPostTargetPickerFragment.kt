@@ -37,7 +37,10 @@ class AmityPostTargetPickerFragment : AmityBaseFragment(),
             AmityPostCreatorActivity
                 .AmityCreateCommunityPostActivityContract()
         ) {
-            getCommunity()
+            if(it != null){
+                getCommunity()
+                handleBackPress()
+            }
         }
 
     private val createLiveStreamPost =
@@ -50,14 +53,20 @@ class AmityPostTargetPickerFragment : AmityBaseFragment(),
                     AmityPostDetailsActivity.newIntent(requireContext(), createdPostId, null, null)
                 startActivity(intent)
             }
-            getCommunity()
+            if(createdPostId != null){
+                getCommunity()
+                handleBackPress()
+            }
         }
 
     private val createPollPost = registerForActivityResult(
         AmityPollPostCreatorActivity
             .AmityPollCreatorActivityContract()
     ) {
-        getCommunity()
+        if(it != null){
+            getCommunity()
+            handleBackPress()
+        }
     }
 
     companion object {

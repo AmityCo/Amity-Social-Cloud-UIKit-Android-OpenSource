@@ -105,9 +105,9 @@ fun isPlurals(number: Long): Boolean {
 fun Int.readableNumber(): String {
     if (this < 1000) return "" + this
     val exp = (ln(this.toDouble()) / ln(1000.0)).toInt()
-    val format = DecimalFormat("0.#")
+    val format = DecimalFormat("0.0")
     val value: String = format.format(this / 1000.0.pow(exp.toDouble()))
-    return String.format("%s%c", value, "kMBTPE"[exp - 1])
+    return String.format("%s%c", value, "KMBTPE"[exp - 1])
 }
 
 fun <T : Any> List<T>.toPagedList(pageSize: Int): PagedList<T> {

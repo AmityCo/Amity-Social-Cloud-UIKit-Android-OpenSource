@@ -8,6 +8,7 @@ import com.amity.socialcloud.uikit.community.databinding.AmityItemPreviewComment
 import com.amity.socialcloud.uikit.community.newsfeed.events.CommentContentClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.events.CommentEngagementClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.events.CommentOptionClickEvent
+import com.amity.socialcloud.uikit.community.newsfeed.events.ReactionCountClickEvent
 import io.reactivex.rxjava3.subjects.PublishSubject
 
 class PreviewCommentViewHolder(
@@ -15,7 +16,8 @@ class PreviewCommentViewHolder(
     private val userClickPublisher: PublishSubject<AmityUser>,
     private val commentContentClickPublisher: PublishSubject<CommentContentClickEvent>,
     private val commentEngagementClickPublisher: PublishSubject<CommentEngagementClickEvent>,
-    private val commentOptionClickPublisher: PublishSubject<CommentOptionClickEvent>
+    private val commentOptionClickPublisher: PublishSubject<CommentOptionClickEvent>,
+    private val reactionCountClickPublisher: PublishSubject<ReactionCountClickEvent>
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(comment: AmityComment?, isReadOnly: Boolean) {
@@ -25,7 +27,8 @@ class PreviewCommentViewHolder(
                 userClickPublisher,
                 commentContentClickPublisher,
                 commentEngagementClickPublisher,
-                commentOptionClickPublisher
+                commentOptionClickPublisher,
+                reactionCountClickPublisher
             )
             if (comment.getChildCount() > 0) {
                 binding.viewMoreRepliesContainer.visibility = View.VISIBLE
