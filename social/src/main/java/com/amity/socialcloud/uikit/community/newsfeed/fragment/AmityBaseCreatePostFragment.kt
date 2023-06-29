@@ -794,7 +794,7 @@ abstract class AmityBaseCreatePostFragment : AmityBaseFragment(),
                     mediaScanIntent.data = contentUri
                     activity?.sendBroadcast(mediaScanIntent)
                     val images = viewModel.addMedia(listOf(contentUri), PostMedia.Type.IMAGE)
-                    uploadMedia(images[0])
+                    uploadMedia(images)
                 }
             }
             AmityConstants.CAPTURE_VIDEO -> {
@@ -808,7 +808,7 @@ abstract class AmityBaseCreatePostFragment : AmityBaseFragment(),
                     mediaScanIntent.data = contentUri
                     activity?.sendBroadcast(mediaScanIntent)
                     val videos = viewModel.addMedia(listOf(contentUri), PostMedia.Type.VIDEO)
-                    uploadMedia(videos[0])
+                    uploadMedia(videos)
                 }
             }
         } else {
@@ -890,11 +890,11 @@ abstract class AmityBaseCreatePostFragment : AmityBaseFragment(),
         setupImageAdapter()
         val resultUris = Matisse.obtainResult(it)
         val postMediaList = viewModel.addMedia(resultUris, mediaType)
-        postMediaList.forEach { uploadMedia(it) }
+        uploadMedia(postMediaList)
     }
 
-    private fun uploadMedia(media: PostMedia) {
-        viewModel.uploadMedia(media)
+    private fun uploadMedia(mediaList: List<PostMedia>) {
+        viewModel.uploadMediaList(mediaList)
             .untilLifecycleEnd(this)
             .subscribe()
     }
@@ -1117,4 +1117,3 @@ abstract class AmityBaseCreatePostFragment : AmityBaseFragment(),
         return binding.recyclerViewUserMention.visibility == View.VISIBLE
     }
 }
-

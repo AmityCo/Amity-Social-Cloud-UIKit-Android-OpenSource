@@ -457,7 +457,12 @@ class AmityCreatePostViewModel : AmityBaseViewModel() {
         }
     }
 
-    fun uploadMedia(postMedia: PostMedia): Completable {
+    fun uploadMediaList(postMedia: List<PostMedia>): Completable {
+        return Flowable.fromIterable(postMedia)
+            .flatMapCompletable(::uploadMedia)
+    }
+
+    private fun uploadMedia(postMedia: PostMedia): Completable {
         when (postMedia.type) {
             PostMedia.Type.IMAGE -> {
                 return fileRepository
@@ -652,11 +657,13 @@ class AmityCreatePostViewModel : AmityBaseViewModel() {
         postText: String,
         userMentions: List<AmityMentionMetadata.USER>
     ): Single<AmityPost> {
+        val orderById = imageMap.values.withIndex().associate { it.value.id to it.index }
+        val sortedImages = uploadedMediaMap.values.toList().sortedBy { orderById[it.getFileId()] }
         return when {
             isUploadedImageMedia() -> {
                 createPostTextAndImages(
                     postText,
-                    uploadedMediaMap.values.toList() as List<AmityImage>,
+                    sortedImages as List<AmityImage>,
                     userMentions
                 )
             }
