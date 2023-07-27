@@ -284,8 +284,9 @@ class AmityLiveStreamPostCreatorFragment : RxFragment() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
+        streamBroadcaster?.stopPreview()
         disposeStream()
+        super.onDestroy()
     }
 
     private fun disposeStream() {
