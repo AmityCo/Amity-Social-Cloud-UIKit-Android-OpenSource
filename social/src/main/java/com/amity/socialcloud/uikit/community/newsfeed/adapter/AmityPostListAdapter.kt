@@ -62,7 +62,9 @@ class AmityPostListAdapter(
                 oldItem: AmityBasePostItem,
                 newItem: AmityBasePostItem
             ): Boolean {
-                return false
+                return oldItem.post.getPostId() == newItem.post.getPostId()
+                        && oldItem.post.getEditedAt() == newItem.post.getEditedAt()
+                        && oldItem.post.isDeleted() == newItem.post.isDeleted()
             }
 
         }

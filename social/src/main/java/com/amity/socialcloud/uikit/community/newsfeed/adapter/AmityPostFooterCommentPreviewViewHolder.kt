@@ -1,17 +1,18 @@
 package com.amity.socialcloud.uikit.community.newsfeed.adapter
 
 import android.view.View
-import androidx.paging.PagingData
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.paging.PagedList
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
+import com.amity.socialcloud.uikit.common.common.toPagedList
 import com.amity.socialcloud.uikit.community.databinding.AmityItemPostFooterCommentPreviewBinding
-import com.amity.socialcloud.uikit.community.newsfeed.events.*
+import com.amity.socialcloud.uikit.community.newsfeed.events.CommentContentClickEvent
+import com.amity.socialcloud.uikit.community.newsfeed.events.CommentEngagementClickEvent
+import com.amity.socialcloud.uikit.community.newsfeed.events.CommentOptionClickEvent
+import com.amity.socialcloud.uikit.community.newsfeed.events.PostEngagementClickEvent
+import com.amity.socialcloud.uikit.community.newsfeed.events.ReactionCountClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.model.AmityBasePostFooterItem
 import io.reactivex.rxjava3.subjects.PublishSubject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlin.math.min
 
 private const val MAXIMUM_COMMENTS_TO_SHOW = 2
@@ -50,26 +51,18 @@ class AmityPostFooterCommentPreviewViewHolder(
             }
             val commentToDisplay =
                 commentList.subList(0, min(commentList.size, MAXIMUM_COMMENTS_TO_SHOW))
-            submitComments(PagingData.from(commentToDisplay))
+            submitComments(commentToDisplay.toPagedList(commentToDisplay.size))
         } else {
             binding.viewAllCommentContainer.visibility = View.GONE
             binding.rvCommentFooter.visibility = View.GONE
         }
     }
 
-    private fun createAdapter() {
-        binding.rvCommentFooter.layoutManager = LinearLayoutManager(binding.root.context)
+    private fun submitComments(commentList: PagedList<AmityComment>) {
         binding.rvCommentFooter.adapter = adapter
-        binding.rvCommentFooter.visibility = View.GONE
-    }
+        adapter.submitList(commentList)
 
-    private fun submitComments(commentList: PagingData<AmityComment>) {
-        createAdapter()
-        CoroutineScope(Dispatchers.IO).launch {
-            adapter.submitData(commentList)
-        }
-
-        if (adapter.itemCount > 0) {
+        if (commentList.isNotEmpty()) {
             binding.rvCommentFooter.visibility = View.VISIBLE
         } else {
             binding.rvCommentFooter.visibility = View.GONE
