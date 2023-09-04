@@ -48,12 +48,12 @@ class AmityPostCreatorActivity : AmityBaseToolbarFragmentContainerActivity() {
     override fun getContentFragment(): Fragment {
         return intent?.getStringExtra(EXTRA_PARAM_COMMUNITY)?.let { communityId ->
             return AmityPostCreatorFragment.newInstance()
-                .onCommunityFeed(communityId)
-                .build()
+                    .onCommunityFeed(communityId)
+                    .build()
         } ?: kotlin.run {
             AmityPostCreatorFragment.newInstance()
-                .onMyFeed()
-                .build()
+                    .onMyFeed()
+                    .build()
         }
     }
 
@@ -72,3 +72,4 @@ class AmityPostCreatorActivity : AmityBaseToolbarFragmentContainerActivity() {
         }
     }
 }
+

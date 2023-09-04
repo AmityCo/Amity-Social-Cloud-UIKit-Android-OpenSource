@@ -12,10 +12,15 @@ import com.amity.socialcloud.uikit.community.databinding.AmityItemPostFooterComm
 import com.amity.socialcloud.uikit.community.databinding.AmityItemPostFooterPostEngagementBinding
 import com.amity.socialcloud.uikit.community.databinding.AmityItemPostFooterPostReviewBinding
 import com.amity.socialcloud.uikit.community.newsfeed.diffutil.PostCommentDiffUtil
-import com.amity.socialcloud.uikit.community.newsfeed.events.*
+import com.amity.socialcloud.uikit.community.newsfeed.events.CommentContentClickEvent
+import com.amity.socialcloud.uikit.community.newsfeed.events.CommentEngagementClickEvent
+import com.amity.socialcloud.uikit.community.newsfeed.events.CommentOptionClickEvent
+import com.amity.socialcloud.uikit.community.newsfeed.events.PostEngagementClickEvent
+import com.amity.socialcloud.uikit.community.newsfeed.events.PostReviewClickEvent
+import com.amity.socialcloud.uikit.community.newsfeed.events.ReactionCountClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.model.AmityBasePostFooterItem
 import io.reactivex.rxjava3.subjects.PublishSubject
-import java.util.*
+import java.util.Random
 
 
 class AmityPostFooterAdapter(

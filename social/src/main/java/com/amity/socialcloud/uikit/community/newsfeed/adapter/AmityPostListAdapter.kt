@@ -7,7 +7,15 @@ import androidx.recyclerview.widget.DiffUtil
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.community.R
-import com.amity.socialcloud.uikit.community.newsfeed.events.*
+import com.amity.socialcloud.uikit.community.newsfeed.events.CommentContentClickEvent
+import com.amity.socialcloud.uikit.community.newsfeed.events.CommentEngagementClickEvent
+import com.amity.socialcloud.uikit.community.newsfeed.events.CommentOptionClickEvent
+import com.amity.socialcloud.uikit.community.newsfeed.events.PollVoteClickEvent
+import com.amity.socialcloud.uikit.community.newsfeed.events.PostContentClickEvent
+import com.amity.socialcloud.uikit.community.newsfeed.events.PostEngagementClickEvent
+import com.amity.socialcloud.uikit.community.newsfeed.events.PostOptionClickEvent
+import com.amity.socialcloud.uikit.community.newsfeed.events.PostReviewClickEvent
+import com.amity.socialcloud.uikit.community.newsfeed.events.ReactionCountClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.model.AmityBasePostItem
 import io.reactivex.rxjava3.subjects.PublishSubject
 
@@ -62,6 +70,7 @@ class AmityPostListAdapter(
                 oldItem: AmityBasePostItem,
                 newItem: AmityBasePostItem
             ): Boolean {
+                // TODO: 1/8/23 need to add more fields check
                 return oldItem.post.getPostId() == newItem.post.getPostId()
                         && oldItem.post.getEditedAt() == newItem.post.getEditedAt()
                         && oldItem.post.isDeleted() == newItem.post.isDeleted()
