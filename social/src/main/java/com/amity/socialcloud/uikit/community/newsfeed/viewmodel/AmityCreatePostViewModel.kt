@@ -456,10 +456,10 @@ class AmityCreatePostViewModel : AmityBaseViewModel() {
             postTextCreator.build().post()
         }
     }
-
+    
     fun uploadMediaList(postMedia: List<PostMedia>): Completable {
         return Flowable.fromIterable(postMedia)
-            .flatMapCompletable(::uploadMedia)
+                .flatMapCompletable(::uploadMedia)
     }
 
     private fun uploadMedia(postMedia: PostMedia): Completable {

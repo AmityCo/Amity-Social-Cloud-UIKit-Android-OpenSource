@@ -69,3 +69,4 @@ class AmityPollPostCreatorActivity : AmityBaseToolbarFragmentContainerActivity()
         }
     }
 }
+

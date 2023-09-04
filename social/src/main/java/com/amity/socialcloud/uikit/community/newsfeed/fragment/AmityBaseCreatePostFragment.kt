@@ -1117,3 +1117,4 @@ abstract class AmityBaseCreatePostFragment : AmityBaseFragment(),
         return binding.recyclerViewUserMention.visibility == View.VISIBLE
     }
 }
+

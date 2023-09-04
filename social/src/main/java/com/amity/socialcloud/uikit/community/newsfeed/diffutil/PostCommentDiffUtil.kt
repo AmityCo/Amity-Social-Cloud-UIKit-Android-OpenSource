@@ -22,13 +22,13 @@ class PostCommentDiffUtil : DiffUtil.ItemCallback<AmityComment>() {
     }
 
     fun areChildrenTheSame(oldChildren: List<AmityComment>, newChildren: List<AmityComment>) : Boolean {
-        if(oldChildren.size != newChildren.size) {
+        if (oldChildren.size != newChildren.size) {
             return false
         } else {
             var isTheSame = true
-            for(index in oldChildren.indices) {
+            for (index in oldChildren.indices) {
                 isTheSame = areContentsTheSame(oldChildren.get(index), newChildren.get(index))
-                if(!isTheSame) {
+                if (!isTheSame) {
                     break
                 }
             }

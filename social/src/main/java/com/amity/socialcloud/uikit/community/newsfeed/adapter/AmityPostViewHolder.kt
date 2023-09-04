@@ -8,7 +8,15 @@ import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewAdapter
 import com.amity.socialcloud.uikit.community.R
-import com.amity.socialcloud.uikit.community.newsfeed.events.*
+import com.amity.socialcloud.uikit.community.newsfeed.events.CommentContentClickEvent
+import com.amity.socialcloud.uikit.community.newsfeed.events.CommentEngagementClickEvent
+import com.amity.socialcloud.uikit.community.newsfeed.events.CommentOptionClickEvent
+import com.amity.socialcloud.uikit.community.newsfeed.events.PollVoteClickEvent
+import com.amity.socialcloud.uikit.community.newsfeed.events.PostContentClickEvent
+import com.amity.socialcloud.uikit.community.newsfeed.events.PostEngagementClickEvent
+import com.amity.socialcloud.uikit.community.newsfeed.events.PostOptionClickEvent
+import com.amity.socialcloud.uikit.community.newsfeed.events.PostReviewClickEvent
+import com.amity.socialcloud.uikit.community.newsfeed.events.ReactionCountClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.model.AmityBasePostItem
 import com.amity.socialcloud.uikit.community.newsfeed.view.AmityBasePostView
 import io.reactivex.rxjava3.subjects.PublishSubject
