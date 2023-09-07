@@ -12,6 +12,7 @@ import androidx.databinding.DataBindingUtil
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionee
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
+import com.amity.socialcloud.sdk.model.core.role.AmityRoles
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
@@ -81,6 +82,7 @@ class AmityPostCommentView : ConstraintLayout {
         )
 
         setText(comment)
+        renderModBadge(comment)
         val isReactedByMe = comment.getMyReactions().contains(AmityConstants.POST_REACTION)
         setUpLikeView(
             isReactedByMe,
@@ -89,6 +91,22 @@ class AmityPostCommentView : ConstraintLayout {
         )
         setReadOnlyMode(isReadOnly!!)
         setViewListeners(comment, post)
+    }
+
+    private fun renderModBadge(comment: AmityComment) {
+        val roles =
+            (comment.getTarget() as? AmityComment.Target.COMMUNITY)?.getCreatorMember()?.getRoles()
+        if (isCommunityModerator(roles)) {
+            binding.tvCommentBy.visibility = View.VISIBLE
+        } else {
+            binding.tvCommentBy.visibility = View.GONE
+        }
+    }
+
+    private fun isCommunityModerator(roles: AmityRoles?): Boolean {
+        return roles?.any {
+            it == AmityConstants.MODERATOR_ROLE || it == AmityConstants.COMMUNITY_MODERATOR_ROLE
+        } ?: false
     }
 
     private fun setViewListeners(comment: AmityComment, post: AmityPost?) {
