@@ -73,14 +73,33 @@
             tools:text="Jackie" />
 
         <TextView
+            android:id="@+id/tvCommentBy"
+            style="@style/AmityTextStyleCaptionBold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/amity_padding_xxs"
+            android:drawablePadding="@dimen/amity_four"
+            android:gravity="center_vertical"
+            android:text="@string/amity_moderator"
+            android:textColor="@color/amityColorBase"
+            app:drawableEndCompat="@drawable/amity_ic_dot_base"
+            app:drawableStartCompat="@drawable/amity_ic_moderator"
+            app:drawableTintColor="@{@color/amityColorBase}"
+            app:drawableTintShade="@{AmityColorShade.SHADE1}"
+            app:layout_constraintStart_toStartOf="@id/tvUserName"
+            app:layout_constraintTop_toBottomOf="@id/tvUserName"
+            app:textColorShade="@{AmityColorShade.SHADE1}" />
+
+        <TextView
             android:id="@+id/tvCommentTime"
             style="@style/AmityTextStyleCaption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/amity_padding_xxs"
             android:drawablePadding="@dimen/amity_padding_xxs"
             android:textColor="@color/amityColorBase"
-            app:layout_constraintStart_toStartOf="@id/tvUserName"
-            app:layout_constraintTop_toBottomOf="@id/tvUserName"
+            app:layout_constraintStart_toEndOf="@id/tvCommentBy"
+            app:layout_constraintTop_toTopOf="@id/tvCommentBy"
             app:textColorShade="@{AmityColorShade.SHADE1}"
             tools:text="10 min" />
 
@@ -163,7 +182,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:textColorShade="@{øAmityColorShade.SHADE2}" />
+                app:textColorShade="@{AmityColorShade.SHADE2}" />
 
             <TextView
                 android:id="@+id/tvNumberOfReactions"
