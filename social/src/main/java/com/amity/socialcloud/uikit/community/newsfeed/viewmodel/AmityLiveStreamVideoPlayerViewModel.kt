@@ -2,7 +2,6 @@ package com.amity.socialcloud.uikit.community.newsfeed.viewmodel
 
 import com.amity.socialcloud.sdk.api.video.AmityVideoClient
 import com.amity.socialcloud.sdk.model.video.stream.AmityStream
-import com.amity.socialcloud.sdk.model.video.stream.AmityWatcherData
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
@@ -14,27 +13,32 @@ class AmityLiveStreamVideoPlayerViewModel :
 
     var streamId: String = ""
 
-    fun getVideoURL(
-        onLoadURLSuccess: (String) -> Unit,
-        onLoadURLError: () -> Unit
+    fun checkStreamStatus(
+        onValidStatus: (isLive: Boolean) -> Unit,
+        onInvalidStatus: () -> Unit
     ): Completable {
         AmityVideoClient.newStreamRepository().fetchStream(streamId).subscribe()
         return AmityVideoClient.newStreamRepository()
-            .observeStream(streamId)
-            .map {
-                if (it.getStatus() == AmityStream.Status.LIVE) {
-                    return@map it.getWatcherData()?.getUrl(AmityWatcherData.Format.FLV) ?: EMPTY_URL
-                } else {
-                    return@map EMPTY_URL
-                }
-            }
+            .getStream(streamId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
+            .distinctUntilChanged { old, new ->
+                old.getStatus() == new.getStatus()
+            }
             .doOnNext {
-                if (it != EMPTY_URL) {
-                    onLoadURLSuccess.invoke(it)
-                } else {
-                    onLoadURLError.invoke()
+                when(it.getStatus()) {
+                    AmityStream.Status.LIVE -> {
+                        onValidStatus.invoke(true)
+                    }
+                    AmityStream.Status.RECORDED -> {
+                        onValidStatus.invoke(false)
+                    }
+                    AmityStream.Status.IDLE -> {
+                        onInvalidStatus.invoke()
+                    }
+                    else -> {
+                        // do nothing
+                    }
                 }
             }
             .ignoreElements()
@@ -45,7 +49,7 @@ class AmityLiveStreamVideoPlayerViewModel :
         onStreamDeleted: () -> Unit
     ): Completable {
         return AmityVideoClient.newStreamRepository()
-            .observeStream(streamId)
+            .getStream(streamId)
             .filter { it.getStatus() == AmityStream.Status.ENDED || it.isDeleted() }
             .firstOrError()
             .subscribeOn(Schedulers.io())
@@ -60,5 +64,3 @@ class AmityLiveStreamVideoPlayerViewModel :
             .ignoreElement()
     }
 }
-
-private const val EMPTY_URL = ""

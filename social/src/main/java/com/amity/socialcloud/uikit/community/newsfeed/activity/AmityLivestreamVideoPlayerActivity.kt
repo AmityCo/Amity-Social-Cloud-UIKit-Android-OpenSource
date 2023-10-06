@@ -26,7 +26,7 @@ open class AmityLivestreamVideoPlayerActivity : RxAppCompatActivity() {
         setContentView(binding.root)
         supportActionBar?.hide()
         viewModel.streamId = intent.getStringExtra(EXTRA_STREAM_ID) ?: ""
-        getVideoURL()
+        prepareToStream()
         observeInvalidStream()
     }
 
@@ -45,18 +45,26 @@ open class AmityLivestreamVideoPlayerActivity : RxAppCompatActivity() {
         super.onPause()
     }
 
-    private fun getVideoURL() {
-        viewModel.getVideoURL(
-            onLoadURLSuccess = { startStreaming(it) },
-            onLoadURLError = { presentStreamLoadingError() })
+    private fun prepareToStream() {
+        viewModel.checkStreamStatus(
+            onValidStatus = {isLive ->
+                if(isLive) {
+                    binding.liveTextview.visibility = View.VISIBLE
+                } else {
+                    binding.liveTextview.visibility = View.INVISIBLE
+                }
+                startStreaming()
+            },
+            onInvalidStatus = { presentStreamLoadingError() }
+        )
             .doOnError { presentStreamLoadingError() }
             .untilLifecycleEnd(this)
             .subscribe()
     }
 
-    private fun startStreaming(liveStreamURL: String) {
+    private fun startStreaming() {
         binding.videoPlayer.enableStopWhenPause()
-        binding.videoPlayer.play(viewModel.streamId, liveStreamURL)
+        binding.videoPlayer.play(viewModel.streamId)
     }
 
     private fun observeInvalidStream() {

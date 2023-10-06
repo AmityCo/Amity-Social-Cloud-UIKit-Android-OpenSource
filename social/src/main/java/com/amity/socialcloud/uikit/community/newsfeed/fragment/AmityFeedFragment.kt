@@ -327,7 +327,7 @@ abstract class AmityFeedFragment : AmityBaseFragment() {
                         onClickFileItem(it.file)
                     }
                     is PostContentClickEvent.Livestream -> {
-                        navigateToLivestreamPlayer(it.stream)
+                        navigateToStreamPlayer(it.stream)
                     }
                 }
             }
@@ -336,24 +336,14 @@ abstract class AmityFeedFragment : AmityBaseFragment() {
             .subscribe()
     }
 
-    private fun navigateToLivestreamPlayer(stream: AmityStream) {
-        val recordings = stream.getRecordings()
-        //recorded stream video
-        if (stream.getStatus() == AmityStream.Status.LIVE) {
+    private fun navigateToStreamPlayer(stream: AmityStream) {
+        if (stream.getStatus() == AmityStream.Status.LIVE
+            || stream.getStatus() == AmityStream.Status.RECORDED) {
             val livestreamIntent = AmityLivestreamVideoPlayerActivity.newIntent(
                 context = requireContext(),
                 streamId = stream.getStreamId()
             )
             requireContext().startActivity(livestreamIntent)
-        }
-        //live stream video
-        else if (!recordings.isNullOrEmpty() && recordings[0]?.getUrl(AmityRecordingData.Format.MP4) != null) {
-            val videoIntent = AmityVideoPlayerActivity
-                .newIntent(
-                    context = requireContext(),
-                    videoUrl = recordings[0]!!.getUrl(AmityRecordingData.Format.MP4)!!
-                )
-            requireContext().startActivity(videoIntent)
         }
     }
 

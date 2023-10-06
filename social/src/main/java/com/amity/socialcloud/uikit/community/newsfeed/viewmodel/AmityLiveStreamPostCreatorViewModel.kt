@@ -109,7 +109,7 @@ class AmityLiveStreamPostCreatorViewModel :
 
     private fun createStream(title: String, description: String): Single<AmityStream> {
         return AmityVideoClient.newStreamRepository()
-            .createVideoStream(
+            .createStream(
                 title = title,
                 description = description,
                 resolution = AmityBroadcastResolution.HD_720P,
