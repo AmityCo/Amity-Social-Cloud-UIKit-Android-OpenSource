@@ -14,7 +14,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 33
         versionCode 1
-        versionName "3.13.0"
+        versionName "3.14.0"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -36,7 +36,9 @@ android {
     buildTypes {
         release {
             minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
         }
         debug {
             minifyEnabled false
