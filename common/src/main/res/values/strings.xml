@@ -62,4 +62,6 @@
     <string name="amity_add">Add</string>
     <string name="amity_selected">Selected</string>
     <string name="amity_no_user_found">No user found</string>
+    <string name="amity_preview_not_available_title">Preview not available</string>
+    <string name="amity_preview_not_available_message">Please make sure the URL is correct and try again.</string>
 </resources>

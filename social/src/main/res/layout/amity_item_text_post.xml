@@ -11,12 +11,22 @@
         android:layout_marginStart="@dimen/amity_padding_m1"
         android:layout_marginTop="@dimen/amity_padding_m1"
         android:layout_marginEnd="@dimen/amity_padding_m1"
-        android:maxLines="@integer/maxLineTextOnlyFeed"
         android:autoLink="web"
-        android:textColorLink="@color/amityColorHighlight"
+        android:maxLines="@integer/maxLineTextOnlyFeed"
         android:textColor="@color/amityColorBase"
+        android:textColorLink="@color/amityColorHighlight"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <com.amity.socialcloud.uikit.common.linkpreview.AmityPreviewLinkView
+        android:id="@+id/viewLinkPreview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/amity_padding_m1"
+        android:layout_marginTop="@dimen/amity_padding_m1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvFeed" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
