@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:text="Test Custom Ranking Posts"
             app:layout_constraintStart_toStartOf="@id/communityHome"
-            app:layout_constraintTop_toBottomOf="@id/communityHome"/>
+            app:layout_constraintTop_toBottomOf="@id/communityHome" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/chatHome"
