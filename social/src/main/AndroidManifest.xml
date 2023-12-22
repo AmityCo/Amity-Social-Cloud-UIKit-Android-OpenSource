@@ -94,6 +94,10 @@
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp" />
         <activity
+            android:name=".newsfeed.activity.AmityStoryTargetPickerActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+        <activity
             android:name=".newsfeed.activity.AmityPostDetailsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp"
@@ -142,6 +146,12 @@
             android:theme="@style/Amity.Base.Theme.AmityApp" />
         <activity
             android:name=".newsfeed.activity.AmityLiveStreamPostCreatorActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp.NoActionBar"
+            android:windowSoftInputMode="stateHidden" />
+
+        <activity
+            android:name=".story.AmityStoryViewActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp.NoActionBar"
             android:windowSoftInputMode="stateHidden" />

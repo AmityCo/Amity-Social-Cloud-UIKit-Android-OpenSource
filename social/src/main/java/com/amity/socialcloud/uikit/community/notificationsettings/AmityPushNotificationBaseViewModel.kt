@@ -48,6 +48,7 @@ open class AmityPushNotificationBaseViewModel : AmityBaseViewModel() {
                         isPostEnabled = true
                     }
                 }
+
                 is AmityCommunityNotificationEvent.COMMENT_CREATED,
                 is AmityCommunityNotificationEvent.COMMENT_REACTED,
                 is AmityCommunityNotificationEvent.COMMENT_REPLIED -> {
@@ -56,6 +57,10 @@ open class AmityPushNotificationBaseViewModel : AmityBaseViewModel() {
                     }
                 }
 
+                is AmityCommunityNotificationEvent.STORY_COMMENT_CREATED,
+                is AmityCommunityNotificationEvent.STORY_CREATED,
+                is AmityCommunityNotificationEvent.STORY_REACTED -> {
+                }
             }
         }
     }

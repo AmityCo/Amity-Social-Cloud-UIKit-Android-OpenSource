@@ -5,7 +5,6 @@
 
     <data>
 
-
         <import type="com.amity.socialcloud.uikit.common.common.views.AmityColorShade" />
 
     </data>
@@ -44,26 +43,21 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/amity_padding_m1"
                         android:paddingBottom="@dimen/amity_padding_m1"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
                         app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed" />
 
                 </com.google.android.material.appbar.CollapsingToolbarLayout>
 
             </com.google.android.material.appbar.AppBarLayout>
 
-
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-
                 <FrameLayout
                     android:id="@+id/globalFeedContainer"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
-
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -75,9 +69,6 @@
                 android:layout_gravity="bottom|end"
                 android:layout_margin="16dp"
                 app:srcCompat="@drawable/amity_ic_edit" />
-
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
 </layout>

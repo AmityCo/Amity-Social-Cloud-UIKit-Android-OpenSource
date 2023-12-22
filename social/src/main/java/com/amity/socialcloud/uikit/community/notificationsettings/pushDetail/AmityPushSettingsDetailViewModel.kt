@@ -135,13 +135,20 @@ class AmityPushSettingsDetailViewModel : AmityPushNotificationBaseViewModel() {
                 initialNewComment = pair.first
                 newComment = initialNewComment
             }
+
             is AmityCommunityNotificationEvent.COMMENT_REPLIED -> {
                 initialReplyComment = pair.first
                 replyComment = initialReplyComment
             }
+
             is AmityCommunityNotificationEvent.COMMENT_REACTED -> {
                 initialReactComment = pair.first
                 reactComment = initialReactComment
+            }
+
+            is AmityCommunityNotificationEvent.STORY_COMMENT_CREATED,
+            is AmityCommunityNotificationEvent.STORY_CREATED,
+            is AmityCommunityNotificationEvent.STORY_REACTED -> {
             }
         }
         if (!isGlobalModerator) {

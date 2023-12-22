@@ -7,14 +7,19 @@ android {
     buildFeatures {
         dataBinding = true
         viewBinding = true
+        compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.4.7"
     }
 }
 
 dependencies {
     api project(path: ':common')
+    api project(path: ':social-compose')
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$amityKotlinVersion"
     implementation 'com.google.android.material:material:1.3.0'
     implementation 'androidx.appcompat:appcompat:1.3.0'
 
@@ -23,7 +28,9 @@ dependencies {
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
     implementation "androidx.recyclerview:recyclerview:1.2.0"
 
-    api ("com.linkedin.android.spyglass:spyglass:3.0.1")
+    implementation 'androidx.activity:activity-compose:1.6.0'
+
+    api("com.linkedin.android.spyglass:spyglass:3.0.1")
     api("com.github.AmityCo.Amity-Social-Cloud-SDK-Android:amity-video-publisher:$amityMessagingSdkVersion")
     api("com.github.AmityCo.Amity-Social-Cloud-SDK-Android:amity-video-player:$amityMessagingSdkVersion")
 }

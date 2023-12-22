@@ -10,6 +10,7 @@
     <string name="amity_following">Following</string>
     <string name="amity_title_news_feed">Newsfeed</string>
     <string name="amity_title_explore">Explore</string>
+    <string name="amity_title_my_communities">My Communities</string>
     <string name="amity_community">Community</string>
     <string name="amity_create_community">Create Community</string>
     <string name="amity_cc_hint">Name your community</string>
@@ -30,6 +31,7 @@
     <string name="amity_hello_blank_fragment">Hello blank fragment</string>
     <string name="amity_feed_post_time">%d mins</string>
     <string name="amity_post_compose_hint">What\'s going on…</string>
+    <string name="amity_story">Story</string>
     <string name="amity_post">Post</string>
     <string name="amity_post_caps">POST</string>
     <string name="amity_new_post">New Post</string>
@@ -52,6 +54,7 @@
     <string name="amity_delete_post_warning_message">This post will be permanently deleted. You’ll no longer to see and find this post</string>
     <string name="amity_my_timeline">My Timeline</string>
     <string name="amity_post_to">Post to</string>
+    <string name="amity_story_to">Story to</string>
     <string name="amity_post_as_community">Post as Community</string>
     <string name="amity_moderator">Moderator</string>
     <string name="amity_edited">Edited</string>
