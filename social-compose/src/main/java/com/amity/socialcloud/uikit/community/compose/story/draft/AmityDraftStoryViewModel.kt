@@ -21,7 +21,7 @@ class AmityDraftStoryViewModel : AmityBaseViewModel() {
             .createImageStory(
                 targetType = AmityStory.TargetType.COMMUNITY,
                 targetId = communityId,
-                fileUri = fileUri,
+                imageUri = fileUri,
                 imageDisplayMode = imageDisplayMode
             )
             .subscribeOn(Schedulers.io())
@@ -41,7 +41,7 @@ class AmityDraftStoryViewModel : AmityBaseViewModel() {
             .createVideoStory(
                 targetType = AmityStory.TargetType.COMMUNITY,
                 targetId = communityId,
-                fileUri = fileUri
+                videoUri = fileUri
             )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
