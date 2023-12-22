@@ -3,7 +3,13 @@ package com.amity.socialcloud.uikit.community.home.fragments
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
-import android.view.*
+import android.view.KeyEvent
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.TextView
@@ -22,6 +28,7 @@ import com.amity.socialcloud.uikit.common.utils.AmityAndroidUtil
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.databinding.AmityFragmentCommunityHomePageBinding
 import com.amity.socialcloud.uikit.community.explore.fragments.AmityCommunityExplorerFragment
+import com.amity.socialcloud.uikit.community.mycommunity.fragment.AmityMyCommunityFragment
 import com.amity.socialcloud.uikit.community.newsfeed.fragment.AmityNewsFeedFragment
 import com.amity.socialcloud.uikit.community.search.AmityUserSearchFragment
 import com.amity.socialcloud.uikit.community.setting.AmityCommunitySearchFragment
@@ -92,7 +99,11 @@ class AmityCommunityHomePageFragment : Fragment() {
                 AmityFragmentStateAdapter.AmityPagerModel(
                     getString(R.string.amity_title_explore),
                     getExploreFragment()
-                )
+                ),
+//                AmityFragmentStateAdapter.AmityPagerModel(
+//                    getString(R.string.amity_title_my_communities),
+//                    getMyCommunityFragment()
+//                )
             )
         )
         binding.tabLayout.setAdapter(fragmentStateAdapter)
@@ -106,6 +117,10 @@ class AmityCommunityHomePageFragment : Fragment() {
         return AmityNewsFeedFragment.newInstance().build()
     }
 
+    private fun getMyCommunityFragment(): Fragment {
+        return AmityMyCommunityFragment.newInstance().build()
+    }
+
     private fun addViewModelListeners() {
         viewModel.onAmityEventReceived += { event ->
             when (event.type) {
@@ -113,6 +128,7 @@ class AmityCommunityHomePageFragment : Fragment() {
                     //searchMenuItem.expandActionView()
                     binding.tabLayout.switchTab(1)
                 }
+
                 else -> {
 
                 }

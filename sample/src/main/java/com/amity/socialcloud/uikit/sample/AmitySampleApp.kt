@@ -9,6 +9,7 @@ import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.sdk.video.AmityStreamBroadcasterClient
 import com.amity.socialcloud.sdk.video.AmityStreamPlayerClient
 import com.amity.socialcloud.uikit.AmityUIKitClient
+import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import com.amity.socialcloud.uikit.feed.settings.AmityPostShareClickListener
 import com.amity.socialcloud.uikit.feed.settings.AmityPostSharingSettings
 import com.amity.socialcloud.uikit.feed.settings.AmityPostSharingTarget
@@ -43,6 +44,9 @@ class AmitySampleApp : Application() {
                 context.shareLinkToExternalApp(fakeURL)
             }
         }
+
+        //  setting up config controller
+        AmityUIKitConfigController.setup(this)
 
         AmityCoreClient.getGlobalBanEvents()
             .subscribeOn(Schedulers.io())

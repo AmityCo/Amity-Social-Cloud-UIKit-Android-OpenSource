@@ -121,4 +121,9 @@
         <item name="amityTextStyle">normal</item>
         <item name="android:textColor">@color/material_btn_bg_color_selector</item>
     </style>
+
+    <style name="AmityStoryDarkTheme" parent="Amity.Base.Theme.MaterialThemeBuilder">
+        <item name="android:statusBarColor" tools:ignore="NewApi">@color/amityColorBlack</item>
+    </style>
+
 </resources>

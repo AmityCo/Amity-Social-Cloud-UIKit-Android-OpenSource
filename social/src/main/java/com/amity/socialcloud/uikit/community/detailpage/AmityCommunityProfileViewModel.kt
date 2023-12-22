@@ -107,7 +107,7 @@ class AmityCommunityProfileViewModel(private val savedState: SavedStateHandle) :
                     communityId!!,
                     AmityPermission.EDIT_COMMUNITY
                 )
-            )
+            ),
         ) { community, hasPendingPosts, postCount, isReviewer, canEditCommunity ->
             var shouldRefreshHasPendingPost = false
 

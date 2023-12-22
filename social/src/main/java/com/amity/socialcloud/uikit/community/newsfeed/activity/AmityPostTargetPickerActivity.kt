@@ -65,6 +65,10 @@ class AmityPostTargetPickerActivity : AmityBaseToolbarFragmentContainerActivity(
         object POLL : CreationType() {
             override fun getName(): String = POST_CREATION_TYPE_POLL
         }
+
+        object STORY : CreationType() {
+            override fun getName(): String = STORY_CREATION
+        }
     }
 }
 

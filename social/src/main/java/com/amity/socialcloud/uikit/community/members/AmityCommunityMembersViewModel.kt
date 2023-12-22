@@ -65,7 +65,7 @@ class AmityCommunityMembersViewModel : AmityBaseViewModel() {
 
     private fun getCommunity(): Flowable<AmityCommunity> {
         if (community != null) {
-            return Flowable.just(community)
+            return Flowable.just(community!!)
         }
         return AmitySocialClient.newCommunityRepository().getCommunity(communityId)
             .subscribeOn(Schedulers.io())

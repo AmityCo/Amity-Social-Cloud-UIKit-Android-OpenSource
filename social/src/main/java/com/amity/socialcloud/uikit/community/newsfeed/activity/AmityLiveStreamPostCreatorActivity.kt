@@ -25,7 +25,7 @@ class AmityLiveStreamPostCreatorActivity : AmityBaseToolbarFragmentContainerActi
     }
 
     class AmityCreateLiveStreamPostActivityContract :
-        ActivityResultContract<String, String?>() {
+        ActivityResultContract<String?, String?>() {
         override fun createIntent(context: Context, communityId: String?): Intent {
             return Intent(context, AmityLiveStreamPostCreatorActivity::class.java).apply {
                 putExtra(EXTRA_PARAM_COMMUNITY_ID, communityId)

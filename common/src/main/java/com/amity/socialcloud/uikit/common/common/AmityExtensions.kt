@@ -25,6 +25,7 @@ import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
+import org.joda.time.DateTime
 import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.util.concurrent.TimeUnit
@@ -84,16 +85,19 @@ fun Long.readableFeedPostTime(context: Context): String {
             days.toInt(),
             days
         )
+
         hours > 0 -> context.resources.getQuantityString(
             R.plurals.amity_number_of_hours,
             hours.toInt(),
             hours
         )
+
         minutes > 0 -> context.resources.getQuantityString(
             R.plurals.amity_number_of_mins,
             minutes.toInt(),
             minutes
         )
+
         else -> context.getString(R.string.amity_just_now)
     }
 }
@@ -108,6 +112,31 @@ fun Int.readableNumber(): String {
     val format = DecimalFormat("0.0")
     val value: String = format.format(this / 1000.0.pow(exp.toDouble()))
     return String.format("%s%c", value, "KMBTPE"[exp - 1])
+}
+
+fun DateTime.readableTimeDiff(): String {
+    val diff = DateTime.now().millis - this.millis
+    diff.let {
+        val days = TimeUnit.MILLISECONDS.toDays(diff)
+        val hours = TimeUnit.MILLISECONDS.toHours(diff)
+        val minutes = TimeUnit.MILLISECONDS.toMinutes(diff)
+        val seconds = TimeUnit.MILLISECONDS.toSeconds(diff)
+
+        return when {
+            days > 0 -> days.toString() + "d"
+            hours > 0 -> hours.toString() + "h"
+            minutes > 0 -> minutes.toString() + "m"
+            seconds > 1 -> seconds.toString() + "s"
+            else -> "Just now"
+        }
+    }
+}
+
+fun Int.readableMinuteSeconds(): String {
+    val minutes = this / 60
+    val seconds = this % 60
+
+    return "%02d:%02d".format(minutes, seconds)
 }
 
 fun <T : Any> List<T>.toPagedList(pageSize: Int): PagedList<T> {
@@ -160,7 +189,8 @@ fun View.setShape(
     val shapeDrawable = MaterialShapeDrawable(modal.build())
 
     if (fillColor == null) {
-        shapeDrawable.fillColor = ContextCompat.getColorStateList(this.context, R.color.amityColorWhite)
+        shapeDrawable.fillColor =
+            ContextCompat.getColorStateList(this.context, R.color.amityColorWhite)
     } else {
         if (colorShade == null)
             shapeDrawable.fillColor = ContextCompat.getColorStateList(this.context, fillColor)
@@ -221,7 +251,10 @@ fun View.toCircularShape(fillColor: Int, strokeWidth: Float? = null) {
     val shapeDrawable = MaterialShapeDrawable(modal.build())
     shapeDrawable.setTint(fillColor)
     if (strokeWidth != null) {
-        shapeDrawable.setStroke(strokeWidth, ContextCompat.getColor(this.context, R.color.amityColorWhite))
+        shapeDrawable.setStroke(
+            strokeWidth,
+            ContextCompat.getColor(this.context, R.color.amityColorWhite)
+        )
     }
     ViewCompat.setBackground(this, shapeDrawable)
 }
@@ -263,7 +296,10 @@ fun View.expandViewHitArea(): View? {
 
 fun Int.toDp(): Int = (this / Resources.getSystem().displayMetrics.density).toInt()
 
-fun View.showSnackBar(msg: String, @BaseTransientBottomBar.Duration duration: Int = Snackbar.LENGTH_LONG) {
+fun View.showSnackBar(
+    msg: String,
+    @BaseTransientBottomBar.Duration duration: Int = Snackbar.LENGTH_LONG
+) {
     Snackbar.make(this, msg, duration).show()
 }
 

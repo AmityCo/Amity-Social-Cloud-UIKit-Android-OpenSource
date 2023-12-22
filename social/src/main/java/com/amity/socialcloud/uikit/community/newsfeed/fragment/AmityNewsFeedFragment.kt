@@ -14,9 +14,11 @@ import com.amity.socialcloud.uikit.common.common.setSafeOnClickListener
 import com.amity.socialcloud.uikit.common.common.views.dialog.bottomsheet.AmityBottomSheetDialog
 import com.amity.socialcloud.uikit.common.common.views.dialog.bottomsheet.BottomSheetMenuItem
 import com.amity.socialcloud.uikit.community.R
+import com.amity.socialcloud.uikit.community.compose.story.target.AmityStoryTargetTabFragment
 import com.amity.socialcloud.uikit.community.databinding.AmityFragmentNewsFeedBinding
 import com.amity.socialcloud.uikit.community.mycommunity.fragment.AmityMyCommunityPreviewFragment
 import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityPostTargetPickerActivity
+import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityStoryTargetPickerActivity
 import com.amity.socialcloud.uikit.community.newsfeed.events.AmityFeedRefreshEvent
 import com.google.android.material.appbar.AppBarLayout
 import io.reactivex.rxjava3.core.BackpressureStrategy
@@ -31,6 +33,13 @@ class AmityNewsFeedFragment : AmityBaseFragment(),
     private val createPost =
         registerForActivityResult<AmityPostTargetPickerActivity.CreationType, String>(
             AmityPostTargetPickerActivity.AmityPostTargetPickerActivityContract()
+        ) {
+            refreshFeed()
+        }
+
+    private val createStory =
+        registerForActivityResult<AmityStoryTargetPickerActivity.CreationType, String>(
+            AmityStoryTargetPickerActivity.AmityStoryTargetPickerActivityContract()
         ) {
             refreshFeed()
         }
@@ -107,6 +116,14 @@ class AmityNewsFeedFragment : AmityBaseFragment(),
                     }
                 ),
                 BottomSheetMenuItem(
+                    iconResId = R.drawable.amity_ic_story_create,
+                    titleResId = R.string.amity_story,
+                    action = {
+                        createStory.launch(AmityStoryTargetPickerActivity.CreationType.STORY)
+                        bottomSheet.dismiss()
+                    }
+                ),
+                BottomSheetMenuItem(
                     iconResId = R.drawable.ic_amity_ic_live_stream_create,
                     titleResId = R.string.amity_video_stream_title,
                     action = {
@@ -128,6 +145,10 @@ class AmityNewsFeedFragment : AmityBaseFragment(),
 
     private fun getMyCommunityPreviewFragment(): Fragment {
         return AmityMyCommunityPreviewFragment.newInstance().build()
+    }
+
+    private fun getStoryTargetFragment(): Fragment {
+        return AmityStoryTargetTabFragment.newInstance().build()
     }
 
     private fun getGlobalFeed(): Fragment {

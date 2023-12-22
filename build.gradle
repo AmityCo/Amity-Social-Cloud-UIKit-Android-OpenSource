@@ -3,7 +3,7 @@
 buildscript {
     ext {
         gradleBuildVersion = '7.4.1'
-        kotlinVersion = "1.7.20"
+        kotlinVersion = "1.8.21"
         jacocoVersion = '0.8.5'
     }
     repositories {
