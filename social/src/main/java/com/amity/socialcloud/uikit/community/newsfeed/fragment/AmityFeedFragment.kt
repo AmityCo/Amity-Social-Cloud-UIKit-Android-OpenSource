@@ -1,6 +1,5 @@
 package com.amity.socialcloud.uikit.community.newsfeed.fragment
 
-import android.Manifest
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -18,7 +17,6 @@ import com.amity.socialcloud.sdk.model.core.file.AmityFile
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
-import com.amity.socialcloud.sdk.model.video.stream.AmityRecordingData
 import com.amity.socialcloud.sdk.model.video.stream.AmityStream
 import com.amity.socialcloud.uikit.common.base.AmityBaseFragment
 import com.amity.socialcloud.uikit.common.common.AmityFileManager
@@ -28,9 +26,17 @@ import com.amity.socialcloud.uikit.common.common.views.dialog.bottomsheet.AmityB
 import com.amity.socialcloud.uikit.common.utils.AmityAlertDialogUtil
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.databinding.AmityFragmentFeedBinding
-import com.amity.socialcloud.uikit.community.newsfeed.activity.*
+import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityEditCommentActivity
+import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityLivestreamVideoPlayerActivity
+import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityPostDetailsActivity
+import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityPostEditorActivity
 import com.amity.socialcloud.uikit.community.newsfeed.adapter.AmityPostListAdapter
-import com.amity.socialcloud.uikit.community.newsfeed.events.*
+import com.amity.socialcloud.uikit.community.newsfeed.events.AmityFeedLoadStateEvent
+import com.amity.socialcloud.uikit.community.newsfeed.events.CommentContentClickEvent
+import com.amity.socialcloud.uikit.community.newsfeed.events.CommentEngagementClickEvent
+import com.amity.socialcloud.uikit.community.newsfeed.events.PostContentClickEvent
+import com.amity.socialcloud.uikit.community.newsfeed.events.PostEngagementClickEvent
+import com.amity.socialcloud.uikit.community.newsfeed.events.PostReviewClickEvent
 import com.amity.socialcloud.uikit.community.newsfeed.model.AmityBasePostItem
 import com.amity.socialcloud.uikit.community.newsfeed.viewmodel.AmityFeedViewModel
 import com.amity.socialcloud.uikit.community.utils.AmityCommunityNavigation
@@ -453,17 +459,8 @@ abstract class AmityFeedFragment : AmityBaseFragment() {
     }
 
     private fun onClickFileItem(file: AmityFile) {
-        if (hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            context?.let {
-                showDownloadingSnackBar(file.getFileName())
-                AmityFileManager.saveFile(it, file.getUrl() ?: "", file.getFileName())
-            }
-        } else {
-            this.requestPermission(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                REQUEST_STORAGE_PERMISSION_IMAGE_UPLOAD
-            )
-        }
+        showDownloadingSnackBar(file.getFileName())
+        AmityFileManager.saveFile(requireContext(), file.getUrl() ?: "", file.getFileName())
     }
 
     open fun navigateToPostDetails(postId: String) {
