@@ -56,6 +56,7 @@ open class AmityPushNotificationBaseViewModel : AmityBaseViewModel() {
                     }
                 }
 
+                else -> {}
             }
         }
     }

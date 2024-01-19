@@ -143,6 +143,8 @@ class AmityPushSettingsDetailViewModel : AmityPushNotificationBaseViewModel() {
                 initialReactComment = pair.first
                 reactComment = initialReactComment
             }
+
+            else -> {}
         }
         if (!isGlobalModerator) {
             choices.add(Pair(R.string.amity_everyone, !isModerator))
