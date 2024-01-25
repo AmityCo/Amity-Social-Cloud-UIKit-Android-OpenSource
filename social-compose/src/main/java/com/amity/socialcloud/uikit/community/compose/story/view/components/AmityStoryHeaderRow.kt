@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.media3.common.util.UnstableApi
@@ -42,6 +43,8 @@ import coil.request.ImageRequest
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.uikit.common.common.readableTimeDiff
+import com.amity.socialcloud.uikit.common.common.views.AmityColorPaletteUtil
+import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
 import com.amity.socialcloud.uikit.common.utils.AmityConstants
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageViewModel
@@ -65,6 +68,7 @@ fun AmityStoryHeaderRow(
     currentSegment: Int,
     isVisible: Boolean,
     shouldPauseTimer: Boolean,
+    shouldRestartTimer: Boolean,
     moveToNextSegment: () -> Unit,
     onCloseClicked: () -> Unit,
     navigateToCreatePage: () -> Unit,
@@ -73,7 +77,7 @@ fun AmityStoryHeaderRow(
     if (isVisible) {
         if (stories.isEmpty()) return
 
-        val story by lazy { stories[currentSegment] }
+        val story by lazy { stories.getOrNull(currentSegment) }
         var timerDuration by remember {
             mutableStateOf(AmityConstants.STORY_DURATION)
         }
@@ -91,7 +95,7 @@ fun AmityStoryHeaderRow(
         val hasManageStoryPermission by viewModel.hasManageStoryPermission.collectAsState()
 
         LaunchedEffect(currentSegment, videoDuration) {
-            timerDuration = if (story.getDataType() == AmityStory.DataType.VIDEO) {
+            timerDuration = if (story?.getDataType() == AmityStory.DataType.VIDEO) {
                 videoDuration
             } else {
                 AmityConstants.STORY_DURATION
@@ -117,6 +121,7 @@ fun AmityStoryHeaderRow(
                 AmityStorySegmentTimerElement(
                     pageScope = pageScope,
                     shouldPauseTimer = shouldPauseTimer,
+                    shouldRestart = shouldRestartTimer,
                     totalSegments = totalSegments,
                     currentSegment = currentSegment,
                     duration = timerDuration,
@@ -141,13 +146,23 @@ fun AmityStoryHeaderRow(
                     ) {
                         if (avatarUrl.isEmpty()) {
                             Image(
-                                painter = painterResource(id = R.drawable.amity_ic_default_profile1),
+                                painter = painterResource(id = R.drawable.amity_ic_default_community_avatar_circular),
                                 contentScale = ContentScale.Fit,
                                 contentDescription = "Avatar Image",
                                 modifier = Modifier
                                     .size(40.dp)
                                     .clip(CircleShape)
-                                    .background(Color.LightGray)
+                                    .background(
+                                        Color(
+                                            AmityColorPaletteUtil.getColor(
+                                                ContextCompat.getColor(
+                                                    LocalContext.current,
+                                                    R.color.amityColorPrimary
+                                                ),
+                                                AmityColorShade.SHADE3
+                                            )
+                                        )
+                                    )
                             )
                         } else {
                             AsyncImage(
@@ -189,7 +204,7 @@ fun AmityStoryHeaderRow(
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             Text(
-                                text = story.getCreatedAt()?.readableTimeDiff() ?: "",
+                                text = story?.getCreatedAt()?.readableTimeDiff() ?: "",
                                 color = Color.White,
                                 style = TextStyle(fontSize = 13.sp)
                             )
@@ -199,14 +214,14 @@ fun AmityStoryHeaderRow(
                                 style = TextStyle(fontSize = 13.sp)
                             )
                             Text(
-                                text = "By ${story.getCreator()?.getDisplayName() ?: ""}",
+                                text = "By ${story?.getCreator()?.getDisplayName() ?: ""}",
                                 color = Color.White,
                                 style = TextStyle(fontSize = 13.sp)
                             )
                         }
                     }
 
-                    if (story.getCreatorId() == AmityCoreClient.getUserId()) {
+                    if (story?.getCreatorId() == AmityCoreClient.getUserId()) {
                         AmityBaseElement(
                             pageScope = pageScope,
                             elementId = "overflow_menu"
@@ -221,7 +236,11 @@ fun AmityStoryHeaderRow(
                                     .size(24.dp)
                                     .align(Alignment.CenterVertically)
                                     .clickable {
-                                        onDeleteClicked(story.getStoryId())
+                                        story
+                                            ?.getStoryId()
+                                            ?.let {
+                                                onDeleteClicked(it)
+                                            }
                                     }
                             )
                         }

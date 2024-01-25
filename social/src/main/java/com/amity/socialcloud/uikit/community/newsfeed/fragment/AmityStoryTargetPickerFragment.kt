@@ -13,7 +13,7 @@ import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.base.AmityBaseFragment
 import com.amity.socialcloud.uikit.common.utils.AmityRecyclerViewItemDecoration
 import com.amity.socialcloud.uikit.community.R
-import com.amity.socialcloud.uikit.community.compose.story.target.AmityStoryTargetTabBehavior
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.databinding.AmityFragmentStoryTargetSelectionBinding
 import com.amity.socialcloud.uikit.community.newsfeed.activity.STORY_CREATION
 import com.amity.socialcloud.uikit.community.newsfeed.adapter.AmityCreatePostCommunitySelectionAdapter
@@ -32,7 +32,7 @@ class AmityStoryTargetPickerFragment : AmityBaseFragment(),
     private lateinit var binding: AmityFragmentStoryTargetSelectionBinding
 
     private val behavior by lazy {
-        AmityStoryTargetTabBehavior(requireContext())
+        AmitySocialBehaviorHelper.storyTabComponentBehavior
     }
 
     private val createStory =
@@ -94,6 +94,7 @@ class AmityStoryTargetPickerFragment : AmityBaseFragment(),
         when (viewModel.storyCreationType) {
             STORY_CREATION -> {
                 behavior.goToCreateStoryPage(
+                    context = requireContext(),
                     launcher = createStory,
                     community = community
                 )

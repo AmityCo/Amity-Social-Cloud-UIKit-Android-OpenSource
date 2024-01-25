@@ -165,7 +165,6 @@ class AmityCommunityProfileFragment : RxFragment() {
         Glide.with(this)
             .load(community.getAvatar()?.getUrl(AmityImage.Size.LARGE) ?: "")
             .centerCrop()
-            .placeholder(R.drawable.amity_ic_default_community_avatar)
             .into(binding.ivAvatar)
 
         binding.tvName.text = community.getDisplayName().trim()

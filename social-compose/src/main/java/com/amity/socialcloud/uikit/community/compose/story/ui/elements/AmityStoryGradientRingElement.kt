@@ -2,6 +2,7 @@ package com.amity.socialcloud.uikit.community.compose.story.ui.elements
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -15,11 +16,12 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun AmityStoryGradientRingElement(
     modifier: Modifier = Modifier,
+    isIndeterminate: Boolean,
     colors: List<Color>,
-    strokeWidth: Float = 6f,
 ) {
     Canvas(modifier = modifier) {
         val center = Offset(size.width / 2, size.height / 2)
+        val strokeWidth = 2.dp.toPx()
         val radius = size.minDimension / 2 - strokeWidth / 2
 
         drawIntoCanvas {
@@ -41,6 +43,14 @@ fun AmityStoryGradientRingElement(
             )
         }
     }
+    if (isIndeterminate) {
+        CircularProgressIndicator(
+            color = Color(0xFFEBECEF),
+            trackColor = Color.Transparent,
+            modifier = modifier,
+            strokeWidth = 2.dp
+        )
+    }
 }
 
 @Preview
@@ -51,7 +61,7 @@ fun AmityStoryGradientRingElementPreview() {
             Color(0xFF339AF9),
             Color(0xFF78FA58)
         ),
-        strokeWidth = 6f,
+        isIndeterminate = true,
         modifier = Modifier.size(64.dp)
     )
 }

@@ -13,7 +13,6 @@ import android.text.Editable
 import android.text.SpannableString
 import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -994,20 +993,16 @@ abstract class AmityBaseCreatePostFragment : AmityBaseFragment(),
         if (files.size != addedFiles.size) {
             showDuplicateFilesMessage()
         }
-        Log.d("TT", "uploadFileAttachments: start")
         files.forEach { fileAttachment ->
-            viewModel.uploadFile(fileAttachment)
+            val disposable = viewModel.uploadFile(fileAttachment)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .untilLifecycleEnd(this)
                 .doOnNext {
-                    Log.d("TT", "uploadFileAttachments: $it")
                     viewModel.updateFileUploadStatus(fileAttachment, it)
-                }.doOnError {
-                    Log.d("TT", "uploadFileAttachments $it")
-                }.subscribe()
-//            compositeDisposable.add(disposable)
+                }.doOnError { }.subscribe()
+            compositeDisposable.add(disposable)
         }
-
     }
 
     private fun showDuplicateFilesMessage() {

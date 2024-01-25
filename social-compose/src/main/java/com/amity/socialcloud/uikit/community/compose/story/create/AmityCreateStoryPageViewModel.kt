@@ -15,7 +15,7 @@ class AmityCreateStoryPageViewModel : AmityBaseViewModel() {
     }
 
     private val _maxRecordDurationSeconds by lazy {
-        MutableStateFlow(60)
+        MutableStateFlow(90)
     }
     val maxRecordDurationSeconds get() = _maxRecordDurationSeconds
 
@@ -25,7 +25,7 @@ class AmityCreateStoryPageViewModel : AmityBaseViewModel() {
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSuccess { contentCheck ->
                 viewModelScope.launch {
-                    val duration = contentCheck.story()?.video?.maxDurationSeconds ?: 60
+                    val duration = contentCheck.story()?.video?.maxDurationSeconds ?: 90
                     _maxRecordDurationSeconds.value = duration
                 }
             }

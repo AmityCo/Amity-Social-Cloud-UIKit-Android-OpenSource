@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -88,7 +87,6 @@ fun AmityDraftStoryPage(
 
     var isImageContentScaleFit by remember { mutableStateOf(true) }
     val openAlertDialog = remember { mutableStateOf(false) }
-    var shouldShowLoading by remember { mutableStateOf(false) }
 
     val communityAvatarPainter = rememberAsyncImagePainter(
         ImageRequest
@@ -188,13 +186,6 @@ fun AmityDraftStoryPage(
                             }
                         }
                     }
-
-
-                    if (shouldShowLoading) {
-                        CircularProgressIndicator(
-                            modifier = modifier.align(Alignment.Center)
-                        )
-                    }
                 }
                 AmityBaseElement(
                     pageScope = getPageScope(),
@@ -257,8 +248,6 @@ fun AmityDraftStoryPage(
                             .padding(start = 4.dp, end = 12.dp)
                             .align(Alignment.CenterEnd)
                             .clickable {
-                                if (shouldShowLoading) return@clickable
-                                shouldShowLoading = true
                                 if (isImage) {
                                     viewModel.createImageStory(
                                         communityId = communityId,
@@ -268,26 +257,24 @@ fun AmityDraftStoryPage(
                                         else AmityStoryImageDisplayMode.FILL,
                                         onSuccess = {
                                             context.showToast("Successfully shared story")
-                                            shouldShowLoading = false
-                                            onCreateSuccess()
                                         },
-                                        onError = {
-                                            context.showToast("Failed to share story")
-                                            shouldShowLoading = false
+                                        onError = { message ->
+                                            context.showToast(message)
                                         }
                                     )
+                                    onCreateSuccess()
                                 } else {
-                                    viewModel.createVideoStory(communityId = communityId,
+                                    viewModel.createVideoStory(
+                                        communityId = communityId,
                                         fileUri = fileUri,
                                         onSuccess = {
-                                            shouldShowLoading = false
-                                            onCreateSuccess()
+                                            context.showToast("Successfully shared story")
                                         },
-                                        onError = {
-                                            context.showToast("Failed to share story")
-                                            shouldShowLoading = false
+                                        onError = { message ->
+                                            context.showToast(message)
                                         }
                                     )
+                                    onCreateSuccess()
                                 }
                             }
                     ) {

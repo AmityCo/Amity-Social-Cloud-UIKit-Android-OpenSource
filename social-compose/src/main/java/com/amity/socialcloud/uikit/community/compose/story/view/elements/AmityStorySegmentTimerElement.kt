@@ -19,6 +19,7 @@ fun AmityStorySegmentTimerElement(
     modifier: Modifier = Modifier,
     pageScope: AmityComposePageScope? = null,
     shouldPauseTimer: Boolean,
+    shouldRestart: Boolean,
     totalSegments: Int,
     currentSegment: Int,
     duration: Long,
@@ -39,6 +40,7 @@ fun AmityStorySegmentTimerElement(
                     elementScope = getElementScope(),
                     modifier = modifier.weight(1f),
                     shouldStart = index == currentSegment,
+                    shouldRestart = index == currentSegment && shouldRestart,
                     shouldPauseTimer = shouldPauseTimer,
                     isAlreadyFinished = index < currentSegment,
                     duration = duration,
@@ -57,10 +59,11 @@ fun AmityStorySegmentTimerElementPreview() {
     AmityBasePage(pageId = "story_page") {
         AmityStorySegmentTimerElement(
             pageScope = getPageScope(),
-            totalSegments = 100,
+            totalSegments = 3,
             currentSegment = 2,
             duration = 2000,
             shouldPauseTimer = false,
+            shouldRestart = false,
         ) {}
     }
 }

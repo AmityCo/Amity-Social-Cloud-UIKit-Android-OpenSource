@@ -25,11 +25,12 @@
 
             <ImageView
                 android:id="@+id/ivAvatar"
+                amityBackgroundColor="@{@color/amityColorPrimary}"
+                backgroundColorShade="@{AmityColorShade.SHADE3}"
                 android:layout_width="match_parent"
                 android:layout_height="260dp"
                 android:adjustViewBounds="true"
-                android:scaleType="centerCrop"
-                android:src="@drawable/amity_ic_default_community_avatar" />
+                android:scaleType="centerCrop" />
 
             <ImageView
                 android:layout_width="match_parent"

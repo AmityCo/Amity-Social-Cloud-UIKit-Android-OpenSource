@@ -39,19 +39,71 @@ fun AmityStoryBodyRow(
     story: AmityStory,
     isVisible: Boolean,
 ) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color.Black)
+    ) {
+        when (story.getDataType()) {
+            AmityStory.DataType.IMAGE -> {
+                AmityStoryBodyImageView(
+                    modifier = modifier,
+                    data = story.getData() as AmityStory.Data.IMAGE,
+                    syncState = story.getState(),
+                )
+            }
+
+            AmityStory.DataType.VIDEO -> {
+                AmityStoryBodyVideoView(
+                    modifier = modifier,
+                    exoPlayer = exoPlayer,
+                    isVisible = isVisible,
+                )
+            }
+
+            AmityStory.DataType.UNKNOWN -> {}
+        }
+        if (story.getState() != AmityStory.State.SYNCED) {
+            Box(
+                modifier = modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(0.5f))
+            )
+        }
+    }
+}
+
+@Composable
+fun AmityStoryBodyImageView(
+    modifier: Modifier = Modifier,
+    data: AmityStory.Data.IMAGE,
+    syncState: AmityStory.State,
+) {
+    val context = LocalContext.current
+
+    val contentScale = remember {
+        when (data.getImageDisplayMode()) {
+            AmityStoryImageDisplayMode.FIT -> ContentScale.Fit
+            AmityStoryImageDisplayMode.FILL -> ContentScale.Crop
+        }
+    }
+    val imagePath = remember {
+        when (syncState) {
+            AmityStory.State.SYNCED -> {
+                data.getImage()?.getUrl(AmityImage.Size.FULL)
+            }
+
+            AmityStory.State.SYNCING,
+            AmityStory.State.FAILED -> {
+                data.getImage()?.getUri()
+            }
+        }
+    }
+
     var palette by remember { mutableStateOf<Palette?>(null) }
     val painter = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
-            .data(
-                when (story.getDataType()) {
-                    AmityStory.DataType.IMAGE -> {
-                        (story.getData() as AmityStory.Data.IMAGE).getImage()
-                            ?.getUrl(AmityImage.Size.FULL) ?: ""
-                    }
-
-                    else -> ""
-                }
-            )
+            .data(imagePath)
             .allowHardware(false)
             .build()
     )
@@ -61,8 +113,7 @@ fun AmityStoryBodyRow(
 
         if (bitmap != null) {
             launch(Dispatchers.Default) {
-                palette = Palette.Builder(bitmap)
-                    .generate()
+                palette = Palette.Builder(bitmap).generate()
             }
         }
     }
@@ -79,34 +130,29 @@ fun AmityStoryBodyRow(
                 )
             )
     ) {
-        when (story.getDataType()) {
-            AmityStory.DataType.IMAGE -> {
-                val contentScale =
-                    when ((story.getData() as AmityStory.Data.IMAGE).getImageDisplayMode()) {
-                        AmityStoryImageDisplayMode.FIT -> ContentScale.Fit
-                        AmityStoryImageDisplayMode.FILL -> ContentScale.Crop
-                    }
-
-                Image(
-                    painter = painter,
-                    contentScale = contentScale,
-                    contentDescription = "Story Image",
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .align(Alignment.Center),
-                )
-            }
-
-            AmityStory.DataType.VIDEO -> {
-                AmityStoryVideoPlayer(
-                    exoPlayer = exoPlayer,
-                    isVisible = isVisible,
-                )
-            }
-
-            AmityStory.DataType.UNKNOWN -> {}
-        }
+        Image(
+            painter = painter,
+            contentScale = contentScale,
+            contentDescription = "Story Image",
+            modifier = Modifier
+                .fillMaxSize()
+                .align(Alignment.Center),
+        )
     }
+}
+
+@UnstableApi
+@Composable
+fun AmityStoryBodyVideoView(
+    modifier: Modifier = Modifier,
+    exoPlayer: ExoPlayer?,
+    isVisible: Boolean
+) {
+    AmityStoryVideoPlayer(
+        modifier = modifier,
+        exoPlayer = exoPlayer,
+        isVisible = isVisible,
+    )
 }
 
 @Preview

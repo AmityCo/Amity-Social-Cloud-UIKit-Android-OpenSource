@@ -62,6 +62,10 @@
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp" />
         <activity
+            android:name=".setting.story.AmityStorySettingsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+        <activity
             android:name=".explore.activity.AmityCategoryCommunityListActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp" />

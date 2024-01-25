@@ -1,7 +1,9 @@
 package com.amity.socialcloud.uikit.community.compose.story.create
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -88,7 +90,14 @@ fun AmityCreateStoryPage(
 
     val mediaPickerLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            uri?.let { onMediaSelected(isPhotoSelected, it.toString()) }
+            uri?.let {
+                context.grantUriPermission(
+                    context.packageName,
+                    it,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+                )
+                onMediaSelected(isPhotoSelected, it.toString())
+            }
         }
 
     val mediaPermissionLauncher =
@@ -293,8 +302,8 @@ fun AmityCreateStoryPage(
                         isCurrentlyRecording = true
                         AmityStoryCameraHelper.captureVideo(
                             context = context,
-                            onVideoSaved = {
-                                onMediaSelected(isPhotoSelected, it)
+                            onVideoSaved = { uri ->
+                                onMediaSelected(isPhotoSelected, uri)
                             }
                         )
                     },

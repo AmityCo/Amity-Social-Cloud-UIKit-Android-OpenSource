@@ -27,6 +27,7 @@ fun AmityStorySingleSegmentTimerElement(
     modifier: Modifier = Modifier,
     elementScope: AmityComposeElementScope,
     shouldStart: Boolean = false,
+    shouldRestart: Boolean = false,
     shouldPauseTimer: Boolean = false,
     isAlreadyFinished: Boolean = false,
     duration: Long = 0,
@@ -44,8 +45,11 @@ fun AmityStorySingleSegmentTimerElement(
         modifier = modifier.fillMaxWidth()
     )
 
-    LaunchedEffect(shouldStart, shouldPauseTimer, isAlreadyFinished, duration) {
+    LaunchedEffect(shouldStart, shouldRestart, shouldPauseTimer, isAlreadyFinished, duration) {
         if (shouldStart) {
+            if (shouldRestart) {
+                currentProgress = 0f
+            }
             if (!shouldPauseTimer) {
                 currentProgress = if (currentProgress == 1f) 0f else currentProgress
                 loadProgress(duration, currentProgress) { progress ->

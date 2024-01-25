@@ -23,10 +23,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.amity.socialcloud.uikit.common.common.views.AmityColorPaletteUtil
+import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
 import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.story.target.AmityStoryTargetRingUiState
 import com.amity.socialcloud.uikit.community.compose.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.community.compose.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.community.compose.ui.scope.AmityComposeComponentScope
@@ -39,8 +43,8 @@ fun AmityStoryTargetElement(
     componentScope: AmityComposeComponentScope,
     communityDisplayName: String = "",
     avatarUrl: String = "",
-    isAlreadyViewed: Boolean = false,
-    isPrivateCommunity: Boolean = false,
+    storyTargetRingUiState: AmityStoryTargetRingUiState,
+    isPublicCommunity: Boolean = false,
     isOfficialCommunity: Boolean = false,
     isSingleCommunityTarget: Boolean = false,
     hasManageStoryPermission: Boolean = false,
@@ -50,10 +54,19 @@ fun AmityStoryTargetElement(
         componentScope = componentScope,
         elementId = "story_ring"
     ) {
-        val colors = if (isAlreadyViewed) {
-            getConfig().getValueAsList("background_color").asColorList()
-        } else {
-            getConfig().getValueAsList("progress_color").asColorList()
+        val colors = when (storyTargetRingUiState) {
+            AmityStoryTargetRingUiState.SEEN -> {
+                getConfig().getValueAsList("background_color").asColorList()
+            }
+
+            AmityStoryTargetRingUiState.SYNCING,
+            AmityStoryTargetRingUiState.HAS_UNSEEN -> {
+                getConfig().getValueAsList("progress_color").asColorList()
+            }
+
+            AmityStoryTargetRingUiState.FAILED -> {
+                getConfig().getValueAsList("fail_color").asColorList()
+            }
         }
 
         val displayName = if (isSingleCommunityTarget) {
@@ -80,13 +93,23 @@ fun AmityStoryTargetElement(
                 ) {
                     if (avatarUrl.isEmpty()) {
                         Image(
-                            painter = painterResource(id = R.drawable.amity_ic_default_profile1),
+                            painter = painterResource(id = R.drawable.amity_ic_default_community_avatar_circular),
                             contentScale = ContentScale.Fit,
                             contentDescription = "Avatar Image",
                             modifier = Modifier
                                 .fillMaxSize()
                                 .clip(CircleShape)
-                                .background(Color.LightGray)
+                                .background(
+                                    Color(
+                                        AmityColorPaletteUtil.getColor(
+                                            ContextCompat.getColor(
+                                                LocalContext.current,
+                                                R.color.amityColorPrimary
+                                            ),
+                                            AmityColorShade.SHADE3
+                                        )
+                                    )
+                                )
                         )
                     } else {
                         AsyncImage(
@@ -105,10 +128,12 @@ fun AmityStoryTargetElement(
 
                 AmityStoryGradientRingElement(
                     colors = colors,
+                    isIndeterminate = storyTargetRingUiState == AmityStoryTargetRingUiState.SYNCING,
                     modifier = Modifier.fillMaxSize(),
                 )
 
                 val badge = when {
+                    storyTargetRingUiState == AmityStoryTargetRingUiState.FAILED -> R.drawable.amity_ic_error_circle
                     isSingleCommunityTarget && hasManageStoryPermission -> R.drawable.amity_ic_plus_circle
                     isOfficialCommunity -> R.drawable.amity_ic_verified
                     else -> null
@@ -129,7 +154,7 @@ fun AmityStoryTargetElement(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                if (isPrivateCommunity && !isSingleCommunityTarget) {
+                if (!isPublicCommunity && !isSingleCommunityTarget) {
                     Image(
                         painter = painterResource(id = R.drawable.amity_ic_lock1),
                         contentDescription = "",
@@ -155,8 +180,8 @@ fun AmityStoryTargetElementPreview() {
             componentScope = getComponentScope(),
             communityDisplayName = "Meow",
             avatarUrl = "",
-            isAlreadyViewed = false,
-            isPrivateCommunity = false,
+            storyTargetRingUiState = AmityStoryTargetRingUiState.SYNCING,
+            isPublicCommunity = false,
             isOfficialCommunity = true,
             isSingleCommunityTarget = true,
             hasManageStoryPermission = true,

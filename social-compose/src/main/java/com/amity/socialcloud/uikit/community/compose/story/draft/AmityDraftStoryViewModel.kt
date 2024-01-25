@@ -2,6 +2,7 @@ package com.amity.socialcloud.uikit.community.compose.story.draft
 
 import android.net.Uri
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
+import com.amity.socialcloud.sdk.model.core.error.AmityException
 import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.sdk.model.social.story.AmityStoryImageDisplayMode
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
@@ -15,7 +16,7 @@ class AmityDraftStoryViewModel : AmityBaseViewModel() {
         fileUri: Uri,
         imageDisplayMode: AmityStoryImageDisplayMode,
         onSuccess: () -> Unit,
-        onError: () -> Unit,
+        onError: (message: String) -> Unit,
     ) {
         AmitySocialClient.newStoryRepository()
             .createImageStory(
@@ -26,8 +27,10 @@ class AmityDraftStoryViewModel : AmityBaseViewModel() {
             )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .doOnComplete { onSuccess() }
-            .doOnError { onError() }
+            .doOnComplete(onSuccess)
+            .doOnError {
+                onError((it as AmityException).message ?: "Unknown error occurred.")
+            }
             .subscribe()
     }
 
@@ -35,7 +38,7 @@ class AmityDraftStoryViewModel : AmityBaseViewModel() {
         communityId: String,
         fileUri: Uri,
         onSuccess: () -> Unit,
-        onError: () -> Unit,
+        onError: (message: String) -> Unit,
     ) {
         AmitySocialClient.newStoryRepository()
             .createVideoStory(
@@ -45,8 +48,9 @@ class AmityDraftStoryViewModel : AmityBaseViewModel() {
             )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .doOnComplete { onSuccess() }
-            .doOnError { onError() }
-            .subscribe()
+            .doOnComplete(onSuccess)
+            .doOnError {
+                onError((it as AmityException).message ?: "Unknown error occurred.")
+            }.subscribe()
     }
 }
