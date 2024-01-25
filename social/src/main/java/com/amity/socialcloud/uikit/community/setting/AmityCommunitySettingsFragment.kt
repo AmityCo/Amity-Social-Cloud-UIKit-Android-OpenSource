@@ -16,10 +16,11 @@ import com.amity.socialcloud.uikit.community.edit.AmityCommunityProfileActivity
 import com.amity.socialcloud.uikit.community.members.AmityCommunityMemberSettingsActivity
 import com.amity.socialcloud.uikit.community.notificationsettings.AmityCommunityNotificationsSettingsActivity
 import com.amity.socialcloud.uikit.community.setting.postreview.AmityPostReviewSettingsActivity
+import com.amity.socialcloud.uikit.community.setting.story.AmityStorySettingsActivity
 import com.amity.socialcloud.uikit.community.utils.EXTRA_PARAM_COMMUNITY_ID
 import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
 import com.trello.rxlifecycle4.components.support.RxFragment
-import java.util.*
+import java.util.Locale
 
 class AmityCommunitySettingsFragment : RxFragment() {
 
@@ -234,6 +235,14 @@ class AmityCommunitySettingsFragment : RxFragment() {
 
     internal fun navigateToPostReview() {
         val intent = AmityPostReviewSettingsActivity.newIntent(
+            requireContext(),
+            viewModel.communityId!!
+        )
+        startActivity(intent)
+    }
+
+    internal fun navigateToStorySetting() {
+        val intent = AmityStorySettingsActivity.newIntent(
             requireContext(),
             viewModel.communityId!!
         )

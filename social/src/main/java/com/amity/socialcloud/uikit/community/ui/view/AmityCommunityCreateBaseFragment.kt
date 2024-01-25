@@ -51,7 +51,6 @@ abstract class AmityCommunityCreateBaseFragment : RxFragment() {
             Glide.with(this)
                 .load(data)
                 .centerCrop()
-                .placeholder(R.drawable.amity_ic_default_community_avatar)
                 .into(binding.ccAvatar)
         }
     }
@@ -127,10 +126,6 @@ abstract class AmityCommunityCreateBaseFragment : RxFragment() {
     }
 
     open fun renderAvatar() {
-        Glide.with(requireContext())
-            .load(R.drawable.amity_ic_default_community_avatar)
-            .centerCrop()
-            .into(binding.ccAvatar)
     }
 
     private fun setAvatar() {

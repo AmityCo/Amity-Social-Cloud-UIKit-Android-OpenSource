@@ -136,6 +136,9 @@
         "#339AF9",
         "#78FA58"
       ],
+      "fail_color": [
+        "#FA4D30"
+      ],
       "background_color": [
         "#EBECEF"
       ]

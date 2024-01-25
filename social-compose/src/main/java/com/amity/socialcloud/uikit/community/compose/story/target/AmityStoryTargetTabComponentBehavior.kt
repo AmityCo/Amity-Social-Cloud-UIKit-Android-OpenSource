@@ -9,11 +9,10 @@ import com.amity.socialcloud.uikit.community.compose.story.create.AmityCreateSto
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageActivity
 
 @UnstableApi
-class AmityStoryTargetTabBehavior(
-    private val context: Context
-) {
+open class AmityStoryTargetTabComponentBehavior {
 
-    fun goToViewStoryPage(
+    open fun goToViewStoryPage(
+        context: Context,
         community: AmityCommunity,
     ) {
         val intent = AmityViewStoryPageActivity.newIntent(
@@ -23,7 +22,8 @@ class AmityStoryTargetTabBehavior(
         context.startActivity(intent)
     }
 
-    fun goToCreateStoryPage(
+    open fun goToCreateStoryPage(
+        context: Context,
         community: AmityCommunity
     ) {
         val intent = AmityCreateStoryPageActivity.newIntent(
@@ -33,7 +33,8 @@ class AmityStoryTargetTabBehavior(
         context.startActivity(intent)
     }
 
-    fun goToCreateStoryPage(
+    open fun goToCreateStoryPage(
+        context: Context,
         launcher: ActivityResultLauncher<Intent>,
         community: AmityCommunity,
     ) {

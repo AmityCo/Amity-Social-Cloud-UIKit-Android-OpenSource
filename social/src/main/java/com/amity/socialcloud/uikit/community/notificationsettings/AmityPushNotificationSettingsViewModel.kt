@@ -70,6 +70,12 @@ class AmityPushNotificationSettingsViewModel(private val savedState: SavedStateH
                     settingsItems.add(comments)
                 }
 
+                if (isStoryEnabled) {
+                    val paddingXXS = AmitySettingsItem.Margin(R.dimen.amity_padding_xxs)
+                    settingsItems.add(paddingXXS)
+                    val stories = menuCreator.createStoryMenu(communityId)
+                    settingsItems.add(stories)
+                }
             }
             settingsItems
         }

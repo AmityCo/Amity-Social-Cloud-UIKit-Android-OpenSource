@@ -17,7 +17,7 @@ import com.amity.socialcloud.uikit.common.common.setSafeOnClickListener
 import com.amity.socialcloud.uikit.common.common.views.dialog.bottomsheet.AmityBottomSheetDialog
 import com.amity.socialcloud.uikit.common.common.views.dialog.bottomsheet.BottomSheetMenuItem
 import com.amity.socialcloud.uikit.community.R
-import com.amity.socialcloud.uikit.community.compose.story.target.AmityStoryTargetTabBehavior
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.databinding.AmityFragmentCommunityPageBinding
 import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityLiveStreamPostCreatorActivity
 import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityPollPostCreatorActivity
@@ -47,7 +47,7 @@ class AmityCommunityPageFragment : RxFragment(),
     private var community: AmityCommunity? = null
 
     private val behavior by lazy {
-        AmityStoryTargetTabBehavior(requireContext())
+        AmitySocialBehaviorHelper.storyTabComponentBehavior
     }
 
     private val createGenericPost =
@@ -237,7 +237,12 @@ class AmityCommunityPageFragment : RxFragment(),
                     iconResId = R.drawable.amity_ic_story_create,
                     titleResId = R.string.amity_story,
                     action = {
-                        community?.let { behavior.goToCreateStoryPage(it) }
+                        community?.let {
+                            behavior.goToCreateStoryPage(
+                                context = requireContext(),
+                                community = it
+                            )
+                        }
                         bottomSheet.dismiss()
                     }
                 )

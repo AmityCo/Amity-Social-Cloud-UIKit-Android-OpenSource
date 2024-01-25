@@ -20,7 +20,7 @@ class AmityPushNotificationMenuCreatorImpl(private val fragment: AmityCommunityN
     override fun createPostMenu(communityId: String): AmitySettingsItem.NavigationContent {
         return AmitySettingsItem.NavigationContent(
             icon = R.drawable.amity_ic_new_posts,
-            title = R.string.amity_posts,
+            title = R.string.amity_Posts,
             callback = { fragment.navigateToNewPostSettings(communityId, AmityCommunityPostNotificationSettingsActivity.SettingType.POSTS)}
         )
     }
@@ -30,6 +30,19 @@ class AmityPushNotificationMenuCreatorImpl(private val fragment: AmityCommunityN
             icon = R.drawable.amity_ic_push_comments,
             title = R.string.amity_comments,
             callback = { fragment.navigateToNewPostSettings(communityId, AmityCommunityPostNotificationSettingsActivity.SettingType.COMMENTS)}
+        )
+    }
+
+    override fun createStoryMenu(communityId: String): AmitySettingsItem.NavigationContent {
+        return AmitySettingsItem.NavigationContent(
+            icon = R.drawable.amity_ic_story_setting,
+            title = R.string.amity_stories,
+            callback = {
+                fragment.navigateToNewPostSettings(
+                    communityId,
+                    AmityCommunityPostNotificationSettingsActivity.SettingType.STORIES
+                )
+            }
         )
     }
 }

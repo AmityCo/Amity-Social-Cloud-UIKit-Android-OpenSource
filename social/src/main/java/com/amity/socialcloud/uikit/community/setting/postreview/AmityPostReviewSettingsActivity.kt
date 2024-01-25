@@ -26,10 +26,6 @@ class AmityPostReviewSettingsActivity :
 
     }
 
-    private val binding : AmityActivityPostReviewSettingsBinding by lazy {
-        AmityActivityPostReviewSettingsBinding.inflate(layoutInflater)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -38,19 +34,19 @@ class AmityPostReviewSettingsActivity :
     }
 
     private fun setUpToolbar() {
-        binding.postReviewToolbar.setLeftDrawable(
+        getViewDataBinding().postReviewToolbar.setLeftDrawable(
             ContextCompat.getDrawable(
                 this,
                 R.drawable.amity_ic_arrow_back
             )
         )
-        binding.postReviewToolbar.setClickListener(this)
+        getViewDataBinding().postReviewToolbar.setClickListener(this)
 
         val titleToolbar = getString(R.string.amity_post_review)
-        binding.postReviewToolbar.setLeftString(titleToolbar)
+        getViewDataBinding().postReviewToolbar.setLeftString(titleToolbar)
 
         supportActionBar?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
-        setSupportActionBar(binding.postReviewToolbar)
+        setSupportActionBar(getViewDataBinding().postReviewToolbar)
     }
 
     private fun loadFragment() {

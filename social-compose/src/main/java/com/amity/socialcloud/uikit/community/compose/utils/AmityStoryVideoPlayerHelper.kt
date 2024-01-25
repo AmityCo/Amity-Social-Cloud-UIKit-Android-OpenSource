@@ -74,14 +74,19 @@ object AmityStoryVideoPlayerHelper {
 
             story.getStoryId() to video
         }.map { (storyId, video) ->
-            val url = video?.getUrl() ?: ""
             if (!urlMapping.containsKey(storyId)) {
                 urlMapping[storyId] = exoPlayer?.mediaItemCount ?: 0
                 exoPlayer?.apply {
-                    addMediaItem(MediaItem.fromUri(url))
+                    val fileUrl = video?.getVideoUrl()
+                    if (fileUrl.isNullOrEmpty()) {
+                        video?.getUri()?.let {
+                            addMediaItem(MediaItem.fromUri(it))
+                        }
+                    } else {
+                        addMediaItem(MediaItem.fromUri(fileUrl))
+                    }
                     prepare()
                 }
-
             }
         }
     }

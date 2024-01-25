@@ -51,6 +51,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="260dp"
                     android:adjustViewBounds="true"
+                    amityBackgroundColor="@{@color/amityColorPrimary}"
+                    backgroundColorShade="@{AmityColorShade.SHADE3}"
                     android:scaleType="centerCrop"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />

@@ -33,7 +33,7 @@ fun AmityStoryCommentCountElement(
             .height(40.dp)
             .clip(MaterialTheme.shapes.extraLarge)
             .background(Color(0xFF292B32))
-            .padding(horizontal = 8.dp)
+            .padding(horizontal = 10.dp, vertical = 8.dp)
             .clickable {
                 onClick()
             }
@@ -48,6 +48,7 @@ fun AmityStoryCommentCountElement(
             text = count,
             color = Color.White,
             modifier = modifier
+                .height(20.dp)
                 .padding(start = 4.dp)
                 .widthIn(min = 16.dp)
         )
@@ -57,5 +58,5 @@ fun AmityStoryCommentCountElement(
 @Preview
 @Composable
 fun AmityStoryCommentCountElementPreview() {
-    AmityStoryCommentCountElement(count = "100") {}
+    AmityStoryCommentCountElement(count = "0") {}
 }

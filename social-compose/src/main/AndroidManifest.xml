@@ -13,14 +13,17 @@
     <application>
         <activity
             android:name=".story.view.AmityViewStoryPageActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".story.create.AmityCreateStoryPageActivity"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:theme="@style/AmityStoryDarkTheme" />
         <activity
             android:name=".story.draft.AmityDraftStoryPageActivity"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:theme="@style/AmityStoryDarkTheme" />
     </application>
 

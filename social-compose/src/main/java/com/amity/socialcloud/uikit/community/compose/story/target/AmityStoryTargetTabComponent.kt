@@ -17,8 +17,8 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.story.ui.elements.AmityStoryTargetElement
-import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageViewModel
 import com.amity.socialcloud.uikit.community.compose.ui.base.AmityBaseComponent
 
 @UnstableApi
@@ -29,21 +29,24 @@ fun AmityStoryTargetTabComponent(
 ) {
     val context = LocalContext.current
     val behavior by lazy {
-        AmityStoryTargetTabBehavior(context)
+        AmitySocialBehaviorHelper.storyTabComponentBehavior
     }
 
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
     }
     val viewModel =
-        viewModel<AmityViewStoryPageViewModel>(viewModelStoreOwner = viewModelStoreOwner)
+        viewModel<AmityStoryTargetTabViewModel>(viewModelStoreOwner = viewModelStoreOwner)
 
     LaunchedEffect(community.getCommunityId()) {
         viewModel.checkMangeStoryPermission(communityId = community.getCommunityId())
         viewModel.getStories(communityId = community.getCommunityId())
+        viewModel.observeStory(communityId = community.getCommunityId())
     }
 
     val stories = viewModel.stories.collectAsLazyPagingItems()
+    val storyTargetRingUiState by viewModel.storyTargetRingUiState.collectAsState()
+
     var isStoryEmpty by remember { mutableStateOf(true) }
 
     LaunchedEffect(stories.itemCount) {
@@ -60,16 +63,22 @@ fun AmityStoryTargetTabComponent(
             componentScope = getComponentScope(),
             communityDisplayName = community.getDisplayName(),
             avatarUrl = community.getAvatar()?.getUrl(AmityImage.Size.LARGE) ?: "",
-            isAlreadyViewed = isStoryEmpty,
-            isPrivateCommunity = !community.isPublic(),
+            storyTargetRingUiState = storyTargetRingUiState,
+            isPublicCommunity = community.isPublic(),
             isOfficialCommunity = community.isOfficial(),
             isSingleCommunityTarget = true,
             hasManageStoryPermission = hasManageStoryPermission,
         ) {
             if (hasManageStoryPermission && isStoryEmpty) {
-                behavior.goToCreateStoryPage(community)
+                behavior.goToCreateStoryPage(
+                    context = context,
+                    community = community
+                )
             } else {
-                behavior.goToViewStoryPage(community)
+                behavior.goToViewStoryPage(
+                    context = context,
+                    community = community
+                )
             }
         }
     }

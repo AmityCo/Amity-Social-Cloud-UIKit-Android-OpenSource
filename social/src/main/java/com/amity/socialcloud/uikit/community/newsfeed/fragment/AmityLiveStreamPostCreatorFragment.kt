@@ -181,7 +181,7 @@ class AmityLiveStreamPostCreatorFragment : RxFragment() {
                     .load(imageUrl)
                     .centerCrop()
                     .dontAnimate()
-                    .placeholder(R.drawable.amity_ic_default_community_avatar)
+                    .placeholder(R.drawable.amity_ic_default_community_avatar_circular)
                     .into(binding.communityAvatar)
             }
         }

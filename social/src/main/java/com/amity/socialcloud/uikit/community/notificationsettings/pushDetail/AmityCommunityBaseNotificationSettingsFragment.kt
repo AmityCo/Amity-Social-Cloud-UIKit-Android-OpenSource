@@ -52,6 +52,7 @@ open class AmityCommunityBaseNotificationSettingsFragment internal constructor()
         viewModel.getDetailSettingsItem(
             postMenuCreator = AmityPostMenuCreatorImpl(this),
             commentMenuCreator = AmityCommentMenuCreatorImpl(this),
+            storyMenuCreator = AmityStoryMenuCreatorImpl(this),
             onResult = this::renderItems,
             onError = this::showErrorLayout
         ).untilLifecycleEnd(this)
@@ -88,6 +89,21 @@ open class AmityCommunityBaseNotificationSettingsFragment internal constructor()
         viewModel.changeState(AmityCommunityNotificationEvent.COMMENT_REPLIED.toString(), value)
     }
 
+    internal fun toggleNewStory(value: Int) {
+        viewModel.changeState(AmityCommunityNotificationEvent.STORY_CREATED.toString(), value)
+    }
+
+    internal fun toggleReactStory(value: Int) {
+        viewModel.changeState(AmityCommunityNotificationEvent.STORY_REACTED.toString(), value)
+    }
+
+    internal fun toggleStoryComment(value: Int) {
+        viewModel.changeState(
+            AmityCommunityNotificationEvent.STORY_COMMENT_CREATED.toString(),
+            value
+        )
+    }
+
     internal fun save() {
         viewModel.updatePushNotificationSettings(
             onComplete = {
@@ -104,20 +120,32 @@ open class AmityCommunityBaseNotificationSettingsFragment internal constructor()
 
     private fun revertState() {
         viewModel.resetState()
-        if (viewModel.settingType == AmityCommunityPostNotificationSettingsActivity.SettingType.POSTS.name) {
-            settingsListAdapter.setItems(
-                viewModel.createPostSettingsItem(
-                    AmityPostMenuCreatorImpl(
-                        this
+        when (viewModel.settingType) {
+            AmityCommunityPostNotificationSettingsActivity.SettingType.POSTS.name -> {
+                settingsListAdapter.setItems(
+                    viewModel.createPostSettingsItem(
+                        AmityPostMenuCreatorImpl(
+                            this
+                        )
                     )
                 )
-            )
-        } else {
-            settingsListAdapter.setItems(
-                viewModel.createCommentSettingsItem(
-                    AmityCommentMenuCreatorImpl(this)
+            }
+
+            AmityCommunityPostNotificationSettingsActivity.SettingType.COMMENTS.name -> {
+                settingsListAdapter.setItems(
+                    viewModel.createCommentSettingsItem(
+                        AmityCommentMenuCreatorImpl(this)
+                    )
                 )
-            )
+            }
+
+            AmityCommunityPostNotificationSettingsActivity.SettingType.STORIES.name -> {
+                settingsListAdapter.setItems(
+                    viewModel.createStorySettingsItem(
+                        AmityStoryMenuCreatorImpl(this)
+                    )
+                )
+            }
         }
     }
 

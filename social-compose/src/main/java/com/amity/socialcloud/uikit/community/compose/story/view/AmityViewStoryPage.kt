@@ -61,7 +61,9 @@ import com.amity.socialcloud.uikit.community.compose.ui.elements.AmityAlertDialo
 import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityComposeTheme
 import com.amity.socialcloud.uikit.community.compose.utils.AmityStoryVideoPlayerHelper
 import com.amity.socialcloud.uikit.community.compose.utils.interceptHold
+import com.amity.socialcloud.uikit.community.compose.utils.interceptSwipeDown
 import com.amity.socialcloud.uikit.community.compose.utils.interceptTap
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
@@ -88,7 +90,8 @@ fun AmityViewStoryPage(
 
         val storyPagerState = rememberPagerState()
         val coroutineScope = rememberCoroutineScope()
-        var shouldPauseTimer by remember { mutableStateOf(false) }
+        val shouldPauseTimer by viewModel.shouldPauseTimer.collectAsState()
+        var shouldRestartTimer by remember { mutableStateOf(false) }
 
         val exoPlayer = remember { ExoPlayer.Builder(context).build() }
 
@@ -112,13 +115,17 @@ fun AmityViewStoryPage(
 
         LaunchedEffect(storyPagerState.targetPage, stories.itemCount) {
             if (stories.itemCount == 0) return@LaunchedEffect
-            isShowingVideoStory =
-                stories[storyPagerState.targetPage]?.getDataType() == AmityStory.DataType.VIDEO
+
+            val story = stories.peek(storyPagerState.targetPage) ?: return@LaunchedEffect
+            isShowingVideoStory = story.getDataType() == AmityStory.DataType.VIDEO
+
+            viewModel.markAsSeen(story)
         }
 
         LaunchedEffect(isShowingVideoStory, shouldPauseTimer) {
             if (stories.itemCount == 0) return@LaunchedEffect
-            val storyId = stories[storyPagerState.targetPage]?.getStoryId() ?: return@LaunchedEffect
+            val storyId =
+                stories.peek(storyPagerState.targetPage)?.getStoryId() ?: return@LaunchedEffect
             if (isShowingVideoStory) {
                 AmityStoryVideoPlayerHelper.playMediaItem(storyId = storyId)
             } else {
@@ -134,7 +141,7 @@ fun AmityViewStoryPage(
 
         LaunchedEffect(isVideoPlaybackReady, isShowingVideoStory) {
             if (isShowingVideoStory) {
-                shouldPauseTimer = !isVideoPlaybackReady
+                viewModel.handleSegmentTimer(shouldPause = !isVideoPlaybackReady)
                 shouldShowLoading = !isVideoPlaybackReady
             }
         }
@@ -143,7 +150,7 @@ fun AmityViewStoryPage(
             val observer = LifecycleEventObserver { _, event ->
                 when (event) {
                     Lifecycle.Event.ON_RESUME -> {
-                        shouldPauseTimer = false
+                        viewModel.handleSegmentTimer(shouldPause = false)
                         if (isShowingVideoStory) {
                             exoPlayer.play()
                         }
@@ -151,7 +158,7 @@ fun AmityViewStoryPage(
 
                     Lifecycle.Event.ON_PAUSE,
                     Lifecycle.Event.ON_STOP -> {
-                        shouldPauseTimer = true
+                        viewModel.handleSegmentTimer(shouldPause = true)
                         if (isShowingVideoStory) {
                             exoPlayer.pause()
                         }
@@ -182,12 +189,44 @@ fun AmityViewStoryPage(
                 confirmText = "Discard",
                 dismissText = "Cancel",
                 onConfirmation = {
-                    viewModel.deleteStory(storyId = storyIdToDelete)
-                    onCloseClicked()
+                    shouldShowLoading = true
+                    viewModel.deleteStory(
+                        storyId = storyIdToDelete,
+                        onSuccess = {
+                            shouldShowLoading = false
+                            openConfirmDeleteDialog.value = false
+                            viewModel.handleSegmentTimer(shouldPause = false)
+
+                            if (stories.itemCount <= 1) {
+                                onCloseClicked()
+                            } else {
+                                coroutineScope.launch {
+                                    moveSegment(
+                                        shouldMoveToNext = false,
+                                        totalSegments = stories.itemCount,
+                                        storyPagerState = storyPagerState,
+                                        firstSegmentReached = {
+                                            coroutineScope.launch {
+                                                shouldRestartTimer = true
+                                                delay(300)
+                                                shouldRestartTimer = false
+                                            }
+                                        },
+                                        lastSegmentReached = {}
+                                    )
+                                }
+                            }
+                        },
+                        onError = {
+                            shouldShowLoading = false
+                            openConfirmDeleteDialog.value = false
+                            viewModel.handleSegmentTimer(shouldPause = false)
+                        }
+                    )
                 },
                 onDismissRequest = {
-                    shouldPauseTimer = false
                     openConfirmDeleteDialog.value = false
+                    viewModel.handleSegmentTimer(shouldPause = false)
                 }
             )
         }
@@ -204,8 +243,19 @@ fun AmityViewStoryPage(
                         state = storyPagerState,
                         beyondBoundsPageCount = 3,
                         userScrollEnabled = false,
+                        key = {
+                            try {
+                                stories.peek(it)?.getStoryId() ?: -1
+                            } catch (e: IndexOutOfBoundsException) {
+                                -1
+                            }
+                        }
                     ) { index ->
-                        val story = stories[index] ?: return@HorizontalPager
+                        val story = try {
+                            stories.peek(index) ?: return@HorizontalPager
+                        } catch (e: IndexOutOfBoundsException) {
+                            return@HorizontalPager
+                        }
 
                         Column {
                             AmityStoryBodyRow(
@@ -218,6 +268,11 @@ fun AmityViewStoryPage(
 
                             AmityStoryBottomRow(
                                 story = story,
+                                onDeleteClicked = {
+                                    viewModel.handleSegmentTimer(shouldPause = true)
+                                    storyIdToDelete = it
+                                    openConfirmDeleteDialog.value = true
+                                }
                             )
                         }
                     }
@@ -232,6 +287,7 @@ fun AmityViewStoryPage(
                         currentSegment = storyPagerState.targetPage,
                         isVisible = true,
                         shouldPauseTimer = shouldPauseTimer,
+                        shouldRestartTimer = shouldRestartTimer,
                         moveToNextSegment = {
                             AmityStoryVideoPlayerHelper.resetPlaybackIndex()
                             coroutineScope.launch {
@@ -239,9 +295,15 @@ fun AmityViewStoryPage(
                                     shouldMoveToNext = true,
                                     totalSegments = stories.itemCount,
                                     storyPagerState = storyPagerState,
-                                ) {
-                                    onCloseClicked()
-                                }
+                                    firstSegmentReached = {
+                                        coroutineScope.launch {
+                                            shouldRestartTimer = true
+                                            delay(300)
+                                            shouldRestartTimer = false
+                                        }
+                                    },
+                                    lastSegmentReached = { onCloseClicked() }
+                                )
                             }
                         },
                         onCloseClicked = onCloseClicked,
@@ -249,7 +311,7 @@ fun AmityViewStoryPage(
                             navigateToCreateStoryPage()
                         },
                         onDeleteClicked = {
-                            shouldPauseTimer = true
+                            viewModel.handleSegmentTimer(shouldPause = true)
                             showBottomSheet = true
                             storyIdToDelete = it
                         }
@@ -269,8 +331,8 @@ fun AmityViewStoryPage(
 
                     Box(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .padding(vertical = 64.dp)
+                            .aspectRatio(9f / 16f)
+                            .padding(top = 64.dp)
                             .pointerInput(Unit) {
                                 interceptTap {
                                     val screenWidth = configuration.screenWidthDp.dp.toPx()
@@ -284,15 +346,26 @@ fun AmityViewStoryPage(
                                             shouldMoveToNext = isTapRight,
                                             totalSegments = stories.itemCount,
                                             storyPagerState = storyPagerState,
-                                        ) {
-                                            onCloseClicked()
-                                        }
+                                            firstSegmentReached = {
+                                                coroutineScope.launch {
+                                                    shouldRestartTimer = true
+                                                    delay(300)
+                                                    shouldRestartTimer = false
+                                                }
+                                            },
+                                            lastSegmentReached = { onCloseClicked() }
+                                        )
                                     }
                                 }
                             }
                             .pointerInput(Unit) {
                                 interceptHold {
-                                    shouldPauseTimer = !shouldPauseTimer
+                                    viewModel.handleSegmentTimer(shouldPause = it)
+                                }
+                            }
+                            .pointerInput(Unit) {
+                                interceptSwipeDown {
+                                    onCloseClicked()
                                 }
                             }
                     )
@@ -321,7 +394,7 @@ fun AmityViewStoryPage(
                     if (showBottomSheet) {
                         ModalBottomSheet(
                             onDismissRequest = {
-                                shouldPauseTimer = false
+                                viewModel.handleSegmentTimer(shouldPause = false)
                                 showBottomSheet = false
                             },
                             sheetState = sheetState,
@@ -375,7 +448,8 @@ private suspend fun moveSegment(
     shouldMoveToNext: Boolean,
     totalSegments: Int,
     storyPagerState: PagerState,
-    lastSegmentReached: () -> Unit
+    firstSegmentReached: () -> Unit,
+    lastSegmentReached: () -> Unit,
 ) {
     val currentSegment = storyPagerState.currentPage
 
@@ -387,6 +461,7 @@ private suspend fun moveSegment(
         }
     } else {
         if (currentSegment == 0) {  //  first segment
+            firstSegmentReached()
         } else {    //  move to previous segment
             storyPagerState.scrollToPage(currentSegment - 1)
         }
