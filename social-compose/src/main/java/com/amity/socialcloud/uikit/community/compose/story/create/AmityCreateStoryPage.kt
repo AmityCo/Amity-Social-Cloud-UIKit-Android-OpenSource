@@ -3,7 +3,6 @@ package com.amity.socialcloud.uikit.community.compose.story.create
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -47,7 +46,6 @@ import com.amity.socialcloud.uikit.community.compose.story.create.elements.Amity
 import com.amity.socialcloud.uikit.community.compose.story.create.elements.AmityStoryPhotoVideoSelectionElement
 import com.amity.socialcloud.uikit.community.compose.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.community.compose.ui.base.AmityBasePage
-import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityComposeTheme
 import com.amity.socialcloud.uikit.community.compose.utils.AmityStoryCameraHelper
 import com.amity.socialcloud.uikit.community.compose.utils.asDrawableRes
 import com.amity.socialcloud.uikit.community.compose.utils.getBackgroundColor
@@ -164,7 +162,7 @@ fun AmityCreateStoryPage(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(AmityComposeTheme.colors.primary)
+                .background(Color.Black)
         ) {
             ConstraintLayout(
                 modifier = Modifier.aspectRatio(9f / 16f)

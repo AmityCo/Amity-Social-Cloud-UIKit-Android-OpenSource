@@ -13,8 +13,10 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,26 +26,55 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.sdk.model.social.story.AmityStory
+import com.amity.socialcloud.uikit.common.common.readableNumber
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.comment.AmityStoryCommentBottomSheet
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageViewModel
 import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmityStoryCommentCountElement
 import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmityStoryReactionCountElement
 import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmityStoryViewCountElement
 import com.amity.socialcloud.uikit.community.compose.ui.elements.AmityAlertDialogWithThreeActions
+import com.amity.socialcloud.uikit.community.compose.ui.scope.AmityComposePageScope
 
 @Composable
 fun AmityStoryBottomRow(
     modifier: Modifier = Modifier,
+    pageScope: AmityComposePageScope,
     story: AmityStory,
     onDeleteClicked: (String) -> Unit
 ) {
+    val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
+        "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
+    }
+    val viewModel =
+        viewModel<AmityViewStoryPageViewModel>(viewModelStoreOwner = viewModelStoreOwner)
+
+    val community = remember(viewModel, story.getStoryId()) {
+        viewModel.getPostedCommunity(story)
+    }
+
+    val isCommunityJoined = remember(viewModel, community) {
+        community?.isJoined() == true
+    }
+
+    val isAllowedComment = remember(viewModel, community) {
+        community?.getStorySettings()?.allowComment == true
+    }
+
     Box(
         modifier = modifier.height(56.dp)
     ) {
         when (story.getState()) {
             AmityStory.State.SYNCED -> AmityStoryEngagementRow(
                 modifier = modifier,
-                reachCount = story.getReach().toString(),
+                pageScope = pageScope,
+                storyId = story.getStoryId(),
+                isCommunityJoined = isCommunityJoined,
+                isAllowedComment = isAllowedComment,
+                reachCount = story.getReach(),
+                commentCount = story.getCommentCount(),
+                reactionCount = story.getReactionCount(),
+                isReactedByMe = story.getMyReactions().isNotEmpty()
             )
 
             AmityStory.State.SYNCING -> AmityStoryUploadProgressRow(modifier)
@@ -59,10 +90,22 @@ fun AmityStoryBottomRow(
 @Composable
 fun AmityStoryEngagementRow(
     modifier: Modifier = Modifier,
-    reachCount: String = "0",
-    commentCount: String = "0",
-    reactionCount: String = "0",
+    pageScope: AmityComposePageScope? = null,
+    storyId: String,
+    isCommunityJoined: Boolean,
+    isAllowedComment: Boolean,
+    reachCount: Int = 0,
+    commentCount: Int = 0,
+    reactionCount: Int = 0,
+    isReactedByMe: Boolean = false,
 ) {
+    val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
+        "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
+    }
+    val viewModel =
+        viewModel<AmityViewStoryPageViewModel>(viewModelStoreOwner = viewModelStoreOwner)
+    var showCommentSheet by remember { mutableStateOf(false) }
+
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -70,7 +113,7 @@ fun AmityStoryEngagementRow(
             .padding(horizontal = 12.dp, vertical = 8.dp)
     ) {
         AmityStoryViewCountElement(
-            count = reachCount,
+            count = reachCount.readableNumber(),
             modifier = Modifier.align(Alignment.CenterStart)
         ) {
 
@@ -84,15 +127,34 @@ fun AmityStoryEngagementRow(
                 count = commentCount,
                 modifier = modifier,
             ) {
-
+                showCommentSheet = true
+                viewModel.handleSegmentTimer(shouldPause = true)
             }
 
             AmityStoryReactionCountElement(
+                pageScope = pageScope,
                 count = reactionCount,
-                isSelected = false,
+                isCommunityJoined = isCommunityJoined,
+                isReactedByMe = isReactedByMe,
                 modifier = modifier,
-            ) {
+            ) { isReacted ->
+                if (isReacted) {
+                    viewModel.addReaction(storyId)
+                } else {
+                    viewModel.removeReaction(storyId)
+                }
+            }
+        }
 
+        if (showCommentSheet) {
+            AmityStoryCommentBottomSheet(
+                modifier = modifier,
+                storyId = storyId,
+                shouldAllowInteraction = isCommunityJoined,
+                shouldAllowComment = isAllowedComment,
+            ) {
+                showCommentSheet = false
+                viewModel.handleSegmentTimer(shouldPause = false)
             }
         }
     }
@@ -204,5 +266,12 @@ fun AmityStoryUploadFailedRow(
 @Preview
 @Composable
 fun AmityStoryBottomRowPreview() {
-    AmityStoryEngagementRow()
+    AmityStoryEngagementRow(
+        storyId = "",
+        isCommunityJoined = false,
+        isAllowedComment = false,
+        reachCount = 1000,
+        commentCount = 10000000,
+        reactionCount = 1000000000,
+    )
 }

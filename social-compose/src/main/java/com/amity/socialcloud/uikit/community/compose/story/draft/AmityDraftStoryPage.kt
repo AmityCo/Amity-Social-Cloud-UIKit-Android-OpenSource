@@ -1,6 +1,7 @@
 package com.amity.socialcloud.uikit.community.compose.story.draft
 
 import android.net.Uri
+import android.util.Patterns
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,15 +21,20 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,6 +58,8 @@ import coil.request.ImageRequest
 import com.amity.socialcloud.sdk.model.social.story.AmityStoryImageDisplayMode
 import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import com.amity.socialcloud.uikit.community.compose.story.create.elements.AmityStoryCameraRelatedButtonElement
+import com.amity.socialcloud.uikit.community.compose.story.hyperlink.AmityStoryHyperlinkComponent
+import com.amity.socialcloud.uikit.community.compose.story.hyperlink.elements.AmityStoryHyperlinkView
 import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmityStoryVideoPlayer
 import com.amity.socialcloud.uikit.community.compose.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.community.compose.ui.base.AmityBasePage
@@ -65,6 +73,7 @@ import com.amity.socialcloud.uikit.community.compose.utils.toComposeColor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @UnstableApi
 @Composable
 fun AmityDraftStoryPage(
@@ -85,8 +94,15 @@ fun AmityDraftStoryPage(
     val viewModel =
         viewModel<AmityDraftStoryViewModel>(viewModelStoreOwner = viewModelStoreOwner)
 
+    val hyperlinkUrlText by viewModel.hyperlinkUrl.collectAsState(initial = "")
+    val hyperlinkCustomText by viewModel.hyperlinkText.collectAsState(initial = "")
+
     var isImageContentScaleFit by remember { mutableStateOf(true) }
     val openAlertDialog = remember { mutableStateOf(false) }
+
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val scope = rememberCoroutineScope()
+    var showBottomSheet by remember { mutableStateOf(false) }
 
     val communityAvatarPainter = rememberAsyncImagePainter(
         ImageRequest
@@ -137,7 +153,7 @@ fun AmityDraftStoryPage(
             ConstraintLayout(
                 modifier = modifier
             ) {
-                val (contentBox, closeBtn, aspectRatioButton) = createRefs()
+                val (contentBox, closeBtn, aspectRatioBtn, hyperlinkBtn, hyperlinkView) = createRefs()
 
                 Box(
                     modifier = modifier
@@ -162,6 +178,7 @@ fun AmityDraftStoryPage(
                                         )
                                     )
                                 )
+                                .background(Color.LightGray)
                         ) {
                             Image(
                                 painter = painter,
@@ -214,9 +231,9 @@ fun AmityDraftStoryPage(
                             icon = getConfig().getValue("aspect_ratio_icon").asDrawableRes(),
                             modifier = Modifier
                                 .size(32.dp)
-                                .constrainAs(aspectRatioButton) {
+                                .constrainAs(aspectRatioBtn) {
                                     top.linkTo(parent.top, 16.dp)
-                                    end.linkTo(parent.end, 16.dp)
+                                    end.linkTo(hyperlinkBtn.start, 8.dp)
                                 },
                             background = getConfig().getBackgroundColor(),
                             onClick = {
@@ -224,6 +241,54 @@ fun AmityDraftStoryPage(
                             }
                         )
                     }
+                }
+
+                AmityBaseElement(
+                    pageScope = getPageScope(),
+                    elementId = "story_hyperlink_button"
+                ) {
+                    AmityStoryCameraRelatedButtonElement(
+                        icon = getConfig().getValue("hyperlink_button_icon").asDrawableRes(),
+                        modifier = Modifier
+                            .size(32.dp)
+                            .constrainAs(hyperlinkBtn) {
+                                top.linkTo(parent.top, 16.dp)
+                                end.linkTo(parent.end, 16.dp)
+                            },
+                        background = getConfig().getBackgroundColor(),
+                        onClick = {
+                            if (hyperlinkUrlText.isEmpty()) {
+                                showBottomSheet = true
+                            } else {
+                                context.showToast("Can't add more than one link to your story.")
+                            }
+                        }
+                    )
+                }
+
+                if (hyperlinkUrlText.isNotEmpty()) {
+                    var displayText = hyperlinkCustomText.takeIf { it.isNotEmpty() }
+                    if (displayText == null) {
+                        val matcher = Patterns.DOMAIN_NAME.matcher(hyperlinkUrlText)
+                        displayText = if (matcher.find()) {
+                            matcher.group()
+                        } else {
+                            hyperlinkUrlText
+                        }
+                    }
+
+                    AmityStoryHyperlinkView(
+                        text = displayText ?: "",
+                        modifier = Modifier
+                            .constrainAs(hyperlinkView) {
+                                start.linkTo(parent.start)
+                                end.linkTo(parent.end)
+                                bottom.linkTo(parent.bottom, 32.dp)
+                            },
+                        onClick = {
+                            showBottomSheet = true
+                        }
+                    )
                 }
             }
 
@@ -306,6 +371,30 @@ fun AmityDraftStoryPage(
                             modifier = Modifier.size(20.dp)
                         )
                     }
+                }
+            }
+
+            if (showBottomSheet) {
+                ModalBottomSheet(
+                    onDismissRequest = {
+                        showBottomSheet = false
+                    },
+                    sheetState = sheetState,
+                    containerColor = Color.White
+                ) {
+                    AmityStoryHyperlinkComponent(
+                        defaultUrlText = hyperlinkUrlText,
+                        defaultCustomText = hyperlinkCustomText,
+                        onClose = {
+                            scope.launch {
+                                sheetState.hide()
+                            }.invokeOnCompletion {
+                                if (!sheetState.isVisible) {
+                                    showBottomSheet = false
+                                }
+                            }
+                        }
+                    )
                 }
             }
         }

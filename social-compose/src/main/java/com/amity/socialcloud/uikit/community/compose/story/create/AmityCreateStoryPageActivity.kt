@@ -9,12 +9,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.media3.common.util.UnstableApi
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 
 @UnstableApi
 class AmityCreateStoryPageActivity : AppCompatActivity() {
 
     private val behavior by lazy {
-        AmityCreateStoryPageBehavior(this)
+        AmitySocialBehaviorHelper.createStoryPageBehavior
     }
 
     private val draftStory =
@@ -37,6 +38,7 @@ class AmityCreateStoryPageActivity : AppCompatActivity() {
                 },
                 onMediaSelected = { isImage, uri ->
                     behavior.goToDraftStoryPage(
+                        context = this@AmityCreateStoryPageActivity,
                         launcher = draftStory,
                         community = community,
                         isImage = isImage,

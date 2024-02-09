@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarVisuals
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -22,28 +24,25 @@ import com.amity.socialcloud.uikit.community.compose.R
 @Composable
 fun AmitySnackbar(
     modifier: Modifier = Modifier,
-    @DrawableRes drawableRes: Int = R.drawable.amity_ic_warning,
-    text: String,
-    containerColor: Color = Color(0xFF292B32),
+    data: AmitySnackbarVisuals,
 ) {
     Snackbar(
-        containerColor = containerColor,
+        containerColor = Color(0xFF292B32),
         modifier = modifier
-            .padding(horizontal = 16.dp)
             .fillMaxWidth()
     ) {
         Row(
-            verticalAlignment = Alignment.Top,
+            verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = modifier.fillMaxWidth()
+            modifier = modifier
         ) {
             Icon(
-                painter = painterResource(id = drawableRes),
+                painter = painterResource(id = data.drawableRes),
                 contentDescription = null,
                 modifier = modifier.size(24.dp),
             )
             Text(
-                text = text,
+                text = data.message,
                 color = Color.White,
                 modifier = modifier
                     .fillMaxWidth()
@@ -53,11 +52,21 @@ fun AmitySnackbar(
     }
 }
 
+data class AmitySnackbarVisuals(
+    override val message: String,
+    @DrawableRes var drawableRes: Int = R.drawable.amity_ic_warning,
+    override val actionLabel: String? = null,
+    override val duration: SnackbarDuration = if (actionLabel == null) SnackbarDuration.Short else SnackbarDuration.Indefinite,
+    override val withDismissAction: Boolean = false,
+) : SnackbarVisuals
+
 @Preview(showBackground = true)
 @Composable
 fun AmitySnackbarPreview() {
     AmitySnackbar(
-        text = "This is a snackbar."
+        data = AmitySnackbarVisuals(
+            message = "This is a snackbar."
 //        text = "This is a snackbar. sample text laje rle re lr;e rl;e r; er;e ;ewjlkqjfojioajr eoi hroerjro gerhopjw owebnpowj w4"
+        )
     )
 }

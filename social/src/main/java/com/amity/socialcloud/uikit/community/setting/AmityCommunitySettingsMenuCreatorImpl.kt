@@ -44,7 +44,7 @@ class AmityCommunitySettingsMenuCreatorImpl(private val fragment: AmityCommunity
     override fun createStorySettingMenu(communityId: String): AmitySettingsItem.NavigationContent {
         return AmitySettingsItem.NavigationContent(
             icon = R.drawable.amity_ic_story_setting,
-            title = R.string.amity_story_setting,
+            title = R.string.amity_story_comments,
             callback = { fragment.navigateToStorySetting() }
         )
     }

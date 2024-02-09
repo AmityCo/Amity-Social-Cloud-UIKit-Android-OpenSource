@@ -40,5 +40,4 @@ object AmityConstants {
     const val NO_PERMISSION_ERROR_CODE = 400301
 
     const val STORY_DURATION = 7 * 1000L    // milli seconds
-    const val STORY_REACTION = "like"
 }

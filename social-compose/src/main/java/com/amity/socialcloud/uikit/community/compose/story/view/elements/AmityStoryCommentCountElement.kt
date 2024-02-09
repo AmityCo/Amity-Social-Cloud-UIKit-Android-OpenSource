@@ -16,17 +16,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.amity.socialcloud.uikit.common.common.readableNumber
 import com.amity.socialcloud.uikit.community.compose.R
 
 @Composable
 fun AmityStoryCommentCountElement(
     modifier: Modifier = Modifier,
-    count: String = "0",
+    count: Int = 0,
     onClick: () -> Unit
 ) {
+    val haptics = LocalHapticFeedback.current
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
@@ -35,17 +40,18 @@ fun AmityStoryCommentCountElement(
             .background(Color(0xFF292B32))
             .padding(horizontal = 10.dp, vertical = 8.dp)
             .clickable {
+                haptics.performHapticFeedback(HapticFeedbackType.LongPress)
                 onClick()
             }
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_story_comment_count),
-            contentDescription = "Story View Count",
+            contentDescription = "Story Comment Count",
             modifier = Modifier.size(20.dp),
             tint = Color(0xFFA5A9B5),
         )
         Text(
-            text = count,
+            text = count.readableNumber(),
             color = Color.White,
             modifier = modifier
                 .height(20.dp)
@@ -58,5 +64,7 @@ fun AmityStoryCommentCountElement(
 @Preview
 @Composable
 fun AmityStoryCommentCountElementPreview() {
-    AmityStoryCommentCountElement(count = "0") {}
+    AmityStoryCommentCountElement(
+        count = 0
+    ) {}
 }
