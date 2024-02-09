@@ -2,25 +2,22 @@ package com.amity.socialcloud.uikit.community.compose.ui.theme
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.compose.ui.graphics.Color
 import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import com.amity.socialcloud.uikit.community.compose.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.community.compose.ui.scope.AmityComposePageScope
-import com.amity.socialcloud.uikit.community.compose.utils.asColor
 
-@Immutable
-data class AmityComposeColors(
-    val primary: Color,
-    val secondary: Color,
-)
 
 val LocalAmityColors = staticCompositionLocalOf {
-    AmityComposeColors(
-        primary = Color.Unspecified,
-        secondary = Color.Unspecified,
-    )
+    AmityUIKitColors
+}
+
+val LocalAmityTypography = staticCompositionLocalOf {
+    AmityUIKitTypography
+}
+
+val LocalAmityShapes = staticCompositionLocalOf {
+    AmityUIKitShapes
 }
 
 @Composable
@@ -33,19 +30,28 @@ fun AmityComposeTheme(
         ?: (pageScope?.getPageTheme()?.lightTheme
             ?: AmityUIKitConfigController.getGlobalTheme().lightTheme)
 
-    val amityColors = AmityComposeColors(
-        primary = lightTheme.primaryColor.asColor(),
-        secondary = lightTheme.secondaryColor.asColor(),
-    )
+    val amityColors = AmityUIKitColors.applyConfiguration(lightTheme)
 
     CompositionLocalProvider(
         LocalAmityColors provides amityColors,
-        content = content
-    )
+        LocalAmityTypography provides AmityUIKitTypography,
+        LocalAmityShapes provides AmityUIKitShapes,
+    ) {
+        content()
+    }
 }
 
-object AmityComposeTheme {
-    val colors: AmityComposeColors
+object AmityTheme {
+
+    val colors: AmityColors
         @Composable
         get() = LocalAmityColors.current
+
+    val typography: AmityTypography
+        @Composable
+        get() = LocalAmityTypography.current
+
+    val shapes: AmityShapes
+        @Composable
+        get() = LocalAmityShapes.current
 }

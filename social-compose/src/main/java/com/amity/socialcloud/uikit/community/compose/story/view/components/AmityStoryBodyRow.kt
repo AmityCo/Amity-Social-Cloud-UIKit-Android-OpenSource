@@ -1,9 +1,13 @@
 package com.amity.socialcloud.uikit.community.compose.story.view.components
 
+import android.content.Intent
+import android.net.Uri
+import android.util.Patterns
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -17,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
@@ -26,6 +31,9 @@ import coil.request.ImageRequest
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.sdk.model.social.story.AmityStoryImageDisplayMode
+import com.amity.socialcloud.sdk.model.social.story.AmityStoryItem
+import com.amity.socialcloud.uikit.community.compose.story.hyperlink.elements.AmityStoryHyperlinkView
+import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmityStoryBodyGestureBox
 import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmityStoryVideoPlayer
 import com.amity.socialcloud.uikit.community.compose.utils.toComposeColor
 import kotlinx.coroutines.Dispatchers
@@ -38,6 +46,9 @@ fun AmityStoryBodyRow(
     exoPlayer: ExoPlayer?,
     story: AmityStory,
     isVisible: Boolean,
+    onTap: (Boolean) -> Unit,
+    onHold: (Boolean) -> Unit,
+    onSwipeDown: () -> Unit,
 ) {
     Box(
         modifier = modifier
@@ -63,6 +74,25 @@ fun AmityStoryBodyRow(
 
             AmityStory.DataType.UNKNOWN -> {}
         }
+
+        AmityStoryBodyGestureBox(
+            modifier = modifier,
+            onTap = onTap,
+            onHold = onHold,
+            onSwipeDown = onSwipeDown
+        )
+
+        if (story.getStoryItems().isNotEmpty() &&
+            story.getStoryItems().first() is AmityStoryItem.HYPERLINK
+        ) {
+            AmityStoryBodyHyperlinkView(
+                hyperlinkItem = story.getStoryItems().first() as AmityStoryItem.HYPERLINK,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 32.dp)
+            )
+        }
+
         if (story.getState() != AmityStory.State.SYNCED) {
             Box(
                 modifier = modifier
@@ -79,8 +109,6 @@ fun AmityStoryBodyImageView(
     data: AmityStory.Data.IMAGE,
     syncState: AmityStory.State,
 ) {
-    val context = LocalContext.current
-
     val contentScale = remember {
         when (data.getImageDisplayMode()) {
             AmityStoryImageDisplayMode.FIT -> ContentScale.Fit
@@ -152,6 +180,37 @@ fun AmityStoryBodyVideoView(
         modifier = modifier,
         exoPlayer = exoPlayer,
         isVisible = isVisible,
+    )
+}
+
+@Composable
+fun AmityStoryBodyHyperlinkView(
+    modifier: Modifier = Modifier,
+    hyperlinkItem: AmityStoryItem.HYPERLINK,
+) {
+    val context = LocalContext.current
+
+    var displayText = hyperlinkItem.getCustomText()
+    if (displayText == null) {
+        val matcher = Patterns.DOMAIN_NAME.matcher(hyperlinkItem.getUrl())
+        displayText = if (matcher.find()) {
+            matcher.group()
+        } else {
+            hyperlinkItem.getUrl()
+        }
+    }
+
+    AmityStoryHyperlinkView(
+        text = displayText ?: "",
+        modifier = modifier,
+        onClick = {
+            var url = hyperlinkItem.getUrl()
+            if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                url = "https://$url"
+            }
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            context.startActivity(browserIntent)
+        }
     )
 }
 

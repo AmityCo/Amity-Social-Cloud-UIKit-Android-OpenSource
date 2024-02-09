@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.ui.scope
 
+import androidx.annotation.DrawableRes
 import com.amity.socialcloud.uikit.common.config.AmityUIKitConfig
 import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import com.google.gson.JsonObject
@@ -26,6 +27,8 @@ interface AmityComposePageScope : AmityComposeScope {
     }
 
     fun getPageTheme(): AmityUIKitConfig.GlobalTheme?
+
+    fun showSnackbar(message: String, @DrawableRes drawableRes: Int? = null)
 }
 
 interface AmityComposeComponentScope : AmityComposeScope {
@@ -35,6 +38,8 @@ interface AmityComposeComponentScope : AmityComposeScope {
     }
 
     fun getComponentTheme(): AmityUIKitConfig.GlobalTheme?
+
+    fun showSnackbar(message: String, @DrawableRes drawableRes: Int? = null)
 }
 
 interface AmityComposeElementScope : AmityComposeScope {
@@ -42,4 +47,6 @@ interface AmityComposeElementScope : AmityComposeScope {
     fun getElementScope(): AmityComposeElementScope {
         return this
     }
+
+    fun showSnackbar(message: String, @DrawableRes drawableRes: Int? = null)
 }

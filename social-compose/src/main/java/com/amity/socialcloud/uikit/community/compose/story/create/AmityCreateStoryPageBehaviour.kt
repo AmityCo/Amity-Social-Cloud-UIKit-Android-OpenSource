@@ -8,10 +8,10 @@ import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.community.compose.story.draft.AmityDraftStoryPageActivity
 
 @UnstableApi
-class AmityCreateStoryPageBehavior(
-    private val context: Context
-) {
-    fun goToDraftStoryPage(
+open class AmityCreateStoryPageBehavior {
+
+    open fun goToDraftStoryPage(
+        context: Context,
         launcher: ActivityResultLauncher<Intent>,
         community: AmityCommunity,
         isImage: Boolean,

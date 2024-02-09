@@ -39,10 +39,6 @@ class MainActivity : RxAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-//        val intent = Intent(this, AmityCreateStoryActivity::class.java)
-//        startActivity(intent)
-//        return
-
         val userId = AmityCoreClient.getUserId()
         if (userId.isNotEmpty()) {
             binding.etUserId.setText(userId)

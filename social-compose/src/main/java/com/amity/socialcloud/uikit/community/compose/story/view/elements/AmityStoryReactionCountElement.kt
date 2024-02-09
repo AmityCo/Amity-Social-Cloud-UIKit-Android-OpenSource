@@ -1,7 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.story.view.elements
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,20 +20,30 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.amity.socialcloud.uikit.common.common.readableNumber
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.ui.scope.AmityComposePageScope
+import com.amity.socialcloud.uikit.community.compose.utils.clickableWithoutRipple
 
 @Composable
 fun AmityStoryReactionCountElement(
     modifier: Modifier = Modifier,
-    count: String = "0",
-    isSelected: Boolean = false,
-    onSelectedChanged: (Boolean) -> Unit
+    pageScope: AmityComposePageScope? = null,
+    count: Int = 0,
+    isCommunityJoined: Boolean = true,
+    isReactedByMe: Boolean = false,
+    onReactChange: (Boolean) -> Unit
 ) {
+    val context = LocalContext.current
     val haptics = LocalHapticFeedback.current
+
+    var isReacted by remember { mutableStateOf(isReactedByMe) }
+    var reactionCount by remember { mutableStateOf(count) }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -42,21 +51,30 @@ fun AmityStoryReactionCountElement(
             .height(40.dp)
             .clip(MaterialTheme.shapes.extraLarge)
             .background(Color(0xFF292B32))
-            .padding(horizontal = 10.dp, vertical = 8.dp)
-            .clickable {
+            .clickableWithoutRipple {
                 haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                onSelectedChanged(!isSelected)
+                if (isCommunityJoined) {
+                    isReacted = !isReacted
+                    onReactChange(isReacted)
+                    reactionCount = if (isReacted) reactionCount + 1 else reactionCount - 1
+                } else {
+                    pageScope?.showSnackbar(
+                        message = context.getString(R.string.amity_join_community_to_interact),
+                        drawableRes = null,
+                    )
+                }
             }
+            .padding(horizontal = 10.dp, vertical = 8.dp)
     ) {
         Icon(
-            imageVector = if (isSelected) ImageVector.vectorResource(id = R.drawable.amity_ic_story_liked_pressed)
+            imageVector = if (isReacted) ImageVector.vectorResource(id = R.drawable.amity_ic_story_liked_pressed)
             else ImageVector.vectorResource(id = R.drawable.amity_ic_story_like_normal),
             contentDescription = "Story Reaction Count",
             modifier = Modifier.size(20.dp),
             tint = Color.Unspecified,
         )
         Text(
-            text = count,
+            text = reactionCount.readableNumber(),
             color = Color.White,
             modifier = modifier
                 .height(20.dp)
@@ -69,10 +87,5 @@ fun AmityStoryReactionCountElement(
 @Preview
 @Composable
 fun AmityStoryReactionCountElementPreview() {
-    var isSelected by remember { mutableStateOf(false) }
-
-    AmityStoryReactionCountElement(
-        isSelected = isSelected,
-        onSelectedChanged = { isSelected = it }
-    )
+    AmityStoryReactionCountElement {}
 }

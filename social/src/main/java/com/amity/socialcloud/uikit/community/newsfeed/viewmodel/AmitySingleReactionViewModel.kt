@@ -81,6 +81,7 @@ class AmitySingleReactionViewModel(private val savedState: SavedStateHandle) : V
             AmityReactionReferenceType.POST -> AmityReactionReference.POST(referenceId)
             AmityReactionReferenceType.COMMENT -> AmityReactionReference.COMMENT(referenceId)
             AmityReactionReferenceType.MESSAGE -> AmityReactionReference.MESSAGE(referenceId)
+            AmityReactionReferenceType.STORY -> AmityReactionReference.STORY(referenceId)
         }
     }
 }

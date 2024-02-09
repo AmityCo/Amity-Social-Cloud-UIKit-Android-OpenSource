@@ -11,7 +11,8 @@ object AmityUIKitDrawableResolver {
         "threeDot.png" to R.drawable.amity_ic_more_horiz,
         "back.png" to R.drawable.amity_ic_arrow_back,
         "aspect_ratio.png" to R.drawable.amity_ic_aspect_ratio,
-        "share_story_button.png" to R.drawable.amity_ic_arrow_forward
+        "share_story_button.png" to R.drawable.amity_ic_arrow_forward,
+        "hyperlink_button.png" to R.drawable.amity_ic_hyperlink,
     )
 
     @DrawableRes

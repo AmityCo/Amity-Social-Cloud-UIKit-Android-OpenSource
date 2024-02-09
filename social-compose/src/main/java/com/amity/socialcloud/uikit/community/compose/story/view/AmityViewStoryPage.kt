@@ -7,11 +7,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
@@ -20,7 +17,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -34,8 +30,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
@@ -58,11 +52,9 @@ import com.amity.socialcloud.uikit.community.compose.story.view.components.Amity
 import com.amity.socialcloud.uikit.community.compose.story.view.components.AmityStoryHeaderRow
 import com.amity.socialcloud.uikit.community.compose.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.community.compose.ui.elements.AmityAlertDialog
+import com.amity.socialcloud.uikit.community.compose.ui.elements.AmityBottomSheetActionItem
 import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityComposeTheme
 import com.amity.socialcloud.uikit.community.compose.utils.AmityStoryVideoPlayerHelper
-import com.amity.socialcloud.uikit.community.compose.utils.interceptHold
-import com.amity.socialcloud.uikit.community.compose.utils.interceptSwipeDown
-import com.amity.socialcloud.uikit.community.compose.utils.interceptTap
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -77,7 +69,6 @@ fun AmityViewStoryPage(
     onCloseClicked: () -> Unit
 ) {
     val context = LocalContext.current
-    val configuration = LocalConfiguration.current
 
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
@@ -88,7 +79,13 @@ fun AmityViewStoryPage(
     AmityComposeTheme {
         val stories = viewModel.stories.collectAsLazyPagingItems()
 
-        val storyPagerState = rememberPagerState()
+        val storyPagerState = rememberPagerState(
+            initialPage = 0,
+            initialPageOffsetFraction = 0f
+        ) {
+            stories.itemCount
+        }
+
         val coroutineScope = rememberCoroutineScope()
         val shouldPauseTimer by viewModel.shouldPauseTimer.collectAsState()
         var shouldRestartTimer by remember { mutableStateOf(false) }
@@ -231,210 +228,186 @@ fun AmityViewStoryPage(
             )
         }
 
-        DisposableEffect(
-            AmityBasePage(pageId = "story_page") {
-                Box(
-                    modifier = modifier
-                        .fillMaxSize()
-                        .background(Color.Black)
-                ) {
-                    HorizontalPager(
-                        pageCount = stories.itemCount,
-                        state = storyPagerState,
-                        beyondBoundsPageCount = 3,
-                        userScrollEnabled = false,
-                        key = {
-                            try {
-                                stories.peek(it)?.getStoryId() ?: -1
-                            } catch (e: IndexOutOfBoundsException) {
-                                -1
-                            }
-                        }
-                    ) { index ->
-                        val story = try {
-                            stories.peek(index) ?: return@HorizontalPager
+        AmityBasePage(pageId = "story_page") {
+            Box(
+                modifier = modifier
+                    .fillMaxSize()
+                    .background(Color.Black)
+            ) {
+                HorizontalPager(
+                    state = storyPagerState,
+                    beyondBoundsPageCount = 3,
+                    userScrollEnabled = false,
+                    key = {
+                        try {
+                            stories.peek(it)?.getStoryId() ?: -1
                         } catch (e: IndexOutOfBoundsException) {
-                            return@HorizontalPager
-                        }
-
-                        Column {
-                            AmityStoryBodyRow(
-                                modifier = modifier
-                                    .aspectRatio(9f / 16f),
-                                exoPlayer = exoPlayer,
-                                story = story,
-                                isVisible = storyPagerState.targetPage == index
-                            )
-
-                            AmityStoryBottomRow(
-                                story = story,
-                                onDeleteClicked = {
-                                    viewModel.handleSegmentTimer(shouldPause = true)
-                                    storyIdToDelete = it
-                                    openConfirmDeleteDialog.value = true
-                                }
-                            )
+                            -1
                         }
                     }
+                ) { index ->
+                    val story = try {
+                        stories.peek(index) ?: return@HorizontalPager
+                    } catch (e: IndexOutOfBoundsException) {
+                        return@HorizontalPager
+                    }
 
-                    AmityStoryHeaderRow(
-                        pageScope = getPageScope(),
-                        communityId = community.getCommunityId(),
-                        communityDisplayName = community.getDisplayName(),
-                        avatarUrl = community.getAvatar()?.getUrl(AmityImage.Size.LARGE) ?: "",
-                        stories = stories.itemSnapshotList.items,
-                        totalSegments = stories.itemCount,
-                        currentSegment = storyPagerState.targetPage,
-                        isVisible = true,
-                        shouldPauseTimer = shouldPauseTimer,
-                        shouldRestartTimer = shouldRestartTimer,
-                        moveToNextSegment = {
-                            AmityStoryVideoPlayerHelper.resetPlaybackIndex()
-                            coroutineScope.launch {
-                                moveSegment(
-                                    shouldMoveToNext = true,
-                                    totalSegments = stories.itemCount,
-                                    storyPagerState = storyPagerState,
-                                    firstSegmentReached = {
-                                        coroutineScope.launch {
-                                            shouldRestartTimer = true
-                                            delay(300)
-                                            shouldRestartTimer = false
-                                        }
-                                    },
-                                    lastSegmentReached = { onCloseClicked() }
-                                )
-                            }
-                        },
-                        onCloseClicked = onCloseClicked,
-                        navigateToCreatePage = {
-                            navigateToCreateStoryPage()
-                        },
-                        onDeleteClicked = {
-                            viewModel.handleSegmentTimer(shouldPause = true)
-                            showBottomSheet = true
-                            storyIdToDelete = it
-                        }
-                    )
-
-                    if (shouldShowLoading) {
-                        Box(
+                    Column {
+                        AmityStoryBodyRow(
                             modifier = modifier
-                                .fillMaxSize()
-                                .background(Color.Black.copy(alpha = 0.5f))
-                        ) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.align(Alignment.Center)
-                            )
-                        }
-                    }
+                                .aspectRatio(9f / 16f),
+                            exoPlayer = exoPlayer,
+                            story = story,
+                            isVisible = storyPagerState.targetPage == index,
+                            onTap = { isTapRight ->
+                                AmityStoryVideoPlayerHelper.resetPlaybackIndex()
 
-                    Box(
-                        modifier = Modifier
-                            .aspectRatio(9f / 16f)
-                            .padding(top = 64.dp)
-                            .pointerInput(Unit) {
-                                interceptTap {
-                                    val screenWidth = configuration.screenWidthDp.dp.toPx()
-                                    val tapWidthOffset = it.x
-                                    val isTapRight = tapWidthOffset > screenWidth / 2
-
-                                    AmityStoryVideoPlayerHelper.resetPlaybackIndex()
-
-                                    coroutineScope.launch {
-                                        moveSegment(
-                                            shouldMoveToNext = isTapRight,
-                                            totalSegments = stories.itemCount,
-                                            storyPagerState = storyPagerState,
-                                            firstSegmentReached = {
-                                                coroutineScope.launch {
-                                                    shouldRestartTimer = true
-                                                    delay(300)
-                                                    shouldRestartTimer = false
-                                                }
-                                            },
-                                            lastSegmentReached = { onCloseClicked() }
-                                        )
-                                    }
-                                }
-                            }
-                            .pointerInput(Unit) {
-                                interceptHold {
-                                    viewModel.handleSegmentTimer(shouldPause = it)
-                                }
-                            }
-                            .pointerInput(Unit) {
-                                interceptSwipeDown {
-                                    onCloseClicked()
-                                }
-                            }
-                    )
-
-                    if (isShowingVideoStory) {
-                        Box(
-                            modifier = Modifier.size(48.dp, 120.dp)
-                        ) {
-                            Image(
-                                painter = painterResource(
-                                    id = if (isAudioMuted) R.drawable.amity_ic_story_audio_mute
-                                    else R.drawable.amity_ic_story_audio_unmute
-                                ),
-                                contentDescription = "Mute/Unmute Audio",
-                                modifier = Modifier
-                                    .size(32.dp)
-                                    .align(Alignment.BottomEnd)
-                                    .clickable {
-                                        isAudioMuted = !isAudioMuted
-                                        exoPlayer.volume = if (isAudioMuted) 0f else 1f
-                                    }
-                            )
-                        }
-                    }
-
-                    if (showBottomSheet) {
-                        ModalBottomSheet(
-                            onDismissRequest = {
-                                viewModel.handleSegmentTimer(shouldPause = false)
-                                showBottomSheet = false
-                            },
-                            sheetState = sheetState,
-                        ) {
-                            Column(
-                                verticalArrangement = Arrangement.spacedBy(8.dp),
-                                modifier = modifier
-                                    .padding(start = 16.dp, end = 16.dp, bottom = 64.dp)
-                            ) {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clickable {
-                                            openConfirmDeleteDialog.value = true
-
-                                            scope
-                                                .launch {
-                                                    sheetState.hide()
-                                                }
-                                                .invokeOnCompletion {
-                                                    if (!sheetState.isVisible) {
-                                                        showBottomSheet = false
-                                                    }
-                                                }
-                                        }
-                                ) {
-                                    Image(
-                                        painter = painterResource(id = R.drawable.amity_ic_delete_story),
-                                        contentDescription = null,
-                                        modifier = Modifier.size(24.dp)
+                                coroutineScope.launch {
+                                    moveSegment(
+                                        shouldMoveToNext = isTapRight,
+                                        totalSegments = stories.itemCount,
+                                        storyPagerState = storyPagerState,
+                                        firstSegmentReached = {
+                                            coroutineScope.launch {
+                                                shouldRestartTimer = true
+                                                delay(300)
+                                                shouldRestartTimer = false
+                                            }
+                                        },
+                                        lastSegmentReached = { onCloseClicked() }
                                     )
-                                    Spacer(modifier = modifier.size(16.dp))
-                                    Text("Delete story")
                                 }
+                            },
+                            onHold = {
+                                viewModel.handleSegmentTimer(shouldPause = it)
+                            },
+                            onSwipeDown = {
+                                onCloseClicked()
+                            }
+                        )
+
+                        AmityStoryBottomRow(
+                            modifier = modifier,
+                            pageScope = getPageScope(),
+                            story = story,
+                            onDeleteClicked = {
+                                viewModel.handleSegmentTimer(shouldPause = true)
+                                storyIdToDelete = it
+                                openConfirmDeleteDialog.value = true
+                            }
+                        )
+                    }
+                }
+
+                AmityStoryHeaderRow(
+                    pageScope = getPageScope(),
+                    communityId = community.getCommunityId(),
+                    communityDisplayName = community.getDisplayName(),
+                    avatarUrl = community.getAvatar()?.getUrl(AmityImage.Size.LARGE) ?: "",
+                    stories = stories.itemSnapshotList.items,
+                    totalSegments = stories.itemCount,
+                    currentSegment = storyPagerState.targetPage,
+                    isVisible = true,
+                    shouldPauseTimer = shouldPauseTimer,
+                    shouldRestartTimer = shouldRestartTimer,
+                    moveToNextSegment = {
+                        AmityStoryVideoPlayerHelper.resetPlaybackIndex()
+                        coroutineScope.launch {
+                            moveSegment(
+                                shouldMoveToNext = true,
+                                totalSegments = stories.itemCount,
+                                storyPagerState = storyPagerState,
+                                firstSegmentReached = {
+                                    coroutineScope.launch {
+                                        shouldRestartTimer = true
+                                        delay(300)
+                                        shouldRestartTimer = false
+                                    }
+                                },
+                                lastSegmentReached = { onCloseClicked() }
+                            )
+                        }
+                    },
+                    onCloseClicked = onCloseClicked,
+                    navigateToCreatePage = {
+                        navigateToCreateStoryPage()
+                    },
+                    onDeleteClicked = {
+                        viewModel.handleSegmentTimer(shouldPause = true)
+                        showBottomSheet = true
+                        storyIdToDelete = it
+                    }
+                )
+
+                if (shouldShowLoading) {
+                    Box(
+                        modifier = modifier
+                            .fillMaxSize()
+                            .background(Color.Black.copy(alpha = 0.5f))
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
+                }
+
+                if (isShowingVideoStory) {
+                    Box(
+                        modifier = Modifier.size(48.dp, 120.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(
+                                id = if (isAudioMuted) R.drawable.amity_ic_story_audio_mute
+                                else R.drawable.amity_ic_story_audio_unmute
+                            ),
+                            contentDescription = "Mute/Unmute Audio",
+                            modifier = Modifier
+                                .size(32.dp)
+                                .align(Alignment.BottomEnd)
+                                .clickable {
+                                    isAudioMuted = !isAudioMuted
+                                    exoPlayer.volume = if (isAudioMuted) 0f else 1f
+                                }
+                        )
+                    }
+                }
+
+                if (showBottomSheet) {
+                    ModalBottomSheet(
+                        onDismissRequest = {
+                            viewModel.handleSegmentTimer(shouldPause = false)
+                            showBottomSheet = false
+                        },
+                        sheetState = sheetState,
+                    ) {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = modifier
+                                .padding(start = 16.dp, end = 16.dp, bottom = 64.dp)
+                        ) {
+                            AmityBottomSheetActionItem(
+                                icon = R.drawable.amity_ic_delete_story,
+                                text = "Delete story",
+                            ) {
+                                openConfirmDeleteDialog.value = true
+
+                                scope
+                                    .launch {
+                                        sheetState.hide()
+                                    }
+                                    .invokeOnCompletion {
+                                        if (!sheetState.isVisible) {
+                                            showBottomSheet = false
+                                        }
+                                    }
                             }
                         }
                     }
                 }
             }
-        ) {
+        }
+
+        DisposableEffect(Unit) {
             onDispose {
                 exoPlayer.release()
                 AmityStoryVideoPlayerHelper.clear()

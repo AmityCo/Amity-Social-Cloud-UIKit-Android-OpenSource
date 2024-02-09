@@ -1,8 +1,8 @@
 {
   "global_theme": {
     "light_theme": {
-      "primary_color": "#FFFFFF",
-      "secondary_color": "#AB1234"
+      "primary_color": "#1054DE",
+      "secondary_color": "#292B32"
     }
   },
   "excludes": [
@@ -11,8 +11,8 @@
     "select_target_page/*/*": {
       "page_theme": {
         "light_theme": {
-          "primary_color": "#1D1234",
-          "secondary_color": "#AB1234"
+          "primary_color": "#1054DE",
+          "secondary_color": "#292B32"
         }
       },
       "title": "Share to"
@@ -24,8 +24,8 @@
       "resolution": "720p",
       "page_theme": {
         "light_theme": {
-          "primary_color": "#000000",
-          "secondary_color": "#AB1234"
+          "primary_color": "#1054DE",
+          "secondary_color": "#292B32"
         }
       }
     },
@@ -89,26 +89,26 @@
     "*/edit_comment_component/*": {
       "component_theme": {
         "light_theme": {
-          "primary_color": "#1D1234",
-          "secondary_color": "#AB1234"
+          "primary_color": "#1054DE",
+          "secondary_color": "#292B32"
         }
       }
     },
     "*/edit_comment_component/cancel_button": {
       "cancel_icon": "",
-      "cancel_button_text": "cancel",
-      "background_color": "#1243EE"
+      "cancel_button_text": "Cancel",
+      "background_color": "#FFFFFF"
     },
     "*/edit_comment_component/save_button": {
       "save_icon": "",
       "save_button_text": "Save",
-      "background_color": "#1243EE"
+      "background_color": "#1054DE"
     },
     "*/hyper_link_config_component/*": {
       "component_theme": {
         "light_theme": {
-          "primary_color": "#1D1234",
-          "secondary_color": "#AB1234"
+          "primary_color": "#1054DE",
+          "secondary_color": "#292B32"
         }
       }
     },
@@ -124,8 +124,8 @@
     "*/comment_tray_component/*": {
       "component_theme": {
         "light_theme": {
-          "primary_color": "#1D1234",
-          "secondary_color": "#AB1234"
+          "primary_color": "#1054DE",
+          "secondary_color": "#292B32"
         }
       }
     },
