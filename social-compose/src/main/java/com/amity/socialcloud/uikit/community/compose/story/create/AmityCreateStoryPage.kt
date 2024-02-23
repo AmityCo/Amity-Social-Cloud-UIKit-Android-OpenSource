@@ -46,6 +46,7 @@ import com.amity.socialcloud.uikit.community.compose.story.create.elements.Amity
 import com.amity.socialcloud.uikit.community.compose.story.create.elements.AmityStoryPhotoVideoSelectionElement
 import com.amity.socialcloud.uikit.community.compose.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.community.compose.ui.base.AmityBasePage
+import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.utils.AmityStoryCameraHelper
 import com.amity.socialcloud.uikit.community.compose.utils.asDrawableRes
 import com.amity.socialcloud.uikit.community.compose.utils.getBackgroundColor
@@ -264,7 +265,7 @@ fun AmityCreateStoryPage(
                     Box(modifier = modifier
                         .size(60.dp, 26.dp)
                         .clip(RoundedCornerShape(4.dp))
-                        .background(Color(0xFFFF305A))
+                        .background(AmityTheme.colors.alert)
                         .constrainAs(durationTimer) {
                             top.linkTo(parent.top, 16.dp)
                             start.linkTo(parent.start)

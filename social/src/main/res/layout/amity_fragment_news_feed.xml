@@ -38,11 +38,9 @@
                     app:scrimAnimationDuration="0">
 
                     <FrameLayout
-                        android:id="@+id/myCommunityContainer"
+                        android:id="@+id/storyFeedContainer"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/amity_padding_m1"
-                        android:paddingBottom="@dimen/amity_padding_m1"
                         app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed" />
 
                 </com.google.android.material.appbar.CollapsingToolbarLayout>

@@ -25,7 +25,7 @@
             type="Boolean" />
 
         <variable
-            name="connectionState"
+            name="followStatus"
             type="com.amity.socialcloud.sdk.model.core.follow.AmityFollowStatus" />
 
     </data>
@@ -139,7 +139,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/amity_padding_s"
             android:text="@string/amity_follow"
-            android:visibility="@{connectionState == AmityFollowStatus.NONE ? View.VISIBLE : View.GONE, default=gone}"
+            android:visibility="@{followStatus == AmityFollowStatus.NONE ? View.VISIBLE : View.GONE, default=gone}"
             app:icon="@drawable/amity_ic_plus"
             app:iconGravity="textStart"
             app:layout_constraintEnd_toEndOf="@id/btnProfileDefaultAction"
@@ -153,10 +153,27 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/amity_padding_s"
             android:text="@string/amity_cancel_request"
-            android:visibility="@{connectionState == AmityFollowStatus.PENDING ? View.VISIBLE : View.GONE, default=gone}"
+            android:visibility="@{followStatus == AmityFollowStatus.PENDING ? View.VISIBLE : View.GONE, default=gone}"
             app:amityButtonStrokeShade="@{AmityColorShade.SHADE4}"
             app:cornerRadius="@dimen/amity_four"
             app:icon="@drawable/amity_ic_cancel_request"
+            app:iconGravity="textStart"
+            app:iconTint="@color/amityColorBase"
+            app:layout_constraintEnd_toEndOf="@id/btnProfileDefaultAction"
+            app:layout_constraintStart_toStartOf="@id/btnProfileDefaultAction"
+            app:layout_constraintTop_toBottomOf="@id/tvDescription" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnUnblockRequest"
+            style="@style/AmityOutlinedButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/amity_padding_s"
+            android:text="@string/amity_unblock_user"
+            android:visibility="@{followStatus == AmityFollowStatus.BLOCKED ? View.VISIBLE : View.GONE, default=gone}"
+            app:amityButtonStrokeShade="@{AmityColorShade.SHADE4}"
+            app:cornerRadius="@dimen/amity_four"
+            app:icon="@drawable/amity_ic_unblock_user"
             app:iconGravity="textStart"
             app:iconTint="@color/amityColorBase"
             app:layout_constraintEnd_toEndOf="@id/btnProfileDefaultAction"

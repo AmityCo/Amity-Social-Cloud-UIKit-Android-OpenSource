@@ -10,7 +10,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
@@ -19,13 +18,17 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
+import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
+import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionee
 import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
+import com.google.gson.JsonObject
 
-@OptIn(ExperimentalTextApi::class)
 @Composable
 fun AmityExpandableText(
     modifier: Modifier = Modifier,
     text: String,
+    mentionGetter: AmityMentionMetadataGetter,
+    mentionees: List<AmityMentionee>,
     style: TextStyle = AmityTheme.typography.body,
 ) {
     BoxWithConstraints(
@@ -52,10 +55,22 @@ fun AmityExpandableText(
         }
 
         val annotatedString = buildAnnotatedString {
-            if (isReadMoreClicked) {
-                append(text)
-            } else {
-                append(trimmedText)
+            val displayText = if (isReadMoreClicked) text else trimmedText
+            append(displayText)
+
+            mentionGetter.getMentionedUsers().forEach { mentionItem ->
+                if (mentionees.any { (it as? AmityMentionee.USER)?.getUserId() == mentionItem.getUserId() }
+                    && mentionItem.getIndex() < displayText.length
+                ) {
+                    addStyle(
+                        style = SpanStyle(AmityTheme.colors.primary),
+                        start = mentionItem.getIndex(),
+                        end = mentionItem.getIndex().plus(mentionItem.getLength()).inc(),
+                    )
+                }
+            }
+
+            if (!isReadMoreClicked) {
                 withStyle(style = SpanStyle(AmityTheme.colors.primary)) {
                     pushStringAnnotation(tag = readMore, annotation = readMore)
                     append(readMore)
@@ -104,6 +119,8 @@ private const val visiblePreviewLines = 8
 fun AmityExpandableTextPreview() {
     AmityExpandableText(
         text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur neque urna, malesuada sit amet mattis sit amet, fringilla vitae eros. Phasellus tristique dolor ut nulla tincidunt sollicitudin. Sed eu bibendum nibh. Cras sed ligula nunc. Fusce mollis hendrerit erat, in tempus nisl rhoncus nec. Vivamus vel dictum lectus. Sed suscipit ante sit amet nulla hendrerit, at tincidunt odio suscipit. Nam cursus malesuada eros, et aliquet sem. Quisque ligula nunc, aliquet sit amet scelerisque eleifend, cursus ut nisl. Sed condimentum eleifend sollicitudin. Nam nec magna egestas, ullamcorper diam in, eleifend justo. Quisque aliquam elit sollicitudin, viverra ex non, ultrices erat. Morbi fermentum, turpis et accumsan ultrices, felis metus posuere sem, at feugiat mi velit quis risus.",
+        mentionGetter = AmityMentionMetadataGetter(JsonObject()),
+        mentionees = emptyList(),
         style = AmityTheme.typography.body
     )
 }

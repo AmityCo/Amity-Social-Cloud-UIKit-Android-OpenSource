@@ -15,16 +15,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.sdk.model.core.reaction.AmityReactionReferenceType
@@ -122,7 +119,7 @@ fun AmityCommentEngagementBar(
                 Icon(
                     painter = painterResource(id = R.drawable.amity_ic_more_horiz),
                     contentDescription = null,
-                    tint = Color(0xFF898E9E),
+                    tint = AmityTheme.colors.secondaryShade2,
                     modifier = modifier
                         .size(20.dp)
                         .clickable {
@@ -142,11 +139,10 @@ fun AmityCommentEngagementBar(
             ) {
                 Text(
                     text = localReactionCount.toString(),
-                    style = TextStyle(
-                        fontSize = 13.sp,
-                        lineHeight = 18.sp,
-                        color = Color(0xFF898E9E),
-                    )
+                    style = AmityTheme.typography.caption.copy(
+                        fontWeight = FontWeight.Normal,
+                        color = AmityTheme.colors.secondaryShade2,
+                    ),
                 )
 
                 Image(

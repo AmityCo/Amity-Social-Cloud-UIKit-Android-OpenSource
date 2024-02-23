@@ -12,6 +12,10 @@
 
     <application>
         <activity
+            android:name=".story.target.global.AmityStoryGlobalFeedActivity"
+            android:exported="true"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".story.view.AmityViewStoryPageActivity"
             android:exported="true"
             android:screenOrientation="portrait" />

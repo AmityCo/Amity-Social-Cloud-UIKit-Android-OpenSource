@@ -18,8 +18,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
 
 @Composable
 fun AmityStoryHyperlinkView(
@@ -44,14 +44,15 @@ fun AmityStoryHyperlinkView(
                 id = R.drawable.amity_ic_hyperlink
             ),
             contentDescription = null,
-            tint = Color(0xFF1054DE)
+            tint = AmityTheme.colors.primary
         )
         Text(
             text = text,
-            fontSize = 15.sp,
+            style = AmityTheme.typography.body.copy(
+                color = AmityTheme.colors.secondary,
+                fontWeight = FontWeight.SemiBold,
+            ),
             maxLines = 1,
-            fontWeight = FontWeight.SemiBold,
-            color = Color(0xFF292B32),
             overflow = TextOverflow.Ellipsis,
         )
     }

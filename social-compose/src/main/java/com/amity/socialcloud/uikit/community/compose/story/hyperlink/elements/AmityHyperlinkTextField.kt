@@ -8,9 +8,8 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
+import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
 
 @Composable
 fun AmityHyperlinkTextField(
@@ -33,7 +32,7 @@ fun AmityHyperlinkTextField(
         placeholder = {
             Text(
                 text = hint,
-                color = Color(0xFFA5A9B5)
+                color = AmityTheme.colors.secondaryShade3
             )
         },
         colors = TextFieldDefaults.colors(
@@ -42,9 +41,8 @@ fun AmityHyperlinkTextField(
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
         ),
-        textStyle = TextStyle(
-            fontSize = 15.sp,
-            color = Color(0xFF292B32),
+        textStyle = AmityTheme.typography.body.copy(
+            color = AmityTheme.colors.secondary,
         ),
         modifier = modifier
             .fillMaxWidth()

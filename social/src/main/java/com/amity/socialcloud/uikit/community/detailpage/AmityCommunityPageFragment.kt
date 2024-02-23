@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.paging.ExperimentalPagingApi
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.uikit.common.base.AmityFragmentStateAdapter
 import com.amity.socialcloud.uikit.common.common.setSafeOnClickListener
 import com.amity.socialcloud.uikit.common.common.views.dialog.bottomsheet.AmityBottomSheetDialog
@@ -44,7 +45,6 @@ class AmityCommunityPageFragment : RxFragment(),
     private lateinit var viewModel: AmityCommunityDetailViewModel
     private lateinit var fragmentStateAdapter: AmityFragmentStateAdapter
     private var refreshEventPublisher = PublishSubject.create<AmityFeedRefreshEvent>()
-    private var community: AmityCommunity? = null
 
     private val behavior by lazy {
         AmitySocialBehaviorHelper.storyTabComponentBehavior
@@ -107,7 +107,6 @@ class AmityCommunityPageFragment : RxFragment(),
 
     private fun observeCommunity() {
         viewModel.getCommunity {
-            this.community = it
             if (it.isJoined()) {
                 binding.fabCreatePost.visibility = View.VISIBLE
             } else {
@@ -237,12 +236,11 @@ class AmityCommunityPageFragment : RxFragment(),
                     iconResId = R.drawable.amity_ic_story_create,
                     titleResId = R.string.amity_story,
                     action = {
-                        community?.let {
-                            behavior.goToCreateStoryPage(
-                                context = requireContext(),
-                                community = it
-                            )
-                        }
+                        behavior.goToCreateStoryPage(
+                            context = requireContext(),
+                            targetId = viewModel.communityId ?: "",
+                            targetType = AmityStory.TargetType.COMMUNITY,
+                        )
                         bottomSheet.dismiss()
                     }
                 )

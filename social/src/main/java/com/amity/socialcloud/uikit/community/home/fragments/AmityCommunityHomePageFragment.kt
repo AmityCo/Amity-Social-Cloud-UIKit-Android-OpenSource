@@ -61,7 +61,7 @@ class AmityCommunityHomePageFragment : Fragment() {
         )
         binding.viewModel = viewModel
         binding.tabLayout.disableSwipe()
-        binding.tabLayout.setOffscreenPageLimit(2)
+        binding.tabLayout.setOffscreenPageLimit(3)
         return binding.root
     }
 
@@ -100,10 +100,10 @@ class AmityCommunityHomePageFragment : Fragment() {
                     getString(R.string.amity_title_explore),
                     getExploreFragment()
                 ),
-//                AmityFragmentStateAdapter.AmityPagerModel(
-//                    getString(R.string.amity_title_my_communities),
-//                    getMyCommunityFragment()
-//                )
+                AmityFragmentStateAdapter.AmityPagerModel(
+                    getString(R.string.amity_title_my_communities),
+                    getMyCommunityFragment()
+                )
             )
         )
         binding.tabLayout.setAdapter(fragmentStateAdapter)

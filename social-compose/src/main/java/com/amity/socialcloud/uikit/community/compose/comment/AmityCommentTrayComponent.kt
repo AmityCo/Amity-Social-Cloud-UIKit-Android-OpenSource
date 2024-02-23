@@ -80,7 +80,6 @@ fun AmityCommentTrayComponent(
         Box(
             modifier = modifier
                 .navigationBarsPadding()
-                .fillMaxSize()
                 .background(Color.White)
         ) {
             Column(modifier = modifier.fillMaxWidth()) {

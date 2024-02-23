@@ -6,15 +6,19 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.media3.common.util.UnstableApi
-import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
+import androidx.media3.exoplayer.ExoPlayer
+import com.amity.socialcloud.sdk.model.social.story.AmityStory
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
+import com.amity.socialcloud.uikit.community.compose.utils.AmityStoryVideoPlayerHelper
 
 
-@UnstableApi
 class AmityViewStoryPageActivity : AppCompatActivity() {
 
     private val behavior by lazy {
-        AmityViewStoryPageBehavior(this)
+        AmitySocialBehaviorHelper.viewStoryPageBehavior
     }
 
     private val createStory =
@@ -25,36 +29,83 @@ class AmityViewStoryPageActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val community: AmityCommunity = intent?.getParcelableExtra(EXTRA_PARAM_COMMUNITY)!!
+        val isGlobalTarget = intent.getBooleanExtra(EXTRA_PARAM_IS_GLOBAL_TARGET, false)
+        val storyTargetId = intent.getStringExtra(EXTRA_PARAM_STORY_TARGET_ID) ?: ""
+        val storyTargetType =
+            intent.getSerializableExtra(EXTRA_PARAM_STORY_TARGET_TYPE) as AmityStory.TargetType
 
         setContent {
-            AmityViewStoryPage(
-                community = community,
-                onCloseClicked = { finish() },
-                navigateToCreateStoryPage = {
-                    behavior.goToCreateStoryPage(
-                        launcher = createStory,
-                        community = community
-                    )
+            val context = LocalContext.current
+
+            if (isGlobalTarget) {
+                AmityViewGlobalStoryPage(
+                    storyTargetId = storyTargetId,
+                    onClose = { finish() },
+                    navigateToCreateStoryPage = {
+                        behavior.goToCreateStoryPage(
+                            context = context,
+                            launcher = createStory,
+                            targetId = storyTargetId,
+                            targetType = storyTargetType,
+                        )
+                    },
+                    navigateToCommunityProfilePage = { community ->
+                        behavior.goToCommunityProfilePage(
+                            context = context,
+                            community = community
+                        )
+                    }
+                )
+            } else {
+                val exoPlayer = remember { ExoPlayer.Builder(context).build() }
+
+                AmityViewStoryPage(
+                    targetId = storyTargetId,
+                    targetType = storyTargetType,
+                    exoPlayer = exoPlayer,
+                    isSingleTarget = true,
+                    onClose = { finish() },
+                    lastSegmentReached = { finish() },
+                    navigateToCreateStoryPage = {
+                        behavior.goToCreateStoryPage(
+                            context = context,
+                            launcher = createStory,
+                            targetId = storyTargetId,
+                            targetType = storyTargetType,
+                        )
+                    }
+                )
+
+                DisposableEffect(Unit) {
+                    onDispose {
+                        exoPlayer.release()
+                        AmityStoryVideoPlayerHelper.clear()
+                    }
                 }
-            )
+            }
         }
     }
 
     companion object {
 
-        private const val EXTRA_PARAM_COMMUNITY = "COMMUNITY"
+        private const val EXTRA_PARAM_IS_GLOBAL_TARGET = "is_global_target"
+        private const val EXTRA_PARAM_STORY_TARGET_ID = "story_target_id"
+        private const val EXTRA_PARAM_STORY_TARGET_TYPE = "story_target_type"
 
         fun newIntent(
             context: Context,
-            community: AmityCommunity,
+            isGlobalFeed: Boolean = false,
+            targetId: String,
+            targetType: AmityStory.TargetType,
         ): Intent {
 
             return Intent(
                 context,
                 AmityViewStoryPageActivity::class.java
             ).apply {
-                putExtra(EXTRA_PARAM_COMMUNITY, community)
+                putExtra(EXTRA_PARAM_IS_GLOBAL_TARGET, isGlobalFeed)
+                putExtra(EXTRA_PARAM_STORY_TARGET_ID, targetId)
+                putExtra(EXTRA_PARAM_STORY_TARGET_TYPE, targetType)
             }
         }
     }

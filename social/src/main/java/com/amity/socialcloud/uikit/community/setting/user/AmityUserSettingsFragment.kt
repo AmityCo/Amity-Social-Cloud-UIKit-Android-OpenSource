@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.amity.socialcloud.sdk.model.core.follow.AmityFollowStatus
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.common.showSnackBar
 import com.amity.socialcloud.uikit.common.utils.AmityAlertDialogUtil
@@ -44,10 +45,10 @@ class AmityUserSettingsFragment : RxFragment() {
             adapter = settingsListAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
-        getCommunitySettingsItems()
+        getUserSettingsItems()
     }
 
-    private fun getCommunitySettingsItems() {
+    private fun getUserSettingsItems() {
         viewModel.getSettingsItemBasedOnStatus(
             otherUserMenuCreator = AmityOtherUserSettingsMenuCreatorImpl(this),
             selfMenuCreator = AmityUserSettingsMenuCreatorImpl(this),
@@ -71,6 +72,22 @@ class AmityUserSettingsFragment : RxFragment() {
         viewModel.unfollowUser(userId)
             .doOnError {
                 showFollowErrorDialog()
+            }.untilLifecycleEnd(this)
+            .subscribe()
+    }
+
+    private fun blockUser() {
+        viewModel.blockUser()
+            .doOnError {
+                showBlockErrorDialog()
+            }.untilLifecycleEnd(this)
+            .subscribe()
+    }
+
+    private fun unblockUser() {
+        viewModel.unblockUser()
+            .doOnError {
+                showUnBlockErrorDialog()
             }.untilLifecycleEnd(this)
             .subscribe()
     }
@@ -114,6 +131,38 @@ class AmityUserSettingsFragment : RxFragment() {
     private fun showFollowErrorDialog() {
         AmityAlertDialogUtil.showDialog(requireContext(),
             getString(R.string.amity_unfollow_error, viewModel.user?.getDisplayName() ?: ""),
+            getString(R.string.amity_something_went_wrong_pls_try),
+            getString(R.string.amity_ok), null,
+            DialogInterface.OnClickListener { dialog, which ->
+                if (which == DialogInterface.BUTTON_POSITIVE) {
+                    dialog.cancel()
+                }
+            })
+    }
+
+    internal fun updateBlockStatus(followStatus: AmityFollowStatus) {
+        if (followStatus == AmityFollowStatus.BLOCKED) {
+            unblockUser()
+        } else {
+            blockUser()
+        }
+    }
+
+    private fun showBlockErrorDialog() {
+        AmityAlertDialogUtil.showDialog(requireContext(),
+            getString(R.string.amity_block_error, viewModel.user?.getDisplayName() ?: ""),
+            getString(R.string.amity_something_went_wrong_pls_try),
+            getString(R.string.amity_ok), null,
+            DialogInterface.OnClickListener { dialog, which ->
+                if (which == DialogInterface.BUTTON_POSITIVE) {
+                    dialog.cancel()
+                }
+            })
+    }
+
+    private fun showUnBlockErrorDialog() {
+        AmityAlertDialogUtil.showDialog(requireContext(),
+            getString(R.string.amity_unblock_error, viewModel.user?.getDisplayName() ?: ""),
             getString(R.string.amity_something_went_wrong_pls_try),
             getString(R.string.amity_ok), null,
             DialogInterface.OnClickListener { dialog, which ->

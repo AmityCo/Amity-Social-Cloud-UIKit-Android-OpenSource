@@ -3,32 +3,35 @@ package com.amity.socialcloud.uikit.community.compose.story.target
 import android.content.Context
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
-import androidx.media3.common.util.UnstableApi
-import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.uikit.community.compose.story.create.AmityCreateStoryPageActivity
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageActivity
 
-@UnstableApi
 open class AmityStoryTargetTabComponentBehavior {
 
     open fun goToViewStoryPage(
         context: Context,
-        community: AmityCommunity,
+        isGlobalFeed: Boolean,
+        communityId: String,
     ) {
         val intent = AmityViewStoryPageActivity.newIntent(
             context = context,
-            community = community,
+            isGlobalFeed = isGlobalFeed,
+            targetId = communityId,
+            targetType = AmityStory.TargetType.COMMUNITY,
         )
         context.startActivity(intent)
     }
 
     open fun goToCreateStoryPage(
         context: Context,
-        community: AmityCommunity
+        targetId: String,
+        targetType: AmityStory.TargetType,
     ) {
         val intent = AmityCreateStoryPageActivity.newIntent(
             context = context,
-            community = community
+            targetId = targetId,
+            targetType = targetType,
         )
         context.startActivity(intent)
     }
@@ -36,11 +39,13 @@ open class AmityStoryTargetTabComponentBehavior {
     open fun goToCreateStoryPage(
         context: Context,
         launcher: ActivityResultLauncher<Intent>,
-        community: AmityCommunity,
+        targetId: String,
+        targetType: AmityStory.TargetType,
     ) {
         val intent = AmityCreateStoryPageActivity.newIntent(
             context = context,
-            community = community,
+            targetId = targetId,
+            targetType = targetType,
         )
         launcher.launch(intent)
     }

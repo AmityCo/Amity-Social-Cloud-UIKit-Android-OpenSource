@@ -2,9 +2,11 @@ package com.amity.socialcloud.uikit.community.compose.comment.query
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.uikit.community.compose.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.community.compose.utils.isCommunityModerator
+import com.google.gson.JsonObject
 
 @Composable
 fun AmityReplyCommentView(
@@ -20,11 +22,8 @@ fun AmityReplyCommentView(
     if (comment.isDeleted()) {
         AmityDeletedCommentView(isReplyComment = true)
     } else {
-        val commentText = if (comment.getDataTypes().contains(AmityComment.DataType.TEXT)) {
-            (comment.getData() as? AmityComment.Data.TEXT)?.getText() ?: ""
-        } else {
-            ""
-        }
+        val mentionGetter = AmityMentionMetadataGetter(comment.getMetadata() ?: JsonObject())
+        val commentText = (comment.getData() as? AmityComment.Data.TEXT)?.getText() ?: ""
 
         AmitySingleCommentView(
             modifier = modifier,
@@ -34,16 +33,18 @@ fun AmityReplyCommentView(
             isReplyComment = true,
             currentUserId = currentUserId,
             commentId = comment.getCommentId(),
-            commentText = commentText,
-            creatorId = comment.getCreatorId(),
             editingCommentId = editingCommentId,
+            commentText = commentText,
+            mentionGetter = mentionGetter,
+            mentionees = comment.getMentionees(),
+            creatorId = comment.getCreatorId(),
             creatorAvatarUrl = comment.getCreator()?.getAvatar()?.getUrl() ?: "",
             creatorDisplayName = comment.getCreator()?.getDisplayName() ?: "",
             createdAt = comment.getCreatedAt(),
             isEdited = comment.isEdited(),
             isCommunityModerator = comment.isCommunityModerator(),
-            isFlaggedByMe = comment.isFlaggedByMe(),
             isReactedByMe = comment.getMyReactions().isNotEmpty(),
+            isFlaggedByMe = comment.isFlaggedByMe(),
             reactionCount = comment.getReactionCount(),
             childCount = null,
             replyComments = emptyList(),

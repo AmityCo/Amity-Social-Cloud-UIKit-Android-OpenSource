@@ -6,8 +6,10 @@ import com.amity.socialcloud.sdk.model.core.error.AmityException
 import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.sdk.model.social.story.AmityStoryImageDisplayMode
 import com.amity.socialcloud.sdk.model.social.story.AmityStoryItem
+import com.amity.socialcloud.sdk.model.social.story.AmityStoryTarget
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -24,7 +26,8 @@ class AmityDraftStoryViewModel : AmityBaseViewModel() {
     val hyperlinkText get() = _hyperlinkText
 
     fun createImageStory(
-        communityId: String,
+        targetId: String,
+        targetType: AmityStory.TargetType,
         fileUri: Uri,
         imageDisplayMode: AmityStoryImageDisplayMode,
         onSuccess: () -> Unit,
@@ -41,8 +44,8 @@ class AmityDraftStoryViewModel : AmityBaseViewModel() {
         }
         AmitySocialClient.newStoryRepository()
             .createImageStory(
-                targetType = AmityStory.TargetType.COMMUNITY,
-                targetId = communityId,
+                targetType = targetType,
+                targetId = targetId,
                 imageUri = fileUri,
                 imageDisplayMode = imageDisplayMode,
                 storyItems = storyItems,
@@ -57,7 +60,8 @@ class AmityDraftStoryViewModel : AmityBaseViewModel() {
     }
 
     fun createVideoStory(
-        communityId: String,
+        targetId: String,
+        targetType: AmityStory.TargetType,
         fileUri: Uri,
         onSuccess: () -> Unit,
         onError: (message: String) -> Unit,
@@ -73,8 +77,8 @@ class AmityDraftStoryViewModel : AmityBaseViewModel() {
         }
         AmitySocialClient.newStoryRepository()
             .createVideoStory(
-                targetType = AmityStory.TargetType.COMMUNITY,
-                targetId = communityId,
+                targetType = targetType,
+                targetId = targetId,
                 videoUri = fileUri,
                 storyItems = storyItems,
             )
@@ -89,5 +93,18 @@ class AmityDraftStoryViewModel : AmityBaseViewModel() {
     fun saveStoryHyperlinkItem(url: String, text: String) {
         _hyperlinkUrl.value = url
         _hyperlinkText.value = text
+    }
+
+    fun getTarget(
+        targetId: String,
+        targetType: AmityStory.TargetType
+    ): Flowable<AmityStoryTarget> {
+        return AmitySocialClient.newStoryRepository()
+            .getStoryTarget(
+                targetId = targetId,
+                targetType = targetType
+            )
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
     }
 }

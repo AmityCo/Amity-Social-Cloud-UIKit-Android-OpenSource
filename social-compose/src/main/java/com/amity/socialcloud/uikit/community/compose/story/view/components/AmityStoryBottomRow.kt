@@ -26,22 +26,32 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.sdk.model.social.story.AmityStory
+import com.amity.socialcloud.sdk.model.social.story.AmityStoryTarget
 import com.amity.socialcloud.uikit.common.common.readableNumber
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.comment.AmityStoryCommentBottomSheet
+import com.amity.socialcloud.uikit.community.compose.story.view.AmityStoryModalDialogUIState
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageViewModel
 import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmityStoryCommentCountElement
 import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmityStoryReactionCountElement
 import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmityStoryViewCountElement
 import com.amity.socialcloud.uikit.community.compose.ui.elements.AmityAlertDialogWithThreeActions
 import com.amity.socialcloud.uikit.community.compose.ui.scope.AmityComposePageScope
+import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
 
 @Composable
 fun AmityStoryBottomRow(
     modifier: Modifier = Modifier,
     pageScope: AmityComposePageScope,
+    storyId: String,
     story: AmityStory,
-    onDeleteClicked: (String) -> Unit
+    target: AmityStoryTarget?,
+    state: AmityStory.State,
+    reachCount: Int,
+    commentCount: Int,
+    reactionCount: Int,
+    isReactedByMe: Boolean,
+    shouldShowCommentTray: Boolean,
 ) {
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
@@ -49,8 +59,12 @@ fun AmityStoryBottomRow(
     val viewModel =
         viewModel<AmityViewStoryPageViewModel>(viewModelStoreOwner = viewModelStoreOwner)
 
-    val community = remember(viewModel, story.getStoryId()) {
-        viewModel.getPostedCommunity(story)
+    val community = remember(viewModel, target?.getTargetId()) {
+        if (target is AmityStoryTarget.COMMUNITY) {
+            target.getCommunity()
+        } else {
+            null
+        }
     }
 
     val isCommunityJoined = remember(viewModel, community) {
@@ -64,24 +78,26 @@ fun AmityStoryBottomRow(
     Box(
         modifier = modifier.height(56.dp)
     ) {
-        when (story.getState()) {
+        when (state) {
             AmityStory.State.SYNCED -> AmityStoryEngagementRow(
                 modifier = modifier,
                 pageScope = pageScope,
-                storyId = story.getStoryId(),
+                storyId = storyId,
                 isCommunityJoined = isCommunityJoined,
                 isAllowedComment = isAllowedComment,
-                reachCount = story.getReach(),
-                commentCount = story.getCommentCount(),
-                reactionCount = story.getReactionCount(),
-                isReactedByMe = story.getMyReactions().isNotEmpty()
+                shouldShowCommentTray = shouldShowCommentTray,
+                reachCount = reachCount,
+                commentCount = commentCount,
+                reactionCount = reactionCount,
+                isReactedByMe = isReactedByMe
             )
 
             AmityStory.State.SYNCING -> AmityStoryUploadProgressRow(modifier)
             AmityStory.State.FAILED -> AmityStoryUploadFailedRow(
                 modifier = modifier,
-                storyId = story.getStoryId(),
-                onDeleteClicked = onDeleteClicked
+                pageScope = pageScope,
+                storyId = storyId,
+                story = story,
             )
         }
     }
@@ -94,6 +110,7 @@ fun AmityStoryEngagementRow(
     storyId: String,
     isCommunityJoined: Boolean,
     isAllowedComment: Boolean,
+    shouldShowCommentTray: Boolean,
     reachCount: Int = 0,
     commentCount: Int = 0,
     reactionCount: Int = 0,
@@ -104,7 +121,7 @@ fun AmityStoryEngagementRow(
     }
     val viewModel =
         viewModel<AmityViewStoryPageViewModel>(viewModelStoreOwner = viewModelStoreOwner)
-    var showCommentSheet by remember { mutableStateOf(false) }
+    var showCommentSheet by remember(shouldShowCommentTray) { mutableStateOf(shouldShowCommentTray) }
 
     Box(
         modifier = modifier
@@ -173,14 +190,14 @@ fun AmityStoryUploadProgressRow(
             .padding(16.dp)
     ) {
         CircularProgressIndicator(
-            color = Color(0xFF1054DE),
+            color = AmityTheme.colors.primary,
             trackColor = Color.White,
             modifier = modifier.size(20.dp),
             strokeWidth = 2.dp
         )
 
         Text(
-            text = "Trying to reupload...",
+            text = "Uploading...",
             color = Color.White
         )
     }
@@ -189,8 +206,9 @@ fun AmityStoryUploadProgressRow(
 @Composable
 fun AmityStoryUploadFailedRow(
     modifier: Modifier = Modifier,
+    pageScope: AmityComposePageScope? = null,
     storyId: String,
-    onDeleteClicked: (String) -> Unit
+    story: AmityStory,
 ) {
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
@@ -211,12 +229,28 @@ fun AmityStoryUploadFailedRow(
             action2Text = "RETRY",
             onAction1 = {
                 openAlertDialog.value = false
-                onDeleteClicked(storyId)
+                viewModel.updateDialogUIState(
+                    AmityStoryModalDialogUIState.OpenConfirmDeleteDialog(storyId)
+                )
             },
             onAction2 = {
                 openAlertDialog.value = false
                 viewModel.handleSegmentTimer(shouldPause = false)
-                viewModel.reuploadStory(storyId = storyId)
+                viewModel.reUploadStory(
+                    storyId = storyId,
+                    story = story,
+                    onSuccess = {
+                        pageScope?.showSnackbar(
+                            drawableRes = R.drawable.amity_ic_check_circle,
+                            message = "Successfully shared story"
+                        )
+                    },
+                    onError = {
+                        pageScope?.showSnackbar(
+                            message = it.message ?: "Failed to reupload story",
+                        )
+                    }
+                )
             },
             onDismissRequest = {
                 openAlertDialog.value = false
@@ -228,7 +262,7 @@ fun AmityStoryUploadFailedRow(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .background(Color(0xFFFA4D30))
+            .background(AmityTheme.colors.alert)
             .padding(horizontal = 16.dp, vertical = 12.dp)
     ) {
         Row(
@@ -270,6 +304,7 @@ fun AmityStoryBottomRowPreview() {
         storyId = "",
         isCommunityJoined = false,
         isAllowedComment = false,
+        shouldShowCommentTray = false,
         reachCount = 1000,
         commentCount = 10000000,
         reactionCount = 1000000000,

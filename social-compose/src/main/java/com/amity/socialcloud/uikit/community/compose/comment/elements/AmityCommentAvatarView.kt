@@ -18,8 +18,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
+import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.amity.socialcloud.uikit.community.compose.R
+import kotlinx.coroutines.Dispatchers
 
 @Composable
 fun AmityCommentAvatarView(
@@ -31,6 +33,9 @@ fun AmityCommentAvatarView(
         model = ImageRequest
             .Builder(LocalContext.current)
             .data(avatarUrl)
+            .dispatcher(Dispatchers.IO)
+            .diskCachePolicy(CachePolicy.ENABLED)
+            .memoryCachePolicy(CachePolicy.ENABLED)
             .build()
     )
 

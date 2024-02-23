@@ -11,6 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
+import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionee
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.uikit.community.compose.comment.elements.AmityCommentAvatarView
 import com.amity.socialcloud.uikit.community.compose.comment.query.coponents.AmityCommentContentContainer
@@ -18,6 +20,7 @@ import com.amity.socialcloud.uikit.community.compose.comment.query.coponents.Ami
 import com.amity.socialcloud.uikit.community.compose.comment.query.coponents.AmityEditCommentContainer
 import com.amity.socialcloud.uikit.community.compose.comment.query.coponents.AmityReplyCommentContainer
 import com.amity.socialcloud.uikit.community.compose.ui.scope.AmityComposeComponentScope
+import com.google.gson.JsonObject
 import org.joda.time.DateTime
 import kotlin.math.max
 
@@ -32,6 +35,8 @@ fun AmitySingleCommentView(
     commentId: String,
     editingCommentId: String?,
     commentText: String,
+    mentionGetter: AmityMentionMetadataGetter,
+    mentionees: List<AmityMentionee>,
     creatorId: String,
     creatorAvatarUrl: String,
     creatorDisplayName: String,
@@ -84,6 +89,8 @@ fun AmitySingleCommentView(
                     displayName = creatorDisplayName,
                     isCommunityModerator = isCommunityModerator,
                     commentText = commentText,
+                    mentionGetter = mentionGetter,
+                    mentionees = mentionees,
                 )
                 AmityCommentEngagementBar(
                     modifier = modifier,
@@ -125,21 +132,23 @@ fun AmitySingleCommentView(
 @Composable
 fun AmityCommentViewPreview() {
     AmitySingleCommentView(
-        storyId = "",
         allowInteraction = true,
+        storyId = "",
         isReplyComment = false,
         currentUserId = "",
-        creatorId = "",
         commentId = "",
         editingCommentId = null,
         commentText = "This is a comment",
+        mentionGetter = AmityMentionMetadataGetter(JsonObject()),
+        mentionees = emptyList(),
+        creatorId = "",
         creatorAvatarUrl = "",
         creatorDisplayName = "John Doe",
         createdAt = DateTime.now(),
         isEdited = true,
         isCommunityModerator = true,
-        isFlaggedByMe = false,
         isReactedByMe = true,
+        isFlaggedByMe = false,
         reactionCount = 1,
         childCount = 10,
         replyComments = emptyList(),

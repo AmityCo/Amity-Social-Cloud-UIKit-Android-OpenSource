@@ -23,10 +23,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
-import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.palette.graphics.Palette
 import coil.compose.rememberAsyncImagePainter
+import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.social.story.AmityStory
@@ -39,28 +39,32 @@ import com.amity.socialcloud.uikit.community.compose.utils.toComposeColor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-@UnstableApi
 @Composable
 fun AmityStoryBodyRow(
     modifier: Modifier = Modifier,
     exoPlayer: ExoPlayer?,
-    story: AmityStory,
+    dataType: AmityStory.DataType,
+    data: AmityStory.Data,
+    state: AmityStory.State,
+    items: List<AmityStoryItem>,
     isVisible: Boolean,
     onTap: (Boolean) -> Unit,
     onHold: (Boolean) -> Unit,
+    onSwipeUp: () -> Unit,
     onSwipeDown: () -> Unit,
+    onHyperlinkClick: () -> Unit = {},
 ) {
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(Color.Black)
     ) {
-        when (story.getDataType()) {
+        when (dataType) {
             AmityStory.DataType.IMAGE -> {
                 AmityStoryBodyImageView(
                     modifier = modifier,
-                    data = story.getData() as AmityStory.Data.IMAGE,
-                    syncState = story.getState(),
+                    data = data as AmityStory.Data.IMAGE,
+                    syncState = state,
                 )
             }
 
@@ -79,21 +83,21 @@ fun AmityStoryBodyRow(
             modifier = modifier,
             onTap = onTap,
             onHold = onHold,
-            onSwipeDown = onSwipeDown
+            onSwipeUp = onSwipeUp,
+            onSwipeDown = onSwipeDown,
         )
 
-        if (story.getStoryItems().isNotEmpty() &&
-            story.getStoryItems().first() is AmityStoryItem.HYPERLINK
-        ) {
+        if (items.isNotEmpty() && items.first() is AmityStoryItem.HYPERLINK) {
             AmityStoryBodyHyperlinkView(
-                hyperlinkItem = story.getStoryItems().first() as AmityStoryItem.HYPERLINK,
+                hyperlinkItem = items.first() as AmityStoryItem.HYPERLINK,
+                onHyperlinkClick = onHyperlinkClick,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(bottom = 32.dp)
             )
         }
 
-        if (story.getState() != AmityStory.State.SYNCED) {
+        if (state != AmityStory.State.SYNCED) {
             Box(
                 modifier = modifier
                     .fillMaxSize()
@@ -133,6 +137,9 @@ fun AmityStoryBodyImageView(
         model = ImageRequest.Builder(LocalContext.current)
             .data(imagePath)
             .allowHardware(false)
+            .dispatcher(Dispatchers.IO)
+            .diskCachePolicy(CachePolicy.ENABLED)
+            .memoryCachePolicy(CachePolicy.ENABLED)
             .build()
     )
 
@@ -169,7 +176,6 @@ fun AmityStoryBodyImageView(
     }
 }
 
-@UnstableApi
 @Composable
 fun AmityStoryBodyVideoView(
     modifier: Modifier = Modifier,
@@ -187,6 +193,7 @@ fun AmityStoryBodyVideoView(
 fun AmityStoryBodyHyperlinkView(
     modifier: Modifier = Modifier,
     hyperlinkItem: AmityStoryItem.HYPERLINK,
+    onHyperlinkClick: () -> Unit = {},
 ) {
     val context = LocalContext.current
 
@@ -204,6 +211,8 @@ fun AmityStoryBodyHyperlinkView(
         text = displayText ?: "",
         modifier = modifier,
         onClick = {
+            onHyperlinkClick()
+
             var url = hyperlinkItem.getUrl()
             if (!url.startsWith("http://") && !url.startsWith("https://")) {
                 url = "https://$url"

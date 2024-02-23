@@ -1,6 +1,5 @@
 package com.amity.socialcloud.uikit.community.compose.ui.elements
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,10 +14,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.community.compose.utils.clickableWithoutRipple
 
 @Composable
 fun AmityAlertDialogWithThreeActions(
@@ -48,14 +50,15 @@ fun AmityAlertDialogWithThreeActions(
                         text = dialogTitle,
                         style = TextStyle(
                             fontSize = 20.sp,
-                            color = Color.Black
+                            fontWeight = FontWeight.Medium,
+                            color = AmityTheme.colors.base,
                         ),
                     )
                     Text(
                         text = dialogText,
                         style = TextStyle(
                             fontSize = 16.sp,
-                            color = Color(0x993C3C43)
+                            color = AmityTheme.colors.baseShade2,
                         )
                     )
                 }
@@ -72,33 +75,39 @@ fun AmityAlertDialogWithThreeActions(
                         text = dismissText,
                         style = TextStyle(
                             fontSize = 14.sp,
-                            color = Color(0xFF1054DE)
+                            lineHeight = 16.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = AmityTheme.colors.primary
                         ),
                         modifier = Modifier
                             .padding(horizontal = 8.dp, vertical = 10.dp)
-                            .clickable { onDismissRequest() }
+                            .clickableWithoutRipple { onDismissRequest() }
                     )
 
                     Text(
                         text = action1Text,
                         style = TextStyle(
                             fontSize = 14.sp,
-                            color = Color(0xFF1054DE)
+                            lineHeight = 16.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = AmityTheme.colors.primary
                         ),
                         modifier = Modifier
                             .padding(horizontal = 8.dp, vertical = 10.dp)
-                            .clickable { onAction1() }
+                            .clickableWithoutRipple { onAction1() }
                     )
 
                     Text(
                         text = action2Text,
                         style = TextStyle(
                             fontSize = 14.sp,
-                            color = Color(0xFF1054DE)
+                            lineHeight = 16.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = AmityTheme.colors.primary
                         ),
                         modifier = Modifier
                             .padding(horizontal = 8.dp, vertical = 10.dp)
-                            .clickable { onAction2() }
+                            .clickableWithoutRipple { onAction2() }
                     )
                 }
             }
