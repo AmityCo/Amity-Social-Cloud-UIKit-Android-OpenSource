@@ -211,6 +211,8 @@
     <string name="amity_unfollow_user">Unfollow %s</string>
     <string name="amity_unfollow">Unfollow</string>
     <string name="amity_share_profile">Share profile</string>
+    <string name="amity_block_user">Block user</string>
+    <string name="amity_unblock_user">Unblock user</string>
     <string name="amity_no_results">No results found</string>
     <string name="amity_communities">Communities</string>
     <string name="amity_accounts">Accounts</string>
@@ -219,6 +221,8 @@
     <string name="amity_follow_user">Follow this user to see all posts</string>
     <string name="amity_follow_error">Unable to follow %s</string>
     <string name="amity_unfollow_error">Unable to unfollow %s</string>
+    <string name="amity_block_error">Unable to unblock %s</string>
+    <string name="amity_unblock_error">Unable to unblock %s</string>
     <string name="amity_pending_requests">Pending requests</string>
     <string name="amity_requests_review"> Your requests are waiting for review</string>
     <string name="amity_accept">Accept</string>

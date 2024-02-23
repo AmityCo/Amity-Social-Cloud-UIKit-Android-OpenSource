@@ -95,4 +95,12 @@ class AmityUserProfileViewModel (private val savedState: SavedStateHandle): Amit
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }
+
+    fun unblock(): Completable {
+        return AmityCoreClient.newUserRepository()
+            .relationship()
+            .unblockUser(userId)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+    }
 }
