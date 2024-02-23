@@ -31,10 +31,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rxjava3.subscribeAsState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,12 +52,13 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.palette.graphics.Palette
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.sdk.model.social.story.AmityStoryImageDisplayMode
+import com.amity.socialcloud.sdk.model.social.story.AmityStoryTarget
 import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import com.amity.socialcloud.uikit.community.compose.story.create.elements.AmityStoryCameraRelatedButtonElement
 import com.amity.socialcloud.uikit.community.compose.story.hyperlink.AmityStoryHyperlinkComponent
@@ -74,12 +77,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
-@UnstableApi
 @Composable
 fun AmityDraftStoryPage(
     modifier: Modifier = Modifier,
-    communityId: String,
-    communityAvatarUrl: String,
+    targetId: String,
+    targetType: AmityStory.TargetType,
     isImage: Boolean,
     fileUri: Uri,
     exoPlayer: ExoPlayer? = null,
@@ -93,6 +95,23 @@ fun AmityDraftStoryPage(
     }
     val viewModel =
         viewModel<AmityDraftStoryViewModel>(viewModelStoreOwner = viewModelStoreOwner)
+
+    val storyTarget by remember(viewModel, targetId, targetType) {
+        viewModel.getTarget(targetId, targetType)
+    }.subscribeAsState(initial = null)
+
+    val communityAvatarUrl by remember {
+        derivedStateOf {
+            when (storyTarget?.getTargetType()) {
+                AmityStory.TargetType.COMMUNITY -> {
+                    (storyTarget as? AmityStoryTarget.COMMUNITY)?.getCommunity()?.getAvatar()
+                        ?.getUrl()
+                }
+
+                else -> ""
+            }
+        }
+    }
 
     val hyperlinkUrlText by viewModel.hyperlinkUrl.collectAsState(initial = "")
     val hyperlinkCustomText by viewModel.hyperlinkText.collectAsState(initial = "")
@@ -189,15 +208,15 @@ fun AmityDraftStoryPage(
                         }
 
                     } else {
-                        DisposableEffect(
-                            AmityStoryVideoPlayer(
-                                exoPlayer = exoPlayer,
-                                isVisible = true,
-                                modifier = modifier
-                                    .aspectRatio(9f / 16f)
-                                    .align(Alignment.TopCenter),
-                            )
-                        ) {
+                        AmityStoryVideoPlayer(
+                            exoPlayer = exoPlayer,
+                            isVisible = true,
+                            modifier = modifier
+                                .aspectRatio(9f / 16f)
+                                .align(Alignment.TopCenter),
+                        )
+
+                        DisposableEffect(Unit) {
                             onDispose {
                                 exoPlayer?.release()
                             }
@@ -315,7 +334,8 @@ fun AmityDraftStoryPage(
                             .clickable {
                                 if (isImage) {
                                     viewModel.createImageStory(
-                                        communityId = communityId,
+                                        targetId = targetId,
+                                        targetType = targetType,
                                         fileUri = fileUri,
                                         imageDisplayMode =
                                         if (isImageContentScaleFit) AmityStoryImageDisplayMode.FIT
@@ -330,7 +350,8 @@ fun AmityDraftStoryPage(
                                     onCreateSuccess()
                                 } else {
                                     viewModel.createVideoStory(
-                                        communityId = communityId,
+                                        targetId = targetId,
+                                        targetType = targetType,
                                         fileUri = fileUri,
                                         onSuccess = {
                                             context.showToast("Successfully shared story")
@@ -401,14 +422,13 @@ fun AmityDraftStoryPage(
     }
 }
 
-@UnstableApi
 @Preview
 @Composable
 fun AmityDraftStoryPagePreview() {
     AmityUIKitConfigController.setup(LocalContext.current)
     AmityDraftStoryPage(
-        communityId = "",
-        communityAvatarUrl = "",
+        targetId = "",
+        targetType = AmityStory.TargetType.COMMUNITY,
         isImage = true,
         fileUri = Uri.parse("")
     )

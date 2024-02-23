@@ -1,5 +1,7 @@
 package com.amity.socialcloud.uikit.community.compose.story.view.elements
 
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.padding
@@ -8,8 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
-import com.amity.socialcloud.uikit.community.compose.utils.interceptHold
-import com.amity.socialcloud.uikit.community.compose.utils.interceptSwipeDown
 import com.amity.socialcloud.uikit.community.compose.utils.interceptTap
 
 @Composable
@@ -17,6 +17,7 @@ fun AmityStoryBodyGestureBox(
     modifier: Modifier = Modifier,
     onTap: (Boolean) -> Unit,
     onHold: (Boolean) -> Unit,
+    onSwipeUp: () -> Unit,
     onSwipeDown: () -> Unit,
 ) {
     val configuration = LocalConfiguration.current
@@ -34,13 +35,27 @@ fun AmityStoryBodyGestureBox(
                 }
             }
             .pointerInput(Unit) {
-                interceptHold {
-                    onHold(it)
-                }
+                detectTapGestures(
+                    onPress = {
+                        onHold(true)
+                        tryAwaitRelease()
+                        onHold(false)
+                    }
+                )
             }
             .pointerInput(Unit) {
-                interceptSwipeDown {
-                    onSwipeDown()
+                detectVerticalDragGestures { change, dragAmount ->
+                    change.consume()
+
+                    when {
+                        dragAmount > 200 -> {
+                            onSwipeDown()
+                        }
+
+                        dragAmount < -200 -> {
+                            onSwipeUp()
+                        }
+                    }
                 }
             }
     )

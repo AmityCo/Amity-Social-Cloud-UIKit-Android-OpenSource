@@ -13,7 +13,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -38,14 +37,17 @@ fun AmityDeletedCommentView(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             modifier = modifier
-                .background(color = Color(0xFFEBECEF), shape = RoundedCornerShape(size = 4.dp))
+                .background(
+                    color = AmityTheme.colors.secondaryShade4,
+                    shape = RoundedCornerShape(size = 4.dp)
+                )
                 .padding(start = 8.dp, end = 12.dp)
                 .padding(vertical = 5.dp)
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.amity_ic_remove),
                 contentDescription = null,
-                tint = Color(0xFF898E9E),
+                tint = AmityTheme.colors.secondaryShade2,
                 modifier = modifier.size(16.dp)
             )
             Text(

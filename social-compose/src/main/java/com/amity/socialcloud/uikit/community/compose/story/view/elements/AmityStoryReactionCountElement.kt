@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -28,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.common.readableNumber
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.ui.scope.AmityComposePageScope
+import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.utils.clickableWithoutRipple
 
 @Composable
@@ -43,14 +45,14 @@ fun AmityStoryReactionCountElement(
     val haptics = LocalHapticFeedback.current
 
     var isReacted by remember { mutableStateOf(isReactedByMe) }
-    var reactionCount by remember { mutableStateOf(count) }
+    var reactionCount by remember { mutableIntStateOf(count) }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .height(40.dp)
             .clip(MaterialTheme.shapes.extraLarge)
-            .background(Color(0xFF292B32))
+            .background(AmityTheme.colors.secondary)
             .clickableWithoutRipple {
                 haptics.performHapticFeedback(HapticFeedbackType.LongPress)
                 if (isCommunityJoined) {

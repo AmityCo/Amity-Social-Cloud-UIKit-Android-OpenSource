@@ -12,8 +12,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,16 +29,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.story.draft.AmityDraftStoryViewModel
 import com.amity.socialcloud.uikit.community.compose.story.hyperlink.elements.AmityHyperlinkTextField
 import com.amity.socialcloud.uikit.community.compose.ui.elements.AmityAlertDialog
+import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.community.compose.utils.clickableWithoutRipple
 
 @ExperimentalMaterial3Api
 @Composable
@@ -111,24 +113,26 @@ fun AmityStoryHyperlinkComponent(
         ) {
             Text(
                 text = "Cancel",
-                fontSize = 15.sp,
-                color = Color(0xFF292B32),
-                modifier = modifier.clickable {
+                style = AmityTheme.typography.body.copy(
+                    color = AmityTheme.colors.secondary
+                ),
+                modifier = modifier.clickableWithoutRipple {
                     openUnsavedAlertDialog.value = true
                 }
             )
 
             Text(
                 text = "Add Link",
-                fontSize = 17.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF292B32),
+                style = AmityTheme.typography.title.copy(
+                    color = AmityTheme.colors.secondary
+                ),
             )
 
             Text(
                 text = "Done",
-                fontSize = 15.sp,
-                color = Color(if (isAllFieldsValid) 0xFF1054DE else 0xFFA0BDF8),
+                style = AmityTheme.typography.body.copy(
+                    color = if (isAllFieldsValid) AmityTheme.colors.primary else AmityTheme.colors.primaryShade2
+                ),
                 modifier = modifier.clickable(enabled = isAllFieldsValid) {
                     onClose()
                     viewModel.saveStoryHyperlinkItem(
@@ -139,23 +143,24 @@ fun AmityStoryHyperlinkComponent(
             )
         }
 
-        Divider(
+        HorizontalDivider(
             thickness = 0.5.dp,
-            color = Color(0xFFE5E5E5)
+            color = AmityTheme.colors.divider,
         )
         Spacer(modifier = modifier.padding(top = 24.dp))
 
         Text(
             buildAnnotatedString {
-                withStyle(style = SpanStyle(Color(0xFF292B32))) {
+                withStyle(style = SpanStyle(AmityTheme.colors.secondary)) {
                     append("URL")
                 }
-                withStyle(style = SpanStyle(Color(0xFFFA4D30))) {
+                withStyle(style = SpanStyle(AmityTheme.colors.alert)) {
                     append("*")
                 }
             },
-            fontSize = 17.sp,
-            fontWeight = FontWeight.SemiBold,
+            style = AmityTheme.typography.title.copy(
+                textAlign = TextAlign.Start,
+            ),
             modifier = modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
@@ -171,16 +176,19 @@ fun AmityStoryHyperlinkComponent(
             },
         )
 
-        Divider(
+        HorizontalDivider(
             thickness = if (isValidUrl) 0.5.dp else 1.dp,
-            color = Color(if (isValidUrl) 0xFFE5E5E5 else 0xFFFA4D30),
+            color = if (isValidUrl) AmityTheme.colors.divider else AmityTheme.colors.alert,
             modifier = modifier.padding(horizontal = 16.dp)
         )
+
         if (!isValidUrl) {
             Text(
                 text = "Please enter a valid URL.",
-                fontSize = 13.sp,
-                color = Color(0xFFFA4D30),
+                style = AmityTheme.typography.caption.copy(
+                    fontWeight = FontWeight.Normal,
+                    color = AmityTheme.colors.alert
+                ),
                 modifier = modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 4.dp)
@@ -196,15 +204,16 @@ fun AmityStoryHyperlinkComponent(
         ) {
             Text(
                 text = "Customize link text",
-                fontSize = 17.sp,
-                fontWeight = FontWeight.SemiBold,
+                style = AmityTheme.typography.title,
                 modifier = Modifier.align(Alignment.CenterStart)
             )
 
             Text(
                 text = "${customText.length}/$CustomTextLimit",
-                fontSize = 13.sp,
-                color = Color(0xFF636878),
+                style = AmityTheme.typography.caption.copy(
+                    fontWeight = FontWeight.Normal,
+                    color = AmityTheme.colors.secondaryShade1
+                ),
                 modifier = Modifier.align(Alignment.CenterEnd)
             )
         }
@@ -218,16 +227,18 @@ fun AmityStoryHyperlinkComponent(
             }
         )
 
-        Divider(
+        HorizontalDivider(
             thickness = 0.5.dp,
-            color = Color(0xFFE5E5E5),
+            color = AmityTheme.colors.divider,
             modifier = modifier.padding(horizontal = 16.dp)
         )
 
         Text(
             text = "This text will show on the link instead of URL.",
-            fontSize = 13.sp,
-            color = Color(0xFF898E9E),
+            style = AmityTheme.typography.caption.copy(
+                fontWeight = FontWeight.Normal,
+                color = AmityTheme.colors.secondaryShade2
+            ),
             modifier = modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 8.dp)
@@ -248,7 +259,7 @@ fun AmityStoryHyperlinkComponent(
                 Icon(
                     painter = painterResource(id = R.drawable.amity_ic_delete_story),
                     contentDescription = "Remove link",
-                    tint = Color(0xFFFA4D30),
+                    tint = AmityTheme.colors.alert,
                     modifier = modifier
                         .align(Alignment.CenterVertically)
                         .clickable {
@@ -262,16 +273,17 @@ fun AmityStoryHyperlinkComponent(
 
                 Text(
                     text = "Remove link",
-                    fontSize = 15.sp,
-                    color = Color(0xFFFA4D30),
+                    style = AmityTheme.typography.body.copy(
+                        color = AmityTheme.colors.alert
+                    ),
                 )
             }
 
             Spacer(modifier = modifier.padding(top = 12.dp))
 
-            Divider(
+            HorizontalDivider(
                 thickness = 0.5.dp,
-                color = Color(0xFFE5E5E5),
+                color = AmityTheme.colors.divider,
                 modifier = modifier.padding(horizontal = 16.dp)
             )
         }

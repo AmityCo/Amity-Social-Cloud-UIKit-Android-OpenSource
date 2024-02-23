@@ -1,16 +1,17 @@
-package com.amity.socialcloud.uikit.community.compose.story.ui.elements
+package com.amity.socialcloud.uikit.community.compose.story.target.elements
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -23,30 +24,31 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import coil.compose.AsyncImage
+import coil.request.CachePolicy
 import coil.request.ImageRequest
-import com.amity.socialcloud.uikit.common.common.views.AmityColorPaletteUtil
-import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
 import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import com.amity.socialcloud.uikit.community.compose.R
-import com.amity.socialcloud.uikit.community.compose.story.target.AmityStoryTargetRingUiState
+import com.amity.socialcloud.uikit.community.compose.story.target.utils.AmityStoryTargetRingUiState
 import com.amity.socialcloud.uikit.community.compose.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.community.compose.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.community.compose.ui.scope.AmityComposeComponentScope
+import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.utils.asColorList
+import com.amity.socialcloud.uikit.community.compose.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.utils.getValueAsList
+import kotlinx.coroutines.Dispatchers
 
 @Composable
 fun AmityStoryTargetElement(
     modifier: Modifier = Modifier,
     componentScope: AmityComposeComponentScope,
+    isCommunityTarget: Boolean = false,
     communityDisplayName: String = "",
     avatarUrl: String = "",
-    storyTargetRingUiState: AmityStoryTargetRingUiState,
+    ringUiState: AmityStoryTargetRingUiState,
     isPublicCommunity: Boolean = false,
     isOfficialCommunity: Boolean = false,
-    isSingleCommunityTarget: Boolean = false,
     hasManageStoryPermission: Boolean = false,
     onClick: () -> Unit
 ) {
@@ -54,7 +56,7 @@ fun AmityStoryTargetElement(
         componentScope = componentScope,
         elementId = "story_ring"
     ) {
-        val colors = when (storyTargetRingUiState) {
+        val colors = when (ringUiState) {
             AmityStoryTargetRingUiState.SEEN -> {
                 getConfig().getValueAsList("background_color").asColorList()
             }
@@ -69,7 +71,7 @@ fun AmityStoryTargetElement(
             }
         }
 
-        val displayName = if (isSingleCommunityTarget) {
+        val displayName = if (isCommunityTarget) {
             "Story"
         } else {
             communityDisplayName
@@ -77,45 +79,39 @@ fun AmityStoryTargetElement(
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(4.dp),
             modifier = modifier
-                .width(if (isSingleCommunityTarget) 52.dp else 72.dp)
-                .clickable {
+                .width(if (isCommunityTarget) 52.dp else 72.dp)
+                .padding(vertical = 8.dp)
+                .clickableWithoutRipple {
                     onClick()
                 }
         ) {
             Box(
-                modifier = Modifier.size(if (isSingleCommunityTarget) 48.dp else 64.dp)
+                modifier = Modifier.size(if (isCommunityTarget) 48.dp else 64.dp)
             ) {
                 Box(
                     modifier = Modifier
-                        .size(if (isSingleCommunityTarget) 40.dp else 56.dp)
+                        .size(if (isCommunityTarget) 40.dp else 56.dp)
                         .align(Alignment.Center)
                 ) {
                     if (avatarUrl.isEmpty()) {
-                        Image(
+                        Icon(
                             painter = painterResource(id = R.drawable.amity_ic_default_community_avatar_circular),
-                            contentScale = ContentScale.Fit,
+                            tint = Color.White,
                             contentDescription = "Avatar Image",
                             modifier = Modifier
                                 .fillMaxSize()
                                 .clip(CircleShape)
-                                .background(
-                                    Color(
-                                        AmityColorPaletteUtil.getColor(
-                                            ContextCompat.getColor(
-                                                LocalContext.current,
-                                                R.color.amityColorPrimary
-                                            ),
-                                            AmityColorShade.SHADE3
-                                        )
-                                    )
-                                )
+                                .background(AmityTheme.colors.primaryShade3)
                         )
                     } else {
                         AsyncImage(
                             model = ImageRequest.Builder(LocalContext.current)
                                 .data(avatarUrl)
-                                .crossfade(true)
+                                .dispatcher(Dispatchers.IO)
+                                .diskCachePolicy(CachePolicy.ENABLED)
+                                .memoryCachePolicy(CachePolicy.ENABLED)
                                 .build(),
                             contentScale = ContentScale.Crop,
                             contentDescription = "Avatar Image",
@@ -128,14 +124,13 @@ fun AmityStoryTargetElement(
 
                 AmityStoryGradientRingElement(
                     colors = colors,
-                    isIndeterminate = storyTargetRingUiState == AmityStoryTargetRingUiState.SYNCING,
+                    isIndeterminate = ringUiState == AmityStoryTargetRingUiState.SYNCING,
                     modifier = Modifier.fillMaxSize(),
                 )
 
                 val badge = when {
-                    storyTargetRingUiState == AmityStoryTargetRingUiState.FAILED -> R.drawable.amity_ic_error_circle
-                    isSingleCommunityTarget && hasManageStoryPermission -> R.drawable.amity_ic_plus_circle
-                    isOfficialCommunity -> R.drawable.amity_ic_verified
+                    ringUiState == AmityStoryTargetRingUiState.FAILED -> R.drawable.amity_ic_error_circle
+                    hasManageStoryPermission -> R.drawable.amity_ic_plus_circle
                     else -> null
                 }
 
@@ -144,7 +139,7 @@ fun AmityStoryTargetElement(
                         painter = painterResource(id = badge),
                         contentDescription = "",
                         modifier = Modifier
-                            .size(if (isSingleCommunityTarget) 16.dp else 20.dp)
+                            .size(if (isCommunityTarget) 16.dp else 20.dp)
                             .align(Alignment.BottomEnd)
                     )
                 }
@@ -154,7 +149,7 @@ fun AmityStoryTargetElement(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                if (!isPublicCommunity && !isSingleCommunityTarget) {
+                if (!isPublicCommunity && !isCommunityTarget) {
                     Image(
                         painter = painterResource(id = R.drawable.amity_ic_lock1),
                         contentDescription = "",
@@ -180,10 +175,10 @@ fun AmityStoryTargetElementPreview() {
             componentScope = getComponentScope(),
             communityDisplayName = "Meow",
             avatarUrl = "",
-            storyTargetRingUiState = AmityStoryTargetRingUiState.SYNCING,
+            ringUiState = AmityStoryTargetRingUiState.SYNCING,
             isPublicCommunity = false,
             isOfficialCommunity = true,
-            isSingleCommunityTarget = true,
+            isCommunityTarget = false,
             hasManageStoryPermission = true,
         ) {}
     }

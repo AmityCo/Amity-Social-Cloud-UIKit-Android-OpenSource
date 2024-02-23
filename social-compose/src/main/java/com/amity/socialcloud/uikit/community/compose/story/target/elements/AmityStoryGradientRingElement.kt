@@ -1,4 +1,4 @@
-package com.amity.socialcloud.uikit.community.compose.story.ui.elements
+package com.amity.socialcloud.uikit.community.compose.story.target.elements
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.size
@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
 
 @Composable
 fun AmityStoryGradientRingElement(
@@ -45,7 +46,7 @@ fun AmityStoryGradientRingElement(
     }
     if (isIndeterminate) {
         CircularProgressIndicator(
-            color = Color(0xFFEBECEF),
+            color = AmityTheme.colors.secondaryShade4,
             trackColor = Color.Transparent,
             modifier = modifier,
             strokeWidth = 2.dp

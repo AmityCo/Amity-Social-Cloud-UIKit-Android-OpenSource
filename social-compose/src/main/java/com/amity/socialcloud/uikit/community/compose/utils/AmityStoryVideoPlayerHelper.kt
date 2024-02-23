@@ -2,12 +2,10 @@ package com.amity.socialcloud.uikit.community.compose.utils
 
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
-import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import kotlinx.coroutines.flow.MutableStateFlow
 
-@UnstableApi
 object AmityStoryVideoPlayerHelper {
 
     private var exoPlayer: ExoPlayer? = null
@@ -59,8 +57,6 @@ object AmityStoryVideoPlayerHelper {
     }
 
     fun setup(exoPlayer: ExoPlayer) {
-        clear()
-
         this.exoPlayer = exoPlayer
 
         setupListener()

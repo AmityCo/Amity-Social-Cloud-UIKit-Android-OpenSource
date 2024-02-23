@@ -76,7 +76,7 @@ class AmityUserProfileHeaderView : ConstraintLayout {
             TextView.BufferType.SPANNABLE
         )
         headerBinding.isSelf = true
-        headerBinding.connectionState = AmityFollowStatus.ACCEPTED
+        headerBinding.followStatus = AmityFollowStatus.ACCEPTED
 
         if (followInfo.getPendingRequestCount() > 0) {
             headerBinding.layoutPendingRequests.visibility = View.VISIBLE
@@ -123,7 +123,7 @@ class AmityUserProfileHeaderView : ConstraintLayout {
     fun getHeaderBinding(): AmityViewUserProfileHeaderBinding = headerBinding
 
     fun updateState(newState: AmityFollowStatus) {
-        headerBinding.connectionState = newState
+        headerBinding.followStatus = newState
         setTextColor(newState)
     }
 

@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.common.readableNumber
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
 
 @Composable
 fun AmityStoryCommentCountElement(
@@ -37,7 +38,7 @@ fun AmityStoryCommentCountElement(
         modifier = modifier
             .height(40.dp)
             .clip(MaterialTheme.shapes.extraLarge)
-            .background(Color(0xFF292B32))
+            .background(AmityTheme.colors.secondary)
             .padding(horizontal = 10.dp, vertical = 8.dp)
             .clickable {
                 haptics.performHapticFeedback(HapticFeedbackType.LongPress)
@@ -48,7 +49,7 @@ fun AmityStoryCommentCountElement(
             imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_story_comment_count),
             contentDescription = "Story Comment Count",
             modifier = Modifier.size(20.dp),
-            tint = Color(0xFFA5A9B5),
+            tint = AmityTheme.colors.secondaryShade3,
         )
         Text(
             text = count.readableNumber(),

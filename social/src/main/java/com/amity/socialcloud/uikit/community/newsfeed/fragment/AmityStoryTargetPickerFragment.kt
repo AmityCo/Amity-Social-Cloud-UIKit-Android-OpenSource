@@ -7,9 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
-import androidx.media3.common.util.UnstableApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.uikit.common.base.AmityBaseFragment
 import com.amity.socialcloud.uikit.common.utils.AmityRecyclerViewItemDecoration
 import com.amity.socialcloud.uikit.community.R
@@ -23,7 +23,6 @@ import com.amity.socialcloud.uikit.community.utils.EXTRA_PARAM_STORY_CREATION_TY
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 
-@UnstableApi
 class AmityStoryTargetPickerFragment : AmityBaseFragment(),
     AmityCreatePostCommunitySelectionListener {
 
@@ -96,7 +95,8 @@ class AmityStoryTargetPickerFragment : AmityBaseFragment(),
                 behavior.goToCreateStoryPage(
                     context = requireContext(),
                     launcher = createStory,
-                    community = community
+                    targetId = community.getCommunityId(),
+                    targetType = AmityStory.TargetType.COMMUNITY,
                 )
             }
         }

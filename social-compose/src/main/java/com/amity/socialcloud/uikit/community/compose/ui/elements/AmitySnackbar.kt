@@ -19,6 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
 
 
 @Composable
@@ -27,7 +28,7 @@ fun AmitySnackbar(
     data: AmitySnackbarVisuals,
 ) {
     Snackbar(
-        containerColor = Color(0xFF292B32),
+        containerColor = AmityTheme.colors.secondary,
         modifier = modifier
             .fillMaxWidth()
     ) {

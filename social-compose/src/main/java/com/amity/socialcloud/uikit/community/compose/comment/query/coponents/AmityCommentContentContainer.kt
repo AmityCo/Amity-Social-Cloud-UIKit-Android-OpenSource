@@ -9,12 +9,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
+import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionee
 import com.amity.socialcloud.uikit.community.compose.comment.query.elements.AmityCommentModeratorBadge
 import com.amity.socialcloud.uikit.community.compose.ui.elements.AmityExpandableText
 import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
+import com.google.gson.JsonObject
 
 @Composable
 fun AmityCommentContentContainer(
@@ -22,12 +24,14 @@ fun AmityCommentContentContainer(
     displayName: String,
     isCommunityModerator: Boolean,
     commentText: String,
+    mentionGetter: AmityMentionMetadataGetter,
+    mentionees: List<AmityMentionee>,
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(4.dp),
         modifier = modifier
             .background(
-                color = Color(0xFFEBECEF),
+                color = AmityTheme.colors.secondaryShade4,
                 shape = RoundedCornerShape(
                     topEnd = 12.dp,
                     bottomStart = 12.dp,
@@ -48,6 +52,8 @@ fun AmityCommentContentContainer(
 
         AmityExpandableText(
             text = commentText,
+            mentionGetter = mentionGetter,
+            mentionees = mentionees,
             style = AmityTheme.typography.body
         )
     }
@@ -60,5 +66,7 @@ fun AmityCommentContentContainerPreview() {
         displayName = "John Doe",
         isCommunityModerator = true,
         commentText = "This is a comment",
+        mentionGetter = AmityMentionMetadataGetter(JsonObject()),
+        mentionees = emptyList(),
     )
 }

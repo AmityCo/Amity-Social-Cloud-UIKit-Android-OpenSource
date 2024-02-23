@@ -58,18 +58,21 @@ class AmityUserProfilePageFragment : AmityBaseFragment(),
     private lateinit var currentUser: AmityUser
     private var refreshEventPublisher = PublishSubject.create<AmityFeedRefreshEvent>()
 
-    private val createGenericPost = registerForActivityResult(AmityPostCreatorActivity.AmityCreateCommunityPostActivityContract()) {
-    }
-
-    private val createLiveStreamPost = registerForActivityResult(AmityLiveStreamPostCreatorActivity.AmityCreateLiveStreamPostActivityContract()) {
-        it?.let {
-            val intent = AmityPostDetailsActivity.newIntent(requireContext(), it, null, null)
-            startActivity(intent)
+    private val createGenericPost =
+        registerForActivityResult(AmityPostCreatorActivity.AmityCreateCommunityPostActivityContract()) {
         }
-    }
 
-    private val createPollPost = registerForActivityResult(AmityPollPostCreatorActivity.AmityPollCreatorActivityContract()) {
-    }
+    private val createLiveStreamPost =
+        registerForActivityResult(AmityLiveStreamPostCreatorActivity.AmityCreateLiveStreamPostActivityContract()) {
+            it?.let {
+                val intent = AmityPostDetailsActivity.newIntent(requireContext(), it, null, null)
+                startActivity(intent)
+            }
+        }
+
+    private val createPollPost =
+        registerForActivityResult(AmityPollPostCreatorActivity.AmityPollCreatorActivityContract()) {
+        }
 
     companion object {
         fun newInstance(userId: String): Builder {
@@ -183,6 +186,7 @@ class AmityUserProfilePageFragment : AmityBaseFragment(),
                 is AmityMyFeedFragment -> {
                     refreshEventPublisher.onNext(AmityFeedRefreshEvent())
                 }
+
                 is AmityUserFeedFragment -> {
                     refreshEventPublisher.onNext(AmityFeedRefreshEvent())
                 }
@@ -235,6 +239,18 @@ class AmityUserProfilePageFragment : AmityBaseFragment(),
                     .subscribe()
             }
 
+            btnUnblockRequest.setOnClickListener {
+                binding.userProfileHeader.updateState(AmityFollowStatus.NONE)
+                viewModel.unblock().doOnError {
+                    showErrorDialog(
+                        getString(R.string.amity_unblock_error, currentUser.getDisplayName()),
+                        getString(R.string.amity_something_went_wrong_pls_try),
+                        AmityFollowStatus.BLOCKED
+                    )
+                }.untilLifecycleEnd(this@AmityUserProfilePageFragment)
+                    .subscribe()
+            }
+
             layoutPendingRequests.setOnClickListener {
                 val intent =
                     AmityFollowRequestsActivity.newIntent(requireContext(), viewModel.userId)
@@ -242,7 +258,7 @@ class AmityUserProfilePageFragment : AmityBaseFragment(),
             }
 
             tvFollowersCount.setOnClickListener {
-                if (connectionState == AmityFollowStatus.ACCEPTED) {
+                if (followStatus == AmityFollowStatus.ACCEPTED) {
                     val intent = AmityUserFollowersActivity.newIntent(
                         requireContext(),
                         currentUser.getDisplayName(),
@@ -253,7 +269,7 @@ class AmityUserProfilePageFragment : AmityBaseFragment(),
             }
 
             tvFollowingCount.setOnClickListener {
-                if (connectionState == AmityFollowStatus.ACCEPTED) {
+                if (followStatus == AmityFollowStatus.ACCEPTED) {
                     val intent = AmityUserFollowersActivity.newIntent(
                         requireContext(),
                         currentUser.getDisplayName(),

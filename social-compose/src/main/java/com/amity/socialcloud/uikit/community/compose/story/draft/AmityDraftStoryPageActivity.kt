@@ -8,17 +8,17 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.media3.common.MediaItem
-import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
-import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.story.AmityStory
 
-@UnstableApi
 class AmityDraftStoryPageActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val community: AmityCommunity = intent?.getParcelableExtra(EXTRA_PARAM_COMMUNITY)!!
+        val storyTargetId = intent.getStringExtra(EXTRA_PARAM_STORY_TARGET_ID) ?: ""
+        val storyTargetType =
+            intent.getSerializableExtra(EXTRA_PARAM_STORY_TARGET_TYPE) as AmityStory.TargetType
         val isImage = intent?.getBooleanExtra(EXTRA_IS_IMAGE, false) ?: false
         val fileUri = intent?.getStringExtra(EXTRA_FILE_URI) ?: ""
 
@@ -34,8 +34,8 @@ class AmityDraftStoryPageActivity : AppCompatActivity() {
 
         setContent {
             AmityDraftStoryPage(
-                communityId = community.getCommunityId(),
-                communityAvatarUrl = community.getAvatar()?.getUrl() ?: "",
+                targetId = storyTargetId,
+                targetType = storyTargetType,
                 isImage = isImage,
                 fileUri = Uri.parse(fileUri),
                 exoPlayer = exoPlayer,
@@ -52,13 +52,15 @@ class AmityDraftStoryPageActivity : AppCompatActivity() {
 
     companion object {
 
-        const val EXTRA_PARAM_COMMUNITY = "community"
-        const val EXTRA_IS_IMAGE = "IS_IMAGE"
-        const val EXTRA_FILE_URI = "FILE_URI"
+        private const val EXTRA_PARAM_STORY_TARGET_ID = "story_target_id"
+        private const val EXTRA_PARAM_STORY_TARGET_TYPE = "story_target_type"
+        private const val EXTRA_IS_IMAGE = "is_image"
+        private const val EXTRA_FILE_URI = "file_uri"
 
         fun newIntent(
             context: Context,
-            community: AmityCommunity,
+            targetId: String,
+            targetType: AmityStory.TargetType = AmityStory.TargetType.COMMUNITY,
             isImage: Boolean,
             fileUri: String,
         ): Intent {
@@ -67,7 +69,8 @@ class AmityDraftStoryPageActivity : AppCompatActivity() {
                 context,
                 AmityDraftStoryPageActivity::class.java
             ).apply {
-                putExtra(EXTRA_PARAM_COMMUNITY, community)
+                putExtra(EXTRA_PARAM_STORY_TARGET_ID, targetId)
+                putExtra(EXTRA_PARAM_STORY_TARGET_TYPE, targetType)
                 putExtra(EXTRA_IS_IMAGE, isImage)
                 putExtra(EXTRA_FILE_URI, fileUri)
             }

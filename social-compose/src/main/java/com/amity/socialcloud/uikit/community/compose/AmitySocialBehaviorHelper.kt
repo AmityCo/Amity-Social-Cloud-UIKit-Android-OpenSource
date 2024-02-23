@@ -1,10 +1,9 @@
 package com.amity.socialcloud.uikit.community.compose
 
-import androidx.media3.common.util.UnstableApi
 import com.amity.socialcloud.uikit.community.compose.story.create.AmityCreateStoryPageBehavior
 import com.amity.socialcloud.uikit.community.compose.story.target.AmityStoryTargetTabComponentBehavior
+import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageBehavior
 
-@UnstableApi
 object AmitySocialBehaviorHelper {
 
     var createStoryPageBehavior: AmityCreateStoryPageBehavior =
@@ -17,4 +16,6 @@ object AmitySocialBehaviorHelper {
     var storyTabComponentBehavior: AmityStoryTargetTabComponentBehavior =
         AmityStoryTargetTabComponentBehavior()
 
+    var viewStoryPageBehavior: AmityViewStoryPageBehavior =
+        AmityViewStoryPageBehavior()
 }

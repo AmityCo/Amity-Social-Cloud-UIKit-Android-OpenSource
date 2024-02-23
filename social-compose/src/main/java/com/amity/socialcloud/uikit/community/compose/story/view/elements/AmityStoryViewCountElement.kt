@@ -16,6 +16,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
 
 @Composable
 fun AmityStoryViewCountElement(
@@ -34,7 +35,7 @@ fun AmityStoryViewCountElement(
             imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_story_view_count),
             contentDescription = "Story View Count",
             modifier = Modifier.size(20.dp),
-            tint = Color(0xFFA5A9B5),
+            tint = AmityTheme.colors.secondaryShade3,
         )
         Text(
             text = count,

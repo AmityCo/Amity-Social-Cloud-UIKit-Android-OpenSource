@@ -14,9 +14,8 @@ import com.amity.socialcloud.uikit.common.common.setSafeOnClickListener
 import com.amity.socialcloud.uikit.common.common.views.dialog.bottomsheet.AmityBottomSheetDialog
 import com.amity.socialcloud.uikit.common.common.views.dialog.bottomsheet.BottomSheetMenuItem
 import com.amity.socialcloud.uikit.community.R
-import com.amity.socialcloud.uikit.community.compose.story.target.AmityStoryTargetTabFragment
+import com.amity.socialcloud.uikit.community.compose.story.target.global.AmityStoryGlobalFeedFragment
 import com.amity.socialcloud.uikit.community.databinding.AmityFragmentNewsFeedBinding
-import com.amity.socialcloud.uikit.community.mycommunity.fragment.AmityMyCommunityPreviewFragment
 import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityPostTargetPickerActivity
 import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityStoryTargetPickerActivity
 import com.amity.socialcloud.uikit.community.newsfeed.events.AmityFeedRefreshEvent
@@ -62,7 +61,7 @@ class AmityNewsFeedFragment : AmityBaseFragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val fragmentTransaction = childFragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.myCommunityContainer, getMyCommunityPreviewFragment())
+        fragmentTransaction.replace(R.id.storyFeedContainer, getStoryFeed())
         fragmentTransaction.replace(R.id.globalFeedContainer, getGlobalFeed())
         fragmentTransaction.commit()
 
@@ -143,12 +142,8 @@ class AmityNewsFeedFragment : AmityBaseFragment(),
         bottomSheet.show(postCreationOptions)
     }
 
-    private fun getMyCommunityPreviewFragment(): Fragment {
-        return AmityMyCommunityPreviewFragment.newInstance().build()
-    }
-
-    private fun getStoryTargetFragment(): Fragment {
-        return AmityStoryTargetTabFragment.newInstance().build()
+    private fun getStoryFeed(): Fragment {
+        return AmityStoryGlobalFeedFragment.newInstance().build()
     }
 
     private fun getGlobalFeed(): Fragment {

@@ -3,23 +3,23 @@ package com.amity.socialcloud.uikit.community.compose.story.create
 import android.content.Context
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
-import androidx.media3.common.util.UnstableApi
-import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.uikit.community.compose.story.draft.AmityDraftStoryPageActivity
 
-@UnstableApi
 open class AmityCreateStoryPageBehavior {
 
     open fun goToDraftStoryPage(
         context: Context,
         launcher: ActivityResultLauncher<Intent>,
-        community: AmityCommunity,
+        targetId: String,
+        targetType: AmityStory.TargetType,
         isImage: Boolean,
         fileUri: String,
     ) {
         val intent = AmityDraftStoryPageActivity.newIntent(
             context = context,
-            community = community,
+            targetId = targetId,
+            targetType = targetType,
             isImage = isImage,
             fileUri = fileUri
         )

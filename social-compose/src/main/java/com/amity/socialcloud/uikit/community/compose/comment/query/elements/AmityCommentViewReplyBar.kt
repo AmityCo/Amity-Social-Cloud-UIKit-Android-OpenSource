@@ -12,7 +12,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,7 +33,7 @@ fun AmityCommentViewReplyBar(
         modifier = modifier
             .border(
                 width = 1.dp,
-                color = Color(0xFFEBECEF),
+                color = AmityTheme.colors.secondaryShade4,
                 shape = RoundedCornerShape(size = 4.dp)
             )
             .clickable { onClick() }
@@ -44,7 +43,7 @@ fun AmityCommentViewReplyBar(
         Icon(
             painter = painterResource(id = R.drawable.amity_view_replies),
             contentDescription = null,
-            tint = Color(0xFF636878),
+            tint = AmityTheme.colors.secondaryShade1,
             modifier = modifier.size(16.dp)
         )
 

@@ -2,9 +2,11 @@ package com.amity.socialcloud.uikit.community.compose.comment.query
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.uikit.community.compose.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.community.compose.utils.isCommunityModerator
+import com.google.gson.JsonObject
 
 @Composable
 fun AmityCommentView(
@@ -21,11 +23,8 @@ fun AmityCommentView(
     if (comment.isDeleted()) {
         AmityDeletedCommentView(isReplyComment = false)
     } else {
-        val commentText = if (comment.getDataTypes().contains(AmityComment.DataType.TEXT)) {
-            (comment.getData() as? AmityComment.Data.TEXT)?.getText() ?: ""
-        } else {
-            ""
-        }
+        val mentionGetter = AmityMentionMetadataGetter(comment.getMetadata() ?: JsonObject())
+        val commentText = (comment.getData() as? AmityComment.Data.TEXT)?.getText() ?: ""
 
         AmitySingleCommentView(
             modifier = modifier,
@@ -36,6 +35,8 @@ fun AmityCommentView(
             currentUserId = currentUserId,
             commentId = comment.getCommentId(),
             commentText = commentText,
+            mentionGetter = mentionGetter,
+            mentionees = comment.getMentionees(),
             creatorId = comment.getCreatorId(),
             editingCommentId = editingCommentId,
             creatorAvatarUrl = comment.getCreator()?.getAvatar()?.getUrl() ?: "",

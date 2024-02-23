@@ -3,23 +3,31 @@ package com.amity.socialcloud.uikit.community.compose.story.view
 import android.content.Context
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
-import androidx.media3.common.util.UnstableApi
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.uikit.community.compose.story.create.AmityCreateStoryPageActivity
 
-@UnstableApi
-class AmityViewStoryPageBehavior(
-    private val context: Context
-) {
+open class AmityViewStoryPageBehavior {
 
-    fun goToCreateStoryPage(
+    open fun goToCreateStoryPage(
+        context: Context,
         launcher: ActivityResultLauncher<Intent>,
-        community: AmityCommunity,
+        targetId: String,
+        targetType: AmityStory.TargetType,
     ) {
         val intent = AmityCreateStoryPageActivity.newIntent(
             context = context,
-            community = community,
+            targetId = targetId,
+            targetType = targetType,
         )
         launcher.launch(intent)
     }
+
+    open fun goToCommunityProfilePage(
+        context: Context,
+        community: AmityCommunity,
+    ) {
+        //  do nothing, need to override in social module to access community profile page
+    }
+
 }

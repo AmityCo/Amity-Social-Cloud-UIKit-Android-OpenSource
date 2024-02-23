@@ -7,11 +7,9 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.media3.common.util.UnstableApi
-import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 
-@UnstableApi
 class AmityCreateStoryPageActivity : AppCompatActivity() {
 
     private val behavior by lazy {
@@ -29,7 +27,9 @@ class AmityCreateStoryPageActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val community: AmityCommunity = intent?.getParcelableExtra(EXTRA_PARAM_COMMUNITY)!!
+        val storyTargetId = intent.getStringExtra(EXTRA_PARAM_STORY_TARGET_ID) ?: ""
+        val storyTargetType =
+            intent.getSerializableExtra(EXTRA_PARAM_STORY_TARGET_TYPE) as AmityStory.TargetType
 
         setContent {
             AmityCreateStoryPage(
@@ -40,7 +40,8 @@ class AmityCreateStoryPageActivity : AppCompatActivity() {
                     behavior.goToDraftStoryPage(
                         context = this@AmityCreateStoryPageActivity,
                         launcher = draftStory,
-                        community = community,
+                        targetId = storyTargetId,
+                        targetType = storyTargetType,
                         isImage = isImage,
                         fileUri = uri
                     )
@@ -51,17 +52,20 @@ class AmityCreateStoryPageActivity : AppCompatActivity() {
 
     companion object {
 
-        const val EXTRA_PARAM_COMMUNITY = "community"
+        private const val EXTRA_PARAM_STORY_TARGET_ID = "story_target_id"
+        private const val EXTRA_PARAM_STORY_TARGET_TYPE = "story_target_type"
 
         fun newIntent(
             context: Context,
-            community: AmityCommunity
+            targetId: String,
+            targetType: AmityStory.TargetType = AmityStory.TargetType.COMMUNITY,
         ): Intent {
             return Intent(
                 context,
                 AmityCreateStoryPageActivity::class.java
             ).apply {
-                putExtra(EXTRA_PARAM_COMMUNITY, community)
+                putExtra(EXTRA_PARAM_STORY_TARGET_ID, targetId)
+                putExtra(EXTRA_PARAM_STORY_TARGET_TYPE, targetType)
             }
         }
     }
