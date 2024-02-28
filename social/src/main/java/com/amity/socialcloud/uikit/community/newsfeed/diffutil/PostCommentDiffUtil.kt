@@ -18,6 +18,7 @@ class PostCommentDiffUtil : DiffUtil.ItemCallback<AmityComment>() {
                 && oldItem.getReactionCount() == newItem.getReactionCount()
                 && (oldItem.getMyReactions().contains(AmityConstants.POST_REACTION) == oldItem.getMyReactions().contains(AmityConstants.POST_REACTION))
                 && oldItem.getEditedAt() == newItem.getEditedAt()
+                && oldItem.getState() == newItem.getState()
                 && areChildrenTheSame(oldItem.getLatestReplies(), newItem.getLatestReplies())
     }
 

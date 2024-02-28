@@ -33,15 +33,15 @@ class AmityCommentCreatorFragment : AmityCommentBaseFragment() {
             },
             onError = {
                 if (AmityError.from(it) == AmityError.BAN_WORD_FOUND) {
-                    // TODO: 21/2/23 delete a comment
-//                    viewModel.deleteComment().subscribe()
+                    view?.showSnackBar(getString(R.string.amity_add_blocked_words_comment_error_message))
+                } else {
+                    if (viewModel.getReply() != null) {
+                        view?.showSnackBar(getString(R.string.amity_add_reply_error_message))
+                    } else {
+                        view?.showSnackBar(getString(R.string.amity_add_comment_error_message))
+                    }
                 }
                 updateCommentMenu(true)
-                if (viewModel.getReply() != null) {
-                    view?.showSnackBar(getString(R.string.amity_add_reply_error_message))
-                } else {
-                    view?.showSnackBar(getString(R.string.amity_add_comment_error_message))
-                }
             })
             .subscribe()
         addComment.let { disposable.add(addComment) }

@@ -4,7 +4,6 @@ import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadata
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataCreator
-import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
@@ -19,13 +18,11 @@ interface CommentViewModel {
 
     fun addComment(
         parentId: String?,
-        commentId: String,
         postId: String,
         message: String,
         userMentions: List<AmityMentionMetadata.USER>,
-        onSuccess: () -> Unit,
-        onError: () -> Unit,
-        onBanned: () -> Unit
+        onSuccess: (AmityComment) -> Unit,
+        onError: (Throwable) -> Unit,
     ): Completable {
         val commentCreator = AmitySocialClient.newCommentRepository().createComment()
             .post(postId)
@@ -43,16 +40,9 @@ interface CommentViewModel {
             .send()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .doOnSuccess {
-                onSuccess.invoke()
-            }
-            .doOnError {
-                if (AmityError.from(it) == AmityError.BAN_WORD_FOUND) {
-                    onBanned.invoke()
-                } else {
-                    onError.invoke()
-                }
-            }.ignoreElement()
+            .doOnSuccess(onSuccess)
+            .doOnError(onError)
+            .ignoreElement()
     }
 
     fun deleteComment(
@@ -142,10 +132,14 @@ interface CommentViewModel {
 
         if (comment.getCreatorId() == AmityCoreClient.getUserId()) {
             if (comment.getParentId() == null) {
-                items.add(editCommentMenuItem)
+                if (comment.getState() != AmityComment.State.FAILED) {
+                    items.add(editCommentMenuItem)
+                }
                 items.add(deleteCommentMenuItem)
             } else {
-                items.add(editReplyMenuItem)
+                if (comment.getState() != AmityComment.State.FAILED) {
+                    items.add(editReplyMenuItem)
+                }
                 items.add(deleteReplyMenuItem)
             }
         } else {

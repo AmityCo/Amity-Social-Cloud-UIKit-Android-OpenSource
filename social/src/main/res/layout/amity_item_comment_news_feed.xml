@@ -32,6 +32,10 @@
         <variable
             name="isReplyComment"
             type="Boolean" />
+
+        <variable
+            name="isFailed"
+            type="Boolean" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -119,7 +123,7 @@
             app:textColorShade="@{AmityColorShade.SHADE1}"
             tools:visibility="visible" />
 
-        <RelativeLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/comment_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -134,15 +138,35 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/amity_padding_xxs"
                 android:layout_marginBottom="@dimen/amity_padding_xs"
+                layoutMarginEnd="@{isFailed ? @dimen/amity_twenty_four : @dimen/amity_zero}"
                 android:autoLink="web"
                 android:background="@drawable/amity_bg_comment_bubble"
                 android:maxLines="@integer/maxLineTextOnlyFeed"
                 android:padding="@dimen/amity_padding_s"
                 android:textColor="@color/amityColorBase"
                 android:textColorLink="@color/amityColorHighlight"
-                tools:text="orem ipsum dolor sit amet, consectetur" />
+                app:layout_constrainedWidth="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="orem ipsum dolor sit amet" />
 
-        </RelativeLayout>
+            <ImageView
+                android:id="@+id/ivCommentSyncFailed"
+                amityTintColor="@{@color/amityColorBase}"
+                amityTintShade="@{AmityColorShade.SHADE2}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/amity_padding_xxs"
+                android:layout_marginBottom="@dimen/amity_padding_xs"
+                android:src="@drawable/amity_ic_error"
+                android:visibility="@{isFailed ? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tvPostComment"
+                tools:ignore="ContentDescription" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         <com.google.android.material.checkbox.MaterialCheckBox

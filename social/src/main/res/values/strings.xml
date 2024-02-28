@@ -162,6 +162,7 @@
     <string name="amity_general">General</string>
     <string name="amity_add_comment_error_message">Unable to add comment</string>
     <string name="amity_update_comment_error_message">Unable to update comment</string>
+    <string name="amity_add_blocked_words_comment_error_message">Your comment wasn’t created as it contained blocked words. Only you can see this</string>
     <plurals name="amity_feed_number_of_likes">
         <item quantity="one">%s like</item>
         <item quantity="other">%s likes</item>
