@@ -4,6 +4,7 @@ import androidx.paging.PagingData
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.core.reaction.reference.AmityReactionReference
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
+import com.amity.socialcloud.sdk.api.social.comment.query.AmityCommentQuery
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadata
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataCreator
@@ -24,10 +25,8 @@ class AmityCommentTrayComponentViewModel : AmityBaseViewModel() {
             .observeOn(AndroidSchedulers.mainThread())
     }
 
-    fun getComments(storyId: String): Flow<PagingData<AmityComment>> {
-        return AmitySocialClient.newCommentRepository()
-            .getComments()
-            .story(storyId)
+    fun getComments(reference: AmityComment.Reference): Flow<PagingData<AmityComment>> {
+        return getCommentQuery(reference = reference)
             .build()
             .query()
             .subscribeOn(Schedulers.io())
@@ -36,7 +35,7 @@ class AmityCommentTrayComponentViewModel : AmityBaseViewModel() {
     }
 
     fun addComment(
-        storyId: String,
+        reference: AmityComment.Reference,
         replyCommentId: String?,
         commentText: String,
         userMentions: List<AmityMentionMetadata.USER> = emptyList(),
@@ -45,7 +44,14 @@ class AmityCommentTrayComponentViewModel : AmityBaseViewModel() {
     ) {
         val commentCreator = AmitySocialClient.newCommentRepository()
             .createComment()
-            .story(storyId)
+            .run {
+                when (reference) {
+                    is AmityComment.Reference.STORY -> story(reference.getStoryId())
+                    is AmityComment.Reference.POST -> post(reference.getPostId())
+                    is AmityComment.Reference.CONTENT -> content(reference.getContentId())
+                    else -> content("")
+                }
+            }
 
         if (!replyCommentId.isNullOrEmpty()) {
             commentCreator.parentId(replyCommentId)
@@ -151,5 +157,20 @@ class AmityCommentTrayComponentViewModel : AmityBaseViewModel() {
             .doOnComplete(onSuccess)
             .doOnError(onError)
             .subscribe()
+    }
+
+    private fun getCommentQuery(
+        reference: AmityComment.Reference,
+    ): AmityCommentQuery.Builder {
+        return AmitySocialClient.newCommentRepository()
+            .getComments()
+            .run {
+                when (reference) {
+                    is AmityComment.Reference.STORY -> story(reference.getStoryId())
+                    is AmityComment.Reference.POST -> post(reference.getPostId())
+                    is AmityComment.Reference.CONTENT -> content(reference.getContentId())
+                    else -> content("")
+                }
+            }
     }
 }

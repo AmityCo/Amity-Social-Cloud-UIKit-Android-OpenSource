@@ -40,6 +40,8 @@ interface AmityComposeComponentScope : AmityComposeScope {
     fun getComponentTheme(): AmityUIKitConfig.GlobalTheme?
 
     fun showSnackbar(message: String, @DrawableRes drawableRes: Int? = null)
+
+    fun getAccessibilityId(viewId: String = ""): String
 }
 
 interface AmityComposeElementScope : AmityComposeScope {
@@ -49,4 +51,6 @@ interface AmityComposeElementScope : AmityComposeScope {
     }
 
     fun showSnackbar(message: String, @DrawableRes drawableRes: Int? = null)
+
+    fun getAccessibilityId(viewId: String = ""): String
 }

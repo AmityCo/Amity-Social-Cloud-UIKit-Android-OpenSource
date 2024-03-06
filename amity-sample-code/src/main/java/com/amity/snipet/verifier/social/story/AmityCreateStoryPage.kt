@@ -11,11 +11,10 @@ class AmityCreateStoryPage {
        asc_page: https://docs.amity.co/amity-uikit/uikit-v4-beta/social/story-creation
        description: Navigate to create story page
        */
-    @androidx.media3.common.util.UnstableApi
     fun startAnActivity(context: Context, community: AmityCommunity) {
         val intent = AmityCreateStoryPageActivity.newIntent(
             context = context,
-            community = community
+            targetId = community.getCommunityId()
         )
         context.startActivity(intent)
     }

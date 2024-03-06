@@ -10,6 +10,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -18,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -61,7 +63,7 @@ fun AmityCommentEngagementBar(
         viewModel<AmityCommentTrayComponentViewModel>(viewModelStoreOwner = viewModelStoreOwner)
 
     var isReacted by remember { mutableStateOf(isReactedByMe) }
-    var localReactionCount by remember { mutableStateOf(reactionCount) }
+    var localReactionCount by remember { mutableIntStateOf(reactionCount) }
     var showCommentActionSheet by remember { mutableStateOf(false) }
     var showReactionListSheet by remember { mutableStateOf(false) }
 
@@ -79,7 +81,8 @@ fun AmityCommentEngagementBar(
                     style = AmityTheme.typography.caption.copy(
                         fontWeight = FontWeight.Normal,
                         color = AmityTheme.colors.baseShade2,
-                    )
+                    ),
+                    modifier = modifier.testTag("comment_list/comment_bubble_timestamp")
                 )
 
                 Text(
@@ -91,17 +94,19 @@ fun AmityCommentEngagementBar(
                         color = if (isReacted) AmityTheme.colors.primary
                         else AmityTheme.colors.baseShade2,
                     ),
-                    modifier = modifier.clickable {
-                        haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                        isReacted = !isReacted
-                        if (isReacted) {
-                            localReactionCount++
-                            viewModel.addReaction(commentId)
-                        } else {
-                            localReactionCount--
-                            viewModel.removeReaction(commentId)
+                    modifier = modifier
+                        .clickable {
+                            haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                            isReacted = !isReacted
+                            if (isReacted) {
+                                localReactionCount++
+                                viewModel.addReaction(commentId)
+                            } else {
+                                localReactionCount--
+                                viewModel.removeReaction(commentId)
+                            }
                         }
-                    }
+                        .testTag("comment_list/comment_bubble_reaction_button")
                 )
 
                 if (!isReplyComment) {
@@ -110,9 +115,11 @@ fun AmityCommentEngagementBar(
                         style = AmityTheme.typography.caption.copy(
                             color = AmityTheme.colors.baseShade2,
                         ),
-                        modifier = modifier.clickable {
-                            onReply(commentId)
-                        }
+                        modifier = modifier
+                            .clickable {
+                                onReply(commentId)
+                            }
+                            .testTag("comment_list/comment_bubble_reply_button")
                     )
                 }
 
@@ -125,6 +132,7 @@ fun AmityCommentEngagementBar(
                         .clickable {
                             showCommentActionSheet = true
                         }
+                        .testTag("comment_list/comment_bubble_meat_balls_button")
                 )
             }
         }
@@ -143,6 +151,7 @@ fun AmityCommentEngagementBar(
                         fontWeight = FontWeight.Normal,
                         color = AmityTheme.colors.secondaryShade2,
                     ),
+                    modifier = modifier.testTag("comment_list/comment_bubble_reaction_count_text_view")
                 )
 
                 Image(
@@ -161,6 +170,7 @@ fun AmityCommentEngagementBar(
             isReplyComment = isReplyComment,
             isCommentCreatedByMe = isCreatedByMe,
             isFlaggedByMe = isFlaggedByMe,
+            isFailed = false,
             onEdit = onEdit,
         ) {
             showCommentActionSheet = false
@@ -183,7 +193,7 @@ fun AmityCommentEngagementBar(
 @Composable
 fun AmityCommentEngagementBarPreview() {
     AmityCommentEngagementBar(
-        allowInteraction = false,
+        allowInteraction = true,
         isReplyComment = false,
         commentId = "",
         createdAt = DateTime.now(),

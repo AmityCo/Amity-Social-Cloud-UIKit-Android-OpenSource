@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
@@ -62,17 +63,17 @@ fun AmityStoryBodyRow(
         when (dataType) {
             AmityStory.DataType.IMAGE -> {
                 AmityStoryBodyImageView(
-                    modifier = modifier,
                     data = data as AmityStory.Data.IMAGE,
                     syncState = state,
+                    modifier = modifier.testTag("image_view"),
                 )
             }
 
             AmityStory.DataType.VIDEO -> {
                 AmityStoryBodyVideoView(
-                    modifier = modifier,
                     exoPlayer = exoPlayer,
                     isVisible = isVisible,
+                    modifier = modifier.testTag("video_view"),
                 )
             }
 
@@ -134,6 +135,7 @@ fun AmityStoryBodyImageView(
 
     var palette by remember { mutableStateOf<Palette?>(null) }
     val painter = rememberAsyncImagePainter(
+        contentScale = contentScale,
         model = ImageRequest.Builder(LocalContext.current)
             .data(imagePath)
             .allowHardware(false)

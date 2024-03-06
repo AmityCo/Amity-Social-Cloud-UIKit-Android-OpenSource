@@ -18,7 +18,7 @@ fun AmityReplyCommentListView(
     modifier: Modifier = Modifier,
     componentScope: AmityComposeComponentScope? = null,
     allowInteraction: Boolean,
-    storyId: String,
+    reference: AmityComment.Reference,
     currentUserId: String,
     commentId: String,
     editingCommentId: String?,
@@ -27,7 +27,7 @@ fun AmityReplyCommentListView(
     onEdit: (String?) -> Unit,
 ) {
     val loader = remember {
-        AmityStoryCommentReplyLoader(storyId, commentId).apply { load() }
+        AmityStoryCommentReplyLoader(reference, commentId).apply { load() }
     }
 
     val shouldShowLoadMoreButton by remember {
@@ -44,7 +44,7 @@ fun AmityReplyCommentListView(
                 modifier = modifier,
                 componentScope = componentScope,
                 allowInteraction = allowInteraction,
-                storyId = storyId,
+                reference = reference,
                 currentUserId = currentUserId,
                 editingCommentId = editingCommentId,
                 comment = comment,
@@ -69,7 +69,7 @@ fun AmityReplyCommentListView(
 fun AmityReplyCommentListViewPreview() {
     AmityReplyCommentListView(
         allowInteraction = true,
-        storyId = "",
+        reference = AmityComment.Reference.STORY(""),
         currentUserId = "",
         commentId = "",
         editingCommentId = null,

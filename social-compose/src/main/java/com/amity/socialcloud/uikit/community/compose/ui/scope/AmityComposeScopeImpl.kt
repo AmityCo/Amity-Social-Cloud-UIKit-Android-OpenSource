@@ -87,6 +87,17 @@ internal class AmityComposeComponentScopeImpl(
             pageScope.showSnackbar(message, drawableRes)
         }
     }
+
+    override fun getAccessibilityId(viewId: String): String {
+        val sb = StringBuilder()
+        sb.append(componentId)
+        sb.append("/")
+
+        if (viewId.isNotEmpty()) {
+            sb.append(viewId)
+        }
+        return sb.toString()
+    }
 }
 
 internal class AmityComposeElementScopeImpl(
@@ -108,5 +119,19 @@ internal class AmityComposeElementScopeImpl(
 
     override fun showSnackbar(message: String, drawableRes: Int?) {
         componentScope?.showSnackbar(message, drawableRes)
+    }
+
+    override fun getAccessibilityId(viewId: String): String {
+        val sb = StringBuilder()
+        if (componentScope != null) {
+            sb.append(componentScope.getId())
+            sb.append("/")
+        }
+        sb.append(elementId)
+        if (viewId.isNotEmpty()) {
+            sb.append("_")
+            sb.append(viewId)
+        }
+        return sb.toString()
     }
 }

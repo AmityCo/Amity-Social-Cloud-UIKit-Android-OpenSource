@@ -4,11 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
@@ -39,11 +39,11 @@ fun AmityCommentContentContainer(
                 )
             )
             .padding(12.dp)
-            .wrapContentSize()
     ) {
         Text(
             text = displayName,
             style = AmityTheme.typography.caption,
+            modifier = modifier.testTag("comment_list/comment_bubble_creator_display_name")
         )
 
         if (isCommunityModerator) {
@@ -54,7 +54,8 @@ fun AmityCommentContentContainer(
             text = commentText,
             mentionGetter = mentionGetter,
             mentionees = mentionees,
-            style = AmityTheme.typography.body
+            style = AmityTheme.typography.body,
+            modifier = modifier.testTag("comment_list/comment_bubble_comment_text_view")
         )
     }
 }

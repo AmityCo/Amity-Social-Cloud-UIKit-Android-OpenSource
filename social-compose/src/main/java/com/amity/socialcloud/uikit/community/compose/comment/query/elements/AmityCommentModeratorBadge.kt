@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,6 +32,7 @@ fun AmityCommentModeratorBadge(
                 shape = RoundedCornerShape(size = 20.dp)
             )
             .padding(start = 4.dp, end = 6.dp)
+            .testTag("comment_list/comment_bubble_moderator_badge")
     ) {
         Icon(
             painter = painterResource(id = R.drawable.amity_ic_moderator_comment),

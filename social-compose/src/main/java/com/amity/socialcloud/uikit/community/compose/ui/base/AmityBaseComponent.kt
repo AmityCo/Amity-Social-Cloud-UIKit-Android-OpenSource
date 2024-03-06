@@ -9,8 +9,11 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.community.compose.ui.elements.AmitySnackbar
 import com.amity.socialcloud.uikit.community.compose.ui.elements.AmitySnackbarVisuals
@@ -19,6 +22,7 @@ import com.amity.socialcloud.uikit.community.compose.ui.scope.AmityComposePageSc
 import com.amity.socialcloud.uikit.community.compose.ui.scope.rememberAmityComposeScopeProvider
 import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityComposeTheme
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun AmityBaseComponent(
     modifier: Modifier = Modifier,
@@ -41,7 +45,6 @@ fun AmityBaseComponent(
         if (!comp.isExcluded()) {
             if (needScaffold) {
                 Scaffold(
-                    modifier = modifier,
                     containerColor = Color.White,
                     snackbarHost = {
                         SnackbarHost(
@@ -54,6 +57,9 @@ fun AmityBaseComponent(
                                 AmitySnackbar(data = data)
                             }
                         }
+                    },
+                    modifier = Modifier.semantics {
+                        testTagsAsResourceId = true
                     }
                 ) { innerPadding ->
                     Box(
@@ -65,7 +71,13 @@ fun AmityBaseComponent(
                     }
                 }
             } else {
-                content(comp)
+                Box(
+                    modifier = modifier.semantics {
+                        testTagsAsResourceId = true
+                    }
+                ) {
+                    content(comp)
+                }
             }
         }
     }

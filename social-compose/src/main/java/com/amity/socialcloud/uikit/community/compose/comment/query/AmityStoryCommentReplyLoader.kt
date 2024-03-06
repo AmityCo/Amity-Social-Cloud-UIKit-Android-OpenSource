@@ -16,14 +16,21 @@ import io.reactivex.rxjava3.subjects.PublishSubject
 private const val COMMENT_PREVIEW_SIZE = 3
 private const val TYPICAL_REPLY_PAGE_SIZE = 5
 
-class AmityStoryCommentReplyLoader(storyId: String, commentId: String) {
+class AmityStoryCommentReplyLoader(reference: AmityComment.Reference, commentId: String) {
 
     private var loader: AmityCommentLoader
 
     init {
         loader = AmitySocialClient.newCommentRepository()
             .getComments()
-            .story(storyId)
+            .run {
+                when (reference) {
+                    is AmityComment.Reference.STORY -> story(reference.getStoryId())
+                    is AmityComment.Reference.POST -> post(reference.getPostId())
+                    is AmityComment.Reference.CONTENT -> content(reference.getContentId())
+                    AmityComment.Reference.UNKNOWN -> content("")
+                }
+            }
             .parentId(commentId)
             .sortBy(AmityCommentSortOption.LAST_CREATED)
             .includeDeleted(true)

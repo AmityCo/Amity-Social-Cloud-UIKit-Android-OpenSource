@@ -29,6 +29,11 @@
     <string name="amity_delete_comment_warning_message">This comment will be permanently removed.</string>
     <string name="amity_delete_reply_title">Delete reply</string>
     <string name="amity_delete_reply_warning_message">This reply will be permanently removed.</string>
+    <string name="amity_add_reply_error_message">Unable to add reply</string>
+    <string name="amity_add_comment_error_message">Unable to add comment</string>
+    <string name="amity_add_blocked_words_comment_error_message">Your comment wasn’t created as it contained blocked words. Only you can see this</string>
+    <string name="amity_update_comment_error_message">Unable to update comment</string>
+    <string name="amity_update_blocked_words_comment_error_message">Your comment wasn’t updated as it contained blocked words. Only you can see this</string>
 
     <string name="amity_cancel">Cancel</string>
     <string name="amity_delete">Delete</string>

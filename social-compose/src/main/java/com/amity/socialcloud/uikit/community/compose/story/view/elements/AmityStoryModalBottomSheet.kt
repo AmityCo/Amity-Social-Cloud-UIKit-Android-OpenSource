@@ -2,6 +2,7 @@ package com.amity.socialcloud.uikit.community.compose.story.view.elements
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
@@ -13,11 +14,16 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponent
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityStoryModalDialogUIState
@@ -27,7 +33,7 @@ import com.amity.socialcloud.uikit.community.compose.ui.elements.AmityBottomShee
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun AmityStoryModalBottomSheet(
     modifier: Modifier = Modifier,
@@ -65,14 +71,17 @@ fun AmityStoryModalBottomSheet(
             },
             sheetState = sheetState,
             containerColor = Color.White,
-            modifier = modifier,
+            windowInsets = WindowInsets(top = 54.dp),
+            modifier = modifier.semantics {
+                testTagsAsResourceId = true
+            },
         ) {
             when (sheetUIState) {
                 is AmityStoryModalSheetUIState.OpenCommentTraySheet -> {
                     val data = sheetUIState as AmityStoryModalSheetUIState.OpenCommentTraySheet
                     AmityCommentTrayComponent(
                         modifier = modifier,
-                        storyId = data.storyId,
+                        reference = AmityComment.Reference.STORY(data.storyId),
                         shouldAllowInteraction = data.shouldAllowInteraction,
                         shouldAllowComment = data.shouldAllowComment,
                     )
@@ -88,6 +97,7 @@ fun AmityStoryModalBottomSheet(
                         AmityBottomSheetActionItem(
                             icon = R.drawable.amity_ic_delete_story,
                             text = "Delete story",
+                            modifier = modifier.testTag("bottom_sheet_delete_button"),
                         ) {
                             viewModel.updateSheetUIState(AmityStoryModalSheetUIState.CloseSheet)
                             viewModel.updateDialogUIState(

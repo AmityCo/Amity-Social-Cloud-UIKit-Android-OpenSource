@@ -13,10 +13,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,8 +27,8 @@ import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.sdk.model.social.story.AmityStoryTarget
 import com.amity.socialcloud.uikit.common.common.readableNumber
 import com.amity.socialcloud.uikit.community.compose.R
-import com.amity.socialcloud.uikit.community.compose.comment.AmityStoryCommentBottomSheet
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityStoryModalDialogUIState
+import com.amity.socialcloud.uikit.community.compose.story.view.AmityStoryModalSheetUIState
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageViewModel
 import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmityStoryCommentCountElement
 import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmityStoryReactionCountElement
@@ -51,7 +49,6 @@ fun AmityStoryBottomRow(
     commentCount: Int,
     reactionCount: Int,
     isReactedByMe: Boolean,
-    shouldShowCommentTray: Boolean,
 ) {
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
@@ -85,7 +82,6 @@ fun AmityStoryBottomRow(
                 storyId = storyId,
                 isCommunityJoined = isCommunityJoined,
                 isAllowedComment = isAllowedComment,
-                shouldShowCommentTray = shouldShowCommentTray,
                 reachCount = reachCount,
                 commentCount = commentCount,
                 reactionCount = reactionCount,
@@ -110,7 +106,6 @@ fun AmityStoryEngagementRow(
     storyId: String,
     isCommunityJoined: Boolean,
     isAllowedComment: Boolean,
-    shouldShowCommentTray: Boolean,
     reachCount: Int = 0,
     commentCount: Int = 0,
     reactionCount: Int = 0,
@@ -121,7 +116,6 @@ fun AmityStoryEngagementRow(
     }
     val viewModel =
         viewModel<AmityViewStoryPageViewModel>(viewModelStoreOwner = viewModelStoreOwner)
-    var showCommentSheet by remember(shouldShowCommentTray) { mutableStateOf(shouldShowCommentTray) }
 
     Box(
         modifier = modifier
@@ -144,8 +138,13 @@ fun AmityStoryEngagementRow(
                 count = commentCount,
                 modifier = modifier,
             ) {
-                showCommentSheet = true
-                viewModel.handleSegmentTimer(shouldPause = true)
+                viewModel.updateSheetUIState(
+                    AmityStoryModalSheetUIState.OpenCommentTraySheet(
+                        storyId = storyId,
+                        shouldAllowInteraction = isCommunityJoined,
+                        shouldAllowComment = isAllowedComment,
+                    )
+                )
             }
 
             AmityStoryReactionCountElement(
@@ -160,18 +159,6 @@ fun AmityStoryEngagementRow(
                 } else {
                     viewModel.removeReaction(storyId)
                 }
-            }
-        }
-
-        if (showCommentSheet) {
-            AmityStoryCommentBottomSheet(
-                modifier = modifier,
-                storyId = storyId,
-                shouldAllowInteraction = isCommunityJoined,
-                shouldAllowComment = isAllowedComment,
-            ) {
-                showCommentSheet = false
-                viewModel.handleSegmentTimer(shouldPause = false)
             }
         }
     }
@@ -304,7 +291,6 @@ fun AmityStoryBottomRowPreview() {
         storyId = "",
         isCommunityJoined = false,
         isAllowedComment = false,
-        shouldShowCommentTray = false,
         reachCount = 1000,
         commentCount = 10000000,
         reactionCount = 1000000000,

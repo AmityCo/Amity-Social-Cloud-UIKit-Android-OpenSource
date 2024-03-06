@@ -16,7 +16,7 @@ fun AmityReplyCommentContainer(
     modifier: Modifier = Modifier,
     componentScope: AmityComposeComponentScope? = null,
     allowInteraction: Boolean,
-    storyId: String,
+    reference: AmityComment.Reference,
     currentUserId: String,
     commentId: String,
     editingCommentId: String?,
@@ -31,7 +31,7 @@ fun AmityReplyCommentContainer(
             modifier = modifier,
             componentScope = componentScope,
             allowInteraction = allowInteraction,
-            storyId = storyId,
+            reference = reference,
             currentUserId = currentUserId,
             commentId = commentId,
             editingCommentId = editingCommentId,
@@ -55,7 +55,7 @@ fun AmityReplyCommentContainer(
 fun AmityReplyCommentContainerPreview() {
     AmityReplyCommentContainer(
         allowInteraction = true,
-        storyId = "",
+        reference = AmityComment.Reference.STORY(""),
         currentUserId = "",
         commentId = "",
         editingCommentId = null,

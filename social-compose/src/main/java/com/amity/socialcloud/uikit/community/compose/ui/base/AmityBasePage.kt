@@ -8,8 +8,11 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.community.compose.ui.elements.AmitySnackbar
 import com.amity.socialcloud.uikit.community.compose.ui.elements.AmitySnackbarVisuals
@@ -18,6 +21,7 @@ import com.amity.socialcloud.uikit.community.compose.ui.scope.rememberAmityCompo
 import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityComposeTheme
 
 
+@OptIn(ExperimentalComposeUiApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun AmityBasePage(
@@ -47,6 +51,9 @@ fun AmityBasePage(
                         AmitySnackbar(data = data)
                     }
                 }
+            },
+            modifier = Modifier.semantics {
+                testTagsAsResourceId = true
             }
         ) {
             if (!comp.isExcluded()) {

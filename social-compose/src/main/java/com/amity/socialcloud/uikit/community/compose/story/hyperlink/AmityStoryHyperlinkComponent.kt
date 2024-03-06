@@ -17,6 +17,8 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,6 +27,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -35,9 +39,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import com.amity.socialcloud.uikit.community.compose.R
-import com.amity.socialcloud.uikit.community.compose.story.draft.AmityDraftStoryViewModel
 import com.amity.socialcloud.uikit.community.compose.story.hyperlink.elements.AmityHyperlinkTextField
+import com.amity.socialcloud.uikit.community.compose.ui.base.AmityBaseComponent
+import com.amity.socialcloud.uikit.community.compose.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.community.compose.ui.elements.AmityAlertDialog
 import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.utils.clickableWithoutRipple
@@ -48,24 +54,49 @@ fun AmityStoryHyperlinkComponent(
     modifier: Modifier = Modifier,
     defaultUrlText: String = "",
     defaultCustomText: String = "",
-    onClose: () -> Unit = {},
+    onClose: (String, String) -> Unit,
 ) {
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
     }
     val viewModel =
-        viewModel<AmityDraftStoryViewModel>(viewModelStoreOwner = viewModelStoreOwner)
+        viewModel<AmityStoryHyperlinkComponentViewModel>(viewModelStoreOwner = viewModelStoreOwner)
 
-    var urlText by remember { mutableStateOf(defaultUrlText) }
-    var customText by remember { mutableStateOf(defaultCustomText) }
+    val urlValidation by viewModel.urlValidation.collectAsState()
+    val textValidation by viewModel.textValidation.collectAsState()
+
+    var urlText by remember(defaultUrlText) { mutableStateOf(defaultUrlText) }
+    var customText by remember(defaultCustomText) { mutableStateOf(defaultCustomText) }
 
     val isAllFieldsValid by remember {
         derivedStateOf {
             urlText.isNotEmpty()
         }
     }
-    var isValidUrl by remember {
-        mutableStateOf(true)
+    var isValidUrlFormat by remember { mutableStateOf(true) }
+    val urlValidationError by remember(isValidUrlFormat, urlValidation) {
+        derivedStateOf {
+            when {
+                !isValidUrlFormat -> "Please enter a valid URL."
+
+                urlValidation is AmityStoryHyperlinkValidationUIState.Invalid &&
+                        (urlValidation as AmityStoryHyperlinkValidationUIState.Invalid).data == urlText
+                -> "Please enter a whitelisted URL."
+
+                else -> ""
+            }
+        }
+    }
+    val textValidationError by remember(textValidation) {
+        derivedStateOf {
+            when {
+                textValidation is AmityStoryHyperlinkValidationUIState.Invalid &&
+                        (textValidation as AmityStoryHyperlinkValidationUIState.Invalid).data == customText
+                -> "Your text contains a blocklisted word."
+
+                else -> ""
+            }
+        }
     }
 
     val openUnsavedAlertDialog = remember { mutableStateOf(false) }
@@ -77,7 +108,7 @@ fun AmityStoryHyperlinkComponent(
             dialogText = "Are you sure you want to cancel? Your changes won't be saved.",
             confirmText = "Yes",
             dismissText = "No",
-            onConfirmation = { onClose() },
+            onConfirmation = { onClose(defaultUrlText, defaultCustomText) },
             onDismissRequest = { openUnsavedAlertDialog.value = false }
         )
     }
@@ -88,204 +119,229 @@ fun AmityStoryHyperlinkComponent(
             confirmText = "Remove",
             dismissText = "Cancel",
             onConfirmation = {
-                viewModel.saveStoryHyperlinkItem(
-                    url = "",
-                    text = ""
-                )
-                onClose()
+                urlText = ""
+                customText = ""
+                onClose("", "")
             },
             onDismissRequest = { openRemoveLinkAlertDialog.value = false }
         )
     }
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(Color.White)
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = modifier
-                .fillMaxWidth()
-                .height(48.dp)
-                .padding(horizontal = 16.dp)
+    LaunchedEffect(urlValidation, textValidation) {
+        if (urlValidation is AmityStoryHyperlinkValidationUIState.Valid
+            && textValidation is AmityStoryHyperlinkValidationUIState.Valid
         ) {
-            Text(
-                text = "Cancel",
-                style = AmityTheme.typography.body.copy(
-                    color = AmityTheme.colors.secondary
-                ),
-                modifier = modifier.clickableWithoutRipple {
-                    openUnsavedAlertDialog.value = true
-                }
-            )
+            onClose(urlText, customText)
+            viewModel.resetValidation()
+        }
+    }
 
-            Text(
-                text = "Add Link",
-                style = AmityTheme.typography.title.copy(
-                    color = AmityTheme.colors.secondary
-                ),
-            )
-
-            Text(
-                text = "Done",
-                style = AmityTheme.typography.body.copy(
-                    color = if (isAllFieldsValid) AmityTheme.colors.primary else AmityTheme.colors.primaryShade2
-                ),
-                modifier = modifier.clickable(enabled = isAllFieldsValid) {
-                    onClose()
-                    viewModel.saveStoryHyperlinkItem(
-                        url = urlText,
-                        text = customText
+    AmityBaseComponent(componentId = "hyper_link_config_component") {
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .background(Color.White)
+                .testTag("hyper_link_config_component/*")
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = modifier
+                    .fillMaxWidth()
+                    .height(48.dp)
+                    .padding(horizontal = 16.dp)
+            ) {
+                AmityBaseElement(
+                    componentScope = getComponentScope(),
+                    elementId = "cancel_button"
+                ) {
+                    Text(
+                        text = "Cancel",
+                        style = AmityTheme.typography.body.copy(
+                            color = AmityTheme.colors.secondary
+                        ),
+                        modifier = modifier
+                            .clickableWithoutRipple {
+                                openUnsavedAlertDialog.value = true
+                            }
+                            .testTag(getAccessibilityId())
                     )
                 }
-            )
-        }
-
-        HorizontalDivider(
-            thickness = 0.5.dp,
-            color = AmityTheme.colors.divider,
-        )
-        Spacer(modifier = modifier.padding(top = 24.dp))
-
-        Text(
-            buildAnnotatedString {
-                withStyle(style = SpanStyle(AmityTheme.colors.secondary)) {
-                    append("URL")
-                }
-                withStyle(style = SpanStyle(AmityTheme.colors.alert)) {
-                    append("*")
-                }
-            },
-            style = AmityTheme.typography.title.copy(
-                textAlign = TextAlign.Start,
-            ),
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-        )
-
-        AmityHyperlinkTextField(
-            text = urlText,
-            hint = "https://example.com",
-            onValueChange = {
-                urlText = it
-                val matcher = Patterns.WEB_URL.matcher(it)
-                isValidUrl = matcher.matches()
-            },
-        )
-
-        HorizontalDivider(
-            thickness = if (isValidUrl) 0.5.dp else 1.dp,
-            color = if (isValidUrl) AmityTheme.colors.divider else AmityTheme.colors.alert,
-            modifier = modifier.padding(horizontal = 16.dp)
-        )
-
-        if (!isValidUrl) {
-            Text(
-                text = "Please enter a valid URL.",
-                style = AmityTheme.typography.caption.copy(
-                    fontWeight = FontWeight.Normal,
-                    color = AmityTheme.colors.alert
-                ),
-                modifier = modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 4.dp)
-            )
-        }
-
-        Spacer(modifier = modifier.padding(top = 24.dp))
-
-        Box(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-        ) {
-            Text(
-                text = "Customize link text",
-                style = AmityTheme.typography.title,
-                modifier = Modifier.align(Alignment.CenterStart)
-            )
-
-            Text(
-                text = "${customText.length}/$CustomTextLimit",
-                style = AmityTheme.typography.caption.copy(
-                    fontWeight = FontWeight.Normal,
-                    color = AmityTheme.colors.secondaryShade1
-                ),
-                modifier = Modifier.align(Alignment.CenterEnd)
-            )
-        }
-
-        AmityHyperlinkTextField(
-            text = customText,
-            hint = "Name your link",
-            maxCharacters = CustomTextLimit,
-            onValueChange = {
-                customText = it
-            }
-        )
-
-        HorizontalDivider(
-            thickness = 0.5.dp,
-            color = AmityTheme.colors.divider,
-            modifier = modifier.padding(horizontal = 16.dp)
-        )
-
-        Text(
-            text = "This text will show on the link instead of URL.",
-            style = AmityTheme.typography.caption.copy(
-                fontWeight = FontWeight.Normal,
-                color = AmityTheme.colors.secondaryShade2
-            ),
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-        )
-
-        if (defaultUrlText.isNotEmpty()) {
-            Spacer(modifier = modifier.padding(top = 32.dp))
-
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        openRemoveLinkAlertDialog.value = true
-                    }
-                    .padding(horizontal = 16.dp),
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.amity_ic_delete_story),
-                    contentDescription = "Remove link",
-                    tint = AmityTheme.colors.alert,
-                    modifier = modifier
-                        .align(Alignment.CenterVertically)
-                        .clickable {
-                            onClose()
-                            viewModel.saveStoryHyperlinkItem(
-                                url = "",
-                                text = ""
-                            )
-                        }
-                )
 
                 Text(
-                    text = "Remove link",
-                    style = AmityTheme.typography.body.copy(
-                        color = AmityTheme.colors.alert
+                    text = "Add Link",
+                    style = AmityTheme.typography.title.copy(
+                        color = AmityTheme.colors.secondary
                     ),
+                    modifier = modifier.testTag(getAccessibilityId("title_text_view"))
                 )
+                AmityBaseElement(
+                    componentScope = getComponentScope(),
+                    elementId = "done_button"
+                ) {
+                    Text(
+                        text = "Done",
+                        style = AmityTheme.typography.body.copy(
+                            color = if (isAllFieldsValid) AmityTheme.colors.primary else AmityTheme.colors.primaryShade2
+                        ),
+                        modifier = modifier
+                            .clickable(enabled = isAllFieldsValid) {
+                                viewModel.validateUrls(urlText)
+                                viewModel.validateTexts(customText)
+                            }
+                            .testTag(getAccessibilityId())
+                    )
+                }
             }
-
-            Spacer(modifier = modifier.padding(top = 12.dp))
 
             HorizontalDivider(
                 thickness = 0.5.dp,
                 color = AmityTheme.colors.divider,
+            )
+            Spacer(modifier = modifier.padding(top = 24.dp))
+
+            Text(
+                buildAnnotatedString {
+                    withStyle(style = SpanStyle(AmityTheme.colors.secondary)) {
+                        append("URL")
+                    }
+                    withStyle(style = SpanStyle(AmityTheme.colors.alert)) {
+                        append("*")
+                    }
+                },
+                style = AmityTheme.typography.title.copy(
+                    textAlign = TextAlign.Start,
+                ),
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .testTag(getAccessibilityId("hyper_link_url_title_text_view"))
+            )
+
+            AmityHyperlinkTextField(
+                text = urlText,
+                hint = "https://example.com",
+                onValueChange = {
+                    urlText = it
+                    val matcher = Patterns.WEB_URL.matcher(it)
+                    isValidUrlFormat = matcher.matches()
+                },
+                modifier = modifier.testTag(getAccessibilityId("hyper_link_url_text_field"))
+            )
+
+            HorizontalDivider(
+                thickness = 1.dp,
+                color = if (urlValidationError.isEmpty()) AmityTheme.colors.divider else AmityTheme.colors.alert,
                 modifier = modifier.padding(horizontal = 16.dp)
             )
+
+            if (urlValidationError.isNotEmpty()) {
+                Text(
+                    text = urlValidationError,
+                    style = AmityTheme.typography.caption.copy(
+                        fontWeight = FontWeight.Normal,
+                        color = AmityTheme.colors.alert
+                    ),
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 4.dp)
+                        .testTag(getAccessibilityId("hyper_link_url_error_text_view"))
+                )
+            }
+
+            Spacer(modifier = modifier.padding(top = 24.dp))
+
+            Box(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+            ) {
+                Text(
+                    text = "Customize link text",
+                    style = AmityTheme.typography.title,
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .testTag(getAccessibilityId("hyper_link_custom_text_title_text_view"))
+                )
+
+                Text(
+                    text = "${customText.length}/$CustomTextLimit",
+                    style = AmityTheme.typography.caption.copy(
+                        fontWeight = FontWeight.Normal,
+                        color = AmityTheme.colors.secondaryShade1
+                    ),
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .testTag(getAccessibilityId("customize_link_text_characters_limit_text_field"))
+                )
+            }
+
+            AmityHyperlinkTextField(
+                text = customText,
+                hint = "Name your link",
+                maxCharacters = CustomTextLimit,
+                onValueChange = {
+                    customText = it
+                },
+                modifier = modifier.testTag(getAccessibilityId("customize_link_text_text_field"))
+            )
+
+            HorizontalDivider(
+                thickness = 1.dp,
+                color = if (textValidationError.isEmpty()) AmityTheme.colors.divider else AmityTheme.colors.alert,
+                modifier = modifier.padding(horizontal = 16.dp)
+            )
+
+            Text(
+                text = textValidationError.ifEmpty { "This text will show on the link instead of URL." },
+                style = AmityTheme.typography.caption.copy(
+                    fontWeight = FontWeight.Normal,
+                    color = if (textValidationError.isEmpty()) AmityTheme.colors.secondaryShade2
+                    else AmityTheme.colors.alert
+                ),
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .testTag(getAccessibilityId("customize_link_text_description_text_field"))
+            )
+
+            if (defaultUrlText.isNotEmpty()) {
+                Spacer(modifier = modifier.padding(top = 32.dp))
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            openRemoveLinkAlertDialog.value = true
+                        }
+                        .padding(horizontal = 16.dp)
+                        .testTag(getAccessibilityId("remove_link_button")),
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.amity_ic_delete_story),
+                        contentDescription = "Remove link",
+                        tint = AmityTheme.colors.alert,
+                        modifier = modifier.align(Alignment.CenterVertically)
+                    )
+
+                    Text(
+                        text = "Remove link",
+                        style = AmityTheme.typography.body.copy(
+                            color = AmityTheme.colors.alert
+                        ),
+                        modifier = modifier.testTag(getAccessibilityId("remove_link_button_text_view"))
+                    )
+                }
+
+                Spacer(modifier = modifier.padding(top = 12.dp))
+
+                HorizontalDivider(
+                    thickness = 0.5.dp,
+                    color = AmityTheme.colors.divider,
+                    modifier = modifier.padding(horizontal = 16.dp)
+                )
+            }
         }
     }
 }
@@ -296,5 +352,8 @@ const val CustomTextLimit = 30
 @Preview
 @Composable
 fun AmityStoryHyperlinkComponentPreview() {
-    AmityStoryHyperlinkComponent()
+    AmityUIKitConfigController.setup(LocalContext.current)
+    AmityStoryHyperlinkComponent(
+        onClose = { _, _ -> }
+    )
 }
