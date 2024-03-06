@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -67,6 +68,7 @@ fun AmityStoryReactionCountElement(
                 }
             }
             .padding(horizontal = 10.dp, vertical = 8.dp)
+            .testTag("reaction_button")
     ) {
         Icon(
             imageVector = if (isReacted) ImageVector.vectorResource(id = R.drawable.amity_ic_story_liked_pressed)
@@ -82,6 +84,7 @@ fun AmityStoryReactionCountElement(
                 .height(20.dp)
                 .padding(start = 4.dp)
                 .widthIn(min = 16.dp)
+                .testTag("reaction_button_text_view")
         )
     }
 }

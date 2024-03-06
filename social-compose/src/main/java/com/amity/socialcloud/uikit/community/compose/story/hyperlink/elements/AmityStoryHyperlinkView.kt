@@ -1,7 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.story.hyperlink.elements
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -13,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.community.compose.utils.clickableWithoutRipple
 
 @Composable
 fun AmityStoryHyperlinkView(
@@ -36,8 +37,9 @@ fun AmityStoryHyperlinkView(
                 color = Color(0xCCFFFFFF),
                 shape = RoundedCornerShape(size = 24.dp)
             )
-            .clickable { onClick() }
+            .clickableWithoutRipple { onClick() }
             .padding(start = 12.dp, top = 10.dp, end = 16.dp, bottom = 10.dp)
+            .testTag("hyper_link_view")
     ) {
         Icon(
             painter = painterResource(
@@ -54,6 +56,7 @@ fun AmityStoryHyperlinkView(
             ),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.testTag("hyper_link_view_text_view")
         )
     }
 }

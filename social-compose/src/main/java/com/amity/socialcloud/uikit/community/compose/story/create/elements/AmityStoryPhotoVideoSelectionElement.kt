@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
@@ -60,7 +61,9 @@ fun AmityStoryPhotoVideoSelectionElement(
                     color = if (isPhotoSelected) AmityTheme.colors.secondaryShade1
                     else AmityTheme.colors.secondaryShade2,
                 ),
-                modifier = Modifier.align(Alignment.Center)
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .testTag("switch_mode_photo_button")
             )
         }
         Box(
@@ -80,7 +83,9 @@ fun AmityStoryPhotoVideoSelectionElement(
                     color = if (isPhotoSelected) AmityTheme.colors.secondaryShade2
                     else AmityTheme.colors.secondaryShade1,
                 ),
-                modifier = Modifier.align(Alignment.Center)
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .testTag("switch_mode_video_button")
             )
         }
     }

@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
@@ -123,7 +124,8 @@ fun AmityEditCommentContainer(
                             text = getElementScope().getConfig().getValue("cancel_button_text"),
                             style = AmityTheme.typography.caption.copy(
                                 color = AmityTheme.colors.baseShade1,
-                            )
+                            ),
+                            modifier = modifier.testTag(getAccessibilityId())
                         )
                     }
                 }
@@ -163,6 +165,7 @@ fun AmityEditCommentContainer(
                             style = AmityTheme.typography.caption.copy(
                                 color = AmityTheme.colors.baseInverse,
                             ),
+                            modifier = modifier.testTag(getAccessibilityId())
                         )
                     }
                 }

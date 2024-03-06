@@ -3,6 +3,9 @@ package com.amity.socialcloud.uikit.community.compose.story.view
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.transition.Slide
+import android.view.Gravity
+import android.view.Window
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -23,11 +26,25 @@ class AmityViewStoryPageActivity : AppCompatActivity() {
 
     private val createStory =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            finish()
+            finishAfterTransition()
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        with(window) {
+            requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
+
+            val slideEnter = Slide(Gravity.BOTTOM)
+            slideEnter.excludeTarget(android.R.id.statusBarBackground, true)
+            slideEnter.excludeTarget(android.R.id.navigationBarBackground, true)
+            enterTransition = slideEnter
+
+            val slideExit = Slide(Gravity.TOP)
+            slideExit.excludeTarget(android.R.id.statusBarBackground, true)
+            slideExit.excludeTarget(android.R.id.navigationBarBackground, true)
+            exitTransition = slideExit
+        }
 
         val isGlobalTarget = intent.getBooleanExtra(EXTRA_PARAM_IS_GLOBAL_TARGET, false)
         val storyTargetId = intent.getStringExtra(EXTRA_PARAM_STORY_TARGET_ID) ?: ""
@@ -40,7 +57,7 @@ class AmityViewStoryPageActivity : AppCompatActivity() {
             if (isGlobalTarget) {
                 AmityViewGlobalStoryPage(
                     storyTargetId = storyTargetId,
-                    onClose = { finish() },
+                    onClose = { finishAfterTransition() },
                     navigateToCreateStoryPage = {
                         behavior.goToCreateStoryPage(
                             context = context,
@@ -64,8 +81,8 @@ class AmityViewStoryPageActivity : AppCompatActivity() {
                     targetType = storyTargetType,
                     exoPlayer = exoPlayer,
                     isSingleTarget = true,
-                    onClose = { finish() },
-                    lastSegmentReached = { finish() },
+                    onClose = { finishAfterTransition() },
+                    lastSegmentReached = { finishAfterTransition() },
                     navigateToCreateStoryPage = {
                         behavior.goToCreateStoryPage(
                             context = context,

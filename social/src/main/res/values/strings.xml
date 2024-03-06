@@ -66,7 +66,6 @@
     <string name="amity_view_replies">View replies</string>
     <string name="amity_view_all_replies">View all %d replies</string>
     <string name="amity_view_all_comments">View all comments…</string>
-   <string name="amity_add_reply_error_message">Unable to add reply</string>
     <string name="amity_discard_reply_message">Do you want to discard your reply?</string>
     <string name="amity_update_reply_error_message">Unable to update reply</string>
     <string name="amity_reply_to">Reply to</string>
@@ -148,8 +147,6 @@
     <string name="amity_connectivity_issue">Unable to reach server</string>
     <string name="amity_add_comment">Add comment</string>
     <string name="amity_general">General</string>
-    <string name="amity_add_comment_error_message">Unable to add comment</string>
-    <string name="amity_update_comment_error_message">Unable to update comment</string>
     <plurals name="amity_feed_number_of_likes">
         <item quantity="one">%s like</item>
         <item quantity="other">%s likes</item>

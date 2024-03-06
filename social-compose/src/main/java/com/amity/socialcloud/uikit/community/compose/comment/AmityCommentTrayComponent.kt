@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
@@ -42,7 +43,7 @@ import com.amity.socialcloud.uikit.community.compose.utils.pagingLoadStateItem
 @Composable
 fun AmityCommentTrayComponent(
     modifier: Modifier = Modifier,
-    storyId: String,
+    reference: AmityComment.Reference,
     shouldAllowInteraction: Boolean,
     shouldAllowComment: Boolean,
 ) {
@@ -54,8 +55,8 @@ fun AmityCommentTrayComponent(
     val viewModel =
         viewModel<AmityCommentTrayComponentViewModel>(viewModelStoreOwner = viewModelStoreOwner)
 
-    val comments = remember(viewModel, storyId) {
-        viewModel.getComments(storyId)
+    val comments = remember(viewModel, reference) {
+        viewModel.getComments(reference)
     }.collectAsLazyPagingItems()
 
     val currentUser = remember(viewModel) {
@@ -86,7 +87,9 @@ fun AmityCommentTrayComponent(
                 Text(
                     text = context.getString(R.string.amity_comments),
                     style = AmityTheme.typography.title,
-                    modifier = modifier.fillMaxWidth(),
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .testTag(getAccessibilityId("title_text_view")),
                 )
 
                 HorizontalDivider(
@@ -97,7 +100,7 @@ fun AmityCommentTrayComponent(
                 if (comments.itemCount == 0 && comments.loadState.append is LoadState.NotLoading) {
                     AmityPagingEmptyItem(
                         text = "No comments yet",
-                        modifier = modifier
+                        modifier = Modifier.testTag("comment_tray_component/empty_text_view")
                     )
                 }
 
@@ -114,7 +117,7 @@ fun AmityCommentTrayComponent(
                         AmityCommentView(
                             modifier = modifier,
                             componentScope = getComponentScope(),
-                            storyId = storyId,
+                            reference = reference,
                             currentUserId = currentUser.value?.getUserId() ?: "",
                             editingCommentId = editingCommentId,
                             comment = comment,
@@ -140,7 +143,7 @@ fun AmityCommentTrayComponent(
                 if (shouldAllowComment) {
                     AmityCommentComposerBar(
                         componentScope = getComponentScope(),
-                        storyId = storyId,
+                        reference = reference,
                         avatarUrl = currentUser.value?.getAvatar()?.getUrl(),
                         replyComment = replyComment,
                         modifier = modifier
@@ -167,7 +170,7 @@ fun AmityCommentTrayComponent(
 @Composable
 fun AmityCommentPagePreview() {
     AmityCommentTrayComponent(
-        storyId = "",
+        reference = AmityComment.Reference.STORY(""),
         shouldAllowInteraction = true,
         shouldAllowComment = true,
     )

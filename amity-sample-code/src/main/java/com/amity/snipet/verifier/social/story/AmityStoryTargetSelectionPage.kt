@@ -20,7 +20,6 @@ class AmityStoryTargetSelectionPage {
         context.startActivity(intent)
     }
 
-    @androidx.media3.common.util.UnstableApi
     fun createFragment(storyCreationType: String) {
         AmityStoryTargetPickerFragment.newInstance()
             .build(storyCreationType = storyCreationType)

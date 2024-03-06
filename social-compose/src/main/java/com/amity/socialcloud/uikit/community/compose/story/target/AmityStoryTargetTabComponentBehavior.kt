@@ -1,11 +1,13 @@
 package com.amity.socialcloud.uikit.community.compose.story.target
 
+import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
 import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.uikit.community.compose.story.create.AmityCreateStoryPageActivity
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageActivity
+import com.amity.socialcloud.uikit.community.compose.utils.getActivity
 
 open class AmityStoryTargetTabComponentBehavior {
 
@@ -20,7 +22,10 @@ open class AmityStoryTargetTabComponentBehavior {
             targetId = communityId,
             targetType = AmityStory.TargetType.COMMUNITY,
         )
-        context.startActivity(intent)
+        context.startActivity(
+            intent,
+            ActivityOptions.makeSceneTransitionAnimation(context.getActivity()).toBundle()
+        )
     }
 
     open fun goToCreateStoryPage(

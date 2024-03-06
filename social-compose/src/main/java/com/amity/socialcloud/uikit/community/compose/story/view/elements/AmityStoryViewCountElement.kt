@@ -1,7 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.story.view.elements
 
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
@@ -12,11 +11,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.community.compose.utils.clickableWithoutRipple
 
 @Composable
 fun AmityStoryViewCountElement(
@@ -27,9 +28,11 @@ fun AmityStoryViewCountElement(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
-        modifier = modifier.clickable {
-            onClick()
-        }
+        modifier = modifier
+            .clickableWithoutRipple {
+                onClick()
+            }
+            .testTag("reach_button")
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_story_view_count),
@@ -40,6 +43,7 @@ fun AmityStoryViewCountElement(
         Text(
             text = count,
             color = Color.White,
+            modifier = modifier.testTag("reach_button_text_view")
         )
     }
 }

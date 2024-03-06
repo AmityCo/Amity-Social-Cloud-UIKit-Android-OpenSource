@@ -67,6 +67,7 @@ class AmityPostCommentView : ConstraintLayout {
             comment.getCreator()?.getDisplayName() ?: context.getString(R.string.amity_anonymous)
         binding.tvCommentTime.text = comment.getCreatedAt().millis.readableFeedPostTime(context)
         binding.edited = comment.isEdited()
+        binding.isFailed = comment.getState() == AmityComment.State.FAILED
         binding.isReplyComment = !comment.getParentId().isNullOrEmpty()
 
         val banIcon = if (comment.getCreator()?.isGlobalBan() == true) {
@@ -139,6 +140,10 @@ class AmityPostCommentView : ConstraintLayout {
         }
 
         binding.btnCommentAction.setOnClickListener {
+            commentOptionClickPublisher.onNext(CommentOptionClickEvent(comment))
+        }
+
+        binding.ivCommentSyncFailed.setOnClickListener {
             commentOptionClickPublisher.onNext(CommentOptionClickEvent(comment))
         }
 

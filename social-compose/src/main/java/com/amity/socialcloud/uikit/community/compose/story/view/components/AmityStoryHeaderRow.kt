@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -187,6 +188,7 @@ fun AmityStoryHeaderRow(
                                         )
                                     )
                                 )
+                                .testTag("community_avatar")
                         )
                     } else {
                         AsyncImage(
@@ -202,6 +204,7 @@ fun AmityStoryHeaderRow(
                             modifier = modifier
                                 .size(40.dp)
                                 .clip(CircleShape)
+                                .testTag("community_avatar")
                         )
                     }
                     if (hasManageStoryPermission) {
@@ -211,6 +214,7 @@ fun AmityStoryHeaderRow(
                             modifier = Modifier
                                 .size(16.dp)
                                 .align(Alignment.BottomEnd)
+                                .testTag("create_story_icon")
                         )
                     }
                 }
@@ -224,15 +228,17 @@ fun AmityStoryHeaderRow(
                             color = Color.White,
                             fontWeight = FontWeight.SemiBold
                         ),
-                        modifier = Modifier.clickableWithoutRipple {
-                            if (isSingleTarget) {
-                                onCloseClicked()
-                            } else {
-                                if (community != null) {
-                                    navigateToCommunityProfilePage(community)
+                        modifier = Modifier
+                            .clickableWithoutRipple {
+                                if (isSingleTarget) {
+                                    onCloseClicked()
+                                } else {
+                                    if (community != null) {
+                                        navigateToCommunityProfilePage(community)
+                                    }
                                 }
                             }
-                        }
+                            .testTag("community_display_name")
                     )
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -241,16 +247,18 @@ fun AmityStoryHeaderRow(
                             text = story?.getCreatedAt()?.readableTimeDiff() ?: "",
                             color = Color.White,
                             fontSize = 13.sp,
+                            modifier = modifier.testTag("created_at")
                         )
                         Text(
-                            text = "•",
+                            text = "• By",
                             color = Color.White,
                             fontSize = 13.sp,
                         )
                         Text(
-                            text = "By ${story?.getCreator()?.getDisplayName() ?: ""}",
+                            text = story?.getCreator()?.getDisplayName() ?: "",
                             color = Color.White,
                             fontSize = 13.sp,
+                            modifier = modifier.testTag("creator_display_name")
                         )
                     }
                 }
@@ -276,6 +284,7 @@ fun AmityStoryHeaderRow(
                                         )
                                     )
                                 }
+                                .testTag("overflow_menu_button"),
                         )
                     }
                     Spacer(modifier = modifier.size(8.dp))
@@ -298,6 +307,7 @@ fun AmityStoryHeaderRow(
                             .clickableWithoutRipple {
                                 onCloseClicked()
                             }
+                            .testTag(getAccessibilityId()),
                     )
                 }
             }

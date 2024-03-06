@@ -1,12 +1,10 @@
 package com.amity.snipet.verifier.customization
 
 import android.content.Context
-import androidx.media3.common.util.UnstableApi
-import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.uikit.AmityUIKit4Manager
 import com.amity.socialcloud.uikit.community.compose.story.target.AmityStoryTargetTabComponentBehavior
 
-@UnstableApi
 class AmityOverridingNavigationBehavior {
     /* begin_sample_code
      gist_id: 85d5a80eb7feaf332bf1b0351c264f89
@@ -18,14 +16,16 @@ class AmityOverridingNavigationBehavior {
 
         override fun goToViewStoryPage(
             context: Context,
-            community: AmityCommunity,
+            isGlobalFeed: Boolean,
+            communityId: String
         ) {
             // custom implementation for navigating to View Story Page
         }
 
         override fun goToCreateStoryPage(
             context: Context,
-            community: AmityCommunity
+            targetId: String,
+            targetType: AmityStory.TargetType
         ) {
             // custom implementation for navigating to Story Creation Page
         }

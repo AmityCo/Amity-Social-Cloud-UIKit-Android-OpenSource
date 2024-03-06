@@ -219,6 +219,7 @@ fun AmityViewStoryPage(
 
     when (dialogState) {
         is AmityStoryModalDialogUIState.OpenConfirmDeleteDialog -> {
+            if (!isTargetVisible) return
             viewModel.handleSegmentTimer(true)
             val data = dialogState as AmityStoryModalDialogUIState.OpenConfirmDeleteDialog
             AmityAlertDialog(
@@ -341,7 +342,6 @@ fun AmityViewStoryPage(
                         commentCount = story.getCommentCount(),
                         reactionCount = story.getReactionCount(),
                         isReactedByMe = story.getMyReactions().isNotEmpty(),
-                        shouldShowCommentTray = false,
                     )
                 }
             }

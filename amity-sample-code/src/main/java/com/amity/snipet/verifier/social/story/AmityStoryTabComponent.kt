@@ -2,7 +2,7 @@ package com.amity.snipet.verifier.social.story
 
 import androidx.compose.runtime.Composable
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
-import com.amity.socialcloud.uikit.community.compose.story.target.AmityStoryTargetTabComponent
+import com.amity.socialcloud.uikit.community.compose.story.target.community.AmityStoryCommunityTargetTabComponent
 
 class AmityStoryTabComponent {
     /* begin_sample_code
@@ -11,16 +11,15 @@ class AmityStoryTabComponent {
        asc_page: https://docs.amity.co/amity-uikit/uikit-v4-beta/social/community-profile-page/story-target-tab-component
        description: Navigate to story tab component
        */
-    @androidx.media3.common.util.UnstableApi
     @Composable
     fun compose(
         community: AmityCommunity
     ) {
         //  It's available as Composable element
-        AmityStoryTargetTabComponent(community = community)
+        AmityStoryCommunityTargetTabComponent(communityId = community.getCommunityId())
 
         //  binding.composeViewStoryTarget.setContent {
-        //      AmityStoryTargetTabComponent(community = community)
+        //      AmityStoryCommunityTargetTabComponent(communityId = community.getCommunityId())
         //  }
     }
     /* end_sample_code */

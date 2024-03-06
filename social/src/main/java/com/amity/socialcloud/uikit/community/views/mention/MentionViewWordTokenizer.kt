@@ -6,7 +6,7 @@ import com.linkedin.android.spyglass.tokenization.impl.WordTokenizerConfig
 
 class MentionViewWordTokenizer {
     fun create(): WordTokenizer {
-        return WordTokenizer(Builder.create().build())
+        return CustomWordTokenizer(Builder.create().build())
     }
 
     private object Builder {

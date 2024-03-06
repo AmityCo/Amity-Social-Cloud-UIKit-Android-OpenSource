@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -86,6 +87,7 @@ fun AmityStoryTargetElement(
                 .clickableWithoutRipple {
                     onClick()
                 }
+                .testTag("story_target_list/*")
         ) {
             Box(
                 modifier = Modifier.size(if (isCommunityTarget) 48.dp else 64.dp)
@@ -104,6 +106,7 @@ fun AmityStoryTargetElement(
                                 .fillMaxSize()
                                 .clip(CircleShape)
                                 .background(AmityTheme.colors.primaryShade3)
+                                .testTag("story_target_list/target_avatar")
                         )
                     } else {
                         AsyncImage(
@@ -118,6 +121,7 @@ fun AmityStoryTargetElement(
                             modifier = modifier
                                 .clip(CircleShape)
                                 .align(Alignment.Center)
+                                .testTag("story_target_list/target_avatar")
                         )
                     }
                 }
@@ -125,12 +129,15 @@ fun AmityStoryTargetElement(
                 AmityStoryGradientRingElement(
                     colors = colors,
                     isIndeterminate = ringUiState == AmityStoryTargetRingUiState.SYNCING,
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .testTag("story_target_list/target_ring_view"),
                 )
 
                 val badge = when {
                     ringUiState == AmityStoryTargetRingUiState.FAILED -> R.drawable.amity_ic_error_circle
                     hasManageStoryPermission -> R.drawable.amity_ic_plus_circle
+                    isOfficialCommunity -> R.drawable.amity_ic_verified
                     else -> null
                 }
 
@@ -141,6 +148,7 @@ fun AmityStoryTargetElement(
                         modifier = Modifier
                             .size(if (isCommunityTarget) 16.dp else 20.dp)
                             .align(Alignment.BottomEnd)
+                            .testTag("story_target_list/target_create_story_icon")
                     )
                 }
             }
@@ -159,7 +167,8 @@ fun AmityStoryTargetElement(
                 Text(
                     text = displayName,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.testTag("story_target_list/target_display_name")
                 )
             }
         }

@@ -11,34 +11,25 @@ import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.schedulers.Schedulers
-import kotlinx.coroutines.flow.MutableStateFlow
 
 class AmityDraftStoryViewModel : AmityBaseViewModel() {
-
-    private val _hyperlinkUrl by lazy {
-        MutableStateFlow("")
-    }
-    val hyperlinkUrl get() = _hyperlinkUrl
-
-    private val _hyperlinkText by lazy {
-        MutableStateFlow("")
-    }
-    val hyperlinkText get() = _hyperlinkText
 
     fun createImageStory(
         targetId: String,
         targetType: AmityStory.TargetType,
         fileUri: Uri,
         imageDisplayMode: AmityStoryImageDisplayMode,
+        hyperlinkUrlText: String,
+        hyperlinkCustomText: String,
         onSuccess: () -> Unit,
         onError: (message: String) -> Unit,
     ) {
         val storyItems = mutableListOf<AmityStoryItem>()
-        if (_hyperlinkUrl.value.isNotEmpty()) {
+        if (hyperlinkUrlText.isNotEmpty()) {
             storyItems.add(
                 AmityStoryItem.HYPERLINK(
-                    url = _hyperlinkUrl.value,
-                    customText = _hyperlinkText.value.takeIf { it.isNotEmpty() },
+                    url = hyperlinkUrlText,
+                    customText = hyperlinkCustomText.takeIf { it.isNotEmpty() },
                 )
             )
         }
@@ -63,15 +54,17 @@ class AmityDraftStoryViewModel : AmityBaseViewModel() {
         targetId: String,
         targetType: AmityStory.TargetType,
         fileUri: Uri,
+        hyperlinkUrlText: String,
+        hyperlinkCustomText: String,
         onSuccess: () -> Unit,
         onError: (message: String) -> Unit,
     ) {
         val storyItems = mutableListOf<AmityStoryItem>()
-        if (_hyperlinkUrl.value.isNotEmpty()) {
+        if (hyperlinkUrlText.isNotEmpty()) {
             storyItems.add(
                 AmityStoryItem.HYPERLINK(
-                    url = _hyperlinkUrl.value,
-                    customText = _hyperlinkText.value.takeIf { it.isNotEmpty() },
+                    url = hyperlinkUrlText,
+                    customText = hyperlinkCustomText.takeIf { it.isNotEmpty() },
                 )
             )
         }
@@ -88,11 +81,6 @@ class AmityDraftStoryViewModel : AmityBaseViewModel() {
             .doOnError {
                 onError((it as AmityException).message ?: "Unknown error occurred.")
             }.subscribe()
-    }
-
-    fun saveStoryHyperlinkItem(url: String, text: String) {
-        _hyperlinkUrl.value = url
-        _hyperlinkText.value = text
     }
 
     fun getTarget(
