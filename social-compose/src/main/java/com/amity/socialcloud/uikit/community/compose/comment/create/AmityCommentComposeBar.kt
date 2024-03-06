@@ -17,11 +17,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
+import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentViewModel
 import com.amity.socialcloud.uikit.community.compose.comment.elements.AmityCommentAvatarView
 import com.amity.socialcloud.uikit.community.compose.comment.elements.AmityCommentComposerTextField
@@ -32,11 +36,13 @@ import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
 fun AmityCommentComposerBar(
     modifier: Modifier = Modifier,
     componentScope: AmityComposeComponentScope? = null,
-    storyId: String,
+    reference: AmityComment.Reference,
     avatarUrl: String? = null,
     replyComment: AmityComment? = null,
     onClose: () -> Unit
 ) {
+    val context = LocalContext.current
+
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
     }
@@ -82,13 +88,15 @@ fun AmityCommentComposerBar(
                 modifier = Modifier
                     .align(Alignment.Bottom)
                     .padding(bottom = 6.dp)
+                    .testTag("comment_tray_component/comment_composer_avatar")
             )
 
             AmityCommentComposerTextField(
                 shouldClearText = isCommentPosted,
                 modifier = Modifier
                     .weight(1f)
-                    .align(Alignment.CenterVertically),
+                    .align(Alignment.CenterVertically)
+                    .testTag("comment_tray_component/comment_composer_text_field"),
                 onValueChange = {
                     commentText = it
                 }
@@ -103,11 +111,12 @@ fun AmityCommentComposerBar(
                 modifier = Modifier
                     .align(Alignment.Bottom)
                     .padding(start = 4.dp, bottom = 12.dp)
+                    .testTag("comment_tray_component/comment_composer_post_button")
                     .clickable(enabled = shouldAllowToPost) {
                         isCommentPosted = true
 
                         viewModel.addComment(
-                            storyId = storyId,
+                            reference = reference,
                             commentText = commentText,
                             replyCommentId = if (isReplyingToComment) replyComment?.getCommentId() else null,
                             onSuccess = {
@@ -122,11 +131,17 @@ fun AmityCommentComposerBar(
                                 isCommentPosted = false
                                 onClose()
 
-                                it.message?.let { message ->
-                                    componentScope?.showSnackbar(
-                                        message = message,
-                                    )
-                                }
+                                val errorMessage =
+                                    if (AmityError.from(it) == AmityError.BAN_WORD_FOUND) {
+                                        context.getString(R.string.amity_add_blocked_words_comment_error_message)
+                                    } else {
+                                        if (isReplyingToComment) {
+                                            context.getString(R.string.amity_add_reply_error_message)
+                                        } else {
+                                            context.getString(R.string.amity_add_comment_error_message)
+                                        }
+                                    }
+                                componentScope?.showSnackbar(errorMessage)
                             }
                         )
                     }
@@ -139,6 +154,6 @@ fun AmityCommentComposerBar(
 @Composable
 fun AmityCommentComposerBarPreview() {
     AmityCommentComposerBar(
-        storyId = ""
+        reference = AmityComment.Reference.STORY(""),
     ) {}
 }

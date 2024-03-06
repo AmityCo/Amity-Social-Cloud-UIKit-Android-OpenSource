@@ -1,7 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.ui.elements
 
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,7 +31,7 @@ fun AmityExpandableText(
     style: TextStyle = AmityTheme.typography.body,
 ) {
     BoxWithConstraints(
-        modifier.fillMaxWidth()
+        modifier = modifier,
     ) {
         val textMeasurer = rememberTextMeasurer()
         val textLayoutResult = remember(text) {

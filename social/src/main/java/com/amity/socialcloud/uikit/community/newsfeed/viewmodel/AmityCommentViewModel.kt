@@ -12,7 +12,6 @@ import com.amity.socialcloud.sdk.api.social.comment.AmityCommentRepository
 import com.amity.socialcloud.sdk.api.social.post.AmityPostRepository
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadata
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataCreator
-import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.sdk.model.social.member.AmityCommunityMember
@@ -89,19 +88,8 @@ class AmityCommentViewModel : AmityBaseViewModel() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSuccess(onSuccess)
-            .doOnError {
-                if (AmityError.from(it) == AmityError.BAN_WORD_FOUND) {
-
-                    // TODO: 21/2/23 delete a comment
-//                    viewModel.deleteComment().subscribe()
-                }
-            }
             .doOnError(onError)
             .ignoreElement()
-    }
-
-    fun deleteComment(commentId: String): Completable {
-        return commentRepository.softDeleteComment(commentId)
     }
 
     fun checkForCommentUpdate() {

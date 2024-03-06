@@ -31,7 +31,7 @@ dependencies {
     androidTestImplementation composeBom
 
     // Material Design 3
-    implementation 'androidx.compose.material3:material3-android:1.2.0-rc01'
+    implementation 'androidx.compose.material3:material3-android:1.2.0'
     // Android Studio Preview support
     implementation 'androidx.compose.ui:ui-tooling-preview'
     debugImplementation 'androidx.compose.ui:ui-tooling'

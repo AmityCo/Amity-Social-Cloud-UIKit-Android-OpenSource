@@ -6,6 +6,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
@@ -21,6 +25,10 @@ fun AmityStoryBodyGestureBox(
     onSwipeDown: () -> Unit,
 ) {
     val configuration = LocalConfiguration.current
+
+    var verticalDragAmount by remember {
+        mutableFloatStateOf(0f)
+    }
 
     Box(
         modifier = modifier
@@ -44,18 +52,18 @@ fun AmityStoryBodyGestureBox(
                 )
             }
             .pointerInput(Unit) {
-                detectVerticalDragGestures { change, dragAmount ->
-                    change.consume()
-
-                    when {
-                        dragAmount > 200 -> {
+                detectVerticalDragGestures(
+                    onDragEnd = {
+                        if (verticalDragAmount > 0) {
                             onSwipeDown()
-                        }
-
-                        dragAmount < -200 -> {
+                        } else {
                             onSwipeUp()
                         }
+                        verticalDragAmount = 0f
                     }
+                ) { change, dragAmount ->
+                    change.consume()
+                    verticalDragAmount += dragAmount
                 }
             }
     )

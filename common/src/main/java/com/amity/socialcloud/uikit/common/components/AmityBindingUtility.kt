@@ -11,6 +11,7 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -340,4 +341,11 @@ fun setBold(view: TextView, isBold: Boolean) {
 @BindingAdapter("amityVisibility")
 fun setVisibility(view: View, value: Boolean) {
     view.visibility = if (value) View.VISIBLE else View.GONE
+}
+
+@BindingAdapter("layoutMarginEnd")
+fun setLayoutMarginEnd(view: View, dimen: Float) {
+    val layoutParams = view.layoutParams as ViewGroup.MarginLayoutParams
+    layoutParams.marginEnd = dimen.toInt()
+    view.layoutParams = layoutParams
 }

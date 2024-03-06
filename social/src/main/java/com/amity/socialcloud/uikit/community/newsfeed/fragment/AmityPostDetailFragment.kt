@@ -1,7 +1,12 @@
 package com.amity.socialcloud.uikit.community.newsfeed.fragment
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -12,6 +17,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.paging.ExperimentalPagingApi
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.sdk.model.social.feed.AmityFeedType
@@ -44,8 +50,7 @@ import com.linkedin.android.spyglass.tokenization.interfaces.QueryTokenReceiver
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
-import org.amity.types.ObjectId
-import java.util.*
+import java.util.Random
 
 class AmityPostDetailFragment : AmityBaseFragment(),
     SuggestionsVisibilityManager, QueryTokenReceiver {
@@ -250,10 +255,8 @@ class AmityPostDetailFragment : AmityBaseFragment(),
     private fun setupComposeBar(post: AmityPost) {
         binding.viewBottom.visibility = if (isJoined(post)) View.VISIBLE else View.INVISIBLE
         binding.commentComposeBar.getPostButton().setOnClickListener {
-            val commentId = ObjectId.get().toHexString()
             viewModel.addComment(
                 replyTo?.getCommentId(),
-                commentId,
                 post.getPostId(),
                 binding.commentComposeBar.getTextCompose(),
                 binding.commentComposeBar.getCommentEditText().getUserMentions(),
@@ -262,14 +265,17 @@ class AmityPostDetailFragment : AmityBaseFragment(),
                     hideReplyTo()
                 },
                 onError = {
-                    // To do handle error
-                },
-                onBanned = {
+                    if (AmityError.from(it) == AmityError.BAN_WORD_FOUND) {
+                        view?.showSnackBar(getString(R.string.amity_add_blocked_words_comment_error_message))
+                    } else {
+                        if (replyTo != null) {
+                            view?.showSnackBar(getString(R.string.amity_add_reply_error_message))
+                        } else {
+                            view?.showSnackBar(getString(R.string.amity_add_comment_error_message))
+                        }
+                    }
                     binding.commentComposeBar.getCommentEditText().setText("")
                     hideReplyTo()
-                    viewModel.deleteComment(commentId, onSuccess = {}, onError = {})
-                        .untilLifecycleEnd(this)
-                        .subscribe()
                 })
                 .untilLifecycleEnd(this)
                 .subscribe()

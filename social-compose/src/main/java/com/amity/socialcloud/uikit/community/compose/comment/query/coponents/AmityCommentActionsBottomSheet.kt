@@ -10,9 +10,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
@@ -24,7 +28,7 @@ import com.amity.socialcloud.uikit.community.compose.ui.elements.AmityBottomShee
 import com.amity.socialcloud.uikit.community.compose.ui.scope.AmityComposeComponentScope
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun AmityCommentActionsBottomSheet(
     modifier: Modifier = Modifier,
@@ -34,6 +38,7 @@ fun AmityCommentActionsBottomSheet(
     isReplyComment: Boolean,
     isCommentCreatedByMe: Boolean,
     isFlaggedByMe: Boolean,
+    isFailed: Boolean,
     onEdit: () -> Unit,
     onClose: () -> Unit,
 ) {
@@ -46,7 +51,10 @@ fun AmityCommentActionsBottomSheet(
                 onClose()
             },
             sheetState = sheetState,
-            containerColor = Color.White
+            containerColor = Color.White,
+            modifier = modifier.semantics {
+                testTagsAsResourceId = true
+            }
         ) {
             AmityCommentActionsContainer(
                 modifier = modifier,
@@ -55,6 +63,7 @@ fun AmityCommentActionsBottomSheet(
                 isReplyComment = isReplyComment,
                 isCommentCreatedByMe = isCommentCreatedByMe,
                 isFlaggedByMe = isFlaggedByMe,
+                isFailed = isFailed,
                 onEdit = onEdit,
             ) {
                 scope.launch {
@@ -77,6 +86,7 @@ fun AmityCommentActionsContainer(
     isReplyComment: Boolean,
     isCommentCreatedByMe: Boolean,
     isFlaggedByMe: Boolean,
+    isFailed: Boolean,
     onEdit: () -> Unit,
     onClose: () -> Unit
 ) {
@@ -135,15 +145,18 @@ fun AmityCommentActionsContainer(
             .padding(start = 16.dp, end = 16.dp, bottom = 50.dp)
     ) {
         if (isCommentCreatedByMe) {
-            AmityBottomSheetActionItem(
-                icon = R.drawable.amity_ic_edit_profile,
-                text = context.getString(
-                    if (isReplyComment) R.string.amity_edit_reply
-                    else R.string.amity_edit_comment
-                ),
-            ) {
-                onClose()
-                onEdit()
+            if (!isFailed) {
+                AmityBottomSheetActionItem(
+                    icon = R.drawable.amity_ic_edit_profile,
+                    text = context.getString(
+                        if (isReplyComment) R.string.amity_edit_reply
+                        else R.string.amity_edit_comment
+                    ),
+                    modifier = modifier.testTag("comment_tray_component/bottom_sheet_edit_comment_button")
+                ) {
+                    onClose()
+                    onEdit()
+                }
             }
 
             AmityBottomSheetActionItem(
@@ -152,6 +165,7 @@ fun AmityCommentActionsContainer(
                     if (isReplyComment) R.string.amity_delete_reply
                     else R.string.amity_delete_comment
                 ),
+                modifier = modifier.testTag("comment_tray_component/bottom_sheet_delete_comment_button"),
             ) {
                 openDeleteAlertDialog.value = true
             }
@@ -166,6 +180,7 @@ fun AmityCommentActionsContainer(
                         else R.string.amity_report_comment
                     }
                 ),
+                modifier = modifier.testTag("comment_tray_component/bottom_sheet_report_comment_button"),
             ) {
                 onClose()
                 if (isFlaggedByMe) {
@@ -214,8 +229,9 @@ fun AmityCommentActionsContainerPreview() {
     AmityCommentActionsContainer(
         commentId = "",
         isReplyComment = false,
-        isCommentCreatedByMe = false,
+        isCommentCreatedByMe = true,
         isFlaggedByMe = false,
+        isFailed = true,
         onEdit = {},
         onClose = {},
     )

@@ -1,7 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.story.view.elements
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,12 +17,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.common.readableNumber
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.community.compose.utils.clickableWithoutRipple
 
 @Composable
 fun AmityStoryCommentCountElement(
@@ -40,10 +41,11 @@ fun AmityStoryCommentCountElement(
             .clip(MaterialTheme.shapes.extraLarge)
             .background(AmityTheme.colors.secondary)
             .padding(horizontal = 10.dp, vertical = 8.dp)
-            .clickable {
+            .clickableWithoutRipple {
                 haptics.performHapticFeedback(HapticFeedbackType.LongPress)
                 onClick()
             }
+            .testTag("comment_button")
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_story_comment_count),
@@ -58,6 +60,7 @@ fun AmityStoryCommentCountElement(
                 .height(20.dp)
                 .padding(start = 4.dp)
                 .widthIn(min = 16.dp)
+                .testTag("comment_button_text_view")
         )
     }
 }

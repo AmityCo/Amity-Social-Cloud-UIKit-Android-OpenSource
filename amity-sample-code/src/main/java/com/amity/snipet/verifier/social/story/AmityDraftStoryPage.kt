@@ -11,7 +11,6 @@ class AmityDraftStoryPage {
        asc_page: https://docs.amity.co/amity-uikit/uikit-v4-beta/social/story-creation/draft-page
        description: Navigate to draft story page
        */
-    @androidx.media3.common.util.UnstableApi
     fun startAnActivity(
         context: Context,
         community: AmityCommunity,
@@ -20,7 +19,7 @@ class AmityDraftStoryPage {
     ) {
         val intent = AmityDraftStoryPageActivity.newIntent(
             context = context,
-            community = community,
+            targetId = community.getCommunityId(),
             isImage = isImage,
             fileUri = fileUri
         )

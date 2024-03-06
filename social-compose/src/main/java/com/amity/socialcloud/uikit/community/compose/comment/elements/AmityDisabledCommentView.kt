@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -43,7 +44,8 @@ fun AmityDisabledCommentView(
                 text = context.getString(R.string.amity_comments_disabled_message),
                 style = AmityTheme.typography.body.copy(
                     color = AmityTheme.colors.baseShade2
-                )
+                ),
+                modifier = Modifier.testTag("comment_tray_component/disabled_text_view")
             )
         }
     }

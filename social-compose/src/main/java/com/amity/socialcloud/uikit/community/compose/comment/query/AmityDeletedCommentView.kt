@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,6 +33,7 @@ fun AmityDeletedCommentView(
             .fillMaxWidth()
             .padding(start = 52.dp)
             .padding(vertical = 8.dp)
+            .testTag("comment_list/comment_bubble_deleted_view")
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,

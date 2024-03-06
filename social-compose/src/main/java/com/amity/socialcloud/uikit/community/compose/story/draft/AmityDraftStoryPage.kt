@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,7 +31,6 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,6 +45,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -113,8 +114,8 @@ fun AmityDraftStoryPage(
         }
     }
 
-    val hyperlinkUrlText by viewModel.hyperlinkUrl.collectAsState(initial = "")
-    val hyperlinkCustomText by viewModel.hyperlinkText.collectAsState(initial = "")
+    var hyperlinkUrlText by remember { mutableStateOf("") }
+    var hyperlinkCustomText by remember { mutableStateOf("") }
 
     var isImageContentScaleFit by remember { mutableStateOf(true) }
     val openAlertDialog = remember { mutableStateOf(false) }
@@ -197,13 +198,14 @@ fun AmityDraftStoryPage(
                                         )
                                     )
                                 )
-                                .background(Color.LightGray)
                         ) {
                             Image(
                                 painter = painter,
                                 contentDescription = null,
                                 contentScale = if (isImageContentScaleFit) ContentScale.Fit else ContentScale.Crop,
-                                modifier = Modifier.fillMaxSize()
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .testTag("image_view")
                             )
                         }
 
@@ -213,7 +215,8 @@ fun AmityDraftStoryPage(
                             isVisible = true,
                             modifier = modifier
                                 .aspectRatio(9f / 16f)
-                                .align(Alignment.TopCenter),
+                                .align(Alignment.TopCenter)
+                                .testTag("video_view"),
                         )
 
                         DisposableEffect(Unit) {
@@ -234,7 +237,8 @@ fun AmityDraftStoryPage(
                             .constrainAs(closeBtn) {
                                 top.linkTo(parent.top, 16.dp)
                                 start.linkTo(parent.start, 16.dp)
-                            },
+                            }
+                            .testTag(getAccessibilityId()),
                         onClick = {
                             openAlertDialog.value = true
                         }
@@ -253,7 +257,8 @@ fun AmityDraftStoryPage(
                                 .constrainAs(aspectRatioBtn) {
                                     top.linkTo(parent.top, 16.dp)
                                     end.linkTo(hyperlinkBtn.start, 8.dp)
-                                },
+                                }
+                                .testTag(getAccessibilityId()),
                             background = getConfig().getBackgroundColor(),
                             onClick = {
                                 isImageContentScaleFit = !isImageContentScaleFit
@@ -273,7 +278,8 @@ fun AmityDraftStoryPage(
                             .constrainAs(hyperlinkBtn) {
                                 top.linkTo(parent.top, 16.dp)
                                 end.linkTo(parent.end, 16.dp)
-                            },
+                            }
+                            .testTag(getAccessibilityId()),
                         background = getConfig().getBackgroundColor(),
                         onClick = {
                             if (hyperlinkUrlText.isEmpty()) {
@@ -311,16 +317,16 @@ fun AmityDraftStoryPage(
                 }
             }
 
-            AmityBaseElement(
-                pageScope = getPageScope(),
-                elementId = "share_story_button"
+            Box(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .background(Color.Black)
+                    .padding(end = 16.dp, top = 16.dp)
             ) {
-                Box(
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .background(Color.Black)
-                        .padding(end = 16.dp, top = 16.dp)
+                AmityBaseElement(
+                    pageScope = getPageScope(),
+                    elementId = "share_story_button"
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -331,6 +337,7 @@ fun AmityDraftStoryPage(
                             .background(getConfig().getBackgroundColor())
                             .padding(start = 4.dp, end = 12.dp)
                             .align(Alignment.CenterEnd)
+                            .testTag(getAccessibilityId())
                             .clickable {
                                 if (isImage) {
                                     viewModel.createImageStory(
@@ -340,6 +347,8 @@ fun AmityDraftStoryPage(
                                         imageDisplayMode =
                                         if (isImageContentScaleFit) AmityStoryImageDisplayMode.FIT
                                         else AmityStoryImageDisplayMode.FILL,
+                                        hyperlinkUrlText = hyperlinkUrlText,
+                                        hyperlinkCustomText = hyperlinkCustomText,
                                         onSuccess = {
                                             context.showToast("Successfully shared story")
                                         },
@@ -353,6 +362,8 @@ fun AmityDraftStoryPage(
                                         targetId = targetId,
                                         targetType = targetType,
                                         fileUri = fileUri,
+                                        hyperlinkUrlText = hyperlinkUrlText,
+                                        hyperlinkCustomText = hyperlinkCustomText,
                                         onSuccess = {
                                             context.showToast("Successfully shared story")
                                         },
@@ -375,6 +386,7 @@ fun AmityDraftStoryPage(
                                     .size(32.dp)
                                     .clip(CircleShape)
                                     .background(Color.Black)
+                                    .testTag(getAccessibilityId("image_view"))
                             )
                         }
 
@@ -401,12 +413,13 @@ fun AmityDraftStoryPage(
                         showBottomSheet = false
                     },
                     sheetState = sheetState,
-                    containerColor = Color.White
+                    containerColor = Color.White,
+                    windowInsets = WindowInsets(top = 54.dp),
                 ) {
                     AmityStoryHyperlinkComponent(
                         defaultUrlText = hyperlinkUrlText,
                         defaultCustomText = hyperlinkCustomText,
-                        onClose = {
+                        onClose = { urlText, customText ->
                             scope.launch {
                                 sheetState.hide()
                             }.invokeOnCompletion {
@@ -414,6 +427,9 @@ fun AmityDraftStoryPage(
                                     showBottomSheet = false
                                 }
                             }
+
+                            hyperlinkUrlText = urlText
+                            hyperlinkCustomText = customText
                         }
                     )
                 }

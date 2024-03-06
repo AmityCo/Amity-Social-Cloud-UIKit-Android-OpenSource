@@ -21,6 +21,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -32,6 +33,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -72,7 +74,7 @@ fun AmityCreateStoryPage(
     var isBackCameraSelected by remember { mutableStateOf(true) }
     var isFlashLightOn by remember { mutableStateOf(false) }
     var isCurrentlyRecording by remember { mutableStateOf(false) }
-    var videoRecordDuration by remember { mutableStateOf(0) }
+    var videoRecordDuration by remember { mutableIntStateOf(0) }
 
 
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
@@ -175,6 +177,7 @@ fun AmityCreateStoryPage(
                         .fillMaxSize()
                         .clip(RoundedCornerShape(12.dp))
                         .background(Color.Black)
+                        .testTag("camera_view")
                         .constrainAs(cameraPreview) {
                             top.linkTo(parent.top)
                             bottom.linkTo(parent.bottom)
@@ -196,7 +199,8 @@ fun AmityCreateStoryPage(
                                 .constrainAs(closeBtn) {
                                     top.linkTo(parent.top, 16.dp)
                                     start.linkTo(parent.start, 16.dp)
-                                },
+                                }
+                                .testTag(getAccessibilityId()),
                             background = getConfig().getBackgroundColor(),
                             onClick = {
                                 haptics.performHapticFeedback(HapticFeedbackType.LongPress)
@@ -214,7 +218,8 @@ fun AmityCreateStoryPage(
                                 .constrainAs(flashBtn) {
                                     top.linkTo(parent.top, 16.dp)
                                     end.linkTo(parent.end, 16.dp)
-                                },
+                                }
+                                .testTag("flash_light_button"),
                             onClick = {
                                 haptics.performHapticFeedback(HapticFeedbackType.LongPress)
                                 isFlashLightOn = !isFlashLightOn
@@ -230,6 +235,7 @@ fun AmityCreateStoryPage(
                                 start.linkTo(parent.start, 16.dp)
                                 centerVerticallyTo(shutterBtn)
                             }
+                            .testTag("media_picker_button"),
                     ) {
                         haptics.performHapticFeedback(HapticFeedbackType.LongPress)
                         if (isMediaPermissionGranted) {
@@ -257,6 +263,7 @@ fun AmityCreateStoryPage(
                                 end.linkTo(parent.end, 16.dp)
                                 centerVerticallyTo(shutterBtn)
                             }
+                            .testTag("switch_camera_button"),
                     ) {
                         haptics.performHapticFeedback(HapticFeedbackType.LongPress)
                         isBackCameraSelected = !isBackCameraSelected
@@ -286,7 +293,8 @@ fun AmityCreateStoryPage(
                         .constrainAs(shutterBtn) {
                             bottom.linkTo(parent.bottom, 32.dp)
                             centerHorizontallyTo(parent)
-                        },
+                        }
+                        .testTag("camera_shutter_button"),
                     isImageCaptureMode = isPhotoSelected,
                     maxRecordDurationSeconds = maxRecordDurationSeconds,
                     onImageCaptureClicked = {
@@ -319,7 +327,8 @@ fun AmityCreateStoryPage(
                 AmityStoryPhotoVideoSelectionElement(
                     modifier = modifier
                         .width(260.dp)
-                        .align(Alignment.Center),
+                        .align(Alignment.Center)
+                        .testTag("switch_mode"),
                     onSelectionChange = {
                         isPhotoSelected = it
                     }
