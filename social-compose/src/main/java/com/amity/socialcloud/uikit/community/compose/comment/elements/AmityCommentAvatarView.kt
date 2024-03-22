@@ -3,6 +3,7 @@ package com.amity.socialcloud.uikit.community.compose.comment.elements
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
@@ -21,6 +22,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
 import kotlinx.coroutines.Dispatchers
 
 @Composable
@@ -52,11 +54,12 @@ fun AmityCommentAvatarView(
             Icon(
                 painter = painterResource(id = R.drawable.amity_ic_default_profile1),
                 contentDescription = null,
-                tint = Color.LightGray,
+                tint = Color.White,
                 modifier = Modifier
                     .size(size)
                     .clip(CircleShape)
-                    .background(Color.White)
+                    .background(AmityTheme.colors.primaryShade3)
+                    .padding(8.dp)
             )
         }
     }

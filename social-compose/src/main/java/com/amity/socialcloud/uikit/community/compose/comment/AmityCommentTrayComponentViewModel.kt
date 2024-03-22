@@ -10,6 +10,7 @@ import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadata
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataCreator
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import com.amity.socialcloud.uikit.common.utils.AmityConstants
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -18,6 +19,13 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.flow.Flow
 
 class AmityCommentTrayComponentViewModel : AmityBaseViewModel() {
+
+    var community: AmityCommunity? = null
+        private set
+
+    fun setCommunity(community: AmityCommunity?) {
+        this.community = community
+    }
 
     fun getCurrentUser(): Flowable<AmityUser> {
         return AmityCoreClient.getCurrentUser()
@@ -38,7 +46,7 @@ class AmityCommentTrayComponentViewModel : AmityBaseViewModel() {
         reference: AmityComment.Reference,
         replyCommentId: String?,
         commentText: String,
-        userMentions: List<AmityMentionMetadata.USER> = emptyList(),
+        mentionedUsers: List<AmityMentionMetadata.USER> = emptyList(),
         onSuccess: (AmityComment) -> Unit,
         onError: (Throwable) -> Unit
     ) {
@@ -58,10 +66,10 @@ class AmityCommentTrayComponentViewModel : AmityBaseViewModel() {
         }
 
         val textCommentCreator = commentCreator.with().text(commentText)
-        if (userMentions.isNotEmpty()) {
+        if (mentionedUsers.isNotEmpty()) {
             textCommentCreator
-                .metadata(AmityMentionMetadataCreator(userMentions).create())
-                .mentionUsers(userMentions.map { it.getUserId() })
+                .metadata(AmityMentionMetadataCreator(mentionedUsers).create())
+                .mentionUsers(mentionedUsers.map { it.getUserId() })
         }
 
         textCommentCreator.build().send()
@@ -102,18 +110,28 @@ class AmityCommentTrayComponentViewModel : AmityBaseViewModel() {
     fun editComment(
         commentId: String,
         commentText: String,
+        userMentions: List<AmityMentionMetadata.USER> = emptyList(),
         onSuccess: (AmityComment) -> Unit,
         onError: (Throwable) -> Unit
     ) {
-        AmitySocialClient.newCommentRepository()
+        val textCommentEditor = AmitySocialClient.newCommentRepository()
             .editComment(commentId)
             .text(commentText)
+
+        if (userMentions.isNotEmpty()) {
+            textCommentEditor
+                .metadata(AmityMentionMetadataCreator(userMentions).create())
+                .mentionUsers(userMentions.map { it.getUserId() })
+        }
+
+        textCommentEditor
             .build()
             .apply()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSuccess(onSuccess)
             .doOnError(onError)
+            .ignoreElement()
             .subscribe()
     }
 

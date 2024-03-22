@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 
 class FragmentStoreOwner: ViewModelStoreOwner {
     private val store = ViewModelStore()
-    override fun getViewModelStore(): ViewModelStore {
-        return store
-    }
+
+    override val viewModelStore: ViewModelStore
+        get() = store
 }

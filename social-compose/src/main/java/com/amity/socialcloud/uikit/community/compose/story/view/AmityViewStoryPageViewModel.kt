@@ -8,6 +8,7 @@ import com.amity.socialcloud.sdk.api.core.reaction.reference.AmityReactionRefere
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.sdk.model.social.story.AmityStoryImageDisplayMode
 import com.amity.socialcloud.sdk.model.social.story.AmityStoryItem
@@ -38,18 +39,11 @@ class AmityViewStoryPageViewModel : AmityBaseViewModel() {
     }
     val dialogUIState get() = _dialogUIState
 
-    fun getStories(
-        targetId: String,
-        targetType: AmityStory.TargetType
-    ): Flow<PagingData<AmityStory>> {
-        return AmitySocialClient.newStoryRepository()
-            .getStoriesByTargets(
-                listOf(targetType to targetId)
-            )
-            .map { PagingData.from(it) }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .asFlow()
+    var community: AmityCommunity? = null
+        private set
+
+    fun setCommunity(community: AmityCommunity?) {
+        this.community = community
     }
 
     fun getActiveStories(
@@ -207,6 +201,7 @@ sealed class AmityStoryModalSheetUIState {
 
     data class OpenCommentTraySheet(
         val storyId: String,
+        val community: AmityCommunity? = null,
         val shouldAllowInteraction: Boolean,
         val shouldAllowComment: Boolean,
     ) : AmityStoryModalSheetUIState()

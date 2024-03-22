@@ -186,6 +186,12 @@ fun AmityViewStoryPage(
         }
     }
 
+    LaunchedEffect(community?.getCommunityId(), isTargetVisible) {
+        if (isTargetVisible) {
+            viewModel.setCommunity(community)
+        }
+    }
+
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
@@ -316,6 +322,7 @@ fun AmityViewStoryPage(
                             viewModel.updateSheetUIState(
                                 AmityStoryModalSheetUIState.OpenCommentTraySheet(
                                     storyId = story.getStoryId(),
+                                    community = viewModel.community,
                                     shouldAllowInteraction = isCommunityJoined,
                                     shouldAllowComment = isCommentCreateAllowed,
                                 )

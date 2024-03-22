@@ -82,6 +82,7 @@ fun AmityStoryModalBottomSheet(
                     AmityCommentTrayComponent(
                         modifier = modifier,
                         reference = AmityComment.Reference.STORY(data.storyId),
+                        community = data.community,
                         shouldAllowInteraction = data.shouldAllowInteraction,
                         shouldAllowComment = data.shouldAllowComment,
                     )

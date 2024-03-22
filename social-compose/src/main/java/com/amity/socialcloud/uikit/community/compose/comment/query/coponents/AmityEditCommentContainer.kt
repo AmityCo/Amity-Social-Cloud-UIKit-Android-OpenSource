@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -31,17 +30,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadata
+import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
+import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionee
+import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
 import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentViewModel
-import com.amity.socialcloud.uikit.community.compose.comment.elements.AmityCommentComposerTextField
 import com.amity.socialcloud.uikit.community.compose.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.community.compose.ui.base.AmityBaseElement
+import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.AmityMentionSuggestionView
+import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.AmityMentionTextField
 import com.amity.socialcloud.uikit.community.compose.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.utils.getBackgroundColor
 import com.amity.socialcloud.uikit.community.compose.utils.getValue
 import com.amity.socialcloud.uikit.community.compose.utils.shade
+import com.google.gson.JsonObject
 
 @Composable
 fun AmityEditCommentContainer(
@@ -49,6 +54,8 @@ fun AmityEditCommentContainer(
     componentScope: AmityComposeComponentScope? = null,
     commentId: String,
     commentText: String,
+    mentionGetter: AmityMentionMetadataGetter,
+    mentionees: List<AmityMentionee>,
     onEditFinished: () -> Unit,
 ) {
     val focusRequester = remember { FocusRequester() }
@@ -63,6 +70,12 @@ fun AmityEditCommentContainer(
     val isAllowedToSave by remember {
         derivedStateOf { localCommentText != commentText && localCommentText.isNotEmpty() }
     }
+
+    var shouldShowSuggestion by remember { mutableStateOf(false) }
+    var queryToken by remember { mutableStateOf("") }
+
+    var selectedUserToMention by remember { mutableStateOf<AmityUser?>(null) }
+    var mentionedUsers by remember { mutableStateOf<List<AmityMentionMetadata.USER>>(emptyList()) }
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
@@ -89,15 +102,39 @@ fun AmityEditCommentContainer(
                         )
                     )
             ) {
-                AmityCommentComposerTextField(
+                AmityMentionTextField(
+                    modifier = Modifier
+                        .weight(1f)
+                        .focusRequester(focusRequester)
+                        .testTag(getAccessibilityId("text_field")),
                     value = localCommentText,
+                    mentionedUser = selectedUserToMention,
+                    mentionMetadata = mentionGetter.getMentionedUsers(),
+                    mentionees = mentionees,
                     onValueChange = {
                         localCommentText = it
                     },
-                    modifier = modifier
-                        .fillMaxSize()
-                        .focusRequester(focusRequester)
+                    onMentionAdded = {
+                        selectedUserToMention = null
+                    },
+                    onQueryToken = {
+                        queryToken = it ?: ""
+                        shouldShowSuggestion = !it.isNullOrEmpty()
+                    },
+                    onUserMentions = {
+                        mentionedUsers = it
+                    }
                 )
+            }
+            if (shouldShowSuggestion) {
+                AmityMentionSuggestionView(
+                    modifier = modifier,
+                    community = viewModel.community,
+                    keyword = queryToken,
+                ) {
+                    selectedUserToMention = it
+                    shouldShowSuggestion = false
+                }
             }
 
             Row(
@@ -150,6 +187,7 @@ fun AmityEditCommentContainer(
                             viewModel.editComment(
                                 commentId = commentId,
                                 commentText = localCommentText,
+                                userMentions = mentionedUsers,
                                 onSuccess = {
                                 },
                                 onError = {
@@ -182,5 +220,7 @@ fun AmityEditCommentContainerPreview() {
         commentId = "",
         commentText = "Hello World",
         onEditFinished = {},
+        mentionGetter = AmityMentionMetadataGetter(JsonObject()),
+        mentionees = emptyList(),
     )
 }
