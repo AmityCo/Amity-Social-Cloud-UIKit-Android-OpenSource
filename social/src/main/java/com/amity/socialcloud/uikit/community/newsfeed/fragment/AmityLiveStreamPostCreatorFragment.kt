@@ -237,7 +237,7 @@ class AmityLiveStreamPostCreatorFragment : RxFragment() {
     }
 
     private fun subscribeBroadcastStatus() {
-        streamBroadcaster?.stateFlowable
+        streamBroadcaster?.getStateFlowable()
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.doOnNext {
                 streamBroadcasterState = it
@@ -264,7 +264,11 @@ class AmityLiveStreamPostCreatorFragment : RxFragment() {
         startCounting()
         viewModel.createLiveStreamingPost(title = getVideoTitle(),
             description = getVideoDescription(),
-            onCreateCompleted = { streamBroadcaster?.startPublish(it) },
+            onCreateCompleted = { streamId ->
+                streamId?.let {
+                    streamBroadcaster?.startPublish(it)
+                }
+            },
             onCreateFailed = { showErrorDialog() },
             descriptionUserMentions = binding.descriptionEdittext.getUserMentions()
         )

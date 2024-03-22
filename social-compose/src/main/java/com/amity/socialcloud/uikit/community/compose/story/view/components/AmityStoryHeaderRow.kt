@@ -44,7 +44,6 @@ import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.story.AmityStory
-import com.amity.socialcloud.sdk.model.social.story.AmityStoryTarget
 import com.amity.socialcloud.uikit.common.common.readableTimeDiff
 import com.amity.socialcloud.uikit.common.common.views.AmityColorPaletteUtil
 import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
@@ -77,15 +76,6 @@ fun AmityStoryHeaderRow(
     navigateToCreatePage: () -> Unit,
     navigateToCommunityProfilePage: (AmityCommunity) -> Unit,
 ) {
-    val community = remember(story?.getTargetId()) {
-        val target = story?.getTarget()
-        if (target is AmityStoryTarget.COMMUNITY) {
-            target.getCommunity()
-        } else {
-            null
-        }
-    }
-
     var timerDuration by remember {
         mutableLongStateOf(AmityConstants.STORY_DURATION)
     }
@@ -97,19 +87,21 @@ fun AmityStoryHeaderRow(
     val viewModel =
         viewModel<AmityViewStoryPageViewModel>(viewModelStoreOwner = viewModelStoreOwner)
 
-    val hasManageStoryPermission by remember(community?.getCommunityId()) {
-        viewModel.checkMangeStoryPermission(communityId = community?.getCommunityId() ?: "")
+    val hasManageStoryPermission by remember(viewModel.community?.getCommunityId()) {
+        viewModel.checkMangeStoryPermission(
+            communityId = viewModel.community?.getCommunityId() ?: ""
+        )
     }.subscribeAsState(initial = false)
 
-    val communityDisplayName by remember(community?.getCommunityId()) {
+    val communityDisplayName by remember(viewModel.community?.getCommunityId()) {
         derivedStateOf {
-            community?.getDisplayName() ?: ""
+            viewModel.community?.getDisplayName() ?: ""
         }
     }
 
-    val communityAvatarUrl by remember(community?.getCommunityId()) {
+    val communityAvatarUrl by remember(viewModel.community?.getCommunityId()) {
         derivedStateOf {
-            community?.getAvatar()?.getUrl(AmityImage.Size.LARGE) ?: ""
+            viewModel.community?.getAvatar()?.getUrl(AmityImage.Size.LARGE) ?: ""
         }
     }
 
@@ -162,7 +154,7 @@ fun AmityStoryHeaderRow(
                                 if (isSingleTarget) {
                                     onCloseClicked()
                                 } else {
-                                    community?.let {
+                                    viewModel.community?.let {
                                         navigateToCommunityProfilePage(it)
                                     }
                                 }
@@ -233,8 +225,8 @@ fun AmityStoryHeaderRow(
                                 if (isSingleTarget) {
                                     onCloseClicked()
                                 } else {
-                                    if (community != null) {
-                                        navigateToCommunityProfilePage(community)
+                                    if (viewModel.community != null) {
+                                        navigateToCommunityProfilePage(viewModel.community!!)
                                     }
                                 }
                             }

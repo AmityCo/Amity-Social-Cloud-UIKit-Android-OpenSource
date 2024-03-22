@@ -53,8 +53,12 @@ class NoRippleInteractionSource : MutableInteractionSource {
     override fun tryEmit(interaction: Interaction) = true
 }
 
-fun Modifier.clickableWithoutRipple(onClick: () -> Unit): Modifier {
+fun Modifier.clickableWithoutRipple(
+    enabled: Boolean = true,
+    onClick: () -> Unit
+): Modifier {
     return this.clickable(
+        enabled = enabled,
         interactionSource = NoRippleInteractionSource(),
         indication = null
     ) {

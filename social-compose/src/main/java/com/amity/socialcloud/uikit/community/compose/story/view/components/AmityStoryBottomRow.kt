@@ -141,6 +141,7 @@ fun AmityStoryEngagementRow(
                 viewModel.updateSheetUIState(
                     AmityStoryModalSheetUIState.OpenCommentTraySheet(
                         storyId = storyId,
+                        community = viewModel.community,
                         shouldAllowInteraction = isCommunityJoined,
                         shouldAllowComment = isAllowedComment,
                     )

@@ -1,6 +1,5 @@
 package com.amity.socialcloud.uikit.community.compose.comment.create
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,14 +22,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadata
 import com.amity.socialcloud.sdk.model.core.error.AmityError
+import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentViewModel
 import com.amity.socialcloud.uikit.community.compose.comment.elements.AmityCommentAvatarView
-import com.amity.socialcloud.uikit.community.compose.comment.elements.AmityCommentComposerTextField
+import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.AmityMentionSuggestionView
+import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.AmityMentionTextField
 import com.amity.socialcloud.uikit.community.compose.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.community.compose.utils.clickableWithoutRipple
 
 @Composable
 fun AmityCommentComposerBar(
@@ -49,10 +52,14 @@ fun AmityCommentComposerBar(
     val viewModel =
         viewModel<AmityCommentTrayComponentViewModel>(viewModelStoreOwner = viewModelStoreOwner)
 
+    var shouldShowSuggestion by remember { mutableStateOf(false) }
+    var queryToken by remember { mutableStateOf("") }
+
+    var selectedUserToMention by remember { mutableStateOf<AmityUser?>(null) }
+    var mentionedUsers by remember { mutableStateOf<List<AmityMentionMetadata.USER>>(emptyList()) }
+
     var commentText by remember { mutableStateOf("") }
-    val shouldAllowToPost by remember {
-        derivedStateOf { commentText.isNotEmpty() }
-    }
+    val shouldAllowToPost by remember { derivedStateOf { commentText.isNotEmpty() } }
     var isCommentPosted by remember { mutableStateOf(false) }
     var isReplyingToComment by remember { mutableStateOf(false) }
 
@@ -63,10 +70,6 @@ fun AmityCommentComposerBar(
     Column(
         modifier = modifier.fillMaxWidth()
     ) {
-        HorizontalDivider(
-            color = AmityTheme.colors.divider
-        )
-
         if (replyComment != null && isReplyingToComment) {
             AmityCommentComposeReplyLabel(
                 displayName = replyComment.getCreator()?.getDisplayName() ?: "",
@@ -75,6 +78,21 @@ fun AmityCommentComposerBar(
                 onClose()
             }
         }
+
+        if (shouldShowSuggestion) {
+            AmityMentionSuggestionView(
+                modifier = modifier,
+                community = viewModel.community,
+                keyword = queryToken
+            ) {
+                selectedUserToMention = it
+                shouldShowSuggestion = false
+            }
+        }
+
+        HorizontalDivider(
+            color = AmityTheme.colors.divider
+        )
 
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -91,14 +109,24 @@ fun AmityCommentComposerBar(
                     .testTag("comment_tray_component/comment_composer_avatar")
             )
 
-            AmityCommentComposerTextField(
-                shouldClearText = isCommentPosted,
+            AmityMentionTextField(
                 modifier = Modifier
                     .weight(1f)
-                    .align(Alignment.CenterVertically)
                     .testTag("comment_tray_component/comment_composer_text_field"),
+                mentionedUser = selectedUserToMention,
+                shouldClearText = isCommentPosted,
                 onValueChange = {
                     commentText = it
+                },
+                onMentionAdded = {
+                    selectedUserToMention = null
+                },
+                onQueryToken = {
+                    queryToken = it ?: ""
+                    shouldShowSuggestion = !it.isNullOrEmpty()
+                },
+                onUserMentions = {
+                    mentionedUsers = it
                 }
             )
 
@@ -112,21 +140,26 @@ fun AmityCommentComposerBar(
                     .align(Alignment.Bottom)
                     .padding(start = 4.dp, bottom = 12.dp)
                     .testTag("comment_tray_component/comment_composer_post_button")
-                    .clickable(enabled = shouldAllowToPost) {
+                    .clickableWithoutRipple(enabled = shouldAllowToPost) {
                         isCommentPosted = true
 
                         viewModel.addComment(
                             reference = reference,
-                            commentText = commentText,
                             replyCommentId = if (isReplyingToComment) replyComment?.getCommentId() else null,
+                            commentText = commentText,
+                            mentionedUsers = mentionedUsers,
                             onSuccess = {
                                 commentText = ""
+                                selectedUserToMention = null
+
                                 isReplyingToComment = false
                                 isCommentPosted = false
                                 onClose()
                             },
                             onError = {
                                 commentText = ""
+                                selectedUserToMention = null
+
                                 isReplyingToComment = false
                                 isCommentPosted = false
                                 onClose()

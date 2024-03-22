@@ -1,7 +1,5 @@
-package com.amity.socialcloud.uikit.community.views.mention
+package com.amity.socialcloud.uikit.community.compose.ui.components.mentions
 
-import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.AmityWordTokenizer
-import com.amity.socialcloud.uikit.community.newsfeed.model.AmityUserMention
 import com.linkedin.android.spyglass.tokenization.impl.WordTokenizer
 import com.linkedin.android.spyglass.tokenization.impl.WordTokenizerConfig
 

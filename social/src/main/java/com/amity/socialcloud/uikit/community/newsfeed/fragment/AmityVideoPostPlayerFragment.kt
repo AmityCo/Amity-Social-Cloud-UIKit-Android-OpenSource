@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import com.amity.socialcloud.sdk.model.core.file.AmityVideo
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.base.AmityBaseFragment
@@ -40,6 +41,7 @@ internal class AmityVideoPostPlayerFragment : AmityBaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupListener()
         val videoData = arguments?.getParcelable<AmityPost.Data.VIDEO>(ARGS_VIDEO_DATA)
         safeLet(context, videoData) { nonNullContext, nonNullVideoData ->
             setupPlayer(nonNullContext)
@@ -70,6 +72,20 @@ internal class AmityVideoPostPlayerFragment : AmityBaseFragment() {
                     .createMediaSource(MediaItem.fromUri(Uri.parse(nonNullUrl)))
             exoplayer?.setMediaSource(videoSource)
             exoplayer?.prepare()
+        }
+    }
+
+    private fun setupListener() {
+        binding.btnAudioToggle.setOnClickListener {
+            val isMuted = exoplayer?.volume == 0f
+            exoplayer?.volume = if (isMuted) 1f else 0f
+
+            binding.btnAudioToggle.setImageDrawable(
+                ContextCompat.getDrawable(
+                    requireContext(),
+                    if (isMuted) R.drawable.amity_ic_story_audio_unmute else R.drawable.amity_ic_story_audio_mute
+                )
+            )
         }
     }
 

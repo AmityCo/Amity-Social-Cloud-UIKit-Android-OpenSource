@@ -29,6 +29,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.comment.create.AmityCommentComposerBar
 import com.amity.socialcloud.uikit.community.compose.comment.elements.AmityDisabledCommentView
@@ -44,6 +45,7 @@ import com.amity.socialcloud.uikit.community.compose.utils.pagingLoadStateItem
 fun AmityCommentTrayComponent(
     modifier: Modifier = Modifier,
     reference: AmityComment.Reference,
+    community: AmityCommunity? = null,
     shouldAllowInteraction: Boolean,
     shouldAllowComment: Boolean,
 ) {
@@ -71,6 +73,10 @@ fun AmityCommentTrayComponent(
         replyComment = comments.itemSnapshotList.firstOrNull {
             it?.getCommentId() == replyCommentId
         }
+    }
+
+    LaunchedEffect(community?.getCommunityId()) {
+        viewModel.setCommunity(community)
     }
 
     AmityBaseComponent(
