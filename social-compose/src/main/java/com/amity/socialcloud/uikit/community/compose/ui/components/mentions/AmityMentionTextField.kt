@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -29,10 +30,13 @@ fun AmityMentionTextField(
     onQueryToken: (String?) -> Unit = {},
     onUserMentions: (List<AmityMentionMetadata.USER>) -> Unit = {},
 ) {
+    val baseColor = AmityTheme.colors.base.toArgb()
+    val baseShade2Color = AmityTheme.colors.baseShade2.toArgb()
+
     AndroidView(
         modifier = modifier
             .background(
-                color = AmityTheme.colors.secondaryShade4,
+                color = AmityTheme.colors.baseShade4,
                 shape = RoundedCornerShape(20.dp)
             )
             .padding(horizontal = 12.dp),
@@ -40,6 +44,10 @@ fun AmityMentionTextField(
             AmityCommentComposeView(it).apply {
                 this.maxLines = maxLines
                 setTextCompose(value)
+                setStyle(
+                    textColor = baseColor,
+                    hintColor = baseShade2Color,
+                )
 
                 setMentionMetadata(mentionMetadata, mentionees)
 

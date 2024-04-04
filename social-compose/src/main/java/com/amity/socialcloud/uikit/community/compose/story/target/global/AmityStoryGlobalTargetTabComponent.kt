@@ -106,7 +106,7 @@ fun AmityStoryGlobalTargetTabComponent(
             }
 
             if (shouldShowDivider) {
-                AmityGlobalFeedDivider(modifier = modifier)
+                AmityGlobalFeedDivider(modifier)
             }
         }
     }

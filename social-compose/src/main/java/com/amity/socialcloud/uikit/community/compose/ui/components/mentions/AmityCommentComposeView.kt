@@ -3,13 +3,12 @@ package com.amity.socialcloud.uikit.community.compose.ui.components.mentions
 import android.content.Context
 import android.graphics.Rect
 import android.util.TypedValue
+import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadata
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionee
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
-import com.amity.socialcloud.uikit.common.common.views.AmityColorPaletteUtil
-import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
 import com.amity.socialcloud.uikit.common.utils.AmityAlertDialogUtil
 import com.amity.socialcloud.uikit.community.compose.R
 import com.linkedin.android.spyglass.mentions.MentionSpan
@@ -132,16 +131,13 @@ class AmityCommentComposeView(context: Context) : MentionsEditText(context) {
 
     private fun applyStyle() {
         setBackgroundColor(ContextCompat.getColor(context, android.R.color.transparent))
-        setTextColor(ContextCompat.getColor(context, R.color.amityColorBase))
         setHint("Say something nice...")
-        setHintTextColor(
-            AmityColorPaletteUtil.getColor(
-                ContextCompat.getColor(context, R.color.amityColorBase),
-                AmityColorShade.SHADE3
-            )
-        )
-
         setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
+    }
+
+    fun setStyle(@ColorInt textColor: Int, @ColorInt hintColor: Int) {
+        setTextColor(textColor)
+        setHintTextColor(hintColor)
     }
 }
 

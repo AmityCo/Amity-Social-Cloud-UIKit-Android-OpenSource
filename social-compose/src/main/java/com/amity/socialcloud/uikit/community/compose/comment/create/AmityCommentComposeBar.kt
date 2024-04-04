@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.comment.create
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -68,7 +69,9 @@ fun AmityCommentComposerBar(
     }
 
     Column(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
+            .background(AmityTheme.colors.background)
     ) {
         if (replyComment != null && isReplyingToComment) {
             AmityCommentComposeReplyLabel(
@@ -98,6 +101,7 @@ fun AmityCommentComposerBar(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = modifier
                 .fillMaxWidth()
+                .background(AmityTheme.colors.background)
                 .padding(12.dp)
         ) {
             AmityCommentAvatarView(

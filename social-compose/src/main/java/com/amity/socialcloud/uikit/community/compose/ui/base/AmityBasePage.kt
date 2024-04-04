@@ -10,7 +10,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
@@ -19,6 +18,7 @@ import com.amity.socialcloud.uikit.community.compose.ui.elements.AmitySnackbarVi
 import com.amity.socialcloud.uikit.community.compose.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.community.compose.ui.scope.rememberAmityComposeScopeProvider
 import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityComposeTheme
+import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
 
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -39,7 +39,7 @@ fun AmityBasePage(
 
     AmityComposeTheme(pageScope = comp) {
         Scaffold(
-            containerColor = Color.White,
+            containerColor = AmityTheme.colors.background,
             snackbarHost = {
                 SnackbarHost(
                     hostState = snackbarHostState,

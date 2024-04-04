@@ -16,7 +16,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
@@ -30,6 +29,7 @@ import com.amity.socialcloud.uikit.community.compose.story.view.AmityStoryModalD
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityStoryModalSheetUIState
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageViewModel
 import com.amity.socialcloud.uikit.community.compose.ui.elements.AmityBottomSheetActionItem
+import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -70,11 +70,12 @@ fun AmityStoryModalBottomSheet(
                 viewModel.updateSheetUIState(AmityStoryModalSheetUIState.CloseSheet)
             },
             sheetState = sheetState,
-            containerColor = Color.White,
+            containerColor = AmityTheme.colors.background,
             windowInsets = WindowInsets(top = 54.dp),
-            modifier = modifier.semantics {
-                testTagsAsResourceId = true
-            },
+            modifier = modifier
+                .semantics {
+                    testTagsAsResourceId = true
+                },
         ) {
             when (sheetUIState) {
                 is AmityStoryModalSheetUIState.OpenCommentTraySheet -> {

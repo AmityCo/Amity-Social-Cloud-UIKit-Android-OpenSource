@@ -1,4 +1,4 @@
-package com.amity.socialcloud.uikit.community.compose.comment.query.coponents
+package com.amity.socialcloud.uikit.community.compose.comment.query.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -12,7 +12,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.semantics
@@ -26,6 +25,7 @@ import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayCom
 import com.amity.socialcloud.uikit.community.compose.ui.elements.AmityAlertDialog
 import com.amity.socialcloud.uikit.community.compose.ui.elements.AmityBottomSheetActionItem
 import com.amity.socialcloud.uikit.community.compose.ui.scope.AmityComposeComponentScope
+import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
@@ -51,7 +51,7 @@ fun AmityCommentActionsBottomSheet(
                 onClose()
             },
             sheetState = sheetState,
-            containerColor = Color.White,
+            containerColor = AmityTheme.colors.background,
             modifier = modifier.semantics {
                 testTagsAsResourceId = true
             }
@@ -141,7 +141,7 @@ fun AmityCommentActionsContainer(
 
     Column(
         modifier = modifier
-            .background(Color.White)
+            .background(AmityTheme.colors.background)
             .padding(start = 16.dp, end = 16.dp, bottom = 50.dp)
     ) {
         if (isCommentCreatedByMe) {

@@ -1,33 +1,40 @@
 {
-  "global_theme": {
-    "light_theme": {
+  "preferred_theme": "default",
+  "theme": {
+    "light": {
       "primary_color": "#1054DE",
-      "secondary_color": "#292B32"
+      "secondary_color": "#292B32",
+      "base_color": "#292b32",
+      "base_shade1_color": "#636878",
+      "base_shade2_color": "#898e9e",
+      "base_shade3_color": "#a5a9b5",
+      "base_shade4_color": "#ebecef",
+      "alert_color": "#FA4D30",
+      "background_color": "#FFFFFF"
+    },
+    "dark": {
+      "primary_color": "#1054DE",
+      "secondary_color": "#292B32",
+      "base_color": "#ebecef",
+      "base_shade1_color": "#a5a9b5",
+      "base_shade2_color": "#6e7487",
+      "base_shade3_color": "#40434e",
+      "base_shade4_color": "#292b32",
+      "alert_color": "#FA4D30",
+      "background_color": "#191919"
     }
   },
   "excludes": [
   ],
   "customizations": {
     "select_target_page/*/*": {
-      "page_theme": {
-        "light_theme": {
-          "primary_color": "#1054DE",
-          "secondary_color": "#292B32"
-        }
-      },
       "title": "Share to"
     },
     "select_target_page/*/back_button": {
       "back_icon": "back.png"
     },
     "camera_page/*/*": {
-      "resolution": "720p",
-      "page_theme": {
-        "light_theme": {
-          "primary_color": "#1054DE",
-          "secondary_color": "#292B32"
-        }
-      }
+      "resolution": "720p"
     },
     "camera_page/*/close_button": {
       "close_icon": "close.png",
@@ -87,12 +94,6 @@
       "background_color": "#1243EE"
     },
     "*/edit_comment_component/*": {
-      "component_theme": {
-        "light_theme": {
-          "primary_color": "#1054DE",
-          "secondary_color": "#292B32"
-        }
-      }
     },
     "*/edit_comment_component/cancel_button": {
       "cancel_icon": "",
@@ -105,12 +106,6 @@
       "background_color": "#1054DE"
     },
     "*/hyper_link_config_component/*": {
-      "component_theme": {
-        "light_theme": {
-          "primary_color": "#1054DE",
-          "secondary_color": "#292B32"
-        }
-      }
     },
     "*/hyper_link_config_component/done_button": {
       "done_icon": "",
@@ -122,12 +117,6 @@
       "cancel_button_text": "Cancel"
     },
     "*/comment_tray_component/*": {
-      "component_theme": {
-        "light_theme": {
-          "primary_color": "#1054DE",
-          "secondary_color": "#292B32"
-        }
-      }
     },
     "*/story_tab_component/*": {
     },
@@ -135,9 +124,6 @@
       "progress_color": [
         "#339AF9",
         "#78FA58"
-      ],
-      "fail_color": [
-        "#FA4D30"
       ],
       "background_color": [
         "#EBECEF"

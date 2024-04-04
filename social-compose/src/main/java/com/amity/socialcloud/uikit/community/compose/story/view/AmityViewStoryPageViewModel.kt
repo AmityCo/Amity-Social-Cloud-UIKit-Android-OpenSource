@@ -9,6 +9,7 @@ import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.member.AmityCommunityMember
 import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.sdk.model.social.story.AmityStoryImageDisplayMode
 import com.amity.socialcloud.sdk.model.social.story.AmityStoryItem
@@ -172,6 +173,18 @@ class AmityViewStoryPageViewModel : AmityBaseViewModel() {
             .check()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
+    }
+
+    fun searchModerators(communityId: String): Flow<PagingData<AmityCommunityMember>> {
+        return AmitySocialClient.newCommunityRepository()
+            .membership(communityId)
+            .getMembers()
+            .roles(listOf(AmityConstants.MODERATOR_ROLE, AmityConstants.COMMUNITY_MODERATOR_ROLE))
+            .build()
+            .query()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .asFlow()
     }
 
     fun handleSegmentTimer(shouldPause: Boolean) {

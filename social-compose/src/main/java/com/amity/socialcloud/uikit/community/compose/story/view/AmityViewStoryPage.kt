@@ -26,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,6 +37,7 @@ import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.sdk.model.social.story.AmityStoryTarget
@@ -49,6 +51,7 @@ import com.amity.socialcloud.uikit.community.compose.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.community.compose.ui.elements.AmityAlertDialog
 import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.utils.AmityStoryVideoPlayerHelper
+import com.amity.socialcloud.uikit.community.compose.utils.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -70,6 +73,7 @@ fun AmityViewStoryPage(
 ) {
     if (exoPlayer == null) return
 
+    val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
@@ -119,6 +123,16 @@ fun AmityViewStoryPage(
     val isShowingVideoStory by remember(currentStory) {
         derivedStateOf {
             currentStory?.getDataType() == AmityStory.DataType.VIDEO
+        }
+    }
+
+    val moderators = remember(community?.getCommunityId()) {
+        viewModel.searchModerators(community?.getCommunityId() ?: "")
+    }.collectAsLazyPagingItems()
+
+    val hasModeratorRole by remember(community?.getCommunityId(), moderators.itemCount) {
+        derivedStateOf {
+            moderators.itemSnapshotList.any { it?.getUserId() == AmityCoreClient.getUserId() }
         }
     }
 
@@ -239,6 +253,7 @@ fun AmityViewStoryPage(
                         storyId = data.storyId,
                         onSuccess = {
                             shouldShowLoading = false
+                            context.showToast("Story deleted")
                             viewModel.updateDialogUIState(AmityStoryModalDialogUIState.CloseDialog)
                             viewModel.handleSegmentTimer(false)
 
@@ -258,6 +273,7 @@ fun AmityViewStoryPage(
                         },
                         onError = {
                             shouldShowLoading = false
+                            context.showToast("Failed to delete story")
                             viewModel.updateDialogUIState(AmityStoryModalDialogUIState.CloseDialog)
                             viewModel.handleSegmentTimer(false)
                         }
@@ -349,6 +365,8 @@ fun AmityViewStoryPage(
                         commentCount = story.getCommentCount(),
                         reactionCount = story.getReactionCount(),
                         isReactedByMe = story.getMyReactions().isNotEmpty(),
+                        isCreatedByMe = story.getCreatorId() == AmityCoreClient.getUserId(),
+                        hasModeratorRole = hasModeratorRole,
                     )
                 }
             }

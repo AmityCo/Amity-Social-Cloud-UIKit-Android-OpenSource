@@ -32,7 +32,7 @@ fun AmityHyperlinkTextField(
         placeholder = {
             Text(
                 text = hint,
-                color = AmityTheme.colors.secondaryShade3
+                color = AmityTheme.colors.baseShade3
             )
         },
         colors = TextFieldDefaults.colors(
@@ -42,7 +42,7 @@ fun AmityHyperlinkTextField(
             unfocusedIndicatorColor = Color.Transparent,
         ),
         textStyle = AmityTheme.typography.body.copy(
-            color = AmityTheme.colors.secondary,
+            color = AmityTheme.colors.base,
         ),
         modifier = modifier
             .fillMaxWidth()

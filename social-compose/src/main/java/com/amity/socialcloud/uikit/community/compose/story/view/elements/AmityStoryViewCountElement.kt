@@ -23,7 +23,7 @@ import com.amity.socialcloud.uikit.community.compose.utils.clickableWithoutRippl
 fun AmityStoryViewCountElement(
     modifier: Modifier = Modifier,
     count: String = "0",
-    onClick: () -> Unit
+    onClick: () -> Unit = {}
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
