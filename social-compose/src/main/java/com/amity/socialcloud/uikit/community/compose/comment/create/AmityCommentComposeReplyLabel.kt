@@ -33,7 +33,7 @@ fun AmityCommentComposeReplyLabel(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxWidth()
-            .background(color = AmityTheme.colors.secondaryShade4)
+            .background(color = AmityTheme.colors.baseShade4)
             .padding(start = 16.dp, top = 10.dp, end = 12.dp, bottom = 10.dp)
     ) {
         val text = buildAnnotatedString {
@@ -53,7 +53,7 @@ fun AmityCommentComposeReplyLabel(
         Icon(
             painter = painterResource(id = R.drawable.amity_ic_close),
             contentDescription = null,
-            tint = AmityTheme.colors.secondaryShade2,
+            tint = AmityTheme.colors.baseShade2,
             modifier = modifier
                 .size(20.dp)
                 .clickable { onClose() }

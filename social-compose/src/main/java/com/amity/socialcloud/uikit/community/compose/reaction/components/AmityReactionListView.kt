@@ -22,9 +22,9 @@ fun AmityReactionTab(
 ) {
     TabRow(
         selectedTabIndex = 0,
-        containerColor = Color.White,
+        containerColor = Color.Transparent,
         indicator = { tabPositions ->
-            TabRowDefaults.Indicator(
+            TabRowDefaults.SecondaryIndicator(
                 modifier = modifier.tabIndicatorOffset(tabPositions[0]),
                 color = AmityTheme.colors.primary
             )

@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -31,6 +32,7 @@ fun AmityDeletedCommentView(
     Box(
         modifier = modifier
             .fillMaxWidth()
+            .background(Color.Transparent)
             .padding(start = 52.dp)
             .padding(vertical = 8.dp)
             .testTag("comment_list/comment_bubble_deleted_view")
@@ -40,7 +42,7 @@ fun AmityDeletedCommentView(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             modifier = modifier
                 .background(
-                    color = AmityTheme.colors.secondaryShade4,
+                    color = AmityTheme.colors.baseShade4,
                     shape = RoundedCornerShape(size = 4.dp)
                 )
                 .padding(start = 8.dp, end = 12.dp)
@@ -49,7 +51,7 @@ fun AmityDeletedCommentView(
             Icon(
                 painter = painterResource(id = R.drawable.amity_ic_remove),
                 contentDescription = null,
-                tint = AmityTheme.colors.secondaryShade2,
+                tint = AmityTheme.colors.baseShade2,
                 modifier = modifier.size(16.dp)
             )
             Text(

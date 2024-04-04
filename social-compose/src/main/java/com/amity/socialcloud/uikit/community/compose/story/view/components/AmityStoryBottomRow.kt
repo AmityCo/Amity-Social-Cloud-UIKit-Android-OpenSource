@@ -49,6 +49,8 @@ fun AmityStoryBottomRow(
     commentCount: Int,
     reactionCount: Int,
     isReactedByMe: Boolean,
+    isCreatedByMe: Boolean,
+    hasModeratorRole: Boolean,
 ) {
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
@@ -64,11 +66,11 @@ fun AmityStoryBottomRow(
         }
     }
 
-    val isCommunityJoined = remember(viewModel, community) {
+    val isCommunityJoined = remember(viewModel, community?.getCommunityId()) {
         community?.isJoined() == true
     }
 
-    val isAllowedComment = remember(viewModel, community) {
+    val isAllowedComment = remember(viewModel, community?.getCommunityId()) {
         community?.getStorySettings()?.allowComment == true
     }
 
@@ -85,7 +87,9 @@ fun AmityStoryBottomRow(
                 reachCount = reachCount,
                 commentCount = commentCount,
                 reactionCount = reactionCount,
-                isReactedByMe = isReactedByMe
+                isReactedByMe = isReactedByMe,
+                isCreatedByMe = isCreatedByMe,
+                hasModeratorRole = hasModeratorRole,
             )
 
             AmityStory.State.SYNCING -> AmityStoryUploadProgressRow(modifier)
@@ -110,6 +114,8 @@ fun AmityStoryEngagementRow(
     commentCount: Int = 0,
     reactionCount: Int = 0,
     isReactedByMe: Boolean = false,
+    isCreatedByMe: Boolean,
+    hasModeratorRole: Boolean,
 ) {
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
@@ -123,11 +129,12 @@ fun AmityStoryEngagementRow(
             .background(Color.Black)
             .padding(horizontal = 12.dp, vertical = 8.dp)
     ) {
-        AmityStoryViewCountElement(
-            count = reachCount.readableNumber(),
-            modifier = Modifier.align(Alignment.CenterStart)
-        ) {
 
+        if (hasModeratorRole || isCreatedByMe) {
+            AmityStoryViewCountElement(
+                count = reachCount.readableNumber(),
+                modifier = Modifier.align(Alignment.CenterStart)
+            )
         }
 
         Row(
@@ -295,5 +302,7 @@ fun AmityStoryBottomRowPreview() {
         reachCount = 1000,
         commentCount = 10000000,
         reactionCount = 1000000000,
+        isCreatedByMe = true,
+        hasModeratorRole = false,
     )
 }

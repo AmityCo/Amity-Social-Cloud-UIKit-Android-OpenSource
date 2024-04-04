@@ -1,4 +1,4 @@
-package com.amity.socialcloud.uikit.community.compose.comment.query.coponents
+package com.amity.socialcloud.uikit.community.compose.comment.query.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
@@ -87,14 +88,16 @@ fun AmityEditCommentContainer(
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = modifier.padding(top = 4.dp),
+            modifier = modifier
+                .background(AmityTheme.colors.background)
+                .padding(top = 4.dp),
         ) {
             Row(
                 modifier = modifier
                     .fillMaxWidth()
                     .height(120.dp)
                     .background(
-                        color = AmityTheme.colors.secondaryShade4,
+                        color = AmityTheme.colors.baseShade4,
                         shape = RoundedCornerShape(
                             topEnd = 12.dp,
                             bottomStart = 12.dp,
@@ -147,7 +150,7 @@ fun AmityEditCommentContainer(
                 ) {
                     OutlinedButton(
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = getElementScope().getConfig().getBackgroundColor(),
+                            containerColor = Color.Transparent,
                             disabledContainerColor = AmityTheme.colors.primaryShade2,
                         ),
                         shape = RoundedCornerShape(4.dp),

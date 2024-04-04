@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.comment.elements
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,7 +25,7 @@ fun AmityDisabledCommentView(
 ) {
     val context = LocalContext.current
     Column(
-        modifier = modifier
+        modifier = modifier.background(AmityTheme.colors.background)
     ) {
         HorizontalDivider(
             color = AmityTheme.colors.divider

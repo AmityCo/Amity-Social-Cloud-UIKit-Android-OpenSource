@@ -1,4 +1,4 @@
-package com.amity.socialcloud.uikit.community.compose.comment.query.coponents
+package com.amity.socialcloud.uikit.community.compose.comment.query.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable

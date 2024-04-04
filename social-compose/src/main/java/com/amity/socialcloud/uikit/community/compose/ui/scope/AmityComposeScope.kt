@@ -26,7 +26,7 @@ interface AmityComposePageScope : AmityComposeScope {
         return this
     }
 
-    fun getPageTheme(): AmityUIKitConfig.GlobalTheme?
+    fun getPageTheme(): AmityUIKitConfig.UIKitTheme?
 
     fun showSnackbar(message: String, @DrawableRes drawableRes: Int? = null)
 }
@@ -37,7 +37,7 @@ interface AmityComposeComponentScope : AmityComposeScope {
         return this
     }
 
-    fun getComponentTheme(): AmityUIKitConfig.GlobalTheme?
+    fun getComponentTheme(): AmityUIKitConfig.UIKitTheme?
 
     fun showSnackbar(message: String, @DrawableRes drawableRes: Int? = null)
 

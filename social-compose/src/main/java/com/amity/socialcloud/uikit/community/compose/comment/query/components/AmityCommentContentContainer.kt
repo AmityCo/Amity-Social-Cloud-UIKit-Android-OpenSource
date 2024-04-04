@@ -1,4 +1,4 @@
-package com.amity.socialcloud.uikit.community.compose.comment.query.coponents
+package com.amity.socialcloud.uikit.community.compose.comment.query.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -31,7 +31,7 @@ fun AmityCommentContentContainer(
         verticalArrangement = Arrangement.spacedBy(4.dp),
         modifier = modifier
             .background(
-                color = AmityTheme.colors.secondaryShade4,
+                color = AmityTheme.colors.baseShade4,
                 shape = RoundedCornerShape(
                     topEnd = 12.dp,
                     bottomStart = 12.dp,

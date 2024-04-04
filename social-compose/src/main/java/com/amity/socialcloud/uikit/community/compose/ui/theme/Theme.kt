@@ -1,7 +1,9 @@
 package com.amity.socialcloud.uikit.community.compose.ui.theme
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.staticCompositionLocalOf
 import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import com.amity.socialcloud.uikit.community.compose.ui.scope.AmityComposeComponentScope
@@ -24,17 +26,23 @@ val LocalAmityShapes = staticCompositionLocalOf {
 fun AmityComposeTheme(
     pageScope: AmityComposePageScope? = null,
     componentScope: AmityComposeComponentScope? = null,
+    isSystemInDarkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    val lightTheme = componentScope?.getComponentTheme()?.lightTheme
-        ?: (pageScope?.getPageTheme()?.lightTheme
-            ?: AmityUIKitConfigController.getGlobalTheme().lightTheme)
+    LaunchedEffect(isSystemInDarkTheme) {
+        AmityUIKitConfigController.setSystemInDarkTheme(isSystemInDarkTheme)
+    }
 
-    val amityColors = AmityUIKitColors.applyConfiguration(lightTheme)
+    val theme = componentScope?.getComponentTheme()
+        ?: (pageScope?.getPageTheme()
+            ?: AmityUIKitConfigController.getGlobalTheme())
+
+    val amityColors = AmityUIKitColors.applyConfiguration(theme)
+    val amityTypography = AmityUIKitTypography.applyConfiguration(theme)
 
     CompositionLocalProvider(
         LocalAmityColors provides amityColors,
-        LocalAmityTypography provides AmityUIKitTypography,
+        LocalAmityTypography provides amityTypography,
         LocalAmityShapes provides AmityUIKitShapes,
     ) {
         content()

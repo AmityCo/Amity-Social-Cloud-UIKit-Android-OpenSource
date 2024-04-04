@@ -26,7 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -140,7 +139,7 @@ fun AmityStoryHyperlinkComponent(
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .background(Color.White)
+                .background(AmityTheme.colors.background)
                 .testTag("hyper_link_config_component/*")
         ) {
             Row(
@@ -157,9 +156,7 @@ fun AmityStoryHyperlinkComponent(
                 ) {
                     Text(
                         text = "Cancel",
-                        style = AmityTheme.typography.body.copy(
-                            color = AmityTheme.colors.secondary
-                        ),
+                        style = AmityTheme.typography.body,
                         modifier = modifier
                             .clickableWithoutRipple {
                                 openUnsavedAlertDialog.value = true
@@ -170,9 +167,7 @@ fun AmityStoryHyperlinkComponent(
 
                 Text(
                     text = "Add Link",
-                    style = AmityTheme.typography.title.copy(
-                        color = AmityTheme.colors.secondary
-                    ),
+                    style = AmityTheme.typography.title,
                     modifier = modifier.testTag(getAccessibilityId("title_text_view"))
                 )
                 AmityBaseElement(
@@ -202,7 +197,7 @@ fun AmityStoryHyperlinkComponent(
 
             Text(
                 buildAnnotatedString {
-                    withStyle(style = SpanStyle(AmityTheme.colors.secondary)) {
+                    withStyle(style = SpanStyle(AmityTheme.colors.base)) {
                         append("URL")
                     }
                     withStyle(style = SpanStyle(AmityTheme.colors.alert)) {
@@ -268,7 +263,7 @@ fun AmityStoryHyperlinkComponent(
                     text = "${customText.length}/$CustomTextLimit",
                     style = AmityTheme.typography.caption.copy(
                         fontWeight = FontWeight.Normal,
-                        color = AmityTheme.colors.secondaryShade1
+                        color = AmityTheme.colors.baseShade1
                     ),
                     modifier = Modifier
                         .align(Alignment.CenterEnd)
@@ -296,7 +291,7 @@ fun AmityStoryHyperlinkComponent(
                 text = textValidationError.ifEmpty { "This text will show on the link instead of URL." },
                 style = AmityTheme.typography.caption.copy(
                     fontWeight = FontWeight.Normal,
-                    color = if (textValidationError.isEmpty()) AmityTheme.colors.secondaryShade2
+                    color = if (textValidationError.isEmpty()) AmityTheme.colors.baseShade2
                     else AmityTheme.colors.alert
                 ),
                 modifier = modifier

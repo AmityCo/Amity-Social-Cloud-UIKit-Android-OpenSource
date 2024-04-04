@@ -22,9 +22,9 @@ internal class AmityComposePageScopeImpl(
         return "$pageId/*/*"
     }
 
-    override fun getPageTheme(): AmityUIKitConfig.GlobalTheme? {
+    override fun getPageTheme(): AmityUIKitConfig.UIKitTheme? {
         return try {
-            AmityUIKitConfigController.getPageTheme(getConfigId())
+            AmityUIKitConfigController.getTheme(getConfigId())
         } catch (e: Exception) {
             null
         }
@@ -62,9 +62,9 @@ internal class AmityComposeComponentScopeImpl(
         return "$pageId/$componentId/*"
     }
 
-    override fun getComponentTheme(): AmityUIKitConfig.GlobalTheme? {
+    override fun getComponentTheme(): AmityUIKitConfig.UIKitTheme? {
         return try {
-            AmityUIKitConfigController.getComponentTheme(getConfigId())
+            AmityUIKitConfigController.getTheme(getConfigId())
         } catch (e: Exception) {
             null
         }

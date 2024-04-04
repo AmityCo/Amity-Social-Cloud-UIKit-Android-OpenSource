@@ -68,6 +68,8 @@ import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmitySt
 import com.amity.socialcloud.uikit.community.compose.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.community.compose.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.community.compose.ui.elements.AmityAlertDialog
+import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityComposeTheme
+import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.utils.asBoolean
 import com.amity.socialcloud.uikit.community.compose.utils.asDrawableRes
 import com.amity.socialcloud.uikit.community.compose.utils.getBackgroundColor
@@ -408,30 +410,32 @@ fun AmityDraftStoryPage(
             }
 
             if (showBottomSheet) {
-                ModalBottomSheet(
-                    onDismissRequest = {
-                        showBottomSheet = false
-                    },
-                    sheetState = sheetState,
-                    containerColor = Color.White,
-                    windowInsets = WindowInsets(top = 54.dp),
-                ) {
-                    AmityStoryHyperlinkComponent(
-                        defaultUrlText = hyperlinkUrlText,
-                        defaultCustomText = hyperlinkCustomText,
-                        onClose = { urlText, customText ->
-                            scope.launch {
-                                sheetState.hide()
-                            }.invokeOnCompletion {
-                                if (!sheetState.isVisible) {
-                                    showBottomSheet = false
+                AmityComposeTheme {
+                    ModalBottomSheet(
+                        onDismissRequest = {
+                            showBottomSheet = false
+                        },
+                        sheetState = sheetState,
+                        containerColor = AmityTheme.colors.background,
+                        windowInsets = WindowInsets(top = 54.dp),
+                    ) {
+                        AmityStoryHyperlinkComponent(
+                            defaultUrlText = hyperlinkUrlText,
+                            defaultCustomText = hyperlinkCustomText,
+                            onClose = { urlText, customText ->
+                                scope.launch {
+                                    sheetState.hide()
+                                }.invokeOnCompletion {
+                                    if (!sheetState.isVisible) {
+                                        showBottomSheet = false
+                                    }
                                 }
-                            }
 
-                            hyperlinkUrlText = urlText
-                            hyperlinkCustomText = customText
-                        }
-                    )
+                                hyperlinkUrlText = urlText
+                                hyperlinkCustomText = customText
+                            }
+                        )
+                    }
                 }
             }
         }

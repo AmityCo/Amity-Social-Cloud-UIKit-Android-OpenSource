@@ -25,11 +25,11 @@ import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionee
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.comment.elements.AmityCommentAvatarView
-import com.amity.socialcloud.uikit.community.compose.comment.query.coponents.AmityCommentActionsBottomSheet
-import com.amity.socialcloud.uikit.community.compose.comment.query.coponents.AmityCommentContentContainer
-import com.amity.socialcloud.uikit.community.compose.comment.query.coponents.AmityCommentEngagementBar
-import com.amity.socialcloud.uikit.community.compose.comment.query.coponents.AmityEditCommentContainer
-import com.amity.socialcloud.uikit.community.compose.comment.query.coponents.AmityReplyCommentContainer
+import com.amity.socialcloud.uikit.community.compose.comment.query.components.AmityCommentActionsBottomSheet
+import com.amity.socialcloud.uikit.community.compose.comment.query.components.AmityCommentContentContainer
+import com.amity.socialcloud.uikit.community.compose.comment.query.components.AmityCommentEngagementBar
+import com.amity.socialcloud.uikit.community.compose.comment.query.components.AmityEditCommentContainer
+import com.amity.socialcloud.uikit.community.compose.comment.query.components.AmityReplyCommentContainer
 import com.amity.socialcloud.uikit.community.compose.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.utils.clickableWithoutRipple

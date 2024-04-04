@@ -10,30 +10,43 @@ object AmityUIKitConfigController {
     private val GSON = GsonBuilder().create()
     private lateinit var config: AmityUIKitConfig
 
+    private val uiKitTheme: AmityUIKitTheme by lazy {
+        AmityUIKitTheme.enumOf(config.preferredTheme)
+    }
+
+    private var isSystemInDarkTheme = false
+
     fun setup(context: Context) {
         parseConfig(context)
     }
 
-    fun getGlobalTheme(): AmityUIKitConfig.GlobalTheme {
-        return config.globalTheme
+    fun setSystemInDarkTheme(isDarkTheme: Boolean) {
+        isSystemInDarkTheme = isDarkTheme
+    }
+
+    fun getGlobalTheme(): AmityUIKitConfig.UIKitTheme {
+        val global = config.globalTheme
+        return when (uiKitTheme) {
+            AmityUIKitTheme.DARK -> global.darkTheme
+            AmityUIKitTheme.LIGHT -> global.lightTheme
+            AmityUIKitTheme.DEFAULT -> if (isSystemInDarkTheme) global.darkTheme else global.lightTheme
+        }
     }
 
     fun getCustomizationConfig(configId: String): JsonObject {
         return config.customizations.getAsJsonObject(configId)
     }
 
-    fun getPageTheme(configId: String): AmityUIKitConfig.GlobalTheme? {
-        val jsonObject = getCustomizationConfig(configId).get("page_theme")
+    fun getTheme(configId: String): AmityUIKitConfig.UIKitTheme? {
+        val jsonObject = getCustomizationConfig(configId).get("theme")
         val type = object : TypeToken<AmityUIKitConfig.GlobalTheme?>() {}.type
 
-        return GSON.fromJson(jsonObject, type)
-    }
-
-    fun getComponentTheme(configId: String): AmityUIKitConfig.GlobalTheme? {
-        val jsonObject = getCustomizationConfig(configId).get("component_theme")
-        val type = object : TypeToken<AmityUIKitConfig.GlobalTheme?>() {}.type
-
-        return GSON.fromJson(jsonObject, type)
+        val theme = GSON.fromJson<AmityUIKitConfig.GlobalTheme>(jsonObject, type)
+        return when (uiKitTheme) {
+            AmityUIKitTheme.DARK -> theme.darkTheme
+            AmityUIKitTheme.LIGHT -> theme.lightTheme
+            AmityUIKitTheme.DEFAULT -> if (isSystemInDarkTheme) theme.darkTheme else theme.lightTheme
+        }
     }
 
     fun isExcluded(configId: String): Boolean {

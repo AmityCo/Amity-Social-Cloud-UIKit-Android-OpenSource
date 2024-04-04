@@ -6,10 +6,10 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
+import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -25,7 +25,7 @@ fun AmityStoryCommentBottomSheet(
     ModalBottomSheet(
         onDismissRequest = onClose,
         sheetState = sheetState,
-        containerColor = Color.White,
+        containerColor = AmityTheme.colors.background,
         windowInsets = WindowInsets(top = 54.dp),
         modifier = modifier,
     ) {

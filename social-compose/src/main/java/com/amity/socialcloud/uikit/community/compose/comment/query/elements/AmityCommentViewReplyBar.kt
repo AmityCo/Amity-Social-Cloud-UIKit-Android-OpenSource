@@ -34,7 +34,7 @@ fun AmityCommentViewReplyBar(
         modifier = modifier
             .border(
                 width = 1.dp,
-                color = AmityTheme.colors.secondaryShade4,
+                color = AmityTheme.colors.baseShade4,
                 shape = RoundedCornerShape(size = 4.dp)
             )
             .clickable { onClick() }
@@ -44,7 +44,7 @@ fun AmityCommentViewReplyBar(
         Icon(
             painter = painterResource(id = R.drawable.amity_view_replies),
             contentDescription = null,
-            tint = AmityTheme.colors.secondaryShade1,
+            tint = AmityTheme.colors.baseShade1,
             modifier = modifier.size(16.dp)
         )
 

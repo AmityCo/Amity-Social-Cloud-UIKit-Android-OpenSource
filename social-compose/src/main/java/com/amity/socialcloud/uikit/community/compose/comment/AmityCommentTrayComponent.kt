@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.HorizontalDivider
@@ -19,7 +18,6 @@ import androidx.compose.runtime.rxjava3.subscribeAsState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
@@ -86,8 +84,7 @@ fun AmityCommentTrayComponent(
     ) {
         Box(
             modifier = modifier
-                .navigationBarsPadding()
-                .background(Color.White)
+                .background(AmityTheme.colors.background)
         ) {
             Column(modifier = modifier.fillMaxWidth()) {
                 Text(
@@ -152,9 +149,7 @@ fun AmityCommentTrayComponent(
                         reference = reference,
                         avatarUrl = currentUser.value?.getAvatar()?.getUrl(),
                         replyComment = replyComment,
-                        modifier = modifier
-                            .background(Color.White)
-                            .align(Alignment.BottomCenter)
+                        modifier = modifier.align(Alignment.BottomCenter)
                     ) {
                         replyComment = null
                         replyCommentId = ""
@@ -163,7 +158,6 @@ fun AmityCommentTrayComponent(
                     AmityDisabledCommentView(
                         modifier = modifier
                             .align(Alignment.BottomCenter)
-                            .background(Color.White)
                             .padding(bottom = 16.dp)
                     )
                 }

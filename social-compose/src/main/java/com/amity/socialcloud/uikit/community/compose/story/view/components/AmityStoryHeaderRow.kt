@@ -255,7 +255,7 @@ fun AmityStoryHeaderRow(
                     }
                 }
 
-                if (story?.getCreatorId() == AmityCoreClient.getUserId()) {
+                if (story?.getCreatorId() == AmityCoreClient.getUserId() || hasManageStoryPermission) {
                     AmityBaseElement(
                         pageScope = pageScope,
                         elementId = "overflow_menu"
@@ -272,7 +272,7 @@ fun AmityStoryHeaderRow(
                                 .clickableWithoutRipple {
                                     viewModel.updateSheetUIState(
                                         AmityStoryModalSheetUIState.OpenOverflowMenuSheet(
-                                            story.getStoryId()
+                                            story?.getStoryId() ?: ""
                                         )
                                     )
                                 }

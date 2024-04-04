@@ -68,7 +68,7 @@ fun AmityStoryTargetElement(
             }
 
             AmityStoryTargetRingUiState.FAILED -> {
-                getConfig().getValueAsList("fail_color").asColorList()
+                listOf(AmityTheme.colors.alert)
             }
         }
 

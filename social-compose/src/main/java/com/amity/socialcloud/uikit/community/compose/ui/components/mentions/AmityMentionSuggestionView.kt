@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.ui.components.mentions
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -47,6 +48,7 @@ fun AmityMentionSuggestionView(
     LazyColumn(
         modifier = modifier
             .fillMaxWidth()
+            .background(AmityTheme.colors.background)
             .requiredHeightIn(0.dp, 250.dp)
             .padding(horizontal = 12.dp)
     ) {

@@ -13,7 +13,8 @@ val amityColorAlert = Color(0xFFFA4D30)
 val amityColorHighlight = Color(0xFF1054DE)
 val amityColorBase = Color(0xFF292B32)
 val amityColorBaseInverse = Color(0xFFFFFFFF)
-val amityColorBaseInverseBlack = Color(0xFF000000)
+
+val amityColorBackground = Color(0xFFFFFFFF)
 val amityColorMessageBubble = Color(0xFF1054DE)
 val amityColorMessageBubbleInverse = Color(0xFFEBECEF)
 
@@ -43,13 +44,7 @@ val AmityUIKitColors = AmityColors(
     messageBubbleInverse = amityColorMessageBubbleInverse,
     divider = amityColorBaseShade4,
     border = amityColorBaseShade4,
-    background = amityColorBaseShade4,
-    backgroundGrey = amityColorBaseShade4,
-    backgroundDark = amityColorBaseInverseBlack.copy(alpha = 0.5f),
-    textPrimary = amityColorBase,
-    textSecondary = amityColorBaseShade1,
-    textTertiary = amityColorBaseShade2,
-    textDisabled = amityColorBaseShade3,
+    background = amityColorBackground,
     primaryShade1 = amityColorPrimaryShade1,
     primaryShade2 = amityColorPrimaryShade2,
     primaryShade3 = amityColorPrimaryShade3,
@@ -77,12 +72,6 @@ data class AmityColors(
     val divider: Color,
     val border: Color,
     val background: Color,
-    val backgroundGrey: Color,
-    val backgroundDark: Color,
-    val textPrimary: Color,
-    val textSecondary: Color,
-    val textTertiary: Color,
-    val textDisabled: Color,
     val primaryShade1: Color,
     val primaryShade2: Color,
     val primaryShade3: Color,
@@ -100,6 +89,13 @@ data class AmityColors(
     fun applyConfiguration(theme: AmityUIKitConfig.UIKitTheme): AmityColors {
         val primary = theme.primaryColor.asColor()
         val secondary = theme.secondaryColor.asColor()
+        val base = theme.baseColor.asColor()
+        val baseShade1 = theme.baseShade1Color.asColor()
+        val baseShade2 = theme.baseShade2Color.asColor()
+        val baseShade3 = theme.baseShade3Color.asColor()
+        val baseShade4 = theme.baseShade4Color.asColor()
+        val alert = theme.alertColor.asColor()
+        val background = theme.backgroundColor.asColor()
 
         return AmityUIKitColors.copy(
             primary = primary,
@@ -112,6 +108,14 @@ data class AmityColors(
             secondaryShade2 = secondary.shade(AmityColorShade.SHADE2),
             secondaryShade3 = secondary.shade(AmityColorShade.SHADE3),
             secondaryShade4 = secondary.shade(AmityColorShade.SHADE4),
+            base = base,
+            baseShade1 = baseShade1,
+            baseShade2 = baseShade2,
+            baseShade3 = baseShade3,
+            baseShade4 = baseShade4,
+            alert = alert,
+            background = background,
+            divider = baseShade4
         )
     }
 

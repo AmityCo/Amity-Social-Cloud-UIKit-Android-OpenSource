@@ -12,20 +12,20 @@
 
     <application>
         <activity
-            android:name=".story.target.global.AmityStoryGlobalFeedActivity"
-            android:exported="true"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".story.view.AmityViewStoryPageActivity"
+            android:configChanges="uiMode"
             android:exported="true"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AmityStoryDarkTheme" />
         <activity
             android:name=".story.create.AmityCreateStoryPageActivity"
+            android:configChanges="uiMode"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/AmityStoryDarkTheme" />
         <activity
             android:name=".story.draft.AmityDraftStoryPageActivity"
+            android:configChanges="uiMode"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/AmityStoryDarkTheme" />
