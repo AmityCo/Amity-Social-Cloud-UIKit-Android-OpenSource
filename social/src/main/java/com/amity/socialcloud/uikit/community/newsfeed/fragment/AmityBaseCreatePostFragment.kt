@@ -13,10 +13,15 @@ import android.text.Editable
 import android.text.SpannableString
 import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.LiveDataReactiveStreams
+import androidx.lifecycle.toPublisher
 import androidx.paging.ExperimentalPagingApi
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -39,7 +44,12 @@ import com.amity.socialcloud.uikit.common.utils.AmityOptionMenuColorUtil
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.databinding.AmityFragmentPostCreateBinding
 import com.amity.socialcloud.uikit.community.domain.model.AmityFileAttachment
-import com.amity.socialcloud.uikit.community.newsfeed.adapter.*
+import com.amity.socialcloud.uikit.community.newsfeed.adapter.AmityCreatePostFileAdapter
+import com.amity.socialcloud.uikit.community.newsfeed.adapter.AmityCreatePostMediaAdapter
+import com.amity.socialcloud.uikit.community.newsfeed.adapter.AmityPostAttachmentOptionsAdapter
+import com.amity.socialcloud.uikit.community.newsfeed.adapter.AmityUserMentionAdapter
+import com.amity.socialcloud.uikit.community.newsfeed.adapter.AmityUserMentionPagingDataAdapter
+import com.amity.socialcloud.uikit.community.newsfeed.adapter.AmityUserMentionViewHolder
 import com.amity.socialcloud.uikit.community.newsfeed.listener.AmityCreatePostFileActionListener
 import com.amity.socialcloud.uikit.community.newsfeed.listener.AmityCreatePostImageActionListener
 import com.amity.socialcloud.uikit.community.newsfeed.model.AmityPostAttachmentOptionItem
@@ -64,7 +74,7 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.PublishSubject
 import java.io.File
-import java.util.*
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 
@@ -191,10 +201,8 @@ abstract class AmityBaseCreatePostFragment : AmityBaseFragment(),
 
     private fun observeImageData() {
         Flowable.fromPublisher(
-            LiveDataReactiveStreams.toPublisher(
-                viewLifecycleOwner,
-                viewModel.getImages()
-            )
+            viewModel.getImages()
+                .toPublisher(viewLifecycleOwner)
         )
             .throttleLatest(1, TimeUnit.SECONDS, true)
             .subscribeOn(Schedulers.io())
@@ -213,10 +221,8 @@ abstract class AmityBaseCreatePostFragment : AmityBaseFragment(),
     private fun observeFileAttachments() {
         setupFileAttachmentAdapter()
         Flowable.fromPublisher(
-            LiveDataReactiveStreams.toPublisher(
-                viewLifecycleOwner,
-                viewModel.getFiles()
-            )
+            viewModel.getFiles()
+                .toPublisher(viewLifecycleOwner)
         )
             .throttleLatest(1, TimeUnit.SECONDS, true)
             .subscribeOn(Schedulers.io())
