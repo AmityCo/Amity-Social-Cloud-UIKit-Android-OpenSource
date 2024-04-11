@@ -4,6 +4,7 @@ import android.content.Context
 import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.uikit.AmityUIKit4Manager
 import com.amity.socialcloud.uikit.community.compose.story.target.AmityStoryTargetTabComponentBehavior
+import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageType
 
 class AmityOverridingNavigationBehavior {
     /* begin_sample_code
@@ -16,8 +17,7 @@ class AmityOverridingNavigationBehavior {
 
         override fun goToViewStoryPage(
             context: Context,
-            isGlobalFeed: Boolean,
-            communityId: String
+            type: AmityViewStoryPageType,
         ) {
             // custom implementation for navigating to View Story Page
         }

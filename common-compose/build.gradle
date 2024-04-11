@@ -37,9 +37,9 @@ android {
 }
 
 dependencies {
-    implementation project(path: ':common')
+    api project(path: ':common')
 
-    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.11.0'
     testImplementation 'junit:junit:4.13.2'
@@ -47,11 +47,11 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
     def composeBom = platform('androidx.compose:compose-bom:2022.12.00')
-    implementation composeBom
-    androidTestImplementation composeBom
+    api composeBom
+    androidTestApi composeBom
 
     // Material Design 3
-    api 'androidx.compose.material3:material3-android:1.2.0-rc01'
+    api 'androidx.compose.material3:material3-android:1.2.1'
     // Android Studio Preview support
     api 'androidx.compose.ui:ui-tooling-preview'
     debugApi 'androidx.compose.ui:ui-tooling'
@@ -68,7 +68,7 @@ dependencies {
     api "androidx.palette:palette-ktx:1.0.0"
 
     api "androidx.constraintlayout:constraintlayout-compose:1.0.1"
-
     api "androidx.paging:paging-compose:3.2.1"
+    api "com.linkedin.android.spyglass:spyglass:3.0.1"
 
 }
