@@ -3,6 +3,7 @@ package com.amity.socialcloud.uikit.chat.messages.fragment
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
@@ -11,9 +12,12 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.*
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
@@ -75,21 +79,29 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
     private var currentCount = 0
     private var isImagePermissionGranted = false
     private var isReachBottom = true
+    private lateinit var pickMedia: ActivityResultLauncher<PickVisualMediaRequest>
 
 
-    private val requiredPermissions = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+    private val requiredPermissions = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+        arrayOf(
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
+    } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
         arrayOf(
             Manifest.permission.RECORD_AUDIO,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
         )
-    } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+    } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
         arrayOf(
             Manifest.permission.RECORD_AUDIO,
             Manifest.permission.READ_MEDIA_AUDIO
         )
     } else {
         arrayOf(
-            Manifest.permission.RECORD_AUDIO
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.READ_MEDIA_AUDIO
         )
     }
 
@@ -106,7 +118,12 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
 
     private val pickMultipleImagesPermission =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-            if (it) {
+            val isGranted = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                it
+            } else {
+                true
+            }
+            if (isGranted) {
                 isImagePermissionGranted = true
                 pickMultipleImages()
             } else {
@@ -116,6 +133,13 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        pickMedia = registerForActivityResult(PickMultipleImages(AmityConstants.MAX_SELECTION_COUNT - currentCount)) { uris ->
+            // Callback is invoked after the user selects a media item or closes the
+            // photo picker.
+            if (uris != null && uris.isNotEmpty()) {
+                uris.map(::addImageToList)
+            }
+        }
         super.onCreate(savedInstanceState)
         essentialViewModel =
             ViewModelProvider(requireActivity()).get(AmityChatRoomEssentialViewModel::class.java)
@@ -508,19 +532,24 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
             if (currentCount == AmityConstants.MAX_SELECTION_COUNT) {
                 view?.showSnackBar(getString(com.amity.socialcloud.uikit.common.R.string.amity_max_image_selected))
             } else {
-                Matisse.from(this)
-                    .choose(MimeType.of(MimeType.JPEG, MimeType.PNG, MimeType.GIF))
-                    .countable(true)
-                    .maxSelectable(AmityConstants.MAX_SELECTION_COUNT - currentCount)
-                    .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
-                    .imageEngine(GlideEngine())
-                    .theme(com.amity.socialcloud.uikit.common.R.style.AmityImagePickerTheme)
-                    .forResult(AmityConstants.PICK_IMAGES)
+                val isSupportPhotoPicker = ActivityResultContracts.PickVisualMedia.isPhotoPickerAvailable(requireContext())
+                if (isSupportPhotoPicker) {
+                    pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.SingleMimeType("*/*")))
+                } else {
+                    Matisse.from(this)
+                        .choose(MimeType.of(MimeType.JPEG, MimeType.PNG, MimeType.GIF))
+                        .countable(true)
+                        .maxSelectable(AmityConstants.MAX_SELECTION_COUNT - currentCount)
+                        .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
+                        .imageEngine(GlideEngine())
+                        .theme(com.amity.socialcloud.uikit.common.R.style.AmityImagePickerTheme)
+                        .forResult(AmityConstants.PICK_IMAGES)
+                }
             }
         } else {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
                 pickMultipleImagesPermission.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
                 pickMultipleImagesPermission.launch(Manifest.permission.READ_MEDIA_IMAGES)
             }
         }
@@ -577,22 +606,29 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
         textView.setShape(null, null, null, null, R.color.amityColorBase, null, null)
         layout.showSnackBar("", Snackbar.LENGTH_SHORT)
     }
-
+    
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 100001) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                isImagePermissionGranted = true
+                pickMultipleImages()
+            } else {
+                isImagePermissionGranted = false
+            }
+        }
+    }
+    
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK && requestCode == 100001) {
+            pickMultipleImages()
+        }
         if (resultCode == Activity.RESULT_OK && requestCode == AmityConstants.PICK_IMAGES) {
             if (requestCode == AmityConstants.PICK_IMAGES) {
                 data?.let {
                     val imageUriList = Matisse.obtainResult(it)
                     for (uri in imageUriList) {
-                        disposable.add(messageListViewModel.sendImageMessage(uri)
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .doOnComplete {
-                                msgSent = true
-                            }.doOnError {
-                                msgSent = false
-                            }.subscribe()
-                        )
+                        addImageToList(uri)
                     }
                 }
                 if (messageListViewModel.showComposeBar.get()) {
@@ -602,6 +638,18 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
                 super.onActivityResult(requestCode, resultCode, data)
             }
         }
+    }
+    
+    private fun addImageToList(uri: Uri) {
+        disposable.add(messageListViewModel.sendImageMessage(uri)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnComplete {
+                msgSent = true
+            }.doOnError {
+                msgSent = false
+            }.subscribe()
+        )
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -679,3 +727,11 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
 }
 
 private const val PAGINATION_PRELOAD_THRESHOLD = 10
+
+class PickMultipleImages(maxItems: Int) : ActivityResultContracts.PickMultipleVisualMedia(maxItems) {
+    override fun createIntent(context: Context, input: PickVisualMediaRequest): Intent {
+        val intent = super.createIntent(context, input)
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/jpeg", "image/png", "image/gif"))
+        return intent
+    }
+}

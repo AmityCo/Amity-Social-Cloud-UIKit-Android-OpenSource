@@ -275,8 +275,10 @@ fun AmityCreateStoryPage(
                         } else {
                             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
                                 mediaPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
-                            } else {
+                            } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
                                 mediaPermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES)
+                            } else {
+                                mediaPermissionLauncher.launch(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED )
                             }
                         }
                     }

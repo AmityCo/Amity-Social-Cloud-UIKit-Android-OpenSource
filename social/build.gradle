@@ -28,7 +28,7 @@ dependencies {
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
     implementation "androidx.recyclerview:recyclerview:1.2.0"
 
-    implementation 'androidx.activity:activity-compose:1.6.0'
+    implementation 'androidx.activity:activity-compose:1.7.0'
 
     api("com.linkedin.android.spyglass:spyglass:3.0.1")
     api("com.github.AmityCo.Amity-Social-Cloud-SDK-Android:amity-video-publisher:$amityMessagingSdkVersion")

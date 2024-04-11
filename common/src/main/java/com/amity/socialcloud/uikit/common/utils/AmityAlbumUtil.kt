@@ -3,7 +3,10 @@ package com.amity.socialcloud.uikit.common.utils
 import android.Manifest
 import android.content.pm.ActivityInfo
 import android.view.View
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.contract.ActivityResultContracts.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.amity.socialcloud.uikit.common.R
@@ -13,25 +16,37 @@ import com.zhihu.matisse.Matisse
 import com.zhihu.matisse.MimeType
 import com.zhihu.matisse.engine.impl.GlideEngine
 
+
 object AmityAlbumUtil {
 
     private const val MAX_SELECTION_COUNT = 20
 
     fun pickMultipleImage(activity: AppCompatActivity, currentCount: Int, resultCode: Int) {
         val pickImagePermission =
-            activity.registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+            activity.registerForActivityResult(RequestPermission()) {
                 if (it) {
                     if (currentCount == MAX_SELECTION_COUNT) {
                         activity.findViewById<View>(android.R.id.content).showSnackBar(activity.getString(R.string.amity_max_image_selected))
                     } else {
-                        Matisse.from(activity)
-                            .choose(MimeType.of(MimeType.JPEG, MimeType.PNG, MimeType.GIF))
-                            .countable(true)
-                            .maxSelectable(MAX_SELECTION_COUNT - currentCount)
-                            .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
-                            .imageEngine(GlideEngine())
-                            .theme(R.style.AmityImagePickerTheme)
-                            .forResult(resultCode)
+                        val isSupportPhotoPicker = PickVisualMedia.isPhotoPickerAvailable(activity.applicationContext)
+                        if (isSupportPhotoPicker) {
+                            activity.registerForActivityResult(PickVisualMedia()) { uri ->
+                                // Callback is invoked after the user selects a media item or closes the
+                                // photo picker.
+                                if (uri != null) {
+                                } else {
+                                }
+                            }
+                        } else {
+                            Matisse.from(activity)
+                                .choose(MimeType.of(MimeType.JPEG, MimeType.PNG, MimeType.GIF))
+                                .countable(true)
+                                .maxSelectable(MAX_SELECTION_COUNT - currentCount)
+                                .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
+                                .imageEngine(GlideEngine())
+                                .theme(R.style.AmityImagePickerTheme)
+                                .forResult(resultCode)
+                        }
                     }
                 } else {
                     activity.findViewById<View>(android.R.id.content).showSnackBar("Permission denied", Snackbar.LENGTH_SHORT)

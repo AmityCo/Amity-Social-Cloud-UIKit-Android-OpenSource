@@ -523,11 +523,19 @@ abstract class AmityBaseCreatePostFragment : AmityBaseFragment(),
         val requiredPermissions = emptyList<String>().toMutableList()
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
             requiredPermissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             when (requestCode) {
                 REQUEST_STORAGE_PERMISSION_IMAGE_UPLOAD -> requiredPermissions.add(Manifest.permission.READ_MEDIA_IMAGES)
                 REQUEST_STORAGE_PERMISSION_VIDEO_UPLOAD -> requiredPermissions.add(Manifest.permission.READ_MEDIA_VIDEO)
+            }
+        } else {
+            when (requestCode) {
+                REQUEST_STORAGE_PERMISSION_IMAGE_UPLOAD -> {
+                    requiredPermissions.add(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
+                }
+                REQUEST_STORAGE_PERMISSION_VIDEO_UPLOAD -> {
+                    requiredPermissions.add(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
+                }
             }
         }
         val hasRequiredPermission = requiredPermissions.fold(true) { acc, permission ->

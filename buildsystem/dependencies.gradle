@@ -4,8 +4,8 @@
 buildscript {
     ext {
         amityMinSdkVersion = 21
-        amityTargetSdkVersion = 33
-        amityCompileSdkVersion = 33
+        amityTargetSdkVersion = 34
+        amityCompileSdkVersion = 34
         amityKotlinJDKVersion = "8"
         amityKotlinVersion = "1.6.20"
         amityLifecycleExtensionVersion = "2.0.0"
@@ -21,12 +21,12 @@ buildscript {
             delegate = dependencyHandler
 
             implementation 'androidx.appcompat:appcompat:1.3.0'
-            implementation 'androidx.core:core-ktx:1.5.0'
+            implementation 'androidx.core:core-ktx:1.9.0'
             implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
             implementation 'com.google.android.material:material:1.3.0'
             implementation 'androidx.paging:paging-runtime:2.1.2'
-            implementation "androidx.activity:activity:1.6.0"
-            implementation "androidx.activity:activity-ktx:1.6.0"
+            implementation "androidx.activity:activity:1.7.0"
+            implementation "androidx.activity:activity-ktx:1.7.0"
             implementation "androidx.fragment:fragment-ktx:1.3.4"
         }
     }
