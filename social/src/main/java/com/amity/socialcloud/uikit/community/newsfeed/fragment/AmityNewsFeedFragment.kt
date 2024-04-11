@@ -16,8 +16,8 @@ import com.amity.socialcloud.uikit.common.common.views.dialog.bottomsheet.Bottom
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.compose.story.target.global.AmityStoryGlobalFeedFragment
 import com.amity.socialcloud.uikit.community.databinding.AmityFragmentNewsFeedBinding
-import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityPostTargetPickerActivity
-import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityStoryTargetPickerActivity
+import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityTargetSelectionPageActivity
+import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityTargetSelectionPageType
 import com.amity.socialcloud.uikit.community.newsfeed.events.AmityFeedRefreshEvent
 import com.google.android.material.appbar.AppBarLayout
 import io.reactivex.rxjava3.core.BackpressureStrategy
@@ -29,16 +29,9 @@ class AmityNewsFeedFragment : AmityBaseFragment(),
     private lateinit var binding: AmityFragmentNewsFeedBinding
     private var refreshEventPublisher = BehaviorSubject.create<AmityFeedRefreshEvent>()
 
-    private val createPost =
-        registerForActivityResult<AmityPostTargetPickerActivity.CreationType, String>(
-            AmityPostTargetPickerActivity.AmityPostTargetPickerActivityContract()
-        ) {
-            refreshFeed()
-        }
-
-    private val createStory =
-        registerForActivityResult<AmityStoryTargetPickerActivity.CreationType, String>(
-            AmityStoryTargetPickerActivity.AmityStoryTargetPickerActivityContract()
+    private val creationTargetSelection =
+        registerForActivityResult<AmityTargetSelectionPageType, String>(
+            AmityTargetSelectionPageActivity.AmityTargetSelectionPageActivityContract()
         ) {
             refreshFeed()
         }
@@ -110,7 +103,7 @@ class AmityNewsFeedFragment : AmityBaseFragment(),
                     iconResId = R.drawable.ic_amity_ic_post_create,
                     titleResId = R.string.amity_post,
                     action = {
-                        createPost.launch(AmityPostTargetPickerActivity.CreationType.GENERIC)
+                        creationTargetSelection.launch(AmityTargetSelectionPageType.POST)
                         bottomSheet.dismiss()
                     }
                 ),
@@ -118,7 +111,7 @@ class AmityNewsFeedFragment : AmityBaseFragment(),
                     iconResId = R.drawable.amity_ic_story_create,
                     titleResId = R.string.amity_story,
                     action = {
-                        createStory.launch(AmityStoryTargetPickerActivity.CreationType.STORY)
+                        creationTargetSelection.launch(AmityTargetSelectionPageType.STORY)
                         bottomSheet.dismiss()
                     }
                 ),
@@ -126,7 +119,7 @@ class AmityNewsFeedFragment : AmityBaseFragment(),
                     iconResId = R.drawable.ic_amity_ic_live_stream_create,
                     titleResId = R.string.amity_video_stream_title,
                     action = {
-                        createPost.launch(AmityPostTargetPickerActivity.CreationType.LIVE_STREAM)
+                        creationTargetSelection.launch(AmityTargetSelectionPageType.LIVESTREAM)
                         bottomSheet.dismiss()
                     }
                 ),
@@ -134,7 +127,7 @@ class AmityNewsFeedFragment : AmityBaseFragment(),
                     iconResId = R.drawable.ic_amity_ic_poll_create,
                     titleResId = R.string.amity_general_poll,
                     action = {
-                        createPost.launch(AmityPostTargetPickerActivity.CreationType.POLL)
+                        creationTargetSelection.launch(AmityTargetSelectionPageType.POLL)
                         bottomSheet.dismiss()
                     }
                 )

@@ -26,7 +26,7 @@ class AmityCommentTrayComponent {
         AmityCommentTrayComponent(
             reference = AmityComment.Reference.STORY(storyId),
             shouldAllowInteraction = shouldAllowInteraction,
-            shouldAllowComment = shouldAllowComment,
+            shouldAllowCreation = shouldAllowComment,
         )
     }
     /* end_sample_code */

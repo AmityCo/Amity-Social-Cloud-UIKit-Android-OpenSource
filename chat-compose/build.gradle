@@ -1,0 +1,29 @@
+apply from: "../buildsystem/activity.gradle"
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+android {
+    buildFeatures {
+        dataBinding true
+        viewBinding true
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.4.7"
+    }
+}
+
+dependencies {
+
+    implementation project(path: ':common')
+    implementation project(path: ':common-compose')
+
+    implementation "com.linkedin.android.spyglass:spyglass:3.0.1"
+
+
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+}

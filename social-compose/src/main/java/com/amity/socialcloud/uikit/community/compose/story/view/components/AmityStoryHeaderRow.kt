@@ -52,13 +52,13 @@ import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityStoryModalSheetUIState
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageViewModel
 import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmityStorySegmentTimerElement
-import com.amity.socialcloud.uikit.community.compose.ui.base.AmityBaseElement
-import com.amity.socialcloud.uikit.community.compose.ui.scope.AmityComposePageScope
-import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
+import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
+import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.utils.AmityStoryVideoPlayerHelper
-import com.amity.socialcloud.uikit.community.compose.utils.asDrawableRes
-import com.amity.socialcloud.uikit.community.compose.utils.clickableWithoutRipple
-import com.amity.socialcloud.uikit.community.compose.utils.getValue
+import com.amity.socialcloud.uikit.common.utils.asDrawableRes
+import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.utils.getValue
 import kotlinx.coroutines.Dispatchers
 
 @Composable

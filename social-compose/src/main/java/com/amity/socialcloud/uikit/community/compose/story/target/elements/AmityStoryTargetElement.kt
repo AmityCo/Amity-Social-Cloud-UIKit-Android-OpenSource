@@ -31,13 +31,13 @@ import coil.request.ImageRequest
 import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.story.target.utils.AmityStoryTargetRingUiState
-import com.amity.socialcloud.uikit.community.compose.ui.base.AmityBaseComponent
-import com.amity.socialcloud.uikit.community.compose.ui.base.AmityBaseElement
-import com.amity.socialcloud.uikit.community.compose.ui.scope.AmityComposeComponentScope
-import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.community.compose.utils.asColorList
-import com.amity.socialcloud.uikit.community.compose.utils.clickableWithoutRipple
-import com.amity.socialcloud.uikit.community.compose.utils.getValueAsList
+import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
+import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
+import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
+import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.utils.asColorList
+import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.utils.getValueAsList
 import kotlinx.coroutines.Dispatchers
 
 @Composable

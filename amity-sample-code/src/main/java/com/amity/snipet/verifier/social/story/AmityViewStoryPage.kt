@@ -2,21 +2,20 @@ package com.amity.snipet.verifier.social.story
 
 import android.content.Context
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
-import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageActivity
+import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageType
 
 class AmityViewStoryPage {
     /* begin_sample_code
        gist_id: b56c789ce415afebce4347007ac62177
-       filename: AmityViewStoryPage.kt
+       filename: AmityViewCommunityStoryPage.kt
        asc_page: https://docs.amity.co/amity-uikit/uikit-v4-beta/social/viewing-story-page
        description: Navigate to view story page
        */
     fun startAnActivity(context: Context, community: AmityCommunity) {
         val intent = AmityViewStoryPageActivity.newIntent(
             context = context,
-            targetId = community.getCommunityId(),
-            targetType = AmityStory.TargetType.COMMUNITY,
+            type = AmityViewStoryPageType.CommunityFeed(communityId = community.getCommunityId())
         )
         context.startActivity(intent)
     }

@@ -4,4 +4,5 @@ apply plugin: 'kotlin-android'
 
 dependencies {
     implementation project(path: ':common')
+    api project(path: ':chat-compose')
 }

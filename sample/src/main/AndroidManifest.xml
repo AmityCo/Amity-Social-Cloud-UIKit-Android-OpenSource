@@ -37,6 +37,9 @@
         <activity android:name=".AmityFeatureListActivity" />
         <activity android:name=".AmityPostCreatorWithOptionsActivity" />
         <activity android:name=".AmityPostCreatorSettingsActivity" />
+        <activity android:name=".liveChat.AmityLiveChatActivity"
+            android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".liveChat.AmityLiveChatListActivity" />
         <activity android:name=".env.EnvironmentActivity" />
         <activity
             android:name=".MainActivity"

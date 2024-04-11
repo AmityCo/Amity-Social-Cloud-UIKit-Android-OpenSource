@@ -10,7 +10,7 @@ buildscript {
         amityKotlinVersion = "1.6.20"
         amityLifecycleExtensionVersion = "2.0.0"
         amityMockkVersion = "1.10.0"
-        amityMessagingSdkVersion = '6.30.0'
+        amityMessagingSdkVersion = '6.31.0'
         amityRxLifeCycleVersion = '1.1.2-beta01'
 
         amityJacocoVersion = '0.8.5'
@@ -46,5 +46,6 @@ buildscript {
     }
     dependencies {
         classpath 'gradle.plugin.com.github.sgtsilvio.gradle:android-retrofix:0.4.1'
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.21'
     }
 }

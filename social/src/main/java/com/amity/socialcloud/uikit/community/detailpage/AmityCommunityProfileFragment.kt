@@ -21,7 +21,8 @@ import com.amity.socialcloud.sdk.model.social.feed.AmityFeedType
 import com.amity.socialcloud.uikit.common.common.formatCount
 import com.amity.socialcloud.uikit.common.common.readableNumber
 import com.amity.socialcloud.uikit.community.R
-import com.amity.socialcloud.uikit.community.compose.story.target.community.AmityStoryCommunityTargetTabComponent
+import com.amity.socialcloud.uikit.community.compose.story.target.AmityStoryTabComponent
+import com.amity.socialcloud.uikit.community.compose.story.target.AmityStoryTabComponentType
 import com.amity.socialcloud.uikit.community.data.PostReviewBannerData
 import com.amity.socialcloud.uikit.community.databinding.AmityFragmentCommunityProfileBinding
 import com.amity.socialcloud.uikit.community.edit.AmityCommunityProfileActivity
@@ -228,8 +229,10 @@ class AmityCommunityProfileFragment : RxFragment() {
 
     private fun renderStory(community: AmityCommunity) {
         binding.cvStoryTarget.setContent {
-            AmityStoryCommunityTargetTabComponent(
-                communityId = community.getCommunityId()
+            AmityStoryTabComponent(
+                type = AmityStoryTabComponentType.CommunityFeed(
+                    communityId = community.getCommunityId()
+                )
             )
         }
     }

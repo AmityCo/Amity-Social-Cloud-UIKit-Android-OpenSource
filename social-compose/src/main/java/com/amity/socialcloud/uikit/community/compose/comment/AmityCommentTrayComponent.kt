@@ -32,12 +32,12 @@ import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.comment.create.AmityCommentComposerBar
 import com.amity.socialcloud.uikit.community.compose.comment.elements.AmityDisabledCommentView
 import com.amity.socialcloud.uikit.community.compose.comment.query.AmityCommentView
-import com.amity.socialcloud.uikit.community.compose.ui.base.AmityBaseComponent
-import com.amity.socialcloud.uikit.community.compose.ui.elements.AmityPagingEmptyItem
-import com.amity.socialcloud.uikit.community.compose.ui.elements.AmityPagingErrorItem
-import com.amity.socialcloud.uikit.community.compose.ui.elements.AmityPagingLoadingItem
-import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.community.compose.utils.pagingLoadStateItem
+import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
+import com.amity.socialcloud.uikit.common.ui.elements.AmityPagingEmptyItem
+import com.amity.socialcloud.uikit.common.ui.elements.AmityPagingErrorItem
+import com.amity.socialcloud.uikit.common.ui.elements.AmityPagingLoadingItem
+import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.utils.pagingLoadStateItem
 
 @Composable
 fun AmityCommentTrayComponent(
@@ -45,7 +45,7 @@ fun AmityCommentTrayComponent(
     reference: AmityComment.Reference,
     community: AmityCommunity? = null,
     shouldAllowInteraction: Boolean,
-    shouldAllowComment: Boolean,
+    shouldAllowCreation: Boolean,
 ) {
     val context = LocalContext.current
 
@@ -143,7 +143,7 @@ fun AmityCommentTrayComponent(
             }
 
             if (shouldAllowInteraction) {
-                if (shouldAllowComment) {
+                if (shouldAllowCreation) {
                     AmityCommentComposerBar(
                         componentScope = getComponentScope(),
                         reference = reference,
@@ -172,6 +172,6 @@ fun AmityCommentPagePreview() {
     AmityCommentTrayComponent(
         reference = AmityComment.Reference.STORY(""),
         shouldAllowInteraction = true,
-        shouldAllowComment = true,
+        shouldAllowCreation = true,
     )
 }

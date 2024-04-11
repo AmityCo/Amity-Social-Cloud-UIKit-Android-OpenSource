@@ -13,9 +13,9 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.amity.socialcloud.sdk.model.core.reaction.AmityReactionReferenceType
 import com.amity.socialcloud.uikit.community.compose.reaction.components.AmityReactionTab
 import com.amity.socialcloud.uikit.community.compose.reaction.elements.AmityReactionListItem
-import com.amity.socialcloud.uikit.community.compose.ui.elements.AmityPagingErrorItem
-import com.amity.socialcloud.uikit.community.compose.ui.elements.AmityPagingLoadingItem
-import com.amity.socialcloud.uikit.community.compose.utils.pagingLoadStateItem
+import com.amity.socialcloud.uikit.common.ui.elements.AmityPagingErrorItem
+import com.amity.socialcloud.uikit.common.ui.elements.AmityPagingLoadingItem
+import com.amity.socialcloud.uikit.common.utils.pagingLoadStateItem
 
 @Composable
 fun AmityReactionListPage(

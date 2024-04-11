@@ -94,11 +94,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp" />
         <activity
-            android:name=".newsfeed.activity.AmityPostTargetPickerActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Amity.Base.Theme.AmityApp" />
-        <activity
-            android:name=".newsfeed.activity.AmityStoryTargetPickerActivity"
+            android:name=".newsfeed.activity.AmityTargetSelectionPageActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp" />
         <activity
@@ -154,11 +150,6 @@
             android:theme="@style/Amity.Base.Theme.AmityApp.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
 
-        <activity
-            android:name=".story.AmityStoryViewActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Amity.Base.Theme.AmityApp.NoActionBar"
-            android:windowSoftInputMode="stateHidden" />
     </application>
 
 </manifest>

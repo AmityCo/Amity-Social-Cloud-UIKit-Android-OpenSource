@@ -33,9 +33,9 @@ import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPa
 import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmityStoryCommentCountElement
 import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmityStoryReactionCountElement
 import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmityStoryViewCountElement
-import com.amity.socialcloud.uikit.community.compose.ui.elements.AmityAlertDialogWithThreeActions
-import com.amity.socialcloud.uikit.community.compose.ui.scope.AmityComposePageScope
-import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialogWithThreeActions
+import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
+import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 
 @Composable
 fun AmityStoryBottomRow(

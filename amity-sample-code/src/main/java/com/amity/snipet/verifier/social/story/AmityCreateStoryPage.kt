@@ -2,6 +2,7 @@ package com.amity.snipet.verifier.social.story
 
 import android.content.Context
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.uikit.community.compose.story.create.AmityCreateStoryPageActivity
 
 class AmityCreateStoryPage {
@@ -14,7 +15,8 @@ class AmityCreateStoryPage {
     fun startAnActivity(context: Context, community: AmityCommunity) {
         val intent = AmityCreateStoryPageActivity.newIntent(
             context = context,
-            targetId = community.getCommunityId()
+            targetId = community.getCommunityId(),
+            targetType = AmityStory.TargetType.COMMUNITY
         )
         context.startActivity(intent)
     }

@@ -1,0 +1,74 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace 'com.amity.socialcloud.uikit.common.compose'
+    compileSdk 34
+
+    defaultConfig {
+        minSdk 21
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+    buildFeatures {
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.4.7"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+    implementation project(path: ':common')
+
+    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.11.0'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+    def composeBom = platform('androidx.compose:compose-bom:2022.12.00')
+    implementation composeBom
+    androidTestImplementation composeBom
+
+    // Material Design 3
+    api 'androidx.compose.material3:material3-android:1.2.0-rc01'
+    // Android Studio Preview support
+    api 'androidx.compose.ui:ui-tooling-preview'
+    debugApi 'androidx.compose.ui:ui-tooling'
+    // Optional - Integration with activities
+    api 'androidx.activity:activity-compose'
+    // Optional - Integration with ViewModels
+    api 'androidx.lifecycle:lifecycle-viewmodel-compose'
+    // Optional - Integration with RxJava
+    api 'androidx.compose.runtime:runtime-rxjava3'
+
+    // image loading
+    api "io.coil-kt:coil-compose:2.4.0"
+    //  extract colors from images with palette
+    api "androidx.palette:palette-ktx:1.0.0"
+
+    api "androidx.constraintlayout:constraintlayout-compose:1.0.1"
+
+    api "androidx.paging:paging-compose:3.2.1"
+
+}

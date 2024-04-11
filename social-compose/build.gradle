@@ -17,6 +17,7 @@ android {
 
 dependencies {
     implementation project(path: ':common')
+    implementation project(path: ':common-compose')
 
 //    implementation 'androidx.core:core-ktx:1.12.0'
 //    implementation platform('org.jetbrains.kotlin:kotlin-bom:1.8.0')

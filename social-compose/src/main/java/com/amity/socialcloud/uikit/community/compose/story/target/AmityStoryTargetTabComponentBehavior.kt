@@ -5,22 +5,20 @@ import android.content.Context
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
 import com.amity.socialcloud.sdk.model.social.story.AmityStory
+import com.amity.socialcloud.uikit.common.utils.getActivity
 import com.amity.socialcloud.uikit.community.compose.story.create.AmityCreateStoryPageActivity
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageActivity
-import com.amity.socialcloud.uikit.community.compose.utils.getActivity
+import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageType
 
 open class AmityStoryTargetTabComponentBehavior {
 
     open fun goToViewStoryPage(
         context: Context,
-        isGlobalFeed: Boolean,
-        communityId: String,
+        type: AmityViewStoryPageType,
     ) {
         val intent = AmityViewStoryPageActivity.newIntent(
             context = context,
-            isGlobalFeed = isGlobalFeed,
-            targetId = communityId,
-            targetType = AmityStory.TargetType.COMMUNITY,
+            type = type,
         )
         context.startActivity(
             intent,

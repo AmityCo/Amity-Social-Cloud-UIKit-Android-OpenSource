@@ -17,8 +17,8 @@ class AmityCommunityGlobalSearchViewModel : AmityBaseViewModel() {
 
     fun searchCommunity(onResult: (list: PagingData<AmityCommunity>) -> Unit): Completable {
         val communityRepository = AmitySocialClient.newCommunityRepository()
-        return communityRepository.getCommunities()
-            .withKeyword(searchString.get() ?: "")
+        return communityRepository
+            .searchCommunities(searchString.get() ?: "")
             .sortBy(AmityCommunitySortOption.DISPLAY_NAME)
             .includeDeleted(false)
             .build()

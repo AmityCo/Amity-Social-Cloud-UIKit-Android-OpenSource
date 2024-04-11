@@ -13,12 +13,12 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
-import com.amity.socialcloud.uikit.community.compose.ui.base.AmityBaseElement
-import com.amity.socialcloud.uikit.community.compose.ui.base.AmityBasePage
-import com.amity.socialcloud.uikit.community.compose.ui.scope.AmityComposeElementScope
-import com.amity.socialcloud.uikit.community.compose.utils.asColor
-import com.amity.socialcloud.uikit.community.compose.utils.getBackgroundColor
-import com.amity.socialcloud.uikit.community.compose.utils.getValue
+import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
+import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
+import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeElementScope
+import com.amity.socialcloud.uikit.common.utils.asColor
+import com.amity.socialcloud.uikit.common.utils.getBackgroundColor
+import com.amity.socialcloud.uikit.common.utils.getValue
 import kotlinx.coroutines.delay
 
 

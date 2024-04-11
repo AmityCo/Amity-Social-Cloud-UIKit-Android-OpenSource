@@ -1,8 +1,10 @@
 package com.amity.socialcloud.uikit.community.compose.story.create
 
 import android.Manifest
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -40,19 +42,24 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.uikit.common.common.readableMinuteSeconds
+import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
+import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
+import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.utils.asDrawableRes
+import com.amity.socialcloud.uikit.common.utils.closePage
+import com.amity.socialcloud.uikit.common.utils.closePageWithResult
+import com.amity.socialcloud.uikit.common.utils.getBackgroundColor
+import com.amity.socialcloud.uikit.common.utils.getValue
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.story.create.elements.AmityStoryCameraPreviewElement
 import com.amity.socialcloud.uikit.community.compose.story.create.elements.AmityStoryCameraRelatedButtonElement
 import com.amity.socialcloud.uikit.community.compose.story.create.elements.AmityStoryCameraShutterButtonElement
 import com.amity.socialcloud.uikit.community.compose.story.create.elements.AmityStoryPhotoVideoSelectionElement
-import com.amity.socialcloud.uikit.community.compose.ui.base.AmityBaseElement
-import com.amity.socialcloud.uikit.community.compose.ui.base.AmityBasePage
-import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.community.compose.story.draft.AmityStoryMediaType
 import com.amity.socialcloud.uikit.community.compose.utils.AmityStoryCameraHelper
-import com.amity.socialcloud.uikit.community.compose.utils.asDrawableRes
-import com.amity.socialcloud.uikit.community.compose.utils.getBackgroundColor
-import com.amity.socialcloud.uikit.community.compose.utils.getValue
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
 
@@ -60,12 +67,24 @@ import kotlin.time.Duration.Companion.seconds
 @Composable
 fun AmityCreateStoryPage(
     modifier: Modifier = Modifier,
-    onCloseClicked: () -> Unit = {},
-    onMediaSelected: (Boolean, String) -> Unit = { _, _ -> }
+    targetId: String,
+    targetType: AmityStory.TargetType,
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val haptics = LocalHapticFeedback.current
+
+    val behavior = remember {
+        AmitySocialBehaviorHelper.createStoryPageBehavior
+    }
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            context.closePageWithResult(Activity.RESULT_OK)
+        }
+    }
 
     var isPhotoSelected by remember { mutableStateOf(true) }
     var isCameraPermissionGranted by remember { mutableStateOf(false) }
@@ -97,7 +116,14 @@ fun AmityCreateStoryPage(
                     it,
                     Intent.FLAG_GRANT_READ_URI_PERMISSION
                 )
-                onMediaSelected(isPhotoSelected, it.toString())
+                behavior.goToDraftStoryPage(
+                    context = context,
+                    launcher = launcher,
+                    targetId = targetId,
+                    targetType = targetType,
+                    mediaType = if (isPhotoSelected) AmityStoryMediaType.Image(it)
+                    else AmityStoryMediaType.Video(it),
+                )
             }
         }
 
@@ -204,7 +230,7 @@ fun AmityCreateStoryPage(
                             background = getConfig().getBackgroundColor(),
                             onClick = {
                                 haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                                onCloseClicked()
+                                context.closePage()
                             }
                         )
                     }
@@ -301,7 +327,13 @@ fun AmityCreateStoryPage(
                         AmityStoryCameraHelper.takePhoto(
                             context = context,
                             onImageSaved = {
-                                onMediaSelected(isPhotoSelected, it)
+                                behavior.goToDraftStoryPage(
+                                    context = context,
+                                    launcher = launcher,
+                                    targetId = targetId,
+                                    targetType = targetType,
+                                    mediaType = AmityStoryMediaType.Image(Uri.parse(it))
+                                )
                             }
                         )
                     },
@@ -309,8 +341,14 @@ fun AmityCreateStoryPage(
                         isCurrentlyRecording = true
                         AmityStoryCameraHelper.captureVideo(
                             context = context,
-                            onVideoSaved = { uri ->
-                                onMediaSelected(isPhotoSelected, uri)
+                            onVideoSaved = {
+                                behavior.goToDraftStoryPage(
+                                    context = context,
+                                    launcher = launcher,
+                                    targetId = targetId,
+                                    targetType = targetType,
+                                    mediaType = AmityStoryMediaType.Video(Uri.parse(it))
+                                )
                             }
                         )
                     },
@@ -341,5 +379,8 @@ fun AmityCreateStoryPage(
 @Preview
 @Composable
 fun AmityCreateStoryPagePreview() {
-    AmityCreateStoryPage()
+    AmityCreateStoryPage(
+        targetId = "",
+        targetType = AmityStory.TargetType.COMMUNITY
+    )
 }

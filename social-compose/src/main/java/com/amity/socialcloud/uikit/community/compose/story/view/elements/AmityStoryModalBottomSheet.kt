@@ -28,8 +28,8 @@ import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayCom
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityStoryModalDialogUIState
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityStoryModalSheetUIState
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageViewModel
-import com.amity.socialcloud.uikit.community.compose.ui.elements.AmityBottomSheetActionItem
-import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem
+import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -85,7 +85,7 @@ fun AmityStoryModalBottomSheet(
                         reference = AmityComment.Reference.STORY(data.storyId),
                         community = data.community,
                         shouldAllowInteraction = data.shouldAllowInteraction,
-                        shouldAllowComment = data.shouldAllowComment,
+                        shouldAllowCreation = data.shouldAllowComment,
                     )
                 }
 
