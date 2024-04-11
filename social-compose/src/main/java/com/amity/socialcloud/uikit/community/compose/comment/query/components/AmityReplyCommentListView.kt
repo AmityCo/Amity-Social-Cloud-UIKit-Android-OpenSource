@@ -11,7 +11,7 @@ import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.uikit.community.compose.comment.query.AmityReplyCommentView
 import com.amity.socialcloud.uikit.community.compose.comment.query.AmityStoryCommentReplyLoader
 import com.amity.socialcloud.uikit.community.compose.comment.query.elements.AmityCommentViewReplyBar
-import com.amity.socialcloud.uikit.community.compose.ui.scope.AmityComposeComponentScope
+import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 
 @Composable
 fun AmityReplyCommentListView(

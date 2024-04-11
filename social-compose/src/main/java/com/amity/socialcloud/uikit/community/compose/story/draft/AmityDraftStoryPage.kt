@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.story.draft
 
+import android.app.Activity
 import android.net.Uri
 import android.util.Patterns
 import androidx.activity.compose.BackHandler
@@ -53,6 +54,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.palette.graphics.Palette
 import coil.compose.rememberAsyncImagePainter
@@ -61,21 +63,23 @@ import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.sdk.model.social.story.AmityStoryImageDisplayMode
 import com.amity.socialcloud.sdk.model.social.story.AmityStoryTarget
 import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
+import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
+import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
+import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
+import com.amity.socialcloud.uikit.common.ui.theme.AmityComposeTheme
+import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.utils.asBoolean
+import com.amity.socialcloud.uikit.common.utils.asDrawableRes
+import com.amity.socialcloud.uikit.common.utils.closePage
+import com.amity.socialcloud.uikit.common.utils.closePageWithResult
+import com.amity.socialcloud.uikit.common.utils.getBackgroundColor
+import com.amity.socialcloud.uikit.common.utils.getValue
+import com.amity.socialcloud.uikit.common.utils.showToast
+import com.amity.socialcloud.uikit.common.utils.toComposeColor
 import com.amity.socialcloud.uikit.community.compose.story.create.elements.AmityStoryCameraRelatedButtonElement
 import com.amity.socialcloud.uikit.community.compose.story.hyperlink.AmityStoryHyperlinkComponent
 import com.amity.socialcloud.uikit.community.compose.story.hyperlink.elements.AmityStoryHyperlinkView
 import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmityStoryVideoPlayer
-import com.amity.socialcloud.uikit.community.compose.ui.base.AmityBaseElement
-import com.amity.socialcloud.uikit.community.compose.ui.base.AmityBasePage
-import com.amity.socialcloud.uikit.community.compose.ui.elements.AmityAlertDialog
-import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityComposeTheme
-import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.community.compose.utils.asBoolean
-import com.amity.socialcloud.uikit.community.compose.utils.asDrawableRes
-import com.amity.socialcloud.uikit.community.compose.utils.getBackgroundColor
-import com.amity.socialcloud.uikit.community.compose.utils.getValue
-import com.amity.socialcloud.uikit.community.compose.utils.showToast
-import com.amity.socialcloud.uikit.community.compose.utils.toComposeColor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -85,11 +89,7 @@ fun AmityDraftStoryPage(
     modifier: Modifier = Modifier,
     targetId: String,
     targetType: AmityStory.TargetType,
-    isImage: Boolean,
-    fileUri: Uri,
-    exoPlayer: ExoPlayer? = null,
-    onCreateSuccess: () -> Unit = {},
-    onCloseClicked: () -> Unit = {},
+    mediaType: AmityStoryMediaType,
 ) {
     val context = LocalContext.current
 
@@ -116,6 +116,20 @@ fun AmityDraftStoryPage(
         }
     }
 
+    val exoPlayer = remember { ExoPlayer.Builder(context).build() }
+
+    LaunchedEffect(mediaType) {
+        if (mediaType is AmityStoryMediaType.Video && mediaType.uri != Uri.EMPTY) {
+            exoPlayer.apply {
+                addMediaItem(MediaItem.fromUri(mediaType.uri))
+                prepare()
+                repeatMode = ExoPlayer.REPEAT_MODE_ONE
+                playWhenReady = true
+            }
+        }
+    }
+
+
     var hyperlinkUrlText by remember { mutableStateOf("") }
     var hyperlinkCustomText by remember { mutableStateOf("") }
 
@@ -137,7 +151,7 @@ fun AmityDraftStoryPage(
 
     val painter = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
-            .data(if (isImage) fileUri else "")
+            .data(if (mediaType is AmityStoryMediaType.Image) mediaType.uri else "")
             .allowHardware(false)
             .build()
     )
@@ -158,7 +172,7 @@ fun AmityDraftStoryPage(
             dialogText = "The story will be permanently deleted. It cannot be undone.",
             confirmText = "Discard",
             dismissText = "Cancel",
-            onConfirmation = { onCloseClicked() },
+            onConfirmation = { context.closePage() },
             onDismissRequest = { openAlertDialog.value = false }
         )
     }
@@ -187,7 +201,7 @@ fun AmityDraftStoryPage(
                             end.linkTo(parent.end)
                         }
                 ) {
-                    if (isImage) {
+                    if (mediaType is AmityStoryMediaType.Image) {
                         Box(
                             modifier = Modifier
                                 .aspectRatio(9f / 16f)
@@ -223,7 +237,7 @@ fun AmityDraftStoryPage(
 
                         DisposableEffect(Unit) {
                             onDispose {
-                                exoPlayer?.release()
+                                exoPlayer.release()
                             }
                         }
                     }
@@ -247,7 +261,7 @@ fun AmityDraftStoryPage(
                     )
                 }
 
-                if (isImage) {
+                if (mediaType is AmityStoryMediaType.Image) {
                     AmityBaseElement(
                         pageScope = getPageScope(),
                         elementId = "aspect_ratio_button"
@@ -341,39 +355,43 @@ fun AmityDraftStoryPage(
                             .align(Alignment.CenterEnd)
                             .testTag(getAccessibilityId())
                             .clickable {
-                                if (isImage) {
-                                    viewModel.createImageStory(
-                                        targetId = targetId,
-                                        targetType = targetType,
-                                        fileUri = fileUri,
-                                        imageDisplayMode =
-                                        if (isImageContentScaleFit) AmityStoryImageDisplayMode.FIT
-                                        else AmityStoryImageDisplayMode.FILL,
-                                        hyperlinkUrlText = hyperlinkUrlText,
-                                        hyperlinkCustomText = hyperlinkCustomText,
-                                        onSuccess = {
-                                            context.showToast("Successfully shared story")
-                                        },
-                                        onError = { message ->
-                                            context.showToast(message)
-                                        }
-                                    )
-                                    onCreateSuccess()
-                                } else {
-                                    viewModel.createVideoStory(
-                                        targetId = targetId,
-                                        targetType = targetType,
-                                        fileUri = fileUri,
-                                        hyperlinkUrlText = hyperlinkUrlText,
-                                        hyperlinkCustomText = hyperlinkCustomText,
-                                        onSuccess = {
-                                            context.showToast("Successfully shared story")
-                                        },
-                                        onError = { message ->
-                                            context.showToast(message)
-                                        }
-                                    )
-                                    onCreateSuccess()
+                                when (mediaType) {
+                                    is AmityStoryMediaType.Image -> {
+                                        viewModel.createImageStory(
+                                            targetId = targetId,
+                                            targetType = targetType,
+                                            fileUri = mediaType.uri,
+                                            imageDisplayMode =
+                                            if (isImageContentScaleFit) AmityStoryImageDisplayMode.FIT
+                                            else AmityStoryImageDisplayMode.FILL,
+                                            hyperlinkUrlText = hyperlinkUrlText,
+                                            hyperlinkCustomText = hyperlinkCustomText,
+                                            onSuccess = {
+                                                context.showToast("Successfully shared story")
+                                            },
+                                            onError = { message ->
+                                                context.showToast(message)
+                                            }
+                                        )
+                                        context.closePageWithResult(Activity.RESULT_OK)
+                                    }
+
+                                    is AmityStoryMediaType.Video -> {
+                                        viewModel.createVideoStory(
+                                            targetId = targetId,
+                                            targetType = targetType,
+                                            fileUri = mediaType.uri,
+                                            hyperlinkUrlText = hyperlinkUrlText,
+                                            hyperlinkCustomText = hyperlinkCustomText,
+                                            onSuccess = {
+                                                context.showToast("Successfully shared story")
+                                            },
+                                            onError = { message ->
+                                                context.showToast(message)
+                                            }
+                                        )
+                                        context.closePageWithResult(Activity.RESULT_OK)
+                                    }
                                 }
                             }
                     ) {
@@ -449,7 +467,6 @@ fun AmityDraftStoryPagePreview() {
     AmityDraftStoryPage(
         targetId = "",
         targetType = AmityStory.TargetType.COMMUNITY,
-        isImage = true,
-        fileUri = Uri.parse("")
+        mediaType = AmityStoryMediaType.Image(Uri.EMPTY),
     )
 }

@@ -26,13 +26,13 @@ import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.comment.elements.AmityCommentAvatarView
 import com.amity.socialcloud.uikit.community.compose.comment.query.components.AmityCommentActionsBottomSheet
+import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
+import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.comment.query.components.AmityCommentContentContainer
 import com.amity.socialcloud.uikit.community.compose.comment.query.components.AmityCommentEngagementBar
 import com.amity.socialcloud.uikit.community.compose.comment.query.components.AmityEditCommentContainer
 import com.amity.socialcloud.uikit.community.compose.comment.query.components.AmityReplyCommentContainer
-import com.amity.socialcloud.uikit.community.compose.ui.scope.AmityComposeComponentScope
-import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.community.compose.utils.clickableWithoutRipple
 import com.google.gson.JsonObject
 import org.joda.time.DateTime
 import kotlin.math.max

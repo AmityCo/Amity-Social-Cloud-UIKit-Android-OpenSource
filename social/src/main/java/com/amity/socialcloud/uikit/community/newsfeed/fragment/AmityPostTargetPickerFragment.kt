@@ -18,9 +18,6 @@ import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityLiveStreamPo
 import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityPollPostCreatorActivity
 import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityPostCreatorActivity
 import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityPostDetailsActivity
-import com.amity.socialcloud.uikit.community.newsfeed.activity.POST_CREATION_TYPE_GENERIC
-import com.amity.socialcloud.uikit.community.newsfeed.activity.POST_CREATION_TYPE_LIVE_STREAM
-import com.amity.socialcloud.uikit.community.newsfeed.activity.POST_CREATION_TYPE_POLL
 import com.amity.socialcloud.uikit.community.newsfeed.adapter.AmityCreatePostCommunitySelectionAdapter
 import com.amity.socialcloud.uikit.community.newsfeed.listener.AmityCreatePostCommunitySelectionListener
 import com.amity.socialcloud.uikit.community.newsfeed.viewmodel.AmityPostTargetViewModel
@@ -199,3 +196,7 @@ class AmityPostTargetPickerFragment : AmityBaseFragment(),
         }
     }
 }
+
+const val POST_CREATION_TYPE_GENERIC = "POST_CREATION_TYPE_GENERIC"
+const val POST_CREATION_TYPE_LIVE_STREAM = "POST_CREATION_TYPE_LIVE_STREAM"
+const val POST_CREATION_TYPE_POLL = "POST_CREATION_TYPE_LIVE_POLL"

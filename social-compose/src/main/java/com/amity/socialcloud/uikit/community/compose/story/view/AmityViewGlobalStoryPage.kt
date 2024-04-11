@@ -27,9 +27,10 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.media3.exoplayer.ExoPlayer
-import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.utils.closePage
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.story.target.global.AmityStorySharedGlobalTargetsObject
-import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.utils.AmityStoryVideoPlayerHelper
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -40,13 +41,14 @@ import kotlin.math.min
 @Composable
 fun AmityViewGlobalStoryPage(
     modifier: Modifier = Modifier,
-    storyTargetId: String,
-    navigateToCreateStoryPage: () -> Unit = {},
-    navigateToCommunityProfilePage: (AmityCommunity) -> Unit = {},
-    onClose: () -> Unit = {},
+    targetId: String,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+
+    val behavior = remember {
+        AmitySocialBehaviorHelper.viewStoryPageBehavior
+    }
 
     var shouldShowLoading by remember { mutableStateOf(false) }
     var shouldRestartTimer by remember { mutableStateOf(false) }
@@ -65,7 +67,7 @@ fun AmityViewGlobalStoryPage(
 
     val exoPlayer = remember { ExoPlayer.Builder(context).build() }
 
-    LaunchedEffect(storyTargetId, selectedTarget.first) {
+    LaunchedEffect(targetId, selectedTarget.first) {
         if (selectedTarget.first < 0) return@LaunchedEffect
 
         scope.launch {
@@ -111,7 +113,7 @@ fun AmityViewGlobalStoryPage(
                             )
                         }
                 ) {
-                    AmityViewStoryPage(
+                    AmityViewCommunityStoryPage(
                         modifier = modifier,
                         targetId = target.getTargetId(),
                         targetType = target.getTargetType(),
@@ -119,9 +121,12 @@ fun AmityViewGlobalStoryPage(
                         isSingleTarget = false,
                         isTargetVisible = targetPagerState.targetPage == index,
                         shouldRestartTimer = shouldRestartTimer,
-                        navigateToCreateStoryPage = navigateToCreateStoryPage,
-                        navigateToCommunityProfilePage = navigateToCommunityProfilePage,
-                        onClose = onClose,
+                        navigateToCommunityProfilePage = { community ->
+                            behavior.goToCommunityProfilePage(
+                                context = context,
+                                community = community
+                            )
+                        },
                         firstSegmentReached = {
                             scope.launch {
                                 moveTarget(
@@ -145,7 +150,7 @@ fun AmityViewGlobalStoryPage(
                                     totalTargets = targets.size,
                                     targetPagerState = targetPagerState,
                                     lastTargetReached = {
-                                        onClose()
+                                        context.closePage()
                                     }
                                 )
                             }
@@ -215,6 +220,6 @@ fun PagerState.offsetForPage(page: Int) = (currentPage - page) + currentPageOffs
 @Composable
 fun PreviewAmityViewGlobalStoryPage() {
     AmityViewGlobalStoryPage(
-        storyTargetId = "",
+        targetId = "",
     )
 }

@@ -38,15 +38,15 @@ import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
 import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentViewModel
-import com.amity.socialcloud.uikit.community.compose.ui.base.AmityBaseComponent
-import com.amity.socialcloud.uikit.community.compose.ui.base.AmityBaseElement
+import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
+import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.AmityMentionSuggestionView
 import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.AmityMentionTextField
-import com.amity.socialcloud.uikit.community.compose.ui.scope.AmityComposeComponentScope
-import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.community.compose.utils.getBackgroundColor
-import com.amity.socialcloud.uikit.community.compose.utils.getValue
-import com.amity.socialcloud.uikit.community.compose.utils.shade
+import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
+import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.utils.getBackgroundColor
+import com.amity.socialcloud.uikit.common.utils.getValue
+import com.amity.socialcloud.uikit.common.utils.shade
 import com.google.gson.JsonObject
 
 @Composable

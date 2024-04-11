@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
 import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.uikit.community.compose.story.draft.AmityDraftStoryPageActivity
+import com.amity.socialcloud.uikit.community.compose.story.draft.AmityStoryMediaType
 
 open class AmityCreateStoryPageBehavior {
 
@@ -13,15 +14,13 @@ open class AmityCreateStoryPageBehavior {
         launcher: ActivityResultLauncher<Intent>,
         targetId: String,
         targetType: AmityStory.TargetType,
-        isImage: Boolean,
-        fileUri: String,
+        mediaType: AmityStoryMediaType,
     ) {
         val intent = AmityDraftStoryPageActivity.newIntent(
             context = context,
             targetId = targetId,
             targetType = targetType,
-            isImage = isImage,
-            fileUri = fileUri
+            mediaType = mediaType,
         )
         launcher.launch(intent)
     }

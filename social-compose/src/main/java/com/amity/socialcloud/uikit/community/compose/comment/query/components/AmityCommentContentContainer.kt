@@ -14,8 +14,8 @@ import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionee
 import com.amity.socialcloud.uikit.community.compose.comment.query.elements.AmityCommentModeratorBadge
-import com.amity.socialcloud.uikit.community.compose.ui.elements.AmityExpandableText
-import com.amity.socialcloud.uikit.community.compose.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.elements.AmityExpandableText
+import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.google.gson.JsonObject
 
 @Composable

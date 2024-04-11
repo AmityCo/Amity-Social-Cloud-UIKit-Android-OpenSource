@@ -13,7 +13,7 @@ import com.amity.socialcloud.uikit.community.explore.activity.EXTRA_PARAM_COMMUN
 import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityPostCreatorActivity
 import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityPostDetailsActivity
 import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityPostEditorActivity
-import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityPostTargetPickerActivity
+import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityTargetSelectionPageActivity
 import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityVideoPostPlayerActivity
 import com.amity.socialcloud.uikit.community.newsfeed.util.AmityTimelineType
 import com.amity.socialcloud.uikit.community.profile.activity.AmityEditUserProfileActivity
@@ -56,7 +56,7 @@ class AmityCommunityNavigation {
         }
 
         fun navigateToCreatePostRoleSelection(context: Context) {
-            val intent = Intent(context, AmityPostTargetPickerActivity::class.java)
+            val intent = Intent(context, AmityTargetSelectionPageActivity::class.java)
             context.startActivity(intent)
         }
 

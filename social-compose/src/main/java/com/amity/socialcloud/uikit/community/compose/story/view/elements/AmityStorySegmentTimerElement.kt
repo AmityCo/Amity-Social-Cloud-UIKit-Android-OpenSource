@@ -10,9 +10,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
-import com.amity.socialcloud.uikit.community.compose.ui.base.AmityBaseElement
-import com.amity.socialcloud.uikit.community.compose.ui.base.AmityBasePage
-import com.amity.socialcloud.uikit.community.compose.ui.scope.AmityComposePageScope
+import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
+import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
+import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 
 @Composable
 fun AmityStorySegmentTimerElement(

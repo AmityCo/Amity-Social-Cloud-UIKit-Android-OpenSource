@@ -2,9 +2,10 @@ package com.amity.snipet.verifier.social.story
 
 import androidx.compose.runtime.Composable
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
-import com.amity.socialcloud.uikit.community.compose.story.target.community.AmityStoryCommunityTargetTabComponent
+import com.amity.socialcloud.uikit.community.compose.story.target.AmityStoryTabComponent
+import com.amity.socialcloud.uikit.community.compose.story.target.AmityStoryTabComponentType
 
-class AmityStoryTabComponent {
+class AmityStoryTabComponentSample {
     /* begin_sample_code
        gist_id: 3f23dc1b5018132d1b891ac1f9f067fb
        filename: AmityStoryTabComponent.kt
@@ -15,12 +16,13 @@ class AmityStoryTabComponent {
     fun compose(
         community: AmityCommunity
     ) {
-        //  It's available as Composable element
-        AmityStoryCommunityTargetTabComponent(communityId = community.getCommunityId())
+        val feedTypeCommunity = AmityStoryTabComponentType.CommunityFeed(community.getCommunityId())
+        val feedTypeGlobal = AmityStoryTabComponentType.GlobalFeed
 
-        //  binding.composeViewStoryTarget.setContent {
-        //      AmityStoryCommunityTargetTabComponent(communityId = community.getCommunityId())
-        //  }
+        //  It's available as Composable element
+        AmityStoryTabComponent(
+            type = feedTypeCommunity
+        )
     }
     /* end_sample_code */
 }

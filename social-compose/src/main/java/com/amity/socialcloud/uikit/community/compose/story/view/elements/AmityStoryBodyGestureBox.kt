@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
-import com.amity.socialcloud.uikit.community.compose.utils.interceptTap
+import com.amity.socialcloud.uikit.common.utils.interceptTap
 
 @Composable
 fun AmityStoryBodyGestureBox(

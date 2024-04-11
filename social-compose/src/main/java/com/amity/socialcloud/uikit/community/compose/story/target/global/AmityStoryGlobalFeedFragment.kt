@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import com.amity.socialcloud.uikit.common.base.AmityBaseFragment
+import com.amity.socialcloud.uikit.community.compose.story.target.AmityStoryTabComponent
+import com.amity.socialcloud.uikit.community.compose.story.target.AmityStoryTabComponentType
 
 class AmityStoryGlobalFeedFragment : AmityBaseFragment() {
 
@@ -16,7 +18,9 @@ class AmityStoryGlobalFeedFragment : AmityBaseFragment() {
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
-                AmityStoryGlobalTargetTabComponent()
+                AmityStoryTabComponent(
+                    type = AmityStoryTabComponentType.GlobalFeed
+                )
             }
         }
     }

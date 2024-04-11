@@ -36,7 +36,7 @@ import com.amity.socialcloud.sdk.model.social.story.AmityStoryItem
 import com.amity.socialcloud.uikit.community.compose.story.hyperlink.elements.AmityStoryHyperlinkView
 import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmityStoryBodyGestureBox
 import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmityStoryVideoPlayer
-import com.amity.socialcloud.uikit.community.compose.utils.toComposeColor
+import com.amity.socialcloud.uikit.common.utils.toComposeColor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

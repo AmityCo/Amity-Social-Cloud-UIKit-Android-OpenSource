@@ -4,8 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
-import com.amity.socialcloud.uikit.community.compose.ui.scope.AmityComposeComponentScope
-import com.amity.socialcloud.uikit.community.compose.utils.isCommunityModerator
+import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
+import com.amity.socialcloud.uikit.common.utils.isCommunityModerator
 import com.google.gson.JsonObject
 
 @Composable

@@ -1,8 +1,11 @@
 package com.amity.snipet.verifier.social.story
 
 import android.content.Context
+import android.net.Uri
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.uikit.community.compose.story.draft.AmityDraftStoryPageActivity
+import com.amity.socialcloud.uikit.community.compose.story.draft.AmityStoryMediaType
 
 class AmityDraftStoryPage {
     /* begin_sample_code
@@ -14,14 +17,13 @@ class AmityDraftStoryPage {
     fun startAnActivity(
         context: Context,
         community: AmityCommunity,
-        isImage: Boolean,
-        fileUri: String
+        mediaType: AmityStoryMediaType = AmityStoryMediaType.Image(Uri.EMPTY)
     ) {
         val intent = AmityDraftStoryPageActivity.newIntent(
             context = context,
             targetId = community.getCommunityId(),
-            isImage = isImage,
-            fileUri = fileUri
+            targetType = AmityStory.TargetType.COMMUNITY,
+            mediaType = mediaType,
         )
         context.startActivity(intent)
     }
