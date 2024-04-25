@@ -27,6 +27,7 @@ import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.sdk.model.social.story.AmityStoryTarget
 import com.amity.socialcloud.uikit.common.common.readableNumber
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.compose.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityStoryModalDialogUIState
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityStoryModalSheetUIState
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageViewModel
@@ -236,7 +237,7 @@ fun AmityStoryUploadFailedRow(
                     story = story,
                     onSuccess = {
                         pageScope?.showSnackbar(
-                            drawableRes = R.drawable.amity_ic_check_circle,
+                            drawableRes = CommonR.drawable.amity_ic_check_circle,
                             message = "Successfully shared story"
                         )
                     },

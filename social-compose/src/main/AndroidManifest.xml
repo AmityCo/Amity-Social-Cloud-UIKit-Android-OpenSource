@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.amity.socialcloud.uikit.community.compose">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-feature android:name="android.hardware.camera.any" />
 
@@ -12,19 +11,19 @@
 
     <application>
         <activity
-            android:name=".story.view.AmityViewStoryPageActivity"
+            android:name="com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageActivity"
             android:configChanges="uiMode"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/AmityStoryDarkTheme" />
         <activity
-            android:name=".story.create.AmityCreateStoryPageActivity"
+            android:name="com.amity.socialcloud.uikit.community.compose.story.create.AmityCreateStoryPageActivity"
             android:configChanges="uiMode"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/AmityStoryDarkTheme" />
         <activity
-            android:name=".story.draft.AmityDraftStoryPageActivity"
+            android:name="com.amity.socialcloud.uikit.community.compose.story.draft.AmityDraftStoryPageActivity"
             android:configChanges="uiMode"
             android:exported="true"
             android:screenOrientation="portrait"

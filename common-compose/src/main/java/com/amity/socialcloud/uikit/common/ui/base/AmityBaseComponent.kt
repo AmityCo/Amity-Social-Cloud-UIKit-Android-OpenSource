@@ -41,7 +41,10 @@ fun AmityBaseComponent(
 		coroutineScope = coroutineScope,
 	)
 	
-	AmityComposeTheme(componentScope = comp) {
+	AmityComposeTheme(
+		pageScope = pageScope,
+		componentScope = comp,
+	) {
 		if (!comp.isExcluded()) {
 			if (needScaffold) {
 				Scaffold(

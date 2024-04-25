@@ -46,3 +46,7 @@
 -keep class com.amity.socialcloud.** { *; }
 -keep interface com.amity.socialcloud.** { *; }
 -keep enum com.amity.socialcloud.** { *; }
+
+-dontwarn com.zhihu.matisse.R$plurals
+-keepclassmembers class com.linkedin.android.** { *; }
+

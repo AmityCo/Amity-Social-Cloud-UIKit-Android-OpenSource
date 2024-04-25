@@ -4,6 +4,8 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
+    namespace 'com.amity.socialcloud.uikit.chat.compose'
+
     buildFeatures {
         dataBinding true
         viewBinding true
@@ -13,12 +15,18 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.7"
     }
+
+    packagingOptions {
+        pickFirst("META-INF/*.kotlin_module")
+        exclude 'META-INF/INDEX.LIST'
+        exclude 'META-INF/io.netty.versions.properties'
+    }
 }
 
 dependencies {
 
-    implementation project(path: ':common')
-    implementation project(path: ':common-compose')
+    api project(path: ':common')
+    api project(path: ':common-compose')
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

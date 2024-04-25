@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.sample.liveChat
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -42,6 +43,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -195,6 +197,8 @@ fun ChannelItemView(channel: AmityChannel, onChannelClick: (AmityChannel) -> Uni
             },
         horizontalArrangement = Arrangement.Start
     ) {
+        val nightModeFlags = LocalContext.current.resources.configuration.uiMode and
+            Configuration.UI_MODE_NIGHT_MASK
         // Display avatar
         AvatarImage(avatarUrl = channel.getAvatar()?.getUrl() ?: "")
         Spacer(modifier = Modifier.width(8.dp))
@@ -203,7 +207,10 @@ fun ChannelItemView(channel: AmityChannel, onChannelClick: (AmityChannel) -> Uni
             modifier = Modifier.padding(8.dp),
             fontSize = 18.sp,
             style = MaterialTheme.typography.bodySmall,
-            color = Color.White
+            color = when (nightModeFlags) {
+                Configuration.UI_MODE_NIGHT_YES -> Color.White
+                else -> Color.Black
+            }
         )
     }
 }
@@ -258,7 +265,6 @@ fun FloatingActionButtonCompose(onClick: () -> Unit = {}) {
         onClick = {
           onClick()
         },
-        modifier = Modifier.shadow(4.dp)
     ) {
         Icon(Icons.Default.Add, contentDescription = null)
     }

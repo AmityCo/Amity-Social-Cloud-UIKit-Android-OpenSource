@@ -13,6 +13,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.paging.ExperimentalPagingApi
@@ -23,6 +25,7 @@ import com.amity.socialcloud.sdk.video.AmityStreamBroadcasterConfiguration
 import com.amity.socialcloud.sdk.video.StreamBroadcaster
 import com.amity.socialcloud.sdk.video.model.AmityBroadcastResolution
 import com.amity.socialcloud.sdk.video.model.AmityStreamBroadcasterState
+import com.amity.socialcloud.uikit.common.base.AmityImagePickerActivity
 import com.amity.socialcloud.uikit.common.common.showSnackBar
 import com.amity.socialcloud.uikit.common.common.views.dialog.bottomsheet.AmityBottomSheetDialog
 import com.amity.socialcloud.uikit.common.common.views.dialog.bottomsheet.BottomSheetMenuItem
@@ -52,7 +55,6 @@ import io.reactivex.rxjava3.internal.operators.flowable.FlowableInterval
 import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
-
 private const val REQUEST_LIVE_STREAM_CAMERA_PERMISSIONS = 20001
 private const val REQUEST_LIVE_STREAM_STORAGE_PERMISSIONS = 20002
 
@@ -73,6 +75,7 @@ class AmityLiveStreamPostCreatorFragment : RxFragment() {
 
     private var communityId: String? = null
     private var duration = 0L
+    private lateinit var imagePickerLauncher: ActivityResultLauncher<Intent>
     private var streamBroadcasterState: AmityStreamBroadcasterState =
         AmityStreamBroadcasterState.IDLE()
     
@@ -107,6 +110,7 @@ class AmityLiveStreamPostCreatorFragment : RxFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupStreamBroadcaster()
+        registerImagePickerResult()
     }
 
     private fun grantCameraPermissions(requestCode: Int, onPermissionGrant: () -> Unit) {
@@ -127,6 +131,20 @@ class AmityLiveStreamPostCreatorFragment : RxFragment() {
             onPermissionGrant()
         } else {
             requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), requestCode)
+        }
+    }
+    
+    private fun registerImagePickerResult() {
+        imagePickerLauncher = requireActivity().registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                result.data?.let {
+                    val uris = it.let(AmityImagePickerActivity::getUris)?.toList()
+                    if (!uris.isNullOrEmpty()) {
+                        uploadThumbnail(uris.first())
+                    }
+                }
+            }
         }
     }
 
@@ -161,9 +179,13 @@ class AmityLiveStreamPostCreatorFragment : RxFragment() {
         binding.iconClose.setOnClickListener { activity?.finish() }
         binding.togglePublish.setOnClickListener { startStreaming() }
         binding.iconAddThumbnail.setOnClickListener {
-            grantStoragePermission(
-                REQUEST_LIVE_STREAM_STORAGE_PERMISSIONS
-            ) { openImagePicker() }
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                grantStoragePermission(
+                    REQUEST_LIVE_STREAM_STORAGE_PERMISSIONS
+                ) { openImagePicker() }
+            } else {
+                openImagePicker()
+            }
         }
         binding.thumbnailContainer.setOnClickListener {
             presentEditThumbnailDialog()
@@ -369,15 +391,24 @@ class AmityLiveStreamPostCreatorFragment : RxFragment() {
     }
 
     private fun openImagePicker() {
-        Matisse.from(this)
-            .choose(MimeType.of(MimeType.JPEG, MimeType.PNG, MimeType.GIF))
-            .showSingleMediaType(true)
-            .countable(true)
-            .maxSelectable(1)
-            .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
-            .imageEngine(GlideEngine())
-            .theme(R.style.AmityImagePickerTheme)
-            .forResult(AmityConstants.PICK_IMAGES)
+        val isSupportPhotoPicker = ActivityResultContracts.PickVisualMedia.isPhotoPickerAvailable(requireContext())
+        if (isSupportPhotoPicker && ::imagePickerLauncher.isInitialized) {
+            val intent = AmityImagePickerActivity.newIntent(
+                context = requireContext(),
+                maxItems = 1,
+            )
+            imagePickerLauncher.launch(intent)
+        } else {
+            Matisse.from(this)
+                .choose(MimeType.of(MimeType.JPEG, MimeType.PNG, MimeType.GIF))
+                .showSingleMediaType(true)
+                .countable(true)
+                .maxSelectable(1)
+                .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
+                .imageEngine(GlideEngine())
+                .theme(R.style.AmityImagePickerTheme)
+                .forResult(AmityConstants.PICK_IMAGES)
+        }
     }
 
     private fun uploadThumbnail(uri: Uri) {

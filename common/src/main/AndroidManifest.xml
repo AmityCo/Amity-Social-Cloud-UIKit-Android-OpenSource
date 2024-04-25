@@ -25,6 +25,16 @@
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp" />
 
+        <activity
+            android:name="com.amity.socialcloud.uikit.common.base.AmityImagePickerActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+
+        <activity
+            android:name="com.amity.socialcloud.uikit.common.base.AmityVideoPickerActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+
         <provider
             android:name=".utils.AmityProvider"
             android:authorities="${applicationId}.UikitCommonProvider"

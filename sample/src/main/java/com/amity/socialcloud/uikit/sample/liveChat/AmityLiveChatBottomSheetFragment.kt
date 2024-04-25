@@ -1,10 +1,12 @@
 package com.amity.socialcloud.uikit.sample.liveChat
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.OptIn
+import androidx.core.content.ContextCompat
 import androidx.media3.common.util.UnstableApi
 import com.amity.socialcloud.uikit.chat.compose.live.AmityLiveChatFragment
 import com.amity.socialcloud.uikit.sample.R
@@ -27,6 +29,17 @@ class AmityLiveChatBottomSheetFragment private constructor(
 		val messageListFragment = AmityLiveChatFragment.newInstance(
 			channelId = channelId,
 		).build()
+		val nightModeFlags = requireContext().resources.configuration.uiMode and
+			Configuration.UI_MODE_NIGHT_MASK
+		binding.bottomSheet.background = when (nightModeFlags) {
+			Configuration.UI_MODE_NIGHT_YES -> {
+				ContextCompat.getDrawable(requireContext(),R.drawable.amity_live_chat_bottom_sheet_dark)
+			}
+			else -> {
+				ContextCompat.getDrawable(requireContext(),R.drawable.amity_live_chat_bottom_sheet_light)
+			}
+		}
+		binding.bottomSheet.setOnDragListener(null)
 		val transaction = childFragmentManager.beginTransaction()
 		transaction.add(R.id.messageListContainer, messageListFragment, messageListFragment.tag)
 		transaction.addToBackStack(messageListFragment.tag)

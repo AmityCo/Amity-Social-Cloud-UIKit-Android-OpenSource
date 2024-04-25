@@ -6,4 +6,6 @@ data class AmityMessageAction(
 	val onReply: (() -> Unit)? = null,
 	val onDelete: (() -> Unit)? = null,
 	val onCopy: @Composable (() -> Unit)? = null,
+	val onFlag: (() -> Unit)? = null,
+	val onUnFlag: (() -> Unit)? = null,
 )

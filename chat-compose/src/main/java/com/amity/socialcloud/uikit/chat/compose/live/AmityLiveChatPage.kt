@@ -8,32 +8,49 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
+import com.amity.socialcloud.uikit.chat.compose.R
 import com.amity.socialcloud.uikit.chat.compose.live.component.AmityLiveChatHeader
 import com.amity.socialcloud.uikit.chat.compose.live.component.AmityLiveChatMessageList
 import com.amity.socialcloud.uikit.chat.compose.live.composer.AmityLiveChatMessageComposeBar
 import com.amity.socialcloud.uikit.chat.compose.live.composer.AmityLiveChatPageViewModel
 import com.amity.socialcloud.uikit.common.eventbus.NetworkConnectionEventPublisher
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
+import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.utils.asColor
+import com.amity.socialcloud.uikit.common.utils.getBackgroundColor
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 
 @Composable
 fun AmityLiveChatPage(
@@ -44,35 +61,58 @@ fun AmityLiveChatPage(
     val viewModel = AmityLiveChatPageViewModel(subChannelId)
     val context = androidx.compose.ui.platform.LocalContext.current
     NetworkConnectionEventPublisher.initPublisher(context = context)
-    
+    val membership by remember {
+        viewModel.observeMembership()
+            .distinctUntilChanged { old, new ->
+                old.isBanned() == new.isBanned()
+                        && old.isMuted() == new.isMuted()
+            }
+    }.collectAsState(initial = null)
+
+    val isChannelMuted by remember {
+        viewModel.getChannelFlow().map {
+            it.isMuted()
+        }.distinctUntilChanged()
+    }.collectAsState(initial = false)
+
+    val isChannelModerator by remember {
+        viewModel.isChannelModerator().distinctUntilChanged()
+    }.collectAsState(initial = false)
+
+    val isGlobalBanned by remember {
+        viewModel.observeGlobalBanEvent().distinctUntilChanged()
+    }.collectAsState(initial = false)
+
     DisposableEffect(Unit) {
         onDispose {
             viewModel.onStop()
         }
     }
-
     AmityBasePage(pageId = "live_chat") {
         Column(
             modifier = modifier
-                .background(Color(0xFF191919))
-// TODO uncomment this when implementing dark mode
-//                .background(
-//                    getPageScope()
-//                        .getConfig()
-//                        .getBackgroundColor()
-//                )
+                .background(
+                    getPageScope()
+                        .getPageTheme()
+                        ?.backgroundColor
+                        ?.asColor() ?: AmityTheme.colors.background
+                )
                 .fillMaxSize()
         ) {
-            Box(modifier = Modifier
-                .fillMaxWidth()
-            ){
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
                 AmityLiveChatHeader(
                     pageScope = getPageScope(),
                     viewModel = viewModel,
                 )
             }
             HorizontalDivider(
-                color = AmityTheme.colors.baseShade5
+                color = getPageScope()
+                    .getPageTheme()
+                    ?.baseShade4Color
+                    ?.asColor() ?: AmityTheme.colors.baseShade4,
             )
             Box(
                 modifier = Modifier
@@ -84,12 +124,58 @@ fun AmityLiveChatPage(
                     viewModel = viewModel,
                 )
             }
-            AmityLiveChatMessageComposeBar(
-                pageScope = getPageScope(),
-                viewModel = viewModel,
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
+
+            val showMutedLabel =
+                !isChannelModerator
+                        && membership?.isBanned() == false
+                        && (membership?.isMuted() == true || isChannelMuted)
+            if (showMutedLabel) {
+                HorizontalDivider(
+                    color = getPageScope()
+                        .getPageTheme()
+                        ?.baseShade4Color
+                        ?.asColor() ?: AmityTheme.colors.baseShade4,
+                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(72.dp)
+                ) {
+
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_chat_muted),
+                        contentDescription = "channel muted",
+                        modifier = Modifier
+                            .padding(start = 16.dp)
+                            .size(20.dp),
+                        tint = AmityTheme.colors.baseShade1,
+                    )
+                    val message = if (isChannelMuted) {
+                        "This channel has been set to read-only by the channel moderator"
+                    } else {
+                        "You’ve been muted by the channel moderator"
+                    }
+                    Text(
+                        modifier = Modifier.padding(start = 16.dp, end = 16.dp),
+                        text = message,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        style = AmityTheme.typography.body.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            color = AmityTheme.colors.baseShade1,
+                        ),
+                    )
+                }
+            }
+            if (membership?.isBanned() == false && !isGlobalBanned)
+                AmityLiveChatMessageComposeBar(
+                    pageScope = getPageScope(),
+                    viewModel = viewModel,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
         }
 
     }
@@ -104,7 +190,7 @@ fun LoadingIndicator(itemCount: Int = 0) {
             CircularProgressIndicator(
                 modifier = Modifier
                     .size(20.dp),
-                color = AmityTheme.colors.primary
+                color = AmityTheme.colors.primary,
             )
         }
     }
@@ -121,14 +207,16 @@ fun LoadingToast() {
                 alignment = Alignment.Center,
                 onDismissRequest = {}
             ) {
-                Box(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp, 24.dp)) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp, 24.dp)
+                ) {
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(8.dp))
                             .shadow(4.dp)
-                            .background(AmityTheme.colors.baseShade5)
+                            .background(AmityTheme.colors.baseShade4)
                             .fillMaxWidth()
                     ) {
                         Column {
@@ -150,7 +238,7 @@ fun LoadingToast() {
                                     )
                                 )
                             }
-                            
+
                         }
                     }
                 }

@@ -32,8 +32,6 @@ val amityColorBaseShade1 = Color(0xFF636878)
 val amityColorBaseShade2 = Color(0xFF898E9E)
 val amityColorBaseShade3 = Color(0xFFA5A9B5)
 val amityColorBaseShade4 = Color(0xFFEBECEF)
-val amityColorBaseShade5 = Color(0xFF292B32)
-val amityColorBaseShade6 = Color(0xFF40434E)
 
 val AmityUIKitColors = AmityColors(
     primary = amityColorPrimary,
@@ -59,8 +57,6 @@ val AmityUIKitColors = AmityColors(
     baseShade2 = amityColorBaseShade2,
     baseShade3 = amityColorBaseShade3,
     baseShade4 = amityColorBaseShade4,
-    baseShade5 = amityColorBaseShade5,
-    baseShade6 = amityColorBaseShade6,
 )
 
 @Immutable
@@ -88,8 +84,6 @@ data class AmityColors(
     val baseShade2: Color,
     val baseShade3: Color,
     val baseShade4: Color,
-    val baseShade5: Color,
-    val baseShade6: Color,
 ) {
 
     fun applyConfiguration(theme: AmityUIKitConfig.UIKitTheme): AmityColors {
@@ -100,6 +94,7 @@ data class AmityColors(
         val baseShade2 = theme.baseShade2Color.asColor()
         val baseShade3 = theme.baseShade3Color.asColor()
         val baseShade4 = theme.baseShade4Color.asColor()
+        val baseInverse = theme.baseInverseColor.asColor()
         val alert = theme.alertColor.asColor()
         val background = theme.backgroundColor.asColor()
 
@@ -119,6 +114,7 @@ data class AmityColors(
             baseShade2 = baseShade2,
             baseShade3 = baseShade3,
             baseShade4 = baseShade4,
+            baseInverse = baseInverse,
             alert = alert,
             background = background,
             divider = baseShade4

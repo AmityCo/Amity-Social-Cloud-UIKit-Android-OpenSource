@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@drawable/amity_live_chat_bottom_sheet"
+        android:background="@drawable/amity_live_chat_bottom_sheet_dark"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <!-- Auto layout, variables, and unit scale are not yet supported -->

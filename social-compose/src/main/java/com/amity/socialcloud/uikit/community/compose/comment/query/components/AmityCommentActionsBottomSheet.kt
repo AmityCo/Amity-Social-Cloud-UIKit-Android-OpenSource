@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.compose.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentViewModel
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
 import com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem
@@ -123,7 +124,7 @@ fun AmityCommentActionsContainer(
                                 if (isReplyComment) R.string.amity_reply_deleted_message
                                 else R.string.amity_comment_deleted_message
                             ),
-                            drawableRes = R.drawable.amity_ic_check_circle
+                            drawableRes = CommonR.drawable.amity_ic_check_circle
                         )
                     },
                     onError = {
@@ -189,7 +190,7 @@ fun AmityCommentActionsContainer(
                         onSuccess = {
                             componentScope?.showSnackbar(
                                 message = context.getString(R.string.amity_comment_unreported_toast_message),
-                                drawableRes = R.drawable.amity_ic_check_circle
+                                drawableRes = CommonR.drawable.amity_ic_check_circle
                             )
                         },
                         onError = {
@@ -206,7 +207,7 @@ fun AmityCommentActionsContainer(
                         onSuccess = {
                             componentScope?.showSnackbar(
                                 message = context.getString(R.string.amity_comment_reported_toast_message),
-                                drawableRes = R.drawable.amity_ic_check_circle
+                                drawableRes = CommonR.drawable.amity_ic_check_circle
                             )
                         },
                         onError = {
