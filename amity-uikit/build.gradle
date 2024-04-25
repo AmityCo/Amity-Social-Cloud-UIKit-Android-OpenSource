@@ -2,6 +2,7 @@ apply from: "../buildsystem/activity.gradle"
 apply plugin: 'com.android.library'
 
 android {
+    namespace 'com.amity.socialcloud.uikit'
     buildTypes {
         release {
             consumerProguardFiles 'amity-proguard-rules.pro'
@@ -11,7 +12,6 @@ android {
         }
     }
 }
-
 
 dependencies {
     api project(path: ':social')

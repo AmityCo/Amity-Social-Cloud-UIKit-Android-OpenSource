@@ -36,6 +36,8 @@ data class AmityUIKitConfig(
         val baseShade3Color: String,
         @SerializedName("base_shade4_color")
         val baseShade4Color: String,
+        @SerializedName("base_inverse_color")
+        val baseInverseColor: String,
         @SerializedName("alert_color")
         val alertColor: String,
         @SerializedName("background_color")

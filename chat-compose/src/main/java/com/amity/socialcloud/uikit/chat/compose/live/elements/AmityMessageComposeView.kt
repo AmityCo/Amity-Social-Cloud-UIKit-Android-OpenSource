@@ -1,11 +1,9 @@
 package com.amity.socialcloud.uikit.chat.compose.live.elements
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Rect
-import android.os.Build
 import android.util.TypedValue
-import android.widget.TextView
+import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadata
@@ -19,7 +17,6 @@ import com.linkedin.android.spyglass.mentions.MentionSpan
 import com.linkedin.android.spyglass.mentions.MentionSpanConfig
 import com.linkedin.android.spyglass.mentions.Mentionable
 import com.linkedin.android.spyglass.ui.MentionsEditText
-import java.lang.reflect.Field
 
 
 class AmityMessageComposeView(context: Context) : MentionsEditText(context) {
@@ -157,19 +154,16 @@ class AmityMessageComposeView(context: Context) : MentionsEditText(context) {
 
     private fun applyStyle() {
         setBackgroundColor(ContextCompat.getColor(context, android.R.color.transparent))
-        setTextColor((ContextCompat.getColor(context, R.color.amityColorWhite)))
-        setHintTextColor(
-            AmityColorPaletteUtil.getColor(
-                ContextCompat.getColor(context, R.color.amityColorBase),
-                AmityColorShade.SHADE3
-            )
-        )
-
         setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
     }
 
     fun setMaxChars(maxChars: Int) {
         this.maxChars = maxChars
+    }
+
+    fun setStyle(@ColorInt textColor: Int, @ColorInt hintColor: Int) {
+        setTextColor(textColor)
+        setHintTextColor(hintColor)
     }
 
 

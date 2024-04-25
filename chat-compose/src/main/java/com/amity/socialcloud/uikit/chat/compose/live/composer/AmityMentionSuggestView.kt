@@ -47,7 +47,7 @@ fun AmityMentionSuggestionView(
 
     LazyColumn(
         modifier = modifier
-            .background(color = Color(0xFF292B32))
+            .background(color = AmityTheme.colors.baseShade4)
             .fillMaxWidth()
             .requiredHeightIn(0.dp, 156.dp)
 
@@ -80,7 +80,7 @@ fun AmityMentionSuggestionView(
                     overflow = TextOverflow.Ellipsis,
                     style = AmityTheme.typography.body.copy(
                         fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFFFFFFFF)//AmityTheme.colors.baseShade1,
+                        color = AmityTheme.colors.baseShade1,
                     )
                 )
                 if(suggestion is AmityMentionSuggestion.CHANNEL){

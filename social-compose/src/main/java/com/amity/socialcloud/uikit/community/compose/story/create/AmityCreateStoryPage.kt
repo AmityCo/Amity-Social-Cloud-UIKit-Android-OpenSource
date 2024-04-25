@@ -89,6 +89,7 @@ fun AmityCreateStoryPage(
     var isPhotoSelected by remember { mutableStateOf(true) }
     var isCameraPermissionGranted by remember { mutableStateOf(false) }
     var isMediaPermissionGranted by remember { mutableStateOf(false) }
+    var shouldShowPermissionRequiredMessage by remember { mutableStateOf(false) }
 
     var isBackCameraSelected by remember { mutableStateOf(true) }
     var isFlashLightOn by remember { mutableStateOf(false) }
@@ -106,6 +107,7 @@ fun AmityCreateStoryPage(
     val cameraPermissionLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
             isCameraPermissionGranted = permissions.entries.all { it.value }
+            shouldShowPermissionRequiredMessage = !isCameraPermissionGranted
         }
 
     val mediaPickerLauncher =
@@ -188,6 +190,12 @@ fun AmityCreateStoryPage(
     }
 
     AmityBasePage(pageId = "camera_page") {
+        LaunchedEffect(shouldShowPermissionRequiredMessage) {
+            if (shouldShowPermissionRequiredMessage) {
+                getPageScope().showSnackbar("Required permission is not granted.")
+            }
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -278,7 +286,7 @@ fun AmityCreateStoryPage(
                             } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
                                 mediaPermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES)
                             } else {
-                                mediaPermissionLauncher.launch(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED )
+                                mediaPermissionLauncher.launch(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
                             }
                         }
                     }

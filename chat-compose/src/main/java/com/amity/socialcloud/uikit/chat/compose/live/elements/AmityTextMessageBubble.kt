@@ -1,6 +1,5 @@
 package com.amity.socialcloud.uikit.chat.compose.live.elements
 
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -23,9 +23,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -34,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
 import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
+import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.uikit.chat.compose.R
 import com.amity.socialcloud.uikit.chat.compose.live.composer.AmityLiveChatPageViewModel
 import com.amity.socialcloud.uikit.chat.compose.live.util.getContent
@@ -42,7 +44,6 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityAnnotatedText
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.common.utils.copyText
 import com.google.gson.JsonObject
 
 @Composable
@@ -54,7 +55,11 @@ fun AmityLiveChatMessageSenderView(
 	viewModel: AmityLiveChatPageViewModel,
 	onMessageAction: AmityMessageAction = AmityMessageAction(),
 ) {
-	AmityBaseElement(elementId = "message_bubble_sender_text") {
+	AmityBaseElement(
+		pageScope = pageScope,
+		componentScope = componentScope,
+		elementId = "message_bubble_sender_text"
+	) {
 		val parentId = message.getParentId()
 		if (parentId == null || message.isDeleted()) {
 			MessageSenderBubble(
@@ -85,7 +90,11 @@ fun AmityLiveChatMessageReceiverView(
 	viewModel: AmityLiveChatPageViewModel,
 	onMessageAction: AmityMessageAction = AmityMessageAction(),
 ) {
-	AmityBaseElement(elementId = "message_bubble_receiver_text") {
+	AmityBaseElement(
+		pageScope = pageScope,
+		componentScope = componentScope,
+		elementId = "message_bubble_receiver_text"
+	) {
 		val parentId = message.getParentId()
 		if (parentId == null || message.isDeleted()) {
 			MessageReceiverView(
@@ -150,7 +159,11 @@ fun BaseMessageBubble(
 	onMessageAction: AmityMessageAction,
 ) {
 	var menuExpanded by remember { mutableStateOf(false) }
-	AmityBaseElement(elementId = "message_bubble") {
+	AmityBaseElement(
+		pageScope = pageScope,
+		componentScope = componentScope,
+		elementId = "message_bubble",
+	) {
 		Row(
 			modifier = modifier
 				.fillMaxWidth()
@@ -159,7 +172,7 @@ fun BaseMessageBubble(
 		) {
 			AmityMessageAvatarView(
 				pageScope = pageScope,
-				avatarUrl = message.getCreator()?.getAvatar()?.getUrl() ?: "",
+				avatarUrl = message.getCreator()?.getAvatar()?.getUrl(AmityImage.Size.SMALL) ?: "",
 				size = 32.dp
 			)
 			Spacer(modifier = Modifier.width(8.dp))
@@ -173,7 +186,7 @@ fun BaseMessageBubble(
 					fontSize = 13.sp,
 					lineHeight = 18.sp,
 					fontWeight = FontWeight(600),
-					color = AmityTheme.colors.baseShade3,
+					color = AmityTheme.colors.secondaryShade3,
 					modifier = Modifier.align(Alignment.Start),
 				)
 				Spacer(modifier = Modifier.height(4.dp))
@@ -187,17 +200,10 @@ fun BaseMessageBubble(
 						} else {
 							RoundedCornerShape(0.dp, 12.dp, 12.dp, 12.dp)
 						},
-						color = AmityTheme.colors.baseShade5,
+						color = AmityTheme.colors.baseShade4,
 						modifier = Modifier
 							.weight(1.0f, fill = false)
 							.wrapContentWidth(align = Alignment.Start)
-							.pointerInput(Unit) {
-								detectTapGestures(
-									onLongPress = { offset ->
-										menuExpanded = true
-									}
-								)
-							}
 					) {
 						Row(
 							verticalAlignment = Alignment.CenterVertically,
@@ -205,11 +211,24 @@ fun BaseMessageBubble(
 							if (message.isDeleted()) {
 								DeletedMessageContent(message = message)
 							} else {
-								TextMessageContent(message = message)
+								TextMessageContent(message = message,
+									onLongPress = {
+										menuExpanded = true
+									})
 							}
 						}
 					}
-					AmityMessageBubbleTimestamp(pageScope = pageScope, componentScope = componentScope, message = message)
+					AmityMessageBubbleFlag(
+						pageScope = pageScope,
+						componentScope = componentScope,
+						message = message
+					)
+					AmityMessageBubbleTimestamp(
+						pageScope = pageScope,
+						componentScope = componentScope,
+						message = message,
+						onDelete = onMessageAction.onDelete,
+					)
 				}
 				if (!message.isDeleted()) {
 					Box(modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)) {
@@ -231,6 +250,7 @@ fun BaseMessageBubble(
 fun TextMessageContent(
 	message: AmityMessage,
 	modifier: Modifier = Modifier,
+	onLongPress: () -> Unit = {},
 ) {
 	AmityAnnotatedText(
 		text = getContent(message),
@@ -242,6 +262,7 @@ fun TextMessageContent(
 			fontWeight = FontWeight(400),
 			color = AmityTheme.colors.baseInverse,
 		),
+		onLongPress = onLongPress,
 		modifier = modifier
 			.padding(10.dp, 8.dp)
 			.testTag(getTextMessageContentTestTag(message = message))
@@ -249,26 +270,37 @@ fun TextMessageContent(
 }
 
 @Composable
-fun DeletedMessageContent(message: AmityMessage) {
-	Spacer(modifier = Modifier.width(8.dp))
-	Icon(
-		imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_delete_message),
-		contentDescription = "deleted message icon",
-		tint = AmityTheme.colors.baseInverse,
-		modifier = Modifier.size(16.dp)
-	)
-	Text(
-		text = getContent(message),
-		style = TextStyle(
-			fontSize = 15.sp,
-			lineHeight = 20.sp,
-			fontWeight = FontWeight(400),
-			color = AmityTheme.colors.baseInverse,
-		),
-		modifier = Modifier
-			.padding(4.dp, 5.dp, 8.dp, 5.dp)
-			.testTag(getTextMessageContentTestTag(message = message))
-	)
+fun DeletedMessageContent(
+	message: AmityMessage,
+	modifier: Modifier = Modifier,
+) {
+	Row(
+		modifier = modifier
+			.wrapContentWidth()
+			.wrapContentHeight(Alignment.CenterVertically),
+	) {
+		Spacer(modifier = Modifier.width(8.dp))
+		Icon(
+			painter = painterResource(id = R.drawable.amity_ic_delete_message),
+			contentDescription = "deleted message icon",
+			tint = AmityTheme.colors.baseInverse,
+			modifier = Modifier
+				.padding(vertical = 5.dp)
+				.size(16.dp)
+		)
+		Text(
+			text = getContent(message),
+			style = TextStyle(
+				fontSize = 15.sp,
+				lineHeight = 20.sp,
+				fontWeight = FontWeight(400),
+				color = AmityTheme.colors.baseInverse,
+			),
+			modifier = Modifier
+				.padding(4.dp, 5.dp, 8.dp, 5.dp)
+				.testTag(getTextMessageContentTestTag(message = message))
+		)
+	}
 }
 
 fun getTextMessageContentTestTag(message: AmityMessage): String {

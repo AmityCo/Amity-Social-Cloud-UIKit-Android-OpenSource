@@ -42,6 +42,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityAnnotatedText
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.utils.asColor
 import com.amity.socialcloud.uikit.common.utils.shimmerBackground
 import com.google.gson.JsonObject
 
@@ -128,7 +129,7 @@ fun BaseReplyMessage(
 				fontSize = 13.sp,
 				lineHeight = 18.sp,
 				fontWeight = FontWeight(600),
-				color = AmityTheme.colors.baseShade3,
+				color = AmityTheme.colors.secondaryShade3,
 				modifier = Modifier.align(Alignment.Start),
 			)
 			Spacer(modifier = Modifier.height(4.dp))
@@ -141,7 +142,7 @@ fun BaseReplyMessage(
 				) {
 					Surface(
 						shape = RoundedCornerShape(12.dp, 12.dp, 0.dp, 0.dp),
-						color = AmityTheme.colors.baseShade6,
+						color = AmityTheme.colors.baseShade3,
 						modifier = Modifier.fillMaxWidth()
 							.testTag(getReplyTextMessageBubbleTestTag(message))
 					) {
@@ -159,7 +160,7 @@ fun BaseReplyMessage(
 					}
 					Surface(
 						shape = RoundedCornerShape(0.dp, 0.dp, 12.dp, 12.dp),
-						color = AmityTheme.colors.baseShade5,
+						color = AmityTheme.colors.baseShade4,
 						modifier = Modifier.fillMaxWidth(),
 					) {
 						Box(
@@ -185,7 +186,17 @@ fun BaseReplyMessage(
 						
 					}
 				}
-				AmityMessageBubbleTimestamp(pageScope = pageScope, componentScope = componentScope, message = message)
+				AmityMessageBubbleFlag(
+					pageScope = pageScope,
+					componentScope = componentScope,
+					message = message
+				)
+				AmityMessageBubbleTimestamp(
+					pageScope = pageScope,
+					componentScope = componentScope,
+					message = message,
+					onDelete = onMessageAction.onDelete,
+				)
 			}
 			Box (modifier = Modifier.padding(0.dp,8.dp,0.dp,0.dp)) {
 				AmityMessageOption(
@@ -201,7 +212,11 @@ fun BaseReplyMessage(
 }
 
 @Composable
-fun ParentTextMessage(message: AmityMessage) {
+fun ParentTextMessage(
+	message: AmityMessage,
+	modifier: Modifier = Modifier,
+	pageScope: AmityComposePageScope? = null,
+) {
 	Column {
 		Text(
 			text = message.getCreator()?.getDisplayName() ?: "Unknown",
@@ -212,15 +227,25 @@ fun ParentTextMessage(message: AmityMessage) {
 		)
 		Spacer(modifier = Modifier.height(4.dp))
 		if (message.isDeleted()) {
-			DeletedParentMessageContent(message = message)
+			DeletedParentMessageContent(
+				message = message,
+				pageScope = pageScope,
+			)
 		} else {
-			ParentTextMessageContent(message = message)
+			ParentTextMessageContent(
+				message = message,
+				pageScope = pageScope,
+			)
 		}
 	}
 }
 
 @Composable
-fun ParentTextMessageContent(message: AmityMessage) {
+fun ParentTextMessageContent(
+	message: AmityMessage,
+	modifier: Modifier = Modifier,
+	pageScope: AmityComposePageScope?,
+) {
 	Text(
 		text = getContent(message),
 		style = TextStyle(
@@ -233,7 +258,11 @@ fun ParentTextMessageContent(message: AmityMessage) {
 }
 
 @Composable
-fun DeletedParentMessageContent(message: AmityMessage) {
+fun DeletedParentMessageContent(
+	message: AmityMessage,
+	modifier: Modifier = Modifier,
+	pageScope: AmityComposePageScope?,
+) {
 	Row(
 		verticalAlignment = Alignment.CenterVertically,
 		modifier = Modifier.padding(0.dp, 2.dp)

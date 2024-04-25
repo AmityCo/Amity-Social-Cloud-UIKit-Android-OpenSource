@@ -15,6 +15,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,7 +23,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,6 +37,8 @@ import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.getValue
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 
 
 @Composable
@@ -62,7 +64,26 @@ fun AmityLiveChatMessageComposeBar(
     val parentMessage by remember { viewModel.replyTo }
     
     fun onDismissParent() { viewModel.dismissReplyMessage() }
-    
+
+    val membership by remember {
+        viewModel.observeMembership()
+            .distinctUntilChanged { old, new ->
+                old.isMuted() == new.isMuted()
+            }
+    }.collectAsState(initial = null)
+
+    val isChannelMuted by remember {
+        derivedStateOf { }
+        viewModel.getChannelFlow().map {
+            it.isMuted()
+        }.distinctUntilChanged()
+    }.collectAsState(initial = false)
+
+    val isChannelModerator by remember {
+        derivedStateOf { }
+        viewModel.isChannelModerator().distinctUntilChanged()
+    }.collectAsState(initial = false)
+
     val isFetching by remember {
         viewModel.isFetching
     }
@@ -102,7 +123,7 @@ fun AmityLiveChatMessageComposeBar(
                 }
                 
                 HorizontalDivider(
-                    color = Color(0xFF292B32) //AmityTheme.colors.divider
+                    color = AmityTheme.colors.baseShade4,
                 )
                 
                 Row(
@@ -132,6 +153,7 @@ fun AmityLiveChatMessageComposeBar(
                             maxChar = maxChar,
                             hint = hint,
                             maxLines = 5,
+                            isEnabled = isChannelModerator || ((membership?.isMuted() != true) && !isChannelMuted),
                             addedMention = selectedUserToMention,
                             shouldClearText = shouldClearText,
                             onValueChange = {
@@ -180,10 +202,10 @@ fun AmityLiveChatMessageComposeBar(
                                         when (AmityError.from(exception.code)) {
                                             AmityError.BAN_WORD_FOUND -> "Your message wasn't sent as it contained a blocked word."
                                             AmityError.LINK_NOT_ALLOWED -> "Your message wasn't sent as it contained a link that's not allowed."
-                                            else -> "unknown error"
+                                            else -> exception.message ?: "unknown error"
                                         }
                                     } else {
-                                        "unknown error"
+                                        exception.message ?: "unknown error"
                                     }
                                     getComponentScope().showSnackbar(
                                         message = errorMessage

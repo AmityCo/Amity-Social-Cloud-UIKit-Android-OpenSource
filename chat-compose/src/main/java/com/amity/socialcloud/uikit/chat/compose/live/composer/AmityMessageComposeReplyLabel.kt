@@ -37,7 +37,7 @@ fun AmityMessageComposeReplyLabel(
         modifier = modifier
             .fillMaxWidth()
             .height(62.dp)
-            .background(color = Color(0xFF292B32))//AmityTheme.colors.secondaryShade4
+            .background(color = AmityTheme.colors.baseShade4)
             .padding(start = 16.dp, top = 0.dp, end = 12.dp, bottom = 0.dp)
     ) {
         val creator = parentMessage?.getCreator()

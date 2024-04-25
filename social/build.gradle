@@ -4,6 +4,8 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
+    namespace 'com.amity.socialcloud.uikit.community'
+
     buildFeatures {
         dataBinding = true
         viewBinding = true
@@ -17,7 +19,9 @@ android {
 
 dependencies {
     api project(path: ':common')
+    api project(path: ':common-compose')
     api project(path: ':social-compose')
+
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'com.google.android.material:material:1.3.0'

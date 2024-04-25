@@ -22,9 +22,12 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.amity.socialcloud.uikit.chat.compose.R
+import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
+import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.utils.asColor
 import com.amity.socialcloud.uikit.common.utils.getBackgroundColor
 import kotlinx.coroutines.Dispatchers
 
@@ -48,44 +51,41 @@ fun AmityMessageAvatarView(
             .memoryCachePolicy(CachePolicy.ENABLED)
             .build()
     )
-
-    Box(modifier = modifier) {
-        if(avatarType == AmityAvatarType.MENTION_ALL) {
-            Image(
-                painter = painterResource(id = R.drawable.amity_ic_mention_all),
-                contentDescription = "Mention all",
-                modifier = Modifier
-                    .size(size)
-                    .clip(CircleShape)
-            )
-        } else {
-            Image(
-                painter = painter,
-                contentScale = ContentScale.Crop,
-                contentDescription = "Avatar Image",
-                modifier = Modifier
-                    .size(size)
-                    .clip(CircleShape)
-            )
-            if (painter.state !is AsyncImagePainter.State.Success) {
+    AmityBaseElement(
+        pageScope = pageScope,
+        componentScope = componentScope,
+        elementId = "message_avatar",
+    ) {
+        Box(modifier = modifier) {
+            if(avatarType == AmityAvatarType.MENTION_ALL) {
                 Image(
-                    painter = placeholder,
-                    contentDescription = null,
-                    contentScale = ContentScale.FillBounds,
-                    colorFilter = placeHolderTint?.let(ColorFilter::tint),
+                    painter = painterResource(id = R.drawable.amity_ic_mention_all),
+                    contentDescription = "Mention all",
                     modifier = Modifier
                         .size(size)
                         .clip(CircleShape)
-                        .background(Color(0xFF191919))
-// TODO uncomment this when implementing dark mode
-//                        .background(
-//                            pageScope
-//                                ?.getPageScope()
-//                                ?.getConfig()
-//                                ?.getBackgroundColor()
-//                                ?: AmityTheme.colors.baseInverse
-//                        )
                 )
+            } else {
+                Image(
+                    painter = painter,
+                    contentScale = ContentScale.Crop,
+                    contentDescription = "Avatar Image",
+                    modifier = Modifier
+                        .size(size)
+                        .clip(CircleShape)
+                )
+                if (painter.state !is AsyncImagePainter.State.Success) {
+                    Image(
+                        painter = placeholder,
+                        contentDescription = null,
+                        contentScale = ContentScale.FillBounds,
+                        colorFilter = placeHolderTint?.let(ColorFilter::tint),
+                        modifier = Modifier
+                            .size(size)
+                            .clip(CircleShape)
+                            .background(AmityTheme.colors.background)
+                    )
+                }
             }
         }
     }

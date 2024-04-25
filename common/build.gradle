@@ -3,6 +3,8 @@ apply plugin: 'com.android.library'
 
 
 android {
+    namespace 'com.amity.socialcloud.uikit.common'
+
     buildFeatures {
         dataBinding = true
         viewBinding = true

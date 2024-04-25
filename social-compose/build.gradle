@@ -4,6 +4,8 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
+    namespace 'com.amity.socialcloud.uikit.community.compose'
+
     buildFeatures {
         dataBinding true
         viewBinding true

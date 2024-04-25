@@ -211,7 +211,7 @@
     <string name="amity_follow_user">Follow this user to see all posts</string>
     <string name="amity_follow_error">Unable to follow %s</string>
     <string name="amity_unfollow_error">Unable to unfollow %s</string>
-    <string name="amity_block_error">Unable to unblock %s</string>
+    <string name="amity_block_error">Unable to block %s</string>
     <string name="amity_unblock_error">Unable to unblock %s</string>
     <string name="amity_pending_requests">Pending requests</string>
     <string name="amity_requests_review"> Your requests are waiting for review</string>

@@ -1,151 +1,150 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.amity.socialcloud.uikit.community">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application android:networkSecurityConfig="@xml/network_security_config">
         <activity
-            android:name=".setting.user.AmityUserSettingsActivity"
+            android:name="com.amity.socialcloud.uikit.community.setting.user.AmityUserSettingsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp" />
         <activity
-            android:name=".followers.AmityUserFollowersActivity"
+            android:name="com.amity.socialcloud.uikit.community.followers.AmityUserFollowersActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp" />
         <activity
-            android:name=".followrequest.AmityFollowRequestsActivity"
+            android:name="com.amity.socialcloud.uikit.community.followrequest.AmityFollowRequestsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp" />
         <activity
-            android:name=".newsfeed.activity.AmityCommentCreatorActivity"
+            android:name="com.amity.socialcloud.uikit.community.newsfeed.activity.AmityCommentCreatorActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".notificationsettings.pushDetail.AmityCommunityPostNotificationSettingsActivity"
+            android:name="com.amity.socialcloud.uikit.community.notificationsettings.pushDetail.AmityCommunityPostNotificationSettingsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp" />
         <activity
-            android:name=".notificationsettings.AmityCommunityNotificationsSettingsActivity"
+            android:name="com.amity.socialcloud.uikit.community.notificationsettings.AmityCommunityNotificationsSettingsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp" />
         <activity
-            android:name=".newsfeed.activity.AmityMyFeedActivity"
+            android:name="com.amity.socialcloud.uikit.community.newsfeed.activity.AmityMyFeedActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp" />
         <activity
-            android:name=".newsfeed.activity.AmityCustomPostRankingFeedActivity"
+            android:name="com.amity.socialcloud.uikit.community.newsfeed.activity.AmityCustomPostRankingFeedActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp" />
         <activity
-            android:name=".newsfeed.activity.AmityPostEditorActivity"
+            android:name="com.amity.socialcloud.uikit.community.newsfeed.activity.AmityPostEditorActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".edit.AmityCommunityProfileActivity"
+            android:name="com.amity.socialcloud.uikit.community.edit.AmityCommunityProfileActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp" />
         <activity
-            android:name=".profile.activity.AmityEditUserProfileActivity"
+            android:name="com.amity.socialcloud.uikit.community.profile.activity.AmityEditUserProfileActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp" />
         <activity
-            android:name=".members.AmityCommunityMemberSettingsActivity"
+            android:name="com.amity.socialcloud.uikit.community.members.AmityCommunityMemberSettingsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp" />
         <activity
-            android:name=".setting.AmityCommunitySettingsActivity"
+            android:name="com.amity.socialcloud.uikit.community.setting.AmityCommunitySettingsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp" />
         <activity
-            android:name=".setting.postreview.AmityPostReviewSettingsActivity"
+            android:name="com.amity.socialcloud.uikit.community.setting.postreview.AmityPostReviewSettingsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp" />
         <activity
-            android:name=".setting.story.AmityStorySettingsActivity"
+            android:name="com.amity.socialcloud.uikit.community.setting.story.AmityStorySettingsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp" />
         <activity
-            android:name=".explore.activity.AmityCategoryCommunityListActivity"
+            android:name="com.amity.socialcloud.uikit.community.explore.activity.AmityCategoryCommunityListActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp" />
         <activity
-            android:name=".mycommunity.activity.AmityMyCommunityActivity"
+            android:name="com.amity.socialcloud.uikit.community.mycommunity.activity.AmityMyCommunityActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp" />
         <activity
-            android:name=".profile.activity.AmityUserProfileActivity"
+            android:name="com.amity.socialcloud.uikit.community.profile.activity.AmityUserProfileActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp" />
         <activity
-            android:name=".explore.activity.AmityCategoryPickerActivity"
+            android:name="com.amity.socialcloud.uikit.community.explore.activity.AmityCategoryPickerActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp" />
         <activity
-            android:name=".explore.activity.AmityCategoryListActivity"
+            android:name="com.amity.socialcloud.uikit.community.explore.activity.AmityCategoryListActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp" />
         <activity
-            android:name=".detailpage.AmityCommunityPageActivity"
+            android:name="com.amity.socialcloud.uikit.community.detailpage.AmityCommunityPageActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp" />
         <activity
-            android:name=".home.activity.AmityCommunityHomePageActivity"
+            android:name="com.amity.socialcloud.uikit.community.home.activity.AmityCommunityHomePageActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp" />
         <activity
-            android:name=".newsfeed.activity.AmityTargetSelectionPageActivity"
+            android:name="com.amity.socialcloud.uikit.community.newsfeed.activity.AmityTargetSelectionPageActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp" />
         <activity
-            android:name=".newsfeed.activity.AmityPostDetailsActivity"
+            android:name="com.amity.socialcloud.uikit.community.newsfeed.activity.AmityPostDetailsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".newsfeed.activity.AmityPostCreatorActivity"
+            android:name="com.amity.socialcloud.uikit.community.newsfeed.activity.AmityPostCreatorActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".newsfeed.activity.AmityPollPostCreatorActivity"
+            android:name="com.amity.socialcloud.uikit.community.newsfeed.activity.AmityPollPostCreatorActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp" />
         <activity
-            android:name=".newsfeed.activity.AmityReactionListActivity"
+            android:name="com.amity.socialcloud.uikit.community.newsfeed.activity.AmityReactionListActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp" />
         <activity
-            android:name="com.amity.socialcloud.uikit.common.memberpicker.AmityMemberPickerActivity"
+            android:name="com.amity.socialcloud.uikit.communitycom.amity.socialcloud.uikit.common.memberpicker.AmityMemberPickerActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp" />
         <activity
-            android:name=".ui.view.AmityCommunityCreatorActivity"
+            android:name="com.amity.socialcloud.uikit.community.ui.view.AmityCommunityCreatorActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp" />
         <activity
-            android:name=".newsfeed.activity.AmityEditCommentActivity"
+            android:name="com.amity.socialcloud.uikit.community.newsfeed.activity.AmityEditCommentActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".newsfeed.activity.AmityCommunityReviewingFeedActivity"
+            android:name="com.amity.socialcloud.uikit.community.newsfeed.activity.AmityCommunityReviewingFeedActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp" />
         <activity
-            android:name=".newsfeed.activity.AmityVideoPlayerActivity"
+            android:name="com.amity.socialcloud.uikit.community.newsfeed.activity.AmityVideoPlayerActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp" />
         <activity
-            android:name=".newsfeed.activity.AmityLivestreamVideoPlayerActivity"
+            android:name="com.amity.socialcloud.uikit.community.newsfeed.activity.AmityLivestreamVideoPlayerActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp" />
         <activity
-            android:name=".newsfeed.activity.AmityVideoPostPlayerActivity"
+            android:name="com.amity.socialcloud.uikit.community.newsfeed.activity.AmityVideoPostPlayerActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp" />
         <activity
-            android:name=".newsfeed.activity.AmityLiveStreamPostCreatorActivity"
+            android:name="com.amity.socialcloud.uikit.community.newsfeed.activity.AmityLiveStreamPostCreatorActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp.NoActionBar"
             android:windowSoftInputMode="stateHidden" />

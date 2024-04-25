@@ -6,7 +6,7 @@
     </style>
 
     <style name="BottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
-        <item name="android:background">@drawable/amity_live_chat_bottom_sheet</item>
+        <item name="android:background">@drawable/amity_live_chat_bottom_sheet_dark</item>
     </style>
 
 </resources>

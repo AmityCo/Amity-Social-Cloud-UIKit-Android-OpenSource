@@ -1,6 +1,7 @@
 package com.amity.socialcloud.uikit.common.utils
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
@@ -30,11 +31,10 @@ object AmityAlbumUtil {
                     } else {
                         val isSupportPhotoPicker = PickVisualMedia.isPhotoPickerAvailable(activity.applicationContext)
                         if (isSupportPhotoPicker) {
-                            activity.registerForActivityResult(PickVisualMedia()) { uri ->
-                                // Callback is invoked after the user selects a media item or closes the
-                                // photo picker.
-                                if (uri != null) {
-                                } else {
+                            
+                            activity.registerForActivityResult(PickMultipleVisualMedia(MAX_SELECTION_COUNT - currentCount)) { uris ->
+                                if (uris != null && uris.isNotEmpty()) {
+                                    activity.setResult(resultCode, Intent().apply { putExtra("data", uris.toTypedArray()) })
                                 }
                             }
                         } else {
