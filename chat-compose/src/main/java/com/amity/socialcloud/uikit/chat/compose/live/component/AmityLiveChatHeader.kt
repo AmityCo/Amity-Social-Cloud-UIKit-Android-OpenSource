@@ -20,12 +20,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.sdk.core.session.model.NetworkConnectionEvent
 import com.amity.socialcloud.uikit.chat.compose.R
-import com.amity.socialcloud.uikit.chat.compose.live.composer.AmityLiveChatPageViewModel
+import com.amity.socialcloud.uikit.chat.compose.live.AmityLiveChatPageViewModel
 import com.amity.socialcloud.uikit.chat.compose.live.elements.AmityLiveChatHeaderAvatar
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.common.utils.asColor
 
 @Composable
 fun AmityLiveChatHeader(
@@ -137,7 +136,7 @@ fun ChatHeaderWaitingForNetwork(
 				modifier = Modifier
 					.size(16.dp)
 					.padding(top = 0.dp, bottom = 2.dp),
-				color = AmityTheme.colors.primary
+				color = AmityTheme.colors.baseInverse
 			)
 			Spacer(modifier = Modifier.width(4.dp))
 			Text(

@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.library'
-    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-android'
+
 }
 
 android {
@@ -26,6 +27,11 @@ android {
     }
     kotlinOptions {
         jvmTarget = '17'
+    }
+    packagingOptions {
+        pickFirst("META-INF/*.kotlin_module")
+        exclude 'META-INF/INDEX.LIST'
+        exclude 'META-INF/io.netty.versions.properties'
     }
 }
 

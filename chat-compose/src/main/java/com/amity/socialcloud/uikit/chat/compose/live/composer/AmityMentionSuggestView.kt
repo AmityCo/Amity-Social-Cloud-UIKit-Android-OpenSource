@@ -14,8 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.modifier.ModifierLocalReadScope
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
+import com.amity.socialcloud.uikit.chat.compose.live.AmityLiveChatPageViewModel
 import com.amity.socialcloud.uikit.chat.compose.live.elements.AmityAvatarType
 import com.amity.socialcloud.uikit.chat.compose.live.elements.AmityMessageAvatarView
 import com.amity.socialcloud.uikit.chat.compose.live.mention.AmityMentionSuggestion
@@ -31,10 +30,10 @@ import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 
 @Composable
 fun AmityMentionSuggestionView(
-	modifier: Modifier = Modifier,
-	viewModel: AmityLiveChatPageViewModel,
-	keyword: String,
-	onClick: (AmityMentionSuggestion) -> Unit
+    modifier: Modifier = Modifier,
+    viewModel: AmityLiveChatPageViewModel,
+    keyword: String,
+    onClick: (AmityMentionSuggestion) -> Unit
 ) {
 
     val suggestions = remember(keyword) {

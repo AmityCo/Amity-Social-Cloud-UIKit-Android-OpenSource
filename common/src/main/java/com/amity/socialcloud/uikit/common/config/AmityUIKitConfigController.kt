@@ -1,6 +1,8 @@
 package com.amity.socialcloud.uikit.common.config
 
 import android.content.Context
+import com.amity.socialcloud.uikit.common.model.AmityMessageReactions
+import com.amity.socialcloud.uikit.common.model.AmityReactionType
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
@@ -18,6 +20,7 @@ object AmityUIKitConfigController {
 
     fun setup(context: Context) {
         parseConfig(context)
+        initMessageReactions()
     }
 
     fun setSystemInDarkTheme(isDarkTheme: Boolean) {
@@ -74,6 +77,18 @@ object AmityUIKitConfigController {
         } catch (e: Exception) {
             e.printStackTrace()
             ""
+        }
+    }
+    
+    private fun initMessageReactions() {
+        config.messageReactions.map {
+            (it as? JsonObject)?.let { reaction: JsonObject ->
+                val name = reaction.get("name")?.asString
+                val image = reaction.get("image")?.asString
+                if (name != null && image != null) {
+                    AmityMessageReactions.addReaction(AmityReactionType(name, AmityUIKitDrawableResolver.getDrawableRes(image)))
+                }
+            }
         }
     }
 }

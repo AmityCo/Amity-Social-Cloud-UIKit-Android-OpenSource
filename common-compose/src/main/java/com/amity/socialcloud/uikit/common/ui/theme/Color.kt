@@ -15,6 +15,7 @@ val amityColorBase = Color(0xFF292B32)
 val amityColorBaseInverse = Color(0xFFFFFFFF)
 
 val amityColorBackground = Color(0xFFFFFFFF)
+val amityColorBackgroundShade1 = Color(0xFFF6F7F8)
 val amityColorMessageBubble = Color(0xFF1054DE)
 val amityColorMessageBubbleInverse = Color(0xFFEBECEF)
 
@@ -57,6 +58,7 @@ val AmityUIKitColors = AmityColors(
     baseShade2 = amityColorBaseShade2,
     baseShade3 = amityColorBaseShade3,
     baseShade4 = amityColorBaseShade4,
+    backgroundShade1 = amityColorBackgroundShade1,
 )
 
 @Immutable
@@ -72,6 +74,7 @@ data class AmityColors(
     val divider: Color,
     val border: Color,
     val background: Color,
+    val backgroundShade1: Color,
     val primaryShade1: Color,
     val primaryShade2: Color,
     val primaryShade3: Color,
@@ -97,6 +100,7 @@ data class AmityColors(
         val baseInverse = theme.baseInverseColor.asColor()
         val alert = theme.alertColor.asColor()
         val background = theme.backgroundColor.asColor()
+        val backgroundShade1 = theme.backgroundShade1Color.asColor()
 
         return AmityUIKitColors.copy(
             primary = primary,
@@ -117,7 +121,8 @@ data class AmityColors(
             baseInverse = baseInverse,
             alert = alert,
             background = background,
-            divider = baseShade4
+            divider = baseShade4,
+            backgroundShade1 = backgroundShade1,
         )
     }
 

@@ -30,7 +30,7 @@ import com.amity.socialcloud.sdk.model.core.reaction.AmityReactionReferenceType
 import com.amity.socialcloud.uikit.common.common.readableTimeDiff
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentViewModel
-import com.amity.socialcloud.uikit.community.compose.reaction.AmityReactionListBottomSheet
+import com.amity.socialcloud.uikit.common.reaction.AmityReactionList
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
@@ -177,7 +177,7 @@ fun AmityCommentEngagementBar(
         }
 
         if (showReactionListSheet) {
-            AmityReactionListBottomSheet(
+            AmityReactionList(
                 modifier = modifier,
                 referenceType = AmityReactionReferenceType.COMMENT,
                 referenceId = commentId,
