@@ -41,12 +41,11 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.Popup
 import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
 import com.amity.socialcloud.uikit.chat.compose.R
-import com.amity.socialcloud.uikit.chat.compose.live.composer.AmityLiveChatPageViewModel
+import com.amity.socialcloud.uikit.chat.compose.live.AmityLiveChatPageViewModel
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.common.utils.asColor
 
 @Composable
 fun AmityMessageOption(
@@ -77,7 +76,11 @@ fun AmityMessageOption(
 			) {
 				Column(
 					modifier = modifier
-						.shadow(elevation = 4.dp)
+						.shadow(
+							shape = RoundedCornerShape(10.dp),
+							elevation = 4.dp,
+							clip = true,
+						)
 						.clip(RoundedCornerShape(10.dp))
 						.background(color = AmityTheme.colors.baseShade4)
 				) {
@@ -150,8 +153,9 @@ fun AmityMessageOptionItem(
 	Row(
 		modifier = Modifier
 			.clickable {
-				action()
 				onDismiss()
+				action()
+
 			}
 			.padding(24.dp, 13.dp)
 	) {

@@ -11,7 +11,8 @@
       "base_shade4_color": "#ebecef",
       "base_inverse_color" : "#000000",
       "alert_color": "#FA4D30",
-      "background_color": "#FFFFFF"
+      "background_color": "#FFFFFF",
+      "background_shade1_color": "#F6F7F8"
     },
     "dark": {
       "primary_color": "#1054DE",
@@ -23,10 +24,18 @@
       "base_shade4_color": "#292b32",
       "base_inverse_color" : "#ffffff",
       "alert_color": "#FA4D30",
-      "background_color": "#191919"
+      "background_color": "#191919",
+      "background_shade1_color": "#40434E"
     }
   },
   "excludes": [
+  ],
+  "message_reactions": [
+    { "name": "heart", "image": "message_reaction_heart.png"},
+    { "name": "like", "image": "message_reaction_like.png"},
+    { "name": "fire", "image": "message_reaction_fire.png"},
+    { "name": "grinning", "image": "message_reaction_grinning.png"},
+    { "name": "sad", "image": "message_reaction_sad.png"}
   ],
   "customizations": {
     "select_target_page/*/*": {
@@ -138,7 +147,7 @@
     "*/*/close_button": {
       "close_icon": "close.png"
     },
-    "live_chat/*/*": {
+    "live_chat_page/*/*": {
       "theme": {
         "light": {
           "primary_color": "#1054DE",
@@ -150,7 +159,8 @@
           "base_shade4_color": "#EBECEF",
           "alert_color": "#FA4D30",
           "background_color": "#FFFFFF",
-          "base_inverse_color": "#000000"
+          "base_inverse_color": "#000000",
+          "background_shade1_color": "#F6F7F8"
         },
         "dark": {
           "primary_color": "#1054DE",
@@ -162,15 +172,29 @@
           "base_shade4_color": "#292B32",
           "alert_color": "#FA4D30",
           "background_color": "#191919",
-          "base_inverse_color": "#FFFFFF"
+          "base_inverse_color": "#FFFFFF",
+          "background_shade1_color": "#40434E"
         }
       }
     },
-    "live_chat/chat_header/*": {},
-    "live_chat/message_list/*": {},
-    "live_chat/message_composer/*": {
+    "live_chat_page/chat_header/*": {},
+    "live_chat_page/message_list/*": {},
+    "live_chat_page/message_composer/*": {
       "message_limit": 200,
       "placeholder_text": "Write a message"
-    }
+    },
+    "live_chat_page/message_list/message_reaction_preview": { },
+    "live_chat_page/message_list/message_quick_reaction": {
+      "reaction": "heart",
+      "reaction_icon": "amity_ic_message_quick_reaction.png"
+    },
+    "live_chat_page/message_list/message_reaction_picker": { },
+    "message_reaction_list_page/*/*": { },
+    "message_reaction_list_page/message_reaction_list_header/*": { },
+    "message_reaction_list_page/message_reaction_list_header/message_reaction_list_tab": { },
+    "message_reaction_list_page/message_reaction_list/*": { },
+    "message_reaction_list_page/message_reaction_list/user_avatar_view": { },
+    "message_reaction_list_page/message_reaction_list/user_display_name": { },
+    "message_reaction_list_page/message_reaction_list/reaction_image_view": { }
   }
 }

@@ -11,6 +11,8 @@ data class AmityUIKitConfig(
     val globalTheme: GlobalTheme,
     @SerializedName("excludes")
     val excludes: JsonArray,
+    @SerializedName("message_reactions")
+    val messageReactions: JsonArray,
     @SerializedName("customizations")
     val customizations: JsonObject
 ) {
@@ -41,6 +43,8 @@ data class AmityUIKitConfig(
         @SerializedName("alert_color")
         val alertColor: String,
         @SerializedName("background_color")
-        val backgroundColor: String
+        val backgroundColor: String,
+        @SerializedName("background_shade1_color")
+        val backgroundShade1Color: String
     )
 }

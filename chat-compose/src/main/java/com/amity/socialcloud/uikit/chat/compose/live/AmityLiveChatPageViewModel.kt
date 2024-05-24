@@ -1,7 +1,8 @@
-package com.amity.socialcloud.uikit.chat.compose.live.composer
+package com.amity.socialcloud.uikit.chat.compose.live
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.TerminalSeparatorType
 import androidx.paging.filter
@@ -12,6 +13,7 @@ import com.amity.socialcloud.sdk.api.chat.member.query.AmityChannelMembership
 import com.amity.socialcloud.sdk.api.chat.member.query.AmityChannelMembershipFilter
 import com.amity.socialcloud.sdk.api.chat.message.query.AmityMessageQuerySortOption
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.api.core.reaction.reference.AmityReactionReference
 import com.amity.socialcloud.sdk.core.session.model.NetworkConnectionEvent
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadata
@@ -23,19 +25,19 @@ import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
 import com.amity.socialcloud.uikit.chat.compose.live.mention.AmityMentionSuggestion
 import com.amity.socialcloud.uikit.common.eventbus.NetworkConnectionEventBus
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import java.util.concurrent.TimeUnit
 
-// TODO Rename to AmityMessageListPageViewModel and move to chat/compose/live/common
 class AmityLiveChatPageViewModel constructor(private val channelId: String) : ViewModel() {
 
     val replyTo = mutableStateOf<AmityMessage?>(null)
     var showDeleteDialog = mutableStateOf(false)
     var targetDeletedMessage = mutableStateOf<AmityMessage?>(null)
-    val isFetching = mutableStateOf(true)
+    val messageListState = mutableStateOf<MessageListState>(MessageListState.INITIAL)
 
     init {
         subscribeToSubChannel(channelId)
@@ -94,9 +96,6 @@ class AmityLiveChatPageViewModel constructor(private val channelId: String) : Vi
             .query()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe {
-                isFetching.value = true
-            }
             .doOnError {
                 onError(it)
             }
@@ -110,6 +109,9 @@ class AmityLiveChatPageViewModel constructor(private val channelId: String) : Vi
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .asFlow()
+            .catch {
+            
+            }
     }
 
     fun searchChannelMembers(keyword: String): Flow<PagingData<AmityMentionSuggestion>> {
@@ -132,6 +134,9 @@ class AmityLiveChatPageViewModel constructor(private val channelId: String) : Vi
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .asFlow()
+            .catch {
+            
+            }
     }
 
     fun getChannelMembers(): Flow<PagingData<AmityMentionSuggestion>> {
@@ -168,6 +173,9 @@ class AmityLiveChatPageViewModel constructor(private val channelId: String) : Vi
         }.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .asFlow()
+            .catch {
+            
+            }
     }
 
     fun isChannelModerator(): Flow<Boolean> {
@@ -177,6 +185,9 @@ class AmityLiveChatPageViewModel constructor(private val channelId: String) : Vi
             .distinctUntilChanged()
             .subscribeOn(Schedulers.io())
             .asFlow()
+            .catch {
+            
+            }
     }
 
     fun getMessage(messageId: String): Flow<AmityMessage> {
@@ -185,6 +196,9 @@ class AmityLiveChatPageViewModel constructor(private val channelId: String) : Vi
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .asFlow()
+            .catch {
+            
+            }
     }
 
     fun observeGlobalBanEvent(): Flow<Boolean> {
@@ -195,6 +209,9 @@ class AmityLiveChatPageViewModel constructor(private val channelId: String) : Vi
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .asFlow()
+            .catch {
+            
+            }
     }
 
     fun setReplyToMessage(message: AmityMessage) {
@@ -242,12 +259,9 @@ class AmityLiveChatPageViewModel constructor(private val channelId: String) : Vi
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .asFlow()
-    }
-
-    fun isFetching(isFetching: Boolean) {
-        if (this.isFetching.value) {
-            this.isFetching.value = isFetching
-        }
+            .catch {
+            
+            }
     }
 
     private fun subscribeToSubChannel(subChannelId: String) {
@@ -315,7 +329,7 @@ class AmityLiveChatPageViewModel constructor(private val channelId: String) : Vi
             }
             .subscribe()
     }
-    
+
     fun unFlagMessage(
         message: AmityMessage,
         onSuccess: () -> Unit = {},
@@ -343,6 +357,41 @@ class AmityLiveChatPageViewModel constructor(private val channelId: String) : Vi
 
             }
     }
+    
+    fun addMessageReaction(message: AmityMessage, reactionName: String) {
+        val reactionRepository = AmityCoreClient.newReactionRepository()
+        val ref = AmityReactionReference.MESSAGE(message.getMessageId())
+        val myReaction = message.getMyReactions().firstOrNull()
+        Completable.defer {
+            if (myReaction != null) {
+                reactionRepository.removeReaction(ref, myReaction)
+            } else {
+                Completable.complete()
+            }
+        }.andThen(
+            reactionRepository
+                .addReaction(ref, reactionName)
+        )
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnError {
+            }
+            .subscribe()
+    }
+    
+    fun removeMessageReaction(message: AmityMessage, reactionName: String) {
+        val ref = AmityReactionReference.MESSAGE(message.getMessageId())
+        AmityCoreClient.newReactionRepository()
+            .removeReaction(ref, reactionName).subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnError {
+            }
+            .subscribe()
+    }
+
+    fun setMessageListState(state: MessageListState) {
+        messageListState.value = state
+    }
 
     fun onStop() {
         unsubscribeToSubChannel(channelId)
@@ -362,17 +411,23 @@ class AmityLiveChatPageViewModel constructor(private val channelId: String) : Vi
         object MUTED : MessageListState()
         object ERROR : MessageListState()
         object SUCCESS : MessageListState()
+        object LOADING : MessageListState()
+        object INITIAL : MessageListState()
 
         companion object {
-            fun from(member: AmityChannelMember?, hasError: Boolean): MessageListState {
-                return if(member == null) {
-                    SUCCESS
-                } else if (member.isBanned()) {
+            fun from(
+                member: AmityChannelMember?,
+                loadState: LoadState,
+                itemCount: Int,
+            ): MessageListState {
+                return if (loadState is LoadState.Loading && itemCount == 0)  {
+                    LOADING
+                } else if (member?.isBanned() == true) {
                     BANNED
-                } else if (hasError) {
-                    ERROR
-                } else if (member.isMuted()) {
+                } else if (member?.isMuted() == true) {
                     MUTED
+                } else if (loadState is LoadState.Error && itemCount == 0) {
+                    ERROR
                 } else {
                     SUCCESS
                 }

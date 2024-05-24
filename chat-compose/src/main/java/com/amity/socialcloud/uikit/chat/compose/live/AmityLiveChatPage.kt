@@ -20,16 +20,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -41,15 +38,11 @@ import com.amity.socialcloud.uikit.chat.compose.R
 import com.amity.socialcloud.uikit.chat.compose.live.component.AmityLiveChatHeader
 import com.amity.socialcloud.uikit.chat.compose.live.component.AmityLiveChatMessageList
 import com.amity.socialcloud.uikit.chat.compose.live.composer.AmityLiveChatMessageComposeBar
-import com.amity.socialcloud.uikit.chat.compose.live.composer.AmityLiveChatPageViewModel
 import com.amity.socialcloud.uikit.common.eventbus.NetworkConnectionEventPublisher
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
-import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.asColor
-import com.amity.socialcloud.uikit.common.utils.getBackgroundColor
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 @Composable
@@ -88,7 +81,7 @@ fun AmityLiveChatPage(
             viewModel.onStop()
         }
     }
-    AmityBasePage(pageId = "live_chat") {
+    AmityBasePage(pageId = "live_chat_page") {
         Column(
             modifier = modifier
                 .background(

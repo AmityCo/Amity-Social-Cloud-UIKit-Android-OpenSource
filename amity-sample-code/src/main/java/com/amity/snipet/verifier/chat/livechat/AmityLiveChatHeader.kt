@@ -2,7 +2,7 @@ package com.amity.snipet.verifier.chat.livechat
 
 import androidx.compose.runtime.Composable
 import com.amity.socialcloud.uikit.chat.compose.live.component.AmityLiveChatHeader
-import com.amity.socialcloud.uikit.chat.compose.live.composer.AmityLiveChatPageViewModel
+import com.amity.socialcloud.uikit.chat.compose.live.AmityLiveChatPageViewModel
 
 
 class AmityLiveChatHeader {

@@ -1,18 +1,26 @@
 package com.amity.socialcloud.uikit.chat.compose.live.composer
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -23,14 +31,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadata
 import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.core.error.AmityException
 import com.amity.socialcloud.uikit.chat.compose.R
+import com.amity.socialcloud.uikit.chat.compose.live.AmityLiveChatPageViewModel
 import com.amity.socialcloud.uikit.chat.compose.live.mention.AmityMentionSuggestion
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
@@ -60,10 +75,12 @@ fun AmityLiveChatMessageComposeBar(
     var mentionedUsers by remember { mutableStateOf<List<AmityMentionMetadata>>(emptyList()) }
 
     var isReplyingToMessage by remember { mutableStateOf(false) }
-    
+
     val parentMessage by remember { viewModel.replyTo }
-    
-    fun onDismissParent() { viewModel.dismissReplyMessage() }
+
+    fun onDismissParent() {
+        viewModel.dismissReplyMessage()
+    }
 
     val membership by remember {
         viewModel.observeMembership()
@@ -84,16 +101,17 @@ fun AmityLiveChatMessageComposeBar(
         viewModel.isChannelModerator().distinctUntilChanged()
     }.collectAsState(initial = false)
 
-    val isFetching by remember {
-        viewModel.isFetching
-    }
+    val messageListState by remember { viewModel.messageListState }
+
+    var showComposeErrorDialog = remember { mutableStateOf(false) }
+
 
     LaunchedEffect(parentMessage) {
         isReplyingToMessage = parentMessage != null
     }
-    
-    if(!isFetching) {
-        
+
+    if (messageListState == AmityLiveChatPageViewModel.MessageListState.SUCCESS) {
+
         AmityBaseComponent(
             pageScope = pageScope,
             componentId = "message_composer"
@@ -101,7 +119,13 @@ fun AmityLiveChatMessageComposeBar(
             Column(
                 modifier = modifier.fillMaxWidth()
             ) {
-                
+
+                if (showComposeErrorDialog.value) {
+                    MessageComposeErrorPopup(
+                        onDismiss = { showComposeErrorDialog.value = false }
+                    )
+                }
+
                 if (parentMessage != null && isReplyingToMessage) {
                     AmityMessageComposeReplyLabel(
                         parentMessage = parentMessage,
@@ -110,7 +134,7 @@ fun AmityLiveChatMessageComposeBar(
                         viewModel.dismissReplyMessage()
                     }
                 }
-                
+
                 if (shouldShowSuggestion) {
                     AmityMentionSuggestionView(
                         modifier = modifier,
@@ -121,11 +145,11 @@ fun AmityLiveChatMessageComposeBar(
                         shouldShowSuggestion = false
                     }
                 }
-                
+
                 HorizontalDivider(
                     color = AmityTheme.colors.baseShade4,
                 )
-                
+
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = modifier
@@ -136,11 +160,7 @@ fun AmityLiveChatMessageComposeBar(
                         elementId = "message_composer_text_field",
                         componentScope = getComponentScope()
                     ) {
-                        val maxChar: Int = try {
-                            getComponentScope().getConfig().getValue("message_limit").toInt()
-                        } catch (e: Exception) {
-                            10000
-                        }
+
                         val hint: String = try {
                             getComponentScope().getConfig().getValue("placeholder_text")
                         } catch (e: Exception) {
@@ -150,7 +170,6 @@ fun AmityLiveChatMessageComposeBar(
                             modifier = Modifier
                                 .weight(1f)
                                 .testTag("message_composer_text_field"),
-                            maxChar = maxChar,
                             hint = hint,
                             maxLines = 5,
                             isEnabled = isChannelModerator || ((membership?.isMuted() != true) && !isChannelMuted),
@@ -171,10 +190,18 @@ fun AmityLiveChatMessageComposeBar(
                             }
                         )
                     }
-                    
+                    val maxChar: Int = try {
+                        getComponentScope().getConfig().getValue("message_limit").toInt()
+                    } catch (e: Exception) {
+                        10000
+                    }
                     Button(
                         onClick = {
                             if (messageText.isBlank()) {
+                                return@Button
+                            }
+                            if (messageText.length > maxChar) {
+                                showComposeErrorDialog.value = true
                                 return@Button
                             }
                             shouldClearText = true
@@ -197,7 +224,7 @@ fun AmityLiveChatMessageComposeBar(
                                     selectedUserToMention = null
                                     isReplyingToMessage = false
                                     onDismissParent()
-                                    
+
                                     val errorMessage: String = if (exception is AmityException) {
                                         when (AmityError.from(exception.code)) {
                                             AmityError.BAN_WORD_FOUND -> "Your message wasn't sent as it contained a blocked word."
@@ -236,6 +263,81 @@ fun AmityLiveChatMessageComposeBar(
             }
         }
     }
+}
+
+@Composable
+fun MessageComposeErrorPopup(
+    onDismiss: () -> Unit,
+) {
+
+    Dialog(
+        onDismissRequest = {},
+        DialogProperties(
+            usePlatformDefaultWidth = false
+        )
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(AmityTheme.colors.baseShade4)
+                    .width(270.dp)
+            ) {
+                Column {
+                    Column(
+                        modifier = Modifier.padding(19.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "Unable to send message",
+                            fontSize = 17.sp,
+                            lineHeight = 22.sp,
+                            fontWeight = FontWeight(600),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth(),
+                            color = AmityTheme.colors.baseInverse,
+                        )
+                        Text(
+                            text = "Your message is too long. Please shorten your message and try again.",
+                            fontSize = 13.sp,
+                            lineHeight = 16.sp,
+                            fontWeight = FontWeight(400),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth(),
+                            color = AmityTheme.colors.baseInverse,
+                        )
+                    }
+                    HorizontalDivider(
+                        thickness = 1.dp,
+                        color = AmityTheme.colors.secondaryShade1
+                    )
+                    Row(
+                        modifier = Modifier
+                            .height(41.dp)
+                            .fillMaxWidth()
+                    ) {
+                        TextButton(
+                            onClick = { onDismiss.invoke() },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(
+                                text = "OK",
+                                fontSize = 17.sp,
+                                lineHeight = 22.sp,
+                                fontWeight = FontWeight(600),
+                                color = AmityTheme.colors.primary,
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 }
 
 @Preview(showBackground = true)

@@ -1,5 +1,7 @@
 package com.amity.socialcloud.uikit.chat.compose.live.elements
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -8,12 +10,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -25,26 +27,30 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
 import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
 import com.amity.socialcloud.uikit.chat.compose.R
-import com.amity.socialcloud.uikit.chat.compose.live.composer.AmityLiveChatPageViewModel
+import com.amity.socialcloud.uikit.chat.compose.live.AmityLiveChatPageViewModel
 import com.amity.socialcloud.uikit.chat.compose.live.util.getContent
-import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAnnotatedText
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.common.utils.asColor
 import com.amity.socialcloud.uikit.common.utils.shimmerBackground
 import com.google.gson.JsonObject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun ReplyMessageSenderView(
@@ -99,6 +105,7 @@ fun BaseReplyMessage(
 	onMessageAction: AmityMessageAction = AmityMessageAction(),
 ) {
 	val parentMessage by viewModel.getMessage(parentId).collectAsState(initial = null)
+	var reactionExpanded by remember { mutableStateOf(false) }
 	var menuExpanded by remember { mutableStateOf(false) }
 	Row(
 		modifier = modifier
@@ -119,6 +126,7 @@ fun BaseReplyMessage(
 					detectTapGestures(
 						onLongPress = { offset ->
 							menuExpanded = true
+							reactionExpanded = true
 						}
 					)
 				},
@@ -133,6 +141,20 @@ fun BaseReplyMessage(
 				modifier = Modifier.align(Alignment.Start),
 			)
 			Spacer(modifier = Modifier.height(4.dp))
+			if (!message.isDeleted()) {
+				Box(modifier = Modifier.padding(bottom = 8.dp)) {
+					AmityMessageReactionPicker(
+						pageScope = pageScope,
+						componentScope = componentScope,
+						message = message,
+						show = reactionExpanded,
+						onAddReaction = onMessageAction.onAddReaction,
+						onRemoveReaction = onMessageAction.onRemoveReaction,
+					) {
+						reactionExpanded = false
+					}
+				}
+			}
 			Row(
 				modifier = Modifier.fillMaxWidth(),
 				verticalAlignment = Alignment.Bottom
@@ -140,10 +162,13 @@ fun BaseReplyMessage(
 				Column(
 					modifier = Modifier.weight(1.0f),
 				) {
-					Surface(
-						shape = RoundedCornerShape(12.dp, 12.dp, 0.dp, 0.dp),
-						color = AmityTheme.colors.baseShade3,
-						modifier = Modifier.fillMaxWidth()
+					Box(
+						modifier = Modifier
+							.fillMaxWidth()
+							.background(
+								shape = RoundedCornerShape(12.dp, 12.dp, 0.dp, 0.dp),
+								color = AmityTheme.colors.backgroundShade1,
+							)
 							.testTag(getReplyTextMessageBubbleTestTag(message))
 					) {
 						Box(
@@ -158,10 +183,13 @@ fun BaseReplyMessage(
 								}
 						}
 					}
-					Surface(
-						shape = RoundedCornerShape(0.dp, 0.dp, 12.dp, 12.dp),
-						color = AmityTheme.colors.baseShade4,
-						modifier = Modifier.fillMaxWidth(),
+					Box(
+						modifier = Modifier
+							.background(
+								shape = RoundedCornerShape(0.dp, 0.dp, 12.dp, 12.dp),
+								color = AmityTheme.colors.baseShade4,
+							)
+							.fillMaxWidth(),
 					) {
 						Box(
 							modifier = Modifier
@@ -186,6 +214,13 @@ fun BaseReplyMessage(
 						
 					}
 				}
+				AmityMessageQuickReaction(
+					pageScope = pageScope,
+					componentScope = componentScope,
+					message = message,
+					onMessageAction = onMessageAction,
+					modifier = Modifier.padding(start = 6.dp),
+				)
 				AmityMessageBubbleFlag(
 					pageScope = pageScope,
 					componentScope = componentScope,
@@ -198,6 +233,38 @@ fun BaseReplyMessage(
 					onDelete = onMessageAction.onDelete,
 				)
 			}
+			Layout(
+				content = {
+					AmityMessageReactionPreview(
+						pageScope = pageScope,
+						componentScope = componentScope,
+						message = message,
+						modifier = Modifier
+							.offset(y = (-8).dp)
+							.clickable {
+								onMessageAction.onOpenReactions(message)
+							}
+					)
+				},
+				measurePolicy = { measurables, constraints ->
+					// Measure each child
+					val placeables = measurables.map { measurable ->
+						measurable.measure(constraints)
+					}
+					
+					// Determine the height of the item
+					val height = placeables.sumOf { it.height } - (8.dp.roundToPx())
+					
+					// Set the size of the item
+					layout(height = height, width = placeables.maxOfOrNull { it.width } ?: 0) {
+						var xPosition = 0
+						placeables.forEach { placeable ->
+							placeable.placeRelative(IntOffset(xPosition, 0))
+							xPosition += placeable.width
+						}
+					}
+				}
+			)
 			Box (modifier = Modifier.padding(0.dp,8.dp,0.dp,0.dp)) {
 				AmityMessageOption(
 					pageScope = pageScope,
@@ -205,7 +272,13 @@ fun BaseReplyMessage(
 					show = menuExpanded,
 					onMessageAction = onMessageAction,
 					modifier = Modifier.width(243.dp),
-				) { menuExpanded = false }
+				) {
+					CoroutineScope(Dispatchers.IO).launch {
+						delay(100)
+						reactionExpanded = false
+					}
+					menuExpanded = false
+				}
 			}
 		}
 	}

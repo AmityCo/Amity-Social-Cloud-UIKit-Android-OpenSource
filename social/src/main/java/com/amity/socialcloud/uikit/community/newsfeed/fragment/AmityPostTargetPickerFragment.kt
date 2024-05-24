@@ -154,7 +154,6 @@ class AmityPostTargetPickerFragment : AmityBaseFragment(),
                 communityAdapter.submitData(lifecycle, it)
                 binding.separator.visibility = View.VISIBLE
                 binding.tvCommunityLabel.visibility = View.VISIBLE
-                Timber.e(">>>>>>>>>>>>>adapter: ${communityAdapter.snapshot().size}")
             }.doOnError {
                 Log.e(TAG, "initRecyclerView: ${it.localizedMessage}")
             }.subscribe()

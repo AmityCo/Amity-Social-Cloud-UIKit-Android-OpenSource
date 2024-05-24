@@ -65,7 +65,7 @@ fun AmityMessageComposeReplyLabel(
                 overflow = TextOverflow.Ellipsis,
                 style = AmityTheme.typography.body.copy(
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFFFFFFFF)//AmityTheme.colors.baseShade1,
+                    color = AmityTheme.colors.baseShade1,
                 ),
             )
             Spacer(modifier = modifier.height(2.dp))
@@ -74,7 +74,7 @@ fun AmityMessageComposeReplyLabel(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = AmityTheme.typography.body.copy(
-                    color = Color(0xFFEBECEF)//AmityTheme.colors.baseShade1,
+                    color = AmityTheme.colors.baseShade1,
                 ),
             )
         }
