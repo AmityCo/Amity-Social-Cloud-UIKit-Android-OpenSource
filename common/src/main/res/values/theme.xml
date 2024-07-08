@@ -99,6 +99,7 @@
         <item name="colorOnSurface">@color/amityColorBase</item>
         <item name="materialAlertDialogTitleTextStyle">@style/AmityAlertDialogTheme.App.Title.Text
         </item>
+        <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
     </style>
 
     <style name="AmityAlertDialogTheme.App.Title.Text" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
@@ -130,6 +131,14 @@
         <item name="android:navigationBarDividerColor" tools:ignore="NewApi">
             @color/amityColorBlack
         </item>
+        <item name="materialAlertDialogTheme">@style/AmityAlertDialogTheme</item>
     </style>
 
+    <style name="AmitySocialTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="materialAlertDialogTheme">@style/AmityAlertDialogTheme</item>
+    </style>
+
+    <style name="PositiveButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textSize">@dimen/amity_text_size_body</item>
+    </style>
 </resources>

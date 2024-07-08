@@ -10,7 +10,7 @@ import com.amity.socialcloud.uikit.community.compose.story.create.AmityCreateSto
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageActivity
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageType
 
-open class AmityStoryTargetTabComponentBehavior {
+open class AmityStoryTabComponentBehavior {
 
     open fun goToViewStoryPage(
         context: Context,

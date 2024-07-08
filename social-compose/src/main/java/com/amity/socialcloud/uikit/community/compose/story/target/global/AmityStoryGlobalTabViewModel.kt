@@ -1,5 +1,7 @@
 package com.amity.socialcloud.uikit.community.compose.story.target.global
 
+import androidx.paging.CombinedLoadStates
+import androidx.paging.LoadState
 import androidx.paging.PagingData
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.sdk.api.social.storytarget.AmityGlobalStoryTargetsQueryOption
@@ -9,8 +11,19 @@ import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 
 class AmityStoryGlobalTabViewModel : AmityBaseViewModel() {
+
+    private val _targetListState by lazy {
+        MutableStateFlow<TargetListState>(TargetListState.LOADING)
+    }
+
+    val targetListState get() = _targetListState
+
+    fun setTargetListState(state: TargetListState) {
+        _targetListState.value = state
+    }
 
     fun getTargets(): Flow<PagingData<AmityStoryTarget>> {
         return AmitySocialClient.newStoryRepository()
@@ -37,5 +50,22 @@ class AmityStoryGlobalTabViewModel : AmityBaseViewModel() {
                     .subscribe()
                     .let(compositeDisposable::add)
             }
+    }
+
+    sealed class TargetListState {
+        object LOADING : TargetListState()
+        object SUCCESS : TargetListState()
+
+        companion object {
+            fun from(
+                loadState: CombinedLoadStates,
+            ): TargetListState {
+                return if ((loadState.refresh is LoadState.Loading || loadState.append is LoadState.Loading)) {
+                    LOADING
+                } else {
+                    SUCCESS
+                }
+            }
+        }
     }
 }

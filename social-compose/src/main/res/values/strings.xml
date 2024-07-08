@@ -38,4 +38,23 @@
     <string name="amity_cancel">Cancel</string>
     <string name="amity_delete">Delete</string>
 
+    <plurals name="amity_feed_reaction_count">
+        <item quantity="one">%s like</item>
+        <item quantity="other">%s likes</item>
+    </plurals>
+    <plurals name="amity_feed_comment_count">
+        <item quantity="one">%s comment</item>
+        <item quantity="other">%s comments</item>
+    </plurals>
+
+    <string name="amity_delete_post_title">Delete this post?</string>
+    <string name="amity_delete_post_warning_message">This post will be permanently deleted. You’ll no longer to see and find this post</string>
+
+    <string name="amity_post_to">Post to</string>
+    <string name="amity_story_to">Story to</string>
+
+    <string name="amity_discard">Discard</string>
+    <string name="amity_discard_post_title">Discard post?</string>
+    <string name="amity_discard_post_message">Do you want to discard your post?</string>
+
 </resources>

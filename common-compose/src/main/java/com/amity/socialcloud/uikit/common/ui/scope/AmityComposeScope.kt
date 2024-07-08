@@ -29,6 +29,8 @@ interface AmityComposePageScope : AmityComposeScope {
     fun getPageTheme(): AmityUIKitConfig.UIKitTheme?
 
     fun showSnackbar(message: String, @DrawableRes drawableRes: Int? = null)
+
+    fun showProgressSnackbar(message: String)
 }
 
 interface AmityComposeComponentScope : AmityComposeScope {

@@ -1,7 +1,8 @@
 package com.amity.socialcloud.uikit.common.ui.elements
 
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -9,27 +10,33 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionee
+import com.amity.socialcloud.uikit.common.extionsions.extractUrls
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.google.gson.JsonObject
 
 @Composable
 fun AmityExpandableText(
-		modifier: Modifier = Modifier,
-		text: String,
-		mentionGetter: AmityMentionMetadataGetter,
-		mentionees: List<AmityMentionee>,
-		style: TextStyle = AmityTheme.typography.body,
+    modifier: Modifier = Modifier,
+    text: String,
+    mentionGetter: AmityMentionMetadataGetter,
+    mentionees: List<AmityMentionee>,
+    style: TextStyle = AmityTheme.typography.body,
 ) {
+    val uriHandler = LocalUriHandler.current
+
     BoxWithConstraints(
         modifier = modifier,
     ) {
@@ -61,12 +68,51 @@ fun AmityExpandableText(
                 if (mentionees.any { (it as? AmityMentionee.USER)?.getUserId() == mentionItem.getUserId() }
                     && mentionItem.getIndex() < displayText.length
                 ) {
+                    val start = mentionItem.getIndex()
+                    val end = mentionItem.getIndex().plus(mentionItem.getLength()).inc()
                     addStyle(
-                        style = SpanStyle(AmityTheme.colors.primary),
-                        start = mentionItem.getIndex(),
-                        end = mentionItem.getIndex().plus(mentionItem.getLength()).inc(),
+                        style = SpanStyle(AmityTheme.colors.highlight),
+                        start = start,
+                        end = end,
+                    )
+                    addStringAnnotation(
+                        tag = "USER_MENTION",
+                        annotation = mentionItem.getUserId(),
+                        start = start,
+                        end = end
                     )
                 }
+            }
+            mentionGetter.getMentionedChannels().forEach { mentionItem ->
+                val start = mentionItem.getIndex()
+                val end = mentionItem.getIndex().plus(mentionItem.getLength()).inc()
+                addStyle(
+                    style = SpanStyle(AmityTheme.colors.highlight),
+                    start = start,
+                    end = end,
+                )
+                addStringAnnotation(
+                    tag = "CHANNEL_MENTION",
+                    annotation = "",
+                    start = start,
+                    end = end
+                )
+            }
+            text.extractUrls().forEach {
+                addStyle(
+                    style = SpanStyle(
+                        color = AmityTheme.colors.highlight,
+                        textDecoration = TextDecoration.Underline
+                    ),
+                    start = it.start,
+                    end = it.end,
+                )
+                addStringAnnotation(
+                    tag = "URL",
+                    annotation = it.url,
+                    start = it.start,
+                    end = it.end
+                )
             }
 
             if (!isReadMoreClicked) {
@@ -76,20 +122,42 @@ fun AmityExpandableText(
                 }
             }
         }
+        val layoutResult = remember { mutableStateOf<TextLayoutResult?>(null) }
+        val pressIndicator = Modifier.pointerInput(Unit) {
+            detectTapGestures(
+                onPress = { offset ->
+                    layoutResult.value?.let {
+                        val position = it.getOffsetForPosition(offset)
+                        val annotations = annotatedString.getStringAnnotations(
+                            tag = "URL",
+                            start = position,
+                            end = position
+                        )
+                        if (annotations.isNotEmpty()) {
+                            val url = annotations.first().item
+                            uriHandler.openUri(url)
+                        }
 
-        ClickableText(
+                        val seeMoreAnnotation = annotatedString.getStringAnnotations(
+                            tag = readMore,
+                            start = position,
+                            end = position
+                        )
+                        if (seeMoreAnnotation.isNotEmpty()) {
+                            isReadMoreClicked = true
+                        }
+                    }
+                }
+            )
+        }
+
+        Text(
             text = annotatedString,
             style = style,
-            onClick = { offset ->
-                annotatedString.getStringAnnotations(
-                    tag = readMore,
-                    start = offset,
-                    end = offset
-                ).firstOrNull()?.let {
-                    isReadMoreClicked = true
-                }
-            },
-            modifier = modifier
+            modifier = modifier.then(pressIndicator),
+            onTextLayout = {
+                layoutResult.value = it
+            }
         )
     }
 }

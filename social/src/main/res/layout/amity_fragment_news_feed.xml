@@ -37,11 +37,24 @@
                     app:layout_scrollFlags="scroll|exitUntilCollapsed"
                     app:scrimAnimationDuration="0">
 
-                    <FrameLayout
-                        android:id="@+id/storyFeedContainer"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed" />
+                        android:orientation="vertical">
+
+                        <FrameLayout
+                            android:id="@+id/storyFeedContainer"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed" />
+
+                        <View
+                            android:id="@+id/divider"
+                            amityBackgroundColor="@{@color/amityColorBase}"
+                            backgroundColorShade="@{AmityColorShade.SHADE4}"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/amity_eight" />
+                    </LinearLayout>
 
                 </com.google.android.material.appbar.CollapsingToolbarLayout>
 

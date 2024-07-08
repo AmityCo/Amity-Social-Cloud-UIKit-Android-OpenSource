@@ -18,9 +18,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.community.compose.R
 
 @Composable
 fun AmityStoryHyperlinkView(
@@ -61,10 +61,42 @@ fun AmityStoryHyperlinkView(
     }
 }
 
+@Composable
+fun AmityStoryAdHyperlinkView(
+    modifier: Modifier = Modifier,
+    text: String = "",
+    onClick: () -> Unit,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier
+            .widthIn(min = 0.dp, max = 300.dp)
+            .background(
+                color = Color(0xCCFFFFFF),
+                shape = RoundedCornerShape(size = 24.dp)
+            )
+            .clickableWithoutRipple { onClick() }
+            .padding(horizontal = 16.dp, vertical = 10.dp)
+            .testTag("hyper_link_view")
+    ) {
+        Text(
+            text = text,
+            style = AmityTheme.typography.body.copy(
+                color = AmityTheme.colors.secondary,
+                fontWeight = FontWeight.SemiBold,
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.testTag("hyper_link_view_text_view")
+        )
+    }
+}
+
 @Preview(showBackground = true, backgroundColor = 0xFF123456)
 @Composable
 fun AmityStoryHyperlinkViewPreview() {
-    AmityStoryHyperlinkView(
+    AmityStoryAdHyperlinkView(
         text = "amity.co"
     ) {}
 }

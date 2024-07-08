@@ -60,7 +60,7 @@ class AmityReactionListPageViewModel(
         viewModelScope.launch {
             getReactionTabs(referenceType, referenceId)
                 .catch {
-                    // Handle error
+
                 }
                 .collect { tabs ->
                     state = state.copy(

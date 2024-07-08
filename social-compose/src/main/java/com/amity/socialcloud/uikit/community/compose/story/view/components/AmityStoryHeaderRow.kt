@@ -41,24 +41,26 @@ import coil.compose.AsyncImage
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.model.core.ad.AmityAd
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.story.AmityStory
+import com.amity.socialcloud.uikit.common.ad.AmityAdBadge
 import com.amity.socialcloud.uikit.common.common.readableTimeDiff
 import com.amity.socialcloud.uikit.common.common.views.AmityColorPaletteUtil
 import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
+import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
+import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
+import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.AmityConstants
+import com.amity.socialcloud.uikit.common.utils.asDrawableRes
+import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.utils.getValue
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityStoryModalSheetUIState
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageViewModel
 import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmityStorySegmentTimerElement
-import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
-import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
-import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.utils.AmityStoryVideoPlayerHelper
-import com.amity.socialcloud.uikit.common.utils.asDrawableRes
-import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
-import com.amity.socialcloud.uikit.common.utils.getValue
 import kotlinx.coroutines.Dispatchers
 
 @Composable
@@ -66,6 +68,7 @@ fun AmityStoryHeaderRow(
     modifier: Modifier = Modifier,
     pageScope: AmityComposePageScope? = null,
     story: AmityStory?,
+    ad: AmityAd?,
     totalSegments: Int,
     currentSegment: Int,
     shouldPauseTimer: Boolean,
@@ -76,6 +79,10 @@ fun AmityStoryHeaderRow(
     navigateToCreatePage: () -> Unit,
     navigateToCommunityProfilePage: (AmityCommunity) -> Unit,
 ) {
+    val isAd = remember(story, ad) {
+        story == null && ad != null
+    }
+
     var timerDuration by remember {
         mutableLongStateOf(AmityConstants.STORY_DURATION)
     }
@@ -93,15 +100,23 @@ fun AmityStoryHeaderRow(
         )
     }.subscribeAsState(initial = false)
 
-    val communityDisplayName by remember(viewModel.community?.getCommunityId()) {
+    val displayName by remember(viewModel.community?.getCommunityId()) {
         derivedStateOf {
-            viewModel.community?.getDisplayName() ?: ""
+            if (isAd) {
+                ad?.getAdvertiser()?.getName() ?: ""
+            } else {
+                viewModel.community?.getDisplayName() ?: ""
+            }
         }
     }
 
-    val communityAvatarUrl by remember(viewModel.community?.getCommunityId()) {
+    val avatarUrl by remember(viewModel.community?.getCommunityId()) {
         derivedStateOf {
-            viewModel.community?.getAvatar()?.getUrl(AmityImage.Size.LARGE) ?: ""
+            if (isAd) {
+                ad?.getAdvertiser()?.getAvatar()?.getUrl(AmityImage.Size.LARGE) ?: ""
+            } else {
+                viewModel.community?.getAvatar()?.getUrl(AmityImage.Size.LARGE) ?: ""
+            }
         }
     }
 
@@ -119,7 +134,7 @@ fun AmityStoryHeaderRow(
             .background(
                 brush = Brush.verticalGradient(
                     listOf(
-                        Color.Black.copy(alpha = 0.2f),
+                        Color.Black.copy(alpha = 0.5f),
                         Color.Transparent
                     )
                 )
@@ -148,6 +163,7 @@ fun AmityStoryHeaderRow(
                     modifier = modifier
                         .size(40.dp)
                         .clickableWithoutRipple {
+                            if (isAd) return@clickableWithoutRipple
                             if (hasManageStoryPermission) {
                                 navigateToCreatePage()
                             } else {
@@ -161,7 +177,7 @@ fun AmityStoryHeaderRow(
                             }
                         }
                 ) {
-                    if (communityAvatarUrl.isEmpty()) {
+                    if (avatarUrl.isEmpty()) {
                         Image(
                             painter = painterResource(id = R.drawable.amity_ic_default_community_avatar_circular),
                             contentScale = ContentScale.Fit,
@@ -186,7 +202,7 @@ fun AmityStoryHeaderRow(
                         AsyncImage(
                             model = ImageRequest
                                 .Builder(LocalContext.current)
-                                .data(communityAvatarUrl)
+                                .data(avatarUrl)
                                 .dispatcher(Dispatchers.IO)
                                 .diskCachePolicy(CachePolicy.ENABLED)
                                 .memoryCachePolicy(CachePolicy.ENABLED)
@@ -199,7 +215,7 @@ fun AmityStoryHeaderRow(
                                 .testTag("community_avatar")
                         )
                     }
-                    if (hasManageStoryPermission) {
+                    if (hasManageStoryPermission && !isAd) {
                         Image(
                             painter = painterResource(id = R.drawable.amity_ic_plus_circle),
                             contentDescription = "",
@@ -215,13 +231,14 @@ fun AmityStoryHeaderRow(
                     modifier = Modifier.weight(1f),
                 ) {
                     Text(
-                        text = communityDisplayName,
+                        text = displayName,
                         style = AmityTheme.typography.body.copy(
                             color = Color.White,
                             fontWeight = FontWeight.SemiBold
                         ),
                         modifier = Modifier
                             .clickableWithoutRipple {
+                                if (isAd) return@clickableWithoutRipple
                                 if (isSingleTarget) {
                                     onCloseClicked()
                                 } else {
@@ -232,30 +249,38 @@ fun AmityStoryHeaderRow(
                             }
                             .testTag("community_display_name")
                     )
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Text(
-                            text = story?.getCreatedAt()?.readableTimeDiff() ?: "",
-                            color = Color.White,
-                            fontSize = 13.sp,
-                            modifier = modifier.testTag("created_at")
-                        )
-                        Text(
-                            text = "• By",
-                            color = Color.White,
-                            fontSize = 13.sp,
-                        )
-                        Text(
-                            text = story?.getCreator()?.getDisplayName() ?: "",
-                            color = Color.White,
-                            fontSize = 13.sp,
-                            modifier = modifier.testTag("creator_display_name")
-                        )
+
+                    if (isAd) {
+                        AmityAdBadge()
+                    } else {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text(
+                                text = story?.getCreatedAt()?.readableTimeDiff() ?: "",
+                                color = Color.White,
+                                fontSize = 13.sp,
+                                modifier = modifier.testTag("created_at")
+                            )
+                            Text(
+                                text = "• By",
+                                color = Color.White,
+                                fontSize = 13.sp,
+                            )
+                            Text(
+                                text = story?.getCreator()?.getDisplayName() ?: "",
+                                color = Color.White,
+                                fontSize = 13.sp,
+                                modifier = modifier.testTag("creator_display_name")
+                            )
+                        }
                     }
                 }
 
-                if (story?.getCreatorId() == AmityCoreClient.getUserId() || hasManageStoryPermission) {
+                if (
+                    (story?.getCreatorId() == AmityCoreClient.getUserId() || hasManageStoryPermission)
+                    && !isAd
+                ) {
                     AmityBaseElement(
                         pageScope = pageScope,
                         elementId = "overflow_menu"

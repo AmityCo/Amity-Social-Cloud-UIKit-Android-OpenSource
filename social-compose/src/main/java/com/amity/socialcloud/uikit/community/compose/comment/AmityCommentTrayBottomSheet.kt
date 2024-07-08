@@ -8,14 +8,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.amity.socialcloud.sdk.model.social.comment.AmityComment
+import com.amity.socialcloud.sdk.model.social.comment.AmityCommentReferenceType
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AmityStoryCommentBottomSheet(
     modifier: Modifier = Modifier,
-    reference: AmityComment.Reference,
+    referenceId: String,
+    referenceType: AmityCommentReferenceType,
     shouldAllowInteraction: Boolean,
     shouldAllowComment: Boolean,
     onClose: () -> Unit = {},
@@ -30,7 +31,8 @@ fun AmityStoryCommentBottomSheet(
         modifier = modifier,
     ) {
         AmityCommentTrayComponent(
-            reference = reference,
+            referenceId = referenceId,
+            referenceType = referenceType,
             shouldAllowInteraction = shouldAllowInteraction,
             shouldAllowCreation = shouldAllowComment,
         )
@@ -41,7 +43,8 @@ fun AmityStoryCommentBottomSheet(
 @Composable
 fun AmityStoryCommentBottomSheetPreview() {
     AmityStoryCommentBottomSheet(
-        reference = AmityComment.Reference.STORY(""),
+        referenceId = "",
+        referenceType = AmityCommentReferenceType.STORY,
         shouldAllowInteraction = true,
         shouldAllowComment = false,
     )

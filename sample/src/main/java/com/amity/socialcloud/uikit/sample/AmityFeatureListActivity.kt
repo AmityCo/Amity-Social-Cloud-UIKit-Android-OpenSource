@@ -17,6 +17,7 @@ import com.amity.socialcloud.sdk.api.chat.AmityChatClient
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.uikit.chat.home.AmityChatHomePageActivity
 import com.amity.socialcloud.uikit.chat.messages.AmityMessageListActivity
+import com.amity.socialcloud.uikit.community.compose.socialhome.AmitySocialHomePageActivity
 import com.amity.socialcloud.uikit.community.home.activity.AmityCommunityHomePageActivity
 import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityCustomPostRankingFeedActivity
 import com.amity.socialcloud.uikit.community.utils.AmityCommunityNavigation
@@ -44,6 +45,23 @@ class AmityFeatureListActivity : AppCompatActivity() {
                     AmityCommunityHomePageActivity::class.java
                 )
                 startActivity(communityIntent)
+            }
+
+            communityHomeV4.setOnClickListener {
+                val communityIntent = Intent(
+                    this@AmityFeatureListActivity,
+                    AmitySocialHomePageActivity::class.java
+                )
+                startActivity(communityIntent)
+            }
+
+            socialV4Compatible.setOnClickListener {
+                startActivity(
+                    AmityCommunityHomePageActivity.newIntent(
+                        this@AmityFeatureListActivity,
+                        useNewsFeedV4 = true
+                    )
+                )
             }
 
             customRankingFeed.setOnClickListener {

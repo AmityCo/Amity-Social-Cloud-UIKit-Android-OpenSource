@@ -5,7 +5,9 @@ import com.amity.socialcloud.uikit.common.linkpreview.models.AmityPreviewMetadat
 import com.amity.socialcloud.uikit.common.linkpreview.models.AmityPreviewMetadataException
 import com.amity.socialcloud.uikit.common.linkpreview.models.AmityPreviewNoUrl
 import com.amity.socialcloud.uikit.common.linkpreview.models.AmityPreviewUrlCacheItem
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.joda.time.DateTime
@@ -14,12 +16,12 @@ import org.jsoup.Jsoup
 object AmityPreviewUrl {
 
     private val postUrlCache: MutableMap<String, AmityPreviewUrlCacheItem> = mutableMapOf()
+    private val commentUrlCache: MutableMap<String, AmityPreviewUrlCacheItem> = mutableMapOf()
     private val previewMetadataCache: MutableMap<String, AmityPreviewMetadataCacheItem> =
         mutableMapOf()
 
     fun getPostPreviewUrl(
         postId: String,
-        postText: String,
         postUrl: String?,
         editedAt: DateTime?
     ): AmityPreviewUrlCacheItem? {
@@ -37,6 +39,20 @@ object AmityPreviewUrl {
         return postUrlCache[postId]
     }
 
+    fun getCommentPreviewUrl(
+        commentId: String,
+        commentUrl: String?,
+        editedAt: DateTime?
+    ): AmityPreviewUrlCacheItem? {
+        val cache = getCommentUrlFromCache(commentId)
+        if (cache == null) {
+            saveCommentUrlInCache(commentId, commentUrl, editedAt)
+        } else if (editedAt?.isAfter(cache.editedAt) == true) {
+            saveCommentUrlInCache(commentId, commentUrl, editedAt)
+        }
+        return commentUrlCache[commentId]
+    }
+
     fun fetchMetadata(url: String): Single<AmityPreviewMetadataCacheItem> {
         val cache = getPreviewFromCache(url)
         return if (cache != null) {
@@ -47,19 +63,16 @@ object AmityPreviewUrl {
                     previewMetadataCache[url] = it
                 }
         }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
     }
 
     private fun getPostUrlFromCache(postId: String): AmityPreviewUrlCacheItem? {
         return postUrlCache[postId]
     }
 
-    private fun findFirstUrl(text: String): String? {
-        val matcher = Patterns.WEB_URL.matcher(text)
-
-        if (matcher.find()) {
-            return matcher.group()
-        }
-        return null
+    private fun getCommentUrlFromCache(commentId: String): AmityPreviewUrlCacheItem? {
+        return commentUrlCache[commentId]
     }
 
     private fun findDomainName(url: String): String? {
@@ -78,6 +91,16 @@ object AmityPreviewUrl {
         } else {
             //  found URL in post text, cache the URL
             postUrlCache[postId] = AmityPreviewUrlCacheItem(url, editedAt)
+        }
+    }
+
+    private fun saveCommentUrlInCache(commentId: String, url: String?, editedAt: DateTime?) {
+        if (url == null) {
+            //  no URL in post text, cache empty item
+            commentUrlCache[commentId] = AmityPreviewNoUrl()
+        } else {
+            //  found URL in post text, cache the URL
+            commentUrlCache[commentId] = AmityPreviewUrlCacheItem(url, editedAt)
         }
     }
 

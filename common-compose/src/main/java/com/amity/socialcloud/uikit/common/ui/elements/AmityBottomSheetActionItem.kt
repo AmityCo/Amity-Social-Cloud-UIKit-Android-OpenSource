@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,8 +22,9 @@ import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 @Composable
 fun AmityBottomSheetActionItem(
     modifier: Modifier = Modifier,
-    icon: Int,
+    icon: Int?,
     text: String,
+    color: Color? = null,
     onClick: () -> Unit
 ) {
     Row(
@@ -33,17 +35,20 @@ fun AmityBottomSheetActionItem(
             .clickableWithoutRipple { onClick() }
             .padding(16.dp)
     ) {
-        Icon(
-            painter = painterResource(id = icon),
-            contentDescription = null,
-            tint = AmityTheme.colors.base,
-            modifier = Modifier.size(24.dp)
-        )
+        if (icon != null) {
+            Icon(
+                painter = painterResource(id = icon),
+                contentDescription = null,
+                tint = color ?: AmityTheme.colors.base,
+                modifier = Modifier.size(24.dp)
+            )
+        }
 
         Text(
             text = text,
             style = AmityTheme.typography.body.copy(
                 fontWeight = FontWeight.SemiBold,
+                color = color ?: AmityTheme.colors.base
             )
         )
     }
@@ -55,6 +60,6 @@ fun AmityBottomSheetActionItemPreview() {
     AmityBottomSheetActionItem(
         icon = R.drawable.amity_ic_delete_story,
         text = "Delete story",
-        onClick = {}
+        onClick = {},
     )
 }

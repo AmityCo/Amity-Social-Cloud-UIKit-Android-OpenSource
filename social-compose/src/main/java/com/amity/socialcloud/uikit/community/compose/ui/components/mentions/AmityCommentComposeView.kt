@@ -131,13 +131,16 @@ class AmityCommentComposeView(context: Context) : MentionsEditText(context) {
 
     private fun applyStyle() {
         setBackgroundColor(ContextCompat.getColor(context, android.R.color.transparent))
-        setHint("Say something nice...")
         setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
     }
 
     fun setStyle(@ColorInt textColor: Int, @ColorInt hintColor: Int) {
         setTextColor(textColor)
         setHintTextColor(hintColor)
+    }
+
+    fun setHintText(text: String) {
+        setHint(text)
     }
 }
 

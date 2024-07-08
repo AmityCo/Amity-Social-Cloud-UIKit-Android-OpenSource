@@ -30,7 +30,7 @@ class AmityStoryTargetPickerFragment : AmityBaseFragment(),
     private lateinit var binding: AmityFragmentStoryTargetSelectionBinding
 
     private val behavior by lazy {
-        AmitySocialBehaviorHelper.storyTabComponentBehavior
+        AmitySocialBehaviorHelper.storyTargetSelectionPageBehavior
     }
 
     private val createStory =
@@ -91,7 +91,7 @@ class AmityStoryTargetPickerFragment : AmityBaseFragment(),
     override fun onClickCommunity(community: AmityCommunity, position: Int) {
         when (viewModel.storyCreationType) {
             STORY_CREATION_TYPE_COMMUNITY -> {
-                behavior.goToCreateStoryPage(
+                behavior.goToStoryCreationPage(
                     context = requireContext(),
                     launcher = createStory,
                     targetId = community.getCommunityId(),

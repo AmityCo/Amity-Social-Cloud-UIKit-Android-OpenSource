@@ -37,9 +37,6 @@
     <string name="amity_new_post">New Post</string>
     <string name="amity_attachment_size_limit_exceed">One or more file exceed max file size limit 1GB</string>
     <string name="amity_attachment_count_limit_exceed">Can not select more than 10 files</string>
-    <string name="amity_discard">Discard</string>
-    <string name="amity_discard_post_title">Discard post?</string>
-    <string name="amity_discard_post_message">Do you want to discard your post?</string>
     <string name="amity_share">Share</string>
     <string name="amity_comment">Comment</string>
     <string name="amity_image_count">+%d</string>
@@ -47,11 +44,7 @@
     <string name="amity_leave">Leave</string>
     <string name="amity_close">Close</string>
     <string name="amity_successfully_created_community">Successfully created community</string>
-    <string name="amity_delete_post_title">Delete this post?</string>
-    <string name="amity_delete_post_warning_message">This post will be permanently deleted. You’ll no longer to see and find this post</string>
     <string name="amity_my_timeline">My Timeline</string>
-    <string name="amity_post_to">Post to</string>
-    <string name="amity_story_to">Story to</string>
     <string name="amity_post_as_community">Post as Community</string>
     <string name="amity_moderator">Moderator</string>
     <string name="amity_edited">Edited</string>

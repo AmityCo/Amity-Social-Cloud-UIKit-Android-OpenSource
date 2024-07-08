@@ -17,6 +17,15 @@ fun JsonObject.getValueAsList(name: String): List<String> {
     return get(name)?.asJsonArray?.map { it.asString } ?: emptyList()
 }
 
+@DrawableRes
+fun JsonObject.getIcon(name: String? = null): Int {
+    return ((get(name ?: "icon") ?: get("image"))?.asString ?: "").asDrawableRes()
+}
+
+fun JsonObject.getText(): String {
+    return get("text")?.asString ?: ""
+}
+
 fun String.asColor(): Color {
     return try {
         Color(android.graphics.Color.parseColor(this))

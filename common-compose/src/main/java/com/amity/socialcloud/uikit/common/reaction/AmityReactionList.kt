@@ -20,7 +20,7 @@ fun AmityReactionList(
     referenceId: String,
     onClose: () -> Unit = {},
 ) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val sheetState = rememberModalBottomSheetState()
     val reactionViewModel = viewModel<AmityReactionListPageViewModel>(
         factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
