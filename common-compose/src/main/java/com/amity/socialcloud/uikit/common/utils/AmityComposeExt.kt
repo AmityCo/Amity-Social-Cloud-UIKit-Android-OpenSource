@@ -3,6 +3,7 @@ package com.amity.socialcloud.uikit.common.utils
 import android.content.Context
 import android.content.ContextWrapper
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -10,7 +11,6 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.activity.ComponentActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.Interaction
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -20,11 +20,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
 import androidx.paging.LoadState
 import androidx.palette.graphics.Palette.Swatch
 import com.amity.socialcloud.uikit.common.common.views.AmityColorPaletteUtil
@@ -122,22 +127,22 @@ fun Modifier.shimmerBackground(
         shimmerBaseColor.copy(alpha = 0.5f),
         shimmerBaseColor.copy(alpha = 0.3f),
     )
-    
+
     val transition = rememberInfiniteTransition(label = "")
-    
+
     val translateAnimation = transition.animateFloat(
         initialValue = 0f,
         targetValue = (durationMillis + widthOfShadowBrush).toFloat(),
         animationSpec = infiniteRepeatable(
-                animation = tween(
-                        durationMillis = durationMillis,
-                        easing = LinearEasing,
-                ),
-                repeatMode = RepeatMode.Restart,
+            animation = tween(
+                durationMillis = durationMillis,
+                easing = LinearEasing,
+            ),
+            repeatMode = RepeatMode.Restart,
         ),
         label = "Shimmer loading animation",
     )
-    
+
     this.background(
         brush = Brush.linearGradient(
             colors = shimmerColors,
@@ -146,4 +151,33 @@ fun Modifier.shimmerBackground(
         ),
         shape = shape
     )
+}
+
+fun Modifier.isVisible(
+    threshold: Int = 100,
+    onVisibilityChange: (Boolean) -> Unit
+): Modifier {
+    return this.onGloballyPositioned { layoutCoordinates: LayoutCoordinates ->
+        val layoutHeight = layoutCoordinates.size.height
+        val thresholdHeight = layoutHeight * threshold / 100
+        val layoutTop = layoutCoordinates.positionInRoot().y
+        val layoutBottom = layoutTop + layoutHeight
+
+        val parent = layoutCoordinates.parentLayoutCoordinates
+
+        parent?.boundsInRoot()?.let { rect: Rect ->
+            val parentTop = rect.top
+            val parentBottom = rect.bottom
+
+            if (
+                parentBottom - layoutTop > thresholdHeight &&
+                (parentTop < layoutBottom - thresholdHeight)
+            ) {
+                onVisibilityChange(true)
+            } else {
+                onVisibilityChange(false)
+
+            }
+        }
+    }
 }

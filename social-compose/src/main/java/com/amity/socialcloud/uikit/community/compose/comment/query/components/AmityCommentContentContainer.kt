@@ -7,26 +7,30 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
-import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionee
-import com.amity.socialcloud.uikit.community.compose.comment.query.elements.AmityCommentModeratorBadge
+import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.uikit.common.ui.elements.AmityExpandableText
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.utils.isCreatorCommunityModerator
+import com.amity.socialcloud.uikit.community.compose.comment.query.elements.AmityCommentModeratorBadge
 import com.google.gson.JsonObject
 
 @Composable
 fun AmityCommentContentContainer(
     modifier: Modifier = Modifier,
-    displayName: String,
-    isCommunityModerator: Boolean,
-    commentText: String,
-    mentionGetter: AmityMentionMetadataGetter,
-    mentionees: List<AmityMentionee>,
+    comment: AmityComment,
 ) {
+    val mentionGetter = remember {
+        AmityMentionMetadataGetter(comment.getMetadata() ?: JsonObject())
+    }
+    val commentText = remember(comment.getCommentId(), comment.getEditedAt()) {
+        (comment.getData() as? AmityComment.Data.TEXT)?.getText() ?: ""
+    }
+
     Column(
         verticalArrangement = Arrangement.spacedBy(4.dp),
         modifier = modifier
@@ -41,33 +45,21 @@ fun AmityCommentContentContainer(
             .padding(12.dp)
     ) {
         Text(
-            text = displayName,
+            text = comment.getCreator()?.getDisplayName() ?: "",
             style = AmityTheme.typography.caption,
             modifier = modifier.testTag("comment_list/comment_bubble_creator_display_name")
         )
 
-        if (isCommunityModerator) {
+        if (comment.isCreatorCommunityModerator()) {
             AmityCommentModeratorBadge()
         }
 
         AmityExpandableText(
             text = commentText,
             mentionGetter = mentionGetter,
-            mentionees = mentionees,
+            mentionees = comment.getMentionees(),
             style = AmityTheme.typography.body,
             modifier = modifier.testTag("comment_list/comment_bubble_comment_text_view")
         )
     }
-}
-
-@Preview
-@Composable
-fun AmityCommentContentContainerPreview() {
-    AmityCommentContentContainer(
-        displayName = "John Doe",
-        isCommunityModerator = true,
-        commentText = "This is a comment",
-        mentionGetter = AmityMentionMetadataGetter(JsonObject()),
-        mentionees = emptyList(),
-    )
 }

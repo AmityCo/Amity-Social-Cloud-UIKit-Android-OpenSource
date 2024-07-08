@@ -18,23 +18,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
-import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionee
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
-import com.amity.socialcloud.uikit.community.compose.R
-import com.amity.socialcloud.uikit.community.compose.comment.elements.AmityCommentAvatarView
-import com.amity.socialcloud.uikit.community.compose.comment.query.components.AmityCommentActionsBottomSheet
+import com.amity.socialcloud.sdk.model.social.comment.AmityCommentReferenceType
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.comment.elements.AmityCommentAvatarView
+import com.amity.socialcloud.uikit.community.compose.comment.query.components.AmityCommentActionsBottomSheet
 import com.amity.socialcloud.uikit.community.compose.comment.query.components.AmityCommentContentContainer
 import com.amity.socialcloud.uikit.community.compose.comment.query.components.AmityCommentEngagementBar
 import com.amity.socialcloud.uikit.community.compose.comment.query.components.AmityEditCommentContainer
 import com.amity.socialcloud.uikit.community.compose.comment.query.components.AmityReplyCommentContainer
-import com.google.gson.JsonObject
-import org.joda.time.DateTime
 import kotlin.math.max
 
 @Composable
@@ -42,26 +38,12 @@ fun AmitySingleCommentView(
     modifier: Modifier = Modifier,
     componentScope: AmityComposeComponentScope? = null,
     allowInteraction: Boolean,
-    reference: AmityComment.Reference,
+    referenceId: String,
+    referenceType: AmityCommentReferenceType,
+    comment: AmityComment,
     isReplyComment: Boolean,
     currentUserId: String,
-    commentId: String,
     editingCommentId: String?,
-    commentText: String,
-    mentionGetter: AmityMentionMetadataGetter,
-    mentionees: List<AmityMentionee>,
-    creatorId: String,
-    creatorAvatarUrl: String,
-    creatorDisplayName: String,
-    createdAt: DateTime,
-    isEdited: Boolean,
-    isCommunityModerator: Boolean,
-    isReactedByMe: Boolean,
-    isFlaggedByMe: Boolean,
-    isFailed: Boolean,
-    reactionCount: Int,
-    childCount: Int?,
-    replyComments: List<AmityComment>,
     onReply: (String) -> Unit,
     onEdit: (String?) -> Unit,
 ) {
@@ -82,7 +64,7 @@ fun AmitySingleCommentView(
     ) {
         AmityCommentAvatarView(
             size = 32.dp,
-            avatarUrl = creatorAvatarUrl,
+            avatarUrl = comment.getCreator()?.getAvatar()?.getUrl() ?: "",
             modifier = modifier.testTag("comment_list/comment_bubble_avatar")
         )
 
@@ -90,14 +72,11 @@ fun AmitySingleCommentView(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = modifier.wrapContentSize(),
         ) {
-            if (editingCommentId == commentId) {
+            if (editingCommentId == comment.getCommentId()) {
                 AmityEditCommentContainer(
                     modifier = modifier,
                     componentScope = componentScope,
-                    commentId = commentId,
-                    commentText = commentText,
-                    mentionGetter = mentionGetter,
-                    mentionees = mentionees,
+                    comment = comment,
                     onEditFinished = {
                         onEdit(null)
                     },
@@ -109,14 +88,10 @@ fun AmitySingleCommentView(
                 ) {
                     AmityCommentContentContainer(
                         modifier = modifier,
-                        displayName = creatorDisplayName,
-                        isCommunityModerator = isCommunityModerator,
-                        commentText = commentText,
-                        mentionGetter = mentionGetter,
-                        mentionees = mentionees,
+                        comment = comment,
                     )
 
-                    if (isFailed) {
+                    if (comment.getState() == AmityComment.State.FAILED) {
                         Icon(
                             painter = painterResource(id = R.drawable.amity_ic_error),
                             tint = AmityTheme.colors.baseShade2,
@@ -132,21 +107,24 @@ fun AmitySingleCommentView(
                     }
                 }
 
+                // TODO: 17/6/24 enable comment link preview once ready
+                /*
+                AmityCommentPreviewLinkView(
+                    modifier = modifier,
+                    comment = comment,
+                )
+                 */
+
                 AmityCommentEngagementBar(
                     modifier = modifier,
                     componentScope = componentScope,
                     allowInteraction = allowInteraction,
                     isReplyComment = isReplyComment,
-                    commentId = commentId,
-                    createdAt = createdAt,
-                    isEdited = isEdited,
-                    isCreatedByMe = currentUserId == creatorId,
-                    isFlaggedByMe = isFlaggedByMe,
-                    isReactedByMe = isReactedByMe,
-                    reactionCount = reactionCount,
+                    comment = comment,
+                    isCreatedByMe = currentUserId == comment.getCreatorId(),
                     onReply = onReply,
                     onEdit = {
-                        onEdit(commentId)
+                        onEdit(comment.getCommentId())
                     }
                 )
             }
@@ -155,13 +133,14 @@ fun AmitySingleCommentView(
                 modifier = modifier,
                 componentScope = componentScope,
                 allowInteraction = allowInteraction,
-                reference = reference,
+                referenceId = referenceId,
+                referenceType = referenceType,
                 currentUserId = currentUserId,
-                commentId = commentId,
+                commentId = comment.getCommentId(),
                 editingCommentId = editingCommentId,
                 // TODO: 31/1/24 child count is not real-time
-                replyCount = max(childCount ?: 0, replyComments.size),
-                replies = replyComments,
+                replyCount = max(comment.getChildCount(), comment.getLatestReplies().size),
+                replies = comment.getLatestReplies(),
                 onEdit = onEdit,
             )
         }
@@ -170,44 +149,14 @@ fun AmitySingleCommentView(
     AmityCommentActionsBottomSheet(
         modifier = modifier,
         componentScope = componentScope,
-        commentId = commentId,
+        commentId = comment.getCommentId(),
         shouldShow = showCommentActionSheet,
         isReplyComment = isReplyComment,
         isCommentCreatedByMe = true,
-        isFlaggedByMe = isFlaggedByMe,
-        isFailed = isFailed,
+        isFlaggedByMe = comment.isFlaggedByMe(),
+        isFailed = comment.getState() == AmityComment.State.FAILED,
         onEdit = {},
     ) {
         showCommentActionSheet = false
     }
-}
-
-@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
-@Composable
-fun AmityCommentViewPreview() {
-    AmitySingleCommentView(
-        allowInteraction = true,
-        reference = AmityComment.Reference.STORY(""),
-        isReplyComment = false,
-        currentUserId = "",
-        commentId = "",
-        editingCommentId = null,
-        commentText = "This is a comment",
-        mentionGetter = AmityMentionMetadataGetter(JsonObject()),
-        mentionees = emptyList(),
-        creatorId = "",
-        creatorAvatarUrl = "",
-        creatorDisplayName = "John Doe",
-        createdAt = DateTime.now(),
-        isEdited = true,
-        isCommunityModerator = true,
-        isReactedByMe = true,
-        isFlaggedByMe = false,
-        isFailed = true,
-        reactionCount = 1,
-        childCount = 10,
-        replyComments = emptyList(),
-        onReply = {},
-        onEdit = {},
-    )
 }

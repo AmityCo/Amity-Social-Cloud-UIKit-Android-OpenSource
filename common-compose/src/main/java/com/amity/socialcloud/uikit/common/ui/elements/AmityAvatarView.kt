@@ -30,6 +30,7 @@ fun AmityAvatarView(
     modifier: Modifier = Modifier,
     size: Dp = 32.dp,
     avatarUrl: String? = null,
+    placeholder: Int = R.drawable.amity_ic_default_profile1
 ) {
     val painter = rememberAsyncImagePainter(
         model = ImageRequest
@@ -52,7 +53,7 @@ fun AmityAvatarView(
         )
         if (painter.state !is AsyncImagePainter.State.Success) {
             Icon(
-                painter = painterResource(id = R.drawable.amity_ic_default_profile1),
+                painter = painterResource(id = placeholder),
                 contentDescription = null,
                 tint = Color.White,
                 modifier = Modifier

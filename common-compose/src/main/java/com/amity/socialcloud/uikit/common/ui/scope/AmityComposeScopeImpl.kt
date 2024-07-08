@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.material3.SnackbarHostState
 import com.amity.socialcloud.uikit.common.config.AmityUIKitConfig
 import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
+import com.amity.socialcloud.uikit.common.ui.elements.AmityProgressSnackbarVisuals
 import com.amity.socialcloud.uikit.common.ui.elements.AmitySnackbarVisuals
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -32,6 +33,7 @@ internal class AmityComposePageScopeImpl(
 
     override fun showSnackbar(message: String, @DrawableRes drawableRes: Int?) {
         coroutineScope.launch {
+            snackbarHostState.currentSnackbarData?.dismiss()
             snackbarHostState.showSnackbar(
                 AmitySnackbarVisuals(
                     message = message,
@@ -40,6 +42,17 @@ internal class AmityComposePageScopeImpl(
                         this.drawableRes = drawableRes
                     }
                 }
+            )
+        }
+    }
+
+    override fun showProgressSnackbar(message: String) {
+        coroutineScope.launch {
+            snackbarHostState.currentSnackbarData?.dismiss()
+            snackbarHostState.showSnackbar(
+                AmityProgressSnackbarVisuals(
+                    message = message,
+                )
             )
         }
     }
@@ -73,6 +86,7 @@ internal class AmityComposeComponentScopeImpl(
     override fun showSnackbar(message: String, drawableRes: Int?) {
         if (pageScope == null) {
             coroutineScope.launch {
+                snackbarHostState.currentSnackbarData?.dismiss()
                 snackbarHostState.showSnackbar(
                     AmitySnackbarVisuals(
                         message = message,
@@ -123,11 +137,12 @@ internal class AmityComposeElementScopeImpl(
 
     override fun getAccessibilityId(viewId: String): String {
         val sb = StringBuilder()
-        if (componentScope != null) {
-            sb.append(componentScope.getId())
-            sb.append("/")
-        }
+        sb.append(pageId)
+        sb.append("/")
+        sb.append(componentId)
+        sb.append("/")
         sb.append(elementId)
+
         if (viewId.isNotEmpty()) {
             sb.append("_")
             sb.append(viewId)

@@ -8,7 +8,7 @@ import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPa
 class AmityViewStoryPage {
     /* begin_sample_code
        gist_id: b56c789ce415afebce4347007ac62177
-       filename: AmityViewCommunityStoryPage.kt
+       filename: AmityViewStoryPage.kt
        asc_page: https://docs.amity.co/amity-uikit/uikit-v4-beta/social/viewing-story-page
        description: Navigate to view story page
        */

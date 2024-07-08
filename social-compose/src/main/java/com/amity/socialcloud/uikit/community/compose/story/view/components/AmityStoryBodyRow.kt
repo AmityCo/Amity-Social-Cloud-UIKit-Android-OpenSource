@@ -21,7 +21,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import androidx.media3.exoplayer.ExoPlayer
@@ -33,10 +32,10 @@ import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.sdk.model.social.story.AmityStoryImageDisplayMode
 import com.amity.socialcloud.sdk.model.social.story.AmityStoryItem
+import com.amity.socialcloud.uikit.common.utils.toComposeColor
 import com.amity.socialcloud.uikit.community.compose.story.hyperlink.elements.AmityStoryHyperlinkView
 import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmityStoryBodyGestureBox
 import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmityStoryVideoPlayer
-import com.amity.socialcloud.uikit.common.utils.toComposeColor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -223,14 +222,4 @@ fun AmityStoryBodyHyperlinkView(
             context.startActivity(browserIntent)
         }
     )
-}
-
-@Preview
-@Composable
-fun AmityStoryBodyRowPreview() {
-//    AmityStoryBodyRow(
-//        exoPlayer = null,
-//        isVisible = true,
-//        shouldPauseVideo = false
-//    )
 }

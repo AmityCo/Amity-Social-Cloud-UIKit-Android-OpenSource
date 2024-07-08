@@ -100,7 +100,7 @@ class AmityNewsFeedFragment : AmityBaseFragment(),
         val postCreationOptions =
             arrayListOf(
                 BottomSheetMenuItem(
-                    iconResId = R.drawable.ic_amity_ic_post_create,
+                    iconResId = R.drawable.amity_ic_post_create,
                     titleResId = R.string.amity_post,
                     action = {
                         creationTargetSelection.launch(AmityTargetSelectionPageType.POST)

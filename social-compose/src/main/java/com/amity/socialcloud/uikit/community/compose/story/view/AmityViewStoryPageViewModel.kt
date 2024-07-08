@@ -7,12 +7,15 @@ import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.core.reaction.reference.AmityReactionReference
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
+import com.amity.socialcloud.sdk.model.core.ad.AmityAdPlacement
 import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.member.AmityCommunityMember
 import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.sdk.model.social.story.AmityStoryImageDisplayMode
 import com.amity.socialcloud.sdk.model.social.story.AmityStoryItem
+import com.amity.socialcloud.uikit.common.ad.AmityAdInjector
+import com.amity.socialcloud.uikit.common.ad.AmityListItem
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import com.amity.socialcloud.uikit.common.utils.AmityConstants
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -22,6 +25,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 
 class AmityViewStoryPageViewModel : AmityBaseViewModel() {
 
@@ -50,7 +54,12 @@ class AmityViewStoryPageViewModel : AmityBaseViewModel() {
     fun getActiveStories(
         targetId: String,
         targetType: AmityStory.TargetType
-    ): Flow<PagingData<AmityStory>> {
+    ): Flow<PagingData<AmityListItem>> {
+        val injector = AmityAdInjector<AmityStory>(
+            AmityAdPlacement.STORY,
+            community?.getCommunityId()
+        )
+
         return AmitySocialClient.newStoryRepository()
             .getActiveStories(
                 targetId = targetId,
@@ -58,6 +67,11 @@ class AmityViewStoryPageViewModel : AmityBaseViewModel() {
             )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
+            .onBackpressureBuffer()
+            .throttleLatest(2000, TimeUnit.MILLISECONDS)
+            .map {
+                injector.inject(it)
+            }
             .asFlow()
     }
 

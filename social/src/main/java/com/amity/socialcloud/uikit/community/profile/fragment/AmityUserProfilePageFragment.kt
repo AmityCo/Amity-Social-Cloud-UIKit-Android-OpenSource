@@ -4,7 +4,12 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.BlendModeColorFilterCompat
@@ -24,7 +29,10 @@ import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.databinding.AmityFragmentUserProfilePageBinding
 import com.amity.socialcloud.uikit.community.followers.AmityUserFollowersActivity
 import com.amity.socialcloud.uikit.community.followrequest.AmityFollowRequestsActivity
-import com.amity.socialcloud.uikit.community.newsfeed.activity.*
+import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityLiveStreamPostCreatorActivity
+import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityPollPostCreatorActivity
+import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityPostCreatorActivity
+import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityPostDetailsActivity
 import com.amity.socialcloud.uikit.community.newsfeed.events.AmityFeedRefreshEvent
 import com.amity.socialcloud.uikit.community.newsfeed.fragment.AmityMediaGalleryFragment
 import com.amity.socialcloud.uikit.community.newsfeed.fragment.AmityMyFeedFragment
@@ -152,7 +160,7 @@ class AmityUserProfilePageFragment : AmityBaseFragment(),
         val postCreationOptions =
             arrayListOf(
                 BottomSheetMenuItem(
-                    iconResId = R.drawable.ic_amity_ic_post_create,
+                    iconResId = R.drawable.amity_ic_post_create,
                     titleResId = R.string.amity_post,
                     action = {
                         createGenericPost.launch(null)

@@ -22,14 +22,14 @@ import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.amity.socialcloud.sdk.model.social.comment.AmityComment
+import com.amity.socialcloud.sdk.model.social.comment.AmityCommentReferenceType
+import com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem
+import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponent
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityStoryModalDialogUIState
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityStoryModalSheetUIState
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageViewModel
-import com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem
-import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -82,7 +82,8 @@ fun AmityStoryModalBottomSheet(
                     val data = sheetUIState as AmityStoryModalSheetUIState.OpenCommentTraySheet
                     AmityCommentTrayComponent(
                         modifier = modifier,
-                        reference = AmityComment.Reference.STORY(data.storyId),
+                        referenceId = data.storyId,
+                        referenceType = AmityCommentReferenceType.STORY,
                         community = data.community,
                         shouldAllowInteraction = data.shouldAllowInteraction,
                         shouldAllowCreation = data.shouldAllowComment,

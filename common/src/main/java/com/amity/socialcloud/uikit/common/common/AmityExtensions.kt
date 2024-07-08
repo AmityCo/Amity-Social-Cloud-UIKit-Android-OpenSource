@@ -28,6 +28,8 @@ import com.google.android.material.snackbar.Snackbar
 import org.joda.time.DateTime
 import java.math.RoundingMode
 import java.text.DecimalFormat
+import java.text.SimpleDateFormat
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 import kotlin.math.ln
 import kotlin.math.pow
@@ -128,6 +130,37 @@ fun DateTime.readableTimeDiff(): String {
             minutes > 0 -> minutes.toString() + "m"
             seconds > 1 -> seconds.toString() + "s"
             else -> "Just now"
+        }
+    }
+}
+
+fun DateTime.readableSocialTimeDiff(): String {
+    val now = DateTime.now()
+
+    if (now.year().get() > this.year().get()) {
+        val formatter = SimpleDateFormat("d MMM yyyy", Locale.getDefault())
+        val formattedDateTime: String = formatter.format(this.toDate())
+        return formattedDateTime
+    } else {
+        if (now.dayOfYear - this.dayOfYear <= 7) {
+            //  within 7 days
+            val diff = now.millis - this.millis
+            diff.let {
+                val days = TimeUnit.MILLISECONDS.toDays(diff)
+                val hours = TimeUnit.MILLISECONDS.toHours(diff)
+                val minutes = TimeUnit.MILLISECONDS.toMinutes(diff)
+
+                return when {
+                    days > 0 -> days.toString() + "d"
+                    hours > 0 -> hours.toString() + "h"
+                    minutes > 0 -> minutes.toString() + "m"
+                    else -> "Just now"
+                }
+            }
+        } else {
+            val formatter = SimpleDateFormat("d MMM", Locale.getDefault())
+            val formattedDateTime: String = formatter.format(this.toDate())
+            return formattedDateTime
         }
     }
 }

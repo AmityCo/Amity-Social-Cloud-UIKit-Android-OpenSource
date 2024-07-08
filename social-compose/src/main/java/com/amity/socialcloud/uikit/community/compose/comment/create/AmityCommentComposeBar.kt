@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,20 +28,22 @@ import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadata
 import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
-import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentViewModel
-import com.amity.socialcloud.uikit.community.compose.comment.elements.AmityCommentAvatarView
-import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.AmityMentionSuggestionView
-import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.AmityMentionTextField
+import com.amity.socialcloud.sdk.model.social.comment.AmityCommentReferenceType
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentViewModel
+import com.amity.socialcloud.uikit.community.compose.comment.elements.AmityCommentAvatarView
+import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.AmityMentionSuggestionView
+import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.AmityMentionTextField
 
 @Composable
 fun AmityCommentComposerBar(
     modifier: Modifier = Modifier,
     componentScope: AmityComposeComponentScope? = null,
-    reference: AmityComment.Reference,
+    referenceId: String,
+    referenceType: AmityCommentReferenceType,
     avatarUrl: String? = null,
     replyComment: AmityComment? = null,
     onClose: () -> Unit
@@ -116,7 +119,12 @@ fun AmityCommentComposerBar(
             AmityMentionTextField(
                 modifier = Modifier
                     .weight(1f)
-                    .testTag("comment_tray_component/comment_composer_text_field"),
+                    .testTag("comment_tray_component/comment_composer_text_field")
+                    .background(
+                        color = AmityTheme.colors.baseShade4,
+                        shape = RoundedCornerShape(20.dp)
+                    )
+                    .padding(horizontal = 12.dp),
                 mentionedUser = selectedUserToMention,
                 shouldClearText = isCommentPosted,
                 onValueChange = {
@@ -127,7 +135,7 @@ fun AmityCommentComposerBar(
                 },
                 onQueryToken = {
                     queryToken = it ?: ""
-                    shouldShowSuggestion = !it.isNullOrEmpty()
+                    shouldShowSuggestion = (it != null)
                 },
                 onUserMentions = {
                     mentionedUsers = it
@@ -148,7 +156,8 @@ fun AmityCommentComposerBar(
                         isCommentPosted = true
 
                         viewModel.addComment(
-                            reference = reference,
+                            referenceId = referenceId,
+                            referenceType = referenceType,
                             replyCommentId = if (isReplyingToComment) replyComment?.getCommentId() else null,
                             commentText = commentText,
                             mentionedUsers = mentionedUsers,
@@ -191,6 +200,7 @@ fun AmityCommentComposerBar(
 @Composable
 fun AmityCommentComposerBarPreview() {
     AmityCommentComposerBar(
-        reference = AmityComment.Reference.STORY(""),
+        referenceId = "",
+        referenceType = AmityCommentReferenceType.STORY,
     ) {}
 }

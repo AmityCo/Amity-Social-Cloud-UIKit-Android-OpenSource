@@ -28,6 +28,43 @@
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/AmityStoryDarkTheme" />
+        <activity
+            android:name=".socialhome.AmitySocialHomePageActivity"
+            android:configChanges="uiMode"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme" />
+        <activity
+            android:name=".post.detail.AmityPostDetailPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme" />
+        <activity
+            android:name=".search.global.AmitySocialGlobalSearchPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme" />
+        <activity
+            android:name=".search.community.AmityMyCommunitiesSearchPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme" />
+        <activity
+            android:name=".target.post.AmityPostTargetSelectionPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme" />
+        <activity
+            android:name=".target.story.AmityStoryTargetSelectionPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme" />
+        <activity
+            android:name=".post.composer.AmityPostComposerPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>

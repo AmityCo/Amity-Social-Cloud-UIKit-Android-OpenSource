@@ -14,21 +14,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
-import com.amity.socialcloud.uikit.community.compose.comment.elements.AmityCommentAvatarView
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.community.compose.comment.elements.AmityCommentAvatarView
 
 @Composable
 fun AmityMentionSuggestionView(
     modifier: Modifier = Modifier,
     community: AmityCommunity?,
     keyword: String,
+    heightIn: Dp = 250.dp,
     onClick: (AmityUser) -> Unit,
 ) {
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
@@ -49,7 +51,7 @@ fun AmityMentionSuggestionView(
         modifier = modifier
             .fillMaxWidth()
             .background(AmityTheme.colors.background)
-            .requiredHeightIn(0.dp, 250.dp)
+            .requiredHeightIn(0.dp, heightIn)
             .padding(horizontal = 12.dp)
     ) {
         items(

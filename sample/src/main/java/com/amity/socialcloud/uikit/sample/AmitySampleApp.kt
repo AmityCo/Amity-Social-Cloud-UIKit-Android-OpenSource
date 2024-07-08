@@ -11,12 +11,8 @@ import coil.util.DebugLogger
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.core.endpoint.AmityEndpoint
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
-import com.amity.socialcloud.sdk.video.AmityStreamBroadcasterClient
-import com.amity.socialcloud.sdk.video.AmityStreamPlayerClient
-import com.amity.socialcloud.uikit.AmityCustomViewStoryPageBehavior
 import com.amity.socialcloud.uikit.AmityUIKit4Manager
 import com.amity.socialcloud.uikit.AmityUIKitClient
-import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import com.amity.socialcloud.uikit.feed.settings.AmityPostShareClickListener
 import com.amity.socialcloud.uikit.feed.settings.AmityPostSharingSettings
 import com.amity.socialcloud.uikit.feed.settings.AmityPostSharingTarget
@@ -30,16 +26,17 @@ class AmitySampleApp : Application(), ImageLoaderFactory {
         super.onCreate()
         APP = this
 
-        AmityCoreClient.setup(
-            SamplePreferences.getApiKey().get(),
-            AmityEndpoint.CUSTOM(
+        // V4 setup
+        AmityUIKit4Manager.setup(
+            apiKey = SamplePreferences.getApiKey().get(),
+            endpoint =  AmityEndpoint.CUSTOM(
                 SamplePreferences.getHttpUrl().get(),
                 SamplePreferences.getSocketUrl().get(),
                 SamplePreferences.getMqttBroker().get()
             )
-        ).subscribe()
+        )
 
-        //TODO This allow setting share external for example
+        // V3 Ex. override post sharing event
         val settings = AmityPostSharingSettings()
         settings.myFeedPostSharingTarget = enumValues<AmityPostSharingTarget>().toList()
         AmityUIKitClient.socialUISettings.postSharingSettings = settings
@@ -52,9 +49,7 @@ class AmitySampleApp : Application(), ImageLoaderFactory {
             }
         }
 
-        //  setting up config controller
-        AmityUIKitConfigController.setup(this)
-
+        // Ex. handle global ban events
         AmityCoreClient.getGlobalBanEvents()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -62,11 +57,6 @@ class AmitySampleApp : Application(), ImageLoaderFactory {
                 Toast.makeText(this, "This user is global banned", Toast.LENGTH_LONG).show()
             }
             .subscribe()
-
-        AmityStreamBroadcasterClient.setup(AmityCoreClient.getConfiguration())
-        AmityStreamPlayerClient.setup(AmityCoreClient.getConfiguration())
-
-        AmityUIKit4Manager.behavior.viewStoryPageBehavior = AmityCustomViewStoryPageBehavior()
     }
 
     companion object {
