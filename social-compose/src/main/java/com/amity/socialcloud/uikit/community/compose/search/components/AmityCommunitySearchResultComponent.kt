@@ -18,7 +18,7 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
-import com.amity.socialcloud.uikit.community.compose.search.global.AmitySocialGlobalSearchPageViewModel
+import com.amity.socialcloud.uikit.community.compose.search.global.AmityGlobalSearchViewModel
 import com.amity.socialcloud.uikit.community.compose.socialhome.elements.AmityCommunityView
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityCommunityListShimmer
 
@@ -27,7 +27,7 @@ fun AmityCommunitySearchResultComponent(
     modifier: Modifier = Modifier,
     pageScope: AmityComposePageScope? = null,
     componentScope: AmityComposeComponentScope? = null,
-    viewModel: AmitySocialGlobalSearchPageViewModel,
+    viewModel: AmityGlobalSearchViewModel,
 ) {
     val context = LocalContext.current
     val behavior by lazy {
@@ -48,25 +48,25 @@ fun AmityCommunitySearchResultComponent(
             .fillMaxSize()
             .padding(horizontal = 16.dp)
     ) {
-        AmitySocialGlobalSearchPageViewModel.CommunityListState.from(
-            loadState = communities.loadState,
+        AmityGlobalSearchViewModel.CommunityListState.from(
+            loadState = communities.loadState.refresh,
             itemCount = communities.itemCount,
         ).let(viewModel::setCommunityListState)
 
         when (loadState) {
-            AmitySocialGlobalSearchPageViewModel.CommunityListState.EMPTY -> {
+            AmityGlobalSearchViewModel.CommunityListState.EMPTY -> {
                 item {
                     AmityEmptySearchResultComponent(modifier)
                 }
             }
 
-            AmitySocialGlobalSearchPageViewModel.CommunityListState.LOADING -> {
+            AmityGlobalSearchViewModel.CommunityListState.LOADING -> {
                 item {
                     AmityCommunityListShimmer()
                 }
             }
 
-            AmitySocialGlobalSearchPageViewModel.CommunityListState.SUCCESS -> {
+            AmityGlobalSearchViewModel.CommunityListState.SUCCESS -> {
                 items(
                     count = communities.itemCount,
                     key = { index -> index }

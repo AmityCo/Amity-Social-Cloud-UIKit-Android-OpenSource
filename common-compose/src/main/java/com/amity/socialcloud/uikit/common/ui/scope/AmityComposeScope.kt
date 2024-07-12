@@ -28,7 +28,11 @@ interface AmityComposePageScope : AmityComposeScope {
 
     fun getPageTheme(): AmityUIKitConfig.UIKitTheme?
 
-    fun showSnackbar(message: String, @DrawableRes drawableRes: Int? = null)
+    fun showSnackbar(
+        message: String,
+        @DrawableRes drawableRes: Int? = null,
+        additionalHeight: Int = 0
+    )
 
     fun showProgressSnackbar(message: String)
 }
@@ -41,7 +45,11 @@ interface AmityComposeComponentScope : AmityComposeScope {
 
     fun getComponentTheme(): AmityUIKitConfig.UIKitTheme?
 
-    fun showSnackbar(message: String, @DrawableRes drawableRes: Int? = null)
+    fun showSnackbar(
+        message: String,
+        @DrawableRes drawableRes: Int? = null,
+        additionalHeight: Int = 0
+    )
 
     fun getAccessibilityId(viewId: String = ""): String
 }

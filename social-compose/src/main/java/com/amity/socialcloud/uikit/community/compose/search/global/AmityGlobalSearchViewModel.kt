@@ -1,7 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.search.global
 
 import androidx.lifecycle.viewModelScope
-import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
@@ -17,7 +16,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import java.util.concurrent.TimeUnit
 
-class AmitySocialGlobalSearchPageViewModel : AmityBaseViewModel() {
+class AmityGlobalSearchViewModel : AmityBaseViewModel() {
 
     private val _keyword by lazy {
         MutableStateFlow("")
@@ -92,16 +91,14 @@ class AmitySocialGlobalSearchPageViewModel : AmityBaseViewModel() {
 
         companion object {
             fun from(
-                loadState: CombinedLoadStates,
+                loadState: LoadState,
                 itemCount: Int,
             ): CommunityListState {
-                return if (loadState.refresh is LoadState.Loading || loadState.append is LoadState.Loading) {
+                return if (loadState is LoadState.Loading && itemCount == 0) {
                     LOADING
-                } else if (
-                    loadState.refresh is LoadState.NotLoading &&
-                    loadState.append is LoadState.NotLoading &&
-                    itemCount == 0
-                ) {
+                } else if (loadState is LoadState.NotLoading && itemCount == 0) {
+                    EMPTY
+                } else if (loadState is LoadState.Error && itemCount == 0) {
                     EMPTY
                 } else {
                     SUCCESS
@@ -117,16 +114,14 @@ class AmitySocialGlobalSearchPageViewModel : AmityBaseViewModel() {
 
         companion object {
             fun from(
-                loadState: CombinedLoadStates,
+                loadState: LoadState,
                 itemCount: Int,
             ): UserListState {
-                return if (loadState.refresh is LoadState.Loading || loadState.append is LoadState.Loading) {
+                return if (loadState is LoadState.Loading && itemCount == 0) {
                     LOADING
-                } else if (
-                    loadState.refresh is LoadState.NotLoading &&
-                    loadState.append is LoadState.NotLoading &&
-                    itemCount == 0
-                ) {
+                } else if (loadState is LoadState.NotLoading && itemCount == 0) {
+                    EMPTY
+                } else if (loadState is LoadState.Error && itemCount == 0) {
                     EMPTY
                 } else {
                     SUCCESS

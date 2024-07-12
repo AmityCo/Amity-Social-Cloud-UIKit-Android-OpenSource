@@ -1,15 +1,15 @@
 package com.amity.socialcloud.uikit.community.compose.socialhome.components
 
 import android.content.Context
-import com.amity.socialcloud.uikit.community.compose.target.AmityTargetSelectionPageType
+import com.amity.socialcloud.uikit.community.compose.target.AmityPostTargetSelectionPageType
 import com.amity.socialcloud.uikit.community.compose.target.post.AmityPostTargetSelectionPageActivity
 import com.amity.socialcloud.uikit.community.compose.target.story.AmityStoryTargetSelectionPageActivity
 
 open class AmityCreatePostMenuComponentBehavior {
 
-    fun goToSelectPostTargetPage(
+    open fun goToSelectPostTargetPage(
         context: Context,
-        type: AmityTargetSelectionPageType
+        type: AmityPostTargetSelectionPageType
     ) {
         val intent = AmityPostTargetSelectionPageActivity.newIntent(
             context = context,
@@ -18,12 +18,11 @@ open class AmityCreatePostMenuComponentBehavior {
         context.startActivity(intent)
     }
 
-    fun goToSelectStoryTargetPage(
+    open fun goToSelectStoryTargetPage(
         context: Context,
     ) {
         val intent = AmityStoryTargetSelectionPageActivity.newIntent(
             context = context,
-            type = AmityTargetSelectionPageType.STORY,
         )
         context.startActivity(intent)
     }

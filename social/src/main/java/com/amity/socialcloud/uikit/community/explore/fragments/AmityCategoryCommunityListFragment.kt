@@ -15,6 +15,7 @@ import com.amity.socialcloud.uikit.common.base.AmityBaseFragment
 import com.amity.socialcloud.uikit.common.common.showSnackBar
 import com.amity.socialcloud.uikit.common.utils.AmityRecyclerViewItemDecoration
 import com.amity.socialcloud.uikit.community.R
+import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageActivity
 import com.amity.socialcloud.uikit.community.databinding.AmityFragmentCategoryCommunityListBinding
 import com.amity.socialcloud.uikit.community.detailpage.AmityCommunityPageActivity
 import com.amity.socialcloud.uikit.community.explore.adapter.AmityCategoryCommunityListAdapter
@@ -107,8 +108,8 @@ class AmityCategoryCommunityListFragment : AmityBaseFragment(),
         if (viewModel.communityItemClickListener != null) {
             viewModel.communityItemClickListener?.onClick(community, position)
         } else {
-            val detailIntent = AmityCommunityPageActivity
-                .newIntent(requireContext(), community)
+            val detailIntent = AmityCommunityProfilePageActivity
+                .newIntent(requireContext(), community.getCommunityId())
             startActivity(detailIntent)
         }
     }

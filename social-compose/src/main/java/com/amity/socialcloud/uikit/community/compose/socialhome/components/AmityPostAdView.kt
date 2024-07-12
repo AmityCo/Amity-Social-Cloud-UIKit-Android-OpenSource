@@ -84,6 +84,7 @@ fun AmityPostAdView(
             ) {
                 AmityAvatarView(
                     avatarUrl = ad.getAdvertiser()?.getAvatar()?.getUrl(AmityImage.Size.FULL),
+                    placeholder = R.drawable.amity_ic_default_advertiser,
                     modifier = modifier.padding(vertical = 8.dp)
                 )
 
@@ -91,6 +92,7 @@ fun AmityPostAdView(
                     Text(
                         text = ad.getAdvertiser()?.getName() ?: "",
                         maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                         style = AmityTheme.typography.body.copy(
                             fontWeight = FontWeight.SemiBold
                         )

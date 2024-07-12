@@ -64,7 +64,7 @@ class AmityCommentTrayComponentViewModel : AmityBaseViewModel() {
             .build()
             .query()
             .onBackpressureBuffer()
-            .throttleLatest(2000, TimeUnit.MILLISECONDS)
+            .throttleLatest(800, TimeUnit.MILLISECONDS)
             .map {
                 injector.inject(it)
             }

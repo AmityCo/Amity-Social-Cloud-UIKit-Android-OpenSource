@@ -13,8 +13,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
@@ -22,22 +20,17 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.getText
+import com.amity.socialcloud.uikit.community.compose.post.composer.AmityMediaAttachmentViewModel
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostAttachmentAllowedPickerType
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostAttachmentPickerEvent
-import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostCreationPageViewModel
 import com.amity.socialcloud.uikit.community.compose.post.composer.elements.AmityPostAttachmentButton
 
 @Composable
 fun AmityDetailedMediaAttachmentComponent(
     modifier: Modifier = Modifier,
     pageScope: AmityComposePageScope? = null,
-    onClick: (AmityPostAttachmentPickerEvent) -> Unit = {}
+    viewModel: AmityMediaAttachmentViewModel,
 ) {
-    val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
-        "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
-    }
-    val viewModel =
-        viewModel<AmityPostCreationPageViewModel>(viewModelStoreOwner = viewModelStoreOwner)
     val allowedPickerType by viewModel.postAttachmentAllowedPickerType.collectAsState()
 
     AmityBaseComponent(
@@ -54,21 +47,21 @@ fun AmityDetailedMediaAttachmentComponent(
                         componentScope = getComponentScope(),
                         elementId = "camera_button",
                     ) {
-                        onClick(AmityPostAttachmentPickerEvent.OpenImageOrVideoSelectionSheet)
+                        viewModel.setPostAttachmentPickerEvent(AmityPostAttachmentPickerEvent.OpenImageOrVideoSelectionSheet)
                     }
                     AmityDetailedMediaAttachmentElement(
                         pageScope = pageScope,
                         componentScope = getComponentScope(),
                         elementId = "image_button",
                     ) {
-                        onClick(AmityPostAttachmentPickerEvent.OpenImagePicker)
+                        viewModel.setPostAttachmentPickerEvent(AmityPostAttachmentPickerEvent.OpenImagePicker)
                     }
                     AmityDetailedMediaAttachmentElement(
                         pageScope = pageScope,
                         componentScope = getComponentScope(),
                         elementId = "video_button",
                     ) {
-                        onClick(AmityPostAttachmentPickerEvent.OpenVideoPicker)
+                        viewModel.setPostAttachmentPickerEvent(AmityPostAttachmentPickerEvent.OpenVideoPicker)
                     }
                     /*
                     AmityDetailedMediaAttachmentElement(
@@ -76,7 +69,7 @@ fun AmityDetailedMediaAttachmentComponent(
                         componentScope = getComponentScope(),
                         elementId = "file_button",
                     ) {
-                        onClick(AmityPostAttachmentPickerEvent.OpenFilePicker)
+                        viewModel.setPostAttachmentPickerEvent(AmityPostAttachmentPickerEvent.OpenFilePicker)
                     }
                      */
                 }
@@ -87,14 +80,14 @@ fun AmityDetailedMediaAttachmentComponent(
                         componentScope = getComponentScope(),
                         elementId = "camera_button",
                     ) {
-                        onClick(AmityPostAttachmentPickerEvent.OpenImageCamera)
+                        viewModel.setPostAttachmentPickerEvent(AmityPostAttachmentPickerEvent.OpenImageCamera)
                     }
                     AmityDetailedMediaAttachmentElement(
                         pageScope = pageScope,
                         componentScope = getComponentScope(),
                         elementId = "image_button",
                     ) {
-                        onClick(AmityPostAttachmentPickerEvent.OpenImagePicker)
+                        viewModel.setPostAttachmentPickerEvent(AmityPostAttachmentPickerEvent.OpenImagePicker)
                     }
                 }
 
@@ -104,14 +97,14 @@ fun AmityDetailedMediaAttachmentComponent(
                         componentScope = getComponentScope(),
                         elementId = "camera_button",
                     ) {
-                        onClick(AmityPostAttachmentPickerEvent.OpenVideoCamera)
+                        viewModel.setPostAttachmentPickerEvent(AmityPostAttachmentPickerEvent.OpenVideoCamera)
                     }
                     AmityDetailedMediaAttachmentElement(
                         pageScope = pageScope,
                         componentScope = getComponentScope(),
                         elementId = "video_button",
                     ) {
-                        onClick(AmityPostAttachmentPickerEvent.OpenVideoPicker)
+                        viewModel.setPostAttachmentPickerEvent(AmityPostAttachmentPickerEvent.OpenVideoPicker)
                     }
                 }
 
@@ -122,7 +115,7 @@ fun AmityDetailedMediaAttachmentComponent(
                         componentScope = getComponentScope(),
                         elementId = "file_button",
                     ) {
-                        onClick(AmityPostAttachmentPickerEvent.OpenFilePicker)
+                        viewModel.setPostAttachmentPickerEvent(AmityPostAttachmentPickerEvent.OpenFilePicker)
                     }
                      */
                 }

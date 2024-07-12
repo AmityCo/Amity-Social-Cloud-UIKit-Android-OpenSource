@@ -29,13 +29,11 @@ import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getText
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
-import com.amity.socialcloud.uikit.community.compose.target.AmityTargetSelectionPageType
 import com.amity.socialcloud.uikit.community.compose.target.components.AmityTargetSelectionMyCommunitiesView
 
 @Composable
 fun AmityStoryTargetSelectionPage(
     modifier: Modifier = Modifier,
-    type: AmityTargetSelectionPageType,
 ) {
     val context = LocalContext.current
     val behavior by lazy {

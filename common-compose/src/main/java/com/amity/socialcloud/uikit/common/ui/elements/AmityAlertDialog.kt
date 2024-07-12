@@ -28,6 +28,8 @@ fun AmityAlertDialog(
     dialogText: String,
     confirmText: String,
     dismissText: String,
+    confirmTextColor: Color = AmityTheme.colors.highlight,
+    dismissTextColor: Color = AmityTheme.colors.baseShade1,
     onConfirmation: () -> Unit,
     onDismissRequest: () -> Unit = {},
 ) {
@@ -52,13 +54,14 @@ fun AmityAlertDialog(
                 ) {
                     AmityAlertDialogActionButton(
                         text = dismissText,
-                        color = AmityTheme.colors.baseShade1,
+                        color = dismissTextColor,
                         onClick = onDismissRequest
                     )
 
                     AmityAlertDialogActionButton(
                         text = confirmText,
-                        onClick = onConfirmation
+                        color = confirmTextColor,
+                        onClick = onConfirmation,
                     )
                 }
             }

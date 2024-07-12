@@ -24,7 +24,9 @@ import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.elements.AmityNewsFeedDivider
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
+import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerHelper
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponent
+import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponentStyle
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostShimmer
 import com.amity.socialcloud.uikit.community.compose.socialhome.AmitySocialHomePageViewModel
 import com.amity.socialcloud.uikit.community.compose.story.target.AmityStoryTabComponent
@@ -60,6 +62,7 @@ fun AmityGlobalFeedComponent(
         onRefresh = {
             viewModel.setGlobalFeedRefreshing()
             posts.refresh()
+            AmityPostComposerHelper.clear()
         }
     )
 
@@ -99,6 +102,25 @@ fun AmityGlobalFeedComponent(
                     AmityNewsFeedDivider()
                 }
 
+                items(
+                    count = AmityPostComposerHelper.getCreatedPosts().size,
+                    key = { AmityPostComposerHelper.getCreatedPosts()[it].getPostId() }
+                ) {
+                    val post = AmityPostComposerHelper.getCreatedPosts()[it]
+                    AmityPostContentComponent(
+                        modifier = modifier,
+                        post = post,
+                        style = AmityPostContentComponentStyle.FEED,
+                        hideMenuButton = false,
+                    ) {
+                        behavior.goToPostDetailPage(
+                            context = context,
+                            id = post.getPostId()
+                        )
+                    }
+                    AmityNewsFeedDivider()
+                }
+
                 when (postListState) {
                     AmitySocialHomePageViewModel.PostListState.SUCCESS -> {
                         items(
@@ -123,11 +145,12 @@ fun AmityGlobalFeedComponent(
                                     AmityPostContentComponent(
                                         modifier = modifier,
                                         post = post,
-                                        isPostDetailPage = false,
-                                    ) { postId ->
+                                        style = AmityPostContentComponentStyle.FEED,
+                                        hideMenuButton = false,
+                                    ) {
                                         behavior.goToPostDetailPage(
                                             context = context,
-                                            postId = postId
+                                            id = post.getPostId()
                                         )
                                     }
                                     AmityNewsFeedDivider()

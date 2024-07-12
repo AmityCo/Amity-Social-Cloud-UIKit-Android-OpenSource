@@ -39,14 +39,14 @@ import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getText
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostTargetType
-import com.amity.socialcloud.uikit.community.compose.target.AmityTargetSelectionPageType
+import com.amity.socialcloud.uikit.community.compose.target.AmityPostTargetSelectionPageType
 import com.amity.socialcloud.uikit.community.compose.target.AmityTargetSelectionPageViewModel
 import com.amity.socialcloud.uikit.community.compose.target.components.AmityTargetSelectionMyCommunitiesView
 
 @Composable
 fun AmityPostTargetSelectionPage(
     modifier: Modifier = Modifier,
-    type: AmityTargetSelectionPageType,
+    type: AmityPostTargetSelectionPageType,
 ) {
     val context = LocalContext.current
     val behavior by lazy {
@@ -55,10 +55,8 @@ fun AmityPostTargetSelectionPage(
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            context.closePageWithResult(Activity.RESULT_OK)
-        }
+    ) {
+        context.closePageWithResult(Activity.RESULT_OK)
     }
 
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {

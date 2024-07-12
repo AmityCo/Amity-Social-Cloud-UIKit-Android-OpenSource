@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.ui.Modifier
-import com.amity.socialcloud.uikit.community.compose.target.AmityTargetSelectionPageType
+import com.amity.socialcloud.uikit.community.compose.target.AmityPostTargetSelectionPageType
 
 class AmityPostTargetSelectionPageActivity : AppCompatActivity() {
 
@@ -18,7 +18,7 @@ class AmityPostTargetSelectionPageActivity : AppCompatActivity() {
         enableEdgeToEdge()
 
         val type =
-            intent?.getSerializableExtra(EXTRA_PARAM_SELECTION_TYPE) as AmityTargetSelectionPageType
+            intent?.getSerializableExtra(EXTRA_PARAM_SELECTION_TYPE) as AmityPostTargetSelectionPageType
 
         setContent {
             AmityPostTargetSelectionPage(
@@ -35,7 +35,7 @@ class AmityPostTargetSelectionPageActivity : AppCompatActivity() {
 
         fun newIntent(
             context: Context,
-            type: AmityTargetSelectionPageType,
+            type: AmityPostTargetSelectionPageType,
         ): Intent {
 
             return Intent(

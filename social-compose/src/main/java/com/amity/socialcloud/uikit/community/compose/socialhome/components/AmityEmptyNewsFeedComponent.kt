@@ -34,8 +34,8 @@ import com.amity.socialcloud.uikit.common.utils.getText
 fun AmityEmptyNewsFeedComponent(
     modifier: Modifier = Modifier,
     pageScope: AmityComposePageScope? = null,
-    onExploreClicked: () -> Unit,
-    onCreateClicked: () -> Unit,
+    onExploreClicked: () -> Unit = {},
+    onCreateClicked: () -> Unit = {},
 ) {
     AmityBaseComponent(
         pageScope = pageScope,
@@ -124,7 +124,7 @@ fun AmityEmptyNewsFeedComponent(
                         Text(
                             text = getConfig().getText(),
                             style = AmityTheme.typography.body.copy(
-                                color = AmityTheme.colors.baseInverse
+                                color = Color.White
                             ),
                         )
                     }

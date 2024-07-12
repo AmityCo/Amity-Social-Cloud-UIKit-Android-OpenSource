@@ -40,13 +40,16 @@ import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.community.compose.comment.amityCommentListComponent
 import com.amity.socialcloud.uikit.community.compose.comment.create.AmityCommentComposerBar
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponent
+import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponentStyle
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuSheetUIState
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuViewModel
 
 @Composable
 fun AmityPostDetailPage(
     modifier: Modifier = Modifier,
-    postId: String
+    id: String,
+    style: AmityPostContentComponentStyle,
+    hideTarget: Boolean,
 ) {
     val context = LocalContext.current
 
@@ -58,8 +61,8 @@ fun AmityPostDetailPage(
     val sheetViewModel =
         viewModel<AmityPostMenuViewModel>(viewModelStoreOwner = viewModelStoreOwner)
 
-    val post by remember(postId) {
-        viewModel.getPost(postId)
+    val post by remember(id) {
+        viewModel.getPost(id)
     }.collectAsState(initial = null)
 
     val currentUser = remember(viewModel) {
@@ -80,7 +83,7 @@ fun AmityPostDetailPage(
             val commentListComposables = amityCommentListComponent(
                 modifier = modifier,
                 componentScope = getComponentScope(),
-                referenceId = postId,
+                referenceId = id,
                 referenceType = AmityCommentReferenceType.POST,
                 shouldAllowInteraction = true,
                 onReply = {
@@ -141,7 +144,6 @@ fun AmityPostDetailPage(
                         )
                     }
                 }
-
                 LazyColumn(
                     verticalArrangement = Arrangement.Top,
                     modifier = modifier.weight(1f)
@@ -149,8 +151,10 @@ fun AmityPostDetailPage(
                     item {
                         AmityPostContentComponent(
                             modifier = modifier,
-                            post = post,
-                            isPostDetailPage = true,
+                            post = post ?: return@item,
+                            style = style,
+                            hideTarget = hideTarget,
+	                        hideMenuButton = true,
                         )
 
                         HorizontalDivider(
@@ -173,13 +177,47 @@ fun AmityPostDetailPage(
 
                 AmityCommentComposerBar(
                     componentScope = getComponentScope(),
-                    referenceId = postId,
+                    referenceId = id,
                     referenceType = AmityCommentReferenceType.POST,
                     avatarUrl = currentUser.value?.getAvatar()?.getUrl(),
                     replyComment = replyComment,
                 ) {
                     replyComment = null
                 }
+            }
+        }
+    }
+}
+
+enum class AmityPostPriority {
+    GENERAL,
+    PIN,
+    ANNOUNCEMENT;
+    
+    companion object {
+        fun fromString(priority: String): AmityPostPriority {
+            return when (priority) {
+                "announcement" -> ANNOUNCEMENT
+                "pin" -> PIN
+                else -> GENERAL
+            }
+        }
+        
+        fun fromStyle(style: AmityPostContentComponentStyle): AmityPostPriority {
+            return when (style) {
+                AmityPostContentComponentStyle.ANNOUNCEMENT_FEED -> ANNOUNCEMENT
+                AmityPostContentComponentStyle.ANNOUNCEMENT_DETAIL -> ANNOUNCEMENT
+                AmityPostContentComponentStyle.PIN_FEED -> PIN
+                AmityPostContentComponentStyle.PIN_DETAIL -> PIN
+                else -> GENERAL
+            }
+        }
+        
+        fun AmityPostPriority.toDetailStyle(): AmityPostContentComponentStyle {
+            return when (this) {
+                ANNOUNCEMENT -> AmityPostContentComponentStyle.ANNOUNCEMENT_DETAIL
+                PIN -> AmityPostContentComponentStyle.PIN_DETAIL
+                else -> AmityPostContentComponentStyle.DETAIL
             }
         }
     }

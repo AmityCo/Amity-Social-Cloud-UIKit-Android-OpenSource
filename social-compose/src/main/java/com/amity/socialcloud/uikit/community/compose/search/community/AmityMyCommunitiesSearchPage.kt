@@ -11,7 +11,7 @@ import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.community.compose.search.components.AmityCommunitySearchResultComponent
 import com.amity.socialcloud.uikit.community.compose.search.components.AmityTopSearchBarComponent
 import com.amity.socialcloud.uikit.community.compose.search.global.AmityGlobalSearchType
-import com.amity.socialcloud.uikit.community.compose.search.global.AmitySocialGlobalSearchPageViewModel
+import com.amity.socialcloud.uikit.community.compose.search.global.AmityGlobalSearchViewModel
 
 
 @Composable
@@ -22,7 +22,7 @@ fun AmityMyCommunitiesSearchPage(
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
     }
     val viewModel =
-        viewModel<AmitySocialGlobalSearchPageViewModel>(viewModelStoreOwner = viewModelStoreOwner)
+        viewModel<AmityGlobalSearchViewModel>(viewModelStoreOwner = viewModelStoreOwner)
 
     LaunchedEffect(Unit) {
         viewModel.setSearchType(AmityGlobalSearchType.MY_COMMUNITY)

@@ -3,6 +3,7 @@ package com.amity.socialcloud.uikit
 import android.content.Context
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageActivity
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponentBehavior
 import com.amity.socialcloud.uikit.community.detailpage.AmityCommunityPageActivity
 import com.amity.socialcloud.uikit.community.profile.activity.AmityUserProfileActivity
@@ -10,9 +11,9 @@ import com.amity.socialcloud.uikit.community.profile.activity.AmityUserProfileAc
 class AmityCustomPostContentComponentBehavior : AmityPostContentComponentBehavior() {
 
     override fun goToCommunityProfilePage(context: Context, community: AmityCommunity) {
-        val intent = AmityCommunityPageActivity.newIntent(
+        val intent = AmityCommunityProfilePageActivity.newIntent(
             context = context,
-            community = community,
+            communityId = community.getCommunityId(),
         )
         context.startActivity(intent)
     }

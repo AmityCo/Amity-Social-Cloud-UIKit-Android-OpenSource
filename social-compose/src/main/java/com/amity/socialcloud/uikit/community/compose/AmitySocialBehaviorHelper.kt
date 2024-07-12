@@ -1,8 +1,13 @@
 package com.amity.socialcloud.uikit.community.compose
 
+import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerPageBehavior
+import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetailPageBehavior
+import com.amity.socialcloud.uikit.community.compose.community.profile.component.AmityCommunityProfilePageBehavior
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponentBehavior
+import com.amity.socialcloud.uikit.community.compose.search.community.AmityMyCommunitiesSearchPageBehavior
 import com.amity.socialcloud.uikit.community.compose.search.components.AmityCommunitySearchResultComponentBehavior
 import com.amity.socialcloud.uikit.community.compose.search.components.AmityUserSearchResultComponentBehavior
+import com.amity.socialcloud.uikit.community.compose.search.global.AmitySocialGlobalSearchPageBehavior
 import com.amity.socialcloud.uikit.community.compose.socialhome.AmitySocialHomePageBehavior
 import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmityCreatePostMenuComponentBehavior
 import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmityGlobalFeedComponentBehavior
@@ -50,4 +55,19 @@ object AmitySocialBehaviorHelper {
 
     var myCommunitiesComponentBehavior: AmityMyCommunitiesComponentBehavior =
         AmityMyCommunitiesComponentBehavior()
+
+    var postDetailPageBehavior: AmityPostDetailPageBehavior =
+        AmityPostDetailPageBehavior()
+
+    var socialGlobalSearchPageBehavior: AmitySocialGlobalSearchPageBehavior =
+        AmitySocialGlobalSearchPageBehavior()
+
+    var myCommunitiesSearchPageBehavior: AmityMyCommunitiesSearchPageBehavior =
+        AmityMyCommunitiesSearchPageBehavior()
+
+    var postComposerPageBehavior: AmityPostComposerPageBehavior =
+        AmityPostComposerPageBehavior()
+	
+	var communityProfilePageBehavior: AmityCommunityProfilePageBehavior =
+		AmityCommunityProfilePageBehavior()
 }

@@ -19,8 +19,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.community.compose.R
 
 @Composable
 fun AmityCommentComposeReplyLabel(
@@ -55,7 +55,7 @@ fun AmityCommentComposeReplyLabel(
             contentDescription = null,
             tint = AmityTheme.colors.baseShade2,
             modifier = modifier
-                .size(20.dp)
+                .size(16.dp)
                 .clickable { onClose() }
                 .padding(2.dp)
         )

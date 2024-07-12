@@ -10,6 +10,7 @@ import com.amity.socialcloud.uikit.common.base.AmityBaseFragment
 import com.amity.socialcloud.uikit.common.utils.AmityExceptionCatchLinearLayoutManager
 import com.amity.socialcloud.uikit.common.utils.AmityRecyclerViewItemDecoration
 import com.amity.socialcloud.uikit.community.R
+import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageActivity
 import com.amity.socialcloud.uikit.community.databinding.AmityFragmentTrendingCommunityBinding
 import com.amity.socialcloud.uikit.community.detailpage.AmityCommunityPageActivity
 import com.amity.socialcloud.uikit.community.explore.adapter.AmityTrendingCommunityAdapter
@@ -69,11 +70,11 @@ class AmityTrendingCommunityFragment : AmityBaseFragment(),
 
     override fun onCommunitySelected(community: AmityCommunity?) {
         if (community != null) {
-            val intent = AmityCommunityPageActivity.newIntent(
-                requireContext(),
-                community
+            val intent = AmityCommunityProfilePageActivity.newIntent(
+                context = requireContext(),
+                communityId = community.getCommunityId(),
             )
-            startActivity(intent)
+            requireContext().startActivity(intent)
         }
     }
 

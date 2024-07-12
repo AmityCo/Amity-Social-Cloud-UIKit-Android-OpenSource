@@ -31,12 +31,17 @@ internal class AmityComposePageScopeImpl(
         }
     }
 
-    override fun showSnackbar(message: String, @DrawableRes drawableRes: Int?) {
+    override fun showSnackbar(
+        message: String,
+        @DrawableRes drawableRes: Int?,
+        additionalHeight: Int,
+    ) {
         coroutineScope.launch {
             snackbarHostState.currentSnackbarData?.dismiss()
             snackbarHostState.showSnackbar(
                 AmitySnackbarVisuals(
                     message = message,
+                    additionalHeight = additionalHeight,
                 ).apply {
                     drawableRes?.let {
                         this.drawableRes = drawableRes
@@ -83,13 +88,18 @@ internal class AmityComposeComponentScopeImpl(
         }
     }
 
-    override fun showSnackbar(message: String, drawableRes: Int?) {
+    override fun showSnackbar(
+        message: String,
+        drawableRes: Int?,
+        additionalHeight: Int,
+    ) {
         if (pageScope == null) {
             coroutineScope.launch {
                 snackbarHostState.currentSnackbarData?.dismiss()
                 snackbarHostState.showSnackbar(
                     AmitySnackbarVisuals(
                         message = message,
+                        additionalHeight = additionalHeight,
                     ).apply {
                         drawableRes?.let {
                             this.drawableRes = drawableRes
