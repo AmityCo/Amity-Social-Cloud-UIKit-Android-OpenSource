@@ -84,7 +84,7 @@ fun AmityCommentAdView(
                 start = 12.dp,
                 end = 12.dp
             )
-            .isVisible(threshold = 70) { isVisible = it }
+            .isVisible { isVisible = it }
             .testTag("comment_list/*")
     ) {
         AmityCommentAvatarView(

@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.ui.Modifier
-import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostPriority.Companion.toDetailStyle
+import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponentStyle
 
 class AmityPostDetailPageActivity : AppCompatActivity() {
 
@@ -18,7 +18,7 @@ class AmityPostDetailPageActivity : AppCompatActivity() {
         enableEdgeToEdge()
 
         val id = intent.getStringExtra(EXTRA_PARAM_POST_ID) ?: ""
-        val priority = intent.getStringExtra(EXTRA_PARAM_PRIORITY) ?: "GENERAL"
+        val category = intent.getStringExtra(EXTRA_PARAM_POST_CATEGORY) ?: "GENERAL"
         val hideTarget = intent.getBooleanExtra(EXTRA_PARAM_HIDE_TARGET, true)
 
         setContent {
@@ -27,7 +27,8 @@ class AmityPostDetailPageActivity : AppCompatActivity() {
                     .statusBarsPadding()
                     .systemBarsPadding(),
                 id = id,
-                style = AmityPostPriority.fromString(priority).toDetailStyle(),
+                style = AmityPostContentComponentStyle.DETAIL,
+                category = AmityPostCategory.fromString(category),
                 hideTarget = hideTarget,
             )
         }
@@ -35,13 +36,13 @@ class AmityPostDetailPageActivity : AppCompatActivity() {
 
     companion object {
         private const val EXTRA_PARAM_POST_ID = "post_id"
-        private const val EXTRA_PARAM_PRIORITY = "priority"
+        private const val EXTRA_PARAM_POST_CATEGORY = "post_category"
         private const val EXTRA_PARAM_HIDE_TARGET = "hide_target"
 
         fun newIntent(
             context: Context,
             id: String,
-            priority: AmityPostPriority = AmityPostPriority.GENERAL,
+            category: AmityPostCategory = AmityPostCategory.GENERAL,
             hideTarget: Boolean = false,
         ): Intent {
             return Intent(
@@ -49,7 +50,7 @@ class AmityPostDetailPageActivity : AppCompatActivity() {
                 AmityPostDetailPageActivity::class.java
             ).apply {
                 putExtra(EXTRA_PARAM_POST_ID, id)
-                putExtra(EXTRA_PARAM_PRIORITY, priority.name)
+                putExtra(EXTRA_PARAM_POST_CATEGORY, category.name)
                 putExtra(EXTRA_PARAM_HIDE_TARGET, hideTarget)
             }
         }

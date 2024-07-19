@@ -11,6 +11,8 @@ import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunityFilter
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
@@ -68,6 +70,9 @@ class AmityGlobalSearchViewModel : AmityBaseViewModel() {
             }
             .build()
             .query()
+            .throttleLatest(300, TimeUnit.MILLISECONDS)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
             .asFlow()
             .cachedIn(viewModelScope)
             .catch {}
@@ -78,7 +83,9 @@ class AmityGlobalSearchViewModel : AmityBaseViewModel() {
             .searchUsers(_keyword.value)
             .build()
             .query()
-            .debounce(300, TimeUnit.MILLISECONDS)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .throttleLatest(300, TimeUnit.MILLISECONDS)
             .asFlow()
             .cachedIn(viewModelScope)
             .catch {}

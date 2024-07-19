@@ -24,6 +24,7 @@ fun AmityCommunityProfileShimmer(modifier: Modifier = Modifier) {
 		verticalArrangement = Arrangement.spacedBy(8.dp),
 		modifier = modifier
 			.fillMaxWidth()
+			.background(AmityTheme.colors.background)
 	) {
 		Box(
 			modifier = modifier

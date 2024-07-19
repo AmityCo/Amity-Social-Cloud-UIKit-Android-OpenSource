@@ -28,8 +28,7 @@
       "background_shade1_color": "#40434E"
     }
   },
-  "excludes": [
-  ],
+  "excludes": ["*/post_content/share_button"],
   "message_reactions": [
     {
       "name": "heart",
@@ -408,6 +407,40 @@
     },
     "*/*/community_private_badge": {
       "image": "lockIcon"
-    }
+    },
+    "community_profile_page/*/*": {},
+    "community_profile_page/community_header/*": {},
+    "community_profile_page/community_header/community_cover": {},
+    "community_profile_page/community_header/community_name": {},
+    "community_profile_page/community_header/community_verify_badge": {
+      "image": "verifiedBadge"
+    },
+    "community_profile_page/community_header/community_category": {},
+    "community_profile_page/community_header/community_description": {},
+    "community_profile_page/community_header/community_info": {},
+    "community_profile_page/community_header/community_join_button": {
+      "image": "plusIcon"
+    },
+    "community_profile_page/community_header/community_pending_post": {
+    },
+    "community_profile_page/*/back_button": {
+      "image": "backIcon"
+    },
+    "community_profile_page/*/menu_button": {
+      "image": "threeDotIcon"
+    },
+    "community_profile_page/community_profile_tab/*": {},
+    "community_profile_page/community_profile_tab/community_feed_tab_button": {
+      "image": "communityFeedIcon"
+    },
+    "community_profile_page/community_profile_tab/community_pin_tab_button": {
+      "image": "communityPinIcon"
+    },
+    "community_profile_page/community_feed/*": {},
+    "community_profile_page/community_pin/*": {},
+    "community_profile_page/*/community_create_post_button": {
+      "image": "plusIcon"
+    },
+    "*/post_content/non_member_section": {}
   }
 }

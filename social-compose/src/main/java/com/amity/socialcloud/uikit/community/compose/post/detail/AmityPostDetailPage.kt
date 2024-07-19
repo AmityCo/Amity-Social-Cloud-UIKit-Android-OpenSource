@@ -49,6 +49,7 @@ fun AmityPostDetailPage(
     modifier: Modifier = Modifier,
     id: String,
     style: AmityPostContentComponentStyle,
+    category: AmityPostCategory = AmityPostCategory.GENERAL,
     hideTarget: Boolean,
 ) {
     val context = LocalContext.current
@@ -70,6 +71,8 @@ fun AmityPostDetailPage(
     }.subscribeAsState(null)
 
     var replyComment by remember { mutableStateOf<AmityComment?>(null) }
+    
+    
 
 //    LaunchedEffect(post?.getPostId()) {
 //        post?.analytics()?.markAsViewed()
@@ -85,7 +88,7 @@ fun AmityPostDetailPage(
                 componentScope = getComponentScope(),
                 referenceId = id,
                 referenceType = AmityCommentReferenceType.POST,
-                shouldAllowInteraction = true,
+                shouldAllowInteraction = !sheetViewModel.isNotMember(post),
                 onReply = {
                     replyComment = it
                 }
@@ -153,6 +156,7 @@ fun AmityPostDetailPage(
                             modifier = modifier,
                             post = post ?: return@item,
                             style = style,
+                            category = category,
                             hideTarget = hideTarget,
 	                        hideMenuButton = true,
                         )
@@ -189,35 +193,17 @@ fun AmityPostDetailPage(
     }
 }
 
-enum class AmityPostPriority {
+enum class AmityPostCategory {
     GENERAL,
     PIN,
     ANNOUNCEMENT;
     
     companion object {
-        fun fromString(priority: String): AmityPostPriority {
-            return when (priority) {
-                "announcement" -> ANNOUNCEMENT
-                "pin" -> PIN
+        fun fromString(category: String): AmityPostCategory {
+            return when (category) {
+                "ANNOUNCEMENT" -> ANNOUNCEMENT
+                "PIN" -> PIN
                 else -> GENERAL
-            }
-        }
-        
-        fun fromStyle(style: AmityPostContentComponentStyle): AmityPostPriority {
-            return when (style) {
-                AmityPostContentComponentStyle.ANNOUNCEMENT_FEED -> ANNOUNCEMENT
-                AmityPostContentComponentStyle.ANNOUNCEMENT_DETAIL -> ANNOUNCEMENT
-                AmityPostContentComponentStyle.PIN_FEED -> PIN
-                AmityPostContentComponentStyle.PIN_DETAIL -> PIN
-                else -> GENERAL
-            }
-        }
-        
-        fun AmityPostPriority.toDetailStyle(): AmityPostContentComponentStyle {
-            return when (this) {
-                ANNOUNCEMENT -> AmityPostContentComponentStyle.ANNOUNCEMENT_DETAIL
-                PIN -> AmityPostContentComponentStyle.PIN_DETAIL
-                else -> AmityPostContentComponentStyle.DETAIL
             }
         }
     }

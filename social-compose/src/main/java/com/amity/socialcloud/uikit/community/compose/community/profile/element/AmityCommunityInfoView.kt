@@ -1,6 +1,7 @@
 package com.amity.socialcloud.uikit.community.compose.community.profile.element
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,8 +10,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -21,6 +24,7 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.AmityNumberUtil.getNumberAbbreveation
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 
 @Composable
 fun AmityCommunityInfoView(
@@ -34,6 +38,10 @@ fun AmityCommunityInfoView(
 		componentScope = componentScope,
 		elementId = "community_info"
 	) {
+		val behavior = remember {
+			AmitySocialBehaviorHelper.communityProfilePageBehavior
+		}
+		val context = LocalContext.current
 		Row(
 			modifier = Modifier
 				.padding(top = 8.dp, bottom = 16.dp, start = 16.dp, end = 16.dp),
@@ -63,25 +71,31 @@ fun AmityCommunityInfoView(
 				.width(1.dp)
 				.height(20.dp)
 				.background(color = AmityTheme.colors.baseShade4)) {}
-			Text(
-				text = getNumberAbbreveation(community?.getMemberCount() ?: 0),
-				style = TextStyle(
-					fontSize = 15.sp,
-					lineHeight = 20.sp,
-					fontWeight = FontWeight(600),
-					color = AmityTheme.colors.base,
+			Row(modifier = Modifier.clickable {
+				community?.let{
+					behavior.goToMemberListPage(context,it)
+				}
+			}) {
+				Text(
+					text = getNumberAbbreveation(community?.getMemberCount() ?: 0),
+					style = TextStyle(
+						fontSize = 15.sp,
+						lineHeight = 20.sp,
+						fontWeight = FontWeight(600),
+						color = AmityTheme.colors.base,
+					)
 				)
-			)
-			Spacer(modifier = Modifier.width(4.dp))
-			Text(
-				text = "members",
-				style = TextStyle(
-					fontSize = 13.sp,
-					lineHeight = 18.sp,
-					fontWeight = FontWeight(400),
-					color = AmityTheme.colors.baseShade2,
+				Spacer(modifier = Modifier.width(4.dp))
+				Text(
+					text = "members",
+					style = TextStyle(
+						fontSize = 13.sp,
+						lineHeight = 18.sp,
+						fontWeight = FontWeight(400),
+						color = AmityTheme.colors.baseShade2,
+					)
 				)
-			)
+			}
 		}
 	}
 }

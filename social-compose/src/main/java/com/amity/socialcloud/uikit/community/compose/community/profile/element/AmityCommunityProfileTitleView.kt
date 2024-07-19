@@ -55,29 +55,42 @@ fun AmityCommunityProfileTitleView(
 				}
 			}
 			Box(modifier = Modifier.weight(1f, fill = false)) {
-				Text(
-					text = community.getDisplayName(),
-					style = TextStyle(
-						fontSize = 20.sp,
-						lineHeight = 24.sp,
-						fontWeight = FontWeight(700),
-						color = AmityTheme.colors.base,
-					),
-					maxLines = 2,
-					overflow = TextOverflow.Ellipsis,
-				)
+				AmityBaseElement(
+					pageScope = pageScope,
+					componentScope = componentScope,
+					elementId = "community_name"
+				) {
+					Text(
+						text = community.getDisplayName(),
+						style = TextStyle(
+							fontSize = 20.sp,
+							lineHeight = 24.sp,
+							fontWeight = FontWeight(700),
+							color = AmityTheme.colors.base,
+						),
+						maxLines = 2,
+						overflow = TextOverflow.Ellipsis,
+					)
+				}
 			}
 			if (community.isOfficial()) {
+				
 				Box(modifier = Modifier
 					.size(24.dp)
 					.padding(top = 2.dp, start = 6.dp)
 				) {
-					Image(
-						painter = painterResource(id = R.drawable.amity_ic_verified_community),
-						contentDescription = "Verified community icon",
-						modifier = Modifier
-							.size(20.dp)
-					)
+					AmityBaseElement(
+						pageScope = pageScope,
+						componentScope = componentScope,
+						elementId = "community_verify_badge"
+					) {
+						Image(
+							painter = painterResource(id = R.drawable.amity_ic_verified_community),
+							contentDescription = "Verified community icon",
+							modifier = Modifier
+								.size(20.dp)
+						)
+					}
 				}
 			}
 		}

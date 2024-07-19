@@ -95,8 +95,8 @@ class AmityPostMenuViewModel : AmityBaseViewModel() {
     }
     
     fun isNotMember(post: AmityPost?): Boolean {
-        val isMember = !((post?.getTarget() as? AmityPost.Target.COMMUNITY)?.getCommunity()?.isJoined() ?: false)
-        return isMember
+        val isNotMember = !((post?.getTarget() as? AmityPost.Target.COMMUNITY)?.getCommunity()?.isJoined() ?: true)
+        return isNotMember
     }
 }
 

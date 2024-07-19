@@ -38,7 +38,8 @@ fun AmityCommunityEmptyView(
 	) {
 		Column(
 			modifier = Modifier
-				.fillMaxSize(),
+				.fillMaxSize()
+				.background(AmityTheme.colors.background),
 			verticalArrangement = Arrangement.Center,
 			horizontalAlignment = Alignment.CenterHorizontally
 		) {

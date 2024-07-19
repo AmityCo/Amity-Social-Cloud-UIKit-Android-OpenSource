@@ -66,14 +66,6 @@ fun AmityGlobalFeedComponent(
         }
     )
 
-//    LaunchedEffect(lazyListState) {
-//        snapshotFlow { lazyListState.firstVisibleItemIndex }
-//            .collect { index ->
-//                val post = posts.itemSnapshotList.getOrNull(index) ?: return@collect
-//                post.analytics().markAsViewed()
-//            }
-//    }
-
     AmityBaseComponent(
         pageScope = pageScope,
         componentId = "global_feed_component"

@@ -82,7 +82,7 @@ fun AmityStoryAdView(
         modifier = modifier
             .fillMaxSize()
             .background(Color.Black)
-            .isVisible(threshold = 70) { isVisible = it }
+            .isVisible { isVisible = it }
     ) {
 
         AmityStoryBodyGestureBox(

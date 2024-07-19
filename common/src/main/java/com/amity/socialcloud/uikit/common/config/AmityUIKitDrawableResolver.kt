@@ -37,6 +37,8 @@ object AmityUIKitDrawableResolver {
         "postAttachmentFile" to R.drawable.amity_ic_post_attachment_file,
         "postCreate" to R.drawable.amity_ic_post_create,
         "storyCreate" to R.drawable.amity_ic_create_story_social,
+        "verifiedBadge" to R.drawable.amity_ic_verified,
+        "plusIcon" to R.drawable.amity_ic_plus,
     )
 
     @DrawableRes

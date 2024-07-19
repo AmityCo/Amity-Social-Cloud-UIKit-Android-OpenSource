@@ -84,7 +84,7 @@ fun AmityCommunityPendingPost(
 							shape = RoundedCornerShape(size = 4.dp)
 						)
 						.clickable {
-						   behavior.goToPostReviewPage(context, community.getCommunityId())
+						   behavior.goToPendingPostPage(context, community.getCommunityId())
 						},
 						contentAlignment = Alignment.Center
 					) {
@@ -141,7 +141,7 @@ fun AmityCommunityJoinButton(
 		elementId = "community_join_button"
 	) {
 		if (!community.isJoined()) {
-			Row(modifier = Modifier.padding(16.dp)) {
+			Row(modifier = modifier.padding(16.dp)) {
 				Box(modifier = Modifier
 					.clickable {
 						AmitySocialClient

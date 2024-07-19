@@ -51,7 +51,19 @@ class AmityCommunityProfileViewModel constructor(private val communityId: String
 	
 	fun getAnnouncement(): Flow<PagingData<AmityPinnedPost>> {
 		return AmitySocialClient.newPostRepository()
-			.getPinnedPosts(communityId = communityId, placement = "announcement")
+			.getPinnedPosts(
+				communityId = communityId,
+				placement = AmityPinnedPost.PinPlacement.ANNOUNCEMENT.value)
+			.subscribeOn(Schedulers.io())
+			.observeOn(AndroidSchedulers.mainThread())
+			.asFlow()
+	}
+	
+	fun getPin(): Flow<PagingData<AmityPinnedPost>> {
+		return AmitySocialClient.newPostRepository()
+			.getPinnedPosts(
+				communityId = communityId,
+				placement = AmityPinnedPost.PinPlacement.DEFAULT.value)
 			.subscribeOn(Schedulers.io())
 			.observeOn(AndroidSchedulers.mainThread())
 			.asFlow()
@@ -65,6 +77,7 @@ class AmityCommunityProfileViewModel constructor(private val communityId: String
 		
 		return AmitySocialClient.newFeedRepository()
 			.getCommunityFeed(communityId)
+			.includeDeleted(false)
 			.build()
 			.query()
 			.subscribeOn(Schedulers.io())

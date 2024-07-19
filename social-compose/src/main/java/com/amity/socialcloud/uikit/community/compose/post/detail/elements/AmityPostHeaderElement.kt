@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.post.detail.elements
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -32,7 +33,7 @@ import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetailPageViewModel
-import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostPriority
+import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostCategory
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponentStyle
 
 @Composable
@@ -41,6 +42,7 @@ fun AmityPostHeaderElement(
     componentScope: AmityComposeComponentScope? = null,
     post: AmityPost,
     style: AmityPostContentComponentStyle,
+    category: AmityPostCategory = AmityPostCategory.GENERAL,
     hideMenuButton: Boolean,
     hideTarget: Boolean = false,
     onMenuClick: (AmityPost) -> Unit = {}
@@ -213,8 +215,7 @@ fun AmityPostHeaderElement(
                 }
             }
         }
-        
-        if (AmityPostPriority.fromStyle(style) == AmityPostPriority.ANNOUNCEMENT) {
+        if (category == AmityPostCategory.ANNOUNCEMENT) {
             AmityBaseElement(
                 componentScope = componentScope,
                 elementId = "announcement_badge"
@@ -222,6 +223,23 @@ fun AmityPostHeaderElement(
                 Icon(
                     painter = painterResource(id = R.drawable.amity_ic_announcement_badge),
                     contentDescription = "Announcement badge",
+                    tint = AmityTheme.colors.primary,
+                    modifier = modifier
+                        .size(20.dp)
+                        .align(Alignment.CenterVertically)
+                        .testTag(getAccessibilityId()),
+                )
+            }
+        }
+        
+        if (category == AmityPostCategory.PIN) {
+            AmityBaseElement(
+                componentScope = componentScope,
+                elementId = "pin_badge"
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.amity_ic_pin_badge),
+                    contentDescription = "Pin badge",
                     tint = AmityTheme.colors.primary,
                     modifier = modifier
                         .size(20.dp)

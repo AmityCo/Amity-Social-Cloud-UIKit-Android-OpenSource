@@ -69,8 +69,9 @@ fun AmityPostAdView(
 
     Column(
         modifier = modifier
+            .background(AmityTheme.colors.background)
             .padding(top = 4.dp)
-            .isVisible(threshold = 70) { isVisible = it }
+            .isVisible { isVisible = it }
     ) {
         Box(
             modifier = modifier.fillMaxWidth()

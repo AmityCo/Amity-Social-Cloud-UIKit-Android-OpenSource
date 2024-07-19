@@ -1,6 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.post.detail.components
 
-import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,6 +31,7 @@ import com.amity.socialcloud.uikit.common.utils.shimmerBackground
 import com.amity.socialcloud.uikit.common.utils.showToast
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerHelper
+import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostCategory
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostContentElement
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostEngagementView
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostHeaderElement
@@ -46,15 +47,14 @@ fun AmityPostContentComponent(
     modifier: Modifier = Modifier,
     post: AmityPost,
     style: AmityPostContentComponentStyle,
+    category: AmityPostCategory = AmityPostCategory.GENERAL,
     hideMenuButton: Boolean,
     hideTarget: Boolean = false,
     onTapAction: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val isPostDetailPage = remember(style) {
-        (style == AmityPostContentComponentStyle.DETAIL
-            || style == AmityPostContentComponentStyle.ANNOUNCEMENT_DETAIL
-            || style == AmityPostContentComponentStyle.PIN_DETAIL)
+        style == AmityPostContentComponentStyle.DETAIL
     }
 
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
@@ -106,13 +106,18 @@ fun AmityPostContentComponent(
         Column(
             modifier = modifier
                 .fillMaxWidth()
+                .background(AmityTheme.colors.background)
                 .clickableWithoutRipple {
                     if (!isPostDetailPage) {
                         onTapAction()
                     }
                 }
-                .isVisible(threshold = 70) {
-                    Log.d("TT", "AmityPostContentComponent: ${post.getPostId()}")
+                .isVisible {
+                    if (!isPostDetailPage) {
+                        post
+                            .analytics()
+                            .markAsViewed()
+                    }
                 }
         ) {
             AmityPostHeaderElement(
@@ -121,6 +126,7 @@ fun AmityPostContentComponent(
                 post = post,
                 hideMenuButton = hideMenuButton,
                 style = style,
+                category = category,
                 hideTarget = hideTarget,
                 onMenuClick = {
                     viewModel.updateSheetUIState(AmityPostMenuSheetUIState.OpenSheet(it.getPostId()))
