@@ -3,7 +3,7 @@ package com.amity.socialcloud.uikit.community.compose.search.community
 import android.content.Context
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 
-class AmityMyCommunitiesSearchPageBehavior {
+open class AmityMyCommunitiesSearchPageBehavior {
 
     open fun goToCommunityProfilePage(
         context: Context,

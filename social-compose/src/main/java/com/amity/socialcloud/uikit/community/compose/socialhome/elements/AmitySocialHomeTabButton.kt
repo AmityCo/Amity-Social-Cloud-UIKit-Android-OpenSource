@@ -15,15 +15,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
-import com.amity.socialcloud.uikit.community.compose.socialhome.AmitySocialHomeTabItem
+import com.amity.socialcloud.uikit.community.compose.socialhome.AmitySocialHomePageTab
 
 @Composable
 fun AmitySocialHomeTabButton(
     modifier: Modifier = Modifier,
     title: String,
-    item: AmitySocialHomeTabItem,
+    item: AmitySocialHomePageTab,
     isSelected: Boolean = false,
-    onClick: (AmitySocialHomeTabItem) -> Unit
+    onClick: (AmitySocialHomePageTab) -> Unit
 ) {
     Box(
         modifier = modifier

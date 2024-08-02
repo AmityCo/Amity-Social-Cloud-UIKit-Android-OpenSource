@@ -84,12 +84,13 @@ fun AmityCommentAdView(
                 start = 12.dp,
                 end = 12.dp
             )
-            .isVisible(threshold = 70) { isVisible = it }
+            .isVisible { isVisible = it }
             .testTag("comment_list/*")
     ) {
         AmityCommentAvatarView(
             size = 32.dp,
             avatarUrl = ad.getAdvertiser()?.getAvatar()?.getUrl() ?: "",
+            fallbackResource = R.drawable.amity_ic_default_advertiser,
             modifier = modifier.testTag("comment_list/comment_bubble_avatar")
         )
 
@@ -128,13 +129,14 @@ fun AmityCommentAdView(
                         Text(
                             text = ad.getAdvertiser()?.getName() ?: "",
                             maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
                             style = AmityTheme.typography.caption,
                             modifier = Modifier
                                 .testTag("comment_list/comment_bubble_creator_display_name")
                                 .padding(top = 12.dp, end = 24.dp)
+                                .weight(1f)
                         )
 
-                        Spacer(modifier = Modifier.weight(1f))
                         Icon(
                             painter = painterResource(id = R.drawable.amity_ic_more_info),
                             contentDescription = null,
@@ -175,7 +177,7 @@ fun AmityCommentAdView(
                                     bottomEnd = 8.dp,
                                 )
                             )
-                            .background(AmityTheme.colors.sheetBackground)
+                            .background(AmityTheme.colors.background)
                             .clickableWithoutRipple {
                                 AmityAdEngine.markClicked(ad, AmityAdPlacement.COMMENT)
                                 uriHandler.openUri(ad.getCallToActionUrl())

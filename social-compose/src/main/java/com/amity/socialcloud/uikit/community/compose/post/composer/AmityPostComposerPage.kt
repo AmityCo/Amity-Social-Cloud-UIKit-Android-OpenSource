@@ -81,7 +81,7 @@ fun AmityPostComposerPage(
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
     }
     val viewModel =
-        viewModel<AmityPostCreationPageViewModel>(viewModelStoreOwner = viewModelStoreOwner)
+        viewModel<AmityPostComposerPageViewModel>(viewModelStoreOwner = viewModelStoreOwner)
 
     LaunchedEffect(options) {
         viewModel.setComposerOptions(options)
@@ -289,10 +289,12 @@ fun AmityPostComposerPage(
 
     if (showDiscardPostDialog) {
         AmityAlertDialog(
-            dialogTitle = context.getString(R.string.amity_discard_post_title),
-            dialogText = context.getString(R.string.amity_discard_post_message),
-            confirmText = context.getString(R.string.amity_discard),
-            dismissText = context.getString(R.string.amity_cancel),
+            dialogTitle = "Discard this post?",
+            dialogText = "The post will be permanently deleted. It cannot be undone.",
+            confirmText = "Discard",
+            dismissText = "Keep editing",
+            confirmTextColor = AmityTheme.colors.alert,
+            dismissTextColor = AmityTheme.colors.highlight,
             onConfirmation = {
                 context.closePageWithResult(Activity.RESULT_CANCELED)
             },
@@ -323,9 +325,12 @@ fun AmityPostComposerPage(
                 }
 
                 AmityPostCreationEvent.Failed -> {
+                    val text =
+                        "Failed to " + if (isInEditMode) "edit" else "create" + " post. Please try again."
                     getPageScope().showSnackbar(
-                        "Failed to create post",
-                        R.drawable.amity_ic_warning
+                        message = text,
+                        drawableRes = R.drawable.amity_ic_warning,
+                        additionalHeight = if (isInEditMode) 0 else 52,
                     )
                 }
 

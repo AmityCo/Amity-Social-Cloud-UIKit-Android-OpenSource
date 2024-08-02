@@ -7,8 +7,10 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
@@ -41,6 +43,7 @@ fun AmityBasePage(
         coroutineScope = coroutineScope,
     )
     val keyboardHeight by getKeyboardHeight()
+    var additionalHeight by remember { mutableIntStateOf(0) }
 
     AmityComposeTheme(pageScope = comp) {
         Scaffold(
@@ -49,12 +52,14 @@ fun AmityBasePage(
                 SnackbarHost(
                     hostState = snackbarHostState,
                     modifier = Modifier
-                        .padding(bottom = keyboardHeight + 64.dp)
+                        .padding(bottom = keyboardHeight + additionalHeight.dp + 16.dp)
                         .padding(horizontal = 16.dp),
                 ) {
                     when (it.visuals) {
                         is AmitySnackbarVisuals -> {
-                            AmitySnackbar(data = it.visuals as AmitySnackbarVisuals)
+                            val data = it.visuals as AmitySnackbarVisuals
+                            additionalHeight = data.additionalHeight
+                            AmitySnackbar(data = data)
                         }
 
                         is AmityProgressSnackbarVisuals -> {

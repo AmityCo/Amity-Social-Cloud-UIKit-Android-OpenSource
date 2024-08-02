@@ -31,7 +31,7 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.getKeyboardHeight
 import com.amity.socialcloud.uikit.common.utils.isKeyboardVisible
-import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostCreationPageViewModel
+import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerPageViewModel
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.AmityDetailedMediaAttachmentComponent
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.AmityMediaAttachmentComponent
 
@@ -51,7 +51,7 @@ fun AmityMediaAttachmentElement(
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
     }
     val viewModel =
-        viewModel<AmityPostCreationPageViewModel>(viewModelStoreOwner = viewModelStoreOwner)
+        viewModel<AmityPostComposerPageViewModel>(viewModelStoreOwner = viewModelStoreOwner)
 
 
     LaunchedEffect(isKeyboardOpen) {
@@ -127,15 +127,13 @@ fun AmityMediaAttachmentElement(
             if (showDetailedView) {
                 AmityDetailedMediaAttachmentComponent(
                     pageScope = pageScope,
-                ) {
-                    viewModel.setPostAttachmentPickerEvent(it)
-                }
+                    viewModel = viewModel,
+                )
             } else {
                 AmityMediaAttachmentComponent(
                     pageScope = pageScope,
-                ) {
-                    viewModel.setPostAttachmentPickerEvent(it)
-                }
+                    viewModel = viewModel,
+                )
 
                 Box(
                     modifier = modifier.size(

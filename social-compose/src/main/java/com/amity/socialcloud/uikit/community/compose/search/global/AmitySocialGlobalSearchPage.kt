@@ -35,7 +35,7 @@ fun AmitySocialGlobalSearchPage(
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
     }
     val viewModel =
-        viewModel<AmitySocialGlobalSearchPageViewModel>(viewModelStoreOwner = viewModelStoreOwner)
+        viewModel<AmityGlobalSearchViewModel>(viewModelStoreOwner = viewModelStoreOwner)
 
     var selectedTabIndex by remember {
         mutableIntStateOf(0)

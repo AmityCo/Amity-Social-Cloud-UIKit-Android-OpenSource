@@ -14,7 +14,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
-import com.amity.socialcloud.uikit.community.compose.search.global.AmitySocialGlobalSearchPageViewModel
+import com.amity.socialcloud.uikit.community.compose.search.global.AmityGlobalSearchViewModel
 import com.amity.socialcloud.uikit.community.compose.socialhome.elements.AmityUserView
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityUserListShimmer
 
@@ -22,7 +22,7 @@ import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityUserListShi
 fun AmityUserSearchResultComponent(
     modifier: Modifier = Modifier,
     pageScope: AmityComposePageScope? = null,
-    viewModel: AmitySocialGlobalSearchPageViewModel,
+    viewModel: AmityGlobalSearchViewModel,
 ) {
     val context = LocalContext.current
     val behavior by lazy {
@@ -46,25 +46,25 @@ fun AmityUserSearchResultComponent(
                 .fillMaxSize()
                 .padding(horizontal = 16.dp)
         ) {
-            AmitySocialGlobalSearchPageViewModel.UserListState.from(
-                loadState = users.loadState,
+            AmityGlobalSearchViewModel.UserListState.from(
+                loadState = users.loadState.refresh,
                 itemCount = users.itemCount,
             ).let(viewModel::setUserListState)
 
             when (loadState) {
-                AmitySocialGlobalSearchPageViewModel.UserListState.EMPTY -> {
+                AmityGlobalSearchViewModel.UserListState.EMPTY -> {
                     item {
                         AmityEmptySearchResultComponent(modifier)
                     }
                 }
 
-                AmitySocialGlobalSearchPageViewModel.UserListState.LOADING -> {
+                AmityGlobalSearchViewModel.UserListState.LOADING -> {
                     item {
                         AmityUserListShimmer()
                     }
                 }
 
-                AmitySocialGlobalSearchPageViewModel.UserListState.SUCCESS -> {
+                AmityGlobalSearchViewModel.UserListState.SUCCESS -> {
                     items(
                         count = users.itemCount,
                         key = { index -> index }

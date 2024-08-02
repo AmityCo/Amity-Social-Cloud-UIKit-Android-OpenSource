@@ -85,42 +85,38 @@ fun AmityPostEngagementView(
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
             ) {
-                if (post.getReactionCount() > 0) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .align(Alignment.CenterStart)
-                            .clickableWithoutRipple {
-                                showReactionListSheet = true
-                            }
-                    ) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_story_liked_pressed),
-                            contentDescription = "Post Reaction Count",
-                            tint = Color.Unspecified,
-                            modifier = Modifier.size(16.dp),
-                        )
-                        Spacer(modifier = modifier.width(4.dp))
-                        Text(
-                            text = reactionCount,
-                            style = AmityTheme.typography.caption.copy(
-                                fontWeight = FontWeight.Normal,
-                                color = AmityTheme.colors.baseShade2
-                            )
-                        )
-                    }
-                }
-
-                if (post.getCommentCount() > 0) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .clickableWithoutRipple {
+                            showReactionListSheet = true
+                        }
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_story_liked_pressed),
+                        contentDescription = "Post Reaction Count",
+                        tint = Color.Unspecified,
+                        modifier = Modifier.size(16.dp),
+                    )
+                    Spacer(modifier = modifier.width(4.dp))
                     Text(
-                        text = commentCount,
+                        text = reactionCount,
                         style = AmityTheme.typography.caption.copy(
                             fontWeight = FontWeight.Normal,
                             color = AmityTheme.colors.baseShade2
-                        ),
-                        modifier = Modifier.align(Alignment.CenterEnd)
+                        )
                     )
                 }
+
+                Text(
+                    text = commentCount,
+                    style = AmityTheme.typography.caption.copy(
+                        fontWeight = FontWeight.Normal,
+                        color = AmityTheme.colors.baseShade2
+                    ),
+                    modifier = Modifier.align(Alignment.CenterEnd)
+                )
             }
         }
 

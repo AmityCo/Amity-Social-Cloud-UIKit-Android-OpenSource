@@ -15,7 +15,8 @@ import com.google.gson.JsonObject
 @Composable
 fun AmityPostContentElement(
     modifier: Modifier = Modifier,
-    post: AmityPost
+    post: AmityPost,
+    onClick: () -> Unit,
 ) {
     val mentionGetter = AmityMentionMetadataGetter(post.getMetadata() ?: JsonObject())
     val text = remember(post.getPostId(), post.getUpdatedAt()) {
@@ -33,6 +34,7 @@ fun AmityPostContentElement(
             mentionGetter = mentionGetter,
             mentionees = post.getMentionees(),
             style = AmityTheme.typography.body,
+            onClick = onClick,
         )
     }
 }

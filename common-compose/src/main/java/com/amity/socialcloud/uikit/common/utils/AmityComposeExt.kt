@@ -154,7 +154,7 @@ fun Modifier.shimmerBackground(
 }
 
 fun Modifier.isVisible(
-    threshold: Int = 100,
+    threshold: Int = 60,
     onVisibilityChange: (Boolean) -> Unit
 ): Modifier {
     return this.onGloballyPositioned { layoutCoordinates: LayoutCoordinates ->

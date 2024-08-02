@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.post.detail.elements
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -31,13 +33,18 @@ import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetailPageViewModel
+import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostCategory
+import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponentStyle
 
 @Composable
 fun AmityPostHeaderElement(
     modifier: Modifier = Modifier,
     componentScope: AmityComposeComponentScope? = null,
     post: AmityPost,
-    isPostDetailPage: Boolean,
+    style: AmityPostContentComponentStyle,
+    category: AmityPostCategory = AmityPostCategory.GENERAL,
+    hideMenuButton: Boolean,
+    hideTarget: Boolean = false,
     onMenuClick: (AmityPost) -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -101,44 +108,9 @@ fun AmityPostHeaderElement(
                     }
                 )
 
-                when (val target = post.getTarget()) {
-                    is AmityPost.Target.COMMUNITY -> {
-                        Icon(
-                            painter = painterResource(id = R.drawable.amity_ic_post_target),
-                            contentDescription = null,
-                            tint = AmityTheme.colors.baseShade1,
-                            modifier = modifier.size(16.dp),
-                        )
-                        Text(
-                            text = target.getCommunity()?.getDisplayName() ?: "",
-                            style = AmityTheme.typography.body.copy(
-                                fontWeight = FontWeight.SemiBold
-                            ),
-                            modifier = modifier.clickableWithoutRipple {
-                                target.getCommunity()?.let {
-                                    behavior.goToCommunityProfilePage(
-                                        context = context,
-                                        community = it
-                                    )
-                                }
-                            }
-                        )
-
-                        if (target.getCommunity()?.isOfficial() == true) {
-                            AmityBaseElement(elementId = "community_official_badge") {
-                                Image(
-                                    painter = painterResource(id = getConfig().getIcon()),
-                                    contentDescription = "Verified Community",
-                                    modifier = Modifier
-                                        .size(16.dp)
-                                        .testTag(getAccessibilityId()),
-                                )
-                            }
-                        }
-                    }
-
-                    is AmityPost.Target.USER -> {
-                        if (target.getUser()?.getUserId() != post.getCreatorId()) {
+                if (!hideTarget) {
+                    when (val target = post.getTarget()) {
+                        is AmityPost.Target.COMMUNITY -> {
                             Icon(
                                 painter = painterResource(id = R.drawable.amity_ic_post_target),
                                 contentDescription = null,
@@ -146,24 +118,65 @@ fun AmityPostHeaderElement(
                                 modifier = modifier.size(16.dp),
                             )
                             Text(
-                                text = target.getUser()?.getDisplayName() ?: "",
+                                text = target.getCommunity()?.getDisplayName() ?: "",
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
                                 style = AmityTheme.typography.body.copy(
                                     fontWeight = FontWeight.SemiBold
                                 ),
                                 modifier = modifier.clickableWithoutRipple {
-                                    target.getUser()?.let {
-                                        behavior.goToUserProfilePage(
+                                    target.getCommunity()?.let {
+                                        behavior.goToCommunityProfilePage(
                                             context = context,
-                                            user = it
+                                            community = it
                                         )
                                     }
                                 }
                             )
+                            
+                            if (target.getCommunity()?.isOfficial() == true) {
+                                AmityBaseElement(elementId = "community_official_badge") {
+                                    Image(
+                                        painter = painterResource(id = getConfig().getIcon()),
+                                        contentDescription = "Verified Community",
+                                        modifier = Modifier
+                                            .size(16.dp)
+                                            .testTag(getAccessibilityId()),
+                                    )
+                                }
+                            }
                         }
-                    }
-
-                    AmityPost.Target.UNKNOWN -> {
-
+                        
+                        is AmityPost.Target.USER -> {
+                            if (target.getUser()?.getUserId() != post.getCreatorId()) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.amity_ic_post_target),
+                                    contentDescription = null,
+                                    tint = AmityTheme.colors.baseShade1,
+                                    modifier = modifier.size(16.dp),
+                                )
+                                Text(
+                                    text = target.getUser()?.getDisplayName() ?: "",
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    style = AmityTheme.typography.body.copy(
+                                        fontWeight = FontWeight.SemiBold
+                                    ),
+                                    modifier = modifier.clickableWithoutRipple {
+                                        target.getUser()?.let {
+                                            behavior.goToUserProfilePage(
+                                                context = context,
+                                                user = it
+                                            )
+                                        }
+                                    }
+                                )
+                            }
+                        }
+                        
+                        AmityPost.Target.UNKNOWN -> {
+                        
+                        }
                     }
                 }
             }
@@ -202,8 +215,41 @@ fun AmityPostHeaderElement(
                 }
             }
         }
+        if (category == AmityPostCategory.ANNOUNCEMENT) {
+            AmityBaseElement(
+                componentScope = componentScope,
+                elementId = "announcement_badge"
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.amity_ic_announcement_badge),
+                    contentDescription = "Announcement badge",
+                    tint = AmityTheme.colors.primary,
+                    modifier = modifier
+                        .size(20.dp)
+                        .align(Alignment.CenterVertically)
+                        .testTag(getAccessibilityId()),
+                )
+            }
+        }
+        
+        if (category == AmityPostCategory.PIN) {
+            AmityBaseElement(
+                componentScope = componentScope,
+                elementId = "pin_badge"
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.amity_ic_pin_badge),
+                    contentDescription = "Pin badge",
+                    tint = AmityTheme.colors.primary,
+                    modifier = modifier
+                        .size(20.dp)
+                        .align(Alignment.CenterVertically)
+                        .testTag(getAccessibilityId()),
+                )
+            }
+        }
 
-        if (!isPostDetailPage) {
+        if (!hideMenuButton) {
             AmityBaseElement(
                 componentScope = componentScope,
                 elementId = "menu_button"

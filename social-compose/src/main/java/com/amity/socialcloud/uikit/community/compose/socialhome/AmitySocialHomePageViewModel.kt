@@ -100,9 +100,9 @@ class AmitySocialHomePageViewModel : AmityBaseViewModel() {
                 loadState: LoadState,
                 itemCount: Int,
             ): PostListState {
-                return if (loadState is LoadState.Loading) {
+                return if (loadState is LoadState.Loading && itemCount == 0) {
                     LOADING
-                } else if (loadState is LoadState.NotLoading && itemCount == 0 && loadState.endOfPaginationReached) {
+                } else if (loadState is LoadState.NotLoading && itemCount == 0) {
                     EMPTY
                 } else if (loadState is LoadState.Error && itemCount == 0) {
                     ERROR

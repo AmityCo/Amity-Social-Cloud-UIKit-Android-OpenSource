@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Flowable
@@ -91,6 +92,11 @@ class AmityPostMenuViewModel : AmityBaseViewModel() {
             .check()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
+    }
+    
+    fun isNotMember(post: AmityPost?): Boolean {
+        val isNotMember = !((post?.getTarget() as? AmityPost.Target.COMMUNITY)?.getCommunity()?.isJoined() ?: true)
+        return isNotMember
     }
 }
 

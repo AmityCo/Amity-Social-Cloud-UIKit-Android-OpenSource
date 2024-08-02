@@ -34,6 +34,7 @@ fun AmityExpandableText(
     mentionGetter: AmityMentionMetadataGetter,
     mentionees: List<AmityMentionee>,
     style: TextStyle = AmityTheme.typography.body,
+    onClick: () -> Unit = {},
 ) {
     val uriHandler = LocalUriHandler.current
 
@@ -136,6 +137,7 @@ fun AmityExpandableText(
                         if (annotations.isNotEmpty()) {
                             val url = annotations.first().item
                             uriHandler.openUri(url)
+                            return@let
                         }
 
                         val seeMoreAnnotation = annotatedString.getStringAnnotations(
@@ -145,7 +147,10 @@ fun AmityExpandableText(
                         )
                         if (seeMoreAnnotation.isNotEmpty()) {
                             isReadMoreClicked = true
+                            return@let
                         }
+
+                        onClick()
                     }
                 }
             )
@@ -188,6 +193,7 @@ fun AmityExpandableTextPreview() {
         text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur neque urna, malesuada sit amet mattis sit amet, fringilla vitae eros. Phasellus tristique dolor ut nulla tincidunt sollicitudin. Sed eu bibendum nibh. Cras sed ligula nunc. Fusce mollis hendrerit erat, in tempus nisl rhoncus nec. Vivamus vel dictum lectus. Sed suscipit ante sit amet nulla hendrerit, at tincidunt odio suscipit. Nam cursus malesuada eros, et aliquet sem. Quisque ligula nunc, aliquet sit amet scelerisque eleifend, cursus ut nisl. Sed condimentum eleifend sollicitudin. Nam nec magna egestas, ullamcorper diam in, eleifend justo. Quisque aliquam elit sollicitudin, viverra ex non, ultrices erat. Morbi fermentum, turpis et accumsan ultrices, felis metus posuere sem, at feugiat mi velit quis risus.",
         mentionGetter = AmityMentionMetadataGetter(JsonObject()),
         mentionees = emptyList(),
-        style = AmityTheme.typography.body
+        style = AmityTheme.typography.body,
+        onClick = {}
     )
 }

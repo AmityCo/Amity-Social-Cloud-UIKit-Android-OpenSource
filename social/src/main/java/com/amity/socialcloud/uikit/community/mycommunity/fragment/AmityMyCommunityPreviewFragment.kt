@@ -14,6 +14,7 @@ import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.base.AmityBaseFragment
 import com.amity.socialcloud.uikit.common.utils.AmityRecyclerViewItemDecoration
 import com.amity.socialcloud.uikit.community.R
+import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageActivity
 import com.amity.socialcloud.uikit.community.databinding.AmityFragmentMyCommunityListBinding
 import com.amity.socialcloud.uikit.community.detailpage.AmityCommunityPageActivity
 import com.amity.socialcloud.uikit.community.mycommunity.activity.AmityMyCommunityActivity
@@ -131,9 +132,9 @@ class AmityMyCommunityPreviewFragment : AmityBaseFragment(),
 
     override fun onCommunitySelected(ekoCommunity: AmityCommunity?) {
         if (ekoCommunity != null) {
-            val detailIntent = AmityCommunityPageActivity.newIntent(
+            val detailIntent = AmityCommunityProfilePageActivity.newIntent(
                 requireContext(),
-                ekoCommunity
+                ekoCommunity.getCommunityId()
             )
             startActivity(detailIntent)
         } else {

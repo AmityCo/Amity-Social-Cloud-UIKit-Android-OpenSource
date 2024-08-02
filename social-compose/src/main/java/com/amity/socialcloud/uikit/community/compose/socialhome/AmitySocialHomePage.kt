@@ -14,11 +14,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.utils.getText
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmityExploreComponent
 import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmityMyCommunitiesComponent
 import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmityNewsFeedComponent
@@ -29,8 +31,13 @@ import com.amity.socialcloud.uikit.community.compose.socialhome.elements.AmitySo
 fun AmitySocialHomePage(
     modifier: Modifier = Modifier,
 ) {
-    var selectedNavigationItem by remember {
-        mutableStateOf(AmitySocialHomeTabItem.NEWSFEED)
+    val context = LocalContext.current
+    val behavior = remember {
+        AmitySocialBehaviorHelper.socialHomePageBehavior
+    }
+
+    var selectedTab by remember {
+        mutableStateOf(AmitySocialHomePageTab.NEWSFEED)
     }
 
     AmityBasePage(
@@ -42,8 +49,18 @@ fun AmitySocialHomePage(
             AmitySocialHomeTopNavigationComponent(
                 modifier = modifier,
                 pageScope = getPageScope(),
-                selectedTab = selectedNavigationItem
-            )
+                selectedTab = selectedTab
+            ) {
+                when (selectedTab) {
+                    AmitySocialHomePageTab.NEWSFEED ->
+                        behavior.goToGlobalSearchPage(context)
+
+                    AmitySocialHomePageTab.MY_COMMUNITIES ->
+                        behavior.goToMyCommunitiesSearchPage(context)
+
+                    else -> {}
+                }
+            }
 
             LazyRow(
                 verticalAlignment = Alignment.CenterVertically,
@@ -59,11 +76,11 @@ fun AmitySocialHomePage(
                     ) {
                         AmitySocialHomeTabButton(
                             title = getConfig().getText(),
-                            item = AmitySocialHomeTabItem.NEWSFEED,
-                            isSelected = selectedNavigationItem == AmitySocialHomeTabItem.NEWSFEED,
+                            item = AmitySocialHomePageTab.NEWSFEED,
+                            isSelected = selectedTab == AmitySocialHomePageTab.NEWSFEED,
                             modifier = modifier.testTag(getAccessibilityId()),
                         ) {
-                            selectedNavigationItem = it
+                            selectedTab = it
                         }
                     }
                 }
@@ -74,11 +91,11 @@ fun AmitySocialHomePage(
                     ) {
                         AmitySocialHomeTabButton(
                             title = getConfig().getText(),
-                            item = AmitySocialHomeTabItem.EXPLORE,
-                            isSelected = selectedNavigationItem == AmitySocialHomeTabItem.EXPLORE,
+                            item = AmitySocialHomePageTab.EXPLORE,
+                            isSelected = selectedTab == AmitySocialHomePageTab.EXPLORE,
                             modifier = modifier.testTag(getAccessibilityId()),
                         ) {
-                            selectedNavigationItem = it
+                            selectedTab = it
                         }
                     }
                 }
@@ -89,11 +106,11 @@ fun AmitySocialHomePage(
                     ) {
                         AmitySocialHomeTabButton(
                             title = getConfig().getText(),
-                            item = AmitySocialHomeTabItem.MY_COMMUNITIES,
-                            isSelected = selectedNavigationItem == AmitySocialHomeTabItem.MY_COMMUNITIES,
+                            item = AmitySocialHomePageTab.MY_COMMUNITIES,
+                            isSelected = selectedTab == AmitySocialHomePageTab.MY_COMMUNITIES,
                             modifier = modifier.testTag(getAccessibilityId()),
                         ) {
-                            selectedNavigationItem = it
+                            selectedTab = it
                         }
                     }
                 }
@@ -103,20 +120,20 @@ fun AmitySocialHomePage(
                 modifier = modifier
                     .fillMaxSize()
             ) {
-                when (selectedNavigationItem) {
-                    AmitySocialHomeTabItem.NEWSFEED -> {
+                when (selectedTab) {
+                    AmitySocialHomePageTab.NEWSFEED -> {
                         AmityNewsFeedComponent(
                             pageScope = getPageScope(),
                         )
                     }
 
-                    AmitySocialHomeTabItem.EXPLORE -> {
+                    AmitySocialHomePageTab.EXPLORE -> {
                         AmityExploreComponent(
                             pageScope = getPageScope(),
                         )
                     }
 
-                    AmitySocialHomeTabItem.MY_COMMUNITIES -> {
+                    AmitySocialHomePageTab.MY_COMMUNITIES -> {
                         AmityMyCommunitiesComponent(
                             pageScope = getPageScope(),
                         )

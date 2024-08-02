@@ -8,6 +8,7 @@ import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.imagepreview.AmityImagePreviewActivity
 import com.amity.socialcloud.uikit.common.imagepreview.AmityPreviewImage
+import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageActivity
 import com.amity.socialcloud.uikit.community.detailpage.AmityCommunityPageActivity
 import com.amity.socialcloud.uikit.community.explore.activity.EXTRA_PARAM_COMMUNITY
 import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityPostCreatorActivity
@@ -101,8 +102,8 @@ class AmityCommunityNavigation {
         }
 
         fun navigateToCommunityDetails(context: Context, community: AmityCommunity) {
-            val detailIntent = AmityCommunityPageActivity
-                .newIntent(context, community)
+            val detailIntent = AmityCommunityProfilePageActivity
+                .newIntent(context, community.getCommunityId())
             context.startActivity(detailIntent)
         }
     }

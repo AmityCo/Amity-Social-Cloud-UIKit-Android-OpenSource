@@ -28,7 +28,7 @@ fun AmityUserListShimmer() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp)
-                    .padding(16.dp)
+                    .padding(vertical = 16.dp)
             ) {
                 Box(
                     modifier = Modifier

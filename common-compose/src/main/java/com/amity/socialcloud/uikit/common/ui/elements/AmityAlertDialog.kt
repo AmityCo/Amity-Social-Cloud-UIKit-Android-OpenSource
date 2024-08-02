@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.amity.socialcloud.uikit.common.common.isNotEmptyOrBlank
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 
@@ -28,6 +29,8 @@ fun AmityAlertDialog(
     dialogText: String,
     confirmText: String,
     dismissText: String,
+    confirmTextColor: Color = AmityTheme.colors.highlight,
+    dismissTextColor: Color = AmityTheme.colors.baseShade1,
     onConfirmation: () -> Unit,
     onDismissRequest: () -> Unit = {},
 ) {
@@ -52,13 +55,14 @@ fun AmityAlertDialog(
                 ) {
                     AmityAlertDialogActionButton(
                         text = dismissText,
-                        color = AmityTheme.colors.baseShade1,
+                        color = dismissTextColor,
                         onClick = onDismissRequest
                     )
 
                     AmityAlertDialogActionButton(
                         text = confirmText,
-                        onClick = onConfirmation
+                        color = confirmTextColor,
+                        onClick = onConfirmation,
                     )
                 }
             }
@@ -162,21 +166,26 @@ fun AmityAlertDialogContentView(
         modifier = Modifier
             .padding(horizontal = 24.dp)
     ) {
-        Text(
-            text = title,
-            style = TextStyle(
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Medium,
-                color = AmityTheme.colors.base,
-            ),
-        )
-        Text(
-            text = message,
-            style = TextStyle(
-                fontSize = 16.sp,
-                color = AmityTheme.colors.baseShade2,
+        if (title.isNotEmptyOrBlank()) {
+            Text(
+                text = title,
+                style = TextStyle(
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = AmityTheme.colors.base,
+                ),
             )
-        )
+        }
+
+        if (message.isNotEmptyOrBlank()) {
+            Text(
+                text = message,
+                style = TextStyle(
+                    fontSize = 16.sp,
+                    color = AmityTheme.colors.baseShade2,
+                )
+            )
+        }
     }
 }
 

@@ -14,7 +14,6 @@ import com.amity.socialcloud.sdk.model.core.file.AmityVideo
 import com.amity.socialcloud.sdk.model.core.file.upload.AmityUploadResult
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
-import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import com.amity.socialcloud.uikit.community.compose.post.model.AmityFileUploadState
 import com.amity.socialcloud.uikit.community.compose.post.model.AmityPostMedia
 import com.amity.socialcloud.uikit.community.compose.post.model.AmityPostMedia.Type
@@ -29,7 +28,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.util.UUID
 
-class AmityPostCreationPageViewModel : AmityBaseViewModel() {
+class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
 
     private var options: AmityPostComposerOptions? = null
 
@@ -44,16 +43,6 @@ class AmityPostCreationPageViewModel : AmityBaseViewModel() {
     private val uploadedMediaMap = LinkedHashMap<String, AmityFileInfo>()
     private val deletedImageIds = mutableListOf<String>()
     private val uploadFailedMediaMap = LinkedHashMap<String, Boolean>()
-
-    private val _postAttachmentPickerEvent by lazy {
-        MutableStateFlow<AmityPostAttachmentPickerEvent>(AmityPostAttachmentPickerEvent.Initial)
-    }
-    val postAttachmentPickerEvent get() = _postAttachmentPickerEvent
-
-    private val _postAttachmentAllowedPickerType by lazy {
-        MutableStateFlow<AmityPostAttachmentAllowedPickerType>(AmityPostAttachmentAllowedPickerType.All)
-    }
-    val postAttachmentAllowedPickerType get() = _postAttachmentAllowedPickerType
 
     private val _postCreationEvent by lazy {
         MutableStateFlow<AmityPostCreationEvent>(AmityPostCreationEvent.Initial)
@@ -421,6 +410,7 @@ class AmityPostCreationPageViewModel : AmityBaseViewModel() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSuccess {
+                AmityPostComposerHelper.addNewPost(it)
                 setPostCreationEvent(AmityPostCreationEvent.Success)
             }
             .doOnError {
@@ -536,20 +526,6 @@ class AmityPostCreationPageViewModel : AmityBaseViewModel() {
 
     fun isUploadingVideoMedia(): Boolean {
         return mediaMap.values.any { it.type == Type.VIDEO }
-    }
-
-    fun setPostAttachmentPickerEvent(event: AmityPostAttachmentPickerEvent) {
-        viewModelScope.launch {
-            _postAttachmentPickerEvent.value = event
-            delay(500)
-            _postAttachmentPickerEvent.value = AmityPostAttachmentPickerEvent.Initial
-        }
-    }
-
-    private fun setPostAttachmentAllowedPickerType(type: AmityPostAttachmentAllowedPickerType) {
-        viewModelScope.launch {
-            _postAttachmentAllowedPickerType.value = type
-        }
     }
 
     private fun setPostCreationEvent(event: AmityPostCreationEvent) {

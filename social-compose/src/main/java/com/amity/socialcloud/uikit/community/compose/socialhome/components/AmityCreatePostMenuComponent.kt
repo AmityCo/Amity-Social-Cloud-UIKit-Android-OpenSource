@@ -1,5 +1,8 @@
 package com.amity.socialcloud.uikit.community.compose.socialhome.components
 
+import android.app.Activity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -21,19 +24,25 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import com.amity.socialcloud.sdk.model.social.story.AmityStory
+import com.amity.socialcloud.uikit.common.common.isNotEmptyOrBlank
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getText
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
-import com.amity.socialcloud.uikit.community.compose.target.AmityTargetSelectionPageType
+import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostTargetType
+import com.amity.socialcloud.uikit.community.compose.target.AmityPostTargetSelectionPageType
 
 @Composable
 fun AmityCreatePostMenuComponent(
     modifier: Modifier = Modifier,
     pageScope: AmityComposePageScope? = null,
+    targetType: CreatePostTargetType? = null,
+    targetId: String? = null,
     expanded: Boolean = false,
     onDismiss: () -> Unit = {}
 ) {
@@ -41,6 +50,18 @@ fun AmityCreatePostMenuComponent(
 
     val behavior by lazy {
         AmitySocialBehaviorHelper.createPostMenuComponentBehavior
+    }
+    val targetPostBehavior by lazy {
+        AmitySocialBehaviorHelper.postTargetSelectionPageBehavior
+    }
+    val targetStoryBehavior by lazy {
+        AmitySocialBehaviorHelper.storyTargetSelectionPageBehavior
+    }
+    
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) {
+        context.closePageWithResult(Activity.RESULT_OK)
     }
 
     AmityBaseComponent(
@@ -87,10 +108,19 @@ fun AmityCreatePostMenuComponent(
                 },
                 onClick = {
                     onDismiss()
-                    behavior.goToSelectPostTargetPage(
-                        context = context,
-                        type = AmityTargetSelectionPageType.POST
-                    )
+                    if (targetType == CreatePostTargetType.COMMUNITY && targetId?.isNotEmptyOrBlank() == true) {
+                        targetPostBehavior.goToPostComposerPage(
+                            context = context,
+                            launcher = launcher,
+                            targetId = targetId,
+                            targetType = AmityPostTargetType.COMMUNITY,
+                        )
+                    } else {
+                        behavior.goToSelectPostTargetPage(
+                            context = context,
+                            type = AmityPostTargetSelectionPageType.POST
+                        )
+                    }
                 },
             )
             DropdownMenuItem(
@@ -124,7 +154,16 @@ fun AmityCreatePostMenuComponent(
                 },
                 onClick = {
                     onDismiss()
-                    behavior.goToSelectStoryTargetPage(context)
+                    if (targetType == CreatePostTargetType.COMMUNITY && targetId?.isNotEmptyOrBlank() == true) {
+                        targetStoryBehavior.goToStoryCreationPage(
+                            context = context,
+                            launcher = launcher,
+                            targetId = targetId,
+                            targetType = AmityStory.TargetType.COMMUNITY,
+                        )
+                    } else {
+                        behavior.goToSelectStoryTargetPage(context)
+                    }
                 }
             )
 
@@ -191,4 +230,9 @@ fun AmityCreatePostMenuComponent(
              */
         }
     }
+}
+
+enum class CreatePostTargetType {
+    COMMUNITY,
+    USER,
 }

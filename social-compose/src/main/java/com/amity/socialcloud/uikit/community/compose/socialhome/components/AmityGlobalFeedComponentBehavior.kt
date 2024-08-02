@@ -7,11 +7,11 @@ open class AmityGlobalFeedComponentBehavior {
 
     open fun goToPostDetailPage(
         context: Context,
-        postId: String,
+        id: String,
     ) {
         val intent = AmityPostDetailPageActivity.newIntent(
             context = context,
-            postId = postId,
+            id = id,
         )
         context.startActivity(intent)
     }

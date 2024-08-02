@@ -10,6 +10,7 @@ import coil.memory.MemoryCache
 import coil.util.DebugLogger
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.core.endpoint.AmityEndpoint
+import com.amity.socialcloud.sdk.model.core.file.AmityFileAccessType
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.AmityUIKit4Manager
 import com.amity.socialcloud.uikit.AmityUIKitClient
@@ -32,7 +33,8 @@ class AmitySampleApp : Application(), ImageLoaderFactory {
             endpoint =  AmityEndpoint.CUSTOM(
                 SamplePreferences.getHttpUrl().get(),
                 SamplePreferences.getSocketUrl().get(),
-                SamplePreferences.getMqttBroker().get()
+                SamplePreferences.getMqttBroker().get(),
+                SamplePreferences.getUploadUrl().get(),
             )
         )
 
@@ -48,6 +50,8 @@ class AmitySampleApp : Application(), ImageLoaderFactory {
                 context.shareLinkToExternalApp(fakeURL)
             }
         }
+        
+        AmityCoreClient.setUploadedFileAccessType(AmityFileAccessType.PUBLIC)
 
         // Ex. handle global ban events
         AmityCoreClient.getGlobalBanEvents()

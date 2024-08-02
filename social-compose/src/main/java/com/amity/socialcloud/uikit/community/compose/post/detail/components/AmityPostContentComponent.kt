@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.post.detail.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -24,13 +26,17 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
 import com.amity.socialcloud.uikit.common.ui.elements.AmityPostPreviewLinkView
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.utils.isVisible
 import com.amity.socialcloud.uikit.common.utils.shimmerBackground
 import com.amity.socialcloud.uikit.common.utils.showToast
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerHelper
+import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostCategory
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostContentElement
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostEngagementView
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostHeaderElement
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostMediaElement
+import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostNonMemberSection
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuBottomSheet
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuDialogUIState
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuSheetUIState
@@ -39,13 +45,17 @@ import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostM
 @Composable
 fun AmityPostContentComponent(
     modifier: Modifier = Modifier,
-    post: AmityPost?,
-    isPostDetailPage: Boolean,
-    onClick: (String) -> Unit = {},
+    post: AmityPost,
+    style: AmityPostContentComponentStyle,
+    category: AmityPostCategory = AmityPostCategory.GENERAL,
+    hideMenuButton: Boolean,
+    hideTarget: Boolean = false,
+    onTapAction: () -> Unit = {},
 ) {
-    if (post == null) return
-
     val context = LocalContext.current
+    val isPostDetailPage = remember(style) {
+        style == AmityPostContentComponentStyle.DETAIL
+    }
 
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
@@ -65,6 +75,7 @@ fun AmityPostContentComponent(
                     confirmText = context.getString(R.string.amity_delete),
                     dismissText = context.getString(R.string.amity_cancel),
                     onConfirmation = {
+                        AmityPostComposerHelper.deletePost(data.postId)
                         viewModel.deletePost(
                             postId = data.postId,
                             onSuccess = {
@@ -95,9 +106,17 @@ fun AmityPostContentComponent(
         Column(
             modifier = modifier
                 .fillMaxWidth()
+                .background(AmityTheme.colors.background)
                 .clickableWithoutRipple {
                     if (!isPostDetailPage) {
-                        onClick(post.getPostId())
+                        onTapAction()
+                    }
+                }
+                .isVisible {
+                    if (!isPostDetailPage) {
+                        post
+                            .analytics()
+                            .markAsViewed()
                     }
                 }
         ) {
@@ -105,14 +124,22 @@ fun AmityPostContentComponent(
                 modifier = modifier,
                 componentScope = getComponentScope(),
                 post = post,
-                isPostDetailPage = isPostDetailPage,
+                hideMenuButton = hideMenuButton,
+                style = style,
+                category = category,
+                hideTarget = hideTarget,
                 onMenuClick = {
                     viewModel.updateSheetUIState(AmityPostMenuSheetUIState.OpenSheet(it.getPostId()))
                 }
             )
             AmityPostContentElement(
                 modifier = modifier,
-                post = post
+                post = post,
+                onClick = {
+                    if (!isPostDetailPage) {
+                        onTapAction()
+                    }
+                },
             )
             AmityPostPreviewLinkView(
                 modifier = modifier,
@@ -122,12 +149,16 @@ fun AmityPostContentComponent(
                 modifier = modifier,
                 post = post
             )
-            AmityPostEngagementView(
-                modifier = modifier,
-                componentScope = getComponentScope(),
-                post = post,
-                isPostDetailPage = isPostDetailPage,
-            )
+            if (viewModel.isNotMember(post)) {
+                AmityPostNonMemberSection()
+            } else {
+                AmityPostEngagementView(
+                    modifier = modifier,
+                    componentScope = getComponentScope(),
+                    post = post,
+                    isPostDetailPage = isPostDetailPage,
+                )
+            }
 
             AmityPostMenuBottomSheet(
                 post = post

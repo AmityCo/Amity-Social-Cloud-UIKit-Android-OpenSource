@@ -179,7 +179,7 @@ fun AmityCommentComposerBar(
 
                                 val errorMessage =
                                     if (AmityError.from(it) == AmityError.BAN_WORD_FOUND) {
-                                        context.getString(R.string.amity_add_blocked_words_comment_error_message)
+                                        "Your comment contains inappropriate word. Please review and delete it."
                                     } else {
                                         if (isReplyingToComment) {
                                             context.getString(R.string.amity_add_reply_error_message)

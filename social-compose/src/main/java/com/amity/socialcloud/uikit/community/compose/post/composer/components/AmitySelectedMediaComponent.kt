@@ -40,7 +40,7 @@ import coil.request.ImageRequest
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.R
-import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostCreationPageViewModel
+import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerPageViewModel
 import com.amity.socialcloud.uikit.community.compose.post.model.AmityFileUploadState
 import com.amity.socialcloud.uikit.community.compose.post.model.AmityPostMedia
 
@@ -52,7 +52,7 @@ fun AmitySelectedMediaComponent(
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
     }
     val viewModel =
-        viewModel<AmityPostCreationPageViewModel>(viewModelStoreOwner = viewModelStoreOwner)
+        viewModel<AmityPostComposerPageViewModel>(viewModelStoreOwner = viewModelStoreOwner)
     val selectedMediaFiles by viewModel.selectedMediaFiles.collectAsState()
 
     val gridCells by remember(selectedMediaFiles.size) {

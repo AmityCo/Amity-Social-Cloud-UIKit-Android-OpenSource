@@ -14,6 +14,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,16 +39,27 @@ import com.amity.socialcloud.uikit.common.utils.closePage
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getText
 import com.amity.socialcloud.uikit.community.compose.R
-import com.amity.socialcloud.uikit.community.compose.search.global.AmitySocialGlobalSearchPageViewModel
+import com.amity.socialcloud.uikit.community.compose.search.global.AmityGlobalSearchType
+import com.amity.socialcloud.uikit.community.compose.search.global.AmityGlobalSearchViewModel
 
 @Composable
 fun AmityTopSearchBarComponent(
     modifier: Modifier = Modifier,
     pageScope: AmityComposePageScope? = null,
-    viewModel: AmitySocialGlobalSearchPageViewModel,
+    viewModel: AmityGlobalSearchViewModel,
 ) {
     val context = LocalContext.current
     var keyword by remember { mutableStateOf(TextFieldValue("")) }
+    val searchType by viewModel.searchType.collectAsState()
+    val title by remember(searchType) {
+        derivedStateOf {
+            if (searchType == AmityGlobalSearchType.MY_COMMUNITY) {
+                "Search my community"
+            } else {
+                "Search community and user"
+            }
+        }
+    }
 
     LaunchedEffect(keyword.text) {
         viewModel.setKeyword(keyword.text)
@@ -102,7 +115,7 @@ fun AmityTopSearchBarComponent(
                     decorationBox = { innerTextField ->
                         if (keyword.text.isEmpty()) {
                             Text(
-                                text = "Search community and user",
+                                text = title,
                                 style = AmityTheme.typography.body.copy(
                                     color = AmityTheme.colors.baseShade2
                                 ),

@@ -22,6 +22,7 @@ import com.amity.socialcloud.uikit.common.contract.AmityPickImageContract
 import com.amity.socialcloud.uikit.common.utils.AmityAlertDialogUtil
 import com.amity.socialcloud.uikit.common.utils.AmityConstants
 import com.amity.socialcloud.uikit.community.R
+import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageActivity
 import com.amity.socialcloud.uikit.community.data.AmitySelectCategoryItem
 import com.amity.socialcloud.uikit.community.databinding.AmityFragmentCreateCommunityBinding
 import com.amity.socialcloud.uikit.community.detailpage.AmityCommunityPageActivity
@@ -178,8 +179,8 @@ abstract class AmityCommunityCreateBaseFragment : RxFragment() {
             .doOnSuccess {
                 viewModel.communityId.set(it.getCommunityId())
                 viewModel.savedCommunityId = it.getCommunityId()
-                val detailIntent = AmityCommunityPageActivity
-                    .newIntent(requireContext(), it, true)
+                val detailIntent = AmityCommunityProfilePageActivity
+                    .newIntent(requireContext(), it.getCommunityId())
                 startActivity(detailIntent)
                 requireActivity().finish()
             }

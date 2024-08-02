@@ -40,7 +40,7 @@ fun AmityAdBadge(
             tint = Color.White,
         )
         Text(
-            text = "Premium Sponsored",
+            text = "Sponsored",
             style = TextStyle(
                 fontSize = 11.sp,
                 lineHeight = 18.sp,
