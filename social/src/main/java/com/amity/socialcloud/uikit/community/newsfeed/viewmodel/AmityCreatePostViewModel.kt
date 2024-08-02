@@ -147,6 +147,7 @@ class AmityCreatePostViewModel : AmityBaseViewModel() {
             .membership(communityId)
             .searchMembers(keyword)
             .membershipFilter(listOf(AmityCommunityMembership.MEMBER))
+            .includeDeleted(false)
             .build()
             .query()
             .subscribeOn(Schedulers.io())

@@ -54,6 +54,11 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
     }
     val selectedMediaFiles get() = _selectedMediaFiles
 
+    private val _isAllMediaSuccessfullyUploaded by lazy {
+        MutableStateFlow(false)
+    }
+    val isAllMediaSuccessfullyUploaded get() = _isAllMediaSuccessfullyUploaded
+
     fun setComposerOptions(options: AmityPostComposerOptions) {
         this.options = options
         when (options) {
@@ -507,6 +512,8 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
         }
         _selectedMediaFiles.value = mediaMap.values.toList()
 
+        checkAllMediaUploadedSuccessfully()
+
         if (mediaMap.isEmpty()) {
             setPostAttachmentAllowedPickerType(AmityPostAttachmentAllowedPickerType.All)
         }
@@ -526,6 +533,16 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
 
     fun isUploadingVideoMedia(): Boolean {
         return mediaMap.values.any { it.type == Type.VIDEO }
+    }
+
+    private fun checkAllMediaUploadedSuccessfully() {
+        viewModelScope.launch {
+            _isAllMediaSuccessfullyUploaded.value = if (mediaMap.isEmpty()) {
+                false
+            } else {
+                mediaMap.values.all { it.uploadState == AmityFileUploadState.COMPLETE }
+            }
+        }
     }
 
     private fun setPostCreationEvent(event: AmityPostCreationEvent) {
@@ -621,6 +638,7 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
                 _selectedMediaFiles.value = mediaMap.values.toList()
             }
         }
+        checkAllMediaUploadedSuccessfully()
     }
 }
 

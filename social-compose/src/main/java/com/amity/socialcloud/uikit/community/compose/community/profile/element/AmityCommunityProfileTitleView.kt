@@ -22,7 +22,7 @@ import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.utils.getIcon
 
 @Composable
 fun AmityCommunityProfileTitleView(
@@ -45,13 +45,17 @@ fun AmityCommunityProfileTitleView(
 					.size(24.dp)
 					.padding(top = 4.dp, end = 8.dp)
 				) {
-					Image(
-						painter = painterResource(id = R.drawable.amity_ic_private_community),
-						contentDescription = "Private community icon",
-						modifier = Modifier
-							.width(20.dp)
-							.height(16.dp)
-					)
+					AmityBaseElement(
+						elementId = "community_private_badge"
+					) {
+						Image(
+							painter = painterResource(id = getConfig().getIcon()),
+							contentDescription = "Private community icon",
+							modifier = Modifier
+								.width(20.dp)
+								.height(16.dp)
+						)
+					}
 				}
 			}
 			Box(modifier = Modifier.weight(1f, fill = false)) {
@@ -85,7 +89,7 @@ fun AmityCommunityProfileTitleView(
 						elementId = "community_verify_badge"
 					) {
 						Image(
-							painter = painterResource(id = R.drawable.amity_ic_verified_community),
+							painter = painterResource(id = getConfig().getIcon()),
 							contentDescription = "Verified community icon",
 							modifier = Modifier
 								.size(20.dp)

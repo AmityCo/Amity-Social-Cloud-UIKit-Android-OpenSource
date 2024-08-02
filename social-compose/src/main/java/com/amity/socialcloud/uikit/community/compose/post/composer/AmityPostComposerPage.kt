@@ -110,13 +110,14 @@ fun AmityPostComposerPage(
     val postAttachmentPickerEvent by viewModel.postAttachmentPickerEvent.collectAsState()
     val postCreationEvent by viewModel.postCreationEvent.collectAsState()
     val selectedMediaFiles by viewModel.selectedMediaFiles.collectAsState()
+    val isAllMediaSuccessfullyUploaded by viewModel.isAllMediaSuccessfullyUploaded.collectAsState()
 
     val shouldAllowToPost by remember(isInEditMode) {
         derivedStateOf {
             if (isInEditMode) {
                 localPostText != postText || post?.getChildren()?.size != selectedMediaFiles.size
             } else {
-                localPostText.isNotEmpty() || selectedMediaFiles.isNotEmpty()
+                localPostText.isNotEmpty() || isAllMediaSuccessfullyUploaded
             }
         }
     }

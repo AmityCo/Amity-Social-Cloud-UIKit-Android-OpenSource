@@ -60,7 +60,11 @@ class AmityMessageListViewModel : AmityChatMessageBaseViewModel() {
 
     fun getDisplayName(): Flowable<PagingData<AmityChannelMember>> {
         val channelRepository: AmityChannelRepository = AmityChatClient.newChannelRepository()
-        return channelRepository.membership(channelID).getMembers().build().query()
+        return channelRepository.membership(channelID)
+            .getMembers()
+            .includeDeleted(false)
+            .build()
+            .query()
     }
 
     fun joinChannel(): Completable {

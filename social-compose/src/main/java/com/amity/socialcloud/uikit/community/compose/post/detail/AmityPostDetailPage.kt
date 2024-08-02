@@ -30,6 +30,7 @@ import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.sdk.model.social.comment.AmityCommentReferenceType
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
@@ -71,12 +72,6 @@ fun AmityPostDetailPage(
     }.subscribeAsState(null)
 
     var replyComment by remember { mutableStateOf<AmityComment?>(null) }
-    
-    
-
-//    LaunchedEffect(post?.getPostId()) {
-//        post?.analytics()?.markAsViewed()
-//    }
 
     AmityBasePage(pageId = "post_detail_page") {
         AmityBaseComponent(
@@ -88,6 +83,7 @@ fun AmityPostDetailPage(
                 componentScope = getComponentScope(),
                 referenceId = id,
                 referenceType = AmityCommentReferenceType.POST,
+                community = (post?.getTarget() as? AmityPost.Target.COMMUNITY)?.getCommunity(),
                 shouldAllowInteraction = !sheetViewModel.isNotMember(post),
                 onReply = {
                     replyComment = it
@@ -158,7 +154,7 @@ fun AmityPostDetailPage(
                             style = style,
                             category = category,
                             hideTarget = hideTarget,
-	                        hideMenuButton = true,
+                            hideMenuButton = true,
                         )
 
                         HorizontalDivider(
@@ -197,7 +193,7 @@ enum class AmityPostCategory {
     GENERAL,
     PIN,
     ANNOUNCEMENT;
-    
+
     companion object {
         fun fromString(category: String): AmityPostCategory {
             return when (category) {

@@ -221,7 +221,7 @@ fun AmityPostHeaderElement(
                 elementId = "announcement_badge"
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.amity_ic_announcement_badge),
+                    painter = painterResource(id = getConfig().getIcon()),
                     contentDescription = "Announcement badge",
                     tint = AmityTheme.colors.primary,
                     modifier = modifier
@@ -238,7 +238,7 @@ fun AmityPostHeaderElement(
                 elementId = "pin_badge"
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.amity_ic_pin_badge),
+                    painter = painterResource(id = getConfig().getIcon()),
                     contentDescription = "Pin badge",
                     tint = AmityTheme.colors.primary,
                     modifier = modifier

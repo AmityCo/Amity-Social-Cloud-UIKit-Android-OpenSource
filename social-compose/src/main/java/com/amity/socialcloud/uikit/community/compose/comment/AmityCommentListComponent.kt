@@ -41,9 +41,10 @@ fun amityCommentListComponent(
     val viewModel =
         viewModel<AmityCommentTrayComponentViewModel>(viewModelStoreOwner = viewModelStoreOwner)
 
-    val comments = remember(triggerRefresh, referenceType, referenceId) {
-        viewModel.getComments(referenceId, referenceType)
-    }.collectAsLazyPagingItems()
+    val comments =
+        remember(triggerRefresh, referenceType, referenceId, community?.getCommunityId()) {
+            viewModel.getComments(referenceId, referenceType, community?.getCommunityId())
+        }.collectAsLazyPagingItems()
 
     val commentListState by viewModel.commentListState.collectAsState()
 
@@ -56,6 +57,7 @@ fun amityCommentListComponent(
                     it.comment.getCommentId() == replyCommentId
         }?.let {
             onReply((it as AmityListItem.CommentItem).comment)
+            replyCommentId = ""
         }
     }
 

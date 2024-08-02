@@ -72,7 +72,7 @@ class AmityCommunityProfileViewModel constructor(private val communityId: String
 	fun getCommunityPosts(): Flow<PagingData<AmityListItem>> {
 		val injector = AmityAdInjector<AmityPost>(
 			placement = AmityAdPlacement.FEED,
-			communityId = null,
+			communityId = communityId,
 		)
 		
 		return AmitySocialClient.newFeedRepository()

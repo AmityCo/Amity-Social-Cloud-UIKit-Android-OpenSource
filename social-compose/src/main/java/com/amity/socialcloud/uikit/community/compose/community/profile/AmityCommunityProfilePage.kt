@@ -40,8 +40,8 @@ import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityNewsFeedDivider
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
-import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfileViewModel
 import com.amity.socialcloud.uikit.community.compose.community.profile.component.AmityCommunityHeaderComponent
 import com.amity.socialcloud.uikit.community.compose.community.profile.component.AmityCommunityHeaderStyle
@@ -49,7 +49,6 @@ import com.amity.socialcloud.uikit.community.compose.community.profile.element.A
 import com.amity.socialcloud.uikit.community.compose.community.profile.element.AmityCommunityProfileActionsBottomSheet
 import com.amity.socialcloud.uikit.community.compose.community.profile.element.AmityCommunityProfileShimmer
 import com.amity.socialcloud.uikit.community.compose.community.profile.element.AmityCommunityProfileTabComponent
-import com.amity.socialcloud.uikit.community.compose.community.profile.element.CommunityProfileTab
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostCategory
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponent
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponentStyle
@@ -118,20 +117,31 @@ fun AmityCommunityProfilePage(
 						stickyHeader {
 							if (isHeaderSticky) {
 								AmityCommunityHeaderComponent(
+									pageScope = getPageScope(),
 									community = community!!,
-									style = AmityCommunityHeaderStyle.COLLAPSE
+									style = AmityCommunityHeaderStyle.COLLAPSE,
 								)
-								AmityCommunityProfileTabComponent(selectedIndex = selectedTabIndex) { index ->
+								AmityCommunityProfileTabComponent(
+									pageScope = getPageScope(),
+									selectedIndex = selectedTabIndex,
+								) { index ->
 									selectedTabIndex = index
 								}
 							}
 						}
 						item {
-							AmityCommunityHeaderComponent(community = community!!)
+							AmityCommunityHeaderComponent(
+								pageScope = getPageScope(),
+								community = community!!,
+								style = AmityCommunityHeaderStyle.EXPANDED,
+							)
 						}
 					}
 					item {
-						AmityCommunityProfileTabComponent(selectedIndex = selectedTabIndex) { index ->
+						AmityCommunityProfileTabComponent(
+							pageScope = getPageScope(),
+							selectedIndex = selectedTabIndex,
+						) { index ->
 							selectedTabIndex = index
 						}
 					}
@@ -314,18 +324,18 @@ fun AmityCommunityProfilePage(
 						onClick = {
 							expanded = true
 						},
-						shape = RoundedCornerShape(size = 25.dp),
+						shape = RoundedCornerShape(size = 32.dp),
 						containerColor = AmityTheme.colors.primary,
 						modifier = Modifier
 							.padding(16.dp)
-							.size(50.dp)
+							.size(64.dp)
 							.align(Alignment.BottomEnd)
 					) {
 						Icon(
-							painter = painterResource(id = R.drawable.amity_ic_plus), // Replace with your icon resource
+							painter = painterResource(id = getConfig().getIcon()),
 							contentDescription = "create post",
 							tint = Color.White,
-							modifier = Modifier.size(25.dp)
+							modifier = Modifier.size(32.dp)
 						)
 					}
 				}
