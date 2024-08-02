@@ -278,6 +278,13 @@
       "icon": "shareButtonIcon",
       "text": "Share"
     },
+    "*/post_content/announcement_badge": {
+      "image": "communityAnnouncementBadge"
+    },
+    "*/post_content/pin_badge": {
+      "image": "communityPinBadge"
+    },
+    "*/post_content/non_member_section": {},
     "social_global_search_page/*/*": {},
     "social_global_search_page/top_search_bar/*": {},
     "social_global_search_page/top_search_bar/search_icon": {
@@ -440,7 +447,6 @@
     "community_profile_page/community_pin/*": {},
     "community_profile_page/*/community_create_post_button": {
       "image": "plusIcon"
-    },
-    "*/post_content/non_member_section": {}
+    }
   }
 }

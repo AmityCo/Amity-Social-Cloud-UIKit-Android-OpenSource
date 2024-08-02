@@ -43,9 +43,18 @@ fun AmityCommunityHeaderComponent(
 				.fillMaxWidth()
 				.background(AmityTheme.colors.background)
 			) {
-				AmityCommunityCoverView(community = community)
+				AmityCommunityCoverView(
+					pageScope = pageScope,
+					componentScope = getComponentScope(),
+					community = community,
+					style = AmityCommunityHeaderStyle.EXPANDED
+				)
 				Column(modifier = Modifier.padding(top = 16.dp)) {
-					AmityCommunityProfileTitleView(community = community)
+					AmityCommunityProfileTitleView(
+						pageScope = pageScope,
+						componentScope = getComponentScope(),
+						community = community,
+					)
 					if (categories.isNotEmpty()) {
 						AmityCommunityCategoryListElement(categories = categories)
 					}
@@ -62,7 +71,11 @@ fun AmityCommunityHeaderComponent(
 							)
 						}
 					}
-					AmityCommunityInfoView(community = community)
+					AmityCommunityInfoView(
+						pageScope = pageScope,
+						componentScope = getComponentScope(),
+						community = community
+					)
 					if (community.isJoined()) {
 						Row(modifier = Modifier
 							.padding(bottom = 12.dp, start = 16.dp, end = 16.dp)
@@ -75,17 +88,27 @@ fun AmityCommunityHeaderComponent(
 							)
 						}
 					}
-					AmityCommunityProfileActionView(pageScope = pageScope, componentScope = getComponentScope(), community = community)
+					AmityCommunityProfileActionView(
+						pageScope = pageScope,
+						componentScope = getComponentScope(),
+						community = community,
+					)
 				}
 			}
 		} else {
 			Column {
-				AmityCommunityCoverView(community = community, style = AmityCommunityHeaderStyle.COLLAPSE)
+				AmityCommunityCoverView(
+					pageScope = pageScope,
+					componentScope = getComponentScope(),
+					community = community,
+					style = AmityCommunityHeaderStyle.COLLAPSE
+				)
 				community.let {
 					if (!community.isJoined()) {
 						AmityCommunityJoinButton(
 							modifier = Modifier.background(AmityTheme.colors.background),
 							pageScope = pageScope,
+							componentScope = getComponentScope(),
 							community = community,
 						)
 					}

@@ -38,7 +38,13 @@ object AmityUIKitDrawableResolver {
         "postCreate" to R.drawable.amity_ic_post_create,
         "storyCreate" to R.drawable.amity_ic_create_story_social,
         "verifiedBadge" to R.drawable.amity_ic_verified,
-        "plusIcon" to R.drawable.amity_ic_plus,
+        "plusIcon" to R.drawable.amity_ic_plus_button,
+        "communityFeedIcon" to R.drawable.amity_ic_community_feed,
+        "communityPinIcon" to R.drawable.amity_ic_community_pin,
+        "backIcon" to R.drawable.amity_ic_social_back,
+        "threeDotIcon" to R.drawable.amity_ic_more_horiz,
+        "communityAnnouncementBadge" to R.drawable.amity_ic_announcement_badge,
+        "communityPinBadge" to R.drawable.amity_ic_pin_badge,
     )
 
     @DrawableRes

@@ -155,7 +155,7 @@ object AmityAdEngine {
         placement: AmityAdPlacement,
         communityId: String?
     ): Single<List<AmityAd>> {
-        return getApplicableAds(placement)
+        return getApplicableAds(placement, communityId)
             .map {
                 if (it.isEmpty()) {
                     return@map it
@@ -165,7 +165,7 @@ object AmityAdEngine {
             }
     }
 
-    private fun getApplicableAds(placement: AmityAdPlacement): Single<List<AmityAd>> {
+    private fun getApplicableAds(placement: AmityAdPlacement, communityId: String?): Single<List<AmityAd>> {
         return Single.fromCallable {
             if (settings == null
                 || !settings!!.isEnabled()
@@ -173,13 +173,23 @@ object AmityAdEngine {
             ) {
                 emptyList<AmityAd>()
             } else {
-                ads.filter {
+                val readyAds = ads.filter {
                     it.getPlacements().contains(placement)
                             && (it.getEndAt() == null || it.getEndAt()?.isAfterNow == true)
                             && (getUrlByPlacement(it, placement)?.let { url ->
                         AmityAdAssetRepository().getAdAsset(url)?.downloadStatus == DownloadManager.STATUS_SUCCESSFUL
                     } ?: false)
                 }
+
+                // Attempt to return targeted ads first, then fallback to non-targeted ads
+                val applicableAds = if (communityId != null) {
+                    val targetedAds = readyAds.filter { it.getAdTarget().getCommunityIds().contains(communityId) }
+                    targetedAds.ifEmpty { readyAds.filter { it.getAdTarget().getCommunityIds().isEmpty() } }
+                } else {
+                    readyAds.filter { it.getAdTarget().getCommunityIds().isEmpty() }
+                }
+
+                applicableAds
             }
         }
     }

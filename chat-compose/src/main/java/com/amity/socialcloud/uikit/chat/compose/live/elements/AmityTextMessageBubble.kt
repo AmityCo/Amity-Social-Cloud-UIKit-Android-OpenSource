@@ -299,7 +299,7 @@ fun BaseMessageBubble(
                             }
 
                             // Determine the height of the item
-                            val height = placeables.sumOf { it.height } - (8.dp.roundToPx())
+                            val height = Math.max(placeables.sumOf { it.height } - (8.dp.roundToPx()), 0)
 
                             // Set the size of the item
                             layout(

@@ -12,9 +12,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -100,6 +103,18 @@ fun AmityPostContentComponent(
         }
     }
 
+    var isVisible by remember {
+        mutableStateOf(false)
+    }
+
+    LaunchedEffect(isVisible) {
+        if (!isPostDetailPage && isVisible) {
+            post
+                .analytics()
+                .markAsViewed()
+        }
+    }
+
     AmityBaseComponent(
         componentId = "post_content"
     ) {
@@ -112,13 +127,7 @@ fun AmityPostContentComponent(
                         onTapAction()
                     }
                 }
-                .isVisible {
-                    if (!isPostDetailPage) {
-                        post
-                            .analytics()
-                            .markAsViewed()
-                    }
-                }
+                .isVisible { isVisible = it }
         ) {
             AmityPostHeaderElement(
                 modifier = modifier,

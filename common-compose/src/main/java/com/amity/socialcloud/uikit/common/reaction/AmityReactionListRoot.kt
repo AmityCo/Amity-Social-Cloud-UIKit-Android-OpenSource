@@ -25,6 +25,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -96,8 +97,12 @@ fun AmityReactionRoot(
         ) { index ->
             val tab = state.tabItems[index]
             val reactionName = if (tab.isAllTab) null else tab.title
+            val reactions = remember(viewModel, tab, reactionName) {
+                viewModel.getReactions(reactionName)
+            }.collectAsLazyPagingItems()
+
             AmityReactionItems(
-                reactions = viewModel.getReactions(reactionName).collectAsLazyPagingItems(),
+                reactions = reactions,
                 state = state,
                 action = { action ->
                     onAction(action)
@@ -326,14 +331,20 @@ fun AmityReactionListShimmer() {
                     modifier = Modifier
                         .size(40.dp)
                         .aspectRatio(1f)
-                        .shimmerBackground(shape = CircleShape)
+                        .shimmerBackground(
+                            color = AmityTheme.colors.baseShade4,
+                            shape = CircleShape
+                        )
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Box(
                     modifier = Modifier
                         .height(8.dp)
                         .width(140.dp)
-                        .shimmerBackground(shape = RoundedCornerShape(6.dp))
+                        .shimmerBackground(
+                            color = AmityTheme.colors.baseShade4,
+                            shape = RoundedCornerShape(6.dp)
+                        )
                 )
             }
         }
