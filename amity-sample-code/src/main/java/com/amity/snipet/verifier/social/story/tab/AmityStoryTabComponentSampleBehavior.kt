@@ -1,4 +1,4 @@
-package com.amity.snipet.verifier.social.bahavior
+package com.amity.snipet.verifier.social.story.tab
 
 import android.content.Context
 import com.amity.socialcloud.sdk.model.social.story.AmityStory
@@ -31,7 +31,7 @@ class AmityStoryTabComponentSampleBehavior {
         }
     }
 
-    // Call this function in Application class to setup custom behaviour class in UIKit
+    // Call this function in AmityUIKit4Manager class to setup custom behaviour class in UIKit
     fun setCustomBehavior() {
         val customBehaviour = CustomStoryTabComponentBehaviour()
         AmityUIKit4Manager.behavior.storyTabComponentBehavior = customBehaviour

@@ -1,4 +1,4 @@
-package com.amity.snipet.verifier.social.bahavior
+package com.amity.snipet.verifier.social.story.create
 
 import android.content.Context
 import android.content.Intent
@@ -29,7 +29,7 @@ class AmityCreateStoryPageSampleBehavior {
         }
     }
 
-    // Call this function in Application class to setup custom behaviour class in UIKit
+    // Call this function in AmityUIKit4Manager class to setup custom behaviour class in UIKit
     fun setCustomBehavior() {
         val customBehaviour = CustomCreateStoryPageBehaviour()
         AmityUIKit4Manager.behavior.createStoryPageBehavior = customBehaviour

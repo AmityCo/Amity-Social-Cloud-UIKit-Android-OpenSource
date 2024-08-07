@@ -1,4 +1,4 @@
-package com.amity.snipet.verifier.social.bahavior
+package com.amity.snipet.verifier.social.story.view
 
 import android.content.Context
 import android.content.Intent
@@ -15,7 +15,7 @@ class AmityViewStoryPageSampleBehavior {
     asc_page: https://docs.amity.co/amity-uikit/uikit-v4-beta/customization/
     description: View story page behavior customization
     */
-    class CustomViewStoryPageBehaviour : AmityViewStoryPageBehavior() {
+    class CustomViewStoryPageBehavior : AmityViewStoryPageBehavior() {
 
         override fun goToCreateStoryPage(
             context: Context,
@@ -34,10 +34,10 @@ class AmityViewStoryPageSampleBehavior {
         }
     }
 
-    // Call this function in Application class to setup custom behaviour class in UIKit
+    // Call this function in AmityUIKit4Manager class to setup custom behaviour class in UIKit
     fun setCustomBehavior() {
-        val customBehaviour = CustomViewStoryPageBehaviour()
-        AmityUIKit4Manager.behavior.viewStoryPageBehavior = customBehaviour
+        val customBehavior = CustomViewStoryPageBehavior()
+        AmityUIKit4Manager.behavior.viewStoryPageBehavior = customBehavior
     }
     /* end_sample_code */
 }
