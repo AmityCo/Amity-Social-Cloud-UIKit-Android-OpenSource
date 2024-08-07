@@ -2,12 +2,19 @@ package com.amity.socialcloud.uikit.community.compose.post.detail.elements
 
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,9 +24,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
@@ -61,94 +70,87 @@ fun AmityPostHeaderElement(
     val isCommunityModerator = remember(post) {
         viewModel.isCommunityModerator(post)
     }
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    
+    Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(start = 12.dp, end = 16.dp, top = 12.dp, bottom = 4.dp)
     ) {
-        AmityAvatarView(
-            size = 32.dp,
-            avatarUrl = post.getCreator()?.getAvatar()?.getUrl(),
-            modifier = modifier.clickableWithoutRipple {
-                post.getCreator()?.let {
-                    behavior.goToUserProfilePage(
-                        context = context,
-                        user = it
+        if (category == AmityPostCategory.ANNOUNCEMENT) {
+            AmityBaseElement(
+                componentScope = componentScope,
+                elementId = "announcement_badge"
+            ) {
+                Box(modifier = Modifier
+                    .padding(vertical = 8.dp)
+                    .wrapContentWidth()
+                    .wrapContentHeight(align = Alignment.CenterVertically)
+                    .background(color = AmityTheme.colors.secondaryShade4, shape = RoundedCornerShape(
+                        topEnd = 4.dp,
+                        bottomEnd = 4.dp,
+                        )
+                    )
+                    .padding(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 4.dp)) {
+                    Text(
+                        text = "Featured",
+                        style = TextStyle(
+                            fontSize = 13.sp,
+                            lineHeight = 18.sp,
+                            fontWeight = FontWeight(600),
+                            color = AmityTheme.colors.secondary,
+                        )
                     )
                 }
             }
-        )
-
-        Column(
+        }
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = modifier
-                .weight(1f)
-                .padding(start = 4.dp)
+                .fillMaxWidth()
+                .padding(start = 12.dp, end = 16.dp, top = 12.dp, bottom = 4.dp)
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                Text(
-                    text = post.getCreator()?.getDisplayName() ?: "",
-                    style = AmityTheme.typography.body.copy(
-                        fontWeight = FontWeight.SemiBold
-                    ),
-                    modifier = modifier.clickableWithoutRipple {
-                        post
-                            .getCreator()
-                            ?.let {
-                                behavior.goToUserProfilePage(
-                                    context = context,
-                                    user = it
-                                )
-                            }
+            AmityAvatarView(
+                size = 32.dp,
+                avatarUrl = post.getCreator()?.getAvatar()?.getUrl(),
+                modifier = modifier.clickableWithoutRipple {
+                    post.getCreator()?.let {
+                        behavior.goToUserProfilePage(
+                            context = context,
+                            user = it
+                        )
                     }
-                )
-
-                if (!hideTarget) {
-                    when (val target = post.getTarget()) {
-                        is AmityPost.Target.COMMUNITY -> {
-                            Icon(
-                                painter = painterResource(id = R.drawable.amity_ic_post_target),
-                                contentDescription = null,
-                                tint = AmityTheme.colors.baseShade1,
-                                modifier = modifier.size(16.dp),
-                            )
-                            Text(
-                                text = target.getCommunity()?.getDisplayName() ?: "",
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                style = AmityTheme.typography.body.copy(
-                                    fontWeight = FontWeight.SemiBold
-                                ),
-                                modifier = modifier.clickableWithoutRipple {
-                                    target.getCommunity()?.let {
-                                        behavior.goToCommunityProfilePage(
-                                            context = context,
-                                            community = it
-                                        )
-                                    }
-                                }
-                            )
-                            
-                            if (target.getCommunity()?.isOfficial() == true) {
-                                AmityBaseElement(elementId = "community_official_badge") {
-                                    Image(
-                                        painter = painterResource(id = getConfig().getIcon()),
-                                        contentDescription = "Verified Community",
-                                        modifier = Modifier
-                                            .size(16.dp)
-                                            .testTag(getAccessibilityId()),
+                }
+            )
+            
+            Column(
+                modifier = modifier
+                    .weight(1f)
+                    .padding(start = 4.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Text(
+                        text = post.getCreator()?.getDisplayName() ?: "",
+                        style = AmityTheme.typography.body.copy(
+                            fontWeight = FontWeight.SemiBold
+                        ),
+                        modifier = modifier.clickableWithoutRipple {
+                            post
+                                .getCreator()
+                                ?.let {
+                                    behavior.goToUserProfilePage(
+                                        context = context,
+                                        user = it
                                     )
                                 }
-                            }
                         }
-                        
-                        is AmityPost.Target.USER -> {
-                            if (target.getUser()?.getUserId() != post.getCreatorId()) {
+                    )
+                    
+                    if (!hideTarget) {
+                        when (val target = post.getTarget()) {
+                            is AmityPost.Target.COMMUNITY -> {
                                 Icon(
                                     painter = painterResource(id = R.drawable.amity_ic_post_target),
                                     contentDescription = null,
@@ -156,114 +158,137 @@ fun AmityPostHeaderElement(
                                     modifier = modifier.size(16.dp),
                                 )
                                 Text(
-                                    text = target.getUser()?.getDisplayName() ?: "",
+                                    text = target.getCommunity()?.getDisplayName() ?: "",
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
                                     style = AmityTheme.typography.body.copy(
                                         fontWeight = FontWeight.SemiBold
                                     ),
                                     modifier = modifier.clickableWithoutRipple {
-                                        target.getUser()?.let {
-                                            behavior.goToUserProfilePage(
+                                        target.getCommunity()?.let {
+                                            behavior.goToCommunityProfilePage(
                                                 context = context,
-                                                user = it
+                                                community = it
                                             )
                                         }
                                     }
                                 )
+                                
+                                if (target.getCommunity()?.isOfficial() == true) {
+                                    AmityBaseElement(elementId = "community_official_badge") {
+                                        Image(
+                                            painter = painterResource(id = getConfig().getIcon()),
+                                            contentDescription = "Verified Community",
+                                            modifier = Modifier
+                                                .size(16.dp)
+                                                .testTag(getAccessibilityId()),
+                                        )
+                                    }
+                                }
                             }
-                        }
-                        
-                        AmityPost.Target.UNKNOWN -> {
-                        
+                            
+                            is AmityPost.Target.USER -> {
+                                if (target.getUser()?.getUserId() != post.getCreatorId()) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.amity_ic_post_target),
+                                        contentDescription = null,
+                                        tint = AmityTheme.colors.baseShade1,
+                                        modifier = modifier.size(16.dp),
+                                    )
+                                    Text(
+                                        text = target.getUser()?.getDisplayName() ?: "",
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                        style = AmityTheme.typography.body.copy(
+                                            fontWeight = FontWeight.SemiBold
+                                        ),
+                                        modifier = modifier.clickableWithoutRipple {
+                                            target.getUser()?.let {
+                                                behavior.goToUserProfilePage(
+                                                    context = context,
+                                                    user = it
+                                                )
+                                            }
+                                        }
+                                    )
+                                }
+                            }
+                            
+                            AmityPost.Target.UNKNOWN -> {
+                            
+                            }
                         }
                     }
                 }
-            }
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                if (isCommunityModerator) {
-                    AmityPostModeratorBadge(
-                        modifier = modifier,
-                        componentScope = componentScope,
-                    )
-
-                    Text(
-                        text = " • ",
-                        style = AmityTheme.typography.caption.copy(
-                            fontWeight = FontWeight.Normal,
-                            color = AmityTheme.colors.baseShade2
+                
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (isCommunityModerator) {
+                        AmityPostModeratorBadge(
+                            modifier = modifier,
+                            componentScope = componentScope,
                         )
-                    )
+                        
+                        Text(
+                            text = " • ",
+                            style = AmityTheme.typography.caption.copy(
+                                fontWeight = FontWeight.Normal,
+                                color = AmityTheme.colors.baseShade2
+                            )
+                        )
+                    }
+                    
+                    AmityBaseElement(
+                        componentScope = componentScope,
+                        elementId = "timestamp"
+                    ) {
+                        Text(
+                            text = (post.getCreatedAt()?.readableSocialTimeDiff() ?: "")
+                                + if (post.isEdited()) " (edited)" else "",
+                            style = AmityTheme.typography.caption.copy(
+                                fontWeight = FontWeight.Normal,
+                                color = AmityTheme.colors.baseShade2
+                            ),
+                            modifier = modifier.testTag(getAccessibilityId()),
+                        )
+                    }
                 }
-
+            }
+            
+            if (category == AmityPostCategory.PIN) {
                 AmityBaseElement(
                     componentScope = componentScope,
-                    elementId = "timestamp"
+                    elementId = "pin_badge"
                 ) {
-                    Text(
-                        text = (post.getCreatedAt()?.readableSocialTimeDiff() ?: "")
-                                + if (post.isEdited()) " (edited)" else "",
-                        style = AmityTheme.typography.caption.copy(
-                            fontWeight = FontWeight.Normal,
-                            color = AmityTheme.colors.baseShade2
-                        ),
-                        modifier = modifier.testTag(getAccessibilityId()),
+                    Icon(
+                        painter = painterResource(id = getConfig().getIcon()),
+                        contentDescription = "Pin badge",
+                        tint = AmityTheme.colors.primary,
+                        modifier = modifier
+                            .size(20.dp)
+                            .align(Alignment.CenterVertically)
+                            .testTag(getAccessibilityId()),
                     )
                 }
             }
-        }
-        if (category == AmityPostCategory.ANNOUNCEMENT) {
-            AmityBaseElement(
-                componentScope = componentScope,
-                elementId = "announcement_badge"
-            ) {
-                Icon(
-                    painter = painterResource(id = getConfig().getIcon()),
-                    contentDescription = "Announcement badge",
-                    tint = AmityTheme.colors.primary,
-                    modifier = modifier
-                        .size(20.dp)
-                        .align(Alignment.CenterVertically)
-                        .testTag(getAccessibilityId()),
-                )
-            }
-        }
-        
-        if (category == AmityPostCategory.PIN) {
-            AmityBaseElement(
-                componentScope = componentScope,
-                elementId = "pin_badge"
-            ) {
-                Icon(
-                    painter = painterResource(id = getConfig().getIcon()),
-                    contentDescription = "Pin badge",
-                    tint = AmityTheme.colors.primary,
-                    modifier = modifier
-                        .size(20.dp)
-                        .align(Alignment.CenterVertically)
-                        .testTag(getAccessibilityId()),
-                )
-            }
-        }
-
-        if (!hideMenuButton) {
-            AmityBaseElement(
-                componentScope = componentScope,
-                elementId = "menu_button"
-            ) {
-                Icon(
-                    painter = painterResource(id = getConfig().getIcon()),
-                    contentDescription = null,
-                    tint = AmityTheme.colors.base,
-                    modifier = modifier
-                        .size(24.dp)
-                        .align(Alignment.CenterVertically)
-                        .clickableWithoutRipple { onMenuClick(post) }
-                        .testTag(getAccessibilityId()),
-                )
+            
+            if (!hideMenuButton) {
+                AmityBaseElement(
+                    componentScope = componentScope,
+                    elementId = "menu_button"
+                ) {
+                    Icon(
+                        painter = painterResource(id = getConfig().getIcon()),
+                        contentDescription = null,
+                        tint = AmityTheme.colors.base,
+                        modifier = modifier
+                            .size(24.dp)
+                            .align(Alignment.CenterVertically)
+                            .clickableWithoutRipple { onMenuClick(post) }
+                            .testTag(getAccessibilityId()),
+                    )
+                }
             }
         }
     }
