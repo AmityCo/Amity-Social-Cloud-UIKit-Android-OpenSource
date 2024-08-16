@@ -56,6 +56,9 @@ fun AmityMentionTextField(
 
                 addTextChangedListener { text ->
                     text?.let { textNonNull ->
+                        if(!textNonNull.contains(AmityUserMention.CHAR_MENTION)) {
+                            onQueryToken(null)
+                        }
                         onValueChange(textNonNull.toString())
                     }
 
