@@ -27,6 +27,7 @@ import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import com.amity.socialcloud.uikit.common.common.AmityFileUtils
 import com.amity.socialcloud.uikit.common.model.AmityEventIdentifier
+import com.amity.socialcloud.uikit.common.service.AmityFileService
 import com.amity.socialcloud.uikit.community.domain.model.AmityFileAttachment
 import com.amity.socialcloud.uikit.community.newsfeed.model.FileUploadState
 import com.amity.socialcloud.uikit.community.newsfeed.model.PostMedia
@@ -43,7 +44,6 @@ class AmityCreatePostViewModel : AmityBaseViewModel() {
 
     private val TAG = AmityCreatePostViewModel::class.java.canonicalName
     private val postRepository = AmitySocialClient.newPostRepository()
-    private val fileRepository = AmityCoreClient.newFileRepository()
     private val communityRepository = AmitySocialClient.newCommunityRepository()
     private val userRepository: AmityUserRepository = AmityCoreClient.newUserRepository()
 
@@ -466,7 +466,7 @@ class AmityCreatePostViewModel : AmityBaseViewModel() {
     private fun uploadMedia(postMedia: PostMedia): Completable {
         when (postMedia.type) {
             PostMedia.Type.IMAGE -> {
-                return fileRepository
+                return AmityFileService()
                     .uploadImage(postMedia.url)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -474,7 +474,7 @@ class AmityCreatePostViewModel : AmityBaseViewModel() {
                     .ignoreElements()
             }
             PostMedia.Type.VIDEO -> {
-                return fileRepository
+                return AmityFileService()
                     .uploadVideo(postMedia.url, AmityContentFeedType.POST)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -489,7 +489,7 @@ class AmityCreatePostViewModel : AmityBaseViewModel() {
 
 
     fun uploadFile(attachment: AmityFileAttachment): Flowable<AmityUploadResult<AmityFile>> {
-        return fileRepository.uploadFile(attachment.uri)
+        return AmityFileService().uploadFile(attachment.uri)
     }
 
     private fun deleteImageOrFileInPost(
@@ -565,7 +565,7 @@ class AmityCreatePostViewModel : AmityBaseViewModel() {
     private fun cancelUpload(uploadId: String?) {
         if (uploadId != null) {
             Log.d(TAG, "cancel file upload $uploadId")
-            fileRepository.cancelUpload(uploadId)
+            AmityFileService().cancelUpload(uploadId)
         }
     }
 

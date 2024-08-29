@@ -35,6 +35,12 @@ android {
     kotlinOptions {
         jvmTarget = '17'
     }
+
+    packagingOptions {
+        pickFirst("META-INF/*.kotlin_module")
+        exclude 'META-INF/INDEX.LIST'
+        exclude 'META-INF/io.netty.versions.properties'
+    }
 }
 
 dependencies {
@@ -73,6 +79,8 @@ dependencies {
     api "androidx.constraintlayout:constraintlayout-compose:1.0.1"
     api "androidx.paging:paging-compose:3.2.1"
     api "com.linkedin.android.spyglass:spyglass:3.0.1"
+
+    api 'com.github.AlexTrotsenko:android-transcoder:aa7dc58615'
 
     def room_version = "2.5.1"
     api "androidx.room:room-runtime:$room_version"

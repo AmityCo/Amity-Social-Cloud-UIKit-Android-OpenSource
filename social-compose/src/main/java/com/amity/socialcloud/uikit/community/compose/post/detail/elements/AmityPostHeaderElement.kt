@@ -1,6 +1,5 @@
 package com.amity.socialcloud.uikit.community.compose.post.detail.elements
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -8,10 +7,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -41,8 +38,8 @@ import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
-import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetailPageViewModel
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostCategory
+import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetailPageViewModel
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponentStyle
 
 @Composable
@@ -136,7 +133,11 @@ fun AmityPostHeaderElement(
                         style = AmityTheme.typography.body.copy(
                             fontWeight = FontWeight.SemiBold
                         ),
-                        modifier = modifier.clickableWithoutRipple {
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = modifier
+                            .weight(1f, fill = false)
+                            .clickableWithoutRipple {
                             post
                                 .getCreator()
                                 ?.let {
@@ -147,6 +148,18 @@ fun AmityPostHeaderElement(
                                 }
                         }
                     )
+
+                    val isBrandCreator = post.getCreator()?.isBrand() == true
+                    if (isBrandCreator) {
+                        val badge = R.drawable.amity_ic_brand_badge
+                        Image(
+                            painter = painterResource(id = badge),
+                            contentDescription = "",
+                            modifier = Modifier
+                                .size(18.dp)
+                                .testTag("post_header/brand_user_icon")
+                        )
+                    }
                     
                     if (!hideTarget) {
                         when (val target = post.getTarget()) {
@@ -155,7 +168,8 @@ fun AmityPostHeaderElement(
                                     painter = painterResource(id = R.drawable.amity_ic_post_target),
                                     contentDescription = null,
                                     tint = AmityTheme.colors.baseShade1,
-                                    modifier = modifier.size(16.dp),
+                                    modifier = modifier
+                                        .size(16.dp),
                                 )
                                 Text(
                                     text = target.getCommunity()?.getDisplayName() ?: "",
@@ -164,7 +178,9 @@ fun AmityPostHeaderElement(
                                     style = AmityTheme.typography.body.copy(
                                         fontWeight = FontWeight.SemiBold
                                     ),
-                                    modifier = modifier.clickableWithoutRipple {
+                                    modifier = modifier
+                                        .weight(1f, fill = false)
+                                        .clickableWithoutRipple {
                                         target.getCommunity()?.let {
                                             behavior.goToCommunityProfilePage(
                                                 context = context,
@@ -202,7 +218,9 @@ fun AmityPostHeaderElement(
                                         style = AmityTheme.typography.body.copy(
                                             fontWeight = FontWeight.SemiBold
                                         ),
-                                        modifier = modifier.clickableWithoutRipple {
+                                        modifier = modifier
+                                            .weight(1f, fill = false)
+                                            .clickableWithoutRipple {
                                             target.getUser()?.let {
                                                 behavior.goToUserProfilePage(
                                                     context = context,
@@ -211,6 +229,18 @@ fun AmityPostHeaderElement(
                                             }
                                         }
                                     )
+
+                                    val isBrandTarget = target.getUser()?.isBrand() == true
+                                    if (isBrandTarget) {
+                                        val badge = R.drawable.amity_ic_brand_badge
+                                        Image(
+                                            painter = painterResource(id = badge),
+                                            contentDescription = "",
+                                            modifier = Modifier
+                                                .size(18.dp)
+                                                .testTag("post_header/brand_user_icon")
+                                        )
+                                    }
                                 }
                             }
                             
