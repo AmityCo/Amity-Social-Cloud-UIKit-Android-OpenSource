@@ -1,6 +1,15 @@
 package com.amity.socialcloud.uikit.community.compose.post.composer
 
+import android.content.Context
+import android.media.MediaCodec
+import android.media.MediaExtractor
+import android.media.MediaFormat
+import android.media.MediaMuxer
 import android.net.Uri
+import android.os.Environment
+import android.provider.MediaStore
+import android.util.Log
+import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
@@ -11,12 +20,15 @@ import com.amity.socialcloud.sdk.model.core.file.AmityFile
 import com.amity.socialcloud.sdk.model.core.file.AmityFileInfo
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.file.AmityVideo
+import com.amity.socialcloud.sdk.model.core.file.upload.AmityUploadInfo
 import com.amity.socialcloud.sdk.model.core.file.upload.AmityUploadResult
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
+import com.amity.socialcloud.uikit.common.service.AmityFileService
 import com.amity.socialcloud.uikit.community.compose.post.model.AmityFileUploadState
 import com.amity.socialcloud.uikit.community.compose.post.model.AmityPostMedia
 import com.amity.socialcloud.uikit.community.compose.post.model.AmityPostMedia.Type
+import com.ekoapp.ekosdk.internal.util.AppContext
 import com.google.gson.JsonObject
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
@@ -26,6 +38,12 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import net.ypresto.androidtranscoder.MediaTranscoder
+import net.ypresto.androidtranscoder.format.MediaFormatStrategyPresets
+import java.io.File
+import java.io.FileNotFoundException
+import java.lang.Exception
+import java.nio.ByteBuffer
 import java.util.UUID
 
 class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
@@ -497,6 +515,7 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
         }
     }
 
+
     fun removeMedia(postMedia: AmityPostMedia) {
         mediaMap.remove(postMedia.url.toString())
         uploadFailedMediaMap.remove(postMedia.url.toString())
@@ -555,28 +574,46 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
 
     private fun cancelUpload(uploadId: String?) {
         uploadId?.let {
-            AmityCoreClient.newFileRepository().cancelUpload(uploadId)
+            AmityFileService().cancelUpload(uploadId)
         }
     }
 
+
     private fun uploadMedia(postMedia: AmityPostMedia) {
-        AmityCoreClient.newFileRepository()
+        updateMediaTransCodingStatus(postMedia)
+        AmityFileService()
             .run {
                 when (postMedia.type) {
                     Type.IMAGE -> uploadImage(postMedia.url)
-                    Type.VIDEO -> uploadVideo(
-                        postMedia.url,
-                        AmityContentFeedType.POST
-                    )
+                    Type.VIDEO -> {
+                        uploadVideo(
+                            postMedia.url,
+                            AmityContentFeedType.POST
+                        )
+                    }
                 }
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnNext {
+                        updateMediaUploadStatus(postMedia, it)
+                    }
+                    .ignoreElements()
+                    .subscribe()
             }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext {
-                updateMediaUploadStatus(postMedia, it)
-            }
-            .ignoreElements()
-            .subscribe()
+    }
+
+    private fun updateMediaTransCodingStatus(
+        postMedia: AmityPostMedia,
+    ) {
+        val pm = AmityPostMedia(
+            id = postMedia.id,
+            uploadId = postMedia.uploadId,
+            url = postMedia.url,
+            uploadState = AmityFileUploadState.UPLOADING,
+            currentProgress = 1,
+            type = postMedia.type
+        )
+        updateList(pm)
     }
 
     private fun updateMediaUploadStatus(
