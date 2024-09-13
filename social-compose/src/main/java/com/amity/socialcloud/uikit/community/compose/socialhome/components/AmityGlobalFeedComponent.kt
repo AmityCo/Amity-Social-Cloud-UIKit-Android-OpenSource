@@ -177,7 +177,9 @@ fun AmityGlobalFeedComponent(
                                 modifier = modifier,
                                 pageScope = pageScope,
                                 onExploreClicked = {},
-                                onCreateClicked = {}
+                                onCreateClicked = {
+                                    behavior.goToCreateCommunityPage(context)
+                                }
                             )
                         }
                     }

@@ -115,9 +115,7 @@ fun AmityPostContentComponent(
         }
     }
 
-    AmityBaseComponent(
-        componentId = "post_content"
-    ) {
+    AmityBaseComponent(componentId = "post_content") {
         Column(
             modifier = modifier
                 .fillMaxWidth()
@@ -145,9 +143,10 @@ fun AmityPostContentComponent(
                 modifier = modifier,
                 post = post,
                 onClick = {
-                    if (!isPostDetailPage) {
-                        onTapAction()
-                    }
+                    // TODO: 8/9/24 disabled click on post content to fix long text post can't scroll
+//                    if (!isPostDetailPage) {
+//                        onTapAction()
+//                    }
                 },
             )
             AmityPostPreviewLinkView(
@@ -158,6 +157,7 @@ fun AmityPostContentComponent(
                 modifier = modifier,
                 post = post
             )
+
             if (viewModel.isNotMember(post)) {
                 AmityPostNonMemberSection()
             } else {

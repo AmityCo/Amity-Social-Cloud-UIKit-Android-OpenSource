@@ -29,12 +29,12 @@ import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.sdk.model.social.comment.AmityCommentReferenceType
+import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentViewModel
-import com.amity.socialcloud.uikit.community.compose.comment.elements.AmityCommentAvatarView
 import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.AmityMentionSuggestionView
 import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.AmityMentionTextField
 
@@ -44,7 +44,7 @@ fun AmityCommentComposerBar(
     componentScope: AmityComposeComponentScope? = null,
     referenceId: String,
     referenceType: AmityCommentReferenceType,
-    avatarUrl: String? = null,
+    currentUser: AmityUser?,
     replyComment: AmityComment? = null,
     onClose: () -> Unit
 ) {
@@ -107,9 +107,8 @@ fun AmityCommentComposerBar(
                 .background(AmityTheme.colors.background)
                 .padding(12.dp)
         ) {
-            AmityCommentAvatarView(
-                avatarUrl = avatarUrl,
-                size = 32.dp,
+            AmityUserAvatarView(
+                user = currentUser,
                 modifier = Modifier
                     .align(Alignment.Bottom)
                     .padding(bottom = 6.dp)
@@ -202,5 +201,6 @@ fun AmityCommentComposerBarPreview() {
     AmityCommentComposerBar(
         referenceId = "",
         referenceType = AmityCommentReferenceType.STORY,
+        currentUser = null,
     ) {}
 }

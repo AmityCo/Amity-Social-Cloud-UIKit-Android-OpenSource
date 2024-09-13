@@ -39,10 +39,72 @@
             android:configChanges="uiMode"
             android:screenOrientation="portrait"
             android:theme="@style/AmitySocialTheme" />
-        <activity android:name=".community.profile.AmityCommunityProfilePageActivity"
+        <activity
+            android:name=".community.profile.AmityCommunityProfilePageActivity"
             android:configChanges="uiMode"
             android:screenOrientation="portrait"
             android:theme="@style/AmitySocialTheme" />
+        <activity
+            android:name=".community.pending.AmityPendingPostsPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme" />
+        <activity
+            android:name=".community.setup.AmityCommunitySetupPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme" />
+        <activity
+            android:name=".community.setting.AmityCommunitySettingPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme" />
+        <activity
+            android:name=".community.category.AmityCommunityAddCategoryPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme" />
+        <activity
+            android:name=".community.membership.add.AmityCommunityAddMemberPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme" />
+        <activity
+            android:name=".community.membership.list.AmityCommunityMembershipPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme" />
+        <activity
+            android:name=".community.setting.post.AmityCommunityPostPermissionPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme" />
+        <activity
+            android:name=".community.setting.story.AmityCommunityStorySettingPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme" />
+        <activity
+            android:name=".community.setting.notifications.AmityCommunityNotificationSettingPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme" />
+        <activity
+            android:name=".community.setting.notifications.comments.AmityCommunityCommentsNotificationSettingPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme" />
+        <activity
+            android:name=".community.setting.notifications.posts.AmityCommunityPostsNotificationSettingPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme" />
+        <activity
+            android:name=".community.setting.notifications.stories.AmityCommunityStoriesNotificationSettingPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme" />
+
         <activity
             android:name=".search.global.AmitySocialGlobalSearchPageActivity"
             android:configChanges="uiMode"

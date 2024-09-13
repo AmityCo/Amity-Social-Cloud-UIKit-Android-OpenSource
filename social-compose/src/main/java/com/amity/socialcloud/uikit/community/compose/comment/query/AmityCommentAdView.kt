@@ -45,13 +45,13 @@ import com.amity.socialcloud.uikit.common.ad.AmityAdBadge
 import com.amity.socialcloud.uikit.common.ad.AmityAdEngine
 import com.amity.socialcloud.uikit.common.ad.AmityAdInfoSheet
 import com.amity.socialcloud.uikit.common.asset.ImageFromAsset
+import com.amity.socialcloud.uikit.common.ui.elements.AmityAvatarView
 import com.amity.socialcloud.uikit.common.ui.elements.AmityExpandableText
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.isVisible
 import com.amity.socialcloud.uikit.community.compose.R
-import com.amity.socialcloud.uikit.community.compose.comment.elements.AmityCommentAvatarView
 import com.google.gson.JsonObject
 
 
@@ -87,10 +87,9 @@ fun AmityCommentAdView(
             .isVisible { isVisible = it }
             .testTag("comment_list/*")
     ) {
-        AmityCommentAvatarView(
-            size = 32.dp,
-            avatarUrl = ad.getAdvertiser()?.getAvatar()?.getUrl() ?: "",
-            fallbackResource = R.drawable.amity_ic_default_advertiser,
+        AmityAvatarView(
+            image = ad.getAdvertiser()?.getAvatar(),
+            placeholder = R.drawable.amity_ic_default_advertiser,
             modifier = modifier.testTag("comment_list/comment_bubble_avatar")
         )
 

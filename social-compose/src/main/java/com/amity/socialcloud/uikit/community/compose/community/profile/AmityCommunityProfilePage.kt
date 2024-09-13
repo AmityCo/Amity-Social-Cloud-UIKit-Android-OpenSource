@@ -42,6 +42,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityNewsFeedDivider
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
+import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageBehavior
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfileViewModel
 import com.amity.socialcloud.uikit.community.compose.community.profile.component.AmityCommunityHeaderComponent
 import com.amity.socialcloud.uikit.community.compose.community.profile.component.AmityCommunityHeaderStyle
@@ -67,7 +68,7 @@ fun AmityCommunityProfilePage(
 		val state by remember { viewModel.communityProfileState }.collectAsState()
 		val community by remember { derivedStateOf { state.community } }
 		var expanded by remember { mutableStateOf(false) }
-		
+
 		var isHeaderSticky by remember { mutableStateOf(false) }
 		val pullRefreshState = rememberPullRefreshState(
 			refreshing = state.isRefreshing,
@@ -75,22 +76,22 @@ fun AmityCommunityProfilePage(
 				viewModel.refresh()
 			}
 		)
-		
+
 		val behavior = remember {
 			AmitySocialBehaviorHelper.communityProfilePageBehavior
 		}
 		val announcement = remember(state.isRefreshing) { viewModel.getAnnouncement() }.collectAsLazyPagingItems()
 		val posts = remember(state.isRefreshing) { viewModel.getCommunityPosts() }.collectAsLazyPagingItems()
 		val pin = remember(state.isRefreshing) { viewModel.getPin() }.collectAsLazyPagingItems()
-		
+
 		var selectedTabIndex by remember { mutableStateOf(0) }
 		Scaffold { padding ->
 			Box(
 				modifier = Modifier
-					.padding(PaddingValues(bottom = padding.calculateBottomPadding()))
-					.fillMaxSize()
-					.pullRefresh(pullRefreshState)
-					.background(AmityTheme.colors.newsfeedDivider),
+                    .padding(PaddingValues(bottom = padding.calculateBottomPadding()))
+                    .fillMaxSize()
+                    .pullRefresh(pullRefreshState)
+                    .background(AmityTheme.colors.newsfeedDivider),
 			) {
 				LaunchedEffect(lazyListState) {
 					snapshotFlow { lazyListState.firstVisibleItemIndex }
@@ -99,14 +100,14 @@ fun AmityCommunityProfilePage(
 								isHeaderSticky = true
 							} else if (index <= 1 && isHeaderSticky) {
 								isHeaderSticky = false
-								
+
 							}
 						}
 				}
 				LazyColumn(
 					modifier = Modifier
-						.fillMaxSize()
-						.background(AmityTheme.colors.newsfeedDivider),
+                        .fillMaxSize()
+                        .background(AmityTheme.colors.newsfeedDivider),
 					state = lazyListState,
 				) {
 					if (community == null || state.isRefreshing) {
@@ -159,26 +160,28 @@ fun AmityCommunityProfilePage(
 									is AmityPost.Data.IMAGE,
 									is AmityPost.Data.VIDEO -> {
 									}
-									
-									else -> return@items
+
+                                    else -> return@items
 								}
-								
-								if (post.isDeleted()) {
+
+                                if (post.isDeleted()) {
 									return@items
 								}
-								
-								AmityPostContentComponent(
+
+                                AmityPostContentComponent(
 									post = post,
 									style = AmityPostContentComponentStyle.FEED,
 									category = AmityPostCategory.ANNOUNCEMENT,
 									hideMenuButton = false,
 									hideTarget = true,
 								) {
-									behavior.goToPostDetailPage(
-										context = context,
-										postId = post.getPostId(),
-										category = AmityPostCategory.ANNOUNCEMENT
-									)
+                                    behavior.goToPostDetailPage(
+                                        AmityCommunityProfilePageBehavior.Context(
+                                            pageContext = context,
+                                        ),
+                                        postId = post.getPostId(),
+                                        category = AmityPostCategory.ANNOUNCEMENT
+                                    )
 								}
 								AmityNewsFeedDivider()
 							}
@@ -197,19 +200,19 @@ fun AmityCommunityProfilePage(
 									val isAnnouncement = announcement.itemSnapshotList.items
 										.map { it.postId }
 										.contains(post.getPostId())
-									
-									if (isAnnouncement) {
+
+                                    if (isAnnouncement) {
 										return@items
 									}
-									
-									// TODO: 3/6/24 currently only support text, image, and video post
+
+                                    // TODO: 3/6/24 currently only support text, image, and video post
 									when (post.getData()) {
 										is AmityPost.Data.TEXT,
 										is AmityPost.Data.IMAGE,
 										is AmityPost.Data.VIDEO -> {
 										}
-										
-										else -> return@items
+
+                                        else -> return@items
 									}
 									val category = if(
 										pin.itemSnapshotList.items.map { it.postId }.contains(post.getPostId())
@@ -225,29 +228,31 @@ fun AmityCommunityProfilePage(
 										hideMenuButton = false,
 										hideTarget = true,
 									) {
-										behavior.goToPostDetailPage(
-											context = context,
-											postId = post.getPostId(),
-											category = category,
-										)
+                                        behavior.goToPostDetailPage(
+                                            AmityCommunityProfilePageBehavior.Context(
+                                                pageContext = context,
+                                            ),
+                                            postId = post.getPostId(),
+                                            category = category,
+                                        )
 									}
 									AmityNewsFeedDivider()
 								}
-								
-								is AmityListItem.AdItem -> {
+
+                                is AmityListItem.AdItem -> {
 									val ad = data.ad
-									
-									AmityPostAdView(
+
+                                    AmityPostAdView(
 										ad = ad,
 									)
 									AmityNewsFeedDivider()
 								}
-								
-								else -> {}
+
+                                else -> {}
 							}
 						}
-						
-						if (announcement.itemCount == 0 && posts.itemCount == 0) {
+
+                        if (announcement.itemCount == 0 && posts.itemCount == 0) {
 							item {
 								Box(
 									modifier = Modifier
@@ -268,37 +273,39 @@ fun AmityCommunityProfilePage(
 								val isAnnouncement = announcement.itemSnapshotList.items
 									.map { it.postId }
 									.contains(post.getPostId())
-								
-								if (isAnnouncement) {
+
+                                if (isAnnouncement) {
 									return@items
 								}
-								
-								// TODO: 3/6/24 currently only support text, image, and video post
+
+                                // TODO: 3/6/24 currently only support text, image, and video post
 								when (post.getData()) {
 									is AmityPost.Data.TEXT,
 									is AmityPost.Data.IMAGE,
 									is AmityPost.Data.VIDEO -> {
 									}
-									
-									else -> return@items
+
+                                    else -> return@items
 								}
-								
-								if (post.isDeleted()) {
+
+                                if (post.isDeleted()) {
 									return@items
 								}
-								
-								AmityPostContentComponent(
+
+                                AmityPostContentComponent(
 									post = post,
 									style = AmityPostContentComponentStyle.FEED,
 									category = AmityPostCategory.PIN,
 									hideMenuButton = false,
 									hideTarget = true,
 								) {
-									behavior.goToPostDetailPage(
-										context = context,
-										postId = post.getPostId(),
-										category = AmityPostCategory.PIN,
-									)
+                                    behavior.goToPostDetailPage(
+                                        AmityCommunityProfilePageBehavior.Context(
+                                            pageContext = context,
+                                        ),
+                                        postId = post.getPostId(),
+                                        category = AmityPostCategory.PIN
+                                    )
 								}
 								AmityNewsFeedDivider()
 							}
@@ -313,8 +320,8 @@ fun AmityCommunityProfilePage(
 								}
 							}
 						}
-						
-					}
+
+                    }
 				}
 				AmityBaseElement(
 					pageScope = getPageScope(),
@@ -327,9 +334,9 @@ fun AmityCommunityProfilePage(
 						shape = RoundedCornerShape(size = 32.dp),
 						containerColor = AmityTheme.colors.primary,
 						modifier = Modifier
-							.padding(16.dp)
-							.size(64.dp)
-							.align(Alignment.BottomEnd)
+                            .padding(16.dp)
+                            .size(64.dp)
+                            .align(Alignment.BottomEnd)
 					) {
 						Icon(
 							painter = painterResource(id = getConfig().getIcon()),
@@ -355,5 +362,5 @@ fun AmityCommunityProfilePage(
 			}
 		}
 	}
-	
+
 }

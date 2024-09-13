@@ -1,18 +1,10 @@
 package com.amity.socialcloud.uikit.community.compose.post.composer
 
-import android.content.Context
-import android.media.MediaCodec
-import android.media.MediaExtractor
-import android.media.MediaFormat
-import android.media.MediaMuxer
 import android.net.Uri
-import android.os.Environment
-import android.provider.MediaStore
-import android.util.Log
-import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
+import com.amity.socialcloud.sdk.api.social.post.review.AmityReviewStatus
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadata
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataCreator
 import com.amity.socialcloud.sdk.model.core.content.AmityContentFeedType
@@ -20,7 +12,6 @@ import com.amity.socialcloud.sdk.model.core.file.AmityFile
 import com.amity.socialcloud.sdk.model.core.file.AmityFileInfo
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.file.AmityVideo
-import com.amity.socialcloud.sdk.model.core.file.upload.AmityUploadInfo
 import com.amity.socialcloud.sdk.model.core.file.upload.AmityUploadResult
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
@@ -28,7 +19,6 @@ import com.amity.socialcloud.uikit.common.service.AmityFileService
 import com.amity.socialcloud.uikit.community.compose.post.model.AmityFileUploadState
 import com.amity.socialcloud.uikit.community.compose.post.model.AmityPostMedia
 import com.amity.socialcloud.uikit.community.compose.post.model.AmityPostMedia.Type
-import com.ekoapp.ekosdk.internal.util.AppContext
 import com.google.gson.JsonObject
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
@@ -38,12 +28,6 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import net.ypresto.androidtranscoder.MediaTranscoder
-import net.ypresto.androidtranscoder.format.MediaFormatStrategyPresets
-import java.io.File
-import java.io.FileNotFoundException
-import java.lang.Exception
-import java.nio.ByteBuffer
 import java.util.UUID
 
 class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
@@ -433,8 +417,12 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSuccess {
-                AmityPostComposerHelper.addNewPost(it)
-                setPostCreationEvent(AmityPostCreationEvent.Success)
+                if (it.getReviewStatus() == AmityReviewStatus.UNDER_REVIEW) {
+                    setPostCreationEvent(AmityPostCreationEvent.Pending)
+                } else {
+                    AmityPostComposerHelper.addNewPost(it)
+                    setPostCreationEvent(AmityPostCreationEvent.Success)
+                }
             }
             .doOnError {
                 setPostCreationEvent(AmityPostCreationEvent.Failed)
@@ -703,4 +691,5 @@ sealed class AmityPostCreationEvent {
     object Updating : AmityPostCreationEvent()
     object Failed : AmityPostCreationEvent()
     object Success : AmityPostCreationEvent()
+    object Pending : AmityPostCreationEvent()
 }

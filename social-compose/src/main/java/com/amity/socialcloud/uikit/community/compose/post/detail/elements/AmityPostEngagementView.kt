@@ -15,6 +15,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -50,14 +51,17 @@ fun AmityPostEngagementView(
     post: AmityPost,
     isPostDetailPage: Boolean,
 ) {
-    var isReacted by remember(post.getReactionCount()) {
+    var isReacted by remember(post.getUpdatedAt(), post.getMyReactions()) {
         mutableStateOf(post.getMyReactions().isNotEmpty())
+    }
+    var localReactionCount by remember(post.getUpdatedAt(), post.getReactionCount()) {
+        mutableIntStateOf(post.getReactionCount())
     }
 
     val reactionCount = pluralStringResource(
         id = R.plurals.amity_feed_reaction_count,
-        count = post.getReactionCount(),
-        post.getReactionCount().readableNumber()
+        count = localReactionCount,
+        localReactionCount.readableNumber()
     )
 
     val commentCount = pluralStringResource(
@@ -148,16 +152,22 @@ fun AmityPostEngagementView(
                             .size(20.dp)
                             .clickableWithoutRipple {
                                 isReacted = !isReacted
+
                                 if (isReacted) {
-                                    viewModel.addReaction(post.getPostId())
+                                    localReactionCount += 1
                                 } else {
-                                    viewModel.removeReaction(post.getPostId())
+                                    localReactionCount -= 1
                                 }
+
+                                viewModel.changeReaction(
+                                    postId = post.getPostId(),
+                                    isReacted = isReacted
+                                )
                             },
                     )
                     Text(
                         text = if (isPostDetailPage) getConfig().getText()
-                        else post.getReactionCount().readableNumber(),
+                        else localReactionCount.readableNumber(),
                         style = AmityTheme.typography.body.copy(
                             fontWeight = FontWeight.SemiBold,
                             color = if (isReacted) AmityTheme.colors.primary

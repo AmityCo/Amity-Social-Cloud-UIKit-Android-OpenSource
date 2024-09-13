@@ -41,11 +41,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
-import com.amity.socialcloud.uikit.community.compose.R
-import com.amity.socialcloud.uikit.community.compose.story.hyperlink.elements.AmityHyperlinkTextField
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
+import com.amity.socialcloud.uikit.common.ui.elements.AmityTextField
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.community.compose.R
 
 @ExperimentalMaterial3Api
 @Composable
@@ -213,7 +213,7 @@ fun AmityStoryHyperlinkComponent(
                     .testTag(getAccessibilityId("hyper_link_url_title_text_view"))
             )
 
-            AmityHyperlinkTextField(
+            AmityTextField(
                 text = urlText,
                 hint = "https://example.com",
                 onValueChange = {
@@ -271,7 +271,7 @@ fun AmityStoryHyperlinkComponent(
                 )
             }
 
-            AmityHyperlinkTextField(
+            AmityTextField(
                 text = customText,
                 hint = "Name your link",
                 maxCharacters = CustomTextLimit,

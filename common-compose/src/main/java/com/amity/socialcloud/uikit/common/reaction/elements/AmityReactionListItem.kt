@@ -23,7 +23,7 @@ import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.core.reaction.AmityReaction
 import com.amity.socialcloud.uikit.common.compose.R
 import com.amity.socialcloud.uikit.common.model.AmityMessageReactions
-import com.amity.socialcloud.uikit.common.ui.elements.AmityAvatarView
+import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 
 @Composable
@@ -32,10 +32,10 @@ fun AmityReactionListItem(
     reaction: AmityReaction,
     onRemoveReaction: (AmityReaction) -> Unit = {}
 ) {
-    val avatarUrl = reaction.getCreator()?.getAvatar()?.getUrl()
     val displayName = reaction.getCreator()?.getDisplayName() ?: ""
     val reactionName = reaction.getReactionName()
     val isMyReaction = reaction.getCreatorId() == AmityCoreClient.getUserId()
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
@@ -47,10 +47,10 @@ fun AmityReactionListItem(
                 }
             }
     ) {
-        AmityAvatarView(
+        AmityUserAvatarView(
             modifier = modifier,
             size = 40.dp,
-            avatarUrl = avatarUrl
+            user = reaction.getCreator(),
         )
 
         Column(
@@ -81,16 +81,16 @@ fun AmityReactionListItem(
         Spacer(modifier = Modifier.weight(1f))
 
         val iconId = AmityMessageReactions.getList()
-            .find {
-                reaction -> reaction.name == reactionName
+            .find { reaction ->
+                reaction.name == reactionName
             }?.icon ?: R.drawable.amity_ic_message_reaction_missing
 
-            Image(
-                imageVector = ImageVector.vectorResource(id = iconId),
-                contentDescription = "",
-                modifier = Modifier
-                    .size(24.dp)
-            )
+        Image(
+            imageVector = ImageVector.vectorResource(id = iconId),
+            contentDescription = "",
+            modifier = Modifier
+                .size(24.dp)
+        )
 
     }
 }

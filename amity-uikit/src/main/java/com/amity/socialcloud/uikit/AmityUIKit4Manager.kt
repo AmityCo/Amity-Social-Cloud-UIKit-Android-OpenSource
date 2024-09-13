@@ -43,6 +43,6 @@ object AmityUIKit4Manager {
         behavior.userSearchResultComponentBehavior = AmityCustomUserSearchResultComponentBehavior()
         behavior.myCommunitiesComponentBehavior = AmityCustomMyCommunitiesComponentBehavior()
         behavior.postContentComponentBehavior = AmityCustomPostContentComponentBehavior()
-        behavior.communityProfilePageBehavior = AmityCustomCommunityProfilePageBehavior()
+        behavior.communityMembershipPageBehavior = AmityCustomCommunityMembershipPageBehavior()
     }
 }

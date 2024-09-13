@@ -46,6 +46,7 @@ import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.uikit.common.common.readableMinuteSeconds
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
+import com.amity.socialcloud.uikit.common.ui.elements.AmityMenuButton
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.asDrawableRes
 import com.amity.socialcloud.uikit.common.utils.closePage
@@ -55,7 +56,6 @@ import com.amity.socialcloud.uikit.common.utils.getValue
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.story.create.elements.AmityStoryCameraPreviewElement
-import com.amity.socialcloud.uikit.community.compose.story.create.elements.AmityStoryCameraRelatedButtonElement
 import com.amity.socialcloud.uikit.community.compose.story.create.elements.AmityStoryCameraShutterButtonElement
 import com.amity.socialcloud.uikit.community.compose.story.create.elements.AmityStoryPhotoVideoSelectionElement
 import com.amity.socialcloud.uikit.community.compose.story.draft.AmityStoryMediaType
@@ -225,9 +225,9 @@ fun AmityCreateStoryPage(
                         pageScope = getPageScope(),
                         elementId = "close_button"
                     ) {
-                        AmityStoryCameraRelatedButtonElement(
+                        AmityMenuButton(
                             icon = getConfig().getValue("close_icon").asDrawableRes(),
-                            iconSize = 12.dp,
+                            size = 12.dp,
                             modifier = Modifier
                                 .size(32.dp)
                                 .constrainAs(closeBtn) {
@@ -244,9 +244,9 @@ fun AmityCreateStoryPage(
                     }
 
                     if (isBackCameraSelected) {
-                        AmityStoryCameraRelatedButtonElement(
+                        AmityMenuButton(
                             icon = if (isFlashLightOn) R.drawable.amity_ic_story_flash else R.drawable.amity_ic_story_flash_off,
-                            iconSize = if (isFlashLightOn) 19.dp else 24.dp,
+                            size = if (isFlashLightOn) 19.dp else 24.dp,
                             modifier = Modifier
                                 .size(32.dp)
                                 .constrainAs(flashBtn) {
@@ -260,9 +260,9 @@ fun AmityCreateStoryPage(
                             }
                         )
                     }
-                    AmityStoryCameraRelatedButtonElement(
+                    AmityMenuButton(
                         icon = R.drawable.amity_ic_story_media,
-                        iconSize = 24.dp,
+                        size = 24.dp,
                         modifier = Modifier
                             .size(40.dp)
                             .constrainAs(selectMediaBtn) {
@@ -290,9 +290,9 @@ fun AmityCreateStoryPage(
                             }
                         }
                     }
-                    AmityStoryCameraRelatedButtonElement(
+                    AmityMenuButton(
                         icon = R.drawable.amity_ic_story_switch_camera,
-                        iconSize = 20.dp,
+                        size = 20.dp,
                         modifier = Modifier
                             .size(40.dp)
                             .constrainAs(switchCameraBtn) {

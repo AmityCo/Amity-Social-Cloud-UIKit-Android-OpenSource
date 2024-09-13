@@ -1,7 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.story.target.elements
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,28 +9,21 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.request.CachePolicy
-import coil.request.ImageRequest
-import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
-import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
+import com.amity.socialcloud.uikit.common.ui.elements.AmityCommunityAvatarView
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.asColorList
@@ -39,21 +31,24 @@ import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.getValueAsList
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.story.target.utils.AmityStoryTargetRingUiState
-import kotlinx.coroutines.Dispatchers
 
 @Composable
 fun AmityStoryTargetElement(
     modifier: Modifier = Modifier,
     componentScope: AmityComposeComponentScope,
     isCommunityTarget: Boolean = false,
-    communityDisplayName: String = "",
-    avatarUrl: String = "",
+    community: AmityCommunity?,
     ringUiState: AmityStoryTargetRingUiState,
-    isPublicCommunity: Boolean = false,
-    isOfficialCommunity: Boolean = false,
     hasManageStoryPermission: Boolean = false,
     onClick: () -> Unit
 ) {
+    val isPublicCommunity by remember(community?.getCommunityId()) {
+        mutableStateOf(community?.isPublic() == true)
+    }
+    val isOfficialCommunity by remember(community?.getCommunityId()) {
+        mutableStateOf(community?.isOfficial() == true)
+    }
+
     AmityBaseElement(
         componentScope = componentScope,
         elementId = "story_ring"
@@ -76,7 +71,7 @@ fun AmityStoryTargetElement(
         val displayName = if (isCommunityTarget) {
             "Story"
         } else {
-            communityDisplayName
+            community?.getDisplayName() ?: ""
         }
 
         Column(
@@ -93,39 +88,13 @@ fun AmityStoryTargetElement(
             Box(
                 modifier = Modifier.size(if (isCommunityTarget) 48.dp else 64.dp)
             ) {
-                Box(
+                AmityCommunityAvatarView(
+                    community = community,
+                    size = if (isCommunityTarget) 40.dp else 56.dp,
                     modifier = Modifier
-                        .size(if (isCommunityTarget) 40.dp else 56.dp)
+                        .testTag("story_target_list/target_avatar")
                         .align(Alignment.Center)
-                ) {
-                    if (avatarUrl.isEmpty()) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.amity_ic_default_community_avatar_circular),
-                            tint = Color.White,
-                            contentDescription = "Avatar Image",
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clip(CircleShape)
-                                .background(AmityTheme.colors.primaryShade3)
-                                .testTag("story_target_list/target_avatar")
-                        )
-                    } else {
-                        AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(avatarUrl)
-                                .dispatcher(Dispatchers.IO)
-                                .diskCachePolicy(CachePolicy.ENABLED)
-                                .memoryCachePolicy(CachePolicy.ENABLED)
-                                .build(),
-                            contentScale = ContentScale.Crop,
-                            contentDescription = "Avatar Image",
-                            modifier = modifier
-                                .clip(CircleShape)
-                                .align(Alignment.Center)
-                                .testTag("story_target_list/target_avatar")
-                        )
-                    }
-                }
+                )
 
                 AmityStoryGradientRingElement(
                     colors = colors,
@@ -176,23 +145,5 @@ fun AmityStoryTargetElement(
                 )
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun AmityStoryTargetElementPreview() {
-    AmityUIKitConfigController.setup(LocalContext.current)
-    AmityBaseComponent(componentId = "story_tab_component") {
-        AmityStoryTargetElement(
-            componentScope = getComponentScope(),
-            communityDisplayName = "Meow",
-            avatarUrl = "",
-            ringUiState = AmityStoryTargetRingUiState.SYNCING,
-            isPublicCommunity = false,
-            isOfficialCommunity = true,
-            isCommunityTarget = false,
-            hasManageStoryPermission = true,
-        ) {}
     }
 }

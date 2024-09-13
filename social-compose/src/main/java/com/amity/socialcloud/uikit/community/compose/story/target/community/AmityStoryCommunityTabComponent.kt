@@ -11,15 +11,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.sdk.model.social.story.AmityStoryTarget
+import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.story.target.elements.AmityStoryTargetElement
 import com.amity.socialcloud.uikit.community.compose.story.target.utils.AmityStoryTargetRingUiState
 import com.amity.socialcloud.uikit.community.compose.story.target.utils.toRingUiState
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageType
-import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 
 @Composable
 fun AmityStoryCommunityTabComponent(
@@ -74,11 +73,8 @@ fun AmityStoryCommunityTabComponent(
         AmityStoryTargetElement(
             modifier = modifier,
             componentScope = getComponentScope(),
-            communityDisplayName = community?.getDisplayName() ?: "",
-            avatarUrl = community?.getAvatar()?.getUrl(AmityImage.Size.LARGE) ?: "",
+            community = community,
             ringUiState = storyTargetRingUiState,
-            isPublicCommunity = community?.isPublic() ?: false,
-            isOfficialCommunity = community?.isOfficial() ?: false,
             isCommunityTarget = true,
             hasManageStoryPermission = hasManageStoryPermission,
         ) {

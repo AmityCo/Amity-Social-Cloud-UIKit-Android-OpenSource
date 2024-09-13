@@ -26,7 +26,6 @@ object AmityUIKitDrawableResolver {
         "exploreCommunityIcon" to R.drawable.amity_ic_social_globe,
         "lockIcon" to R.drawable.amity_ic_lock1,
         "officialBadgeIcon" to R.drawable.amity_ic_verified,
-        "backButtonIcon" to R.drawable.amity_ic_social_back,
         "menuIcon" to R.drawable.amity_ic_more_horiz,
         "badgeIcon" to R.drawable.amity_ic_moderator_social,
         "commentButtonIcon" to R.drawable.amity_ic_post_comment,
@@ -41,14 +40,17 @@ object AmityUIKitDrawableResolver {
         "plusIcon" to R.drawable.amity_ic_plus_button,
         "communityFeedIcon" to R.drawable.amity_ic_community_feed,
         "communityPinIcon" to R.drawable.amity_ic_community_pin,
-        "backIcon" to R.drawable.amity_ic_social_back,
+        "backIcon" to R.drawable.amity_ic_back,
         "threeDotIcon" to R.drawable.amity_ic_more_horiz,
         "communityAnnouncementBadge" to R.drawable.amity_ic_announcement_badge,
         "communityPinBadge" to R.drawable.amity_ic_pin_badge,
+        "privacyPrivateIcon" to R.drawable.amity_ic_lock1,
+        "privacyPublicIcon" to R.drawable.amity_ic_globe,
+        "addIcon" to R.drawable.amity_ic_add,
     )
 
     @DrawableRes
     fun getDrawableRes(name: String): Int {
-        return MAPPER.firstOrNull { it.first == name }?.second ?: R.drawable.amity_ic_warning
+        return MAPPER.firstOrNull { it.first == name }?.second ?: R.drawable.amity_empty
     }
 }
