@@ -45,6 +45,8 @@ class AmityCommunityProfileViewModel constructor(private val communityId: String
 				val isMember = community.isJoined()
 				_communityProfileState.value = CommunityProfileState(communityId, community, isRefreshing = false, isMember = isMember, isModerator = isModerator)
 			}
+			.subscribeOn(Schedulers.io())
+			.observeOn(AndroidSchedulers.mainThread())
 			.subscribe()
 			.let { disposable.add(it) }
 	}

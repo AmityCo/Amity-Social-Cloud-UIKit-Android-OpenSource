@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
@@ -108,6 +109,31 @@ fun AmityCommunityProfileShimmer(modifier: Modifier = Modifier) {
 				Box(
 					modifier = Modifier
 						.width(54.dp)
+						.height(12.dp)
+						.shimmerBackground(
+							color = AmityTheme.colors.baseShade4,
+							shape = RoundedCornerShape(size = 12.dp)
+						)
+				)
+			}
+
+			Spacer(modifier = Modifier.height(32.dp))
+			Column(
+				horizontalAlignment = Alignment.CenterHorizontally,
+				modifier = modifier.width(64.dp)
+			) {
+				Box(
+					modifier = modifier
+						.size(40.dp)
+						.shimmerBackground(
+							color = AmityTheme.colors.baseShade4,
+							shape = RoundedCornerShape(40.dp)
+						)
+				)
+				Spacer(modifier = Modifier.height(12.dp))
+				Box(
+					modifier = Modifier
+						.width(60.dp)
 						.height(12.dp)
 						.shimmerBackground(
 							color = AmityTheme.colors.baseShade4,

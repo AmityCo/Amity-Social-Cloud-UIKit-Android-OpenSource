@@ -1,8 +1,12 @@
 package com.amity.socialcloud.uikit.community.compose
 
+import com.amity.socialcloud.uikit.community.compose.community.membership.list.AmityCommunityMembershipPageBehavior
+import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageBehavior
+import com.amity.socialcloud.uikit.community.compose.community.setting.AmityCommunitySettingPageBehavior
+import com.amity.socialcloud.uikit.community.compose.community.setting.notifications.AmityCommunityNotificationSettingPageBehavior
+import com.amity.socialcloud.uikit.community.compose.community.setup.AmityCommunitySetupPageBehavior
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerPageBehavior
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetailPageBehavior
-import com.amity.socialcloud.uikit.community.compose.community.profile.component.AmityCommunityProfilePageBehavior
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponentBehavior
 import com.amity.socialcloud.uikit.community.compose.search.community.AmityMyCommunitiesSearchPageBehavior
 import com.amity.socialcloud.uikit.community.compose.search.components.AmityCommunitySearchResultComponentBehavior
@@ -12,6 +16,7 @@ import com.amity.socialcloud.uikit.community.compose.socialhome.AmitySocialHomeP
 import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmityCreatePostMenuComponentBehavior
 import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmityGlobalFeedComponentBehavior
 import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmityMyCommunitiesComponentBehavior
+import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmitySocialHomeTopNavigationComponentBehavior
 import com.amity.socialcloud.uikit.community.compose.story.create.AmityCreateStoryPageBehavior
 import com.amity.socialcloud.uikit.community.compose.story.target.AmityStoryTabComponentBehavior
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageBehavior
@@ -44,6 +49,9 @@ object AmitySocialBehaviorHelper {
     var createPostMenuComponentBehavior: AmityCreatePostMenuComponentBehavior =
         AmityCreatePostMenuComponentBehavior()
 
+    var socialHomeTopNavigationComponentBehavior: AmitySocialHomeTopNavigationComponentBehavior =
+        AmitySocialHomeTopNavigationComponentBehavior()
+
     var globalFeedComponentBehavior: AmityGlobalFeedComponentBehavior =
         AmityGlobalFeedComponentBehavior()
 
@@ -67,7 +75,19 @@ object AmitySocialBehaviorHelper {
 
     var postComposerPageBehavior: AmityPostComposerPageBehavior =
         AmityPostComposerPageBehavior()
-	
-	var communityProfilePageBehavior: AmityCommunityProfilePageBehavior =
-		AmityCommunityProfilePageBehavior()
+
+    var communityProfilePageBehavior: AmityCommunityProfilePageBehavior =
+        AmityCommunityProfilePageBehavior()
+
+    var communitySetupPageBehavior: AmityCommunitySetupPageBehavior =
+        AmityCommunitySetupPageBehavior()
+
+    var communitySettingPageBehavior: AmityCommunitySettingPageBehavior =
+        AmityCommunitySettingPageBehavior()
+
+    var communityNotificationSettingPageBehavior: AmityCommunityNotificationSettingPageBehavior =
+        AmityCommunityNotificationSettingPageBehavior()
+
+    var communityMembershipPageBehavior: AmityCommunityMembershipPageBehavior =
+        AmityCommunityMembershipPageBehavior()
 }

@@ -25,6 +25,7 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.AmityNumberUtil.getNumberAbbreveation
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
+import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageBehavior
 
 @Composable
 fun AmityCommunityInfoView(
@@ -70,10 +71,16 @@ fun AmityCommunityInfoView(
 				.padding(horizontal = 16.dp)
 				.width(1.dp)
 				.height(20.dp)
-				.background(color = AmityTheme.colors.baseShade4)) {}
+				.background(color = AmityTheme.colors.baseShade4)
+            ) {}
 			Row(modifier = Modifier.clickable {
 				community?.let{
-					behavior.goToMemberListPage(context,it)
+                    behavior.goToMemberListPage(
+						AmityCommunityProfilePageBehavior.Context(
+							pageContext = context,
+                            community = it
+                        )
+                    )
 				}
 			}) {
 				Text(

@@ -4,10 +4,12 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeightIn
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,10 +27,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.R
-import com.amity.socialcloud.uikit.community.compose.comment.elements.AmityCommentAvatarView
 
 @Composable
 fun AmityMentionSuggestionView(
@@ -73,30 +75,36 @@ fun AmityMentionSuggestionView(
                         onClick(user)
                     },
             ) {
-                AmityCommentAvatarView(
-                    avatarUrl = user.getAvatar()?.getUrl(),
+                AmityUserAvatarView(
+                    user = user,
                     size = 40.dp,
                     modifier = modifier.padding(4.dp),
                 )
-                Text(
-                    text = user.getDisplayName() ?: "",
-                    overflow = TextOverflow.Ellipsis,
-                    style = AmityTheme.typography.body
-                )
-                // To be enable in next release
-                //val isBrandUser = user.isBrand()
-                val isBrandUser = false
-                if (isBrandUser) {
-                    val badge = R.drawable.amity_ic_brand_badge
-                    Image(
-                        painter = painterResource(id = badge),
-                        contentDescription = "",
-                        modifier = Modifier
-                            .size(20.dp)
-                            .padding(start = 4.dp)
-                            .testTag("mention_suggestion_view/brand_user_icon")
+
+                Row(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        maxLines = 1,
+                        text = user.getDisplayName() ?: "",
+                        overflow = TextOverflow.Ellipsis,
+                        style = AmityTheme.typography.body,
                     )
+
+                    val isBrandUser = user.isBrand()
+                    if (isBrandUser) {
+                        val badge = R.drawable.amity_ic_brand_badge
+                        Image(
+                            painter = painterResource(id = badge),
+                            contentDescription = "",
+                            modifier = Modifier
+                                .size(20.dp)
+                                .padding(start = 4.dp)
+                                .testTag("mention_suggestion_view/brand_user_icon")
+                        )
+                    }
                 }
+
             }
         }
     }

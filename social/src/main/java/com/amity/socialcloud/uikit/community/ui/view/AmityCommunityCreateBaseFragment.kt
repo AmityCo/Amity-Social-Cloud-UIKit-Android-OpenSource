@@ -25,7 +25,6 @@ import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageActivity
 import com.amity.socialcloud.uikit.community.data.AmitySelectCategoryItem
 import com.amity.socialcloud.uikit.community.databinding.AmityFragmentCreateCommunityBinding
-import com.amity.socialcloud.uikit.community.detailpage.AmityCommunityPageActivity
 import com.amity.socialcloud.uikit.community.explore.activity.AmityCategoryPickerActivity
 import com.amity.socialcloud.uikit.community.home.activity.AmityCommunityHomePageActivity
 import com.amity.socialcloud.uikit.community.ui.viewModel.AmityCreateCommunityViewModel
@@ -214,8 +213,8 @@ abstract class AmityCommunityCreateBaseFragment : RxFragment() {
 
     private fun showDialog() {
         AmityAlertDialogUtil.showDialog(requireContext(),
-            getString(R.string.amity_cc_leave),
-            getString(R.string.amity_cc_dialog_msg),
+            getString(R.string.amity_cc_leave_title),
+            getString(R.string.amity_cc_leave_description),
             getString(R.string.amity_leave),
             getString(R.string.amity_cancel),
             DialogInterface.OnClickListener { dialog, which ->

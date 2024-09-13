@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.chat.compose.live.composer
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -8,12 +9,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeightIn
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
+import com.amity.socialcloud.uikit.chat.compose.R
 import com.amity.socialcloud.uikit.chat.compose.live.AmityLiveChatPageViewModel
 import com.amity.socialcloud.uikit.chat.compose.live.elements.AmityAvatarType
 import com.amity.socialcloud.uikit.chat.compose.live.elements.AmityMessageAvatarView
@@ -56,14 +61,14 @@ fun AmityMentionSuggestionView(
             key = { index -> index }
         ) {
             val suggestion = suggestions[it] ?: return@items
-            val text = if(suggestion is AmityMentionSuggestion.USER) suggestion.user?.getDisplayName() ?: "" else "All"
-            val avatarUrl = if(suggestion is AmityMentionSuggestion.USER) suggestion.user?.getAvatar()?.getUrl(AmityImage.Size.SMALL) else null
+            val text = if(suggestion is AmityMentionSuggestion.USER) suggestion.user.getDisplayName() ?: "" else "All"
+            val avatarUrl = if(suggestion is AmityMentionSuggestion.USER) suggestion.user.getAvatar()?.getUrl(AmityImage.Size.SMALL) else null
+            val isBrandUser = suggestion is AmityMentionSuggestion.USER && suggestion.user.isBrand()
             Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = modifier
-                    .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 0.dp)
+                    .fillMaxWidth()
                     .height(52.dp)
                     .clickableWithoutRipple {
                         onClick(suggestion)
@@ -76,14 +81,30 @@ fun AmityMentionSuggestionView(
                 )
                 Text(
                     text = text,
+                    maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     style = AmityTheme.typography.body.copy(
                         fontWeight = FontWeight.SemiBold,
                         color = AmityTheme.colors.baseShade1,
-                    )
+                    ),
+                    modifier = Modifier.padding(start = 16.dp)
                 )
+
+                if(isBrandUser) {
+                    val badge = R.drawable.amity_ic_brand_badge
+                    Image(
+                        painter = painterResource(id = badge),
+                        contentDescription = "",
+                        modifier = Modifier
+                            .size(20.dp)
+                            .padding(start = 4.dp)
+                            .testTag("user_view/brand_user_icon")
+                    )
+                }
+
+                Spacer(modifier = Modifier.weight(1f))
+
                 if(suggestion is AmityMentionSuggestion.CHANNEL){
-                    Spacer(modifier = Modifier.weight(1f))
                     Text(
                         text = "Notify everyone",
                         overflow = TextOverflow.Ellipsis,

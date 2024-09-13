@@ -12,19 +12,6 @@
     <string name="amity_title_explore">Explore</string>
     <string name="amity_title_my_communities">My Communities</string>
     <string name="amity_community">Community</string>
-    <string name="amity_create_community">Create Community</string>
-    <string name="amity_cc_hint">Name your community</string>
-    <string name="amity_about">About</string>
-    <string name="amity_enter_description">Enter description</string>
-    <string name="amity_tv_public">Public</string>
-    <string name="amity_admin_description">Choose to allow Only Admins to create posts in this community.</string>
-    <string name="amity_public_description">Anyone can join, view, and search the posts in this community.</string>
-    <string name="amity_tv_private">Private</string>
-    <string name="amity_private_description">Only members invited by the moderators can join, view, and search the posts in this community.</string>
-    <string name="amity_only_admin">Only admin can post</string>
-    <string name="amity_add_members">Add members<font fgcolor='#FF0000'>*</font></string>
-    <string name="amity_cancel_request">Cancel request</string>
-    <string name="amity_select_members">Select members</string>
     <string name="amity_add">Add</string>
     <string name="amity_selected">Selected</string>
     <string name="amity_hello_blank_fragment">Hello blank fragment</string>
@@ -41,8 +28,6 @@
     <string name="amity_comment">Comment</string>
     <string name="amity_image_count">+%d</string>
     <string name="amity_view_all_files">View all files</string>
-    <string name="amity_leave">Leave</string>
-    <string name="amity_close">Close</string>
     <string name="amity_successfully_created_community">Successfully created community</string>
     <string name="amity_my_timeline">My Timeline</string>
     <string name="amity_post_as_community">Post as Community</string>
@@ -67,10 +52,7 @@
     <string name="amity_category">Category</string>
     <string name="amity_category_required_field">Category<font fgcolor='#FF0000'>*</font></string>
     <string name="amity_please_select_category">Please Select Category</string>
-    <string name="amity_categories">Categories</string>
     <string name="amity_error_name">This name has already been taken.</string>
-    <string name="amity_cc_leave">Leave without finishing</string>
-    <string name="amity_cc_dialog_msg">Your progress won\'t be saved and your group won\'t be created.</string>
     <string name="amity_done">DONE</string>
     <string name="amity_discard_comment_title">Discard Comment?</string>
     <string name="amity_discard_comment_message">Do you want to discard your comment?</string>
@@ -87,7 +69,6 @@
     <string name="amity_join_community_message">Join community to interact with all posts</string>
     <string name="amity_timeline">TIMELINE</string>
     <string name="amity_no_post">No posts yet</string>
-    <string name="amity_select_category">Select category</string>
     <string name="amity_start_post">Start your first post</string>
     <string name="amity_no_user_found">No user found</string>
     <string name="amity_my_community">My Community</string>
@@ -102,16 +83,6 @@
     <string name="amity_community_setting">Community Settings</string>
     <string name="amity_basic_info">Basic Info</string>
     <string name="amity_community_permissions">Community Permissions</string>
-    <string name="amity_close_community">Close community</string>
-    <string name="amity_close_community_description">Closing this community will remove the community page and all its content and comments.</string>
-    <string name="amity_leave_community">Leave community</string>
-    <string name="amity_moderator_leave_community_msg">Leaving community, you’ll give up your moderator status and won’t no longer be able to post and interact in this community.</string>
-    <string name="amity_moderator_leave_community_error_msg">You’re the only moderator in this group. To leave community, nominate other members to moderator role.</string>
-    <string name="amity_last_moderator_leave_community_msg">As you’re the last moderator and member, leaving will also close this community. All posts shared in community will be deleted. This cannot be undone.</string>
-    <string name="amity_close_community_msg">All members will be removed from the community. All posts, messages, reactions, and media shared in community will be deleted. This cannot be undone.</string>
-    <string name="amity_leave_community_msg">You won\’t no longer be able to post and interact in this community after leaving.</string>
-    <string name="amity_leave_community_error_title">Unable to leave community</string>
-    <string name="amity_close_community_error_title">Unable to close community</string>
     <string name="amity_mention_error_title">Unable to mention user</string>
     <string name="amity_mention_error_msg">You have reached maximum 30 mentioned users in a post.</string>
     <string name="amity_post_characters_limit_error_title">Unable to type text into post</string>

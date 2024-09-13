@@ -1,9 +1,13 @@
 package com.amity.socialcloud.uikit
 
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
+import com.amity.socialcloud.uikit.community.compose.community.membership.list.AmityCommunityMembershipPageBehavior
+import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageBehavior
+import com.amity.socialcloud.uikit.community.compose.community.setting.AmityCommunitySettingPageBehavior
+import com.amity.socialcloud.uikit.community.compose.community.setting.notifications.AmityCommunityNotificationSettingPageBehavior
+import com.amity.socialcloud.uikit.community.compose.community.setup.AmityCommunitySetupPageBehavior
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerPageBehavior
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetailPageBehavior
-import com.amity.socialcloud.uikit.community.compose.community.profile.component.AmityCommunityProfilePageBehavior
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponentBehavior
 import com.amity.socialcloud.uikit.community.compose.search.community.AmityMyCommunitiesSearchPageBehavior
 import com.amity.socialcloud.uikit.community.compose.search.components.AmityCommunitySearchResultComponentBehavior
@@ -13,6 +17,7 @@ import com.amity.socialcloud.uikit.community.compose.socialhome.AmitySocialHomeP
 import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmityCreatePostMenuComponentBehavior
 import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmityGlobalFeedComponentBehavior
 import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmityMyCommunitiesComponentBehavior
+import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmitySocialHomeTopNavigationComponentBehavior
 import com.amity.socialcloud.uikit.community.compose.story.create.AmityCreateStoryPageBehavior
 import com.amity.socialcloud.uikit.community.compose.story.target.AmityStoryTabComponentBehavior
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageBehavior
@@ -84,6 +89,13 @@ class AmityUIKit4Behavior {
             AmitySocialBehaviorHelper.createPostMenuComponentBehavior = value
         }
 
+    var socialHomeTopNavigationComponentBehavior: AmitySocialHomeTopNavigationComponentBehavior =
+        AmitySocialBehaviorHelper.socialHomeTopNavigationComponentBehavior
+        set(value) {
+            field = value
+            AmitySocialBehaviorHelper.socialHomeTopNavigationComponentBehavior = value
+        }
+
     var postDetailPageBehavior: AmityPostDetailPageBehavior =
         AmitySocialBehaviorHelper.postDetailPageBehavior
         set(value) {
@@ -132,11 +144,39 @@ class AmityUIKit4Behavior {
             field = value
             AmitySocialBehaviorHelper.postComposerPageBehavior = value
         }
-    
+
     var communityProfilePageBehavior: AmityCommunityProfilePageBehavior =
         AmitySocialBehaviorHelper.communityProfilePageBehavior
         set(value) {
             field = value
             AmitySocialBehaviorHelper.communityProfilePageBehavior = value
+        }
+
+    var communityMembershipPageBehavior: AmityCommunityMembershipPageBehavior =
+        AmitySocialBehaviorHelper.communityMembershipPageBehavior
+        set(value) {
+            field = value
+            AmitySocialBehaviorHelper.communityMembershipPageBehavior = value
+        }
+
+    var communitySetupPageBehavior: AmityCommunitySetupPageBehavior =
+        AmitySocialBehaviorHelper.communitySetupPageBehavior
+        set(value) {
+            field = value
+            AmitySocialBehaviorHelper.communitySetupPageBehavior = value
+        }
+
+    var communitySettingPageBehavior: AmityCommunitySettingPageBehavior =
+        AmitySocialBehaviorHelper.communitySettingPageBehavior
+        set(value) {
+            field = value
+            AmitySocialBehaviorHelper.communitySettingPageBehavior = value
+        }
+
+    var communityNotificationSettingPageBehavior: AmityCommunityNotificationSettingPageBehavior =
+        AmitySocialBehaviorHelper.communityNotificationSettingPageBehavior
+        set(value) {
+            field = value
+            AmitySocialBehaviorHelper.communityNotificationSettingPageBehavior = value
         }
 }

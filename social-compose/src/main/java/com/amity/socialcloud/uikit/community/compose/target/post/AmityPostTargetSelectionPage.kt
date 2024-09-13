@@ -17,6 +17,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rxjava3.subscribeAsState
 import androidx.compose.ui.Alignment
@@ -30,7 +31,7 @@ import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
-import com.amity.socialcloud.uikit.common.ui.elements.AmityAvatarView
+import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.closePage
@@ -65,7 +66,7 @@ fun AmityPostTargetSelectionPage(
     val viewModel =
         viewModel<AmityTargetSelectionPageViewModel>(viewModelStoreOwner = viewModelStoreOwner)
 
-    val currentUser = remember(viewModel) {
+    val currentUser by remember(viewModel) {
         viewModel.getCurrentUser()
     }.subscribeAsState(null)
 
@@ -131,10 +132,10 @@ fun AmityPostTargetSelectionPage(
                     pageScope = getPageScope(),
                     elementId = "my_timeline_avatar"
                 ) {
-                    AmityAvatarView(
-                        avatarUrl = currentUser.value?.getAvatar()?.getUrl(),
+                    AmityUserAvatarView(
                         size = 40.dp,
                         modifier = modifier.testTag(getAccessibilityId()),
+                        user = currentUser,
                     )
                 }
 
