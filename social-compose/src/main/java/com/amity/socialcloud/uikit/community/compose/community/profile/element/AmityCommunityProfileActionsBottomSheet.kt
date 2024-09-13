@@ -17,14 +17,13 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
-import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
-import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostTargetType
+import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageBehavior
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
@@ -101,22 +100,26 @@ fun AmityCommunityProfileActionsContainer(
 			) {
 				onDismiss()
 				behavior.goToPostComposerPage(
-					context = context,
-					launcher = launcher,
-					community = community,
+					AmityCommunityProfilePageBehavior.Context(
+						pageContext = context,
+						activityLauncher = launcher,
+						community = community,
+					)
 				)
 			}
-			
+
 			AmityBottomSheetActionItem(
-				icon = R.drawable.amity_ic_story_create,
+				icon = R.drawable.amity_ic_create_story_social,
 				text = "Story",
 				modifier = modifier,
 			) {
 				onDismiss()
 				behavior.goToCreateStoryPage(
-					context = context,
-					launcher = launcher,
-					community = community,
+					AmityCommunityProfilePageBehavior.Context(
+						pageContext = context,
+						activityLauncher = launcher,
+						community = community,
+					)
 				)
 			}
 			

@@ -151,7 +151,7 @@ fun AmityPostMenuBottomSheet(
                                     viewModel.unflagPost(
                                         postId = post.getPostId(),
                                         onSuccess = {
-                                            context.showToast(context.getString(R.string.amity_comment_unreported_toast_message))
+                                            context.showToast("Post unreported")
                                         },
                                         onError = {
                                             it.message?.let { message ->

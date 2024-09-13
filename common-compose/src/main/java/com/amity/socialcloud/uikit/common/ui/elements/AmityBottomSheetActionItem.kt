@@ -54,12 +54,47 @@ fun AmityBottomSheetActionItem(
     }
 }
 
+@Composable
+fun AmityBottomSheetActionItem(
+    modifier: Modifier = Modifier,
+    icon: @Composable () -> Unit,
+    text: String,
+    color: Color? = null,
+    onClick: () -> Unit
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .clickableWithoutRipple { onClick() }
+            .padding(16.dp)
+    ) {
+        icon()
+
+        Text(
+            text = text,
+            style = AmityTheme.typography.body.copy(
+                fontWeight = FontWeight.SemiBold,
+                color = color ?: AmityTheme.colors.base
+            )
+        )
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun AmityBottomSheetActionItemPreview() {
     AmityBottomSheetActionItem(
-        icon = R.drawable.amity_ic_delete_story,
         text = "Delete story",
         onClick = {},
+        icon = {
+            Icon(
+                painter = painterResource(id = R.drawable.amity_ic_camera2),
+                contentDescription = null,
+                tint = AmityTheme.colors.base,
+                modifier = Modifier.size(24.dp)
+            )
+        }
     )
 }

@@ -78,7 +78,7 @@
                         <ImageView
                             android:layout_width="20dp"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/amity_ic_avatar_upload_camera" />
+                            android:src="@drawable/amity_ic_camera2" />
 
                         <TextView
                             style="@style/AmityTextStyleBodyBold"
@@ -319,7 +319,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/amity_padding_m1"
-                android:text="@string/amity_tv_public"
+                android:text="@string/amity_public"
                 android:textColor="@color/amityColorBase"
                 app:layout_constraintStart_toEndOf="@id/iv_globe"
                 app:layout_constraintTop_toTopOf="@id/iv_globe" />
@@ -371,7 +371,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/amity_padding_m1"
-                android:text="@string/amity_tv_private"
+                android:text="@string/amity_private"
                 android:textColor="@color/amityColorBase"
                 app:layout_constraintStart_toEndOf="@id/iv_lock"
                 app:layout_constraintTop_toTopOf="@id/iv_lock" />

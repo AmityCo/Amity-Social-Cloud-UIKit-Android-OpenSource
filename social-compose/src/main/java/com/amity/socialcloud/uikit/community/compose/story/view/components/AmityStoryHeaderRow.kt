@@ -27,29 +27,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImage
-import coil.request.CachePolicy
-import coil.request.ImageRequest
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.core.ad.AmityAd
-import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.uikit.common.ad.AmityAdBadge
 import com.amity.socialcloud.uikit.common.common.readableTimeDiff
-import com.amity.socialcloud.uikit.common.common.views.AmityColorPaletteUtil
-import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
+import com.amity.socialcloud.uikit.common.ui.elements.AmityAvatarView
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.AmityConstants
@@ -61,7 +53,6 @@ import com.amity.socialcloud.uikit.community.compose.story.view.AmityStoryModalS
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageViewModel
 import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmityStorySegmentTimerElement
 import com.amity.socialcloud.uikit.community.compose.utils.AmityStoryVideoPlayerHelper
-import kotlinx.coroutines.Dispatchers
 
 @Composable
 fun AmityStoryHeaderRow(
@@ -110,12 +101,12 @@ fun AmityStoryHeaderRow(
         }
     }
 
-    val avatarUrl by remember(viewModel.community?.getCommunityId()) {
+    val avatarImage by remember(viewModel.community?.getCommunityId()) {
         derivedStateOf {
             if (isAd) {
-                ad?.getAdvertiser()?.getAvatar()?.getUrl(AmityImage.Size.LARGE) ?: ""
+                ad?.getAdvertiser()?.getAvatar()
             } else {
-                viewModel.community?.getAvatar()?.getUrl(AmityImage.Size.LARGE) ?: ""
+                viewModel.community?.getAvatar()
             }
         }
     }
@@ -177,44 +168,14 @@ fun AmityStoryHeaderRow(
                             }
                         }
                 ) {
-                    if (avatarUrl.isEmpty()) {
-                        Image(
-                            painter = painterResource(id = R.drawable.amity_ic_default_community_avatar_circular),
-                            contentScale = ContentScale.Fit,
-                            contentDescription = "Avatar Image",
-                            modifier = Modifier
-                                .size(40.dp)
-                                .clip(CircleShape)
-                                .background(
-                                    Color(
-                                        AmityColorPaletteUtil.getColor(
-                                            ContextCompat.getColor(
-                                                LocalContext.current,
-                                                R.color.amityColorPrimary
-                                            ),
-                                            AmityColorShade.SHADE3
-                                        )
-                                    )
-                                )
-                                .testTag("community_avatar")
-                        )
-                    } else {
-                        AsyncImage(
-                            model = ImageRequest
-                                .Builder(LocalContext.current)
-                                .data(avatarUrl)
-                                .dispatcher(Dispatchers.IO)
-                                .diskCachePolicy(CachePolicy.ENABLED)
-                                .memoryCachePolicy(CachePolicy.ENABLED)
-                                .build(),
-                            contentScale = ContentScale.Crop,
-                            contentDescription = "Avatar Image",
-                            modifier = modifier
-                                .size(40.dp)
-                                .clip(CircleShape)
-                                .testTag("community_avatar")
-                        )
-                    }
+                    AmityAvatarView(
+                        image = avatarImage,
+                        size = 40.dp,
+                        modifier = modifier
+                            .clip(CircleShape)
+                            .testTag("community_avatar")
+                    )
+
                     if (hasManageStoryPermission && !isAd) {
                         Image(
                             painter = painterResource(id = R.drawable.amity_ic_plus_circle),

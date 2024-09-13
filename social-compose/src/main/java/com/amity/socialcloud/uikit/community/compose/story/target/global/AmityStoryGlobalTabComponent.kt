@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.social.story.AmityStoryTarget
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.elements.AmityNewsFeedDivider
@@ -104,12 +103,8 @@ fun AmityStoryGlobalTabComponent(
                             AmityStoryTargetElement(
                                 modifier = modifier,
                                 componentScope = getComponentScope(),
-                                communityDisplayName = community.getDisplayName(),
-                                avatarUrl = community.getAvatar()?.getUrl(AmityImage.Size.LARGE)
-                                    ?: "",
+                                community = community,
                                 ringUiState = target.toRingUiState(),
-                                isPublicCommunity = community.isPublic(),
-                                isOfficialCommunity = community.isOfficial(),
                                 isCommunityTarget = false,
                                 hasManageStoryPermission = false,
                             ) {

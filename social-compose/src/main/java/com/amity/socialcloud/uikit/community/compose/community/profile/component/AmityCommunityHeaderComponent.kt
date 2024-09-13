@@ -21,7 +21,7 @@ import com.amity.socialcloud.uikit.community.compose.community.profile.element.A
 import com.amity.socialcloud.uikit.community.compose.community.profile.element.AmityCommunityCoverView
 import com.amity.socialcloud.uikit.community.compose.community.profile.element.AmityCommunityInfoView
 import com.amity.socialcloud.uikit.community.compose.community.profile.element.AmityCommunityJoinButton
-import com.amity.socialcloud.uikit.community.compose.community.profile.element.AmityCommunityProfileActionView
+import com.amity.socialcloud.uikit.community.compose.community.profile.element.AmityCommunityPendingPost
 import com.amity.socialcloud.uikit.community.compose.community.profile.element.AmityCommunityProfileTitleView
 import com.amity.socialcloud.uikit.community.compose.story.target.AmityStoryTabComponent
 import com.amity.socialcloud.uikit.community.compose.story.target.AmityStoryTabComponentType
@@ -40,8 +40,8 @@ fun AmityCommunityHeaderComponent(
 		val categories = community.getCategories().map { it.getName() }.filter { it.isNotEmpty() }
 		if (style == AmityCommunityHeaderStyle.EXPANDED) {
 			Column(modifier = modifier
-				.fillMaxWidth()
-				.background(AmityTheme.colors.background)
+                .fillMaxWidth()
+                .background(AmityTheme.colors.background)
 			) {
 				AmityCommunityCoverView(
 					pageScope = pageScope,
@@ -76,23 +76,29 @@ fun AmityCommunityHeaderComponent(
 						componentScope = getComponentScope(),
 						community = community
 					)
-					if (community.isJoined()) {
-						Row(modifier = Modifier
-							.padding(bottom = 12.dp, start = 16.dp, end = 16.dp)
-							.fillMaxWidth()
-							.align(Alignment.Start)) {
-							AmityStoryTabComponent(
-								type = AmityStoryTabComponentType.CommunityFeed(
-									communityId = community.getCommunityId(),
-								)
+
+                    AmityCommunityJoinButton(
+                        pageScope = pageScope,
+                        componentScope = getComponentScope(),
+                        community = community
+                    )
+					Row(
+						modifier = Modifier
+                            .padding(bottom = 12.dp, start = 16.dp, end = 16.dp)
+                            .fillMaxWidth()
+                            .align(Alignment.Start)
+					) {
+						AmityStoryTabComponent(
+							type = AmityStoryTabComponentType.CommunityFeed(
+								communityId = community.getCommunityId(),
 							)
-						}
+						)
 					}
-					AmityCommunityProfileActionView(
-						pageScope = pageScope,
-						componentScope = getComponentScope(),
-						community = community,
-					)
+                    AmityCommunityPendingPost(
+                        pageScope = pageScope,
+                        componentScope = getComponentScope(),
+                        community = community
+                    )
 				}
 			}
 		} else {

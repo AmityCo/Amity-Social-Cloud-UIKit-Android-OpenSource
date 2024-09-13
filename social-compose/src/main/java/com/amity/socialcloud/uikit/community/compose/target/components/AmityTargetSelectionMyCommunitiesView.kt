@@ -27,7 +27,6 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.pagingLoadStateItem
-import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.target.AmityTargetSelectionPageViewModel
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityCommunityListShimmer
 
@@ -82,11 +81,11 @@ fun AmityTargetSelectionMyCommunitiesView(
                     }
             ) {
                 AmityCommunityAvatarView(
-                    avatarUrl = community.getAvatar()?.getUrl(),
-                    placeholder = R.drawable.amity_ic_default_community_avatar_circular,
-                    size = 40.dp,
                     modifier = modifier,
+                    size = 40.dp,
+                    community = community,
                 )
+
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                     verticalAlignment = Alignment.CenterVertically

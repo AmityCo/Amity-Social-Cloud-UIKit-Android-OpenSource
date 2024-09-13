@@ -2,6 +2,7 @@ package com.amity.socialcloud.uikit.common.utils
 
 import android.content.Context
 import android.content.ContextWrapper
+import android.content.Intent
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.animation.core.LinearEasing
@@ -14,9 +15,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.Interaction
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
@@ -30,8 +35,17 @@ import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.ClipboardManager
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.palette.graphics.Palette.Swatch
+import com.amity.socialcloud.uikit.common.common.toDp
 import com.amity.socialcloud.uikit.common.common.views.AmityColorPaletteUtil
 import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
@@ -55,6 +69,13 @@ fun Context.closePage() {
 fun Context.closePageWithResult(resultCode: Int) {
     getActivity()?.let {
         it.setResult(resultCode)
+        it.finishAfterTransition()
+    }
+}
+
+fun Context.closePageWithResult(resultCode: Int, intent: Intent) {
+    getActivity()?.let {
+        it.setResult(resultCode, intent)
         it.finishAfterTransition()
     }
 }
@@ -180,4 +201,29 @@ fun Modifier.isVisible(
             }
         }
     }
+}
+
+@Composable
+fun copyText(text: String) {
+    val clipboardManager: ClipboardManager = LocalClipboardManager.current
+    clipboardManager.setText(AnnotatedString((text)))
+}
+
+@Composable
+fun isKeyboardVisible(): State<Boolean> {
+    val isImeVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
+    return rememberUpdatedState(isImeVisible)
+}
+
+@Composable
+fun getKeyboardHeight(): State<Dp> {
+    val bottomHeight = WindowInsets.ime.getBottom(LocalDensity.current).toDp().dp
+    return rememberUpdatedState(bottomHeight)
+}
+
+@Composable
+fun measureTextWidth(text: String, style: TextStyle): Dp {
+    val textMeasurer = rememberTextMeasurer()
+    val widthInPixels = textMeasurer.measure(text, style).size.width
+    return with(LocalDensity.current) { widthInPixels.toDp() }
 }

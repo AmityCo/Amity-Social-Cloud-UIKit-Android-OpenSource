@@ -13,9 +13,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
-import com.amity.socialcloud.uikit.common.ui.elements.AmityAvatarView
+import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.R
@@ -36,20 +37,23 @@ fun AmityUserView(
                 onClick(user)
             }
     ) {
-        AmityAvatarView(
+        AmityUserAvatarView(
             modifier = modifier,
             size = 40.dp,
-            avatarUrl = user.getAvatar()?.getUrl(),
+            user = user,
         )
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
+        Row (
+            modifier = Modifier.weight(1f)
+        ){
             Text(
                 text = user.getDisplayName() ?: "",
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
                 style = AmityTheme.typography.body.copy(
                     fontWeight = FontWeight.SemiBold
-                )
+                ),
+
             )
 
             val isBrandUser = user.isBrand()

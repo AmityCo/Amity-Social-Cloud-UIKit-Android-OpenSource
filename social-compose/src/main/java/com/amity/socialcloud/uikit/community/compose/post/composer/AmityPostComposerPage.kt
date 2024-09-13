@@ -75,6 +75,7 @@ fun AmityPostComposerPage(
     var showMediaCameraSelectionSheet by remember { mutableStateOf(false) }
     var showMaxUploadLimitReachedDialog by remember { mutableStateOf(false) }
     var showDiscardPostDialog by remember { mutableStateOf(false) }
+    var showPendingPostDialog by remember { mutableStateOf(false) }
     var isCameraPermissionGranted by remember { mutableStateOf(false) }
 
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
@@ -198,7 +199,7 @@ fun AmityPostComposerPage(
                     if (imageFile == null) {
                         context.showToast("Failed to create image file")
                     } else {
-                        capturedMediaUri = AmityCameraUtil.createVideoUri(context, imageFile)
+                        capturedMediaUri = AmityCameraUtil.createPhotoUri(context, imageFile)
                         imageCaptureLauncher.launch(capturedMediaUri)
                     }
                 } else {
@@ -304,6 +305,18 @@ fun AmityPostComposerPage(
             }
         )
     }
+
+    if (showPendingPostDialog) {
+        AmityAlertDialog(
+            dialogTitle = "",
+            dialogText = "Your post has been submitted to the pending list. It will be reviewed by community moderator.",
+            dismissText = "OK",
+        ) {
+            showPendingPostDialog = false
+            context.closePageWithResult(Activity.RESULT_OK)
+        }
+    }
+
     BackHandler {
         showDiscardPostDialog = true
     }
@@ -323,6 +336,10 @@ fun AmityPostComposerPage(
 
                 AmityPostCreationEvent.Success -> {
                     context.closePageWithResult(Activity.RESULT_OK)
+                }
+
+                AmityPostCreationEvent.Pending -> {
+                    showPendingPostDialog = true
                 }
 
                 AmityPostCreationEvent.Failed -> {

@@ -40,11 +40,11 @@ import coil.request.ImageRequest
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.file.AmityVideo
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
+import com.amity.socialcloud.uikit.common.ui.elements.AmityMenuButton
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostVideoPlayerHelper
-import com.amity.socialcloud.uikit.community.compose.story.create.elements.AmityStoryCameraRelatedButtonElement
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -167,15 +167,13 @@ fun AmityPostMediaPreviewDialog(
         ) {
             val (closeBtn, muteBtn, counter) = createRefs()
 
-            AmityStoryCameraRelatedButtonElement(
-                iconSize = 12.dp,
-                background = Color(0x80FFFFFF),
-                modifier = Modifier
-                    .size(32.dp)
-                    .constrainAs(closeBtn) {
-                        top.linkTo(parent.top, margin = 16.dp)
-                        start.linkTo(parent.start, margin = 16.dp)
-                    },
+            AmityMenuButton(
+                size = 32.dp,
+                iconPadding = 8.dp,
+                modifier = Modifier.constrainAs(closeBtn) {
+                    top.linkTo(parent.top, margin = 16.dp)
+                    start.linkTo(parent.start, margin = 16.dp)
+                },
             ) {
                 onDismiss()
             }

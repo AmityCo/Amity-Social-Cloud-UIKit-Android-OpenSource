@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -24,6 +25,7 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getText
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.socialhome.AmitySocialHomePageTab
 import com.amity.socialcloud.uikit.community.compose.socialhome.elements.AmitySocialHomeNavigationButton
 
@@ -34,6 +36,11 @@ fun AmitySocialHomeTopNavigationComponent(
     selectedTab: AmitySocialHomePageTab,
     searchButtonAction: () -> Unit,
 ) {
+    val context = LocalContext.current
+
+    val behavior by lazy {
+        AmitySocialBehaviorHelper.socialHomeTopNavigationComponentBehavior
+    }
     AmityBaseComponent(
         pageScope = pageScope,
         componentId = "top_navigation",
@@ -101,7 +108,21 @@ fun AmitySocialHomeTopNavigationComponent(
                             .size(32.dp)
                             .testTag(getAccessibilityId()),
                         onClick = {
-                            expanded = true
+                            when (selectedTab) {
+                                AmitySocialHomePageTab.NEWSFEED -> {
+                                    expanded = true
+                                }
+
+                                AmitySocialHomePageTab.MY_COMMUNITIES -> {
+                                    behavior.goToCreateCommunityPage(
+                                        AmitySocialHomeTopNavigationComponentBehavior.Context(
+                                            componentContext = context,
+                                        )
+                                    )
+                                }
+
+                                AmitySocialHomePageTab.EXPLORE -> {}
+                            }
                         },
                     )
                 }

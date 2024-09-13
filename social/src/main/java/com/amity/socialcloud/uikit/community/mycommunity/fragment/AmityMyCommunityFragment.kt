@@ -25,7 +25,6 @@ import com.amity.socialcloud.uikit.common.model.AmityEventIdentifier
 import com.amity.socialcloud.uikit.common.utils.AmityAndroidUtil
 import com.amity.socialcloud.uikit.common.utils.AmityRecyclerViewItemDecoration
 import com.amity.socialcloud.uikit.community.R
-import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageActivity
 import com.amity.socialcloud.uikit.community.databinding.AmityFragmentMyCommunityBinding
 import com.amity.socialcloud.uikit.community.detailpage.AmityCommunityPageActivity
 import com.amity.socialcloud.uikit.community.mycommunity.adapter.AmityMyCommunityListAdapter
@@ -192,11 +191,11 @@ class AmityMyCommunityFragment : AmityBaseFragment(),
 
     private fun navigateToCommunityDetails(ekoCommunity: AmityCommunity?) {
         if (ekoCommunity != null) {
-            val intent = AmityCommunityProfilePageActivity.newIntent(
-                context = requireContext(),
-                communityId = ekoCommunity.getCommunityId(),
+            val detailIntent = AmityCommunityPageActivity.newIntent(
+                requireContext(),
+                ekoCommunity
             )
-            requireContext().startActivity(intent)
+            startActivity(detailIntent)
         }
 
     }

@@ -56,7 +56,7 @@ fun AmityCommentTrayComponent(
 
     val commentListState by viewModel.commentListState.collectAsState()
 
-    val currentUser = remember(viewModel) {
+    val currentUser by remember(viewModel) {
         viewModel.getCurrentUser()
     }.subscribeAsState(null)
 
@@ -145,7 +145,7 @@ fun AmityCommentTrayComponent(
                         componentScope = getComponentScope(),
                         referenceId = referenceId,
                         referenceType = referenceType,
-                        avatarUrl = currentUser.value?.getAvatar()?.getUrl(),
+                        currentUser = currentUser,
                         replyComment = replyComment,
                         modifier = modifier.align(Alignment.BottomCenter)
                     ) {

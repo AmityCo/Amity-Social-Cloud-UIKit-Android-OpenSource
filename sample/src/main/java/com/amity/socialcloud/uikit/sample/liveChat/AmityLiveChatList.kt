@@ -1,7 +1,6 @@
 package com.amity.socialcloud.uikit.sample.liveChat
 
 import android.content.res.Configuration
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -34,27 +32,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
-import coil.compose.AsyncImage
-import coil.request.CachePolicy
-import coil.request.ImageRequest
 import com.amity.socialcloud.sdk.api.chat.AmityChatClient
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.model.chat.channel.AmityChannel
-import com.amity.socialcloud.uikit.chat.compose.R
+import com.amity.socialcloud.uikit.common.compose.R
+import com.amity.socialcloud.uikit.common.ui.elements.AmityAvatarView
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.flow.Flow
@@ -77,18 +68,19 @@ fun AmityLiveChatList(
         items(
             count = channels.itemCount,
             key = channels.itemKey { it.getChannelId() }
-        ) {index ->
-            channels.get(index)?.let { channel ->
+        ) { index ->
+            channels[index]?.let { channel ->
                 ChannelItemView(channel, onChannelClick)
             }
         }
-        
+
         // Handle loading state
         channels.apply {
             when {
                 loadState.refresh is LoadState.Loading -> {
                     item { LoadingIndicator() }
                 }
+
                 loadState.append is LoadState.Loading -> {
                     item { LoadingIndicator() }
                 }
@@ -96,14 +88,15 @@ fun AmityLiveChatList(
         }
     }
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
             .padding(16.dp)
     ) {
         Column(
-        modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.End
-        ){
+        ) {
             FloatingActionButtonCompose(
                 onClick = {
                     openDialog = true
@@ -114,10 +107,12 @@ fun AmityLiveChatList(
     if (openDialog) {
         AlertDialog(
             onDismissRequest = { openDialog = false },
-            title = { Text(
-                text = "Create live chat",
-                color = Color.Black
-            ) },
+            title = {
+                Text(
+                    text = "Create live chat",
+                    color = Color.Black
+                )
+            },
             text = {
                 Column {
                     TextField(
@@ -149,7 +144,8 @@ fun AmityLiveChatList(
                 Button(onClick = {
                     openDialog = false
                     val memberList = members.text.trim().split(",")
-                    val channelName = chatDisplayName.text.trim().ifEmpty { memberList.joinToString(" & ") }
+                    val channelName =
+                        chatDisplayName.text.trim().ifEmpty { memberList.joinToString(" & ") }
                     if (memberList.isNotEmpty()) {
                         AmityChatClient.newChannelRepository()
                             .createChannel(displayName = channelName)
@@ -165,7 +161,7 @@ fun AmityLiveChatList(
                             }
                             .subscribe()
                     }
-                    
+
                 }) {
                     Text(
                         text = "Create",
@@ -198,9 +194,12 @@ fun ChannelItemView(channel: AmityChannel, onChannelClick: (AmityChannel) -> Uni
         horizontalArrangement = Arrangement.Start
     ) {
         val nightModeFlags = LocalContext.current.resources.configuration.uiMode and
-            Configuration.UI_MODE_NIGHT_MASK
-        // Display avatar
-        AvatarImage(avatarUrl = channel.getAvatar()?.getUrl() ?: "")
+                Configuration.UI_MODE_NIGHT_MASK
+
+        AmityAvatarView(
+            image = channel.getAvatar(),
+            placeholder = R.drawable.amity_ic_default_community_avatar_circular
+        )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
             text = channel.getDisplayName(),
@@ -216,39 +215,18 @@ fun ChannelItemView(channel: AmityChannel, onChannelClick: (AmityChannel) -> Uni
 }
 
 @Composable
-fun AvatarImage(avatarUrl: String) {
-    val url = avatarUrl.ifEmpty { null }
-    AsyncImage(
-        model = ImageRequest
-            .Builder(LocalContext.current)
-            .data(url)
-            .fallback(R.drawable.amity_ic_user)
-            .crossfade(true)
-            .networkCachePolicy(CachePolicy.ENABLED)
-            .diskCachePolicy(CachePolicy.ENABLED)
-            .memoryCachePolicy(CachePolicy.ENABLED)
-            .build(),
-        placeholder = painterResource(R.drawable.amity_ic_user),
-        contentDescription = "User avatar",
-        contentScale = ContentScale.Crop,
-        modifier = Modifier
-            .size(32.dp)
-            .background(Color.LightGray, CircleShape)
-            .clip(CircleShape)
-    )
-}
-
-@Composable
 fun LoadingIndicator() {
-    CircularProgressIndicator(Modifier
-        .size(48.dp)
-        .padding(8.dp))
+    CircularProgressIndicator(
+        Modifier
+            .size(48.dp)
+            .padding(8.dp)
+    )
 }
 
 fun getLiveChatList(): Flow<PagingData<AmityChannel>> {
     return AmityChatClient.newChannelRepository()
         .getChannels()
-         .types(listOf(AmityChannel.Type.LIVE))
+        .types(listOf(AmityChannel.Type.LIVE))
         .includeDeleted(false)
         .build()
         .query()
@@ -262,9 +240,7 @@ fun FloatingActionButtonCompose(onClick: () -> Unit = {}) {
         shape = MaterialTheme.shapes.large.copy(CornerSize(percent = 50)),
         containerColor = Color.LightGray,
         contentColor = Color.Black,
-        onClick = {
-          onClick()
-        },
+        onClick = onClick,
     ) {
         Icon(Icons.Default.Add, contentDescription = null)
     }

@@ -67,7 +67,7 @@ fun AmityPostDetailPage(
         viewModel.getPost(id)
     }.collectAsState(initial = null)
 
-    val currentUser = remember(viewModel) {
+    val currentUser by remember(viewModel) {
         viewModel.getCurrentUser()
     }.subscribeAsState(null)
 
@@ -179,7 +179,7 @@ fun AmityPostDetailPage(
                     componentScope = getComponentScope(),
                     referenceId = id,
                     referenceType = AmityCommentReferenceType.POST,
-                    avatarUrl = currentUser.value?.getAvatar()?.getUrl(),
+                    currentUser = currentUser,
                     replyComment = replyComment,
                 ) {
                     replyComment = null

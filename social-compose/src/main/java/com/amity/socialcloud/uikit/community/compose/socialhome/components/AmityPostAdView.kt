@@ -84,7 +84,7 @@ fun AmityPostAdView(
                     .padding(start = 12.dp)
             ) {
                 AmityAvatarView(
-                    avatarUrl = ad.getAdvertiser()?.getAvatar()?.getUrl(AmityImage.Size.FULL),
+                    image = ad.getAdvertiser()?.getAvatar(),
                     placeholder = R.drawable.amity_ic_default_advertiser,
                     modifier = modifier.padding(vertical = 8.dp)
                 )

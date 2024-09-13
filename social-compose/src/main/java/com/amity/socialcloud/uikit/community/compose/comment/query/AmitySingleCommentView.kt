@@ -22,11 +22,11 @@ import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.sdk.model.social.comment.AmityCommentReferenceType
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
+import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.R
-import com.amity.socialcloud.uikit.community.compose.comment.elements.AmityCommentAvatarView
 import com.amity.socialcloud.uikit.community.compose.comment.query.components.AmityCommentContentContainer
 import com.amity.socialcloud.uikit.community.compose.comment.query.components.AmityCommentEngagementBar
 import com.amity.socialcloud.uikit.community.compose.comment.query.components.AmityEditCommentContainer
@@ -63,9 +63,8 @@ fun AmitySingleCommentView(
             )
             .testTag("comment_list/*")
     ) {
-        AmityCommentAvatarView(
-            size = 32.dp,
-            avatarUrl = comment.getCreator()?.getAvatar()?.getUrl() ?: "",
+        AmityUserAvatarView(
+            user = comment.getCreator(),
             modifier = modifier.testTag("comment_list/comment_bubble_avatar")
         )
 

@@ -66,6 +66,7 @@ import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
+import com.amity.socialcloud.uikit.common.ui.elements.AmityMenuButton
 import com.amity.socialcloud.uikit.common.ui.theme.AmityComposeTheme
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.asBoolean
@@ -76,7 +77,6 @@ import com.amity.socialcloud.uikit.common.utils.getBackgroundColor
 import com.amity.socialcloud.uikit.common.utils.getValue
 import com.amity.socialcloud.uikit.common.utils.showToast
 import com.amity.socialcloud.uikit.common.utils.toComposeColor
-import com.amity.socialcloud.uikit.community.compose.story.create.elements.AmityStoryCameraRelatedButtonElement
 import com.amity.socialcloud.uikit.community.compose.story.hyperlink.AmityStoryHyperlinkComponent
 import com.amity.socialcloud.uikit.community.compose.story.hyperlink.elements.AmityStoryHyperlinkView
 import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmityStoryVideoPlayer
@@ -246,7 +246,7 @@ fun AmityDraftStoryPage(
                     pageScope = getPageScope(),
                     elementId = "back_button"
                 ) {
-                    AmityStoryCameraRelatedButtonElement(
+                    AmityMenuButton(
                         icon = getConfig().getValue("back_icon").asDrawableRes(),
                         modifier = Modifier
                             .size(32.dp)
@@ -266,7 +266,7 @@ fun AmityDraftStoryPage(
                         pageScope = getPageScope(),
                         elementId = "aspect_ratio_button"
                     ) {
-                        AmityStoryCameraRelatedButtonElement(
+                        AmityMenuButton(
                             icon = getConfig().getValue("aspect_ratio_icon").asDrawableRes(),
                             modifier = Modifier
                                 .size(32.dp)
@@ -287,7 +287,7 @@ fun AmityDraftStoryPage(
                     pageScope = getPageScope(),
                     elementId = "story_hyperlink_button"
                 ) {
-                    AmityStoryCameraRelatedButtonElement(
+                    AmityMenuButton(
                         icon = getConfig().getValue("hyperlink_button_icon").asDrawableRes(),
                         modifier = Modifier
                             .size(32.dp)
