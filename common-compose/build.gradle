@@ -80,8 +80,6 @@ dependencies {
     api "androidx.paging:paging-compose:3.2.1"
     api "com.linkedin.android.spyglass:spyglass:3.0.1"
 
-    api 'com.github.AlexTrotsenko:android-transcoder:aa7dc58615'
-
     def room_version = "2.5.1"
     api "androidx.room:room-runtime:$room_version"
     api "androidx.room:room-rxjava3:$room_version"

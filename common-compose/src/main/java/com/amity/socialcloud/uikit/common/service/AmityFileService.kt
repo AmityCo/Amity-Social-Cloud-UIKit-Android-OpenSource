@@ -24,8 +24,8 @@ import com.amity.socialcloud.sdk.model.core.file.upload.AmityUploadResult
 import com.ekoapp.ekosdk.internal.util.AppContext
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
-import net.ypresto.androidtranscoder.MediaTranscoder
-import net.ypresto.androidtranscoder.format.MediaFormatStrategyPresets
+import com.amity.socialcloud.uikit.common.infra.transcoder.MediaTranscoder
+import com.amity.socialcloud.uikit.common.infra.transcoder.format.MediaFormatStrategyPresets
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
