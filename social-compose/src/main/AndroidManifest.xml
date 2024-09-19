@@ -126,6 +126,16 @@
             android:screenOrientation="portrait"
             android:theme="@style/AmitySocialTheme" />
         <activity
+            android:name=".community.bycategory.AmityCommunitiesByCategoryPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme" />
+        <activity
+            android:name=".community.category.AmityAllCategoriesPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme" />
+        <activity
             android:name=".post.composer.AmityPostComposerPageActivity"
             android:configChanges="uiMode"
             android:screenOrientation="portrait"

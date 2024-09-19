@@ -24,21 +24,22 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 fun AmityCommunityCategoryView(
     modifier: Modifier = Modifier,
     categories: List<AmityCommunityCategory>,
+    maxPreview: Int = 3,
 ) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         modifier = modifier.fillMaxWidth()
     ) {
         for (index in categories.indices) {
-            if (index >= 3) break
+            if (index >= maxPreview) break
             AmityCommunityCategoryItemView(
                 categoryName = categories[index].getName(),
             )
         }
 
-        if (categories.size >= 4) {
+        if (categories.size > maxPreview) {
             AmityCommunityCategoryOverflowCount(
-                remainingCount = categories.size - 3
+                remainingCount = categories.size - maxPreview
             )
         }
     }
@@ -51,7 +52,7 @@ fun AmityCommunityCategoryItemView(
 ) {
     Box(
         modifier = modifier
-            .widthIn(max = 84.dp)
+            .widthIn(max = 70.dp)
             .height(18.dp)
             .background(
                 color = AmityTheme.colors.baseShade4,
