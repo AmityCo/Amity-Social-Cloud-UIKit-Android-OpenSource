@@ -17,20 +17,34 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.shimmerBackground
 
-
 @Composable
-fun AmityCommunityListShimmer(
-    modifier: Modifier = Modifier
+fun AmityTrendingCommunityShimmer(
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier,
     ) {
-        repeat(10) {
+        Column(
+            verticalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .padding(vertical = 16.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .height(12.dp)
+                    .width(156.dp)
+                    .shimmerBackground(
+                        color = AmityTheme.colors.baseShade4,
+                        shape = RoundedCornerShape(6.dp)
+                    )
+            )
+        }
+
+        repeat(2) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
@@ -84,10 +98,4 @@ fun AmityCommunityListShimmer(
             )
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun AmityCommunityListShimmerPreview() {
-    AmityCommunityListShimmer()
 }
