@@ -2,9 +2,7 @@ package com.amity.socialcloud.uikit.chat.messages.fragment
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Intent
-import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
@@ -14,6 +12,8 @@ import android.os.Looper
 import android.view.*
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
@@ -48,9 +48,6 @@ import com.amity.socialcloud.uikit.common.utils.AmityAndroidUtil
 import com.amity.socialcloud.uikit.common.utils.AmityConstants
 import com.amity.socialcloud.uikit.common.utils.AmityRecyclerViewItemDecoration
 import com.google.android.material.snackbar.Snackbar
-import com.zhihu.matisse.Matisse
-import com.zhihu.matisse.MimeType
-import com.zhihu.matisse.engine.impl.GlideEngine
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -75,19 +72,14 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
     private var currentCount = 0
     private var isImagePermissionGranted = false
     private var isReachBottom = true
-
+    private lateinit var imagePickerLauncher: ActivityResultLauncher<PickVisualMediaRequest>
 
     private val requiredPermissions = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
         arrayOf(
             Manifest.permission.RECORD_AUDIO,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
         )
-    } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-        arrayOf(
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.READ_MEDIA_AUDIO
-        )
-    } else {
+    }  else {
         arrayOf(
             Manifest.permission.RECORD_AUDIO
         )
@@ -125,7 +117,7 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = DataBindingUtil.inflate(
             inflater,
@@ -148,6 +140,25 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
         initMessageLoader()
 //        observeRefreshStatus()
 //        observeConnectionStatus()
+        imagePickerLauncher = registerForActivityResult(
+            ActivityResultContracts.PickMultipleVisualMedia(
+                AmityConstants.MAX_SELECTION_COUNT
+            )
+        ) { uris ->
+            // Callback is invoked after the user selects media items or closes the
+            // photo picker.
+            for (uri in uris) {
+                disposable.add(messageListViewModel.sendImageMessage(uri)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnComplete {
+                        msgSent = true
+                    }.doOnError {
+                        msgSent = false
+                    }.subscribe()
+                )
+            }
+        }
     }
 
     private fun setupComposebar() {
@@ -410,6 +421,7 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
                         binding.recorderView.circularReveal()
 
                     }
+
                     MotionEvent.ACTION_UP -> messageListViewModel.isRecording.set(false)
                 }
             } else {
@@ -462,6 +474,7 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
                         snackBar.show()
                     }
                 }
+
                 AmityEventIdentifier.MSG_SEND_SUCCESS -> scrollToLastPosition()
                 AmityEventIdentifier.TOGGLE_CHAT_COMPOSE_BAR -> toggleSoftKeyboard()
                 AmityEventIdentifier.SHOW_AUDIO_RECORD_UI -> showAudioRecordUi()
@@ -503,27 +516,7 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
     }
 
     private fun pickMultipleImages() {
-        if (isImagePermissionGranted) {
-            currentCount = 0
-            if (currentCount == AmityConstants.MAX_SELECTION_COUNT) {
-                view?.showSnackBar(getString(com.amity.socialcloud.uikit.common.R.string.amity_max_image_selected))
-            } else {
-                Matisse.from(this)
-                    .choose(MimeType.of(MimeType.JPEG, MimeType.PNG, MimeType.GIF))
-                    .countable(true)
-                    .maxSelectable(AmityConstants.MAX_SELECTION_COUNT - currentCount)
-                    .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
-                    .imageEngine(GlideEngine())
-                    .theme(com.amity.socialcloud.uikit.common.R.style.AmityImagePickerTheme)
-                    .forResult(AmityConstants.PICK_IMAGES)
-            }
-        } else {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-                pickMultipleImagesPermission.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                pickMultipleImagesPermission.launch(Manifest.permission.READ_MEDIA_IMAGES)
-            }
-        }
+        imagePickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
 
     override fun onFilePicked(data: Uri?) {
@@ -578,38 +571,8 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
         layout.showSnackBar("", Snackbar.LENGTH_SHORT)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == Activity.RESULT_OK && requestCode == AmityConstants.PICK_IMAGES) {
-            if (requestCode == AmityConstants.PICK_IMAGES) {
-                data?.let {
-                    val imageUriList = Matisse.obtainResult(it)
-                    for (uri in imageUriList) {
-                        disposable.add(messageListViewModel.sendImageMessage(uri)
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .doOnComplete {
-                                msgSent = true
-                            }.doOnError {
-                                msgSent = false
-                            }.subscribe()
-                        )
-                    }
-                }
-                if (messageListViewModel.showComposeBar.get()) {
-                    messageListViewModel.showComposeBar.set(false)
-                }
-            } else {
-                super.onActivityResult(requestCode, resultCode, data)
-            }
-        }
-    }
-
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         //inflater.inflate(R.menu.eko_chat_list, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return super.onOptionsItemSelected(item)
     }
 
     override fun onPause() {

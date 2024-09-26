@@ -18,7 +18,7 @@ import com.amity.socialcloud.uikit.common.common.showSnackBar
 import com.amity.socialcloud.uikit.common.contract.AmityPickMemberContract
 import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
 
-class AmityChatHomePageFragment private constructor() : Fragment() {
+class AmityChatHomePageFragment : Fragment() {
     private lateinit var mViewModel: AmityChatHomePageViewModel
     private lateinit var fragmentStateAdapter: AmityFragmentStateAdapter
 
@@ -26,9 +26,9 @@ class AmityChatHomePageFragment private constructor() : Fragment() {
     private val binding get() = _binding!!
 
     private val selectMembers = registerForActivityResult(AmityPickMemberContract()) { userList ->
-        if (userList.isNotEmpty()) {
+        if (userList?.isNotEmpty() ?: false) {
             view?.showSnackBar(msg = getString(R.string.amity_channel_creation_loading))
-            mViewModel.createChat(selectedMembers = userList,
+            mViewModel.createChat(selectedMembers = userList!!,
                 onChatCreateSuccess = { channelId: String ->
                     val chatListIntent =
                         AmityMessageListActivity.newIntent(requireContext(), channelId)

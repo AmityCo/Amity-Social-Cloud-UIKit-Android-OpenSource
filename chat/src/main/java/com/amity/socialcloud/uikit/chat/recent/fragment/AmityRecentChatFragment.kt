@@ -18,7 +18,7 @@ import com.amity.socialcloud.uikit.chat.recent.adapter.AmityRecentChatAdapter
 import com.amity.socialcloud.uikit.chat.util.AmityRecentItemDecoration
 import io.reactivex.rxjava3.disposables.Disposable
 
-class AmityRecentChatFragment private constructor() : Fragment(), AmityRecentChatItemClickListener {
+class AmityRecentChatFragment : Fragment(), AmityRecentChatItemClickListener {
     private lateinit var mViewModel: AmityRecentChatViewModel
 
     private lateinit var mAdapter: AmityRecentChatAdapter
