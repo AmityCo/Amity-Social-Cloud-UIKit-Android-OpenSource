@@ -3,7 +3,6 @@ package com.amity.socialcloud.uikit.community.newsfeed.fragment
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
-import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
@@ -20,6 +19,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
 import androidx.fragment.app.activityViewModels
@@ -46,8 +46,6 @@ import com.amity.socialcloud.uikit.common.utils.AmityOptionMenuColorUtil
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.databinding.AmityFragmentPostCreateBinding
 import com.amity.socialcloud.uikit.community.domain.model.AmityFileAttachment
-import com.amity.socialcloud.uikit.common.base.AmityImagePickerActivity
-import com.amity.socialcloud.uikit.common.base.AmityVideoPickerActivity
 import com.amity.socialcloud.uikit.community.newsfeed.adapter.AmityCreatePostFileAdapter
 import com.amity.socialcloud.uikit.community.newsfeed.adapter.AmityCreatePostMediaAdapter
 import com.amity.socialcloud.uikit.community.newsfeed.adapter.AmityPostAttachmentOptionsAdapter
@@ -68,9 +66,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.linkedin.android.spyglass.suggestions.interfaces.SuggestionsVisibilityManager
 import com.linkedin.android.spyglass.tokenization.QueryToken
 import com.linkedin.android.spyglass.tokenization.interfaces.QueryTokenReceiver
-import com.zhihu.matisse.Matisse
-import com.zhihu.matisse.MimeType
-import com.zhihu.matisse.engine.impl.GlideEngine
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.reactivex.rxjava3.core.Flowable
@@ -115,8 +110,8 @@ abstract class AmityBaseCreatePostFragment : AmityBaseFragment(),
     private var fileAdapter: AmityCreatePostFileAdapter? = null
     private val userMentionAdapter by lazy { AmityUserMentionAdapter() }
     private val userMentionPagingDataAdapter by lazy { AmityUserMentionPagingDataAdapter() }
-    private lateinit var imagePickerLauncher: ActivityResultLauncher<Intent>
-    private lateinit var videoPickerLauncher: ActivityResultLauncher<Intent>
+    private lateinit var imagePickerLauncher: ActivityResultLauncher<PickVisualMediaRequest>
+    private lateinit var videoPickerLauncher: ActivityResultLauncher<PickVisualMediaRequest>
     
     private val searchDisposable: CompositeDisposable by lazy {
         CompositeDisposable()
@@ -174,22 +169,23 @@ abstract class AmityBaseCreatePostFragment : AmityBaseFragment(),
         }
         return super.onOptionsItemSelected(item)
     }
-    
+
     private fun registerMediaPickerResult() {
-        imagePickerLauncher = requireActivity().registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                result.data?.let {
-                    addMedia(it, PostMedia.Type.IMAGE, true)
-                }
+        imagePickerLauncher = registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(
+            MAX_IMAGE_SELECTABLE)) { uris ->
+            val selectedCount = viewModel.getImages().value?.size ?: 0
+            if(uris.isNotEmpty()) {
+                val canSelect = Math.min(MAX_IMAGE_SELECTABLE - selectedCount, uris.size)
+                addMedia(uris.subList(0, canSelect), PostMedia.Type.IMAGE)
             }
         }
-        videoPickerLauncher = requireActivity().registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                result.data?.let {
-                    addMedia(it, PostMedia.Type.VIDEO, true)
-                }
+
+        videoPickerLauncher = registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(
+            MAX_VIDEO_SELECTABLE)) { uris ->
+            val selectedCount = viewModel.getImages().value?.size ?: 0
+            if(uris.isNotEmpty()) {
+                val canSelect = Math.min(MAX_VIDEO_SELECTABLE - selectedCount, uris.size)
+                addMedia(uris.subList(0, canSelect), PostMedia.Type.VIDEO)
             }
         }
     }
@@ -525,7 +521,7 @@ abstract class AmityBaseCreatePostFragment : AmityBaseFragment(),
         if (hasReachedSelectionLimit()) {
             view?.showSnackBar(getString(R.string.amity_create_post_max_image_selected_warning))
         } else {
-            grantStoragePermission(REQUEST_STORAGE_PERMISSION_IMAGE_UPLOAD) { openImagePicker() }
+            openImagePicker()
         }
     }
 
@@ -533,7 +529,7 @@ abstract class AmityBaseCreatePostFragment : AmityBaseFragment(),
         if (hasReachedSelectionLimit()) {
             view?.showSnackBar(getString(R.string.amity_create_post_max_image_selected_warning))
         } else {
-            grantStoragePermission(REQUEST_STORAGE_PERMISSION_VIDEO_UPLOAD) { openVideoPicker() }
+            openVideoPicker()
         }
     }
 
@@ -547,23 +543,8 @@ abstract class AmityBaseCreatePostFragment : AmityBaseFragment(),
 
     private fun grantStoragePermission(requestCode: Int, onPermissionGrant: () -> Unit) {
         val requiredPermissions = emptyList<String>().toMutableList()
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-            requiredPermissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
-        } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            when (requestCode) {
-                REQUEST_STORAGE_PERMISSION_IMAGE_UPLOAD -> requiredPermissions.add(Manifest.permission.READ_MEDIA_IMAGES)
-                REQUEST_STORAGE_PERMISSION_VIDEO_UPLOAD -> requiredPermissions.add(Manifest.permission.READ_MEDIA_VIDEO)
-            }
-        } else {
-            when (requestCode) {
-                REQUEST_STORAGE_PERMISSION_IMAGE_UPLOAD -> {
-                    requiredPermissions.add(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
-                }
-                REQUEST_STORAGE_PERMISSION_VIDEO_UPLOAD -> {
-                    requiredPermissions.add(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
-                }
-            }
-        }
+        requiredPermissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+
         val hasRequiredPermission = requiredPermissions.fold(true) { acc, permission ->
             acc && hasPermission(permission)
         }
@@ -761,26 +742,8 @@ abstract class AmityBaseCreatePostFragment : AmityBaseFragment(),
     }
 
     private fun openImagePicker() {
-        val selectedImageCount = getSelectedImageCount()
         if (canSelectImage()) {
-            val isSupportPhotoPicker = ActivityResultContracts.PickVisualMedia.isPhotoPickerAvailable(requireContext())
-            if (isSupportPhotoPicker && ::imagePickerLauncher.isInitialized) {
-                val intent = AmityImagePickerActivity.newIntent(
-                    context = requireContext(),
-                    maxItems = MAX_IMAGE_SELECTABLE - selectedImageCount
-                )
-                imagePickerLauncher.launch(intent)
-            } else {
-                Matisse.from(this)
-                    .choose(MimeType.of(MimeType.JPEG, MimeType.PNG, MimeType.GIF))
-                    .showSingleMediaType(true)
-                    .countable(true)
-                    .maxSelectable(MAX_IMAGE_SELECTABLE - selectedImageCount)
-                    .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
-                    .imageEngine(GlideEngine())
-                    .theme(R.style.AmityImagePickerTheme)
-                    .forResult(AmityConstants.PICK_IMAGES)
-            }
+            imagePickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
     }
     
@@ -804,24 +767,7 @@ abstract class AmityBaseCreatePostFragment : AmityBaseFragment(),
         if (selectedVideoCount == MAX_VIDEO_SELECTABLE) {
             view?.showSnackBar(getString(R.string.amity_create_post_max_image_selected_warning))
         } else {
-            val isSupportPhotoPicker = ActivityResultContracts.PickVisualMedia.isPhotoPickerAvailable(requireContext())
-            if (isSupportPhotoPicker && ::videoPickerLauncher.isInitialized) {
-                val intent = AmityVideoPickerActivity.newIntent(
-                    context = requireContext(),
-                    maxItems = MAX_VIDEO_SELECTABLE - selectedVideoCount,
-                )
-                videoPickerLauncher.launch(intent)
-            } else {
-                Matisse.from(this)
-                    .choose(MimeType.ofVideo())
-                    .showSingleMediaType(true)
-                    .countable(true)
-                    .maxSelectable(MAX_VIDEO_SELECTABLE - selectedVideoCount)
-                    .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
-                    .imageEngine(GlideEngine())
-                    .theme(R.style.AmityImagePickerTheme)
-                    .forResult(AmityConstants.PICK_VIDEOS)
-            }
+            videoPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.VideoOnly))
         }
     }
 
@@ -846,17 +792,6 @@ abstract class AmityBaseCreatePostFragment : AmityBaseFragment(),
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == Activity.RESULT_OK) when (requestCode) {
-            AmityConstants.PICK_IMAGES -> {
-                data?.let {
-                    addMedia(it, PostMedia.Type.IMAGE)
-                }
-            }
-
-            AmityConstants.PICK_VIDEOS -> {
-                data?.let {
-                    addMedia(it, PostMedia.Type.VIDEO)
-                }
-            }
 
             AmityConstants.PICK_FILES -> {
                 if (data != null)
@@ -968,14 +903,10 @@ abstract class AmityBaseCreatePostFragment : AmityBaseFragment(),
                 || (currentAttachmentCount + 1) > MAX_FILE_SELECTABLE
     }
 
-    private fun addMedia(it: Intent, mediaType: PostMedia.Type, isNative: Boolean = false) {
+    private fun addMedia(uris: List<Uri>, mediaType: PostMedia.Type) {
         setupImageAdapter()
-        if (isNative) {
-            it.let(AmityImagePickerActivity::getUris)?.toList()
-        } else {
-            Matisse.obtainResult(it)
-        }?.let { resultUris ->
-            val postMediaList = viewModel.addMedia(resultUris, mediaType)
+        if(uris.isNotEmpty()) {
+            val postMediaList = viewModel.addMedia(uris, mediaType)
             uploadMedia(postMediaList)
         }
     }

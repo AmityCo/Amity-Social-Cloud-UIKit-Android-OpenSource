@@ -9,10 +9,10 @@ import com.amity.socialcloud.uikit.common.ui.scope.rememberAmityComposeScopeProv
 
 @Composable
 fun AmityBaseElement(
-	pageScope: AmityComposePageScope? = null,
-	componentScope: AmityComposeComponentScope? = null,
-	elementId: String,
-	content: @Composable AmityComposeElementScope.() -> Unit
+    pageScope: AmityComposePageScope? = null,
+    componentScope: AmityComposeComponentScope? = null,
+    elementId: String,
+    content: @Composable AmityComposeElementScope.() -> Unit
 ) {
     val comp = rememberAmityComposeScopeProvider(
         pageScope = pageScope,

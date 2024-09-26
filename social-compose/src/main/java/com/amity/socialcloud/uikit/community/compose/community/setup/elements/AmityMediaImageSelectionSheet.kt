@@ -16,19 +16,27 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem
+import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.utils.getIcon
+import com.amity.socialcloud.uikit.common.utils.getText
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun AmityMediaImageSelectionSheet(
     modifier: Modifier = Modifier,
+    pageScope: AmityComposePageScope? = null,
     onSelect: (AmityMediaImageSelectionType?) -> Unit = {},
 ) {
     val sheetState = rememberModalBottomSheetState()
@@ -38,69 +46,83 @@ fun AmityMediaImageSelectionSheet(
         sheetState = sheetState,
         containerColor = AmityTheme.colors.background,
         windowInsets = WindowInsets(bottom = 0.dp),
-        modifier = modifier,
+        modifier = modifier.semantics {
+            testTagsAsResourceId = true
+        },
     ) {
         Column(
             modifier = modifier
                 .fillMaxWidth()
                 .padding(horizontal = 8.dp)
         ) {
-            AmityBottomSheetActionItem(
-                icon = {
-                    Box(
-                        modifier = modifier
-                            .clip(CircleShape)
-                            .background(
-                                color = if (isSystemInDarkTheme()) {
-                                    AmityTheme.colors.baseShade3
-                                } else {
-                                    AmityTheme.colors.baseShade4
-                                },
-                            )
-                            .size(32.dp)
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.amity_ic_post_attachment_camera),
-                            contentDescription = null,
-                            tint = AmityTheme.colors.base,
-                            modifier = Modifier
-                                .size(24.dp)
-                                .align(Alignment.Center),
-                        )
-                    }
-                },
-                text = "Camera",
+            AmityBaseElement(
+                pageScope = pageScope,
+                elementId = "camera_button"
             ) {
-                onSelect(AmityMediaImageSelectionType.CAMERA)
+                AmityBottomSheetActionItem(
+                    modifier = modifier.testTag(getAccessibilityId()),
+                    icon = {
+                        Box(
+                            modifier = modifier
+                                .clip(CircleShape)
+                                .background(
+                                    color = if (isSystemInDarkTheme()) {
+                                        AmityTheme.colors.baseShade3
+                                    } else {
+                                        AmityTheme.colors.baseShade4
+                                    },
+                                )
+                                .size(32.dp)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = getConfig().getIcon()),
+                                contentDescription = null,
+                                tint = AmityTheme.colors.base,
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .align(Alignment.Center),
+                            )
+                        }
+                    },
+                    text = getConfig().getText(),
+                ) {
+                    onSelect(AmityMediaImageSelectionType.CAMERA)
+                }
             }
 
-            AmityBottomSheetActionItem(
-                icon = {
-                    Box(
-                        modifier = modifier
-                            .clip(CircleShape)
-                            .background(
-                                color = if (isSystemInDarkTheme()) {
-                                    AmityTheme.colors.baseShade3
-                                } else {
-                                    AmityTheme.colors.baseShade4
-                                },
-                            )
-                            .size(32.dp)
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.amity_ic_post_attachment_photo),
-                            contentDescription = null,
-                            tint = AmityTheme.colors.base,
-                            modifier = Modifier
-                                .size(24.dp)
-                                .align(Alignment.Center),
-                        )
-                    }
-                },
-                text = "Photo",
+            AmityBaseElement(
+                pageScope = pageScope,
+                elementId = "image_button"
             ) {
-                onSelect(AmityMediaImageSelectionType.IMAGE)
+                AmityBottomSheetActionItem(
+                    modifier = modifier.testTag(getAccessibilityId()),
+                    icon = {
+                        Box(
+                            modifier = modifier
+                                .clip(CircleShape)
+                                .background(
+                                    color = if (isSystemInDarkTheme()) {
+                                        AmityTheme.colors.baseShade3
+                                    } else {
+                                        AmityTheme.colors.baseShade4
+                                    },
+                                )
+                                .size(32.dp)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = getConfig().getIcon()),
+                                contentDescription = null,
+                                tint = AmityTheme.colors.base,
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .align(Alignment.Center),
+                            )
+                        }
+                    },
+                    text = getConfig().getText(),
+                ) {
+                    onSelect(AmityMediaImageSelectionType.IMAGE)
+                }
             }
 
             Box(modifier = Modifier.height(16.dp))

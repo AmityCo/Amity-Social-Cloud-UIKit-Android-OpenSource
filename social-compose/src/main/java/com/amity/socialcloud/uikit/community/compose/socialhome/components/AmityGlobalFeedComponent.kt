@@ -68,7 +68,7 @@ fun AmityGlobalFeedComponent(
 
     AmityBaseComponent(
         pageScope = pageScope,
-        componentId = "global_feed_component"
+        componentId = "global_feed"
     ) {
         Box(
             modifier = Modifier
@@ -96,11 +96,10 @@ fun AmityGlobalFeedComponent(
 
                 items(
                     count = AmityPostComposerHelper.getCreatedPosts().size,
-                    key = { AmityPostComposerHelper.getCreatedPosts()[it].getPostId() }
+                    key = { "temp_" + AmityPostComposerHelper.getCreatedPosts()[it].getPostId() }
                 ) {
                     val post = AmityPostComposerHelper.getCreatedPosts()[it]
                     AmityPostContentComponent(
-                        modifier = modifier,
                         post = post,
                         style = AmityPostContentComponentStyle.FEED,
                         hideMenuButton = false,
@@ -135,7 +134,6 @@ fun AmityGlobalFeedComponent(
                                     }
 
                                     AmityPostContentComponent(
-                                        modifier = modifier,
                                         post = post,
                                         style = AmityPostContentComponentStyle.FEED,
                                         hideMenuButton = false,
@@ -158,7 +156,10 @@ fun AmityGlobalFeedComponent(
                                     AmityNewsFeedDivider()
                                 }
 
-                                else -> {}
+                                else -> {
+                                    AmityPostShimmer()
+                                    AmityNewsFeedDivider()
+                                }
                             }
                         }
                     }

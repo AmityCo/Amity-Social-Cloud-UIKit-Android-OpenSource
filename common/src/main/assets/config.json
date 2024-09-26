@@ -251,8 +251,8 @@
     },
     "social_home_page/my_communities/community_category_name": {},
     "social_home_page/my_communities/community_members_count": {},
-    "social_home_page/newsfeed_component/*": {},
-    "social_home_page/global_feed_component/*": {},
+    "social_home_page/newsfeed/*": {},
+    "social_home_page/global_feed/*": {},
     "post_detail_page/*/back_button": {
       "icon": "backIcon"
     },
@@ -438,13 +438,7 @@
     "community_profile_page/*/menu_button": {
       "image": "threeDotIcon"
     },
-    "community_profile_page/community_profile_tab/*": {},
-    "community_profile_page/community_profile_tab/community_feed_tab_button": {
-      "image": "communityFeedIcon"
-    },
-    "community_profile_page/community_profile_tab/community_pin_tab_button": {
-      "image": "communityPinIcon"
-    },
+    "community_profile_page/*/community_profile_tab": {},
     "community_profile_page/community_feed/*": {},
     "community_profile_page/community_pin/*": {},
     "community_profile_page/*/community_create_post_button": {
@@ -504,6 +498,14 @@
     "community_setup_page/*/community_edit_button": {
       "text": "Save",
       "image": ""
+    },
+    "community_setup_page/*/image_button": {
+      "text": "Photo",
+      "image": "postAttachmentPhoto"
+    },
+    "community_setup_page/*/camera_button": {
+      "text": "Camera",
+      "image": "postAttachmentCamera"
     },
     "community_add_category_page/*/*": {},
     "community_add_member_page/*/*": {},

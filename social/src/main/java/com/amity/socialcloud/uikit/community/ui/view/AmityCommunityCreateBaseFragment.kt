@@ -1,27 +1,22 @@
 package com.amity.socialcloud.uikit.community.ui.view
 
-import android.Manifest
 import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.amity.socialcloud.sdk.model.core.error.AmityException
 import com.amity.socialcloud.sdk.model.core.file.upload.AmityUploadResult
 import com.amity.socialcloud.uikit.common.common.showSnackBar
-import com.amity.socialcloud.uikit.common.contract.AmityPickImageContract
 import com.amity.socialcloud.uikit.common.utils.AmityAlertDialogUtil
 import com.amity.socialcloud.uikit.common.utils.AmityConstants
-import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageActivity
 import com.amity.socialcloud.uikit.community.data.AmitySelectCategoryItem
 import com.amity.socialcloud.uikit.community.databinding.AmityFragmentCreateCommunityBinding
@@ -35,6 +30,10 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import timber.log.Timber
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import com.amity.socialcloud.uikit.community.R
 
 abstract class AmityCommunityCreateBaseFragment : RxFragment() {
 
@@ -44,25 +43,7 @@ abstract class AmityCommunityCreateBaseFragment : RxFragment() {
     lateinit var viewModel: AmityCreateCommunityViewModel
     internal lateinit var binding: AmityFragmentCreateCommunityBinding
 
-    private val pickImage = registerForActivityResult(AmityPickImageContract()) { data ->
-        if (data != null) {
-            imageUri = data
-            viewModel.initialStateChanged.set(true)
-            Glide.with(this)
-                .load(data)
-                .centerCrop()
-                .into(binding.ccAvatar)
-        }
-    }
-
-    private val pickImagePermission =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-            if (it) {
-                pickImage.launch(getString(com.amity.socialcloud.uikit.common.R.string.amity_choose_image))
-            } else {
-                binding.root.showSnackBar("Permission denied", Snackbar.LENGTH_SHORT)
-            }
-        }
+    private lateinit var imagePickerLauncher: ActivityResultLauncher<PickVisualMediaRequest>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -95,6 +76,16 @@ abstract class AmityCommunityCreateBaseFragment : RxFragment() {
         setUpBackPress()
         setAvatar()
         uploadImageAndCreateCommunity()
+        imagePickerLauncher = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            if(uri != null) {
+                imageUri = uri
+                viewModel.initialStateChanged.set(true)
+                Glide.with(this)
+                    .load(imageUri)
+                    .centerCrop()
+                    .into(binding.ccAvatar)
+            }
+        }
     }
 
     private fun uploadImageAndCreateCommunity() {
@@ -114,13 +105,7 @@ abstract class AmityCommunityCreateBaseFragment : RxFragment() {
     fun getBindingVariable(): AmityFragmentCreateCommunityBinding = binding
 
     private fun pickImage() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-            pickImagePermission.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
-        } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            pickImagePermission.launch(Manifest.permission.READ_MEDIA_IMAGES)
-        } else {
-            pickImagePermission.launch(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED )
-        }
+        imagePickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
 
     private fun launchCategorySelection(preSelectedCategoryAmity: AmitySelectCategoryItem) {

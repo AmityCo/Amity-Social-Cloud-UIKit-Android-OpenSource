@@ -14,6 +14,10 @@ object AmityPostVideoPlayerHelper {
         }
     }
 
+    fun add(video: AmityVideo) {
+        add(listOf(video))
+    }
+
     fun add(videos: List<AmityVideo>) {
         videos.map { video ->
             exoPlayer?.apply {

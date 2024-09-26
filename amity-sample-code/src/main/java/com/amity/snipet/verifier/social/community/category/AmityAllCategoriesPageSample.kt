@@ -6,14 +6,14 @@ import com.amity.socialcloud.uikit.community.compose.community.category.AmityAll
 
 class AmityAllCategoriesPageSample {
     /* begin_sample_code
-    gist_id: bb4b996e326bc49039879816f10ceec9
+    gist_id: 11d3b007c669aea5fb983d7114fccdcc
     filename: AmityAllCategoriesPageSample.kt
     asc_page: https://docs.amity.co/amity-uikit/uikit-v4-beta/
-    description: All categories sample
+    description: All Categories Page sample
     */
     @Composable
     fun composeAllCategoriesPage() {
         AmityAllCategoriesPage()
     }
-    /* end_sample_code */
+
 }

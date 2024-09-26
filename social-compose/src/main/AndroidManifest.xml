@@ -38,7 +38,8 @@
             android:name=".post.detail.AmityPostDetailPageActivity"
             android:configChanges="uiMode"
             android:screenOrientation="portrait"
-            android:theme="@style/AmitySocialTheme" />
+            android:theme="@style/AmitySocialTheme"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".community.profile.AmityCommunityProfilePageActivity"
             android:configChanges="uiMode"

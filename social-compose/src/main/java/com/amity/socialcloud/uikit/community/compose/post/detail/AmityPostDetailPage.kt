@@ -4,17 +4,22 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.coerceAtMost
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -38,6 +44,8 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.closePage
 import com.amity.socialcloud.uikit.common.utils.getIcon
+import com.amity.socialcloud.uikit.common.utils.getKeyboardHeight
+import com.amity.socialcloud.uikit.common.utils.isKeyboardVisible
 import com.amity.socialcloud.uikit.community.compose.comment.amityCommentListComponent
 import com.amity.socialcloud.uikit.community.compose.comment.create.AmityCommentComposerBar
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponent
@@ -72,6 +80,20 @@ fun AmityPostDetailPage(
     }.subscribeAsState(null)
 
     var replyComment by remember { mutableStateOf<AmityComment?>(null) }
+
+    val isKeyboardOpen by isKeyboardVisible()
+    val keyboardHeight by getKeyboardHeight()
+    val systemBarPadding = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()
+
+    val commentComposeBarBottomOffset by remember(systemBarPadding) {
+        derivedStateOf {
+            if (isKeyboardOpen) {
+                2.dp.minus(keyboardHeight).plus(systemBarPadding).coerceAtMost(0.dp)
+            } else {
+                0.dp
+            }
+        }
+    }
 
     AmityBasePage(pageId = "post_detail_page") {
         AmityBaseComponent(
@@ -176,6 +198,7 @@ fun AmityPostDetailPage(
                 }
 
                 AmityCommentComposerBar(
+                    modifier = modifier.offset(y = commentComposeBarBottomOffset),
                     componentScope = getComponentScope(),
                     referenceId = id,
                     referenceType = AmityCommentReferenceType.POST,

@@ -2,6 +2,7 @@ package com.amity.socialcloud.uikit.community.compose.socialhome.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 
@@ -12,10 +13,10 @@ fun AmityNewsFeedComponent(
 ) {
     AmityBaseComponent(
         pageScope = pageScope,
-        componentId = "newsfeed_component"
+        componentId = "newsfeed"
     ) {
         AmityGlobalFeedComponent(
-            modifier = modifier,
+            modifier = modifier.testTag(getAccessibilityId()),
             pageScope = pageScope
         )
     }

@@ -9,21 +9,21 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 
 class AmityCommunityProfilePageActivity : AppCompatActivity() {
-	
+
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		enableEdgeToEdge()
-		
+
 		val communityId = intent.getStringExtra(EXTRA_PARAM_COMMUNITY_ID) ?: ""
-		
+
 		setContent {
-			AmityCommunityProfilePage(communityId)
+			AmityCommunityProfilePage(communityId = communityId)
 		}
 	}
-	
+
 	companion object {
 		private const val EXTRA_PARAM_COMMUNITY_ID = "community_id"
-		
+
 		fun newIntent(
 			context: Context,
 			communityId: String

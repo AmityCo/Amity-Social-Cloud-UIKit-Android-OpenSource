@@ -16,11 +16,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -37,6 +40,7 @@ import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostTargetType
 import com.amity.socialcloud.uikit.community.compose.target.AmityPostTargetSelectionPageType
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun AmityCreatePostMenuComponent(
     modifier: Modifier = Modifier,
@@ -57,7 +61,7 @@ fun AmityCreatePostMenuComponent(
     val targetStoryBehavior by lazy {
         AmitySocialBehaviorHelper.storyTargetSelectionPageBehavior
     }
-    
+
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) {
@@ -76,6 +80,9 @@ fun AmityCreatePostMenuComponent(
                 .width(180.dp)
                 .background(AmityTheme.colors.background)
                 .clip(RoundedCornerShape(12.dp))
+                .semantics {
+                    testTagsAsResourceId = true
+                }
         ) {
             DropdownMenuItem(
                 text = {
