@@ -23,7 +23,7 @@ class Android16By9FormatStrategy implements MediaFormatStrategy {
     public static final int AUDIO_BITRATE_AS_IS = -1;
     public static final int AUDIO_CHANNELS_AS_IS = -1;
     public static final int SCALE_720P = 5;
-    private static final String TAG = "Android16By9Format";
+    private static final String TAG = "Android16By9";
     private final int mScale;
     private final int mVideoBitrate;
     private final int mAudioBitrate;

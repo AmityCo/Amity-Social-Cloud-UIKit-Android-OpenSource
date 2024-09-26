@@ -52,13 +52,13 @@ fun AmitySocialHomePage(
                 selectedTab = selectedTab
             ) {
                 when (selectedTab) {
-                    AmitySocialHomePageTab.EXPLORE,
                     AmitySocialHomePageTab.NEWSFEED ->
                         behavior.goToGlobalSearchPage(context)
 
                     AmitySocialHomePageTab.MY_COMMUNITIES ->
                         behavior.goToMyCommunitiesSearchPage(context)
 
+                    else -> {}
                 }
             }
 

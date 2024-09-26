@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
@@ -35,43 +36,41 @@ fun AmityCommunityListShimmer(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(96.dp)
+                    .height(56.dp)
             ) {
                 Box(
                     modifier = Modifier
-                        .size(80.dp)
+                        .size(40.dp)
                         .aspectRatio(1f)
                         .shimmerBackground(
-                            color = AmityTheme.colors.baseShade4,
-                            shape = RoundedCornerShape(4.dp)
+                            color = AmityTheme.colors.baseShade3,
+                            shape = CircleShape
                         )
                 )
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Column(
-                    verticalArrangement = Arrangement.Center,
+                    verticalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(vertical = 12.dp)
                 ) {
                     Box(
                         modifier = Modifier
-                            .height(12.dp)
-                            .width(196.dp)
+                            .height(8.dp)
+                            .width(140.dp)
                             .shimmerBackground(
-                                color = AmityTheme.colors.baseShade4,
+                                color = AmityTheme.colors.baseShade3,
                                 shape = RoundedCornerShape(6.dp)
                             )
                     )
 
-                    Spacer(modifier = Modifier.height(12.dp))
-
                     Box(
                         modifier = Modifier
-                            .height(10.dp)
-                            .width(93.dp)
+                            .height(8.dp)
+                            .width(108.dp)
                             .shimmerBackground(
-                                color = AmityTheme.colors.baseShade4,
+                                color = AmityTheme.colors.baseShade3,
                                 shape = RoundedCornerShape(6.dp)
                             )
                     )

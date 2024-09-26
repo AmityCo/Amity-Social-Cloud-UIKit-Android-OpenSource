@@ -17,9 +17,6 @@ import com.amity.socialcloud.sdk.api.chat.AmityChatClient
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.uikit.chat.home.AmityChatHomePageActivity
 import com.amity.socialcloud.uikit.chat.messages.AmityMessageListActivity
-import com.amity.socialcloud.uikit.community.compose.community.bycategory.AmityCommunitiesByCategoryPage
-import com.amity.socialcloud.uikit.community.compose.community.bycategory.AmityCommunitiesByCategoryPageActivity
-import com.amity.socialcloud.uikit.community.compose.community.category.AmityAllCategoriesPageActivity
 import com.amity.socialcloud.uikit.community.compose.socialhome.AmitySocialHomePageActivity
 import com.amity.socialcloud.uikit.community.home.activity.AmityCommunityHomePageActivity
 import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityCustomPostRankingFeedActivity
@@ -113,16 +110,6 @@ class AmityFeatureListActivity : AppCompatActivity() {
                         AmityLiveChatListActivity::class.java
                     )
                 )
-            }
-            playground.setOnClickListener {
-//                val intent = Intent(
-//                    this@AmityFeatureListActivity,
-//                    AmityPlaygroundActivity::class.java
-//                )
-                //val categoryId = "58c355dcaf3f821538a9ff41cd1d75cd"
-                //val intent = AmityCommunitiesByCategoryPageActivity.newIntent(this@AmityFeatureListActivity, categoryId)
-                val intent = AmityAllCategoriesPageActivity.newIntent(this@AmityFeatureListActivity)
-                startActivity(intent)
             }
         }
     }

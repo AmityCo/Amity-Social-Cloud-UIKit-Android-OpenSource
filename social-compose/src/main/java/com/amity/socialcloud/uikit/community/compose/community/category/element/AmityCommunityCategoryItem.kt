@@ -85,7 +85,8 @@ fun AmityCommunityCategoryItem(
         Image(
             painter = painterResource(
                 if (isSelected) R.drawable.amity_ic_category_selected
-                else R.drawable.amity_ic_category_not_selected
+                else if (isEnabled) R.drawable.amity_ic_category_not_selected
+                else R.drawable.amity_ic_category_selection_disabled
             ),
             contentDescription = "Selection",
             modifier = modifier.size(24.dp)

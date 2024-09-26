@@ -79,7 +79,7 @@ dependencies {
     api "androidx.constraintlayout:constraintlayout-compose:1.0.1"
     api "androidx.paging:paging-compose:3.2.1"
     api "com.linkedin.android.spyglass:spyglass:3.0.1"
-    
+
     def room_version = "2.5.1"
     api "androidx.room:room-runtime:$room_version"
     api "androidx.room:room-rxjava3:$room_version"

@@ -48,10 +48,6 @@
         <activity android:name=".liveChat.AmityLiveChatActivity"
             android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".liveChat.AmityLiveChatListActivity" />
-        <activity android:name=".AmityPlaygroundActivity"
-            android:configChanges="uiMode"
-            android:screenOrientation="portrait"
-            android:theme="@style/AmitySocialTheme" />
         <activity android:name=".env.EnvironmentActivity" />
         <activity
             android:name=".MainActivity"

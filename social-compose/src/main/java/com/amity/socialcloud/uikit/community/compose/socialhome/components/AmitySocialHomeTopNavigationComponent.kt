@@ -71,7 +71,6 @@ fun AmitySocialHomeTopNavigationComponent(
             ) {
                 when (selectedTab) {
                     AmitySocialHomePageTab.NEWSFEED,
-                    AmitySocialHomePageTab.EXPLORE,
                     AmitySocialHomePageTab.MY_COMMUNITIES -> {
                         AmityBaseElement(
                             pageScope = pageScope,
@@ -89,47 +88,43 @@ fun AmitySocialHomeTopNavigationComponent(
                             )
                         }
                     }
+
+                    AmitySocialHomePageTab.EXPLORE -> {}
                 }
 
                 Spacer(modifier = modifier.width(10.dp))
 
                 var expanded by remember { mutableStateOf(false) }
-                when (selectedTab) {
-                    AmitySocialHomePageTab.NEWSFEED,
-                    AmitySocialHomePageTab.MY_COMMUNITIES -> {
-                        AmityBaseElement(
-                            pageScope = pageScope,
-                            componentScope = getComponentScope(),
-                            elementId = "post_creation_button"
-                        ) {
-                            AmitySocialHomeNavigationButton(
-                                icon = getConfig().getIcon(),
-                                background = AmityTheme.colors.baseShade4,
-                                iconSize = 16.dp,
-                                modifier = modifier
-                                    .size(32.dp)
-                                    .testTag(getAccessibilityId()),
-                                onClick = {
-                                    when (selectedTab) {
-                                        AmitySocialHomePageTab.NEWSFEED -> {
-                                            expanded = true
-                                        }
+                AmityBaseElement(
+                    pageScope = pageScope,
+                    componentScope = getComponentScope(),
+                    elementId = "post_creation_button"
+                ) {
+                    AmitySocialHomeNavigationButton(
+                        icon = getConfig().getIcon(),
+                        background = AmityTheme.colors.baseShade4,
+                        iconSize = 16.dp,
+                        modifier = modifier
+                            .size(32.dp)
+                            .testTag(getAccessibilityId()),
+                        onClick = {
+                            when (selectedTab) {
+                                AmitySocialHomePageTab.NEWSFEED -> {
+                                    expanded = true
+                                }
 
-                                        AmitySocialHomePageTab.MY_COMMUNITIES -> {
-                                            behavior.goToCreateCommunityPage(
-                                                AmitySocialHomeTopNavigationComponentBehavior.Context(
-                                                    componentContext = context,
-                                                )
-                                            )
-                                        }
+                                AmitySocialHomePageTab.MY_COMMUNITIES -> {
+                                    behavior.goToCreateCommunityPage(
+                                        AmitySocialHomeTopNavigationComponentBehavior.Context(
+                                            componentContext = context,
+                                        )
+                                    )
+                                }
 
-                                        else -> {}
-                                    }
-                                },
-                            )
-                        }
-                    }
-                    else ->{}
+                                AmitySocialHomePageTab.EXPLORE -> {}
+                            }
+                        },
+                    )
                 }
 
                 AmityCreatePostMenuComponent(
