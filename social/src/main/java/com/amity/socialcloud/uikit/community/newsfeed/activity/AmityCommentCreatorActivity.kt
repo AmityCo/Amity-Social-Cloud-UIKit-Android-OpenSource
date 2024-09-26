@@ -39,7 +39,7 @@ class AmityCommentCreatorActivity : AmityBaseToolbarFragmentContainerActivity() 
         return fragmentBuilder.build(this)
     }
 
-    class AmityAddCommentContract : ActivityResultContract<Bundle, Boolean?>() {
+    class AmityAddCommentContract : ActivityResultContract<Bundle?, Boolean?>() {
 
         override fun createIntent(context: Context, input: Bundle?): Intent {
             val postId: String? = input?.getString(EXTRA_PARAM_POST_ID)

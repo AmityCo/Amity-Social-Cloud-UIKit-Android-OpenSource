@@ -44,7 +44,7 @@ class AmityCategoryPickerActivity :
     }
 
     class AmityCategorySelectionActivityContract :
-        ActivityResultContract<AmitySelectCategoryItem, AmitySelectCategoryItem?>() {
+        ActivityResultContract<AmitySelectCategoryItem?, AmitySelectCategoryItem?>() {
         override fun createIntent(
             context: Context,
             defaultSelection: AmitySelectCategoryItem?

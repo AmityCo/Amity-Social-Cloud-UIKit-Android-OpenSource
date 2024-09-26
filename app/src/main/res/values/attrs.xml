@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <declare-styleable name="AmityAvatar">
-        <attr name="amityAvatarHeight" format="dimension" />
-        <attr name="amityAvatarWidth" format="dimension" />
-        <attr name="amityAvatarPlaceholderImage" format="reference" />
-    </declare-styleable>
-</resources>

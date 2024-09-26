@@ -2,12 +2,28 @@ apply from: "../buildsystem/activity.gradle"
 apply plugin: 'com.android.library'
 
 android {
+
+    namespace 'com.amity.socialcloud.uikit'
+    lint {
+        abortOnError false
+        checkAllWarnings true
+        checkDependencies false
+        disable 'GoogleAppIndexingWarning', 'NewerVersionAvailable', 'UnusedResources', 'LogNotTimber', 'StringFormatInTimber', 'ThrowableNotAtBeginning', 'BinaryOperationInTimber', 'TimberArgCount', 'TimberArgTypes', 'TimberTagLength', 'TimberExceptionLogging'
+        quiet true
+        warningsAsErrors true
+        xmlReport false
+    }
     buildTypes {
         release {
             consumerProguardFiles 'amity-proguard-rules.pro'
         }
         debug {
             consumerProguardFiles 'amity-proguard-rules.pro'
+        }
+    }
+    configurations.configureEach {
+        resolutionStrategy {
+            force("androidx.core:core-ktx:1.9.0")
         }
     }
 }

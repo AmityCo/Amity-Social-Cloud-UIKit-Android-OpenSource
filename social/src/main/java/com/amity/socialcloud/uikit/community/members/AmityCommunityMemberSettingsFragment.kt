@@ -30,12 +30,14 @@ class AmityCommunityMemberSettingsFragment : AmityBaseFragment() {
     private lateinit var memberFragment: AmityMembersFragment
     private lateinit var modFragment: AmityModeratorsFragment
     private val selectMembers = registerForActivityResult(AmityPickMemberContract()) {
-        viewModel.handleAddRemoveMembers(it, onMembersAdded = {
-            viewModel.getCommunityMembers({}, {}, {})
-                .subscribe()
-        }, onFailed = {
+        it?.let {
+            viewModel.handleAddRemoveMembers(it, onMembersAdded = {
+                viewModel.getCommunityMembers({}, {}, {})
+                    .subscribe()
+            }, onFailed = {
 
-        })
+            })
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

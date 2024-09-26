@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.Activity
 import android.content.DialogInterface
 import android.content.Intent
-import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
@@ -13,6 +12,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.paging.ExperimentalPagingApi
@@ -27,13 +29,13 @@ import com.amity.socialcloud.uikit.common.common.showSnackBar
 import com.amity.socialcloud.uikit.common.common.views.dialog.bottomsheet.AmityBottomSheetDialog
 import com.amity.socialcloud.uikit.common.common.views.dialog.bottomsheet.BottomSheetMenuItem
 import com.amity.socialcloud.uikit.common.utils.AmityAlertDialogUtil
-import com.amity.socialcloud.uikit.common.utils.AmityConstants
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.databinding.AmityFragmentLiveStreamPostCreatorBinding
 import com.amity.socialcloud.uikit.community.newsfeed.adapter.AmityUserMentionAdapter
 import com.amity.socialcloud.uikit.community.newsfeed.adapter.AmityUserMentionPagingDataAdapter
 import com.amity.socialcloud.uikit.community.newsfeed.adapter.AmityUserMentionViewHolder
 import com.amity.socialcloud.uikit.community.newsfeed.model.AmityUserMention
+import com.amity.socialcloud.uikit.community.newsfeed.model.PostMedia
 import com.amity.socialcloud.uikit.community.newsfeed.viewmodel.AmityLiveStreamPostCreatorViewModel
 import com.amity.socialcloud.uikit.community.views.createpost.AmityPostComposeView
 import com.bumptech.glide.Glide
@@ -42,9 +44,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.linkedin.android.spyglass.suggestions.interfaces.SuggestionsVisibilityManager
 import com.linkedin.android.spyglass.tokenization.QueryToken
 import com.trello.rxlifecycle4.components.support.RxFragment
-import com.zhihu.matisse.Matisse
-import com.zhihu.matisse.MimeType
-import com.zhihu.matisse.engine.impl.GlideEngine
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
@@ -58,7 +57,6 @@ private const val REQUEST_LIVE_STREAM_STORAGE_PERMISSIONS = 20002
 
 
 class AmityLiveStreamPostCreatorFragment : RxFragment() {
-
 
     private lateinit var binding: AmityFragmentLiveStreamPostCreatorBinding
 
@@ -81,7 +79,7 @@ class AmityLiveStreamPostCreatorFragment : RxFragment() {
     private val searchDisposable: CompositeDisposable by lazy {
         CompositeDisposable()
     }
-
+    private lateinit var imagePickerLauncher: ActivityResultLauncher<PickVisualMediaRequest>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -107,6 +105,15 @@ class AmityLiveStreamPostCreatorFragment : RxFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupStreamBroadcaster()
+        registerImagePickerResult()
+    }
+
+    private fun registerImagePickerResult() {
+        imagePickerLauncher = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            if (uri != null) {
+                uploadThumbnail(uri)
+            }
+        }
     }
 
     private fun grantCameraPermissions(requestCode: Int, onPermissionGrant: () -> Unit) {
@@ -369,15 +376,7 @@ class AmityLiveStreamPostCreatorFragment : RxFragment() {
     }
 
     private fun openImagePicker() {
-        Matisse.from(this)
-            .choose(MimeType.of(MimeType.JPEG, MimeType.PNG, MimeType.GIF))
-            .showSingleMediaType(true)
-            .countable(true)
-            .maxSelectable(1)
-            .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
-            .imageEngine(GlideEngine())
-            .theme(R.style.AmityImagePickerTheme)
-            .forResult(AmityConstants.PICK_IMAGES)
+        imagePickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
 
     private fun uploadThumbnail(uri: Uri) {
@@ -565,19 +564,7 @@ class AmityLiveStreamPostCreatorFragment : RxFragment() {
             COMPOSE.DESCRIPTION -> descriptionUserMentionPagingDataAdapter
         }
     }
-    
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK) when (requestCode) {
-            AmityConstants.PICK_IMAGES -> {
-                val results = Matisse.obtainResult(data)
-                if (!results.isNullOrEmpty()) {
-                    uploadThumbnail(results[0])
-                }
-            }
-        }
-    }
-    
+
     internal enum class COMPOSE { DESCRIPTION }
 
     class Builder internal constructor() {
