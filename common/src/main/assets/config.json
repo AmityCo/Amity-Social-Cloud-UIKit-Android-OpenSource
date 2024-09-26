@@ -553,6 +553,36 @@
     },
     "pending_posts_page/pending_post_content/post_decline_button": {
       "text": "Decline"
+    },
+    "social_home_page/trending_communities/*": {
+
+    },
+    "social_home_page/trending_communities/community_official_badge": {
+      "image": "officialBadgeIcon"
+    },
+    "social_home_page/trending_communities/community_private_badge": {
+      "image": "lockIcon"
+    },
+    "social_home_page/recommended_communities/*": {
+
+    },
+    "social_home_page/recommended_communities/community_official_badge": {
+      "image": "officialBadgeIcon"
+    },
+    "social_home_page/recommended_communities/community_private_badge": {
+      "image": "lockIcon"
+    },
+    "communities_by_category_page/*/*": {
+      "image": "lockIcon"
+    },
+    "communities_by_category_page/*/community_official_badge": {
+      "image": "officialBadgeIcon"
+    },
+    "communities_by_category_page/*/community_private_badge": {
+      "image": "lockIcon"
+    },
+    "all_categories_page/*/*": {
+
     }
   }
 }
