@@ -6,7 +6,7 @@ import com.amity.socialcloud.uikit.community.compose.community.recommending.Amit
 
 class AmityRecommendedCommunitiesComponentSample {
     /* begin_sample_code
-    gist_id: 5933b4141a737e16df4ffa230400e6e5
+    gist_id: cb88ed2a8915f3a3c1bfe01b0ebe997b
     filename: AmityRecommendedCommunitiesComponentSample.kt
     asc_page: https://docs.amity.co/amity-uikit/uikit-v4-beta/
     description: Recommended communities sample
@@ -15,5 +15,5 @@ class AmityRecommendedCommunitiesComponentSample {
     fun composeRecommendedCommunitiesComponent() {
         AmityRecommendedCommunitiesComponent()
     }
-    /* end_sample_code */
+
 }

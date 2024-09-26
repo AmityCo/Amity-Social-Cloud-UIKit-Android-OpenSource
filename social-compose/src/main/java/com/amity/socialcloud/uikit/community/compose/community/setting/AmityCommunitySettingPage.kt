@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -220,6 +221,7 @@ fun AmityCommunitySettingPage(
                     elementId = "edit_profile"
                 ) {
                     AmityCommunitySettingItem(
+                        modifier = modifier.testTag(getAccessibilityId()),
                         title = getConfig().getText(),
                         icon = {
                             Box(
@@ -255,6 +257,7 @@ fun AmityCommunitySettingPage(
                 elementId = "members"
             ) {
                 AmityCommunitySettingItem(
+                    modifier = modifier.testTag(getAccessibilityId()),
                     title = getConfig().getText(),
                     icon = {
                         Box(
@@ -297,6 +300,7 @@ fun AmityCommunitySettingPage(
                         elementId = "notifications"
                     ) {
                         AmityCommunitySettingItem(
+                            modifier = modifier.testTag(getAccessibilityId()),
                             title = getConfig().getText(),
                             icon = {
                                 Box(
@@ -358,6 +362,7 @@ fun AmityCommunitySettingPage(
                     elementId = "post_permission"
                 ) {
                     AmityCommunitySettingItem(
+                        modifier = modifier.testTag(getAccessibilityId()),
                         title = getConfig().getText(),
                         icon = {
                             Box(
@@ -394,6 +399,7 @@ fun AmityCommunitySettingPage(
                     elementId = "story_setting"
                 ) {
                     AmityCommunitySettingItem(
+                        modifier = modifier.testTag(getAccessibilityId()),
                         title = getConfig().getText(),
                         icon = {
                             Box(
@@ -436,6 +442,7 @@ fun AmityCommunitySettingPage(
                     ),
                     modifier = modifier
                         .padding(vertical = 12.dp, horizontal = 8.dp)
+                        .testTag(getAccessibilityId())
                         .clickableWithoutRipple {
                             viewModel.updateUIEvent(
                                 if (hasDeletePermission) {
@@ -470,7 +477,9 @@ fun AmityCommunitySettingPage(
                                 color = AmityTheme.colors.alert,
                                 fontWeight = FontWeight.SemiBold,
                             ),
-                            modifier = modifier.padding(horizontal = 8.dp)
+                            modifier = modifier
+                                .padding(horizontal = 8.dp)
+                                .testTag(getAccessibilityId())
                         )
                     }
 
@@ -486,7 +495,9 @@ fun AmityCommunitySettingPage(
                                 fontWeight = FontWeight.Normal,
                                 color = AmityTheme.colors.baseShade1,
                             ),
-                            modifier = modifier.padding(horizontal = 8.dp)
+                            modifier = modifier
+                                .padding(horizontal = 8.dp)
+                                .testTag(getAccessibilityId())
                         )
                     }
 

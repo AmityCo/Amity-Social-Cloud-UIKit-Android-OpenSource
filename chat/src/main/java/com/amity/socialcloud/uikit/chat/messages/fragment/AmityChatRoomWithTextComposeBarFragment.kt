@@ -1,9 +1,5 @@
 package com.amity.socialcloud.uikit.chat.messages.fragment
 
-import android.Manifest
-import android.app.Activity
-import android.content.Intent
-import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -13,8 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -35,7 +29,6 @@ import com.amity.socialcloud.uikit.chat.databinding.AmityFragmentChatWithTextCom
 import com.amity.socialcloud.uikit.chat.messages.adapter.AmityMessagePagingAdapter
 import com.amity.socialcloud.uikit.chat.messages.viewModel.AmityChatRoomEssentialViewModel
 import com.amity.socialcloud.uikit.chat.messages.viewModel.AmityMessageListViewModel
-import com.amity.socialcloud.uikit.common.base.AmityImagePickerActivity
 import com.amity.socialcloud.uikit.common.base.AmityPickerFragment
 import com.amity.socialcloud.uikit.common.common.setShape
 import com.amity.socialcloud.uikit.common.common.showSnackBar
@@ -45,12 +38,8 @@ import com.amity.socialcloud.uikit.common.components.AmityAudioRecorderListener
 import com.amity.socialcloud.uikit.common.components.AmityMessageListListener
 import com.amity.socialcloud.uikit.common.model.AmityEventIdentifier
 import com.amity.socialcloud.uikit.common.utils.AmityAndroidUtil
-import com.amity.socialcloud.uikit.common.utils.AmityConstants
 import com.amity.socialcloud.uikit.common.utils.AmityRecyclerViewItemDecoration
 import com.google.android.material.snackbar.Snackbar
-import com.zhihu.matisse.Matisse
-import com.zhihu.matisse.MimeType
-import com.zhihu.matisse.engine.impl.GlideEngine
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -73,20 +62,7 @@ class AmityChatRoomWithTextComposeBarFragment() : AmityPickerFragment(),
     private var viewHolderListener: AmityMessagePagingAdapter.CustomViewHolderListener? = null
     private var messageListDisposable: Disposable? = null
     private var currentCount = 0
-    private var isImagePermissionGranted = false
     private var isReachBottom = true
-    private lateinit var imagePickerLauncher: ActivityResultLauncher<Intent>
-
-    private val pickMultipleImagesPermission =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-            if (it) {
-                isImagePermissionGranted = true
-                pickMultipleImages()
-            } else {
-                isImagePermissionGranted = false
-                view?.showSnackBar("Permission denied", Snackbar.LENGTH_SHORT)
-            }
-        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -118,7 +94,6 @@ class AmityChatRoomWithTextComposeBarFragment() : AmityPickerFragment(),
         setupComposebar()
         observeViewModelEvents()
         initMessageLoader()
-        registerImagePickerResult()
 //        observeRefreshStatus()
 //        observeConnectionStatus()
     }
@@ -168,20 +143,6 @@ class AmityChatRoomWithTextComposeBarFragment() : AmityPickerFragment(),
             .subscribe()
     }
      */
-    
-    private fun registerImagePickerResult() {
-        imagePickerLauncher = requireActivity().registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                result.data?.let {
-                    val uris = it.let(AmityImagePickerActivity::getUris)?.toList()
-                    if (!uris.isNullOrEmpty()) {
-                        uris.map(::addImageToList)
-                    }
-                }
-            }
-        }
-    }
 
     private fun presentDisconnectedView() {
         if (essentialViewModel.enableConnectionBar) {
@@ -396,7 +357,6 @@ class AmityChatRoomWithTextComposeBarFragment() : AmityPickerFragment(),
             when (event.type) {
                 AmityEventIdentifier.CAMERA_CLICKED -> takePicture()
                 AmityEventIdentifier.PICK_FILE -> pickFile()
-                AmityEventIdentifier.PICK_IMAGE -> pickMultipleImages()
                 AmityEventIdentifier.MSG_SEND_ERROR -> {
                     CoroutineScope(Dispatchers.Main).launch {
                         val snackBar =
@@ -445,35 +405,6 @@ class AmityChatRoomWithTextComposeBarFragment() : AmityPickerFragment(),
             if (height != null && height > 0) {
                 messageListViewModel.keyboardHeight.set(height)
             }
-        }
-    }
-
-    private fun pickMultipleImages() {
-        if (isImagePermissionGranted) {
-            currentCount = 0
-            if (currentCount == AmityConstants.MAX_SELECTION_COUNT) {
-                view?.showSnackBar(getString(com.amity.socialcloud.uikit.common.R.string.amity_max_image_selected))
-            } else {
-                val isSupportPhotoPicker = ActivityResultContracts.PickVisualMedia.isPhotoPickerAvailable(requireContext())
-                if (isSupportPhotoPicker && ::imagePickerLauncher.isInitialized) {
-                    val intent = AmityImagePickerActivity.newIntent(
-                        context = requireContext(),
-                        maxItems = AmityConstants.MAX_SELECTION_COUNT - currentCount
-                    )
-                    imagePickerLauncher.launch(intent)
-                } else {
-                    Matisse.from(this)
-                        .choose(MimeType.of(MimeType.JPEG, MimeType.PNG, MimeType.GIF))
-                        .countable(true)
-                        .maxSelectable(AmityConstants.MAX_SELECTION_COUNT - currentCount)
-                        .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
-                        .imageEngine(GlideEngine())
-                        .theme(com.amity.socialcloud.uikit.common.R.style.AmityImagePickerTheme)
-                        .forResult(AmityConstants.PICK_IMAGES)
-                }
-            }
-        } else {
-            pickMultipleImagesPermission.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         }
     }
 
@@ -527,32 +458,6 @@ class AmityChatRoomWithTextComposeBarFragment() : AmityPickerFragment(),
         val textView = layout.findViewById<TextView>(R.id.tvMessage)
         textView.setShape(null, null, null, null, R.color.amityColorBase, null, null)
         layout.showSnackBar("", Snackbar.LENGTH_SHORT)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == Activity.RESULT_OK && requestCode == AmityConstants.PICK_IMAGES) {
-            if (requestCode == AmityConstants.PICK_IMAGES) {
-                data?.let {
-                    val imageUriList = Matisse.obtainResult(it)
-                    for (uri in imageUriList) {
-                        disposable.add(messageListViewModel.sendImageMessage(uri)
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .doOnComplete {
-                                msgSent = true
-                            }.doOnError {
-                                msgSent = false
-                            }.subscribe()
-                        )
-                    }
-                }
-                if (messageListViewModel.showComposeBar.get()) {
-                    messageListViewModel.showComposeBar.set(false)
-                }
-            } else {
-                super.onActivityResult(requestCode, resultCode, data)
-            }
-        }
     }
 
     override fun onPause() {

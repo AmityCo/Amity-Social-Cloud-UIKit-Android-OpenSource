@@ -18,7 +18,7 @@ import com.amity.socialcloud.uikit.common.common.showSnackBar
 import com.amity.socialcloud.uikit.common.contract.AmityPickMemberContract
 import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
 
-class AmityChatHomePageFragment private constructor() : Fragment() {
+class AmityChatHomePageFragment : Fragment() {
     private lateinit var mViewModel: AmityChatHomePageViewModel
     private lateinit var fragmentStateAdapter: AmityFragmentStateAdapter
 

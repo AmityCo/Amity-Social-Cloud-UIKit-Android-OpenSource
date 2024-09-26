@@ -114,10 +114,13 @@ internal class AmityComposeComponentScopeImpl(
 
     override fun getAccessibilityId(viewId: String): String {
         val sb = StringBuilder()
-        sb.append(componentId)
+        sb.append(pageId)
         sb.append("/")
+        sb.append(componentId)
+        sb.append("/*")
 
         if (viewId.isNotEmpty()) {
+            sb.append("_")
             sb.append(viewId)
         }
         return sb.toString()

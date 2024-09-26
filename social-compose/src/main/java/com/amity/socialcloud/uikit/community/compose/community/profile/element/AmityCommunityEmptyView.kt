@@ -4,11 +4,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,37 +26,89 @@ import com.amity.socialcloud.uikit.community.compose.R
 
 @Composable
 fun AmityCommunityEmptyView(
-	modifier: Modifier = Modifier,
-	pageScope: AmityComposePageScope? = null,
-	componentScope: AmityComposeComponentScope? = null,
+    modifier: Modifier = Modifier,
+    pageScope: AmityComposePageScope? = null,
+    componentScope: AmityComposeComponentScope? = null,
 ) {
-	AmityBaseElement(
-		pageScope = pageScope,
-		componentScope = componentScope,
-		elementId = "empty_feed"
-	) {
-		Column(
-			modifier = Modifier
-				.fillMaxSize()
-				.background(AmityTheme.colors.background),
-			verticalArrangement = Arrangement.Center,
-			horizontalAlignment = Alignment.CenterHorizontally
-		) {
-			Image(
-				painter = painterResource(id = R.drawable.amity_ic_empty_feed),
-				contentDescription = "empty feed icon"
-			)
-			Spacer(modifier = Modifier.height(8.dp))
-			Text(
-				text = "No post yet",
-				style = TextStyle(
-					fontSize = 17.sp,
-					lineHeight = 22.sp,
-					fontWeight = FontWeight(600),
-					color = AmityTheme.colors.baseShade3,
-					textAlign = TextAlign.Center,
-				)
-			)
-		}
-	}
+    AmityBaseElement(
+        pageScope = pageScope,
+        componentScope = componentScope,
+        elementId = "empty_feed"
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(AmityTheme.colors.background),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.amity_ic_empty_feed),
+                contentDescription = "empty feed icon"
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "No post yet",
+                style = TextStyle(
+                    fontSize = 17.sp,
+                    lineHeight = 22.sp,
+                    fontWeight = FontWeight(600),
+                    color = AmityTheme.colors.baseShade3,
+                    textAlign = TextAlign.Center,
+                )
+            )
+        }
+    }
+}
+
+@Composable
+fun AmityCommunityEmptyImageFeedView(
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(AmityTheme.colors.background),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.amity_ic_photo_empty),
+            tint = AmityTheme.colors.baseShade4,
+            contentDescription = "empty feed icon"
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "No photo yet",
+            style = AmityTheme.typography.title.copy(
+                color = AmityTheme.colors.baseShade3,
+            ),
+        )
+    }
+}
+
+@Composable
+fun AmityCommunityEmptyVideoFeedView(
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(AmityTheme.colors.background),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.amity_ic_video_empty),
+            tint = AmityTheme.colors.baseShade4,
+            contentDescription = "empty feed icon"
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "No video yet",
+            style = AmityTheme.typography.title.copy(
+                color = AmityTheme.colors.baseShade3,
+            ),
+        )
+    }
 }

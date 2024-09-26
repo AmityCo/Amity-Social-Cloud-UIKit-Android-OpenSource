@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
@@ -52,9 +53,10 @@ fun AmityCommunitySettingRadioGroupItem(
             modifier = modifier
                 .weight(1f)
                 .padding(start = 16.dp)
+                .testTag(text)
         )
         RadioButton(
-            modifier = modifier,
+            modifier = modifier.testTag(text),
             selected = isSelected,
             colors = RadioButtonDefaults.colors(
                 selectedColor = AmityTheme.colors.highlight,

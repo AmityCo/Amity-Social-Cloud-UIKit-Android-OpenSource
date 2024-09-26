@@ -3,11 +3,13 @@ package com.amity.socialcloud.uikit.common.base
 import android.Manifest
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
+import android.view.View
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import com.amity.socialcloud.uikit.common.R
 import com.amity.socialcloud.uikit.common.common.showSnackBar
 import com.amity.socialcloud.uikit.common.contract.AmityPickFileContract
-import com.amity.socialcloud.uikit.common.contract.AmityPickImageContract
 import com.amity.socialcloud.uikit.common.utils.AmityCameraUtil
 import com.google.android.material.snackbar.Snackbar
 import java.io.File
@@ -16,18 +18,7 @@ abstract class AmityPickerFragment : AmityBaseFragment() {
 
     private var photoFile: File? = null
 
-    private val pickImage = registerForActivityResult(AmityPickImageContract()) { data ->
-        onImagePicked(data)
-    }
-
-    private val pickImagePermission =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-            if (it) {
-                pickImage.launch(getString(R.string.amity_choose_image))
-            } else {
-                view?.showSnackBar("Permission denied", Snackbar.LENGTH_SHORT)
-            }
-        }
+    private lateinit var imagePickerLauncher: ActivityResultLauncher<PickVisualMediaRequest>
 
     private val pickFile = registerForActivityResult(AmityPickFileContract()) { data ->
         onFilePicked(data)
@@ -70,13 +61,7 @@ abstract class AmityPickerFragment : AmityBaseFragment() {
     abstract fun onPhotoClicked(file: File?)
 
     fun pickImage() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-            pickImagePermission.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
-        } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            pickImagePermission.launch(Manifest.permission.READ_MEDIA_IMAGES)
-        } else {
-            pickImagePermission.launch(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED )
-        }
+        imagePickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
 
     fun pickFile() {
@@ -95,6 +80,13 @@ abstract class AmityPickerFragment : AmityBaseFragment() {
             )
         }
         cameraPermission.launch(permissions)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        imagePickerLauncher = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            onImagePicked(uri)
+        }
     }
 
 }

@@ -48,6 +48,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -251,6 +252,7 @@ fun AmityCommunitySetupPage(
                                 .clickableWithoutRipple {
                                     showLeaveConfirmDialog = true
                                 }
+                                .testTag(getAccessibilityId())
                         )
                     }
                     AmityBaseElement(
@@ -263,6 +265,7 @@ fun AmityCommunitySetupPage(
                             modifier = modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 16.dp)
+                                .testTag(getAccessibilityId())
                         )
                     }
                 }
@@ -317,7 +320,8 @@ fun AmityCommunitySetupPage(
                     ) {
                         Text(
                             text = getConfig().getText(),
-                            style = AmityTheme.typography.title
+                            style = AmityTheme.typography.title,
+                            modifier = modifier.testTag(getAccessibilityId())
                         )
                     }
 
@@ -359,7 +363,8 @@ fun AmityCommunitySetupPage(
                         ) {
                             Text(
                                 text = getConfig().getText(),
-                                style = AmityTheme.typography.title
+                                style = AmityTheme.typography.title,
+                                modifier = modifier.testTag(getAccessibilityId())
                             )
                         }
                         Text(
@@ -399,7 +404,9 @@ fun AmityCommunitySetupPage(
                     Text(
                         text = getConfig().getText(),
                         style = AmityTheme.typography.title,
-                        modifier = modifier.padding(horizontal = 16.dp)
+                        modifier = modifier
+                            .padding(horizontal = 16.dp)
+                            .testTag(getAccessibilityId())
                     )
                 }
                 Spacer(modifier = modifier.height(18.dp))
@@ -468,7 +475,9 @@ fun AmityCommunitySetupPage(
                     Text(
                         text = getConfig().getText(),
                         style = AmityTheme.typography.title,
-                        modifier = modifier.padding(horizontal = 16.dp)
+                        modifier = modifier
+                            .padding(horizontal = 16.dp)
+                            .testTag(getAccessibilityId())
                     )
                 }
                 Row(
@@ -493,6 +502,7 @@ fun AmityCommunitySetupPage(
                                 modifier = modifier
                                     .size(16.dp)
                                     .align(Alignment.Center)
+                                    .testTag(getAccessibilityId())
                             )
                         }
                     }
@@ -511,7 +521,8 @@ fun AmityCommunitySetupPage(
                                 text = context.getString(R.string.amity_public),
                                 style = AmityTheme.typography.body.copy(
                                     fontWeight = FontWeight.SemiBold
-                                )
+                                ),
+                                modifier = modifier.testTag(getAccessibilityId())
                             )
                         }
                         Spacer(modifier.height(2.dp))
@@ -524,7 +535,8 @@ fun AmityCommunitySetupPage(
                                 style = AmityTheme.typography.caption.copy(
                                     color = AmityTheme.colors.baseShade1,
                                     fontWeight = FontWeight.Normal,
-                                )
+                                ),
+                                modifier = modifier.testTag(getAccessibilityId())
                             )
                         }
                     }
@@ -561,6 +573,7 @@ fun AmityCommunitySetupPage(
                                 modifier = modifier
                                     .size(16.dp)
                                     .align(Alignment.Center)
+                                    .testTag(getAccessibilityId())
                             )
                         }
                     }
@@ -579,7 +592,8 @@ fun AmityCommunitySetupPage(
                                 text = context.getString(R.string.amity_private),
                                 style = AmityTheme.typography.body.copy(
                                     fontWeight = FontWeight.SemiBold
-                                )
+                                ),
+                                modifier = modifier.testTag(getAccessibilityId())
                             )
                         }
                         Spacer(modifier.height(2.dp))
@@ -592,7 +606,8 @@ fun AmityCommunitySetupPage(
                                 style = AmityTheme.typography.caption.copy(
                                     color = AmityTheme.colors.baseShade1,
                                     fontWeight = FontWeight.Normal,
-                                )
+                                ),
+                                modifier = modifier.testTag(getAccessibilityId())
                             )
                         }
                     }
@@ -623,7 +638,9 @@ fun AmityCommunitySetupPage(
                         Text(
                             text = getConfig().getText(),
                             style = AmityTheme.typography.title,
-                            modifier = modifier.padding(horizontal = 16.dp)
+                            modifier = modifier
+                                .padding(horizontal = 16.dp)
+                                .testTag(getAccessibilityId())
                         )
                     }
                     Spacer(modifier = modifier.height(16.dp))
@@ -735,6 +752,7 @@ fun AmityCommunitySetupPage(
                             style = AmityTheme.typography.caption.copy(
                                 color = Color.White,
                             ),
+                            modifier = modifier.testTag(getAccessibilityId())
                         )
                     }
                 }
@@ -745,6 +763,7 @@ fun AmityCommunitySetupPage(
         if (showMediaCameraSelectionSheet) {
             AmityMediaImageSelectionSheet(
                 modifier = modifier,
+                pageScope = getPageScope(),
             ) { type ->
                 showMediaCameraSelectionSheet = false
 

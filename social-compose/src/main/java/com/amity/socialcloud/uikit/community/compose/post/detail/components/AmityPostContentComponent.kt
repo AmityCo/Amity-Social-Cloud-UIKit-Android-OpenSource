@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -126,6 +127,7 @@ fun AmityPostContentComponent(
                     }
                 }
                 .isVisible { isVisible = it }
+                .testTag(getAccessibilityId())
         ) {
             AmityPostHeaderElement(
                 modifier = modifier,

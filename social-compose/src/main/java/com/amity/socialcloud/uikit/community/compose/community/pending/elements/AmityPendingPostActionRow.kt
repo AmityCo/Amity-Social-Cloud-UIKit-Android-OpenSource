@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
@@ -52,7 +53,9 @@ fun AmityPendingPostActionRow(
                     shape = RoundedCornerShape(8.dp),
                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
                     enabled = true,
-                    modifier = modifier.weight(1f),
+                    modifier = modifier
+                        .weight(1f)
+                        .testTag(getAccessibilityId()),
                     onClick = onAccept,
                 ) {
                     Text(
@@ -75,7 +78,9 @@ fun AmityPendingPostActionRow(
                     border = BorderStroke(1.dp, AmityTheme.colors.baseShade3),
                     shape = RoundedCornerShape(8.dp),
                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
-                    modifier = modifier.weight(1f),
+                    modifier = modifier
+                        .weight(1f)
+                        .testTag(getAccessibilityId()),
                     onClick = onDecline,
                 ) {
                     Text(

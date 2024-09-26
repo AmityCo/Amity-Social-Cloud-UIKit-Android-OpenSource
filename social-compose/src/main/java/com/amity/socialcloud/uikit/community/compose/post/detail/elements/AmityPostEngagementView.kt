@@ -163,7 +163,8 @@ fun AmityPostEngagementView(
                                     postId = post.getPostId(),
                                     isReacted = isReacted
                                 )
-                            },
+                            }
+                            .testTag(getAccessibilityId()),
                     )
                     Text(
                         text = if (isPostDetailPage) getConfig().getText()
@@ -173,7 +174,6 @@ fun AmityPostEngagementView(
                             color = if (isReacted) AmityTheme.colors.primary
                             else AmityTheme.colors.baseShade2
                         ),
-                        modifier = modifier.testTag(getAccessibilityId()),
                     )
                 }
 
@@ -185,7 +185,9 @@ fun AmityPostEngagementView(
                     Image(
                         painter = painterResource(id = getConfig().getIcon()),
                         contentDescription = null,
-                        modifier = modifier.size(20.dp)
+                        modifier = modifier
+                            .size(20.dp)
+                            .testTag(getAccessibilityId())
                     )
                     Text(
                         text = if (isPostDetailPage) getConfig().getText()
@@ -194,7 +196,6 @@ fun AmityPostEngagementView(
                             fontWeight = FontWeight.SemiBold,
                             color = AmityTheme.colors.baseShade2
                         ),
-                        modifier = modifier.testTag(getAccessibilityId()),
                     )
                 }
             }

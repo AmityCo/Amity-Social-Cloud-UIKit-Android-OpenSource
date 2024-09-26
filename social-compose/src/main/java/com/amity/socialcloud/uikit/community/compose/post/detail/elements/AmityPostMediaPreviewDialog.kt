@@ -65,6 +65,7 @@ fun AmityPostMediaPreviewDialog(
         ExoPlayer.Builder(context)
             .setSeekBackIncrementMs(15_000)
             .setSeekForwardIncrementMs(15_000)
+            .setPauseAtEndOfMediaItems(true)
             .build()
     }
     var isAudioMuted by remember { mutableStateOf(false) }

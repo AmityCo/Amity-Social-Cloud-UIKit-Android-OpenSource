@@ -272,23 +272,13 @@ fun AmityCreateStoryPage(
                             .testTag("media_picker_button"),
                     ) {
                         haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                        if (isMediaPermissionGranted) {
-                            mediaPickerLauncher.launch(
-                                PickVisualMediaRequest(
-                                    mediaType =
-                                    if (isPhotoSelected) ActivityResultContracts.PickVisualMedia.ImageOnly
-                                    else ActivityResultContracts.PickVisualMedia.VideoOnly,
-                                )
+                        mediaPickerLauncher.launch(
+                            PickVisualMediaRequest(
+                                mediaType =
+                                if (isPhotoSelected) ActivityResultContracts.PickVisualMedia.ImageOnly
+                                else ActivityResultContracts.PickVisualMedia.VideoOnly,
                             )
-                        } else {
-                            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-                                mediaPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
-                            } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                                mediaPermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES)
-                            } else {
-                                mediaPermissionLauncher.launch(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
-                            }
-                        }
+                        )
                     }
                     AmityMenuButton(
                         icon = R.drawable.amity_ic_story_switch_camera,

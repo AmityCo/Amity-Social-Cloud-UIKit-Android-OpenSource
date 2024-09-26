@@ -87,7 +87,6 @@ fun AmityCommentComposerBar(
 
         if (shouldShowSuggestion) {
             AmityMentionSuggestionView(
-                modifier = modifier,
                 community = viewModel.community,
                 keyword = queryToken
             ) {
@@ -102,7 +101,7 @@ fun AmityCommentComposerBar(
 
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .background(AmityTheme.colors.background)
                 .padding(12.dp)
