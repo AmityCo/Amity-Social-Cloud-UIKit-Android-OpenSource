@@ -21,11 +21,11 @@ import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.file.AmityVideo
 import com.amity.socialcloud.sdk.model.core.file.upload.AmityUploadInfo
 import com.amity.socialcloud.sdk.model.core.file.upload.AmityUploadResult
+import com.amity.socialcloud.uikit.common.infra.transcoder.MediaTranscoder
+import com.amity.socialcloud.uikit.common.infra.transcoder.format.MediaFormatStrategyPresets
 import com.ekoapp.ekosdk.internal.util.AppContext
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
-import com.amity.socialcloud.uikit.common.infra.transcoder.MediaTranscoder
-import com.amity.socialcloud.uikit.common.infra.transcoder.format.MediaFormatStrategyPresets
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
