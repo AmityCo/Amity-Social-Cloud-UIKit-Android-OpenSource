@@ -181,7 +181,7 @@ fun AmityCommunityNotificationSettingPage(
                             Icon(
                                 painter = painterResource(id = R.drawable.amity_ic_community_notification_post),
                                 contentDescription = "",
-                                tint = Color.Black,
+                                tint = AmityTheme.colors.base,
                                 modifier = modifier.size(24.dp)
                             )
                         }
@@ -206,7 +206,7 @@ fun AmityCommunityNotificationSettingPage(
                             Icon(
                                 painter = painterResource(id = R.drawable.amity_ic_community_notification_comment),
                                 contentDescription = "",
-                                tint = Color.Black,
+                                tint = AmityTheme.colors.base,
                                 modifier = modifier.size(24.dp)
                             )
                         }
@@ -231,7 +231,7 @@ fun AmityCommunityNotificationSettingPage(
                             Icon(
                                 painter = painterResource(id = R.drawable.amity_ic_community_story_setting),
                                 contentDescription = "",
-                                tint = Color.Black,
+                                tint = AmityTheme.colors.base,
                                 modifier = modifier.size(24.dp)
                             )
                         }

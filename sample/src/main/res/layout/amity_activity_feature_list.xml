@@ -66,13 +66,22 @@
             app:layout_constraintTop_toBottomOf="@id/chatHome" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/userProfileV4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/amity_padding_m1"
+            android:text="LoggedIn User Profile V4"
+            app:layout_constraintStart_toStartOf="@id/communityHome"
+            app:layout_constraintTop_toBottomOf="@id/userProfile" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/textComposebar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/amity_padding_m1"
             android:text="Text only composebar"
             app:layout_constraintStart_toStartOf="@id/communityHome"
-            app:layout_constraintTop_toBottomOf="@id/userProfile" />
+            app:layout_constraintTop_toBottomOf="@id/userProfileV4" />
 
 
         <com.google.android.material.button.MaterialButton

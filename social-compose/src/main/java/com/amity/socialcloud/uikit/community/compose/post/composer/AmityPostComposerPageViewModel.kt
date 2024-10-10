@@ -362,9 +362,7 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
         mentionedUsers: List<AmityMentionMetadata.USER>
     ) {
         setPostCreationEvent(AmityPostCreationEvent.Creating)
-        val target = community?.let {
-            AmityPost.Target.COMMUNITY.create(it.getCommunityId())
-        } ?: AmityPost.Target.USER.create(AmityCoreClient.getUserId())
+        val target = getTargetForPostCreation()
         val metadata = mentionedUsers.takeIf { it.isNotEmpty() }?.let {
             AmityMentionMetadataCreator(mentionedUsers).create()
         }
@@ -664,6 +662,25 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
             }
         }
         checkAllMediaUploadedSuccessfully()
+    }
+
+    private fun getTargetForPostCreation(): AmityPost.Target {
+        return when (val option = options) {
+            is AmityPostComposerOptions.AmityPostComposerCreateOptions -> {
+                when (option.targetType) {
+                    AmityPostTargetType.USER -> {
+                        option.targetId?.let { AmityPost.Target.USER.create(it) }
+                            ?: AmityPost.Target.USER.create(AmityCoreClient.getUserId())
+                    }
+
+                    AmityPostTargetType.COMMUNITY -> {
+                        option.targetId?.let { AmityPost.Target.COMMUNITY.create(it) }
+                    }
+                }
+            }
+
+            else -> AmityPost.Target.USER.create(AmityCoreClient.getUserId())
+        } ?: AmityPost.Target.USER.create(AmityCoreClient.getUserId())
     }
 }
 

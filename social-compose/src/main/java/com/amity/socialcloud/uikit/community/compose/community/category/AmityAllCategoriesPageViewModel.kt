@@ -17,7 +17,8 @@ class AmityAllCategoriesPageViewModel : AmityBaseViewModel() {
 
     private val _categoryListState by lazy {
         MutableStateFlow<CategoryListState>(
-            CategoryListState.EMPTY)
+            CategoryListState.EMPTY
+        )
     }
     val categoryListState get() = _categoryListState
 

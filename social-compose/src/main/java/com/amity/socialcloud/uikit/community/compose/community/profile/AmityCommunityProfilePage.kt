@@ -1,15 +1,9 @@
 import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -39,11 +33,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.amity.socialcloud.sdk.model.social.post.AmityPost
-import com.amity.socialcloud.uikit.common.ad.AmityListItem
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
-import com.amity.socialcloud.uikit.common.ui.elements.AmityNewsFeedDivider
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
@@ -51,19 +42,15 @@ import com.amity.socialcloud.uikit.community.compose.community.profile.AmityComm
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfileViewModel
 import com.amity.socialcloud.uikit.community.compose.community.profile.component.AmityCommunityHeaderComponent
 import com.amity.socialcloud.uikit.community.compose.community.profile.component.AmityCommunityHeaderStyle
-import com.amity.socialcloud.uikit.community.compose.community.profile.element.AmityCommunityEmptyImageFeedView
-import com.amity.socialcloud.uikit.community.compose.community.profile.element.AmityCommunityEmptyVideoFeedView
-import com.amity.socialcloud.uikit.community.compose.community.profile.element.AmityCommunityEmptyView
-import com.amity.socialcloud.uikit.community.compose.community.profile.element.AmityCommunityImageFeedItem
 import com.amity.socialcloud.uikit.community.compose.community.profile.element.AmityCommunityProfileActionsBottomSheet
 import com.amity.socialcloud.uikit.community.compose.community.profile.element.AmityCommunityProfileShimmer
 import com.amity.socialcloud.uikit.community.compose.community.profile.element.AmityCommunityProfileTabRow
-import com.amity.socialcloud.uikit.community.compose.community.profile.element.AmityCommunityVideoFeedItem
+import com.amity.socialcloud.uikit.community.compose.paging.feed.community.amityCommunityAnnouncementFeedLLS
+import com.amity.socialcloud.uikit.community.compose.paging.feed.community.amityCommunityFeedLLS
+import com.amity.socialcloud.uikit.community.compose.paging.feed.community.amityCommunityImageFeedLLS
+import com.amity.socialcloud.uikit.community.compose.paging.feed.community.amityCommunityPinnedFeedLLS
+import com.amity.socialcloud.uikit.community.compose.paging.feed.community.amityCommunityVideoFeedLLS
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostCategory
-import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponent
-import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponentStyle
-import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostShimmer
-import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmityPostAdView
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @SuppressLint("UnrememberedMutableState")
@@ -72,38 +59,49 @@ fun AmityCommunityProfilePage(
     modifier: Modifier = Modifier,
     communityId: String,
 ) {
-    AmityBasePage(pageId = "community_profile_page") {
-        val viewModel = remember { AmityCommunityProfileViewModel(communityId) }
-        val context = LocalContext.current
-        val lazyListState = rememberLazyListState()
-        val state by remember { viewModel.communityProfileState }.collectAsState()
-        val community by remember { derivedStateOf { state.community } }
-        var expanded by remember { mutableStateOf(false) }
+    val viewModel = remember { AmityCommunityProfileViewModel(communityId) }
+    val context = LocalContext.current
+    val lazyListState = rememberLazyListState()
+    val state by remember { viewModel.communityProfileState }.collectAsState()
+    val community by remember { derivedStateOf { state.community } }
+    var expanded by remember { mutableStateOf(false) }
 
-        var isHeaderSticky by remember { mutableStateOf(false) }
-        val pullRefreshState = rememberPullRefreshState(
-            refreshing = state.isRefreshing,
-            onRefresh = {
-                viewModel.refresh()
-            }
-        )
-
-        val behavior = remember {
-            AmitySocialBehaviorHelper.communityProfilePageBehavior
+    var isHeaderSticky by remember { mutableStateOf(false) }
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = state.isRefreshing,
+        onRefresh = {
+            viewModel.refresh()
         }
-        val announcement =
-            remember(state.isRefreshing) { viewModel.getAnnouncement() }.collectAsLazyPagingItems()
-        val posts =
-            remember(state.isRefreshing) { viewModel.getCommunityPosts() }.collectAsLazyPagingItems()
-        val pin = remember(state.isRefreshing) { viewModel.getPin() }.collectAsLazyPagingItems()
-        val imagePosts = remember(state.isRefreshing) {
-            viewModel.getCommunityImagePosts()
-        }.collectAsLazyPagingItems()
-        val videoPosts = remember(state.isRefreshing) {
-            viewModel.getCommunityVideoPosts()
-        }.collectAsLazyPagingItems()
+    )
 
-        var selectedTabIndex by remember { mutableIntStateOf(0) }
+    val behavior = remember {
+        AmitySocialBehaviorHelper.communityProfilePageBehavior
+    }
+    val announcementPosts =
+        remember(communityId) { viewModel.getAnnouncement() }.collectAsLazyPagingItems()
+    val communityPosts =
+        remember(communityId) { viewModel.getCommunityPosts() }.collectAsLazyPagingItems()
+    val pinPosts =
+        remember(communityId) { viewModel.getPin() }.collectAsLazyPagingItems()
+    val imagePosts =
+        remember(communityId) { viewModel.getCommunityImagePosts() }.collectAsLazyPagingItems()
+    val videoPosts =
+        remember(communityId) { viewModel.getCommunityVideoPosts() }.collectAsLazyPagingItems()
+
+    var selectedTabIndex by remember { mutableIntStateOf(0) }
+
+
+    LaunchedEffect(state.isRefreshing) {
+        if (state.isRefreshing) {
+            announcementPosts.refresh()
+            communityPosts.refresh()
+            pinPosts.refresh()
+            imagePosts.refresh()
+            videoPosts.refresh()
+        }
+    }
+
+    AmityBasePage(pageId = "community_profile_page") {
         Scaffold { padding ->
             Box(
                 modifier = Modifier
@@ -166,302 +164,88 @@ fun AmityCommunityProfilePage(
                             selectedTabIndex = index
                         }
                     }
-                    if (announcement.itemCount > 0 && (selectedTabIndex == 0 || selectedTabIndex == 1)) {
-                        items(
-                            count = announcement.itemCount,
-                            key = {
-                                "announcement_${announcement[it]?.post?.getPostId() ?: it}"
-                            }
-                        ) { index ->
-                            announcement[index]?.post?.let { post ->
-                                // TODO: 3/6/24 currently only support text, image, and video post
-                                when (post.getData()) {
-                                    is AmityPost.Data.TEXT,
-                                    is AmityPost.Data.IMAGE,
-                                    is AmityPost.Data.VIDEO -> {
-                                    }
-
-                                    else -> return@items
+                    val hasAnnouncementPin = announcementPosts
+                        .itemSnapshotList
+                        .items
+                        .firstOrNull()
+                        ?.postId
+                        ?.let { announcementId ->
+                            pinPosts.itemSnapshotList.items
+                                .map {
+                                    it.postId
                                 }
-
-                                if (post.isDeleted()) {
-                                    return@items
-                                }
-
-                                AmityPostContentComponent(
-                                    post = post,
-                                    style = AmityPostContentComponentStyle.FEED,
-                                    category = AmityPostCategory.ANNOUNCEMENT,
-                                    hideMenuButton = false,
-                                    hideTarget = true,
-                                ) {
-                                    behavior.goToPostDetailPage(
-                                        AmityCommunityProfilePageBehavior.Context(
-                                            pageContext = context,
-                                        ),
-                                        postId = post.getPostId(),
-                                        category = AmityPostCategory.ANNOUNCEMENT
-                                    )
-                                }
-                                AmityNewsFeedDivider()
-                            }
-                        }
-                    }
-                    if (selectedTabIndex == 0) {
-                        items(
-                            count = posts.itemCount,
-                            key = {
-                                (posts[it] as? AmityListItem.PostItem)?.post?.getPostId() ?: it
-                            }
-                        ) { index ->
-                            when (val data = posts[index]) {
-                                is AmityListItem.PostItem -> {
-                                    val post = data.post
-                                    val isAnnouncement = announcement.itemSnapshotList.items
-                                        .map { it.postId }
-                                        .contains(post.getPostId())
-
-                                    if (isAnnouncement) {
-                                        return@items
-                                    }
-
-                                    // TODO: 3/6/24 currently only support text, image, and video post
-                                    when (post.getData()) {
-                                        is AmityPost.Data.TEXT,
-                                        is AmityPost.Data.IMAGE,
-                                        is AmityPost.Data.VIDEO -> {
-                                        }
-
-                                        else -> return@items
-                                    }
-                                    val category = if (
-                                        pin.itemSnapshotList.items.map { it.postId }
-                                            .contains(post.getPostId())
-                                    ) {
-                                        AmityPostCategory.PIN
+                                .contains(announcementId)
+                        } ?: false
+                    val shouldShowAnnouncement = announcementPosts.itemCount > 0
+                            && (selectedTabIndex == 0 || (selectedTabIndex == 1 && hasAnnouncementPin))
+                    if (shouldShowAnnouncement) {
+                        amityCommunityAnnouncementFeedLLS(
+                            modifier = modifier,
+                            announcementPosts = announcementPosts,
+                            hasAnnouncementPin = hasAnnouncementPin,
+                            onClick = {
+                                behavior.goToPostDetailPage(
+                                    AmityCommunityProfilePageBehavior.Context(
+                                        pageContext = context,
+                                    ),
+                                    postId = it.getPostId(),
+                                    category = if (hasAnnouncementPin) {
+                                        AmityPostCategory.PIN_AND_ANNOUNCEMENT
                                     } else {
-                                        AmityPostCategory.GENERAL
+                                        AmityPostCategory.ANNOUNCEMENT
                                     }
-                                    AmityPostContentComponent(
-                                        post = post,
-                                        style = AmityPostContentComponentStyle.FEED,
-                                        category = category,
-                                        hideMenuButton = false,
-                                        hideTarget = true,
-                                    ) {
-                                        behavior.goToPostDetailPage(
-                                            AmityCommunityProfilePageBehavior.Context(
-                                                pageContext = context,
-                                            ),
-                                            postId = post.getPostId(),
-                                            category = category,
-                                        )
-                                    }
-                                    AmityNewsFeedDivider()
-                                }
-
-                                is AmityListItem.AdItem -> {
-                                    val ad = data.ad
-                                    AmityPostAdView(
-                                        ad = ad,
-                                    )
-                                    AmityNewsFeedDivider()
-                                }
-
-                                else -> {
-                                    AmityPostShimmer()
-                                    AmityNewsFeedDivider()
-                                }
+                                )
                             }
-                        }
-
-                        if (announcement.itemCount == 0 && posts.itemCount == 0) {
-                            item {
-                                Box(
-                                    modifier = Modifier
-                                        .height(480.dp),
-                                ) {
-                                    AmityCommunityEmptyView()
-                                }
-                            }
-                        }
-                    } else if (selectedTabIndex == 1) {
-                        items(
-                            count = pin.itemCount,
-                            key = {
-                                "pin_${pin[it]?.post?.getPostId() ?: it}"
-                            }
-                        ) { index ->
-                            pin[index]?.post?.let { post ->
-                                val isAnnouncement = announcement.itemSnapshotList.items
-                                    .map { it.postId }
-                                    .contains(post.getPostId())
-
-                                if (isAnnouncement) {
-                                    return@items
-                                }
-
-                                // TODO: 3/6/24 currently only support text, image, and video post
-                                when (post.getData()) {
-                                    is AmityPost.Data.TEXT,
-                                    is AmityPost.Data.IMAGE,
-                                    is AmityPost.Data.VIDEO -> {
-                                    }
-
-                                    else -> return@items
-                                }
-
-                                if (post.isDeleted()) {
-                                    return@items
-                                }
-                                AmityPostContentComponent(
-                                    post = post,
-                                    style = AmityPostContentComponentStyle.FEED,
-                                    category = AmityPostCategory.PIN,
-                                    hideMenuButton = false,
-                                    hideTarget = true,
-                                ) {
+                        )
+                    }
+                    when (selectedTabIndex) {
+                        0 -> {
+                            amityCommunityFeedLLS(
+                                modifier = modifier,
+                                communityPosts = communityPosts,
+                                pinPosts = pinPosts,
+                                announcementPosts = announcementPosts,
+                                onClick = { post, category ->
                                     behavior.goToPostDetailPage(
                                         AmityCommunityProfilePageBehavior.Context(
                                             pageContext = context,
                                         ),
                                         postId = post.getPostId(),
+                                        category = category,
+                                    )
+                                }
+                            )
+                        }
+
+                        1 -> {
+                            amityCommunityPinnedFeedLLS(
+                                modifier = modifier,
+                                pinPosts = pinPosts,
+                                announcementPosts = announcementPosts,
+                                onClick = {
+                                    behavior.goToPostDetailPage(
+                                        AmityCommunityProfilePageBehavior.Context(
+                                            pageContext = context,
+                                        ),
+                                        postId = it.getPostId(),
                                         category = AmityPostCategory.PIN
                                     )
                                 }
-                                AmityNewsFeedDivider()
-                            }
-                        }
-                        if (announcement.itemCount == 0 && pin.itemCount == 0) {
-                            item {
-                                Box(
-                                    modifier = Modifier
-                                        .height(480.dp),
-                                ) {
-                                    AmityCommunityEmptyView()
-                                }
-                            }
-                        }
-                    } else if (selectedTabIndex == 2) {
-                        item { Spacer(modifier.height(12.dp)) }
-                        /*  count calculation logic
-                         *  showing 2 items in a row
-                         *  check if the item count is even or odd
-                         *  if even, show 2 items in a row
-                         *  if odd, show last item in a new row
-                         */
-                        items(
-                            count = imagePosts.itemCount / 2 + imagePosts.itemCount % 2,
-                            key = {
-                                "image_${imagePosts[it]?.getPostId() ?: it}"
-                            }
-                        ) { index ->
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                modifier = modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp, vertical = 2.dp)
-                                    .aspectRatio(2f)
-                            ) {
-                                //  check first image index is valid
-                                val isFirstImageIndexValid =
-                                    index * 2 < imagePosts.itemCount && index >= 0
-                                val firstImage = if (isFirstImageIndexValid) {
-                                    imagePosts[index * 2]
-                                } else {
-                                    null
-                                }
-                                AmityCommunityImageFeedItem(
-                                    modifier = modifier.weight(1f),
-                                    data = firstImage?.getData() as? AmityPost.Data.IMAGE
-                                )
-
-                                //  check second image index is valid
-                                val isSecondImageIndexValid =
-                                    index * 2 + 1 < imagePosts.itemCount && index >= 0
-                                val secondImage = if (isSecondImageIndexValid) {
-                                    imagePosts[index * 2 + 1]
-                                } else {
-                                    null
-                                }
-
-                                //  show image thumbnail if index is valid
-                                //  if not, it's one last item in a new row and show empty box
-                                if (isSecondImageIndexValid) {
-                                    AmityCommunityImageFeedItem(
-                                        modifier = modifier.weight(1f),
-                                        data = secondImage?.getData() as? AmityPost.Data.IMAGE
-                                    )
-                                } else {
-                                    Box(modifier = modifier.weight(1f))
-                                }
-                            }
+                            )
                         }
 
-                        if (imagePosts.itemCount == 0) {
-                            item {
-                                Box(modifier = Modifier.height(300.dp)) {
-                                    AmityCommunityEmptyImageFeedView()
-                                }
-                            }
-                        }
-                    } else if (selectedTabIndex == 3) {
-                        item { Spacer(modifier.height(12.dp)) }
-                        items(
-                            count = videoPosts.itemCount / 2 + videoPosts.itemCount % 2,
-                            key = {
-                                "video_${videoPosts[it]?.getPostId() ?: it}"
-                            }
-                        ) { index ->
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                modifier = modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp, vertical = 2.dp)
-                                    .aspectRatio(2f)
-                            ) {
-                                val isFirstVideoIndexValid =
-                                    index * 2 < videoPosts.itemCount && index >= 0
-
-                                if (isFirstVideoIndexValid) {
-                                    val firstVideo = videoPosts[index * 2]
-                                    if (firstVideo == null) {
-                                        Box(modifier.weight(1f))
-                                    } else {
-                                        AmityCommunityVideoFeedItem(
-                                            modifier = modifier.weight(1f),
-                                            data = firstVideo.getData() as AmityPost.Data.VIDEO
-                                        )
-                                    }
-                                } else {
-                                    Box(modifier.weight(1f))
-                                }
-
-                                val isSecondVideoIndexValid =
-                                    index * 2 + 1 < videoPosts.itemCount && index >= 0
-
-                                if (isSecondVideoIndexValid) {
-                                    val secondVideo = videoPosts.peek(index * 2 + 1)
-                                    if (secondVideo == null) {
-                                        Box(modifier = modifier.weight(1f))
-                                    } else {
-                                        AmityCommunityVideoFeedItem(
-                                            modifier = modifier.weight(1f),
-                                            data = secondVideo.getData() as AmityPost.Data.VIDEO
-                                        )
-                                    }
-                                } else {
-                                    Box(modifier = modifier.weight(1f))
-                                }
-                            }
+                        2 -> {
+                            amityCommunityImageFeedLLS(
+                                modifier = modifier,
+                                imagePosts = imagePosts,
+                            )
                         }
 
-                        if (videoPosts.itemCount == 0) {
-                            item {
-                                Box(modifier = Modifier.height(300.dp)) {
-                                    AmityCommunityEmptyVideoFeedView()
-                                }
-                            }
+                        3 -> {
+                            amityCommunityVideoFeedLLS(
+                                modifier = modifier,
+                                videoPosts = videoPosts,
+                            )
                         }
                     }
                 }

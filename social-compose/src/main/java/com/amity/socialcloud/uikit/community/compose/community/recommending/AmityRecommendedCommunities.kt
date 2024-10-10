@@ -135,6 +135,7 @@ fun AmityRecommendedCommunitiesComponent(
             AmityRecommendedCommunitiesViewModel.CommunityListState.EMPTY -> {
 
             }
+
             AmityRecommendedCommunitiesViewModel.CommunityListState.ERROR -> {
 
             }
@@ -193,7 +194,8 @@ fun AmityRecommendedCommunityAvatarView(
         )
         if (painter.state !is AsyncImagePainter.State.Success) {
             Box(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
                     .clip(
                         RoundedCornerShape(
                             topStart = 8.dp,

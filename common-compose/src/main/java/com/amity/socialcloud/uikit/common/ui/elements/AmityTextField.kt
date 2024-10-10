@@ -17,11 +17,14 @@ fun AmityTextField(
     modifier: Modifier = Modifier,
     text: String = "",
     hint: String = "",
+    maxLines: Int = 1,
     maxCharacters: Int = -1,
+    enabled: Boolean = true,
     onValueChange: (String) -> Unit,
 ) {
     TextField(
-        singleLine = true,
+        enabled = enabled,
+        maxLines = maxLines,
         value = text,
         onValueChange = {
             if (maxCharacters == -1) {
@@ -38,12 +41,14 @@ fun AmityTextField(
         },
         colors = TextFieldDefaults.colors(
             focusedContainerColor = Color.Transparent,
-            unfocusedContainerColor = Color.Transparent,
             focusedIndicatorColor = Color.Transparent,
+            unfocusedContainerColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
+            disabledContainerColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent,
         ),
         textStyle = AmityTheme.typography.body.copy(
-            color = AmityTheme.colors.base,
+            color = if (enabled) AmityTheme.colors.base else AmityTheme.colors.baseShade2,
         ),
         modifier = modifier
             .fillMaxWidth()

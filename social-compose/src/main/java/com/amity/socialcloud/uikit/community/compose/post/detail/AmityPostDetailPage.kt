@@ -18,6 +18,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -34,9 +35,11 @@ import androidx.compose.ui.unit.coerceAtMost
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.sdk.model.social.comment.AmityCommentReferenceType
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
+import com.amity.socialcloud.uikit.common.ad.AmityListItem
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
@@ -46,8 +49,9 @@ import com.amity.socialcloud.uikit.common.utils.closePage
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getKeyboardHeight
 import com.amity.socialcloud.uikit.common.utils.isKeyboardVisible
-import com.amity.socialcloud.uikit.community.compose.comment.amityCommentListComponent
+import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentViewModel
 import com.amity.socialcloud.uikit.community.compose.comment.create.AmityCommentComposerBar
+import com.amity.socialcloud.uikit.community.compose.paging.comment.amityCommentListLLS
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponent
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponentStyle
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuSheetUIState
@@ -70,6 +74,14 @@ fun AmityPostDetailPage(
         viewModel<AmityPostDetailPageViewModel>(viewModelStoreOwner = viewModelStoreOwner)
     val sheetViewModel =
         viewModel<AmityPostMenuViewModel>(viewModelStoreOwner = viewModelStoreOwner)
+    val commentViewModel =
+        viewModel<AmityCommentTrayComponentViewModel>(viewModelStoreOwner = viewModelStoreOwner)
+
+    val comments = remember(id) {
+        commentViewModel.getComments(id, AmityCommentReferenceType.POST, null)
+    }.collectAsLazyPagingItems()
+
+    val commentListState by commentViewModel.commentListState.collectAsState()
 
     val post by remember(id) {
         viewModel.getPost(id)
@@ -80,6 +92,22 @@ fun AmityPostDetailPage(
     }.subscribeAsState(null)
 
     var replyComment by remember { mutableStateOf<AmityComment?>(null) }
+    var replyCommentId by remember { mutableStateOf("") }
+    var editingCommentId by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(replyCommentId) {
+        comments.itemSnapshotList.firstOrNull {
+            it is AmityListItem.CommentItem &&
+                    it.comment.getCommentId() == replyCommentId
+        }?.let {
+            replyComment = (it as AmityListItem.CommentItem).comment
+            replyCommentId = ""
+        }
+    }
+
+    LaunchedEffect(post) {
+        commentViewModel.setCommunity((post?.getTarget() as? AmityPost.Target.COMMUNITY)?.getCommunity())
+    }
 
     val isKeyboardOpen by isKeyboardVisible()
     val keyboardHeight by getKeyboardHeight()
@@ -100,18 +128,6 @@ fun AmityPostDetailPage(
             pageScope = getPageScope(),
             componentId = "comment_tray_component"
         ) {
-            val commentListComposables = amityCommentListComponent(
-                modifier = modifier,
-                componentScope = getComponentScope(),
-                referenceId = id,
-                referenceType = AmityCommentReferenceType.POST,
-                community = (post?.getTarget() as? AmityPost.Target.COMMUNITY)?.getCommunity(),
-                shouldAllowInteraction = !sheetViewModel.isNotMember(post),
-                onReply = {
-                    replyComment = it
-                }
-            )
-
             Column(modifier = modifier.fillMaxSize()) {
                 Box(
                     modifier = modifier
@@ -169,6 +185,11 @@ fun AmityPostDetailPage(
                     verticalArrangement = Arrangement.Top,
                     modifier = modifier.weight(1f)
                 ) {
+                    AmityCommentTrayComponentViewModel.CommentListState.from(
+                        loadState = comments.loadState.refresh,
+                        itemCount = comments.itemCount,
+                    ).let(commentViewModel::setCommentListState)
+
                     item {
                         AmityPostContentComponent(
                             modifier = modifier,
@@ -189,11 +210,25 @@ fun AmityPostDetailPage(
                         Spacer(modifier = modifier.height(8.dp))
                     }
 
-                    items(
-                        count = commentListComposables.size,
-                        key = { it }
-                    ) { index ->
-                        commentListComposables[index]()
+                    amityCommentListLLS(
+                        modifier = modifier,
+                        componentScope = getComponentScope(),
+                        comments = comments,
+                        commentListState = commentListState,
+                        referenceId = id,
+                        referenceType = AmityCommentReferenceType.POST,
+                        editingCommentId = editingCommentId,
+                        shouldAllowInteraction = true,
+                        onReply = {
+                            replyCommentId = it
+                        },
+                        onEdit = {
+                            editingCommentId = it
+                        }
+                    )
+
+                    item {
+                        Box(modifier.height(commentComposeBarBottomOffset.unaryMinus()))
                     }
                 }
 
@@ -207,6 +242,7 @@ fun AmityPostDetailPage(
                 ) {
                     replyComment = null
                 }
+
             }
         }
     }
@@ -215,11 +251,13 @@ fun AmityPostDetailPage(
 enum class AmityPostCategory {
     GENERAL,
     PIN,
-    ANNOUNCEMENT;
+    ANNOUNCEMENT,
+    PIN_AND_ANNOUNCEMENT;
 
     companion object {
         fun fromString(category: String): AmityPostCategory {
             return when (category) {
+                "PIN_AND_ANNOUNCEMENT" -> PIN_AND_ANNOUNCEMENT
                 "ANNOUNCEMENT" -> ANNOUNCEMENT
                 "PIN" -> PIN
                 else -> GENERAL

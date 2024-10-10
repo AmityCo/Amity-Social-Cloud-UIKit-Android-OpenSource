@@ -23,19 +23,6 @@ public class MediaExtractorUtils {
     private MediaExtractorUtils() {
     }
 
-    public static class TrackResult {
-
-        private TrackResult() {
-        }
-
-        public int mVideoTrackIndex;
-        public String mVideoTrackMime;
-        public MediaFormat mVideoTrackFormat;
-        public int mAudioTrackIndex;
-        public String mAudioTrackMime;
-        public MediaFormat mAudioTrackFormat;
-    }
-
     public static TrackResult getFirstVideoAndAudioTrack(MediaExtractor extractor) {
         TrackResult trackResult = new TrackResult();
         trackResult.mVideoTrackIndex = -1;
@@ -59,5 +46,17 @@ public class MediaExtractorUtils {
             throw new IllegalArgumentException("extractor does not contain video and/or audio tracks.");
         }
         return trackResult;
+    }
+
+    public static class TrackResult {
+
+        public int mVideoTrackIndex;
+        public String mVideoTrackMime;
+        public MediaFormat mVideoTrackFormat;
+        public int mAudioTrackIndex;
+        public String mAudioTrackMime;
+        public MediaFormat mAudioTrackFormat;
+        private TrackResult() {
+        }
     }
 }

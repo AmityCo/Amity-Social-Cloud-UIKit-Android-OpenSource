@@ -17,8 +17,6 @@ import com.amity.socialcloud.sdk.api.chat.AmityChatClient
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.uikit.chat.home.AmityChatHomePageActivity
 import com.amity.socialcloud.uikit.chat.messages.AmityMessageListActivity
-import com.amity.socialcloud.uikit.community.compose.community.bycategory.AmityCommunitiesByCategoryPage
-import com.amity.socialcloud.uikit.community.compose.community.bycategory.AmityCommunitiesByCategoryPageActivity
 import com.amity.socialcloud.uikit.community.compose.community.category.AmityAllCategoriesPageActivity
 import com.amity.socialcloud.uikit.community.compose.socialhome.AmitySocialHomePageActivity
 import com.amity.socialcloud.uikit.community.home.activity.AmityCommunityHomePageActivity
@@ -83,6 +81,13 @@ class AmityFeatureListActivity : AppCompatActivity() {
 
             userProfile.setOnClickListener {
                 AmityCommunityNavigation.navigateToUserProfile(
+                    this@AmityFeatureListActivity,
+                    AmityCoreClient.getUserId()
+                )
+            }
+
+            userProfileV4.setOnClickListener {
+                AmityCommunityNavigation.navigateToUserProfileV4(
                     this@AmityFeatureListActivity,
                     AmityCoreClient.getUserId()
                 )

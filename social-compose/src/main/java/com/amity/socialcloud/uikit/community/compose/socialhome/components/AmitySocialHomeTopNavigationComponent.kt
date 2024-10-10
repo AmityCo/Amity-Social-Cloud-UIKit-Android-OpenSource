@@ -129,7 +129,8 @@ fun AmitySocialHomeTopNavigationComponent(
                             )
                         }
                     }
-                    else ->{}
+
+                    else -> {}
                 }
 
                 AmityCreatePostMenuComponent(

@@ -2,7 +2,6 @@ package com.amity.socialcloud.uikit.community.compose.community.bycategory
 
 import androidx.paging.LoadState
 import androidx.paging.PagingData
-import androidx.paging.filter
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.sdk.api.social.community.query.AmityCommunitySortOption
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow

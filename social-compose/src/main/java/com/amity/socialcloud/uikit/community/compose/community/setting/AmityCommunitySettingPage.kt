@@ -31,7 +31,6 @@ import androidx.compose.runtime.rxjava3.subscribeAsState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
@@ -190,6 +189,7 @@ fun AmityCommunitySettingPage(
                 Icon(
                     painter = painterResource(R.drawable.amity_ic_back),
                     contentDescription = "Close",
+                    tint = AmityTheme.colors.base,
                     modifier = modifier
                         .size(24.dp)
                         .align(Alignment.CenterStart)
@@ -235,7 +235,7 @@ fun AmityCommunitySettingPage(
                                 Icon(
                                     painter = painterResource(id = R.drawable.amity_ic_community_edit),
                                     contentDescription = "",
-                                    tint = Color.Black,
+                                    tint = AmityTheme.colors.base,
                                     modifier = modifier.align(Alignment.Center)
                                 )
                             }
@@ -271,7 +271,7 @@ fun AmityCommunitySettingPage(
                             Icon(
                                 painter = painterResource(id = R.drawable.amity_ic_community_members),
                                 contentDescription = "",
-                                tint = Color.Black,
+                                tint = AmityTheme.colors.base,
                                 modifier = modifier.align(Alignment.Center)
                             )
                         }
@@ -314,7 +314,7 @@ fun AmityCommunitySettingPage(
                                     Icon(
                                         painter = painterResource(id = R.drawable.amity_ic_community_notifications),
                                         contentDescription = "",
-                                        tint = Color.Black,
+                                        tint = AmityTheme.colors.base,
                                         modifier = modifier.align(Alignment.Center)
                                     )
                                 }
@@ -376,7 +376,7 @@ fun AmityCommunitySettingPage(
                                 Icon(
                                     painter = painterResource(id = R.drawable.amity_ic_community_post_setting),
                                     contentDescription = "",
-                                    tint = Color.Black,
+                                    tint = AmityTheme.colors.base,
                                     modifier = modifier.align(Alignment.Center)
                                 )
                             }
@@ -413,7 +413,7 @@ fun AmityCommunitySettingPage(
                                 Icon(
                                     painter = painterResource(id = R.drawable.amity_ic_community_story_setting),
                                     contentDescription = "",
-                                    tint = Color.Black,
+                                    tint = AmityTheme.colors.base,
                                     modifier = modifier.align(Alignment.Center)
                                 )
                             }

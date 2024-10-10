@@ -13,7 +13,11 @@ class AmityDownloadCompleteReceiver: BroadcastReceiver() {
         if(intent?.action == "android.intent.action.DOWNLOAD_COMPLETE") {
             val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1L)
             if(id != -1L) {
-                AmityAdAssetRepository().updateDownloadStatus(id, DownloadManager.STATUS_SUCCESSFUL)
+                try {
+                    AmityAdAssetRepository().updateDownloadStatus(id, DownloadManager.STATUS_SUCCESSFUL)
+                } catch (e: Exception) {
+                
+                }
             }
         }
     }

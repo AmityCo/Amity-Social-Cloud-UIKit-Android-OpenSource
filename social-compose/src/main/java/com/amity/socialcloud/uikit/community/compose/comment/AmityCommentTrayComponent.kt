@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,9 +24,11 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.sdk.model.social.comment.AmityCommentReferenceType
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.uikit.common.ad.AmityListItem
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.elements.AmityPagingEmptyItem
 import com.amity.socialcloud.uikit.common.ui.elements.AmityPagingErrorItem
@@ -36,6 +37,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.comment.create.AmityCommentComposerBar
 import com.amity.socialcloud.uikit.community.compose.comment.elements.AmityDisabledCommentView
+import com.amity.socialcloud.uikit.community.compose.paging.comment.amityCommentListLLS
 
 @Composable
 fun AmityCommentTrayComponent(
@@ -54,6 +56,10 @@ fun AmityCommentTrayComponent(
     val viewModel =
         viewModel<AmityCommentTrayComponentViewModel>(viewModelStoreOwner = viewModelStoreOwner)
 
+    val comments =
+        remember(referenceType, referenceId, community?.getCommunityId()) {
+            viewModel.getComments(referenceId, referenceType, community?.getCommunityId())
+        }.collectAsLazyPagingItems()
     val commentListState by viewModel.commentListState.collectAsState()
 
     val currentUser by remember(viewModel) {
@@ -61,6 +67,19 @@ fun AmityCommentTrayComponent(
     }.subscribeAsState(null)
 
     var replyComment by remember { mutableStateOf<AmityComment?>(null) }
+
+    var replyCommentId by remember { mutableStateOf("") }
+    var editingCommentId by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(replyCommentId) {
+        comments.itemSnapshotList.firstOrNull {
+            it is AmityListItem.CommentItem &&
+                    it.comment.getCommentId() == replyCommentId
+        }?.let {
+            replyComment = (it as AmityListItem.CommentItem).comment
+            replyCommentId = ""
+        }
+    }
 
     LaunchedEffect(community?.getCommunityId()) {
         viewModel.setCommunity(community)
@@ -71,17 +90,6 @@ fun AmityCommentTrayComponent(
         needScaffold = true,
         componentId = "comment_tray_component",
     ) {
-        val commentListComposables = amityCommentListComponent(
-            modifier = modifier,
-            componentScope = getComponentScope(),
-            referenceId = referenceId,
-            referenceType = referenceType,
-            shouldAllowInteraction = true,
-            onReply = {
-                replyComment = it
-            }
-        )
-
         Box(
             modifier = modifier
                 .background(AmityTheme.colors.background)
@@ -107,6 +115,11 @@ fun AmityCommentTrayComponent(
                         .fillMaxSize()
                         .padding(bottom = 64.dp)
                 ) {
+                    AmityCommentTrayComponentViewModel.CommentListState.from(
+                        loadState = comments.loadState.refresh,
+                        itemCount = comments.itemCount,
+                    ).let(viewModel::setCommentListState)
+
                     when (commentListState) {
                         AmityCommentTrayComponentViewModel.CommentListState.EMPTY -> {
                             item {
@@ -118,9 +131,22 @@ fun AmityCommentTrayComponent(
                         }
 
                         AmityCommentTrayComponentViewModel.CommentListState.SUCCESS -> {
-                            items(commentListComposables) { composable ->
-                                composable()
-                            }
+                            amityCommentListLLS(
+                                modifier = modifier,
+                                componentScope = getComponentScope(),
+                                comments = comments,
+                                commentListState = commentListState,
+                                referenceId = referenceId,
+                                referenceType = referenceType,
+                                editingCommentId = editingCommentId,
+                                shouldAllowInteraction = true,
+                                onReply = {
+                                    replyCommentId = it
+                                },
+                                onEdit = {
+                                    editingCommentId = it
+                                }
+                            )
                         }
 
                         AmityCommentTrayComponentViewModel.CommentListState.LOADING -> {

@@ -16,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -26,6 +27,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.comment.query.components.AmityCommentContentContainer
 import com.amity.socialcloud.uikit.community.compose.comment.query.components.AmityCommentEngagementBar
@@ -48,6 +50,10 @@ fun AmitySingleCommentView(
     onReply: (String) -> Unit,
     onEdit: (String?) -> Unit,
 ) {
+    val context = LocalContext.current
+    val behavior by lazy {
+        AmitySocialBehaviorHelper.commentTrayComponentBehavior
+    }
     var showDeleteBannedWordCommentDialog by remember { mutableStateOf(false) }
 
     Row(
@@ -65,7 +71,11 @@ fun AmitySingleCommentView(
     ) {
         AmityUserAvatarView(
             user = comment.getCreator(),
-            modifier = modifier.testTag("comment_list/comment_bubble_avatar")
+            modifier = modifier
+                .clickableWithoutRipple {
+                    behavior.goToUserProfilePage(context, comment.getCreatorId())
+                }
+                .testTag("comment_list/comment_bubble_avatar")
         )
 
         Column(

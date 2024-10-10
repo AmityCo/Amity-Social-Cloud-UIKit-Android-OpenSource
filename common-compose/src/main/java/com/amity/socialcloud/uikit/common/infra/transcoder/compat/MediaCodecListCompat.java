@@ -37,6 +37,14 @@ public class MediaCodecListCompat {
         }
     }
 
+    private static int getCodecCount() {
+        return MediaCodecList.getCodecCount();
+    }
+
+    private static MediaCodecInfo getCodecInfoAt(int index) {
+        return MediaCodecList.getCodecInfoAt(index);
+    }
+
     public final String findDecoderForFormat(MediaFormat format) {
         return findCoderForFormat(format, false);
     }
@@ -66,14 +74,6 @@ public class MediaCodecListCompat {
             codecInfos[i] = getCodecInfoAt(i);
         }
         return codecInfos;
-    }
-
-    private static int getCodecCount() {
-        return MediaCodecList.getCodecCount();
-    }
-
-    private static MediaCodecInfo getCodecInfoAt(int index) {
-        return MediaCodecList.getCodecInfoAt(index);
     }
 
     private final class MediaCodecInfoIterator implements Iterator<MediaCodecInfo> {

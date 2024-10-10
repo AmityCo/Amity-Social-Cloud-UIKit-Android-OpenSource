@@ -50,6 +50,7 @@ fun AmityCommunitySettingRadioGroupItem(
     ) {
         Text(
             text = text,
+            style = AmityTheme.typography.body,
             modifier = modifier
                 .weight(1f)
                 .padding(start = 16.dp)

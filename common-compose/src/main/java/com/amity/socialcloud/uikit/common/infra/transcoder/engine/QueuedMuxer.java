@@ -33,12 +33,12 @@ public class QueuedMuxer {
     private static final int BUFFER_SIZE = 64 * 1024; // I have no idea whether this value is appropriate or not...
     private final MediaMuxer mMuxer;
     private final Listener mListener;
+    private final List<SampleInfo> mSampleInfoList;
     private MediaFormat mVideoFormat;
     private MediaFormat mAudioFormat;
     private int mVideoTrackIndex;
     private int mAudioTrackIndex;
     private ByteBuffer mByteBuffer;
-    private final List<SampleInfo> mSampleInfoList;
     private boolean mStarted;
 
     public QueuedMuxer(MediaMuxer muxer, Listener listener) {
@@ -116,6 +116,10 @@ public class QueuedMuxer {
 
     public enum SampleType {VIDEO, AUDIO}
 
+    public interface Listener {
+        void onDetermineOutputFormat();
+    }
+
     private static class SampleInfo {
         private final SampleType mSampleType;
         private final int mSize;
@@ -132,9 +136,5 @@ public class QueuedMuxer {
         private void writeToBufferInfo(MediaCodec.BufferInfo bufferInfo, int offset) {
             bufferInfo.set(offset, mSize, mPresentationTimeUs, mFlags);
         }
-    }
-
-    public interface Listener {
-        void onDetermineOutputFormat();
     }
 }

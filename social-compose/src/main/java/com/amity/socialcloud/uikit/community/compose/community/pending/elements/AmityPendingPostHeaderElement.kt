@@ -37,11 +37,11 @@ fun AmityPendingPostHeaderElement(
     componentScope: AmityComposeComponentScope? = null,
     post: AmityPost,
     hideMenuButton: Boolean,
-    onMenuClick: (AmityPost) -> Unit = {}
+    onMenuClick: (AmityPost) -> Unit = {},
 ) {
     val context = LocalContext.current
     val behavior by lazy {
-        AmitySocialBehaviorHelper.postContentComponentBehavior
+        AmitySocialBehaviorHelper.pendingPostContentComponentBehavior
     }
 
     Column(
@@ -61,7 +61,7 @@ fun AmityPendingPostHeaderElement(
                     post.getCreator()?.let {
                         behavior.goToUserProfilePage(
                             context = context,
-                            user = it
+                            userId = it.getUserId(),
                         )
                     }
                 }
@@ -91,7 +91,7 @@ fun AmityPendingPostHeaderElement(
                                     ?.let {
                                         behavior.goToUserProfilePage(
                                             context = context,
-                                            user = it
+                                            userId = it.getUserId(),
                                         )
                                     }
                             }

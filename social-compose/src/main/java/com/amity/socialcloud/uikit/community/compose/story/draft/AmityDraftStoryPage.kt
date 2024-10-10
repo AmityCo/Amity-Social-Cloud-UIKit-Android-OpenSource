@@ -420,7 +420,7 @@ fun AmityDraftStoryPage(
                                 id = getConfig().getValue("share_icon").asDrawableRes()
                             ),
                             contentDescription = null,
-                            tint = Color.Black,
+                            tint = AmityTheme.colors.base,
                             modifier = Modifier.size(20.dp)
                         )
                     }

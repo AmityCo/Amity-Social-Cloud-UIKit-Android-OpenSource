@@ -23,9 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.common.readableNumber
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
-import com.amity.socialcloud.uikit.common.ui.elements.AmityCommunityAvatarView
 import com.amity.socialcloud.uikit.common.ui.elements.AmityCommunityAvatarWithLabelView
-import com.amity.socialcloud.uikit.common.ui.elements.AmityCommunityAvatarWithRoundedCornerView
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme

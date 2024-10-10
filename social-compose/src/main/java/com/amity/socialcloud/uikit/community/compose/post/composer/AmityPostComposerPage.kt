@@ -33,6 +33,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadata
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
@@ -271,52 +272,6 @@ fun AmityPostComposerPage(
         }
     }
 
-    if (showMaxUploadLimitReachedDialog) {
-        val mediaType = if (viewModel.isUploadingImageMedia()) {
-            "images"
-        } else if (viewModel.isUploadingVideoMedia()) {
-            "videos"
-        } else {
-            "files"
-        }
-
-        AmityAlertDialog(
-            dialogTitle = "Maximum upload limit reached",
-            dialogText = "You’ve reached the upload limit of 10 $mediaType. Any additional $mediaType will not be saved.",
-            dismissText = "Close",
-        ) {
-            showMaxUploadLimitReachedDialog = false
-        }
-    }
-
-    if (showDiscardPostDialog) {
-        AmityAlertDialog(
-            dialogTitle = "Discard this post?",
-            dialogText = "The post will be permanently deleted. It cannot be undone.",
-            confirmText = "Discard",
-            dismissText = "Keep editing",
-            confirmTextColor = AmityTheme.colors.alert,
-            dismissTextColor = AmityTheme.colors.highlight,
-            onConfirmation = {
-                context.closePageWithResult(Activity.RESULT_CANCELED)
-            },
-            onDismissRequest = {
-                showDiscardPostDialog = false
-            }
-        )
-    }
-
-    if (showPendingPostDialog) {
-        AmityAlertDialog(
-            dialogTitle = "",
-            dialogText = "Your post has been submitted to the pending list. It will be reviewed by community moderator.",
-            dismissText = "OK",
-        ) {
-            showPendingPostDialog = false
-            context.closePageWithResult(Activity.RESULT_OK)
-        }
-    }
-
     BackHandler {
         showDiscardPostDialog = true
     }
@@ -347,7 +302,7 @@ fun AmityPostComposerPage(
                         "Failed to " + if (isInEditMode) "edit" else "create" + " post. Please try again."
                     getPageScope().showSnackbar(
                         message = text,
-                        drawableRes = R.drawable.amity_ic_warning,
+                        drawableRes = R.drawable.amity_ic_snack_bar_warning,
                         additionalHeight = if (isInEditMode) 0 else 52,
                     )
                 }
@@ -391,7 +346,11 @@ fun AmityPostComposerPage(
                 val title = when (options) {
                     is AmityPostComposerOptions.AmityPostComposerCreateOptions -> {
                         if (options.targetType == AmityPostTargetType.USER) {
-                            options.targetId ?: "My Timeline"
+                            if (options.targetId == AmityCoreClient.getUserId()) {
+                                "My timeline"
+                            } else {
+                                options.targetId ?: ""
+                            }
                         } else {
                             options.community?.getDisplayName() ?: "Community"
                         }
@@ -556,6 +515,52 @@ fun AmityPostComposerPage(
                         }
                     )
                 }
+            }
+        }
+
+        if (showMaxUploadLimitReachedDialog) {
+            val mediaType = if (viewModel.isUploadingImageMedia()) {
+                "images"
+            } else if (viewModel.isUploadingVideoMedia()) {
+                "videos"
+            } else {
+                "files"
+            }
+
+            AmityAlertDialog(
+                dialogTitle = "Maximum upload limit reached",
+                dialogText = "You’ve reached the upload limit of 10 $mediaType. Any additional $mediaType will not be saved.",
+                dismissText = "Close",
+            ) {
+                showMaxUploadLimitReachedDialog = false
+            }
+        }
+
+        if (showDiscardPostDialog) {
+            AmityAlertDialog(
+                dialogTitle = "Discard this post?",
+                dialogText = "The post will be permanently deleted. It cannot be undone.",
+                confirmText = "Discard",
+                dismissText = "Keep editing",
+                confirmTextColor = AmityTheme.colors.alert,
+                dismissTextColor = AmityTheme.colors.highlight,
+                onConfirmation = {
+                    context.closePageWithResult(Activity.RESULT_CANCELED)
+                },
+                onDismissRequest = {
+                    showDiscardPostDialog = false
+                }
+            )
+        }
+
+        if (showPendingPostDialog) {
+            AmityAlertDialog(
+                dialogTitle = "",
+                dialogText = "Your post has been submitted to the pending list. It will be reviewed by community moderator.",
+                dismissText = "OK",
+            ) {
+                showPendingPostDialog = false
+                context.closePageWithResult(Activity.RESULT_OK)
             }
         }
     }

@@ -21,7 +21,6 @@ import android.media.MediaMetadataRetriever;
 import android.media.MediaMuxer;
 import android.util.Log;
 
-//import net.ypresto.androidtranscoder.BuildConfig;
 import com.amity.socialcloud.uikit.common.infra.transcoder.format.MediaFormatStrategy;
 import com.amity.socialcloud.uikit.common.infra.transcoder.utils.ISO6709LocationParser;
 import com.amity.socialcloud.uikit.common.infra.transcoder.utils.MediaExtractorUtils;

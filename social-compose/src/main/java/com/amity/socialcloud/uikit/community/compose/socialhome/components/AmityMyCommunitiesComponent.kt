@@ -10,6 +10,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -41,9 +42,9 @@ fun AmityMyCommunitiesComponent(
     val viewModel =
         viewModel<AmitySocialHomePageViewModel>(viewModelStoreOwner = viewModelStoreOwner)
 
-    val communities = viewModel.getMyCommunities().collectAsLazyPagingItems()
+    val communities = remember { viewModel.getMyCommunities() }.collectAsLazyPagingItems()
     val communityListState by viewModel.communityListState.collectAsState()
-    Column( modifier = modifier.fillMaxSize()) {
+    Column(modifier = modifier.fillMaxSize()) {
         AmityNewsFeedDivider()
         AmityBaseComponent(
             pageScope = pageScope,

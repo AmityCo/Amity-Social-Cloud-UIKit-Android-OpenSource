@@ -4,7 +4,6 @@ import android.app.Activity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -39,11 +38,9 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityToolBar
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.closePageWithResult
-import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.community.bycategory.AmityCommunitiesByCategoryPageActivity
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityCategoryListShimmer
-import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityCommunityListShimmer
 
 
 @Composable

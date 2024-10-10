@@ -9,13 +9,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.uikit.common.ui.elements.AmityExpandableText
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.isCreatorCommunityModerator
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.comment.query.elements.AmityCommentModeratorBadge
 import com.google.gson.JsonObject
 
@@ -24,6 +27,11 @@ fun AmityCommentContentContainer(
     modifier: Modifier = Modifier,
     comment: AmityComment,
 ) {
+    val context = LocalContext.current
+    val behavior by lazy {
+        AmitySocialBehaviorHelper.commentTrayComponentBehavior
+    }
+
     val mentionGetter = remember(comment.getCommentId(), comment.getEditedAt()) {
         AmityMentionMetadataGetter(comment.getMetadata() ?: JsonObject())
     }
@@ -47,7 +55,11 @@ fun AmityCommentContentContainer(
         Text(
             text = comment.getCreator()?.getDisplayName() ?: "",
             style = AmityTheme.typography.caption,
-            modifier = modifier.testTag("comment_list/comment_bubble_creator_display_name")
+            modifier = modifier
+                .testTag("comment_list/comment_bubble_creator_display_name")
+                .clickableWithoutRipple {
+                    behavior.goToUserProfilePage(context, comment.getCreatorId())
+                }
         )
 
         if (comment.isCreatorCommunityModerator()) {
@@ -59,7 +71,10 @@ fun AmityCommentContentContainer(
             mentionGetter = mentionGetter,
             mentionees = comment.getMentionees(),
             style = AmityTheme.typography.body,
-            modifier = modifier.testTag("comment_list/comment_bubble_comment_text_view")
+            modifier = modifier.testTag("comment_list/comment_bubble_comment_text_view"),
+            onMentionedUserClick = {
+                behavior.goToUserProfilePage(context, it)
+            }
         )
     }
 }

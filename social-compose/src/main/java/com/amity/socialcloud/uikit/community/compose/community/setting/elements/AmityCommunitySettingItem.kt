@@ -13,7 +13,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -77,7 +76,7 @@ fun AmityCommunitySettingItemPreview() {
                 Icon(
                     painter = painterResource(id = R.drawable.amity_ic_community_post_setting),
                     contentDescription = "",
-                    tint = Color.Black,
+                    tint = AmityTheme.colors.base,
                     modifier = Modifier.align(Alignment.Center)
                 )
             }

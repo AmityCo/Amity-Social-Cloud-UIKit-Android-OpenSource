@@ -42,7 +42,8 @@ public class MediaFormatPresets {
      * Preset similar to iOS SDK's AVAssetExportPreset960x540.
      * Note that encoding resolutions of this preset are not supported in all devices e.g. Nexus 4.
      * On unsupported device encoded video stream will be broken without any exception.
-     * @param originalWidth Input video width.
+     *
+     * @param originalWidth  Input video width.
      * @param originalHeight Input video height.
      * @return MediaFormat instance, or null if pass through.
      */

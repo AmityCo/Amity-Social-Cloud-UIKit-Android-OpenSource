@@ -1,7 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.community.setup.elements
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -29,6 +28,7 @@ import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.theme.isUIKitInDarkTheme
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getText
 
@@ -66,7 +66,7 @@ fun AmityMediaImageSelectionSheet(
                             modifier = modifier
                                 .clip(CircleShape)
                                 .background(
-                                    color = if (isSystemInDarkTheme()) {
+                                    color = if (isUIKitInDarkTheme()) {
                                         AmityTheme.colors.baseShade3
                                     } else {
                                         AmityTheme.colors.baseShade4
@@ -101,7 +101,7 @@ fun AmityMediaImageSelectionSheet(
                             modifier = modifier
                                 .clip(CircleShape)
                                 .background(
-                                    color = if (isSystemInDarkTheme()) {
+                                    color = if (isUIKitInDarkTheme()) {
                                         AmityTheme.colors.baseShade3
                                     } else {
                                         AmityTheme.colors.baseShade4

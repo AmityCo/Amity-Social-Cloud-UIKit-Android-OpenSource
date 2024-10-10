@@ -1,6 +1,8 @@
 package com.amity.socialcloud.uikit.community.compose
 
+import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentBehavior
 import com.amity.socialcloud.uikit.community.compose.community.membership.list.AmityCommunityMembershipPageBehavior
+import com.amity.socialcloud.uikit.community.compose.community.pending.elements.AmityPendingPostContentComponentBehavior
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageBehavior
 import com.amity.socialcloud.uikit.community.compose.community.setting.AmityCommunitySettingPageBehavior
 import com.amity.socialcloud.uikit.community.compose.community.setting.notifications.AmityCommunityNotificationSettingPageBehavior
@@ -22,6 +24,12 @@ import com.amity.socialcloud.uikit.community.compose.story.target.AmityStoryTabC
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageBehavior
 import com.amity.socialcloud.uikit.community.compose.target.post.AmityPostTargetSelectionPageBehavior
 import com.amity.socialcloud.uikit.community.compose.target.story.AmityStoryTargetSelectionPageBehavior
+import com.amity.socialcloud.uikit.community.compose.user.blocked.AmityBlockedUsersPageBehavior
+import com.amity.socialcloud.uikit.community.compose.user.pending.AmityUserPendingFollowRequestsPageBehavior
+import com.amity.socialcloud.uikit.community.compose.user.profile.AmityUserProfilePageBehavior
+import com.amity.socialcloud.uikit.community.compose.user.profile.components.AmityUserFeedComponentBehavior
+import com.amity.socialcloud.uikit.community.compose.user.profile.components.AmityUserProfileHeaderComponentBehavior
+import com.amity.socialcloud.uikit.community.compose.user.relationship.AmityUserRelationshipPageBehavior
 
 object AmitySocialBehaviorHelper {
 
@@ -90,4 +98,26 @@ object AmitySocialBehaviorHelper {
 
     var communityMembershipPageBehavior: AmityCommunityMembershipPageBehavior =
         AmityCommunityMembershipPageBehavior()
+
+    var userProfilePageBehavior: AmityUserProfilePageBehavior = AmityUserProfilePageBehavior()
+
+    var userProfileHeaderComponentBehavior: AmityUserProfileHeaderComponentBehavior =
+        AmityUserProfileHeaderComponentBehavior()
+
+    var userRelationshipPageBehavior: AmityUserRelationshipPageBehavior =
+        AmityUserRelationshipPageBehavior()
+
+    var userPendingFollowRequestsPageBehavior: AmityUserPendingFollowRequestsPageBehavior =
+        AmityUserPendingFollowRequestsPageBehavior()
+
+    var blockedUsersPageBehavior: AmityBlockedUsersPageBehavior =
+        AmityBlockedUsersPageBehavior()
+
+    var userFeedComponentBehavior: AmityUserFeedComponentBehavior = AmityUserFeedComponentBehavior()
+
+    var pendingPostContentComponentBehavior: AmityPendingPostContentComponentBehavior =
+        AmityPendingPostContentComponentBehavior()
+
+    var commentTrayComponentBehavior: AmityCommentTrayComponentBehavior =
+        AmityCommentTrayComponentBehavior()
 }

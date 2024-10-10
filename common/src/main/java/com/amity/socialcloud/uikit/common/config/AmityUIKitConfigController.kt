@@ -27,17 +27,25 @@ object AmityUIKitConfigController {
         isSystemInDarkTheme = isDarkTheme
     }
 
+    fun shouldUIKitInDarkTheme(): Boolean {
+        return when (uiKitTheme) {
+            AmityUIKitTheme.DARK -> true
+            AmityUIKitTheme.LIGHT -> false
+            AmityUIKitTheme.DEFAULT -> isSystemInDarkTheme
+        }
+    }
+
     fun getGlobalTheme(): AmityUIKitConfig.UIKitTheme {
         val global = config.globalTheme
-        return when (uiKitTheme) {
-            AmityUIKitTheme.DARK -> global.darkTheme
-            AmityUIKitTheme.LIGHT -> global.lightTheme
-            AmityUIKitTheme.DEFAULT -> if (isSystemInDarkTheme) global.darkTheme else global.lightTheme
+        return if (shouldUIKitInDarkTheme()) {
+            global.darkTheme
+        } else {
+            global.lightTheme
         }
     }
 
     fun getCustomizationConfig(configId: String): JsonObject {
-        return config.customizations.getAsJsonObject(configId)
+        return config.customizations.getAsJsonObject(configId) ?: JsonObject()
     }
 
     fun getTheme(configId: String): AmityUIKitConfig.UIKitTheme? {
@@ -45,10 +53,10 @@ object AmityUIKitConfigController {
         val type = object : TypeToken<AmityUIKitConfig.GlobalTheme?>() {}.type
 
         val theme = GSON.fromJson<AmityUIKitConfig.GlobalTheme>(jsonObject, type)
-        return when (uiKitTheme) {
-            AmityUIKitTheme.DARK -> theme.darkTheme
-            AmityUIKitTheme.LIGHT -> theme.lightTheme
-            AmityUIKitTheme.DEFAULT -> if (isSystemInDarkTheme) theme.darkTheme else theme.lightTheme
+        return if (shouldUIKitInDarkTheme()) {
+            theme.darkTheme
+        } else {
+            theme.lightTheme
         }
     }
 
@@ -79,7 +87,7 @@ object AmityUIKitConfigController {
             ""
         }
     }
-    
+
     private fun initMessageReactions() {
         config.messageReactions.map {
             (it as? JsonObject)?.let { reaction: JsonObject ->

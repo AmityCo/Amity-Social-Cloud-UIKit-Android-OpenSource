@@ -33,6 +33,7 @@ import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.isVisible
 import com.amity.socialcloud.uikit.common.utils.shimmerBackground
 import com.amity.socialcloud.uikit.common.utils.showToast
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerHelper
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostCategory
@@ -57,6 +58,9 @@ fun AmityPostContentComponent(
     onTapAction: () -> Unit = {},
 ) {
     val context = LocalContext.current
+    val behavior by lazy {
+        AmitySocialBehaviorHelper.postContentComponentBehavior
+    }
     val isPostDetailPage = remember(style) {
         style == AmityPostContentComponentStyle.DETAIL
     }
@@ -145,10 +149,15 @@ fun AmityPostContentComponent(
                 modifier = modifier,
                 post = post,
                 onClick = {
-                    // TODO: 8/9/24 disabled click on post content to fix long text post can't scroll
-//                    if (!isPostDetailPage) {
-//                        onTapAction()
-//                    }
+                    if (!isPostDetailPage) {
+                        onTapAction()
+                    }
+                },
+                onMentionedUserClick = {
+//                    behavior.goToUserProfilePage(
+//                        context = context,
+//                        userId = it,
+//                    )
                 },
             )
             AmityPostPreviewLinkView(

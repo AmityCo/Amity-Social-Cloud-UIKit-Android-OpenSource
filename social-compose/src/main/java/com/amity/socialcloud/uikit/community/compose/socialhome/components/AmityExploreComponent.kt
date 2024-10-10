@@ -118,17 +118,19 @@ fun AmityExploreComponent(
                             40.dp
                         }
 
-                    val title = if (viewModel.getCategoryState() == AmityCommunityCategoriesViewModel.CategoryListState.EMPTY) {
-                        "Your explore is empty"
-                    } else {
-                        "No community yet"
-                    }
+                    val title =
+                        if (viewModel.getCategoryState() == AmityCommunityCategoriesViewModel.CategoryListState.EMPTY) {
+                            "Your explore is empty"
+                        } else {
+                            "No community yet"
+                        }
 
-                    val caption = if (viewModel.getCategoryState() == AmityCommunityCategoriesViewModel.CategoryListState.EMPTY) {
-                        "Find community or create your own"
-                    } else {
-                        "Let's create your own communities.."
-                    }
+                    val caption =
+                        if (viewModel.getCategoryState() == AmityCommunityCategoriesViewModel.CategoryListState.EMPTY) {
+                            "Find community or create your own"
+                        } else {
+                            "Let's create your own communities.."
+                        }
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
@@ -157,7 +159,10 @@ fun AmityExploreComponent(
 
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
+                            horizontalArrangement = Arrangement.spacedBy(
+                                4.dp,
+                                Alignment.CenterHorizontally
+                            ),
                             modifier = Modifier
                                 .widthIn(min = 0.dp, max = 250.dp)
                                 .padding(top = 26.dp)
@@ -175,7 +180,8 @@ fun AmityExploreComponent(
                             Icon(
                                 imageVector = Icons.Default.Add,
                                 contentDescription = null,
-                                modifier = Modifier.size(25.dp)
+                                modifier = Modifier
+                                    .size(25.dp)
                                     .padding(start = 12.dp),
                                 tint = Color.White
                             )
@@ -207,7 +213,7 @@ fun AmityExploreComponent(
                         Icon(
                             painter = painterResource(id = R.drawable.amity_ic_unable_to_load),
                             contentDescription = null,
-                            tint =AmityTheme.colors.baseShade4,
+                            tint = AmityTheme.colors.baseShade4,
                         )
 
                         Text(

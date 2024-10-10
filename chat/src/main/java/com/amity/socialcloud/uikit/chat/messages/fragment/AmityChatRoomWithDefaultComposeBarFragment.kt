@@ -2,15 +2,18 @@ package com.amity.socialcloud.uikit.chat.messages.fragment
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
@@ -86,7 +89,7 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
             Manifest.permission.RECORD_AUDIO,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
         )
-    }  else {
+    } else {
         arrayOf(
             Manifest.permission.RECORD_AUDIO,
             Manifest.permission.READ_MEDIA_AUDIO
@@ -423,6 +426,7 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
                         binding.recorderView.circularReveal()
 
                     }
+
                     MotionEvent.ACTION_UP -> messageListViewModel.isRecording.set(false)
                 }
             } else {
@@ -475,6 +479,7 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
                         snackBar.show()
                     }
                 }
+
                 AmityEventIdentifier.MSG_SEND_SUCCESS -> scrollToLastPosition()
                 AmityEventIdentifier.TOGGLE_CHAT_COMPOSE_BAR -> toggleSoftKeyboard()
                 AmityEventIdentifier.SHOW_AUDIO_RECORD_UI -> showAudioRecordUi()
@@ -571,7 +576,7 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
         layout.showSnackBar("", Snackbar.LENGTH_SHORT)
     }
 
-    
+
     private fun addImageToList(uri: Uri) {
         disposable.add(messageListViewModel.sendImageMessage(uri)
             .subscribeOn(Schedulers.io())

@@ -4,7 +4,6 @@ import android.media.MediaCodec;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
 
-
 import com.amity.socialcloud.uikit.common.infra.transcoder.compat.MediaCodecBufferCompatWrapper;
 
 import java.io.IOException;
@@ -19,13 +18,11 @@ public class AudioTrackTranscoder implements TrackTranscoder {
 
     private final MediaExtractor mExtractor;
     private final QueuedMuxer mMuxer;
-    private long mWrittenPresentationTimeUs;
-
     private final int mTrackIndex;
     private final MediaFormat mInputFormat;
     private final MediaFormat mOutputFormat;
-
     private final MediaCodec.BufferInfo mBufferInfo = new MediaCodec.BufferInfo();
+    private long mWrittenPresentationTimeUs;
     private MediaCodec mDecoder;
     private MediaCodec mEncoder;
     private MediaFormat mActualOutputFormat;

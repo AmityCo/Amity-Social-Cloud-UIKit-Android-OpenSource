@@ -45,6 +45,16 @@ object AmityUIKitDrawableResolver {
         "privacyPrivateIcon" to R.drawable.amity_ic_lock1,
         "privacyPublicIcon" to R.drawable.amity_ic_globe,
         "addIcon" to R.drawable.amity_ic_add,
+        "profileFeedIcon" to R.drawable.amity_ic_community_feed,
+        "profileImageFeedIcon" to R.drawable.amity_ic_community_image_feed,
+        "profileVideoFeedIcon" to R.drawable.amity_ic_community_video_feed,
+        "followingIcon" to R.drawable.amity_ic_user_following,
+        "pendingIcon" to R.drawable.amity_ic_user_pending,
+        "blockedIcon" to R.drawable.amity_ic_user_blocked,
+        "emptyProfileFeedIcon" to R.drawable.amity_ic_empty_feed,
+        "lockIcon" to R.drawable.amity_ic_lock1,
+        "emptyPhotoIcon" to R.drawable.amity_ic_photo_empty,
+        "emptyVideoIcon" to R.drawable.amity_ic_video_empty,
     )
 
     @DrawableRes

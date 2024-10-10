@@ -130,9 +130,10 @@ class AmityLiveStreamPostCreatorFragment : RxFragment() {
     }
 
     private fun registerImagePickerResult() {
-        imagePickerLauncher = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            if (uri != null) {
-                uploadThumbnail(uri)
+        imagePickerLauncher =
+            registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+                if (uri != null) {
+                    uploadThumbnail(uri)
             }
         }
     }

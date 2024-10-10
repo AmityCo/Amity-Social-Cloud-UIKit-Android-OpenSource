@@ -108,6 +108,7 @@ fun AmityTrendingCommunitiesComponent(
                 AmityTrendingCommunitiesViewModel.CommunityListState.EMPTY -> {
 
                 }
+
                 AmityTrendingCommunitiesViewModel.CommunityListState.ERROR -> {
 
                 }

@@ -3,7 +3,6 @@ package com.amity.socialcloud.uikit.common.infra.transcoder.engine;
 import android.media.MediaCodec;
 import android.media.MediaFormat;
 
-
 import com.amity.socialcloud.uikit.common.infra.transcoder.compat.MediaCodecBufferCompatWrapper;
 
 import java.nio.ByteBuffer;
@@ -15,43 +14,28 @@ import java.util.Queue;
 /**
  * Channel of raw audio from decoder to encoder.
  * Performs the necessary conversion between different input & output audio formats.
- *
+ * <p>
  * We currently support upmixing from mono to stereo & downmixing from stereo to mono.
  * Sample rate conversion is not supported yet.
  */
 class AudioChannel {
 
-    private static class AudioBuffer {
-        int bufferIndex;
-        long presentationTimeUs;
-        ShortBuffer data;
-    }
-
     public static final int BUFFER_INDEX_END_OF_STREAM = -1;
-
     private static final int BYTES_PER_SHORT = 2;
     private static final long MICROSECS_PER_SEC = 1000000;
-
     private final Queue<AudioBuffer> mEmptyBuffers = new ArrayDeque<>();
     private final Queue<AudioBuffer> mFilledBuffers = new ArrayDeque<>();
-
     private final MediaCodec mDecoder;
     private final MediaCodec mEncoder;
     private final MediaFormat mEncodeFormat;
-
+    private final MediaCodecBufferCompatWrapper mDecoderBuffers;
+    private final MediaCodecBufferCompatWrapper mEncoderBuffers;
+    private final AudioBuffer mOverflowBuffer = new AudioBuffer();
     private int mInputSampleRate;
     private int mInputChannelCount;
     private int mOutputChannelCount;
-
     private AudioRemixer mRemixer;
-
-    private final MediaCodecBufferCompatWrapper mDecoderBuffers;
-    private final MediaCodecBufferCompatWrapper mEncoderBuffers;
-
-    private final AudioBuffer mOverflowBuffer = new AudioBuffer();
-
     private MediaFormat mActualDecodedFormat;
-
 
     public AudioChannel(final MediaCodec decoder,
                         final MediaCodec encoder, final MediaFormat encodeFormat) {
@@ -61,6 +45,12 @@ class AudioChannel {
 
         mDecoderBuffers = new MediaCodecBufferCompatWrapper(mDecoder);
         mEncoderBuffers = new MediaCodecBufferCompatWrapper(mEncoder);
+    }
+
+    private static long sampleCountToDurationUs(final int sampleCount,
+                                                final int sampleRate,
+                                                final int channelCount) {
+        return (sampleCount / (sampleRate * MICROSECS_PER_SEC)) / channelCount;
     }
 
     public void setActualDecodedFormat(final MediaFormat decodedFormat) {
@@ -163,12 +153,6 @@ class AudioChannel {
         return true;
     }
 
-    private static long sampleCountToDurationUs(final int sampleCount,
-                                                final int sampleRate,
-                                                final int channelCount) {
-        return (sampleCount / (sampleRate * MICROSECS_PER_SEC)) / channelCount;
-    }
-
     private long drainOverflow(final ShortBuffer outBuff) {
         final ShortBuffer overflowBuff = mOverflowBuffer.data;
         final int overflowLimit = overflowBuff.limit();
@@ -228,5 +212,11 @@ class AudioChannel {
         }
 
         return input.presentationTimeUs;
+    }
+
+    private static class AudioBuffer {
+        int bufferIndex;
+        long presentationTimeUs;
+        ShortBuffer data;
     }
 }

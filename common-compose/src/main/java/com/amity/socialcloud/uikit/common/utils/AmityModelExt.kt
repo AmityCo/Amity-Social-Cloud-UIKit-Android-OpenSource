@@ -1,5 +1,7 @@
 package com.amity.socialcloud.uikit.common.utils
 
+import com.amity.socialcloud.sdk.model.core.file.AmityVideo
+import com.amity.socialcloud.sdk.model.core.file.AmityVideoResolution
 import com.amity.socialcloud.sdk.model.core.notification.AmityUserNotificationModule
 import com.amity.socialcloud.sdk.model.core.notification.AmityUserNotificationSettings
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
@@ -89,4 +91,20 @@ fun AmityCommunityNotificationSettings.getEnabledStoryNotificationSettings(): Li
 
 fun AmityCommunityNotificationSettings.isStoryNotificationEnabled(): Boolean {
     return this.getStoryNotificationSettings().any { it.isNetworkEnabled() }
+}
+
+fun AmityVideo.getVideoUrlWithFallbackQuality(): String? {
+    val resolutions = this.getResolutions()
+
+    return if (resolutions.contains(AmityVideoResolution.RES_1080)) {
+        this.getVideoUrl(AmityVideoResolution.RES_1080)
+    } else if (resolutions.contains(AmityVideoResolution.RES_720)) {
+        this.getVideoUrl(AmityVideoResolution.RES_720)
+    } else if (resolutions.contains(AmityVideoResolution.RES_480)) {
+        this.getVideoUrl(AmityVideoResolution.RES_480)
+    } else if (resolutions.contains(AmityVideoResolution.RES_360)) {
+        this.getVideoUrl(AmityVideoResolution.RES_360)
+    } else {
+        this.getVideoUrl(AmityVideoResolution.ORIGINAL)
+    }
 }

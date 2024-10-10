@@ -13,12 +13,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.amity.socialcloud.uikit.common.common.isNotEmptyOrBlank
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 
@@ -27,6 +27,29 @@ import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 fun AmityAlertDialog(
     dialogTitle: String,
     dialogText: String,
+    confirmText: String,
+    dismissText: String,
+    confirmTextColor: Color = AmityTheme.colors.highlight,
+    dismissTextColor: Color = AmityTheme.colors.baseShade1,
+    onConfirmation: () -> Unit,
+    onDismissRequest: () -> Unit = {},
+) {
+    AmityAlertDialog(
+        dialogTitle = dialogTitle,
+        dialogText = AnnotatedString(dialogText),
+        confirmText = confirmText,
+        dismissText = dismissText,
+        confirmTextColor = confirmTextColor,
+        dismissTextColor = dismissTextColor,
+        onConfirmation = onConfirmation,
+        onDismissRequest = onDismissRequest
+    )
+}
+
+@Composable
+fun AmityAlertDialog(
+    dialogTitle: String,
+    dialogText: AnnotatedString,
     confirmText: String,
     dismissText: String,
     confirmTextColor: Color = AmityTheme.colors.highlight,
@@ -74,6 +97,21 @@ fun AmityAlertDialog(
 fun AmityAlertDialog(
     dialogTitle: String,
     dialogText: String,
+    dismissText: String,
+    onDismissRequest: () -> Unit = {},
+) {
+    AmityAlertDialog(
+        dialogTitle = dialogTitle,
+        dialogText = AnnotatedString(dialogText),
+        dismissText = dismissText,
+        onDismissRequest = onDismissRequest,
+    )
+}
+
+@Composable
+fun AmityAlertDialog(
+    dialogTitle: String,
+    dialogText: AnnotatedString,
     dismissText: String,
     onDismissRequest: () -> Unit = {},
 ) {
@@ -125,7 +163,7 @@ fun AmityAlertDialog(
             Column {
                 AmityAlertDialogContentView(
                     title = dialogTitle,
-                    message = dialogText
+                    message = AnnotatedString(dialogText)
                 )
 
                 Spacer(modifier = Modifier.height(22.dp))
@@ -158,7 +196,7 @@ fun AmityAlertDialog(
 fun AmityAlertDialogContentView(
     modifier: Modifier = Modifier,
     title: String,
-    message: String,
+    message: AnnotatedString,
 ) {
     Spacer(modifier = modifier.height(22.dp))
     Column(
@@ -166,7 +204,7 @@ fun AmityAlertDialogContentView(
         modifier = Modifier
             .padding(horizontal = 24.dp)
     ) {
-        if (title.isNotEmptyOrBlank()) {
+        if (title.isNotEmpty()) {
             Text(
                 text = title,
                 style = TextStyle(
@@ -177,7 +215,7 @@ fun AmityAlertDialogContentView(
             )
         }
 
-        if (message.isNotEmptyOrBlank()) {
+        if (message.isNotEmpty()) {
             Text(
                 text = message,
                 style = TextStyle(

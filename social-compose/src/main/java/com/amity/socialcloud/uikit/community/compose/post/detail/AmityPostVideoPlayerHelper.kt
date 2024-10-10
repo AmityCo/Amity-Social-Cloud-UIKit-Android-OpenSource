@@ -3,6 +3,7 @@ package com.amity.socialcloud.uikit.community.compose.post.detail
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import com.amity.socialcloud.sdk.model.core.file.AmityVideo
+import com.amity.socialcloud.uikit.common.utils.getVideoUrlWithFallbackQuality
 
 object AmityPostVideoPlayerHelper {
 
@@ -21,7 +22,7 @@ object AmityPostVideoPlayerHelper {
     fun add(videos: List<AmityVideo>) {
         videos.map { video ->
             exoPlayer?.apply {
-                video.getVideoUrl()?.let {
+                video.getVideoUrlWithFallbackQuality()?.let {
                     addMediaItem(MediaItem.fromUri(it))
                 }
                 prepare()

@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.story.AmityStory
+import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageActivity
 import com.amity.socialcloud.uikit.community.compose.story.create.AmityCreateStoryPageActivity
 
 open class AmityViewStoryPageBehavior {
@@ -27,7 +28,11 @@ open class AmityViewStoryPageBehavior {
         context: Context,
         community: AmityCommunity,
     ) {
-        //  do nothing, need to override in social module to access community profile page
+        val intent = AmityCommunityProfilePageActivity.newIntent(
+            context = context,
+            communityId = community.getCommunityId(),
+        )
+        context.startActivity(intent)
     }
 
 }

@@ -31,10 +31,12 @@ import com.google.gson.JsonObject
 fun AmityExpandableText(
     modifier: Modifier = Modifier,
     text: String,
-    mentionGetter: AmityMentionMetadataGetter,
-    mentionees: List<AmityMentionee>,
+    mentionGetter: AmityMentionMetadataGetter = AmityMentionMetadataGetter(JsonObject()),
+    mentionees: List<AmityMentionee> = emptyList(),
     style: TextStyle = AmityTheme.typography.body,
+    previewLines: Int = 8,
     onClick: () -> Unit = {},
+    onMentionedUserClick: (String) -> Unit = {},
 ) {
     val uriHandler = LocalUriHandler.current
 
@@ -53,7 +55,8 @@ fun AmityExpandableText(
             mutableStateOf(
                 getTrimmedText(
                     text = text,
-                    textLayoutResult = textLayoutResult
+                    textLayoutResult = textLayoutResult,
+                    visiblePreviewLines = previewLines,
                 )
             )
         }
@@ -123,12 +126,25 @@ fun AmityExpandableText(
                 }
             }
         }
+
         val layoutResult = remember { mutableStateOf<TextLayoutResult?>(null) }
         val pressIndicator = Modifier.pointerInput(annotatedString) {
             detectTapGestures(
                 onTap = { offset ->
                     layoutResult.value?.let {
                         val position = it.getOffsetForPosition(offset)
+                        val mentionedUser = annotatedString.getStringAnnotations(
+                            tag = "USER_MENTION",
+                            start = position,
+                            end = position
+                        )
+
+                        if (mentionedUser.isNotEmpty()) {
+                            val userId = mentionedUser.first().item
+                            onMentionedUserClick(userId)
+                            return@let
+                        }
+
                         val annotations = annotatedString.getStringAnnotations(
                             tag = "URL",
                             start = position,
@@ -167,7 +183,11 @@ fun AmityExpandableText(
     }
 }
 
-private fun getTrimmedText(text: String, textLayoutResult: TextLayoutResult): String {
+private fun getTrimmedText(
+    text: String,
+    textLayoutResult: TextLayoutResult,
+    visiblePreviewLines: Int
+): String {
     return if (textLayoutResult.lineCount >= visiblePreviewLines) {
         val startIndex = textLayoutResult.getLineStart(visiblePreviewLines - 1)
         val endIndex = textLayoutResult.getLineEnd(visiblePreviewLines - 1)
@@ -184,7 +204,6 @@ private fun getTrimmedText(text: String, textLayoutResult: TextLayoutResult): St
 }
 
 private const val readMore = "…See more"
-private const val visiblePreviewLines = 8
 
 @Preview(showBackground = true)
 @Composable

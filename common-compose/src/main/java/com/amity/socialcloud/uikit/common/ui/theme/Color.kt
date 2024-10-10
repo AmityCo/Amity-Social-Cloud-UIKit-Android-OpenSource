@@ -95,7 +95,7 @@ data class AmityColors(
 
     fun applyConfiguration(
         theme: AmityUIKitConfig.UIKitTheme,
-        isSystemInDarkTheme: Boolean
+        isUIKitInDarkTheme: Boolean,
     ): AmityColors {
         val primary = theme.primaryColor.asColor()
         val secondary = theme.secondaryColor.asColor()
@@ -110,13 +110,13 @@ data class AmityColors(
         val background = theme.backgroundColor.asColor()
         val backgroundShade1 = theme.backgroundShade1Color.asColor()
 
-        val newsfeedDivider = if (isSystemInDarkTheme) {
+        val newsfeedDivider = if (isUIKitInDarkTheme) {
             Color.Black
         } else {
             baseShade4
         }
 
-        val sheetBackground = if (isSystemInDarkTheme) {
+        val sheetBackground = if (isUIKitInDarkTheme) {
             baseShade4
         } else {
             background

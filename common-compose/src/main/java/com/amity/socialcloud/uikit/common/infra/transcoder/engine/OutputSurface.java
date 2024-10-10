@@ -17,6 +17,7 @@
 // blob: fc8ad9cd390c5c311f015d3b7c1359e4d295bc52
 // modified: change TIMEOUT_MS from 500 to 10000
 package com.amity.socialcloud.uikit.common.infra.transcoder.engine;
+
 import android.graphics.SurfaceTexture;
 import android.opengl.EGL14;
 import android.opengl.EGLConfig;
@@ -25,6 +26,7 @@ import android.opengl.EGLDisplay;
 import android.opengl.EGLSurface;
 import android.util.Log;
 import android.view.Surface;
+
 /**
  * Holds state associated with a Surface used for MediaCodec decoder output.
  * <p>
@@ -51,6 +53,7 @@ class OutputSurface implements SurfaceTexture.OnFrameAvailableListener {
     private Object mFrameSyncObject = new Object();     // guards mFrameAvailable
     private boolean mFrameAvailable;
     private TextureRender mTextureRender;
+
     /**
      * Creates an OutputSurface backed by a pbuffer with the specifed dimensions.  The new
      * EGL context and surface will be made current.  Creates a Surface that can be passed
@@ -64,6 +67,7 @@ class OutputSurface implements SurfaceTexture.OnFrameAvailableListener {
         makeCurrent();
         setup();
     }
+
     /**
      * Creates an OutputSurface using the current EGL context (rather than establishing a
      * new one).  Creates a Surface that can be passed to MediaCodec.configure().
@@ -71,6 +75,7 @@ class OutputSurface implements SurfaceTexture.OnFrameAvailableListener {
     public OutputSurface() {
         setup();
     }
+
     /**
      * Creates instances of TextureRender and SurfaceTexture, and a Surface associated
      * with the SurfaceTexture.
@@ -98,6 +103,7 @@ class OutputSurface implements SurfaceTexture.OnFrameAvailableListener {
         mSurfaceTexture.setOnFrameAvailableListener(this);
         mSurface = new Surface(mSurfaceTexture);
     }
+
     /**
      * Prepares EGL.  We want a GLES 2.0 context and a surface that supports pbuffer.
      */
@@ -151,6 +157,7 @@ class OutputSurface implements SurfaceTexture.OnFrameAvailableListener {
             throw new RuntimeException("surface was null");
         }
     }
+
     /**
      * Discard all resources held by this class, notably the EGL context.
      */
@@ -172,6 +179,7 @@ class OutputSurface implements SurfaceTexture.OnFrameAvailableListener {
         mSurface = null;
         mSurfaceTexture = null;
     }
+
     /**
      * Makes our EGL context and surface current.
      */
@@ -180,18 +188,21 @@ class OutputSurface implements SurfaceTexture.OnFrameAvailableListener {
             throw new RuntimeException("eglMakeCurrent failed");
         }
     }
+
     /**
      * Returns the Surface that we draw onto.
      */
     public Surface getSurface() {
         return mSurface;
     }
+
     /**
      * Replaces the fragment shader.
      */
     public void changeFragmentShader(String fragmentShader) {
         mTextureRender.changeFragmentShader(fragmentShader);
     }
+
     /**
      * Latches the next buffer into the texture.  Must be called from the thread that created
      * the OutputSurface object, after the onFrameAvailable callback has signaled that new
@@ -220,8 +231,10 @@ class OutputSurface implements SurfaceTexture.OnFrameAvailableListener {
         mTextureRender.checkGlError("before updateTexImage");
         mSurfaceTexture.updateTexImage();
     }
+
     /**
      * Wait up to given timeout until new image become available.
+     *
      * @param timeoutMs
      * @return true if new image is available. false for no new image until timeout.
      */
@@ -247,12 +260,14 @@ class OutputSurface implements SurfaceTexture.OnFrameAvailableListener {
         mSurfaceTexture.updateTexImage();
         return true;
     }
+
     /**
      * Draws the data from SurfaceTexture onto the current EGL surface.
      */
     public void drawImage() {
         mTextureRender.drawFrame(mSurfaceTexture);
     }
+
     @Override
     public void onFrameAvailable(SurfaceTexture st) {
         if (VERBOSE) Log.d(TAG, "new frame available");
@@ -264,6 +279,7 @@ class OutputSurface implements SurfaceTexture.OnFrameAvailableListener {
             mFrameSyncObject.notifyAll();
         }
     }
+
     /**
      * Checks for EGL errors.
      */
