@@ -23,12 +23,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.api.social.post.review.AmityReviewStatus
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunityPostSettings
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.showToast
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostCategory
 import io.reactivex.rxjava3.core.Flowable
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
@@ -36,6 +39,7 @@ import io.reactivex.rxjava3.core.Flowable
 fun AmityPostMenuBottomSheet(
     modifier: Modifier = Modifier,
     post: AmityPost,
+    category: AmityPostCategory = AmityPostCategory.GENERAL
 ) {
     val context = LocalContext.current
     val behavior by lazy {
@@ -119,10 +123,20 @@ fun AmityPostMenuBottomSheet(
                                 modifier = modifier.testTag("bottom_sheet_edit_button"),
                             ) {
                                 viewModel.updateSheetUIState(AmityPostMenuSheetUIState.CloseSheet)
-                                behavior.goToPostComposerPage(
-                                    context = context,
-                                    post = post,
-                                )
+                                val target = post.getTarget()
+                                if(category == AmityPostCategory.GLOBAL
+                                    && target is AmityPost.Target.COMMUNITY
+                                    && target.getCommunity()?.getPostSettings() == AmityCommunityPostSettings.ADMIN_REVIEW_POST_REQUIRED
+                                    && post.getReviewStatus() == AmityReviewStatus.PUBLISHED) {
+                                    viewModel.updateDialogUIState(
+                                        AmityPostMenuDialogUIState.OpenConfirmEditDialog(postId = post.getPostId())
+                                    )
+                                } else {
+                                    behavior.goToPostComposerPage(
+                                        context = context,
+                                        post = post,
+                                    )
+                                }
                             }
                         }
 

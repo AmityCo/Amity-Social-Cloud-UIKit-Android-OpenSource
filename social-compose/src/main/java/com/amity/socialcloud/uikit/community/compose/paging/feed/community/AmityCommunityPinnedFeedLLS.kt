@@ -9,7 +9,7 @@ import androidx.paging.compose.LazyPagingItems
 import com.amity.socialcloud.sdk.model.core.pin.AmityPinnedPost
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.ui.elements.AmityNewsFeedDivider
-import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageBehavior
+import com.amity.socialcloud.uikit.common.utils.isSupportedDataTypes
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostCategory
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponent
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponentStyle
@@ -29,24 +29,10 @@ fun LazyListScope.amityCommunityPinnedFeedLLS(
             val isAnnouncement = announcementPosts.itemSnapshotList.items
                 .map { it.postId }
                 .contains(post.getPostId())
-
-            if (isAnnouncement) {
+            if (!post.isSupportedDataTypes() || post.isDeleted() || isAnnouncement) {
                 return@items
             }
 
-            // TODO: 3/6/24 currently only support text, image, and video post
-            when (post.getData()) {
-                is AmityPost.Data.TEXT,
-                is AmityPost.Data.IMAGE,
-                is AmityPost.Data.VIDEO -> {
-                }
-
-                else -> return@items
-            }
-
-            if (post.isDeleted()) {
-                return@items
-            }
             AmityPostContentComponent(
                 post = post,
                 style = AmityPostContentComponentStyle.FEED,

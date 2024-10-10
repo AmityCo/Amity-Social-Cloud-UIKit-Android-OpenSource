@@ -50,7 +50,10 @@ fun LazyListScope.amityUserImageFeedLLS(
             val error = (imagePosts.loadState.mediator?.refresh as LoadState.Error)
             val amityError = AmityError.from(error.error)
 
-            if (amityError == AmityError.UNAUTHORIZED_ERROR) {
+            if (
+                amityError == AmityError.UNAUTHORIZED_ERROR ||
+                amityError == AmityError.PERMISSION_DENIED
+            ) {
                 AmityBaseComponent(
                     pageScope = pageScope,
                     componentId = "user_image_feed"

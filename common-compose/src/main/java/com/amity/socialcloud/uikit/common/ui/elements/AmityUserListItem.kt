@@ -2,10 +2,12 @@ package com.amity.socialcloud.uikit.common.ui.elements
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -44,31 +46,36 @@ fun AmityUserListItem(
                 onUserClick(user)
             }
         )
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = modifier.weight(1f)
-        ) {
-            Text(
-                text = user.getDisplayName() ?: "",
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 1,
-                style = AmityTheme.typography.body.copy(
-                    fontWeight = FontWeight.SemiBold,
-                ),
-                modifier = modifier.clickableWithoutRipple {
-                    onUserClick(user)
-                }
-            )
 
-            if (user.isBrand()) {
-                Image(
-                    painter = painterResource(id = R.drawable.amity_ic_brand_badge),
-                    contentDescription = "",
-                    modifier = Modifier
-                        .size(20.dp)
-                        .padding(start = 4.dp)
-                        .testTag("user_view/brand_user_icon")
+        Row(modifier = modifier.weight(1f)) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(2.dp),
+                modifier = modifier.width(IntrinsicSize.Max)
+            ) {
+                Text(
+                    text = user.getDisplayName() ?: "",
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1,
+                    style = AmityTheme.typography.body.copy(
+                        fontWeight = FontWeight.SemiBold,
+                    ),
+                    modifier = modifier
+                        .weight(1f)
+                        .clickableWithoutRipple {
+                            onUserClick(user)
+                        }
                 )
+
+                if (user.isBrand()) {
+                    Image(
+                        painter = painterResource(id = R.drawable.amity_ic_brand_badge),
+                        contentDescription = "",
+                        modifier = Modifier
+                            .size(20.dp)
+                            .testTag("user_view/brand_user_icon")
+                    )
+                }
             }
         }
 

@@ -23,6 +23,7 @@ import com.amity.socialcloud.uikit.community.compose.R
 fun AmityUserRelationshipActionsBottomSheet(
     modifier: Modifier = Modifier,
     user: AmityUser,
+    allowToBlock: Boolean = false,
     onDismiss: () -> Unit,
     onReportUser: (AmityUser) -> Unit,
     onUnreportUser: (AmityUser) -> Unit,
@@ -65,13 +66,15 @@ fun AmityUserRelationshipActionsBottomSheet(
                 }
             }
 
-            AmityBottomSheetActionItem(
-                icon = R.drawable.amity_ic_blocked_user,
-                text = "Block user",
-                modifier = modifier,
-            ) {
-                onDismiss()
-                onBlockUser(user)
+            if (allowToBlock) {
+                AmityBottomSheetActionItem(
+                    icon = R.drawable.amity_ic_blocked_user,
+                    text = "Block user",
+                    modifier = modifier,
+                ) {
+                    onDismiss()
+                    onBlockUser(user)
+                }
             }
         }
     }

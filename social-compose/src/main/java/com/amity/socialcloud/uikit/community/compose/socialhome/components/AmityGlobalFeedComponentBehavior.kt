@@ -3,6 +3,7 @@ package com.amity.socialcloud.uikit.community.compose.socialhome.components
 import android.content.Context
 import com.amity.socialcloud.uikit.community.compose.community.setup.AmityCommunitySetupPageActivity
 import com.amity.socialcloud.uikit.community.compose.community.setup.AmityCommunitySetupPageMode
+import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostCategory
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetailPageActivity
 import com.amity.socialcloud.uikit.community.compose.user.profile.AmityUserProfilePageActivity
 
@@ -11,10 +12,12 @@ open class AmityGlobalFeedComponentBehavior {
     open fun goToPostDetailPage(
         context: Context,
         id: String,
+        category: AmityPostCategory = AmityPostCategory.GENERAL
     ) {
         val intent = AmityPostDetailPageActivity.newIntent(
             context = context,
             id = id,
+            category = category
         )
         context.startActivity(intent)
     }

@@ -38,9 +38,6 @@ class AmityRecommendedCommunitiesViewModel : AmityBaseViewModel() {
                     recommendedCommunities
                 }
             }
-//            .map {
-//                emptyList<AmityCommunity>()
-//            }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext {

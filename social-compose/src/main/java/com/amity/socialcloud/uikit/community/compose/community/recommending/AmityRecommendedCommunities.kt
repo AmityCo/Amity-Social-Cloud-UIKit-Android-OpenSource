@@ -299,7 +299,7 @@ fun AmityRecommendedCommunityView(
                     elementId = "community_display_name"
                 ) {
                     Text(
-                        text = community.getDisplayName(),
+                        text = community.getDisplayName().trim(),
                         style = AmityTheme.typography.body.copy(
                             fontWeight = FontWeight.SemiBold
                         ),
@@ -341,7 +341,7 @@ fun AmityRecommendedCommunityView(
                             AmityCommunityCategoryView(
                                 categories = community.getCategories(),
                                 modifier = modifier
-                                    .padding(top = 6.dp)
+                                    .padding(top = 6.dp, end = 4.dp)
                                     .testTag(getAccessibilityId()),
                                 maxPreview = 2
                             )

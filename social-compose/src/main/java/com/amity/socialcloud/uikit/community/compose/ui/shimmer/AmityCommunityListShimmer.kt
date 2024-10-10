@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,6 +35,7 @@ fun AmityCommunityListShimmer(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(96.dp)
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
             ) {
                 Box(
                     modifier = Modifier
@@ -46,7 +46,8 @@ fun AmityCommunityListShimmer(
                             shape = RoundedCornerShape(4.dp)
                         )
                 )
-                Spacer(modifier = Modifier.width(8.dp))
+
+                Spacer(modifier = Modifier.width(12.dp))
 
                 Column(
                     verticalArrangement = Arrangement.Center,
@@ -77,11 +78,6 @@ fun AmityCommunityListShimmer(
                     )
                 }
             }
-
-            HorizontalDivider(
-                color = AmityTheme.colors.divider,
-                modifier = Modifier.padding(vertical = 12.dp),
-            )
         }
     }
 }

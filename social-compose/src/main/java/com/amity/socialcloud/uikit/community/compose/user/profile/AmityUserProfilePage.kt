@@ -186,7 +186,9 @@ fun AmityUserProfilePage(
                             pageScope = getPageScope(),
                             user = user!!,
                         ) {
-                            showAvatarPopupDialog = true
+                            if (user?.getAvatar() != null) {
+                                showAvatarPopupDialog = true
+                            }
                         }
                     }
                 }

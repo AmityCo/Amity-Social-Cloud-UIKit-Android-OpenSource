@@ -90,7 +90,11 @@ fun AmityPendingPostContentComponent(
             }
         }
 
-        AmityPostMenuDialogUIState.CloseDialog -> {
+        is AmityPostMenuDialogUIState.OpenConfirmEditDialog -> {
+
+        }
+
+        is AmityPostMenuDialogUIState.CloseDialog -> {
             viewModel.updateDialogUIState(AmityPostMenuDialogUIState.CloseDialog)
         }
     }

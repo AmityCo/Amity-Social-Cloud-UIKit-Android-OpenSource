@@ -168,6 +168,12 @@
             android:configChanges="uiMode"
             android:screenOrientation="portrait"
             android:theme="@style/AmitySocialTheme" />
+        <activity
+            android:name=".livestream.AmityLivestreamPlayerPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>

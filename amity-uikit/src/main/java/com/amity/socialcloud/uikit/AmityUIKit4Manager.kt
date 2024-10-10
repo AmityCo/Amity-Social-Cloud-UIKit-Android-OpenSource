@@ -7,6 +7,7 @@ import com.amity.socialcloud.sdk.video.AmityStreamBroadcasterClient
 import com.amity.socialcloud.sdk.video.AmityStreamPlayerClient
 import com.amity.socialcloud.uikit.common.ad.AmityAdEngine
 import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
+import com.amity.socialcloud.uikit.common.eventbus.NetworkConnectionEventPublisher
 import com.amity.socialcloud.uikit.common.infra.db.AmityUIKitDB
 import com.amity.socialcloud.uikit.common.infra.initializer.AmityAppContext
 
@@ -29,6 +30,7 @@ object AmityUIKit4Manager {
         AmityStreamPlayerClient.setup(AmityCoreClient.getConfiguration())
         AmityAdEngine.init()
         AmityUIKitConfigController.setup(AmityAppContext.getContext())
+        NetworkConnectionEventPublisher.initPublisher(context = AmityAppContext.getContext())
 
         overrideCustomBehavior()
     }

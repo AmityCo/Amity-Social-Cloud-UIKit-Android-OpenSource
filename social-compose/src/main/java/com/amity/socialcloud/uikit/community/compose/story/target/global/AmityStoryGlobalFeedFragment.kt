@@ -19,7 +19,7 @@ class AmityStoryGlobalFeedFragment : AmityBaseFragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 AmityStoryTabComponent(
-                    type = AmityStoryTabComponentType.GlobalFeed
+                    type = AmityStoryTabComponentType.GlobalFeed()
                 )
             }
         }

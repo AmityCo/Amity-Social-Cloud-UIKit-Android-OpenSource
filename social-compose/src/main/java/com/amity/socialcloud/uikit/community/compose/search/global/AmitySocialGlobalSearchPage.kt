@@ -1,14 +1,9 @@
 package com.amity.socialcloud.uikit.community.compose.search.global
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.TabRowDefaults
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -16,13 +11,13 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
-import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.elements.AmityTabRow
+import com.amity.socialcloud.uikit.common.ui.elements.AmityTabRowItem
 import com.amity.socialcloud.uikit.community.compose.search.components.AmityCommunitySearchResultComponent
 import com.amity.socialcloud.uikit.community.compose.search.components.AmityTopSearchBarComponent
 import com.amity.socialcloud.uikit.community.compose.search.components.AmityUserSearchResultComponent
@@ -37,9 +32,14 @@ fun AmitySocialGlobalSearchPage(
     val viewModel =
         viewModel<AmityGlobalSearchViewModel>(viewModelStoreOwner = viewModelStoreOwner)
 
-    var selectedTabIndex by remember {
-        mutableIntStateOf(0)
+
+    val tabs = remember {
+        listOf(
+            AmityTabRowItem(title = "Communities"),
+            AmityTabRowItem(title = "Users"),
+        )
     }
+    var selectedTabIndex by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(selectedTabIndex) {
         when (selectedTabIndex) {
@@ -60,52 +60,14 @@ fun AmitySocialGlobalSearchPage(
                 viewModel = viewModel,
             )
 
-            TabRow(
-                selectedTabIndex = selectedTabIndex,
-                containerColor = Color.Transparent,
-                divider = {
-                    HorizontalDivider(
-                        color = AmityTheme.colors.baseShade4
-                    )
-                },
-                indicator = { tabPositions ->
-                    TabRowDefaults.SecondaryIndicator(
-                        modifier = modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                        color = AmityTheme.colors.primary
-                    )
-                },
-                contentColor = AmityTheme.colors.primary,
-                modifier = modifier.padding(bottom = 8.dp)
+            AmityTabRow(
+                tabs = tabs,
+                selectedIndex = selectedTabIndex
             ) {
-                Tab(
-                    selected = selectedTabIndex == 0,
-                    onClick = {
-                        selectedTabIndex = 0
-                    }
-                ) {
-                    Text(
-                        text = "Communities",
-                        style = AmityTheme.typography.title.copy(
-                            color = if (selectedTabIndex == 0) AmityTheme.colors.primary else AmityTheme.colors.baseShade3
-                        ),
-                        modifier = modifier.padding(vertical = 12.dp)
-                    )
-                }
-                Tab(
-                    selected = selectedTabIndex == 1,
-                    onClick = {
-                        selectedTabIndex = 1
-                    }
-                ) {
-                    Text(
-                        text = "Users",
-                        style = AmityTheme.typography.title.copy(
-                            color = if (selectedTabIndex == 1) AmityTheme.colors.primary else AmityTheme.colors.baseShade3
-                        ),
-                        modifier = modifier.padding(vertical = 12.dp)
-                    )
-                }
+                selectedTabIndex = it
             }
+
+            Spacer(modifier.height(8.dp))
 
             when (selectedTabIndex) {
                 0 -> {

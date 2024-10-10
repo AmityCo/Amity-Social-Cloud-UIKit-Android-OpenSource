@@ -218,7 +218,7 @@ fun AmityPostDetailPage(
                         referenceId = id,
                         referenceType = AmityCommentReferenceType.POST,
                         editingCommentId = editingCommentId,
-                        shouldAllowInteraction = true,
+                        shouldAllowInteraction = !sheetViewModel.isNotMember(post),
                         onReply = {
                             replyCommentId = it
                         },
@@ -232,17 +232,18 @@ fun AmityPostDetailPage(
                     }
                 }
 
-                AmityCommentComposerBar(
-                    modifier = modifier.offset(y = commentComposeBarBottomOffset),
-                    componentScope = getComponentScope(),
-                    referenceId = id,
-                    referenceType = AmityCommentReferenceType.POST,
-                    currentUser = currentUser,
-                    replyComment = replyComment,
-                ) {
-                    replyComment = null
+                if(!sheetViewModel.isNotMember(post)) {
+                    AmityCommentComposerBar(
+                        modifier = modifier.offset(y = commentComposeBarBottomOffset),
+                        componentScope = getComponentScope(),
+                        referenceId = id,
+                        referenceType = AmityCommentReferenceType.POST,
+                        currentUser = currentUser,
+                        replyComment = replyComment,
+                    ) {
+                        replyComment = null
+                    }
                 }
-
             }
         }
     }
@@ -252,12 +253,14 @@ enum class AmityPostCategory {
     GENERAL,
     PIN,
     ANNOUNCEMENT,
+    GLOBAL,
     PIN_AND_ANNOUNCEMENT;
 
     companion object {
         fun fromString(category: String): AmityPostCategory {
             return when (category) {
                 "PIN_AND_ANNOUNCEMENT" -> PIN_AND_ANNOUNCEMENT
+                "GLOBAL" -> GLOBAL
                 "ANNOUNCEMENT" -> ANNOUNCEMENT
                 "PIN" -> PIN
                 else -> GENERAL

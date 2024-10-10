@@ -9,18 +9,20 @@ import com.amity.socialcloud.uikit.community.compose.story.target.global.AmitySt
 fun AmityStoryTabComponent(
     modifier: Modifier = Modifier,
     type: AmityStoryTabComponentType,
-) {
+    ) {
     when (type) {
         is AmityStoryTabComponentType.CommunityFeed -> {
             AmityStoryCommunityTabComponent(
                 modifier = modifier,
-                communityId = type.communityId
+                communityId = type.communityId,
             )
         }
 
-        AmityStoryTabComponentType.GlobalFeed -> {
+        is AmityStoryTabComponentType.GlobalFeed -> {
             AmityStoryGlobalTabComponent(
-                modifier = modifier
+                modifier = modifier,
+                refreshEventFlow = type.refreshEventFlow,
+                onStateChanged = type.onStateChanged
             )
         }
     }

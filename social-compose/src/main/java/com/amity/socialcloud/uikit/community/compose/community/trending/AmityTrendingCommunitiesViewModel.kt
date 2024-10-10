@@ -34,9 +34,6 @@ class AmityTrendingCommunitiesViewModel : AmityBaseViewModel() {
                     it
                 }
             }
-//            .map {
-//                emptyList<AmityCommunity>()
-//            }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext {

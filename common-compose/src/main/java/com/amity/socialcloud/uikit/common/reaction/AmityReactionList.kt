@@ -19,6 +19,7 @@ fun AmityReactionList(
     referenceType: AmityReactionReferenceType,
     referenceId: String,
     onClose: () -> Unit = {},
+    onUserClick: (String) -> Unit = {},
 ) {
     val sheetState = rememberModalBottomSheetState()
     val reactionViewModel = viewModel<AmityReactionListPageViewModel>(
@@ -39,6 +40,7 @@ fun AmityReactionList(
         AmityReactionRoot(
             state = reactionViewModel.state,
             onAction = reactionViewModel::onAction,
+            onUserClick = onUserClick,
         )
     }
 }

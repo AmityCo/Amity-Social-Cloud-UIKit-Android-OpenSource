@@ -29,11 +29,11 @@ fun AmityBottomSheetActionItem(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
         modifier = modifier
             .fillMaxWidth()
             .clickableWithoutRipple { onClick() }
-            .padding(16.dp)
+            .padding(horizontal = 4.dp, vertical = 16.dp)
     ) {
         if (icon != null) {
             Icon(

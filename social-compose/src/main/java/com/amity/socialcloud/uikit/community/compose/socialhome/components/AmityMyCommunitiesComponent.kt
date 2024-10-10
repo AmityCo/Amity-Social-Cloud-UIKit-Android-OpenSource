@@ -4,9 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -20,7 +18,6 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.elements.AmityNewsFeedDivider
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
-import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.socialhome.AmitySocialHomePageViewModel
 import com.amity.socialcloud.uikit.community.compose.socialhome.elements.AmityCommunityView
@@ -46,14 +43,13 @@ fun AmityMyCommunitiesComponent(
     val communityListState by viewModel.communityListState.collectAsState()
     Column(modifier = modifier.fillMaxSize()) {
         AmityNewsFeedDivider()
+        Spacer(modifier.height(8.dp))
         AmityBaseComponent(
             pageScope = pageScope,
             componentId = "my_communities"
         ) {
             LazyColumn(
-                modifier = modifier
-                    .fillMaxSize()
-                    .padding(top = 16.dp, bottom = 0.dp, start = 16.dp, end = 16.dp)
+                modifier = modifier.fillMaxSize()
             ) {
                 AmitySocialHomePageViewModel.CommunityListState.from(
                     loadState = communities.loadState.refresh,
@@ -78,14 +74,6 @@ fun AmityMyCommunitiesComponent(
                                     context = context,
                                     community = community,
                                 )
-                            }
-
-                            Spacer(modifier = modifier.height(8.dp))
-                            if (index < communities.itemCount - 1) {
-                                HorizontalDivider(
-                                    color = AmityTheme.colors.divider
-                                )
-                                Spacer(modifier = modifier.height(8.dp))
                             }
                         }
                     }

@@ -3,6 +3,7 @@ package com.amity.socialcloud.uikit.community.compose.story.target.global
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -20,6 +21,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -32,15 +36,20 @@ import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.story.target.elements.AmityStoryTargetElement
 import com.amity.socialcloud.uikit.community.compose.story.target.utils.toRingUiState
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageType
+import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
 fun AmityStoryGlobalTabComponent(
     modifier: Modifier = Modifier,
+    refreshEventFlow: MutableStateFlow<Boolean> = MutableStateFlow(false),
+    onStateChanged: (AmityStoryGlobalTabViewModel.TargetListState) -> Unit = {},
 ) {
     val context = LocalContext.current
     val behavior by lazy {
         AmitySocialBehaviorHelper.storyTabComponentBehavior
     }
+
+    val isRefreshing by refreshEventFlow.collectAsState()
 
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
@@ -48,7 +57,7 @@ fun AmityStoryGlobalTabComponent(
     val viewModel =
         viewModel<AmityStoryGlobalTabViewModel>(viewModelStoreOwner = viewModelStoreOwner)
 
-    val targets = remember(viewModel) {
+    val targets = remember {
         viewModel.getTargets()
     }.collectAsLazyPagingItems()
 
@@ -62,27 +71,45 @@ fun AmityStoryGlobalTabComponent(
         viewModel.prefetchStoriesFromTargets(targets.itemSnapshotList.items)
     }
 
+    LaunchedEffect(isRefreshing) {
+        if(isRefreshing) {
+            targets.refresh()
+        }
+    }
+
     AmityBaseComponent(componentId = "story_tab_component") {
         AmityStoryGlobalTabViewModel.TargetListState.from(
             loadState = targets.loadState,
-        ).let(viewModel::setTargetListState)
-
+            itemCount = targets.itemCount,
+        ).let {
+            onStateChanged(it)
+            viewModel.setTargetListState(it)
+        }
+        onStateChanged(targetListState)
         Column(
             modifier = modifier.fillMaxWidth()
         ) {
-            if (targets.itemCount > 0) {
+            if (
+                targetListState == AmityStoryGlobalTabViewModel.TargetListState.LOADING
+                || targetListState == AmityStoryGlobalTabViewModel.TargetListState.SUCCESS
+            ) {
                 AmityNewsFeedDivider(modifier)
             }
-
             LazyRow(
+                verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp),
                 modifier = modifier
                     .fillMaxWidth()
-                    .padding(start = 16.dp)
             ) {
                 when (targetListState) {
+
+                    AmityStoryGlobalTabViewModel.TargetListState.EMPTY -> {
+
+                    }
+
                     AmityStoryGlobalTabViewModel.TargetListState.LOADING -> {
-                        items(7) {
+                        items(6) {
                             AmityStoryShimmer(modifier)
                         }
                     }
@@ -130,23 +157,24 @@ fun AmityStoryGlobalTabComponent(
 
 @Composable
 fun AmityStoryShimmer(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceEvenly,
-        modifier = modifier.size(width = 64.dp, height = 96.dp)
+        verticalArrangement = Arrangement.Center,
+        modifier = modifier.size(width = 64.dp, height = 118.dp)
     ) {
         Box(
             modifier = modifier
                 .size(64.dp)
                 .shimmerBackground(
                     color = AmityTheme.colors.baseShade4,
-                    shape = RoundedCornerShape(72.dp)
+                    shape = RoundedCornerShape(64.dp)
                 )
         )
         Box(
             Modifier
+                .padding(top = 8.dp)
                 .width(54.dp)
                 .height(8.dp)
                 .shimmerBackground(

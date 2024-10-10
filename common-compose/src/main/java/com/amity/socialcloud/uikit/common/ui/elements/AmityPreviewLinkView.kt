@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -119,7 +120,7 @@ fun AmityPreviewLinkView(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .height(230.dp)
+            .aspectRatio(2f)
             .border(
                 width = 1.dp,
                 color = AmityTheme.colors.baseShade4,

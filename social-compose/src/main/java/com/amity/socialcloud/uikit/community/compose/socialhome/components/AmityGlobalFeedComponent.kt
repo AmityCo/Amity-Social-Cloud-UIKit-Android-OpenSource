@@ -29,6 +29,7 @@ import com.amity.socialcloud.uikit.community.compose.socialhome.AmitySocialHomeP
 fun AmityGlobalFeedComponent(
     modifier: Modifier = Modifier,
     pageScope: AmityComposePageScope? = null,
+    onExploreRequested: () -> Unit = {},
 ) {
     val context = LocalContext.current
 
@@ -38,6 +39,7 @@ fun AmityGlobalFeedComponent(
 
     val viewModel = viewModel<AmitySocialHomePageViewModel>()
     val posts = remember { viewModel.getGlobalFeed() }.collectAsLazyPagingItems()
+    val pinnedPosts = remember { viewModel.getGlobalPinnedPosts() }.collectAsState(emptyList())
 
     val lazyListState = rememberLazyListState()
     val postListState by viewModel.postListState.collectAsState()
@@ -75,6 +77,7 @@ fun AmityGlobalFeedComponent(
                     modifier = modifier,
                     pageScope = pageScope,
                     globalPosts = posts,
+                    pinnedPosts = pinnedPosts,
                     postListState = postListState,
                     onClick = {
                         behavior.goToPostDetailPage(
@@ -84,6 +87,9 @@ fun AmityGlobalFeedComponent(
                     },
                     onCreateCommunityClicked = {
                         behavior.goToCreateCommunityPage(context)
+                    },
+                    onExploreCommunityClicked = {
+                        onExploreRequested()
                     }
                 )
             }

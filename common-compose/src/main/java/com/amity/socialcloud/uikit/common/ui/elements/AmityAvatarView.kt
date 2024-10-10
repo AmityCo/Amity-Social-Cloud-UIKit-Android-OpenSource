@@ -175,7 +175,7 @@ fun AmityUserAvatarView(
         )
         if (painter.state !is AsyncImagePainter.State.Success) {
             val displayNameFirstCharacter =
-                (user?.getDisplayName()?.trim() ?: "").firstOrNull()?.toString() ?: ""
+                (user?.getDisplayName()?.trim() ?: "").firstOrNull()?.uppercase() ?: ""
 
             val fontSize = when (size) {
                 64.dp -> 32.sp

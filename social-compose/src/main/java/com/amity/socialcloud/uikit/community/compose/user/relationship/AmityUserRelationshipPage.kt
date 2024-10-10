@@ -26,6 +26,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
@@ -128,6 +129,7 @@ fun AmityUserRelationshipPage(
         if (showUserActionSheet && targetUser != null) {
             AmityUserRelationshipActionsBottomSheet(
                 user = targetUser!!,
+                allowToBlock = userId == AmityCoreClient.getUserId(),
                 onDismiss = {
                     showUserActionSheet = false
                     targetUser = null

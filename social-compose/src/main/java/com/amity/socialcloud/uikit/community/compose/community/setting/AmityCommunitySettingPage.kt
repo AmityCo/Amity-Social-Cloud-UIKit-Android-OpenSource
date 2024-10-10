@@ -332,7 +332,6 @@ fun AmityCommunitySettingPage(
 
                     Text(
                         text = "On",
-//                        text = if (isNotificationEnabled) "On" else "Off",
                         style = AmityTheme.typography.body.copy(
                             color = AmityTheme.colors.baseShade1,
                         ),

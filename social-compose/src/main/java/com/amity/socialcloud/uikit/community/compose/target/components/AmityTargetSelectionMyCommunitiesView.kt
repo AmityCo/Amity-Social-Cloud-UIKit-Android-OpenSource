@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,6 +22,7 @@ import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunityPostSettings
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.elements.AmityCommunityAvatarView
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
@@ -46,6 +48,8 @@ fun AmityTargetSelectionMyCommunitiesView(
         viewModel.getCommunities()
     }.collectAsLazyPagingItems()
 
+    val allowToCreateMap = remember(viewModel) { viewModel.allowToCreateMap }.collectAsState()
+
     Text(
         text = "My Communities",
         style = AmityTheme.typography.body.copy(
@@ -65,66 +69,74 @@ fun AmityTargetSelectionMyCommunitiesView(
                 )
             },
         )
-
         items(
             count = communities.itemCount,
             key = { communities[it]?.getCommunityId() ?: it }
         ) { index ->
             val community = communities[index] ?: return@items
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-                    .clickableWithoutRipple {
-                        onClick(community)
-                    }
-            ) {
-                AmityCommunityAvatarView(
-                    modifier = modifier,
-                    size = 40.dp,
-                    community = community,
-                )
-
+            if (!allowToCreateMap.value.containsKey(community.getCommunityId())) {
+                if (community.getPostSettings() != AmityCommunityPostSettings.ADMIN_CAN_POST_ONLY) {
+                    viewModel.setAllowToCreate(community.getCommunityId(), true)
+                } else {
+                    viewModel.handlePermissionCheck(community)
+                }
+            }
+            if (allowToCreateMap.value[community.getCommunityId()] != false) {
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    if (!community.isPublic()) {
-                        AmityBaseElement(
-                            elementId = "community_private_badge"
-                        ) {
-                            Icon(
-                                painter = painterResource(id = getConfig().getIcon()),
-                                tint = AmityTheme.colors.baseShade1,
-                                contentDescription = "Private Community",
-                                modifier = Modifier
-                                    .size(16.dp)
-                                    .testTag(getAccessibilityId()),
-                            )
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .clickableWithoutRipple {
+                            onClick(community)
                         }
-                    }
-
-                    Text(
-                        text = community.getDisplayName(),
-                        style = AmityTheme.typography.body.copy(
-                            fontWeight = FontWeight.SemiBold
-                        ),
+                ) {
+                    AmityCommunityAvatarView(
                         modifier = modifier,
+                        size = 40.dp,
+                        community = community,
                     )
 
-                    if (community.isOfficial()) {
-                        AmityBaseElement(
-                            elementId = "community_official_badge"
-                        ) {
-                            Image(
-                                painter = painterResource(id = getConfig().getIcon()),
-                                contentDescription = "Verified Community",
-                                modifier = Modifier
-                                    .size(16.dp)
-                                    .testTag(getAccessibilityId()),
-                            )
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        if (!community.isPublic()) {
+                            AmityBaseElement(
+                                elementId = "community_private_badge"
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = getConfig().getIcon()),
+                                    tint = AmityTheme.colors.baseShade1,
+                                    contentDescription = "Private Community",
+                                    modifier = Modifier
+                                        .size(16.dp)
+                                        .testTag(getAccessibilityId()),
+                                )
+                            }
+                        }
+
+                        Text(
+                            text = community.getDisplayName(),
+                            style = AmityTheme.typography.body.copy(
+                                fontWeight = FontWeight.SemiBold
+                            ),
+                            modifier = modifier,
+                        )
+
+                        if (community.isOfficial()) {
+                            AmityBaseElement(
+                                elementId = "community_official_badge"
+                            ) {
+                                Image(
+                                    painter = painterResource(id = getConfig().getIcon()),
+                                    contentDescription = "Verified Community",
+                                    modifier = Modifier
+                                        .size(16.dp)
+                                        .testTag(getAccessibilityId()),
+                                )
+                            }
                         }
                     }
                 }

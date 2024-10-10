@@ -33,8 +33,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
+import com.amity.socialcloud.uikit.common.ad.AmityListItem
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
+import com.amity.socialcloud.uikit.common.ui.elements.AmityNewsFeedDivider
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
@@ -51,6 +54,9 @@ import com.amity.socialcloud.uikit.community.compose.paging.feed.community.amity
 import com.amity.socialcloud.uikit.community.compose.paging.feed.community.amityCommunityPinnedFeedLLS
 import com.amity.socialcloud.uikit.community.compose.paging.feed.community.amityCommunityVideoFeedLLS
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostCategory
+import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponent
+import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponentStyle
+import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmityPostAdView
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @SuppressLint("UnrememberedMutableState")

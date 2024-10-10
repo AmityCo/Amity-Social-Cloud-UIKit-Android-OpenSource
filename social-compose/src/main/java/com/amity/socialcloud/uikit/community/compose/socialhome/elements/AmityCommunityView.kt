@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.common.readableNumber
@@ -41,8 +42,10 @@ fun AmityCommunityView(
 ) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
             .height(80.dp)
             .clickableWithoutRipple {
                 onClick(community)
@@ -61,15 +64,13 @@ fun AmityCommunityView(
         }
 
         Column(
-            verticalArrangement = Arrangement.SpaceAround,
+            verticalArrangement = Arrangement.spacedBy(4.dp),
             modifier = Modifier
                 .weight(1f)
-                .padding(vertical = 8.dp)
-                .fillMaxHeight()
+                .padding(vertical = 4.dp)
         ) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
-                verticalAlignment = Alignment.CenterVertically
             ) {
                 if (!community.isPublic()) {
                     AmityBaseElement(
@@ -94,10 +95,12 @@ fun AmityCommunityView(
                     elementId = "community_display_name"
                 ) {
                     Text(
-                        text = community.getDisplayName(),
+                        text = community.getDisplayName().trim(),
                         style = AmityTheme.typography.body.copy(
                             fontWeight = FontWeight.SemiBold
                         ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                         modifier = modifier.testTag(getAccessibilityId()),
                     )
                 }
@@ -119,47 +122,37 @@ fun AmityCommunityView(
                 }
             }
 
-            Row(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight()
+            if (community.getCategories().isNotEmpty()) {
+                AmityBaseElement(
+                    pageScope = pageScope,
+                    componentScope = componentScope,
+                    elementId = "community_category_name"
                 ) {
-                    if (community.getCategories().isNotEmpty()) {
-                        AmityBaseElement(
-                            pageScope = pageScope,
-                            componentScope = componentScope,
-                            elementId = "community_category_name"
-                        ) {
-                            AmityCommunityCategoryView(
-                                categories = community.getCategories(),
-                                modifier = modifier
-                                    .padding(top = 6.dp)
-                                    .testTag(getAccessibilityId()),
-                                maxPreview = 3
-                            )
-                        }
-                    }
-
-                    AmityBaseElement(
-                        pageScope = pageScope,
-                        componentScope = componentScope,
-                        elementId = "community_members_count"
-                    ) {
-                        Text(
-                            text = "${community.getMemberCount().readableNumber()} members",
-                            style = AmityTheme.typography.caption.copy(
-                                fontWeight = FontWeight.Normal,
-                                color = AmityTheme.colors.baseShade1,
-                            ),
-                            modifier = Modifier
-                                .padding(top = 6.dp)
-                                .testTag(getAccessibilityId()),
-                        )
-                    }
+                    AmityCommunityCategoryView(
+                        categories = community.getCategories(),
+                        modifier = modifier
+                            .padding(top = 6.dp, end = 4.dp)
+                            .testTag(getAccessibilityId()),
+                        maxPreview = 3
+                    )
                 }
+            }
+
+            AmityBaseElement(
+                pageScope = pageScope,
+                componentScope = componentScope,
+                elementId = "community_members_count"
+            ) {
+                Text(
+                    text = "${community.getMemberCount().readableNumber()} members",
+                    style = AmityTheme.typography.caption.copy(
+                        fontWeight = FontWeight.Normal,
+                        color = AmityTheme.colors.baseShade1,
+                    ),
+                    modifier = Modifier
+                        .padding(top = 6.dp)
+                        .testTag(getAccessibilityId()),
+                )
             }
         }
     }
@@ -179,6 +172,7 @@ fun AmityJoinCommunityView(
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         modifier = modifier
             .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
             .height(80.dp)
             .clickableWithoutRipple {
                 onClick(community)
@@ -234,6 +228,8 @@ fun AmityJoinCommunityView(
                         style = AmityTheme.typography.body.copy(
                             fontWeight = FontWeight.SemiBold
                         ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                         modifier = modifier.testTag(getAccessibilityId()),
                     )
                 }
@@ -261,6 +257,7 @@ fun AmityJoinCommunityView(
                 Column(
                     modifier = Modifier
                         .weight(1f)
+                        //.padding(end = 2.dp)
                         .fillMaxHeight()
                 ) {
                     if (community.getCategories().isNotEmpty()) {
@@ -272,7 +269,7 @@ fun AmityJoinCommunityView(
                             AmityCommunityCategoryView(
                                 categories = community.getCategories(),
                                 modifier = modifier
-                                    .padding(top = 6.dp)
+                                    .padding(top = 6.dp, end = 4.dp)
                                     .testTag(getAccessibilityId()),
                                 maxPreview = 2
                             )

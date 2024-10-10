@@ -20,6 +20,7 @@ import com.amity.socialcloud.uikit.community.newsfeed.listener.AmityCreatePostCo
 import com.amity.socialcloud.uikit.community.newsfeed.viewmodel.AmityStoryTargetViewModel
 import com.amity.socialcloud.uikit.community.utils.EXTRA_PARAM_STORY_CREATION_TYPE
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 
 class AmityStoryTargetPickerFragment : AmityBaseFragment(),
@@ -28,6 +29,7 @@ class AmityStoryTargetPickerFragment : AmityBaseFragment(),
     private val viewModel: AmityStoryTargetViewModel by viewModels()
     private lateinit var communityAdapter: AmityCreatePostCommunitySelectionAdapter
     private lateinit var binding: AmityFragmentStoryTargetSelectionBinding
+    private val adapterDisposables = CompositeDisposable()
 
     private val behavior by lazy {
         AmitySocialBehaviorHelper.storyTargetSelectionPageBehavior
@@ -62,7 +64,7 @@ class AmityStoryTargetPickerFragment : AmityBaseFragment(),
     }
 
     private fun initRecyclerView() {
-        communityAdapter = AmityCreatePostCommunitySelectionAdapter(this)
+        communityAdapter = AmityCreatePostCommunitySelectionAdapter(adapterDisposables, this)
 
         binding.rvCommunity.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -99,6 +101,11 @@ class AmityStoryTargetPickerFragment : AmityBaseFragment(),
                 )
             }
         }
+    }
+
+    override fun onDestroy() {
+        adapterDisposables.clear()
+        super.onDestroy()
     }
 
     class Builder internal constructor() {
