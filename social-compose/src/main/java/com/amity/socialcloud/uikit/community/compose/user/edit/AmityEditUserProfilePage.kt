@@ -52,6 +52,7 @@ import com.amity.socialcloud.uikit.common.utils.getKeyboardHeight
 import com.amity.socialcloud.uikit.common.utils.getText
 import com.amity.socialcloud.uikit.common.utils.isKeyboardVisible
 import com.amity.socialcloud.uikit.common.utils.showToast
+import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.user.edit.elements.AmityEditUserAvatar
 
 @Composable
@@ -102,6 +103,7 @@ fun AmityEditUserProfilePage(
 
     var shouldDisabledClicking by remember { mutableStateOf(false) }
     var showUnsavedDialog by remember { mutableStateOf(false) }
+    var showInappropriateImageDialog by remember { mutableStateOf(false) }
 
     BackHandler {
         if (isSaveButtonEnabled) {
@@ -285,7 +287,13 @@ fun AmityEditUserProfilePage(
                                 },
                                 onError = {
                                     shouldDisabledClicking = false
-                                    context.showToast("Failed to save your profile. Please try again.")
+                                    getPageScope().showSnackbar(
+                                        message = "Failed to save your profile. Please try again.",
+                                        drawableRes = R.drawable.amity_ic_snack_bar_warning,
+                                    )
+                                },
+                                onInappropriateImageError = {
+                                    showInappropriateImageDialog = true
                                 }
                             )
                             shouldDisabledClicking = true
@@ -314,6 +322,17 @@ fun AmityEditUserProfilePage(
                     },
                     onDismissRequest = {
                         showUnsavedDialog = false
+                    }
+                )
+            }
+
+            if (showInappropriateImageDialog) {
+                AmityAlertDialog(
+                    dialogTitle = "Inappropriate image",
+                    dialogText = "Please choose a different image to upload.",
+                    dismissText = "OK",
+                    onDismissRequest = {
+                        showInappropriateImageDialog = false
                     }
                 )
             }

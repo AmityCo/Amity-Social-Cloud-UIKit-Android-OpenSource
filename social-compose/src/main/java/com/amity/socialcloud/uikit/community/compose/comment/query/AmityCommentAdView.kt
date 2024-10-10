@@ -90,6 +90,7 @@ fun AmityCommentAdView(
         AmityAvatarView(
             image = ad.getAdvertiser()?.getAvatar(),
             placeholder = R.drawable.amity_ic_default_advertiser,
+            iconPadding = 8.dp,
             modifier = modifier.testTag("comment_list/comment_bubble_avatar")
         )
 

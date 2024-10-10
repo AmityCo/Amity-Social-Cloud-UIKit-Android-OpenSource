@@ -23,6 +23,12 @@ import com.amity.socialcloud.uikit.community.compose.story.target.AmityStoryTabC
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageBehavior
 import com.amity.socialcloud.uikit.community.compose.target.post.AmityPostTargetSelectionPageBehavior
 import com.amity.socialcloud.uikit.community.compose.target.story.AmityStoryTargetSelectionPageBehavior
+import com.amity.socialcloud.uikit.community.compose.user.blocked.AmityBlockedUsersPageBehavior
+import com.amity.socialcloud.uikit.community.compose.user.pending.AmityUserPendingFollowRequestsPageBehavior
+import com.amity.socialcloud.uikit.community.compose.user.profile.AmityUserProfilePageBehavior
+import com.amity.socialcloud.uikit.community.compose.user.profile.components.AmityUserFeedComponentBehavior
+import com.amity.socialcloud.uikit.community.compose.user.profile.components.AmityUserProfileHeaderComponentBehavior
+import com.amity.socialcloud.uikit.community.compose.user.relationship.AmityUserRelationshipPageBehavior
 
 class AmityUIKit4Behavior {
 
@@ -178,5 +184,47 @@ class AmityUIKit4Behavior {
         set(value) {
             field = value
             AmitySocialBehaviorHelper.communityNotificationSettingPageBehavior = value
+        }
+
+    var userFeedComponentBehavior: AmityUserFeedComponentBehavior =
+        AmitySocialBehaviorHelper.userFeedComponentBehavior
+        set(value) {
+            field = value
+            AmitySocialBehaviorHelper.userFeedComponentBehavior = value
+        }
+
+    var userProfileHeaderComponentBehavior: AmityUserProfileHeaderComponentBehavior =
+        AmitySocialBehaviorHelper.userProfileHeaderComponentBehavior
+        set(value) {
+            field = value
+            AmitySocialBehaviorHelper.userProfileHeaderComponentBehavior = value
+        }
+
+    var userProfilePageBehavior: AmityUserProfilePageBehavior =
+        AmitySocialBehaviorHelper.userProfilePageBehavior
+        set(value) {
+            field = value
+            AmitySocialBehaviorHelper.userProfilePageBehavior = value
+        }
+
+    var blockedUsersPageBehavior: AmityBlockedUsersPageBehavior =
+        AmitySocialBehaviorHelper.blockedUsersPageBehavior
+        set(value) {
+            field = value
+            AmitySocialBehaviorHelper.blockedUsersPageBehavior = value
+        }
+
+    var userPendingFollowRequestsPageBehavior: AmityUserPendingFollowRequestsPageBehavior =
+        AmitySocialBehaviorHelper.userPendingFollowRequestsPageBehavior
+        set(value) {
+            field = value
+            AmitySocialBehaviorHelper.userPendingFollowRequestsPageBehavior = value
+        }
+
+    var userRelationshipPageBehavior: AmityUserRelationshipPageBehavior =
+        AmitySocialBehaviorHelper.userRelationshipPageBehavior
+        set(value) {
+            field = value
+            AmitySocialBehaviorHelper.userRelationshipPageBehavior = value
         }
 }

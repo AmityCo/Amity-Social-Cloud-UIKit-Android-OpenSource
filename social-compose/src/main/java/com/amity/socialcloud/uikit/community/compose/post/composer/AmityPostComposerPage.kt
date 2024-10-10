@@ -117,9 +117,9 @@ fun AmityPostComposerPage(
     val shouldAllowToPost by remember(isInEditMode) {
         derivedStateOf {
             if (isInEditMode) {
-                localPostText != postText || post?.getChildren()?.size != selectedMediaFiles.size
+                localPostText != postText && localPostText.trim().isNotEmpty() || post?.getChildren()?.size != selectedMediaFiles.size
             } else {
-                localPostText.isNotEmpty() || isAllMediaSuccessfullyUploaded
+                localPostText.trim().isNotEmpty() || isAllMediaSuccessfullyUploaded
             }
         }
     }

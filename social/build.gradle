@@ -35,6 +35,7 @@ dependencies {
     implementation 'androidx.activity:activity-compose:1.7.0'
 
     api("com.linkedin.android.spyglass:spyglass:3.0.1")
-    api("com.github.AmityCo.Amity-Social-Cloud-SDK-Android:amity-video-publisher:$amityMessagingSdkVersion")
-    api("com.github.AmityCo.Amity-Social-Cloud-SDK-Android:amity-video-player:$amityMessagingSdkVersion")
+
+    api("co.amity.android:amity-video-publisher:$amityMessagingSdkVersion")
+    api("co.amity.android:amity-video-player:$amityMessagingSdkVersion")
 }

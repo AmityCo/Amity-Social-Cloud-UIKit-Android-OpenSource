@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.base.AmityBaseFragment
-import com.amity.socialcloud.uikit.common.utils.AmityRecyclerViewItemDecoration
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.databinding.AmityFragmentPostTargetSelectionBinding
 import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityLiveStreamPostCreatorActivity
@@ -24,8 +23,8 @@ import com.amity.socialcloud.uikit.community.newsfeed.viewmodel.AmityPostTargetV
 import com.amity.socialcloud.uikit.community.utils.EXTRA_PARAM_POST_CREATION_TYPE
 import com.bumptech.glide.Glide
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
-import timber.log.Timber
 
 class AmityPostTargetPickerFragment : AmityBaseFragment(),
     AmityCreatePostCommunitySelectionListener {
@@ -34,13 +33,14 @@ class AmityPostTargetPickerFragment : AmityBaseFragment(),
     private lateinit var communityAdapter: AmityCreatePostCommunitySelectionAdapter
     private lateinit var binding: AmityFragmentPostTargetSelectionBinding
     private val TAG = AmityPostTargetPickerFragment::class.java.canonicalName
+    private val adapterDisposables: CompositeDisposable = CompositeDisposable()
 
     private val createGenericPost =
         registerForActivityResult(
             AmityPostCreatorActivity
                 .AmityCreateCommunityPostActivityContract()
         ) {
-            if (it != null) {
+            if(it != null){
                 getCommunity()
                 handleBackPress()
             }
@@ -105,11 +105,9 @@ class AmityPostTargetPickerFragment : AmityBaseFragment(),
             POST_CREATION_TYPE_GENERIC -> {
                 createGenericPost.launch(null)
             }
-
             POST_CREATION_TYPE_LIVE_STREAM -> {
                 createLiveStreamPost.launch(null)
             }
-
             POST_CREATION_TYPE_POLL -> {
                 createPollPost.launch(null)
             }
@@ -127,7 +125,7 @@ class AmityPostTargetPickerFragment : AmityBaseFragment(),
     }
 
     private fun initRecyclerView() {
-        communityAdapter = AmityCreatePostCommunitySelectionAdapter(this)
+        communityAdapter = AmityCreatePostCommunitySelectionAdapter(adapterDisposables,this)
 //        adapter.addLoadStateListener { loadState ->
 //            if (loadState.source.refresh is LoadState.NotLoading) {
 //                handleCommunitySectionVisibility()
@@ -136,12 +134,6 @@ class AmityPostTargetPickerFragment : AmityBaseFragment(),
         binding.rvCommunity.apply {
             layoutManager = LinearLayoutManager(requireContext())
             this.adapter = communityAdapter
-            addItemDecoration(
-                AmityRecyclerViewItemDecoration(
-                    resources.getDimensionPixelSize(R.dimen.amity_padding_xs),
-                    0, resources.getDimensionPixelSize(R.dimen.amity_padding_xs)
-                )
-            )
             hasFixedSize()
         }
         getCommunity()
@@ -160,8 +152,7 @@ class AmityPostTargetPickerFragment : AmityBaseFragment(),
     }
 
     private fun handleCommunitySectionVisibility() {
-        val communitySectionVisibility =
-            if (communityAdapter.itemCount > 0) View.VISIBLE else View.GONE
+        val communitySectionVisibility = if (communityAdapter.itemCount > 0) View.VISIBLE else View.GONE
         binding.separator.visibility = communitySectionVisibility
         binding.tvCommunityLabel.visibility = communitySectionVisibility
     }
@@ -172,11 +163,9 @@ class AmityPostTargetPickerFragment : AmityBaseFragment(),
             POST_CREATION_TYPE_GENERIC -> {
                 createGenericPost.launch(community.getCommunityId())
             }
-
             POST_CREATION_TYPE_LIVE_STREAM -> {
                 createLiveStreamPost.launch(community.getCommunityId())
             }
-
             POST_CREATION_TYPE_POLL -> {
                 createPollPost.launch(community.getCommunityId())
             }
@@ -193,6 +182,11 @@ class AmityPostTargetPickerFragment : AmityBaseFragment(),
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        adapterDisposables.clear()
+        super.onDestroy()
     }
 }
 

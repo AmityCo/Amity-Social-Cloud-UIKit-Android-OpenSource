@@ -2,6 +2,7 @@ package com.amity.snipet.verifier.social.socialhome.feed
 
 import android.content.Context
 import com.amity.socialcloud.uikit.AmityUIKit4Manager
+import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostCategory
 import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmityGlobalFeedComponentBehavior
 
 class AmityGlobalFeedComponentSampleBehavior {
@@ -12,7 +13,7 @@ class AmityGlobalFeedComponentSampleBehavior {
     description: Amity Global Feed Component Behavior customization
     */
     class CustomGlobalFeedComponentBehavior : AmityGlobalFeedComponentBehavior() {
-        override fun goToPostDetailPage(context: Context, id: String) {
+        override fun goToPostDetailPage(context: Context, id: String, category: AmityPostCategory) {
             // custom implementation for navigating to Post Detail Page
         }
     }

@@ -44,7 +44,8 @@ fun AmitySocialHomePage(
         pageId = "social_home_page"
     ) {
         Column(
-            modifier = modifier.fillMaxSize()
+            modifier = modifier
+                .fillMaxSize()
         ) {
             AmitySocialHomeTopNavigationComponent(
                 modifier = modifier,
@@ -124,6 +125,9 @@ fun AmitySocialHomePage(
                     AmitySocialHomePageTab.NEWSFEED -> {
                         AmityNewsFeedComponent(
                             pageScope = getPageScope(),
+                            onExploreRequested = {
+                                selectedTab = AmitySocialHomePageTab.EXPLORE
+                            }
                         )
                     }
 

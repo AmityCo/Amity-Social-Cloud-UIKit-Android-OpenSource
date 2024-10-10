@@ -30,8 +30,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -177,16 +175,8 @@ fun AmityBlockedUsersPage(
         if (showUnblockUserDialog && targetUser != null) {
             AmityAlertDialog(
                 dialogTitle = "Unblock user?",
-                dialogText = buildAnnotatedString {
-                    val displayName = targetUser?.getDisplayName() ?: ""
-                    append(displayName)
-                    addStyle(
-                        style = SpanStyle(AmityTheme.colors.base),
-                        start = 0,
-                        end = displayName.length,
-                    )
-                    append(" will now be able to see posts and comments that you've created. They won't be notified that you've unblocked them.")
-                }, confirmText = "Unblock",
+                dialogText = "They will now be able to see posts and comments that you’ve created. They won’t be notified that you’ve unblocked them.",
+                confirmText = "Unblock",
                 dismissText = "Cancel",
                 confirmTextColor = AmityTheme.colors.alert,
                 onConfirmation = {

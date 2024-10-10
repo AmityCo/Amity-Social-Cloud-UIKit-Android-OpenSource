@@ -56,6 +56,7 @@ fun AmityReactionRoot(
     modifier: Modifier = Modifier,
     state: AmityReactionListPageState,
     onAction: (AmityReactionListPageAction) -> Unit = {},
+    onUserClick: (String) -> Unit = {},
 ) {
 
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
@@ -106,7 +107,8 @@ fun AmityReactionRoot(
                 state = state,
                 action = { action ->
                     onAction(action)
-                }
+                },
+                onUserClick = onUserClick,
             )
         }
 
@@ -187,7 +189,8 @@ fun AmityReactionItems(
     modifier: Modifier = Modifier,
     reactions: LazyPagingItems<AmityReaction>,
     state: AmityReactionListPageState,
-    action: (AmityReactionListPageAction) -> Unit = {}
+    action: (AmityReactionListPageAction) -> Unit = {},
+    onUserClick: (String) -> Unit = {},
 ) {
     if (state.tabItems.first().count == 0) {
         Column(
@@ -236,7 +239,8 @@ fun AmityReactionItems(
                 reaction = reaction,
                 onRemoveReaction = {
                     action(AmityReactionListPageAction.RemoveReaction(reaction.getReactionName()))
-                }
+                },
+                onUserClick = onUserClick,
             )
         }
 

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -15,7 +16,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -68,11 +73,21 @@ fun AmityPostHeaderElement(
         viewModel.isCommunityModerator(post)
     }
 
+    var firstTextWidth by remember { mutableIntStateOf(0) }
+    var secondTextWidth by remember { mutableIntStateOf(0) }
+    var isFirstTextTruncated by remember { mutableStateOf(false) }
+
+    // Sample texts
+    var firstText = ""
+    var secondText = ""
+
     Column(
         modifier = modifier
             .fillMaxWidth()
     ) {
-        if (category == AmityPostCategory.ANNOUNCEMENT || category == AmityPostCategory.PIN_AND_ANNOUNCEMENT) {
+        if (category == AmityPostCategory.ANNOUNCEMENT
+            || category == AmityPostCategory.PIN_AND_ANNOUNCEMENT
+            || category == AmityPostCategory.GLOBAL) {
             AmityBaseElement(
                 componentScope = componentScope,
                 elementId = "announcement_badge"
@@ -130,15 +145,20 @@ fun AmityPostHeaderElement(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
+                    firstText = post.getCreator()?.getDisplayName()?.trim() ?: ""
                     Text(
-                        text = post.getCreator()?.getDisplayName() ?: "",
+                        text = firstText,
                         style = AmityTheme.typography.body.copy(
                             fontWeight = FontWeight.SemiBold
                         ),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
+                        onTextLayout = {
+                            firstTextWidth = it.size.width
+                            isFirstTextTruncated = it.didOverflowWidth
+                        },
                         modifier = modifier
-                            .weight(1f, fill = false)
+                            .weight(calculateWeight(firstTextWidth, secondTextWidth), fill = false)
                             .clickableWithoutRipple {
                                 post
                                     .getCreator()
@@ -171,7 +191,8 @@ fun AmityPostHeaderElement(
                                     contentDescription = null,
                                     tint = AmityTheme.colors.baseShade1,
                                     modifier = modifier
-                                        .size(16.dp),
+                                        .size(16.dp)
+                                        .offset(x = if(isFirstTextTruncated) (-2).dp else 0.dp)
                                 )
 
                                 if (target.getCommunity()?.isPublic() != true) {
@@ -188,15 +209,19 @@ fun AmityPostHeaderElement(
                                         )
                                     }
                                 }
+                                secondText = target.getCommunity()?.getDisplayName()?.trim() ?: ""
                                 Text(
-                                    text = target.getCommunity()?.getDisplayName() ?: "",
+                                    text = secondText,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
                                     style = AmityTheme.typography.body.copy(
                                         fontWeight = FontWeight.SemiBold
                                     ),
+                                    onTextLayout = {
+                                        secondTextWidth = it.size.width
+                                    },
                                     modifier = modifier
-                                        .weight(1f, fill = false)
+                                        .weight(calculateWeight(secondTextWidth, firstTextWidth), fill = false)
                                         .clickableWithoutRipple {
                                             target
                                                 .getCommunity()
@@ -228,20 +253,25 @@ fun AmityPostHeaderElement(
                                         painter = painterResource(id = R.drawable.amity_ic_post_target),
                                         contentDescription = null,
                                         tint = AmityTheme.colors.baseShade1,
-                                        modifier = modifier.size(16.dp),
+                                        modifier = modifier.size(16.dp)
+                                            .offset(x = if(isFirstTextTruncated) (-2).dp else 0.dp)
+                                        ,
                                     )
+                                    secondText = target.getUser()?.getDisplayName()?.trim() ?: ""
                                     Text(
-                                        text = target.getUser()?.getDisplayName() ?: "",
+                                        text = secondText,
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis,
                                         style = AmityTheme.typography.body.copy(
                                             fontWeight = FontWeight.SemiBold
                                         ),
+                                        onTextLayout = {
+                                            secondTextWidth = it.size.width
+                                        },
                                         modifier = modifier
-                                            .weight(1f, fill = false)
+                                            .weight(calculateWeight(secondTextWidth, firstTextWidth), fill = false)
                                             .clickableWithoutRipple {
-                                                target
-                                                    .getUser()
+                                                target.getUser()
                                                     ?.let {
                                                         behavior.goToUserProfilePage(
                                                             context = context,
@@ -273,7 +303,8 @@ fun AmityPostHeaderElement(
                 }
 
                 Row(
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(top = 2.dp)
                 ) {
                     if (isCommunityModerator) {
                         AmityPostModeratorBadge(
@@ -342,5 +373,14 @@ fun AmityPostHeaderElement(
                 }
             }
         }
+    }
+}
+
+fun calculateWeight(primaryTextWidth: Int, secondaryTextWidth: Int): Float {
+    // Ensure no division by zero
+    return if (primaryTextWidth + secondaryTextWidth == 0) {
+        1f
+    } else {
+        primaryTextWidth.toFloat() / (primaryTextWidth + secondaryTextWidth)
     }
 }

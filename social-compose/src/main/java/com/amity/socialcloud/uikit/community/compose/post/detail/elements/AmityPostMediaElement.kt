@@ -114,7 +114,7 @@ fun AmityChildPostMediaElement(
         1 -> AmityPostMediaImageChildrenOne(
             modifier = modifier,
             isVideoPost = isVideoPost,
-            image = images[0]
+            image = images.first()
         ) {
             selectedFileId.value = it.getFileId()
             showMediaDialog.value = true

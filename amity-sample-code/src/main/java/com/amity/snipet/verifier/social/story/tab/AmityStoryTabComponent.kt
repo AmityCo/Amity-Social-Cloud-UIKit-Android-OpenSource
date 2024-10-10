@@ -17,7 +17,7 @@ class AmityStoryTabComponentSample {
         community: AmityCommunity
     ) {
         val feedTypeCommunity = AmityStoryTabComponentType.CommunityFeed(community.getCommunityId())
-        val feedTypeGlobal = AmityStoryTabComponentType.GlobalFeed
+        val feedTypeGlobal = AmityStoryTabComponentType.GlobalFeed()
 
         //  It's available as Composable element
         AmityStoryTabComponent(

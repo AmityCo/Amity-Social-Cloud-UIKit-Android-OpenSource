@@ -71,7 +71,7 @@ fun AmityStoryTargetElement(
         val displayName = if (isCommunityTarget) {
             "Story"
         } else {
-            community?.getDisplayName() ?: ""
+            community?.getDisplayName()?.trim() ?: ""
         }
 
         Column(
@@ -79,7 +79,7 @@ fun AmityStoryTargetElement(
             verticalArrangement = Arrangement.spacedBy(4.dp),
             modifier = modifier
                 .width(if (isCommunityTarget) 52.dp else 72.dp)
-                .padding(vertical = 8.dp)
+                .padding(top = 16.dp, bottom = 16.dp)
                 .clickableWithoutRipple {
                     onClick()
                 }

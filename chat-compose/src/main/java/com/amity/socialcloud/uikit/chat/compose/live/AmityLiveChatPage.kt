@@ -52,8 +52,6 @@ fun AmityLiveChatPage(
 ) {
     val subChannelId = channelId
     val viewModel = AmityLiveChatPageViewModel(subChannelId)
-    val context = androidx.compose.ui.platform.LocalContext.current
-    NetworkConnectionEventPublisher.initPublisher(context = context)
     val membership by remember {
         viewModel.observeMembership()
             .distinctUntilChanged { old, new ->

@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -41,6 +42,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getText
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetailPageViewModel
 
@@ -51,6 +53,10 @@ fun AmityPostEngagementView(
     post: AmityPost,
     isPostDetailPage: Boolean,
 ) {
+    val context = LocalContext.current
+    val behavior by lazy {
+        AmitySocialBehaviorHelper.postContentComponentBehavior
+    }
     var isReacted by remember(post.getUpdatedAt(), post.getMyReactions()) {
         mutableStateOf(post.getMyReactions().isNotEmpty())
     }
@@ -236,9 +242,16 @@ fun AmityPostEngagementView(
                 modifier = modifier,
                 referenceType = AmityReactionReferenceType.POST,
                 referenceId = post.getPostId(),
-            ) {
-                showReactionListSheet = false
-            }
+                onClose = {
+                    showReactionListSheet = false
+                },
+                onUserClick = {
+                    behavior.goToUserProfilePage(
+                        context = context,
+                        userId = it,
+                    )
+                }
+            )
         }
     }
 }

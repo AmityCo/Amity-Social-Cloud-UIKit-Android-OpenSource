@@ -116,7 +116,7 @@ fun AmityCommunityCategoryElement(
         }
         Spacer(modifier.width(8.dp))
         Text(
-            text = category.getName(),
+            text = category.getName().trim(),
             style = AmityTheme.typography.body.copy(
                 fontWeight = FontWeight.SemiBold,
             ),

@@ -6,12 +6,15 @@ import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.file.upload.AmityUploadResult
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 
 
 class AmityCommunitySetupPageViewModel : AmityBaseViewModel() {
+
+    var hasGlobalFeaturedPost: Boolean = false
 
     fun createCommunity(
         avatarUri: Uri,
@@ -170,6 +173,23 @@ class AmityCommunitySetupPageViewModel : AmityBaseViewModel() {
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSuccess(onSuccess)
             .doOnError { onError(it.message ?: "Failed to update community") }
+            .subscribe()
+    }
+
+    fun observeGlobalFeaturedPost(communityId: String) {
+        AmitySocialClient.newPostRepository()
+            .getGlobalPinnedPosts()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnNext {
+                hasGlobalFeaturedPost = it.any { pinnedPost ->
+                    pinnedPost.post?.getTarget() is AmityPost.Target.COMMUNITY
+                            && (pinnedPost.post?.getTarget() as AmityPost.Target.COMMUNITY).getCommunityId() == communityId
+                }
+            }
+            .doOnError {
+
+            }
             .subscribe()
     }
 }

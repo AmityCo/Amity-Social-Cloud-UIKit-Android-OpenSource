@@ -40,6 +40,7 @@ import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostCatego
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostContentElement
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostEngagementView
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostHeaderElement
+import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostLivestreamElement
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostMediaElement
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostNonMemberSection
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuBottomSheet
@@ -49,51 +50,73 @@ import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostM
 
 @Composable
 fun AmityPostContentComponent(
-    modifier: Modifier = Modifier,
-    post: AmityPost,
-    style: AmityPostContentComponentStyle,
-    category: AmityPostCategory = AmityPostCategory.GENERAL,
-    hideMenuButton: Boolean,
-    hideTarget: Boolean = false,
-    onTapAction: () -> Unit = {},
+	modifier: Modifier = Modifier,
+	post: AmityPost,
+	style: AmityPostContentComponentStyle,
+	category: AmityPostCategory = AmityPostCategory.GENERAL,
+	hideMenuButton: Boolean,
+	hideTarget: Boolean = false,
+	onTapAction: () -> Unit = {},
 ) {
-    val context = LocalContext.current
-    val behavior by lazy {
-        AmitySocialBehaviorHelper.postContentComponentBehavior
-    }
-    val isPostDetailPage = remember(style) {
-        style == AmityPostContentComponentStyle.DETAIL
-    }
+	val context = LocalContext.current
+	val behavior by lazy {
+		AmitySocialBehaviorHelper.postContentComponentBehavior
+	}
+	val isPostDetailPage = remember(style) {
+		style == AmityPostContentComponentStyle.DETAIL
+	}
 
-    val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
-        "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
-    }
-    val viewModel =
-        viewModel<AmityPostMenuViewModel>(viewModelStoreOwner = viewModelStoreOwner)
+	val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
+		"No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
+	}
+	val viewModel =
+		viewModel<AmityPostMenuViewModel>(viewModelStoreOwner = viewModelStoreOwner)
 
-    val dialogState by viewModel.dialogUIState.collectAsState()
+	val dialogState by viewModel.dialogUIState.collectAsState()
 
-    when (dialogState) {
-        is AmityPostMenuDialogUIState.OpenConfirmDeleteDialog -> {
-            val data = dialogState as AmityPostMenuDialogUIState.OpenConfirmDeleteDialog
+	when (dialogState) {
+		is AmityPostMenuDialogUIState.OpenConfirmDeleteDialog -> {
+			val data = dialogState as AmityPostMenuDialogUIState.OpenConfirmDeleteDialog
+			if (data.postId == post.getPostId()) {
+				AmityAlertDialog(
+					dialogTitle = context.getString(R.string.amity_delete_post_title),
+					dialogText = context.getString(R.string.amity_delete_post_warning_message),
+					confirmText = context.getString(R.string.amity_delete),
+					dismissText = context.getString(R.string.amity_cancel),
+					onConfirmation = {
+						AmityPostComposerHelper.deletePost(data.postId)
+						viewModel.deletePost(
+							postId = data.postId,
+							onSuccess = {
+								context.showToast("Post deleted")
+								viewModel.updateDialogUIState(AmityPostMenuDialogUIState.CloseDialog)
+							},
+							onError = {
+								context.showToast("Failed to delete post")
+								viewModel.updateDialogUIState(AmityPostMenuDialogUIState.CloseDialog)
+							}
+						)
+					},
+					onDismissRequest = {
+						viewModel.updateDialogUIState(AmityPostMenuDialogUIState.CloseDialog)
+					}
+				)
+			}
+		}
+
+        is AmityPostMenuDialogUIState.OpenConfirmEditDialog -> {
+            val data = dialogState as AmityPostMenuDialogUIState.OpenConfirmEditDialog
             if (data.postId == post.getPostId()) {
                 AmityAlertDialog(
-                    dialogTitle = context.getString(R.string.amity_delete_post_title),
-                    dialogText = context.getString(R.string.amity_delete_post_warning_message),
-                    confirmText = context.getString(R.string.amity_delete),
+                    dialogTitle = "Edit globally featured post?",
+                    dialogText = "The post you're editing has been featured globally. If you edit your post, it will need to be re-approved and will no longer be globally featured.",
+                    confirmText = "Edit",
                     dismissText = context.getString(R.string.amity_cancel),
                     onConfirmation = {
-                        AmityPostComposerHelper.deletePost(data.postId)
-                        viewModel.deletePost(
-                            postId = data.postId,
-                            onSuccess = {
-                                context.showToast("Post deleted")
-                                viewModel.updateDialogUIState(AmityPostMenuDialogUIState.CloseDialog)
-                            },
-                            onError = {
-                                context.showToast("Failed to delete post")
-                                viewModel.updateDialogUIState(AmityPostMenuDialogUIState.CloseDialog)
-                            }
+						viewModel.updateDialogUIState(AmityPostMenuDialogUIState.CloseDialog)
+                        behavior.goToPostComposerPage(
+                            context = context,
+                            post = post,
                         )
                     },
                     onDismissRequest = {
@@ -103,163 +126,170 @@ fun AmityPostContentComponent(
             }
         }
 
-        AmityPostMenuDialogUIState.CloseDialog -> {
-            viewModel.updateDialogUIState(AmityPostMenuDialogUIState.CloseDialog)
-        }
-    }
+		AmityPostMenuDialogUIState.CloseDialog -> {
+			viewModel.updateDialogUIState(AmityPostMenuDialogUIState.CloseDialog)
+		}
+	}
 
-    var isVisible by remember {
-        mutableStateOf(false)
-    }
+	var isVisible by remember {
+		mutableStateOf(false)
+	}
 
-    LaunchedEffect(isVisible) {
-        if (!isPostDetailPage && isVisible) {
-            post
-                .analytics()
-                .markAsViewed()
-        }
-    }
+	LaunchedEffect(isVisible) {
+		if (!isPostDetailPage && isVisible) {
+			post
+				.analytics()
+				.markAsViewed()
+		}
+	}
 
-    AmityBaseComponent(componentId = "post_content") {
-        Column(
-            modifier = modifier
-                .fillMaxWidth()
-                .background(AmityTheme.colors.background)
-                .clickableWithoutRipple {
-                    if (!isPostDetailPage) {
-                        onTapAction()
-                    }
-                }
-                .isVisible { isVisible = it }
-                .testTag(getAccessibilityId())
-        ) {
-            AmityPostHeaderElement(
-                modifier = modifier,
-                componentScope = getComponentScope(),
-                post = post,
-                hideMenuButton = hideMenuButton,
-                style = style,
-                category = category,
-                hideTarget = hideTarget,
-                onMenuClick = {
-                    viewModel.updateSheetUIState(AmityPostMenuSheetUIState.OpenSheet(it.getPostId()))
-                }
-            )
-            AmityPostContentElement(
-                modifier = modifier,
-                post = post,
-                onClick = {
-                    if (!isPostDetailPage) {
-                        onTapAction()
-                    }
-                },
-                onMentionedUserClick = {
+	AmityBaseComponent(componentId = "post_content") {
+		Column(
+			modifier = modifier
+				.fillMaxWidth()
+				.background(AmityTheme.colors.background)
+				.clickableWithoutRipple {
+					if (!isPostDetailPage) {
+						onTapAction()
+					}
+				}
+				.isVisible { isVisible = it }
+				.testTag(getAccessibilityId())
+		) {
+			AmityPostHeaderElement(
+				modifier = modifier,
+				componentScope = getComponentScope(),
+				post = post,
+				hideMenuButton = hideMenuButton,
+				style = style,
+				category = category,
+				hideTarget = hideTarget,
+				onMenuClick = {
+					viewModel.updateSheetUIState(AmityPostMenuSheetUIState.OpenSheet(it.getPostId()))
+				}
+			)
+			if (post.getChildren().any { it.getData() is AmityPost.Data.LIVE_STREAM }) {
+				AmityPostLivestreamElement(
+					modifier = modifier,
+					post = post
+				)
+			} else {
+				AmityPostContentElement(
+					modifier = modifier,
+					post = post,
+					onClick = {
+						if (!isPostDetailPage) {
+							onTapAction()
+						}
+					},
+					onMentionedUserClick = {
 //                    behavior.goToUserProfilePage(
 //                        context = context,
 //                        userId = it,
 //                    )
-                },
-            )
-            AmityPostPreviewLinkView(
-                modifier = modifier,
-                post = post,
-            )
-            AmityPostMediaElement(
-                modifier = modifier,
-                post = post
-            )
+					},
+				)
+				AmityPostPreviewLinkView(
+					modifier = modifier,
+					post = post,
+				)
+				AmityPostMediaElement(
+					modifier = modifier,
+					post = post
+				)
+			}
+			if (viewModel.isNotMember(post)) {
+				AmityPostNonMemberSection()
+			} else {
+				AmityPostEngagementView(
+					modifier = modifier,
+					componentScope = getComponentScope(),
+					post = post,
+					isPostDetailPage = isPostDetailPage,
+				)
+			}
 
-            if (viewModel.isNotMember(post)) {
-                AmityPostNonMemberSection()
-            } else {
-                AmityPostEngagementView(
-                    modifier = modifier,
-                    componentScope = getComponentScope(),
-                    post = post,
-                    isPostDetailPage = isPostDetailPage,
-                )
-            }
-
-            AmityPostMenuBottomSheet(
-                post = post
-            )
-        }
-    }
+			AmityPostMenuBottomSheet(
+				post = post,
+                category = category
+			)
+		}
+	}
 }
 
 @Composable
 fun AmityPostShimmer(
-    modifier: Modifier = Modifier
+	modifier: Modifier = Modifier
 ) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-        modifier = modifier
-            .fillMaxWidth()
-            .height(200.dp)
-            .padding(horizontal = 16.dp, vertical = 12.dp)
-    ) {
-        Row {
-            Box(
-                modifier = modifier
-                    .size(40.dp)
-                    .shimmerBackground(
-                        color = AmityTheme.colors.baseShade4,
-                        shape = RoundedCornerShape(40.dp)
-                    )
-            )
-            Column(
-                verticalArrangement = Arrangement.SpaceBetween,
-                modifier = modifier
-                    .height(40.dp)
-                    .padding(horizontal = 8.dp, vertical = 6.dp)
-            ) {
-                Box(
-                    Modifier
-                        .width(120.dp)
-                        .height(8.dp)
-                        .shimmerBackground(
-                            color = AmityTheme.colors.baseShade4,
-                            shape = RoundedCornerShape(12.dp)
-                        )
-                )
-                Box(
-                    Modifier
-                        .width(88.dp)
-                        .height(8.dp)
-                        .shimmerBackground(
-                            color = AmityTheme.colors.baseShade4,
-                            shape = RoundedCornerShape(12.dp)
-                        )
-                )
-            }
-        }
+	Column(
+		verticalArrangement = Arrangement.spacedBy(12.dp),
+		modifier = modifier
+			.fillMaxWidth()
+			.height(200.dp)
+			.padding(horizontal = 16.dp, vertical = 12.dp)
+	) {
+		Row {
+			Box(
+				modifier = modifier
+					.size(40.dp)
+					.shimmerBackground(
+						color = AmityTheme.colors.baseShade4,
+						shape = RoundedCornerShape(40.dp)
+					)
+			)
+			Column(
+				verticalArrangement = Arrangement.SpaceBetween,
+				modifier = modifier
+					.height(40.dp)
+					.padding(horizontal = 8.dp, vertical = 6.dp)
+			) {
+				Box(
+					Modifier
+						.width(120.dp)
+						.height(8.dp)
+						.shimmerBackground(
+							color = AmityTheme.colors.baseShade4,
+							shape = RoundedCornerShape(12.dp)
+						)
+				)
+				Box(
+					Modifier
+						.width(88.dp)
+						.height(8.dp)
+						.shimmerBackground(
+							color = AmityTheme.colors.baseShade4,
+							shape = RoundedCornerShape(12.dp)
+						)
+				)
+			}
+		}
 
-        Box(
-            Modifier
-                .width(240.dp)
-                .height(8.dp)
-                .shimmerBackground(
-                    color = AmityTheme.colors.baseShade4,
-                    shape = RoundedCornerShape(12.dp)
-                )
-        )
-        Box(
-            Modifier
-                .width(300.dp)
-                .height(8.dp)
-                .shimmerBackground(
-                    color = AmityTheme.colors.baseShade4,
-                    shape = RoundedCornerShape(12.dp)
-                )
-        )
-        Box(
-            Modifier
-                .width(180.dp)
-                .height(8.dp)
-                .shimmerBackground(
-                    color = AmityTheme.colors.baseShade4,
-                    shape = RoundedCornerShape(12.dp)
-                )
-        )
-    }
+		Box(
+			Modifier
+				.width(240.dp)
+				.height(8.dp)
+				.shimmerBackground(
+					color = AmityTheme.colors.baseShade4,
+					shape = RoundedCornerShape(12.dp)
+				)
+		)
+		Box(
+			Modifier
+				.width(300.dp)
+				.height(8.dp)
+				.shimmerBackground(
+					color = AmityTheme.colors.baseShade4,
+					shape = RoundedCornerShape(12.dp)
+				)
+		)
+		Box(
+			Modifier
+				.width(180.dp)
+				.height(8.dp)
+				.shimmerBackground(
+					color = AmityTheme.colors.baseShade4,
+					shape = RoundedCornerShape(12.dp)
+				)
+		)
+	}
 }

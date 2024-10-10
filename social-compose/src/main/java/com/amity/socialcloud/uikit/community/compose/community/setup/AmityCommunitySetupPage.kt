@@ -1,7 +1,9 @@
 package com.amity.socialcloud.uikit.community.compose.community.setup
 
 import android.app.Activity
+import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -36,6 +38,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -51,6 +54,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
@@ -64,6 +68,7 @@ import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
 import com.amity.socialcloud.uikit.common.ui.elements.AmityTextField
+import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.AmityCameraUtil
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
@@ -162,6 +167,7 @@ fun AmityCommunitySetupPage(
         viewModel<AmityCommunitySetupPageViewModel>(viewModelStoreOwner = viewModelStoreOwner)
 
     var showLeaveConfirmDialog by remember { mutableStateOf(false) }
+    var showPrivacyConfirmDialog by remember { mutableStateOf(false) }
     var showMediaCameraSelectionSheet by remember { mutableStateOf(false) }
     var isCameraPermissionGranted by remember { mutableStateOf(false) }
 
@@ -214,6 +220,12 @@ fun AmityCommunitySetupPage(
             } else {
                 name.isNotBlank()
             }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        if (mode is AmityCommunitySetupPageMode.Edit) {
+            viewModel.observeGlobalFeaturedPost(communityToEdit!!.getCommunityId())
         }
     }
 
@@ -687,29 +699,27 @@ fun AmityCommunitySetupPage(
                     shape = RoundedCornerShape(4.dp),
                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
                     enabled = shouldActionButtonEnable,
-                    modifier = modifier
+                    modifier = Modifier
                         .height(40.dp)
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),
                     onClick = {
                         if (isInEditMode) {
-                            getPageScope().showProgressSnackbar("Updating...")
-                            viewModel.editCommunity(
-                                communityId = communityToEdit?.getCommunityId() ?: "",
-                                avatarUri = avatarUri,
-                                displayName = name,
-                                description = description,
-                                isPublic = isPublic,
-                                categoryIds = selectedCategories.map { it.getCategoryId() },
-                                onSuccess = {
-                                    context.showToast("Successfully updated community profile!")
-                                    context.closePageWithResult(Activity.RESULT_OK)
-                                },
-                                onError = {
-                                    context.showToast("Failed to save your community profile. Please try again.")
-                                    context.closePageWithResult(Activity.RESULT_OK)
-                                }
-                            )
+                            if (!isPublic && communityToEdit!!.isPublic() && viewModel.hasGlobalFeaturedPost) {
+                                showPrivacyConfirmDialog = true
+                            } else {
+                                updateCommunity(
+                                    communityId = communityToEdit?.getCommunityId() ?: "",
+                                    avatarUri = avatarUri,
+                                    displayName = name,
+                                    description = description,
+                                    isPublic = isPublic,
+                                    categoryIds = selectedCategories.map { it.getCategoryId() },
+                                    viewModel = viewModel,
+                                    pageScope = getPageScope(),
+                                    context = context,
+                                )
+                            }
                         } else {
                             getPageScope().showProgressSnackbar("Creating...")
                             viewModel.createCommunity(
@@ -740,24 +750,55 @@ fun AmityCommunitySetupPage(
                         pageScope = getPageScope(),
                         elementId = if (isInEditMode) "community_edit_button" else "community_create_button"
                     ) {
-                        Icon(
-                            painter = painterResource(getConfig().getIcon()),
-                            contentDescription = "Create",
-                            tint = Color.White,
-                            modifier = modifier.size(16.dp)
-                        )
-                        Spacer(modifier = modifier.width(8.dp))
+                        if (!isInEditMode) {
+                            Icon(
+                                painter = painterResource(getConfig().getIcon()),
+                                contentDescription = "Create",
+                                tint = Color.White,
+                                modifier = modifier.size(16.dp)
+                            )
+                            Spacer(modifier = modifier.width(8.dp))
+                        }
                         Text(
                             text = getConfig().getText(),
                             style = AmityTheme.typography.caption.copy(
                                 color = Color.White,
                             ),
-                            modifier = modifier.testTag(getAccessibilityId())
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .testTag(getAccessibilityId())
+                                .fillMaxWidth()
                         )
                     }
                 }
                 Spacer(modifier = modifier.height(16.dp))
             }
+        }
+
+        if (showPrivacyConfirmDialog) {
+            AmityAlertDialog(
+                dialogTitle = "Change community privacy settings",
+                dialogText = "This community has globally featured posts. Changing the community from public to private will remove these posts from being featured globally",
+                confirmText = "Confirm",
+                dismissText = context.getString(R.string.amity_cancel),
+                onConfirmation = {
+                    showPrivacyConfirmDialog = false
+                    updateCommunity(
+                        communityId = communityToEdit?.getCommunityId() ?: "",
+                        avatarUri = avatarUri,
+                        displayName = name,
+                        description = description,
+                        isPublic = isPublic,
+                        categoryIds = selectedCategories.map { it.getCategoryId() },
+                        viewModel = viewModel,
+                        pageScope = getPageScope(),
+                        context = context,
+                    )
+                },
+                onDismissRequest = {
+                    showPrivacyConfirmDialog = false
+                }
+            )
         }
 
         if (showMediaCameraSelectionSheet) {
@@ -820,6 +861,36 @@ fun AmityCommunitySetupPage(
             }
         }
     }
+}
+
+fun updateCommunity(
+    communityId: String,
+    avatarUri: Uri,
+    displayName: String,
+    description: String,
+    isPublic: Boolean,
+    categoryIds: List<String>,
+    viewModel: AmityCommunitySetupPageViewModel,
+    pageScope: AmityComposePageScope,
+    context: Context,
+) {
+    pageScope.showProgressSnackbar("Updating...")
+    viewModel.editCommunity(
+        communityId = communityId,
+        avatarUri = avatarUri,
+        displayName = displayName,
+        description = description,
+        isPublic = isPublic,
+        categoryIds = categoryIds,
+        onSuccess = {
+            context.showToast("Successfully updated community profile!")
+            context.closePageWithResult(Activity.RESULT_OK)
+        },
+        onError = {
+            context.showToast("Failed to save your community profile. Please try again.")
+            context.closePageWithResult(Activity.RESULT_OK)
+        }
+    )
 }
 
 @Preview(showBackground = true)

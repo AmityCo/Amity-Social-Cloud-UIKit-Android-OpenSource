@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.story.target.global
 
+import androidx.lifecycle.viewModelScope
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.paging.PagingData
@@ -12,6 +13,8 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.launch
 
 class AmityStoryGlobalTabViewModel : AmityBaseViewModel() {
 
@@ -33,6 +36,10 @@ class AmityStoryGlobalTabViewModel : AmityBaseViewModel() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .asFlow()
+            .catch {
+
+            }
+
     }
 
     fun prefetchStoriesFromTargets(targets: List<AmityStoryTarget>) {
@@ -55,15 +62,19 @@ class AmityStoryGlobalTabViewModel : AmityBaseViewModel() {
     sealed class TargetListState {
         object LOADING : TargetListState()
         object SUCCESS : TargetListState()
+        object EMPTY : TargetListState()
 
         companion object {
             fun from(
                 loadState: CombinedLoadStates,
+                itemCount: Int,
             ): TargetListState {
-                return if ((loadState.refresh is LoadState.Loading || loadState.append is LoadState.Loading)) {
+                return if (loadState.refresh is LoadState.Loading) {
                     LOADING
-                } else {
+                } else if (itemCount > 0)  {
                     SUCCESS
+                } else {
+                    EMPTY
                 }
             }
         }

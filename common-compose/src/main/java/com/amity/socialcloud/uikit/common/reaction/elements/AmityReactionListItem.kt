@@ -1,7 +1,6 @@
 package com.amity.socialcloud.uikit.common.reaction.elements
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,12 +24,14 @@ import com.amity.socialcloud.uikit.common.compose.R
 import com.amity.socialcloud.uikit.common.model.AmityMessageReactions
 import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 
 @Composable
 fun AmityReactionListItem(
     modifier: Modifier = Modifier,
     reaction: AmityReaction,
-    onRemoveReaction: (AmityReaction) -> Unit = {}
+    onRemoveReaction: (AmityReaction) -> Unit = {},
+    onUserClick: (String) -> Unit = {},
 ) {
     val displayName = reaction.getCreator()?.getDisplayName() ?: ""
     val reactionName = reaction.getReactionName()
@@ -41,16 +42,18 @@ fun AmityReactionListItem(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
-            .clickable {
+            .clickableWithoutRipple {
                 if (isMyReaction) {
                     onRemoveReaction.invoke(reaction)
                 }
             }
     ) {
         AmityUserAvatarView(
-            modifier = modifier,
             size = 40.dp,
             user = reaction.getCreator(),
+            modifier = modifier.clickableWithoutRipple {
+                onUserClick(reaction.getCreatorId())
+            }
         )
 
         Column(
@@ -65,6 +68,9 @@ fun AmityReactionListItem(
                     fontWeight = FontWeight.SemiBold,
                     color = AmityTheme.colors.base
                 ),
+                modifier = modifier.clickableWithoutRipple {
+                    onUserClick(reaction.getCreatorId())
+                }
             )
 
             if (isMyReaction) {

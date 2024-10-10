@@ -13,6 +13,7 @@ import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.elements.AmityNewsFeedDivider
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
+import com.amity.socialcloud.uikit.common.utils.isSupportedDataTypes
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponent
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponentStyle
@@ -22,7 +23,6 @@ import com.amity.socialcloud.uikit.community.compose.ui.components.feed.user.Ami
 import com.amity.socialcloud.uikit.community.compose.ui.components.feed.user.AmityPrivateUserFeed
 import com.amity.socialcloud.uikit.community.compose.ui.components.feed.user.AmityUnknownUserFeed
 import com.amity.socialcloud.uikit.community.compose.ui.components.feed.user.AmityUserFeedType
-
 
 fun LazyListScope.amityUserFeedLLS(
     modifier: Modifier = Modifier,
@@ -55,7 +55,10 @@ fun LazyListScope.amityUserFeedLLS(
             val error = (userPosts.loadState.mediator?.refresh as LoadState.Error)
             val amityError = AmityError.from(error.error)
 
-            if (amityError == AmityError.UNAUTHORIZED_ERROR) {
+            if (
+                amityError == AmityError.UNAUTHORIZED_ERROR ||
+                amityError == AmityError.PERMISSION_DENIED
+            ) {
                 AmityBaseComponent(
                     pageScope = pageScope,
                     componentId = "user_feed"
@@ -99,14 +102,8 @@ fun LazyListScope.amityUserFeedLLS(
                 AmityPostShimmer()
                 AmityNewsFeedDivider()
             } else {
-                // TODO: 3/6/24 currently only support text, image, and video post
-                when (post.getData()) {
-                    is AmityPost.Data.TEXT,
-                    is AmityPost.Data.IMAGE,
-                    is AmityPost.Data.VIDEO -> {
-                    }
-
-                    else -> return@items
+                if (!post.isSupportedDataTypes()) {
+                    return@items
                 }
 
                 AmityPostContentComponent(

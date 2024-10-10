@@ -1,16 +1,24 @@
 package com.amity.socialcloud.uikit.community.compose.comment.query.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
@@ -19,6 +27,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.isCreatorCommunityModerator
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
+import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.comment.query.elements.AmityCommentModeratorBadge
 import com.google.gson.JsonObject
 
@@ -52,15 +61,36 @@ fun AmityCommentContentContainer(
             )
             .padding(12.dp)
     ) {
-        Text(
-            text = comment.getCreator()?.getDisplayName() ?: "",
-            style = AmityTheme.typography.caption,
-            modifier = modifier
-                .testTag("comment_list/comment_bubble_creator_display_name")
-                .clickableWithoutRipple {
-                    behavior.goToUserProfilePage(context, comment.getCreatorId())
-                }
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = comment.getCreator()?.getDisplayName()?.trim() ?: "",
+                style = AmityTheme.typography.caption,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = modifier
+                    .weight(1f, fill = false)
+                    .testTag("comment_list/comment_bubble_creator_display_name")
+                    .clickableWithoutRipple {
+                        behavior.goToUserProfilePage(context, comment.getCreatorId())
+                    }
+            )
+
+            Spacer(modifier = Modifier.width(4.dp))
+
+            val isBrandCreator = comment.getCreator()?.isBrand() == true
+            if (isBrandCreator) {
+                val badge = R.drawable.amity_ic_brand_badge
+                Image(
+                    painter = painterResource(id = badge),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(18.dp)
+                        .testTag("comment_list/brand_user_icon")
+                )
+            }
+        }
 
         if (comment.isCreatorCommunityModerator()) {
             AmityCommentModeratorBadge()

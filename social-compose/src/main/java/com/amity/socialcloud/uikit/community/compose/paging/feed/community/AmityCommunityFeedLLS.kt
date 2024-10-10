@@ -10,13 +10,13 @@ import com.amity.socialcloud.sdk.model.core.pin.AmityPinnedPost
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.ad.AmityListItem
 import com.amity.socialcloud.uikit.common.ui.elements.AmityNewsFeedDivider
+import com.amity.socialcloud.uikit.common.utils.isSupportedDataTypes
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostCategory
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponent
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponentStyle
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostShimmer
 import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmityPostAdView
 import com.amity.socialcloud.uikit.community.compose.ui.components.feed.community.AmityCommunityEmptyFeedView
-
 
 fun LazyListScope.amityCommunityFeedLLS(
     modifier: Modifier = Modifier,
@@ -35,20 +35,10 @@ fun LazyListScope.amityCommunityFeedLLS(
                 val isAnnouncement = announcementPosts.itemSnapshotList.items
                     .map { it.postId }
                     .contains(post.getPostId())
-
-                if (isAnnouncement) {
+                if (!post.isSupportedDataTypes() || isAnnouncement) {
                     return@items
                 }
 
-                // TODO: 3/6/24 currently only support text, image, and video post
-                when (post.getData()) {
-                    is AmityPost.Data.TEXT,
-                    is AmityPost.Data.IMAGE,
-                    is AmityPost.Data.VIDEO -> {
-                    }
-
-                    else -> return@items
-                }
                 val category = if (
                     pinPosts.itemSnapshotList.items.map { it.postId }
                         .contains(post.getPostId())

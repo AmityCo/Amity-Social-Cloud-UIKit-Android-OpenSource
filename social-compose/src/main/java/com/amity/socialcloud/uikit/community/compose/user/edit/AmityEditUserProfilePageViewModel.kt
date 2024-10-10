@@ -27,6 +27,7 @@ class AmityEditUserProfilePageViewModel : AmityBaseViewModel() {
         avatarUri: Uri?,
         onSuccess: (AmityUser) -> Unit,
         onError: (String) -> Unit,
+        onInappropriateImageError: () -> Unit,
     ) {
         if (avatarUri == null) {
             editUser(
@@ -48,7 +49,8 @@ class AmityEditUserProfilePageViewModel : AmityBaseViewModel() {
                         onError = onError
                     )
                 },
-                onError = onError
+                onError = onError,
+                onInappropriateImageError = onInappropriateImageError,
             )
         }
     }
@@ -57,13 +59,20 @@ class AmityEditUserProfilePageViewModel : AmityBaseViewModel() {
         uri: Uri,
         onSuccess: (AmityImage) -> Unit,
         onError: (String) -> Unit,
+        onInappropriateImageError: () -> Unit,
     ) {
         AmityCoreClient.newFileRepository()
             .uploadImage(uri)
             .doOnNext { uploadStatus ->
                 when (uploadStatus) {
                     is AmityUploadResult.COMPLETE -> onSuccess(uploadStatus.getFile())
-                    is AmityUploadResult.ERROR, AmityUploadResult.CANCELLED -> onError("Failed to upload image")
+                    is AmityUploadResult.ERROR -> {
+                        val error = uploadStatus.getError()
+                        if (error.code == 500000) {
+                            onInappropriateImageError()
+                        }
+                    }
+
                     else -> {}
                 }
             }
