@@ -18,8 +18,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.CachePolicy
@@ -149,13 +152,69 @@ fun AmityUserAvatarView(
     size: Dp = 32.dp,
     user: AmityUser?,
 ) {
-    AmityAvatarView(
-        modifier = modifier,
-        size = size,
-        iconPadding = 10.dp,
-        image = user?.getAvatar(),
-        placeholder = R.drawable.amity_ic_default_profile1
+    val url = user?.getAvatar()?.getUrl(AmityImage.Size.MEDIUM)?.ifEmpty { null }
+
+    val painter = rememberAsyncImagePainter(
+        model = ImageRequest
+            .Builder(LocalContext.current)
+            .data(url)
+            .dispatcher(Dispatchers.IO)
+            .diskCachePolicy(CachePolicy.ENABLED)
+            .memoryCachePolicy(CachePolicy.ENABLED)
+            .build()
     )
+
+    Box(modifier = modifier) {
+        Image(
+            painter = painter,
+            contentScale = ContentScale.Crop,
+            contentDescription = "Avatar Image",
+            modifier = Modifier
+                .size(size)
+                .clip(CircleShape)
+        )
+        if (painter.state !is AsyncImagePainter.State.Success) {
+            val displayNameFirstCharacter =
+                (user?.getDisplayName()?.trim() ?: "").firstOrNull()?.toString() ?: ""
+
+            val fontSize = when (size) {
+                64.dp -> 32.sp
+                56.dp -> 32.sp
+                40.dp -> 20.sp
+                32.dp -> 17.sp
+                28.dp -> 15.sp
+                else -> 14.sp
+            }
+
+            val lineHeight = when (size) {
+                64.dp -> 40.sp
+                56.dp -> 40.sp
+                40.dp -> 24.sp
+                32.dp -> 20.sp
+                28.dp -> 20.sp
+                else -> 14.sp
+            }
+
+            Box(
+                modifier = Modifier
+                    .size(size)
+                    .clip(CircleShape)
+                    .background(AmityTheme.colors.primaryShade2)
+            ) {
+                Text(
+                    text = displayNameFirstCharacter,
+                    style = TextStyle(
+                        fontSize = fontSize,
+                        lineHeight = lineHeight,
+                        fontWeight = FontWeight.Normal,
+                        color = Color.White,
+                    ),
+                    modifier = Modifier.align(Alignment.Center),
+                )
+
+            }
+        }
+    }
 }
 
 @Composable

@@ -1,22 +1,17 @@
 package com.amity.socialcloud.uikit.community.compose.community.trending
 
 import androidx.paging.LoadState
-import androidx.paging.PagingData
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
-import com.amity.socialcloud.sdk.api.social.community.query.AmityCommunitySortOption
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
-import com.amity.socialcloud.sdk.model.social.community.AmityCommunityFilter
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
-import com.amity.socialcloud.uikit.community.compose.community.recommending.AmityRecommendedCommunitiesViewModel
-import com.amity.socialcloud.uikit.community.compose.socialhome.AmitySocialHomePageViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 
-class AmityTrendingCommunitiesViewModel: AmityBaseViewModel() {
+class AmityTrendingCommunitiesViewModel : AmityBaseViewModel() {
 
     private val _communityListState by lazy {
         MutableStateFlow<CommunityListState>(CommunityListState.EMPTY)
@@ -33,7 +28,7 @@ class AmityTrendingCommunitiesViewModel: AmityBaseViewModel() {
         return AmitySocialClient.newCommunityRepository()
             .getTrendingCommunities()
             .map {
-                if(it.size > 5) {
+                if (it.size > 5) {
                     it.subList(0, 5)
                 } else {
                     it
@@ -45,10 +40,9 @@ class AmityTrendingCommunitiesViewModel: AmityBaseViewModel() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext {
-                if(it.isEmpty() && communityListState.value != CommunityListState.EMPTY) {
+                if (it.isEmpty() && communityListState.value != CommunityListState.EMPTY) {
                     setCommunityListState(CommunityListState.EMPTY)
-                }
-                else if(it.isNotEmpty() && communityListState.value != CommunityListState.SUCCESS) {
+                } else if (it.isNotEmpty() && communityListState.value != CommunityListState.SUCCESS) {
                     setCommunityListState(CommunityListState.SUCCESS)
                 }
             }

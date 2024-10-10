@@ -19,16 +19,14 @@ object AmityUIKit4Manager {
         endpoint: AmityEndpoint,
         dbEncryption: AmityDBEncryption = AmityDBEncryption.NONE
     ) {
+        AmityUIKitDB.init()
         AmityCoreClient.setup(
             apiKey = apiKey,
             endpoint = endpoint,
             dbEncryption = dbEncryption
         )
-
         AmityStreamBroadcasterClient.setup(AmityCoreClient.getConfiguration())
         AmityStreamPlayerClient.setup(AmityCoreClient.getConfiguration())
-
-        AmityUIKitDB.init()
         AmityAdEngine.init()
         AmityUIKitConfigController.setup(AmityAppContext.getContext())
 
@@ -36,13 +34,6 @@ object AmityUIKit4Manager {
     }
 
     private fun overrideCustomBehavior() {
-        behavior.viewStoryPageBehavior = AmityCustomViewStoryPageBehavior()
-        behavior.viewStoryPageBehavior = AmityCustomViewStoryPageBehavior()
-        behavior.communitySearchResultComponentBehavior =
-            AmityCustomCommunitySearchResultComponentBehavior()
-        behavior.userSearchResultComponentBehavior = AmityCustomUserSearchResultComponentBehavior()
-        behavior.myCommunitiesComponentBehavior = AmityCustomMyCommunitiesComponentBehavior()
-        behavior.postContentComponentBehavior = AmityCustomPostContentComponentBehavior()
-        behavior.communityMembershipPageBehavior = AmityCustomCommunityMembershipPageBehavior()
+//        behavior.viewStoryPageBehavior = AmityCustomViewStoryPageBehavior()
     }
 }

@@ -25,6 +25,9 @@ public class MediaFormatStrategyPresets {
     @Deprecated
     public static final MediaFormatStrategy EXPORT_PRESET_960x540 = new ExportPreset960x540Strategy();
 
+    private MediaFormatStrategyPresets() {
+    }
+
     /**
      * Preset based on Nexus 4 camera recording with 720p quality.
      * This preset is ensured to work on any Android &gt;=4.3 devices by Android CTS (if codec is available).
@@ -66,8 +69,5 @@ public class MediaFormatStrategyPresets {
      */
     public static MediaFormatStrategy createExportPreset960x540Strategy() {
         return new ExportPreset960x540Strategy();
-    }
-
-    private MediaFormatStrategyPresets() {
     }
 }

@@ -2,12 +2,17 @@ package com.amity.socialcloud.uikit.community.compose.search.components
 
 import android.content.Context
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageActivity
 
 open class AmityCommunitySearchResultComponentBehavior {
     open fun goToCommunityProfilePage(
         context: Context,
         community: AmityCommunity,
     ) {
-        //  do nothing, need to override in social module to access community profile page
+        val intent = AmityCommunityProfilePageActivity.newIntent(
+            context = context,
+            communityId = community.getCommunityId(),
+        )
+        context.startActivity(intent)
     }
 }

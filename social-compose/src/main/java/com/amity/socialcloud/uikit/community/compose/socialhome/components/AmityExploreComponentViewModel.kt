@@ -1,6 +1,5 @@
 package com.amity.socialcloud.uikit.community.compose.socialhome.components
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import com.amity.socialcloud.uikit.community.compose.community.category.component.AmityCommunityCategoriesViewModel

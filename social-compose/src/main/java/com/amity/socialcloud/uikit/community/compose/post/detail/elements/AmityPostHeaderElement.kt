@@ -72,7 +72,7 @@ fun AmityPostHeaderElement(
         modifier = modifier
             .fillMaxWidth()
     ) {
-        if (category == AmityPostCategory.ANNOUNCEMENT) {
+        if (category == AmityPostCategory.ANNOUNCEMENT || category == AmityPostCategory.PIN_AND_ANNOUNCEMENT) {
             AmityBaseElement(
                 componentScope = componentScope,
                 elementId = "announcement_badge"
@@ -115,7 +115,7 @@ fun AmityPostHeaderElement(
                     post.getCreator()?.let {
                         behavior.goToUserProfilePage(
                             context = context,
-                            user = it
+                            userId = it.getUserId(),
                         )
                     }
                 }
@@ -145,7 +145,7 @@ fun AmityPostHeaderElement(
                                     ?.let {
                                         behavior.goToUserProfilePage(
                                             context = context,
-                                            user = it
+                                            userId = it.getUserId(),
                                         )
                                     }
                             }
@@ -245,7 +245,7 @@ fun AmityPostHeaderElement(
                                                     ?.let {
                                                         behavior.goToUserProfilePage(
                                                             context = context,
-                                                            user = it
+                                                            userId = it.getUserId(),
                                                         )
                                                     }
                                             }
@@ -307,7 +307,7 @@ fun AmityPostHeaderElement(
                 }
             }
 
-            if (category == AmityPostCategory.PIN) {
+            if (category == AmityPostCategory.PIN || category == AmityPostCategory.PIN_AND_ANNOUNCEMENT) {
                 AmityBaseElement(
                     componentScope = componentScope,
                     elementId = "pin_badge"

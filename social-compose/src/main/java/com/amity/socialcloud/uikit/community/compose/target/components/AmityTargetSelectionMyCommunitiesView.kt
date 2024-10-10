@@ -29,6 +29,7 @@ import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.pagingLoadStateItem
 import com.amity.socialcloud.uikit.community.compose.target.AmityTargetSelectionPageViewModel
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityCommunityListShimmer
+import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityCommunityTargetListShimmer
 
 @Composable
 fun AmityTargetSelectionMyCommunitiesView(
@@ -59,7 +60,7 @@ fun AmityTargetSelectionMyCommunitiesView(
         pagingLoadStateItem(
             loadState = communities.loadState.refresh,
             loading = {
-                AmityCommunityListShimmer(
+                AmityCommunityTargetListShimmer(
                     modifier = modifier.padding(horizontal = 16.dp)
                 )
             },

@@ -20,6 +20,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityPostPreviewLinkView
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.showToast
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostContentElement
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostMediaElement
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuDialogUIState
@@ -35,6 +36,9 @@ fun AmityPendingPostContentComponent(
     onDeclineAction: (AmityPost) -> Unit
 ) {
     val context = LocalContext.current
+    val behavior by lazy {
+        AmitySocialBehaviorHelper.pendingPostContentComponentBehavior
+    }
 
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
@@ -114,6 +118,9 @@ fun AmityPendingPostContentComponent(
                 modifier = modifier,
                 post = post,
                 onClick = {},
+                onMentionedUserClick = {
+                    behavior.goToUserProfilePage(context = context, userId = it)
+                }
             )
             AmityPostPreviewLinkView(
                 modifier = modifier,

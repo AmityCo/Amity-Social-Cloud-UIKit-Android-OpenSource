@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.reactive.asFlow
-import java.util.concurrent.TimeUnit
 
 
 class AmityCommunityCategoriesViewModel : AmityBaseViewModel() {

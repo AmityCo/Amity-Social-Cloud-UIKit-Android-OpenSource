@@ -1,7 +1,6 @@
 package com.amity.snipet.verifier.social.post.detail
 
 import android.content.Context
-import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.AmityUIKit4Manager
@@ -19,7 +18,7 @@ class AmityPostContentComponentSampleBehavior {
             // custom implementation for navigating to Community Profile Page
         }
 
-        override fun goToUserProfilePage(context: Context, user: AmityUser) {
+        override fun goToUserProfilePage(context: Context, userId: String) {
             // custom implementation for navigating to User Profile Page
         }
 

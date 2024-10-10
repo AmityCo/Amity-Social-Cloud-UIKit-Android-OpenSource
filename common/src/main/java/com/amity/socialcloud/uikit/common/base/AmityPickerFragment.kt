@@ -84,9 +84,10 @@ abstract class AmityPickerFragment : AmityBaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        imagePickerLauncher = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            onImagePicked(uri)
-        }
+        imagePickerLauncher =
+            registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+                onImagePicked(uri)
+            }
     }
 
 }

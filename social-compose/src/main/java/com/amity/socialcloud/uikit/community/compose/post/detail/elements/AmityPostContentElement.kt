@@ -17,6 +17,7 @@ fun AmityPostContentElement(
     modifier: Modifier = Modifier,
     post: AmityPost,
     onClick: () -> Unit,
+    onMentionedUserClick: (String) -> Unit = {},
 ) {
     val mentionGetter = AmityMentionMetadataGetter(post.getMetadata() ?: JsonObject())
     val text = remember(post.getPostId(), post.getUpdatedAt()) {
@@ -35,6 +36,7 @@ fun AmityPostContentElement(
             mentionees = post.getMentionees(),
             style = AmityTheme.typography.body,
             onClick = onClick,
+            onMentionedUserClick = onMentionedUserClick,
         )
     }
 }

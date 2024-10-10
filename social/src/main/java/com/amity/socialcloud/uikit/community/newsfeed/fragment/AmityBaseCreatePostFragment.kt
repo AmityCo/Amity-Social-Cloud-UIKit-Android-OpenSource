@@ -171,19 +171,25 @@ abstract class AmityBaseCreatePostFragment : AmityBaseFragment(),
     }
 
     private fun registerMediaPickerResult() {
-        imagePickerLauncher = registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(
-            MAX_IMAGE_SELECTABLE)) { uris ->
+        imagePickerLauncher = registerForActivityResult(
+            ActivityResultContracts.PickMultipleVisualMedia(
+                MAX_IMAGE_SELECTABLE
+            )
+        ) { uris ->
             val selectedCount = viewModel.getImages().value?.size ?: 0
-            if(uris.isNotEmpty()) {
+            if (uris.isNotEmpty()) {
                 val canSelect = Math.min(MAX_IMAGE_SELECTABLE - selectedCount, uris.size)
                 addMedia(uris.subList(0, canSelect), PostMedia.Type.IMAGE)
             }
         }
 
-        videoPickerLauncher = registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(
-            MAX_VIDEO_SELECTABLE)) { uris ->
+        videoPickerLauncher = registerForActivityResult(
+            ActivityResultContracts.PickMultipleVisualMedia(
+                MAX_VIDEO_SELECTABLE
+            )
+        ) { uris ->
             val selectedCount = viewModel.getImages().value?.size ?: 0
-            if(uris.isNotEmpty()) {
+            if (uris.isNotEmpty()) {
                 val canSelect = Math.min(MAX_VIDEO_SELECTABLE - selectedCount, uris.size)
                 addMedia(uris.subList(0, canSelect), PostMedia.Type.VIDEO)
             }
@@ -905,7 +911,7 @@ abstract class AmityBaseCreatePostFragment : AmityBaseFragment(),
 
     private fun addMedia(uris: List<Uri>, mediaType: PostMedia.Type) {
         setupImageAdapter()
-        if(uris.isNotEmpty()) {
+        if (uris.isNotEmpty()) {
             val postMediaList = viewModel.addMedia(uris, mediaType)
             uploadMedia(postMediaList)
         }

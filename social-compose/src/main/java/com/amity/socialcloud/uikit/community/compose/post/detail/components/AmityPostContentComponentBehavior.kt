@@ -1,11 +1,12 @@
 package com.amity.socialcloud.uikit.community.compose.post.detail.components
 
 import android.content.Context
-import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
+import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageActivity
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerOptions
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerPageActivity
+import com.amity.socialcloud.uikit.community.compose.user.profile.AmityUserProfilePageActivity
 
 open class AmityPostContentComponentBehavior {
 
@@ -13,14 +14,22 @@ open class AmityPostContentComponentBehavior {
         context: Context,
         community: AmityCommunity,
     ) {
-        //  do nothing, need to override in social module to access community profile page
+        val intent = AmityCommunityProfilePageActivity.newIntent(
+            context = context,
+            communityId = community.getCommunityId(),
+        )
+        context.startActivity(intent)
     }
 
     open fun goToUserProfilePage(
         context: Context,
-        user: AmityUser,
+        userId: String,
     ) {
-        //  do nothing, need to override in social module to access user profile page
+        val intent = AmityUserProfilePageActivity.newIntent(
+            context = context,
+            userId = userId,
+        )
+        context.startActivity(intent)
     }
 
     open fun goToPostComposerPage(

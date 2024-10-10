@@ -1,7 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.post.composer.elements
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -17,6 +16,7 @@ import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.theme.isUIKitInDarkTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.getIcon
 
@@ -37,7 +37,7 @@ fun AmityPostAttachmentButton(
             modifier = modifier
                 .clip(CircleShape)
                 .background(
-                    color = if (isSystemInDarkTheme()) {
+                    color = if (isUIKitInDarkTheme()) {
                         AmityTheme.colors.baseShade3
                     } else {
                         AmityTheme.colors.baseShade4

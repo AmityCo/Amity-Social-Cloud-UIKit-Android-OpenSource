@@ -101,7 +101,7 @@ fun AmityCommunityCategoriesComponent(
                                 )
                             }
                         }
-                        if(categories.itemCount > maxItemCount) {
+                        if (categories.itemCount > maxItemCount) {
                             item {
                                 AmityBaseElement(
                                     pageScope = pageScope,

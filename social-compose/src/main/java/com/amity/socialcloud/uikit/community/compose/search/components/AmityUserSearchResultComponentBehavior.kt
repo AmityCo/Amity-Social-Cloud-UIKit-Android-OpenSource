@@ -2,6 +2,7 @@ package com.amity.socialcloud.uikit.community.compose.search.components
 
 import android.content.Context
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
+import com.amity.socialcloud.uikit.community.compose.user.profile.AmityUserProfilePageActivity
 
 open class AmityUserSearchResultComponentBehavior {
 
@@ -9,6 +10,10 @@ open class AmityUserSearchResultComponentBehavior {
         context: Context,
         user: AmityUser,
     ) {
-        //  do nothing, need to override in social module to access user profile page
+        val intent = AmityUserProfilePageActivity.newIntent(
+            context = context,
+            userId = user.getUserId(),
+        )
+        context.startActivity(intent)
     }
 }

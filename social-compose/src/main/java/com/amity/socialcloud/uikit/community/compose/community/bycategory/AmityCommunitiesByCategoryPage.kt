@@ -35,7 +35,6 @@ import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.socialhome.elements.AmityJoinCommunityView
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityCommunityListShimmer
-import kotlinx.coroutines.delay
 
 @Composable
 fun AmityCommunitiesByCategoryPage(

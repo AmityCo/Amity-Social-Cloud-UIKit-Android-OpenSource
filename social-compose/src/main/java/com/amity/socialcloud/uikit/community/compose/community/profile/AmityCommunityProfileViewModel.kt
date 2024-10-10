@@ -21,12 +21,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import java.util.concurrent.TimeUnit
 
-class AmityCommunityProfileViewModel constructor(private val communityId: String) :
+class AmityCommunityProfileViewModel(private val communityId: String) :
     AmityBaseViewModel() {
     val disposable = CompositeDisposable()
 
     private val _communityProfileState by lazy {
-        MutableStateFlow<CommunityProfileState>(CommunityProfileState.Initial(communityId))
+        MutableStateFlow(CommunityProfileState.Initial(communityId))
     }
 
     val communityProfileState get() = _communityProfileState
@@ -111,8 +111,6 @@ class AmityCommunityProfileViewModel constructor(private val communityId: String
             .query()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .onBackpressureBuffer()
-            .throttleLatest(1000, TimeUnit.MILLISECONDS)
             .asFlow()
             .catch {}
     }
@@ -127,8 +125,6 @@ class AmityCommunityProfileViewModel constructor(private val communityId: String
             .query()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .onBackpressureBuffer()
-            .throttleLatest(1000, TimeUnit.MILLISECONDS)
             .asFlow()
             .catch {}
     }

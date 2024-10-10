@@ -18,6 +18,7 @@
 // modified: removed unused method bodies
 // modified: use GL_LINEAR for GL_TEXTURE_MIN_FILTER to improve quality.
 package com.amity.socialcloud.uikit.common.infra.transcoder.engine;
+
 import android.graphics.SurfaceTexture;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
@@ -27,6 +28,7 @@ import android.util.Log;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+
 /**
  * Code for rendering a texture onto a surface using OpenGL ES 2.0.
  */
@@ -36,14 +38,6 @@ class TextureRender {
     private static final int TRIANGLE_VERTICES_DATA_STRIDE_BYTES = 5 * FLOAT_SIZE_BYTES;
     private static final int TRIANGLE_VERTICES_DATA_POS_OFFSET = 0;
     private static final int TRIANGLE_VERTICES_DATA_UV_OFFSET = 3;
-    private final float[] mTriangleVerticesData = {
-            // X, Y, Z, U, V
-            -1.0f, -1.0f, 0, 0.f, 0.f,
-            1.0f, -1.0f, 0, 1.f, 0.f,
-            -1.0f,  1.0f, 0, 0.f, 1.f,
-            1.0f,  1.0f, 0, 1.f, 1.f,
-    };
-    private FloatBuffer mTriangleVertices;
     private static final String VERTEX_SHADER =
             "uniform mat4 uMVPMatrix;\n" +
                     "uniform mat4 uSTMatrix;\n" +
@@ -62,6 +56,14 @@ class TextureRender {
                     "void main() {\n" +
                     "  gl_FragColor = texture2D(sTexture, vTextureCoord);\n" +
                     "}\n";
+    private final float[] mTriangleVerticesData = {
+            // X, Y, Z, U, V
+            -1.0f, -1.0f, 0, 0.f, 0.f,
+            1.0f, -1.0f, 0, 1.f, 0.f,
+            -1.0f, 1.0f, 0, 0.f, 1.f,
+            1.0f, 1.0f, 0, 1.f, 1.f,
+    };
+    private FloatBuffer mTriangleVertices;
     private float[] mMVPMatrix = new float[16];
     private float[] mSTMatrix = new float[16];
     private int mProgram;
@@ -70,16 +72,28 @@ class TextureRender {
     private int muSTMatrixHandle;
     private int maPositionHandle;
     private int maTextureHandle;
+
     public TextureRender() {
         mTriangleVertices = ByteBuffer.allocateDirect(
-                mTriangleVerticesData.length * FLOAT_SIZE_BYTES)
+                        mTriangleVerticesData.length * FLOAT_SIZE_BYTES)
                 .order(ByteOrder.nativeOrder()).asFloatBuffer();
         mTriangleVertices.put(mTriangleVerticesData).position(0);
         Matrix.setIdentityM(mSTMatrix, 0);
     }
+
+    /**
+     * Saves the current frame to disk as a PNG image.  Frame starts from (0,0).
+     * <p>
+     * Useful for debugging.
+     */
+    public static void saveFrame(String filename, int width, int height) {
+        throw new UnsupportedOperationException("Not implemented.");
+    }
+
     public int getTextureId() {
         return mTextureID;
     }
+
     public void drawFrame(SurfaceTexture st) {
         checkGlError("onDrawFrame start");
         st.getTransformMatrix(mSTMatrix);
@@ -108,6 +122,7 @@ class TextureRender {
         checkGlError("glDrawArrays");
         GLES20.glFinish();
     }
+
     /**
      * Initializes GL state.  Call this after the EGL surface has been created and made current.
      */
@@ -151,12 +166,14 @@ class TextureRender {
                 GLES20.GL_CLAMP_TO_EDGE);
         checkGlError("glTexParameter");
     }
+
     /**
      * Replaces the fragment shader.
      */
     public void changeFragmentShader(String fragmentShader) {
         throw new UnsupportedOperationException("Not implemented");
     }
+
     private int loadShader(int shaderType, String source) {
         int shader = GLES20.glCreateShader(shaderType);
         checkGlError("glCreateShader type=" + shaderType);
@@ -172,6 +189,7 @@ class TextureRender {
         }
         return shader;
     }
+
     private int createProgram(String vertexSource, String fragmentSource) {
         int vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vertexSource);
         if (vertexShader == 0) {
@@ -201,19 +219,12 @@ class TextureRender {
         }
         return program;
     }
+
     public void checkGlError(String op) {
         int error;
         while ((error = GLES20.glGetError()) != GLES20.GL_NO_ERROR) {
             Log.e(TAG, op + ": glError " + error);
             throw new RuntimeException(op + ": glError " + error);
         }
-    }
-    /**
-     * Saves the current frame to disk as a PNG image.  Frame starts from (0,0).
-     * <p>
-     * Useful for debugging.
-     */
-    public static void saveFrame(String filename, int width, int height) {
-        throw new UnsupportedOperationException("Not implemented.");
     }
 }

@@ -17,7 +17,6 @@ package com.amity.socialcloud.uikit.common.infra.transcoder.utils;
 
 import android.media.MediaFormat;
 
-
 import com.amity.socialcloud.uikit.common.infra.transcoder.format.MediaFormatExtraConstants;
 
 import java.nio.ByteBuffer;
@@ -33,6 +32,10 @@ public class AvcCsdUtils {
     // https://tools.ietf.org/html/rfc6184
     private static final byte AVC_SPS_NAL_2 = 39; // 0<<7 + 1<<5 + 7<<0
     private static final byte AVC_SPS_NAL_3 = 71; // 0<<7 + 2<<5 + 7<<0
+
+    private AvcCsdUtils() {
+        throw new RuntimeException();
+    }
 
     /**
      * @return ByteBuffer contains SPS without NAL header.
@@ -62,9 +65,5 @@ public class AvcCsdUtils {
         prefix4[3] = prefixedSpsBuffer.get();
         if (Arrays.equals(prefix4, AVC_START_CODE_4)) return;
         throw new IllegalStateException("AVC NAL start code does not found in csd.");
-    }
-
-    private AvcCsdUtils() {
-        throw new RuntimeException();
     }
 }

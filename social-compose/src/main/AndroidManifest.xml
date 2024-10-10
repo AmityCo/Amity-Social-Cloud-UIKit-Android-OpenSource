@@ -142,6 +142,32 @@
             android:screenOrientation="portrait"
             android:theme="@style/AmitySocialTheme"
             android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".user.profile.AmityUserProfilePageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme" />
+        <activity
+            android:name=".user.edit.AmityEditUserProfilePageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".user.blocked.AmityBlockedUsersPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme" />
+        <activity
+            android:name=".user.relationship.AmityUserRelationshipPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme" />
+        <activity
+            android:name=".user.pending.AmityUserPendingFollowRequestsPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme" />
     </application>
 
 </manifest>

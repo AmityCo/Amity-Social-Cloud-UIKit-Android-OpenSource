@@ -12,11 +12,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 
 
-class AmityRecommendedCommunitiesViewModel: AmityBaseViewModel() {
+class AmityRecommendedCommunitiesViewModel : AmityBaseViewModel() {
 
     private val _communityListState by lazy {
         MutableStateFlow<CommunityListState>(
-            CommunityListState.EMPTY)
+            CommunityListState.EMPTY
+        )
     }
 
     val communityListState get() = _communityListState
@@ -31,7 +32,7 @@ class AmityRecommendedCommunitiesViewModel: AmityBaseViewModel() {
             .getRecommendedCommunities()
             .map {
                 val recommendedCommunities = it.filter { community -> !community.isJoined() }
-                if(recommendedCommunities.size > 4) {
+                if (recommendedCommunities.size > 4) {
                     recommendedCommunities.subList(0, 4)
                 } else {
                     recommendedCommunities
@@ -43,10 +44,9 @@ class AmityRecommendedCommunitiesViewModel: AmityBaseViewModel() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext {
-                if(it.isEmpty() && communityListState.value != CommunityListState.EMPTY) {
+                if (it.isEmpty() && communityListState.value != CommunityListState.EMPTY) {
                     setCommunityListState(CommunityListState.EMPTY)
-                }
-                else if(it.isNotEmpty() && communityListState.value != CommunityListState.SUCCESS) {
+                } else if (it.isNotEmpty() && communityListState.value != CommunityListState.SUCCESS) {
                     setCommunityListState(CommunityListState.SUCCESS)
                 }
             }
@@ -58,17 +58,17 @@ class AmityRecommendedCommunitiesViewModel: AmityBaseViewModel() {
 
     fun updateMembership(community: AmityCommunity) {
         val isJoined = community.isJoined()
-        if(isJoined) {
+        if (isJoined) {
             AmitySocialClient.newCommunityRepository().leaveCommunity(community.getCommunityId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnError {  }
+                .doOnError { }
                 .subscribe()
         } else {
             AmitySocialClient.newCommunityRepository().joinCommunity(community.getCommunityId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnError {  }
+                .doOnError { }
                 .subscribe()
         }
     }

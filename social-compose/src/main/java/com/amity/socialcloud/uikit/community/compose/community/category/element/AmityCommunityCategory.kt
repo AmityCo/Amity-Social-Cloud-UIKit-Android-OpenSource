@@ -125,7 +125,7 @@ fun AmityCommunityCategoryElement(
             modifier = Modifier.weight(1f, false)
         )
         Spacer(modifier.width(4.dp))
-        if(onRemove != null) {
+        if (onRemove != null) {
             Icon(
                 painter = painterResource(R.drawable.amity_ic_close2),
                 contentDescription = "Close",

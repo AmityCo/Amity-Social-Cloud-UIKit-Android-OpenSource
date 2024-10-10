@@ -20,17 +20,25 @@ public class MediaFormatExtraConstants {
     // https://android.googlesource.com/platform/frameworks/av/+/lollipop-release/media/libstagefright/ACodec.cpp#2621
     // NOTE: native code enforces baseline profile.
     // https://android.googlesource.com/platform/frameworks/av/+/lollipop-release/media/libstagefright/ACodec.cpp#2638
-    /** For encoder parameter. Use value of MediaCodecInfo.CodecProfileLevel.AVCProfile* . */
+    /**
+     * For encoder parameter. Use value of MediaCodecInfo.CodecProfileLevel.AVCProfile* .
+     */
     public static final String KEY_PROFILE = "profile";
 
     // from https://android.googlesource.com/platform/frameworks/av/+/lollipop-release/media/libstagefright/ACodec.cpp#2623
-    /** For encoder parameter. Use value of MediaCodecInfo.CodecProfileLevel.AVCLevel* . */
+    /**
+     * For encoder parameter. Use value of MediaCodecInfo.CodecProfileLevel.AVCLevel* .
+     */
     public static final String KEY_LEVEL = "level";
 
     // from https://android.googlesource.com/platform/frameworks/av/+/lollipop-release/media/libstagefright/MediaCodec.cpp#2197
-    /** Included in MediaFormat from {@link android.media.MediaExtractor#getTrackFormat(int)}. Value is {@link java.nio.ByteBuffer}. */
+    /**
+     * Included in MediaFormat from {@link android.media.MediaExtractor#getTrackFormat(int)}. Value is {@link java.nio.ByteBuffer}.
+     */
     public static final String KEY_AVC_SPS = "csd-0";
-    /** Included in MediaFormat from {@link android.media.MediaExtractor#getTrackFormat(int)}. Value is {@link java.nio.ByteBuffer}. */
+    /**
+     * Included in MediaFormat from {@link android.media.MediaExtractor#getTrackFormat(int)}. Value is {@link java.nio.ByteBuffer}.
+     */
     public static final String KEY_AVC_PPS = "csd-1";
 
     /**
