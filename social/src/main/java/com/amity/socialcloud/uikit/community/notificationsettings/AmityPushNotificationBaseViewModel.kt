@@ -65,6 +65,8 @@ open class AmityPushNotificationBaseViewModel : AmityBaseViewModel() {
                         isStoryEnabled = true
                     }
                 }
+
+                is AmityCommunityNotificationEvent.LIVESTREAM_START -> {}
             }
         }
     }

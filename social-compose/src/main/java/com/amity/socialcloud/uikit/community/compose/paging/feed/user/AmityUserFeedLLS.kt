@@ -23,12 +23,14 @@ import com.amity.socialcloud.uikit.community.compose.ui.components.feed.user.Ami
 import com.amity.socialcloud.uikit.community.compose.ui.components.feed.user.AmityPrivateUserFeed
 import com.amity.socialcloud.uikit.community.compose.ui.components.feed.user.AmityUnknownUserFeed
 import com.amity.socialcloud.uikit.community.compose.ui.components.feed.user.AmityUserFeedType
+import com.amity.socialcloud.uikit.community.compose.user.profile.AmityUserProfilePageViewModel.PostListState
 
 fun LazyListScope.amityUserFeedLLS(
     modifier: Modifier = Modifier,
     context: Context,
     pageScope: AmityComposePageScope? = null,
     userPosts: LazyPagingItems<AmityPost>,
+    postListState: PostListState,
     isBlockedByMe: Boolean,
 ) {
     val behavior by lazy {
@@ -50,76 +52,91 @@ fun LazyListScope.amityUserFeedLLS(
                 }
             }
         }
-    } else if (userPosts.loadState.mediator?.refresh is LoadState.Error) {
-        item {
-            val error = (userPosts.loadState.mediator?.refresh as LoadState.Error)
-            val amityError = AmityError.from(error.error)
-
-            if (
-                amityError == AmityError.UNAUTHORIZED_ERROR ||
-                amityError == AmityError.PERMISSION_DENIED
-            ) {
-                AmityBaseComponent(
-                    pageScope = pageScope,
-                    componentId = "user_feed"
-                ) {
-                    Box(modifier = Modifier.height(480.dp)) {
-                        AmityPrivateUserFeed(
-                            pageScope = pageScope,
-                            componentScope = getComponentScope(),
-                            feedType = AmityUserFeedType.POST
-                        )
+    } else {
+        when (postListState) {
+            PostListState.EMPTY -> {
+                item {
+                    AmityBaseComponent(
+                        pageScope = pageScope,
+                        componentId = "user_feed"
+                    ) {
+                        Box(modifier = Modifier.height(480.dp)) {
+                            AmityEmptyUserFeed(
+                                pageScope = pageScope,
+                                componentScope = getComponentScope(),
+                                feedType = AmityUserFeedType.POST
+                            )
+                        }
                     }
                 }
-            } else {
-                Box(modifier = Modifier.height(480.dp)) {
-                    AmityUnknownUserFeed()
-                }
             }
-        }
-    } else if (userPosts.itemCount == 0) {
-        item {
-            AmityBaseComponent(
-                pageScope = pageScope,
-                componentId = "user_feed"
-            ) {
-                Box(modifier = Modifier.height(480.dp)) {
-                    AmityEmptyUserFeed(
-                        pageScope = pageScope,
-                        componentScope = getComponentScope(),
-                        feedType = AmityUserFeedType.POST
-                    )
-                }
-            }
-        }
-    } else {
-        items(
-            count = userPosts.itemCount,
-            key = { "user_${userPosts[it]?.getPostId() ?: it}" }
-        ) { index ->
-            val post = userPosts[index]
-            if (post == null) {
-                AmityPostShimmer()
-                AmityNewsFeedDivider()
-            } else {
-                if (!post.isSupportedDataTypes()) {
-                    return@items
-                }
 
-                AmityPostContentComponent(
-                    modifier = modifier,
-                    post = post,
-                    style = AmityPostContentComponentStyle.FEED,
-                    hideMenuButton = false,
-                    hideTarget = true,
-                    onTapAction = {
-                        behavior.goToPostDetailPage(
-                            context = context,
-                            postId = post.getPostId(),
+            PostListState.ERROR -> {
+                item {
+                    val error = (userPosts.loadState.mediator?.refresh as? LoadState.Error)
+                    val amityError = AmityError.from(error?.error)
+
+                    if (
+                        amityError == AmityError.UNAUTHORIZED_ERROR ||
+                        amityError == AmityError.PERMISSION_DENIED
+                    ) {
+                        AmityBaseComponent(
+                            pageScope = pageScope,
+                            componentId = "user_feed"
+                        ) {
+                            Box(modifier = Modifier.height(480.dp)) {
+                                AmityPrivateUserFeed(
+                                    pageScope = pageScope,
+                                    componentScope = getComponentScope(),
+                                    feedType = AmityUserFeedType.POST
+                                )
+                            }
+                        }
+                    } else {
+                        Box(modifier = Modifier.height(480.dp)) {
+                            AmityUnknownUserFeed()
+                        }
+                    }
+                }
+            }
+
+            PostListState.LOADING -> {
+                items(4) {
+                    AmityPostShimmer()
+                    AmityNewsFeedDivider()
+                }
+            }
+
+            PostListState.SUCCESS -> {
+                items(
+                    count = userPosts.itemCount,
+                    key = { "user_${userPosts[it]?.getPostId() ?: it}" }
+                ) { index ->
+                    val post = userPosts[index]
+                    if (post == null) {
+                        AmityPostShimmer()
+                        AmityNewsFeedDivider()
+                    } else {
+                        if (!post.isSupportedDataTypes()) {
+                            return@items
+                        }
+
+                        AmityPostContentComponent(
+                            modifier = modifier,
+                            post = post,
+                            style = AmityPostContentComponentStyle.FEED,
+                            hideMenuButton = false,
+                            hideTarget = true,
+                            onTapAction = {
+                                behavior.goToPostDetailPage(
+                                    context = context,
+                                    postId = post.getPostId(),
+                                )
+                            },
                         )
-                    },
-                )
-                AmityNewsFeedDivider()
+                        AmityNewsFeedDivider()
+                    }
+                }
             }
         }
     }

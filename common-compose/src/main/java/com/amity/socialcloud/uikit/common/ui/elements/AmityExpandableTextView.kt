@@ -17,7 +17,6 @@ import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.rememberTextMeasurer
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
@@ -191,11 +190,18 @@ private fun getTrimmedText(
         val startIndex = textLayoutResult.getLineStart(visiblePreviewLines - 1)
         val endIndex = textLayoutResult.getLineEnd(visiblePreviewLines - 1)
         val lastLine = text.substring(startIndex, endIndex)
-        if (lastLine.length > 25) {
+
+        val newText = if (lastLine.length > 25) {
             val lengthToReduce = readMore.length * 3 / 2
             text.substring(0, endIndex - lengthToReduce)
         } else {
             text.substring(0, endIndex)
+        }
+
+        if (newText.endsWith("\n")) {
+            newText.replaceRange(endIndex - 1, endIndex, "")
+        } else {
+            newText
         }
     } else {
         text

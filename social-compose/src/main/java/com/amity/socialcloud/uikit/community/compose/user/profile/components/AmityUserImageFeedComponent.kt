@@ -3,16 +3,16 @@ package com.amity.socialcloud.uikit.community.compose.user.profile.components
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.amity.socialcloud.sdk.api.social.AmitySocialClient
-import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
-import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.community.compose.paging.feed.user.amityUserImageFeedLLS
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.schedulers.Schedulers
-import kotlinx.coroutines.flow.catch
+import com.amity.socialcloud.uikit.community.compose.user.profile.AmityUserProfilePageViewModel
 
 @Composable
 fun AmityUserImageFeedComponent(
@@ -20,19 +20,17 @@ fun AmityUserImageFeedComponent(
     userId: String,
     shouldRefresh: Boolean = false,
 ) {
+    val viewModel = viewModel<AmityUserProfilePageViewModel>(
+        factory = object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return AmityUserProfilePageViewModel(userId) as T
+            }
+        }
+    )
     val imagePosts = remember(userId) {
-        AmitySocialClient.newPostRepository()
-            .getPosts()
-            .targetUser(userId)
-            .types(listOf(AmityPost.DataType.sealedOf(AmityPost.DataType.IMAGE.getApiKey())))
-            .includeDeleted(false)
-            .build()
-            .query()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .asFlow()
-            .catch {}
+        viewModel.getUserImagePosts()
     }.collectAsLazyPagingItems()
+    val postListState by viewModel.imagePostListState.collectAsState()
 
     LaunchedEffect(shouldRefresh) {
         if (shouldRefresh) {
@@ -41,9 +39,15 @@ fun AmityUserImageFeedComponent(
     }
 
     LazyColumn {
+        AmityUserProfilePageViewModel.PostListState.from(
+            loadState = imagePosts.loadState.refresh,
+            itemCount = imagePosts.itemCount
+        ).let(viewModel::setImagePostListState)
+
         amityUserImageFeedLLS(
             modifier = modifier,
             imagePosts = imagePosts,
+            postListState = postListState,
             isBlockedByMe = false,
         )
     }

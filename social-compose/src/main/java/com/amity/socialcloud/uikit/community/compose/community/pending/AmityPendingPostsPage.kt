@@ -115,7 +115,7 @@ fun AmityPendingPostsPage(
                                         postId = post.getPostId(),
                                         onApproved = {
                                             getPageScope().showSnackbar(
-                                                message = "Post accepted",
+                                                message = "Post accepted.",
                                                 drawableRes = R.drawable.amity_ic_snack_bar_success,
                                             )
                                         },

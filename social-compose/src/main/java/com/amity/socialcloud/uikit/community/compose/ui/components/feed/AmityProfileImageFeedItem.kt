@@ -126,7 +126,7 @@ fun AmityProfileImageFeedItemPreviewDialog(
                 }
             )
 
-            if (painter.state is AsyncImagePainter.State.Error) {
+            if (painter.state !is AsyncImagePainter.State.Success) {
                 Box(
                     modifier = modifier
                         .fillMaxWidth()

@@ -46,7 +46,7 @@ fun AmityCommunityInfoView(
 		Row(
 			modifier = Modifier
 				.padding(top = 8.dp, bottom = 16.dp, start = 16.dp, end = 16.dp),
-			verticalAlignment = Alignment.Bottom,
+			verticalAlignment = Alignment.CenterVertically,
 		) {
 			Text(
 				text = getNumberAbbreveation(community?.getPostCount() ?: 0),

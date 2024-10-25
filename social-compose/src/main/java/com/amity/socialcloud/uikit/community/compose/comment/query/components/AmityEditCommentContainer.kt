@@ -209,7 +209,7 @@ fun AmityEditCommentContainer(
                         Text(
                             text = getElementScope().getConfig().getValue("save_button_text"),
                             style = AmityTheme.typography.caption.copy(
-                                color = AmityTheme.colors.baseInverse,
+                                color = Color.White,
                             ),
                             modifier = modifier.testTag(getAccessibilityId())
                         )

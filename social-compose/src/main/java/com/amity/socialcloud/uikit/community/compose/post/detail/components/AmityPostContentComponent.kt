@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -146,15 +147,15 @@ fun AmityPostContentComponent(
 	AmityBaseComponent(componentId = "post_content") {
 		Column(
 			modifier = modifier
-				.fillMaxWidth()
-				.background(AmityTheme.colors.background)
-				.clickableWithoutRipple {
-					if (!isPostDetailPage) {
-						onTapAction()
-					}
-				}
-				.isVisible { isVisible = it }
-				.testTag(getAccessibilityId())
+                .fillMaxWidth()
+                .background(AmityTheme.colors.background)
+                .clickableWithoutRipple {
+                    if (!isPostDetailPage) {
+                        onTapAction()
+                    }
+                }
+                .isVisible { isVisible = it }
+                .testTag(getAccessibilityId())
 		) {
 			AmityPostHeaderElement(
 				modifier = modifier,
@@ -224,72 +225,105 @@ fun AmityPostShimmer(
 	Column(
 		verticalArrangement = Arrangement.spacedBy(12.dp),
 		modifier = modifier
-			.fillMaxWidth()
-			.height(200.dp)
-			.padding(horizontal = 16.dp, vertical = 12.dp)
+            .fillMaxWidth()
+            .height(200.dp)
+            .padding(horizontal = 16.dp, vertical = 12.dp)
 	) {
 		Row {
 			Box(
 				modifier = modifier
-					.size(40.dp)
-					.shimmerBackground(
-						color = AmityTheme.colors.baseShade4,
-						shape = RoundedCornerShape(40.dp)
-					)
+                    .size(40.dp)
+                    .shimmerBackground(
+                        color = AmityTheme.colors.baseShade4,
+                        shape = RoundedCornerShape(40.dp)
+                    )
 			)
 			Column(
 				verticalArrangement = Arrangement.SpaceBetween,
 				modifier = modifier
-					.height(40.dp)
-					.padding(horizontal = 8.dp, vertical = 6.dp)
+                    .height(40.dp)
+                    .padding(horizontal = 8.dp, vertical = 6.dp)
 			) {
 				Box(
-					Modifier
-						.width(120.dp)
-						.height(8.dp)
-						.shimmerBackground(
-							color = AmityTheme.colors.baseShade4,
-							shape = RoundedCornerShape(12.dp)
-						)
+                    Modifier
+                        .width(120.dp)
+                        .height(8.dp)
+                        .shimmerBackground(
+                            color = AmityTheme.colors.baseShade4,
+                            shape = RoundedCornerShape(12.dp)
+                        )
 				)
 				Box(
-					Modifier
-						.width(88.dp)
-						.height(8.dp)
-						.shimmerBackground(
-							color = AmityTheme.colors.baseShade4,
-							shape = RoundedCornerShape(12.dp)
-						)
+                    Modifier
+                        .width(88.dp)
+                        .height(8.dp)
+                        .shimmerBackground(
+                            color = AmityTheme.colors.baseShade4,
+                            shape = RoundedCornerShape(12.dp)
+                        )
 				)
 			}
 		}
 
 		Box(
-			Modifier
-				.width(240.dp)
-				.height(8.dp)
-				.shimmerBackground(
-					color = AmityTheme.colors.baseShade4,
-					shape = RoundedCornerShape(12.dp)
-				)
+            Modifier
+                .width(240.dp)
+                .height(8.dp)
+                .shimmerBackground(
+                    color = AmityTheme.colors.baseShade4,
+                    shape = RoundedCornerShape(12.dp)
+                )
 		)
 		Box(
-			Modifier
-				.width(300.dp)
-				.height(8.dp)
-				.shimmerBackground(
-					color = AmityTheme.colors.baseShade4,
-					shape = RoundedCornerShape(12.dp)
-				)
+            Modifier
+                .width(300.dp)
+                .height(8.dp)
+                .shimmerBackground(
+                    color = AmityTheme.colors.baseShade4,
+                    shape = RoundedCornerShape(12.dp)
+                )
 		)
 		Box(
-			Modifier
-				.width(180.dp)
-				.height(8.dp)
-				.shimmerBackground(
-					color = AmityTheme.colors.baseShade4,
-					shape = RoundedCornerShape(12.dp)
-				)
+            Modifier
+                .width(180.dp)
+                .height(8.dp)
+                .shimmerBackground(
+                    color = AmityTheme.colors.baseShade4,
+                    shape = RoundedCornerShape(12.dp)
+                )
 		)
 	}
+}
+
+
+@Composable
+fun AmityMediaPostShimmer(
+    modifier: Modifier = Modifier
+) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 2.dp)
+            .aspectRatio(2f)
+    ) {
+        Box(
+            modifier = modifier
+                .weight(1f)
+                .aspectRatio(1f)
+                .shimmerBackground(
+                    color = AmityTheme.colors.baseShade4,
+                    shape = RoundedCornerShape(4.dp)
+                )
+        )
+        Box(
+            modifier = modifier
+                .weight(1f)
+                .aspectRatio(1f)
+                .shimmerBackground(
+                    color = AmityTheme.colors.baseShade4,
+                    shape = RoundedCornerShape(4.dp)
+                )
+        )
+    }
 }
