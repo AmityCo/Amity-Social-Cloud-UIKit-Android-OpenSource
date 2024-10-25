@@ -99,6 +99,10 @@ fun AmityUserProfilePage(
     val imagePosts = remember(userId) { viewModel.getUserImagePosts() }.collectAsLazyPagingItems()
     val videoPosts = remember(userId) { viewModel.getUserVideoPosts() }.collectAsLazyPagingItems()
 
+    val postListState by viewModel.postListState.collectAsState()
+    val imagePostListState by viewModel.imagePostListState.collectAsState()
+    val videoPostListState by viewModel.videoPostListState.collectAsState()
+
     var selectedTabIndex by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(state.isRefreshing) {
@@ -202,29 +206,47 @@ fun AmityUserProfilePage(
 
                 when (selectedTabIndex) {
                     0 -> {
+                        AmityUserProfilePageViewModel.PostListState.from(
+                            loadState = userPosts.loadState.refresh,
+                            itemCount = userPosts.itemCount
+                        ).let(viewModel::setPostListState)
+
                         amityUserFeedLLS(
                             modifier = modifier,
                             context = context,
                             pageScope = getPageScope(),
                             userPosts = userPosts,
+                            postListState = postListState,
                             isBlockedByMe = isBlockedByMe,
                         )
                     }
 
                     1 -> {
+                        AmityUserProfilePageViewModel.PostListState.from(
+                            loadState = imagePosts.loadState.refresh,
+                            itemCount = imagePosts.itemCount
+                        ).let(viewModel::setImagePostListState)
+
                         amityUserImageFeedLLS(
                             modifier = modifier,
                             pageScope = getPageScope(),
                             imagePosts = imagePosts,
+                            postListState = imagePostListState,
                             isBlockedByMe = isBlockedByMe,
                         )
                     }
 
                     2 -> {
+                        AmityUserProfilePageViewModel.PostListState.from(
+                            loadState = videoPosts.loadState.refresh,
+                            itemCount = videoPosts.itemCount
+                        ).let(viewModel::setVideoPostListState)
+
                         amityUserVideoFeedLLS(
                             modifier = modifier,
                             pageScope = getPageScope(),
                             videoPosts = videoPosts,
+                            postListState = videoPostListState,
                             isBlockedByMe = isBlockedByMe,
                         )
                     }

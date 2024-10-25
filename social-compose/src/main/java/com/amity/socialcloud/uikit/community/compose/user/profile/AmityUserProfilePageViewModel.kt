@@ -1,6 +1,7 @@
 package com.amity.socialcloud.uikit.community.compose.user.profile
 
 import androidx.lifecycle.viewModelScope
+import androidx.paging.LoadState
 import androidx.paging.PagingData
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
@@ -27,27 +28,59 @@ class AmityUserProfilePageViewModel(val userId: String) : AmityBaseViewModel() {
     }
     val userProfileState get() = _userProfileState
 
+    private val _postListState by lazy {
+        MutableStateFlow<PostListState>(PostListState.EMPTY)
+    }
+    val postListState get() = _postListState
+
+    private val _imagePostListState by lazy {
+        MutableStateFlow<PostListState>(PostListState.EMPTY)
+    }
+    val imagePostListState get() = _imagePostListState
+
+    private val _videoPostListState by lazy {
+        MutableStateFlow<PostListState>(PostListState.EMPTY)
+    }
+    val videoPostListState get() = _videoPostListState
+
+    fun setPostListState(state: PostListState) {
+        _postListState.value = state
+    }
+
+    fun setImagePostListState(state: PostListState) {
+        _imagePostListState.value = state
+    }
+
+    fun setVideoPostListState(state: PostListState) {
+        _videoPostListState.value = state
+    }
+
     init {
         refresh()
     }
 
     fun refresh() {
         compositeDisposable.clear()
-        _userProfileState.value = _userProfileState.value.copy(
-            isRefreshing = true,
-        )
+        viewModelScope.launch {
+            _userProfileState.value = _userProfileState.value.copy(
+                isRefreshing = true,
+            )
+        }
 
         if (userId == AmityCoreClient.getUserId()) {
             Flowable.combineLatest(
                 AmityCoreClient.newUserRepository().getUser(userId),
                 getMyFollowInfo(),
             ) { user, myFollowInfo ->
-                _userProfileState.value = _userProfileState.value.copy(
-                    user = user,
-                    myFollowInfo = myFollowInfo,
-                    userFollowInfo = null,
-                    isRefreshing = false,
-                )
+                viewModelScope.launch {
+                    delay(100)
+                    _userProfileState.value = _userProfileState.value.copy(
+                        user = user,
+                        myFollowInfo = myFollowInfo,
+                        userFollowInfo = null,
+                        isRefreshing = false,
+                    )
+                }
             }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -59,12 +92,15 @@ class AmityUserProfilePageViewModel(val userId: String) : AmityBaseViewModel() {
                 getMyFollowInfo(),
                 getUserFollowInfo(),
             ) { user, myFollowInfo, userFollowInfo ->
-                _userProfileState.value = _userProfileState.value.copy(
-                    user = user,
-                    myFollowInfo = myFollowInfo,
-                    userFollowInfo = userFollowInfo,
-                    isRefreshing = false,
-                )
+                viewModelScope.launch {
+                    delay(100)
+                    _userProfileState.value = _userProfileState.value.copy(
+                        user = user,
+                        myFollowInfo = myFollowInfo,
+                        userFollowInfo = userFollowInfo,
+                        isRefreshing = false,
+                    )
+                }
             }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -208,6 +244,31 @@ class AmityUserProfilePageViewModel(val userId: String) : AmityBaseViewModel() {
             .getFollowInfo(userId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
+    }
+
+
+    sealed class PostListState {
+        object LOADING : PostListState()
+        object SUCCESS : PostListState()
+        object EMPTY : PostListState()
+        object ERROR : PostListState()
+
+        companion object {
+            fun from(
+                loadState: LoadState,
+                itemCount: Int,
+            ): PostListState {
+                return if (loadState is LoadState.Loading && itemCount == 0) {
+                    LOADING
+                } else if (loadState is LoadState.NotLoading && itemCount == 0) {
+                    EMPTY
+                } else if (loadState is LoadState.Error && itemCount == 0) {
+                    ERROR
+                } else {
+                    SUCCESS
+                }
+            }
+        }
     }
 }
 

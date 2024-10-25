@@ -185,6 +185,8 @@ class AmityPushSettingsDetailViewModel : AmityPushNotificationBaseViewModel() {
                 initialNewStoryComment = pair.first
                 newStoryComment = initialNewStoryComment
             }
+
+            is AmityCommunityNotificationEvent.LIVESTREAM_START -> {}
         }
         if (!isGlobalModerator) {
             choices.add(Pair(R.string.amity_everyone, !isModerator))

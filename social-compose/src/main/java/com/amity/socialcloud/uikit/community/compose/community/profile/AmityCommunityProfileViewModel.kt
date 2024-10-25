@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.community.profile
 
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
@@ -16,9 +17,11 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
 class AmityCommunityProfileViewModel(private val communityId: String) :
@@ -26,7 +29,7 @@ class AmityCommunityProfileViewModel(private val communityId: String) :
     val disposable = CompositeDisposable()
 
     private val _communityProfileState by lazy {
-        MutableStateFlow(CommunityProfileState.Initial(communityId))
+        MutableStateFlow(CommunityProfileState(communityId))
     }
 
     val communityProfileState get() = _communityProfileState
@@ -37,7 +40,12 @@ class AmityCommunityProfileViewModel(private val communityId: String) :
 
     fun refresh() {
         disposable.clear()
-        _communityProfileState.value = CommunityProfileState.Initial(communityId)
+        viewModelScope.launch {
+            _communityProfileState.value = _communityProfileState.value.copy(
+                isRefreshing = true
+            )
+        }
+
         Flowable.combineLatest(
             AmitySocialClient.newCommunityRepository().getCommunity(communityId).doOnError { },
             AmityCoreClient.hasPermission(AmityPermission.EDIT_COMMUNITY).atCommunity(communityId)
@@ -45,13 +53,16 @@ class AmityCommunityProfileViewModel(private val communityId: String) :
         ) { community, hasPermission -> Pair(community, hasPermission) }
             .doOnNext { (community, isModerator) ->
                 val isMember = community.isJoined()
-                _communityProfileState.value = CommunityProfileState(
-                    communityId,
-                    community,
-                    isRefreshing = false,
-                    isMember = isMember,
-                    isModerator = isModerator
-                )
+                viewModelScope.launch {
+                    delay(100)
+                    _communityProfileState.value = _communityProfileState.value.copy(
+                        communityId = communityId,
+                        community = community,
+                        isRefreshing = false,
+                        isMember = isMember,
+                        isModerator = isModerator
+                    )
+                }
             }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -133,18 +144,7 @@ class AmityCommunityProfileViewModel(private val communityId: String) :
 data class CommunityProfileState(
     val communityId: String,
     val community: AmityCommunity? = null,
-    val isRefreshing: Boolean,
-    val isMember: Boolean,
-    val isModerator: Boolean,
-) {
-
-    companion object {
-        fun Initial(communityId: String) = CommunityProfileState(
-            communityId = communityId,
-            community = null,
-            isRefreshing = true,
-            isMember = false,
-            isModerator = false,
-        )
-    }
-}
+    val isRefreshing: Boolean = true,
+    val isMember: Boolean = false,
+    val isModerator: Boolean = false,
+)

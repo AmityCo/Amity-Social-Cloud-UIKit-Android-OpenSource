@@ -5,16 +5,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.uikit.common.common.isNotEmptyOrBlank
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
+import com.amity.socialcloud.uikit.common.ui.elements.AmityExpandableText
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.community.profile.element.AmityCommunityCategoryListElement
@@ -58,19 +56,17 @@ fun AmityCommunityHeaderComponent(
 					if (categories.isNotEmpty()) {
 						AmityCommunityCategoryListElement(categories = categories)
 					}
-					if (community.getDescription().isNotBlank()) {
+
+                    if (community.getDescription().isNotEmptyOrBlank()) {
 						Row(modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)) {
-							Text(
+							AmityExpandableText(
 								text = community.getDescription(),
-								style = TextStyle(
-									fontSize = 15.sp,
-									lineHeight = 20.sp,
-									fontWeight = FontWeight(400),
-									color = AmityTheme.colors.base,
-								)
+								previewLines = 4,
+								modifier = modifier.padding(vertical = 8.dp)
 							)
 						}
-					}
+                    }
+
 					AmityCommunityInfoView(
 						pageScope = pageScope,
 						componentScope = getComponentScope(),
