@@ -1,5 +1,7 @@
 package com.amity.socialcloud.uikit.community.compose.post.detail
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -57,6 +60,7 @@ import com.amity.socialcloud.uikit.community.compose.post.detail.components.Amit
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuSheetUIState
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuViewModel
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AmityPostDetailPage(
     modifier: Modifier = Modifier,
@@ -123,65 +127,19 @@ fun AmityPostDetailPage(
         }
     }
 
+    val scrollState = rememberLazyListState()
+    val hasScrolled by remember {
+        derivedStateOf { scrollState.firstVisibleItemScrollOffset > 0 }
+    }
+
     AmityBasePage(pageId = "post_detail_page") {
         AmityBaseComponent(
             pageScope = getPageScope(),
             componentId = "comment_tray_component"
         ) {
             Column(modifier = modifier.fillMaxSize()) {
-                Box(
-                    modifier = modifier
-                        .height(58.dp)
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                ) {
-                    AmityBaseElement(
-                        pageScope = getPageScope(),
-                        elementId = "back_button"
-                    ) {
-                        Icon(
-                            painter = painterResource(id = getConfig().getIcon()),
-                            contentDescription = null,
-                            tint = AmityTheme.colors.base,
-                            modifier = modifier
-                                .size(20.dp)
-                                .align(Alignment.CenterStart)
-                                .clickableWithoutRipple {
-                                    context.closePage()
-                                }
-                                .testTag(getAccessibilityId()),
-                        )
-                    }
-
-                    Text(
-                        text = "Post",
-                        style = AmityTheme.typography.title,
-                        modifier = modifier.align(Alignment.Center)
-                    )
-
-                    AmityBaseElement(
-                        pageScope = getPageScope(),
-                        elementId = "menu_button"
-                    ) {
-                        Icon(
-                            painter = painterResource(id = getConfig().getIcon()),
-                            contentDescription = null,
-                            tint = AmityTheme.colors.base,
-                            modifier = modifier
-                                .size(24.dp)
-                                .align(Alignment.CenterEnd)
-                                .clickableWithoutRipple {
-                                    post?.let {
-                                        sheetViewModel.updateSheetUIState(
-                                            AmityPostMenuSheetUIState.OpenSheet(it.getPostId())
-                                        )
-                                    }
-                                }
-                                .testTag(getAccessibilityId()),
-                        )
-                    }
-                }
                 LazyColumn(
+                    state = scrollState,
                     verticalArrangement = Arrangement.Top,
                     modifier = modifier.weight(1f)
                 ) {
@@ -190,9 +148,71 @@ fun AmityPostDetailPage(
                         itemCount = comments.itemCount,
                     ).let(commentViewModel::setCommentListState)
 
+                    stickyHeader {
+                        Box(
+                            modifier = modifier
+                                .height(58.dp)
+                                .fillMaxWidth()
+                                .background(AmityTheme.colors.background)
+                                .padding(horizontal = 16.dp)
+                        ) {
+                            AmityBaseElement(
+                                pageScope = getPageScope(),
+                                elementId = "back_button"
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = getConfig().getIcon()),
+                                    contentDescription = null,
+                                    tint = AmityTheme.colors.base,
+                                    modifier = modifier
+                                        .size(20.dp)
+                                        .align(Alignment.CenterStart)
+                                        .clickableWithoutRipple {
+                                            context.closePage()
+                                        }
+                                        .testTag(getAccessibilityId()),
+                                )
+                            }
+
+                            Text(
+                                text = "Post",
+                                style = AmityTheme.typography.title,
+                                modifier = modifier.align(Alignment.Center)
+                            )
+
+                            AmityBaseElement(
+                                pageScope = getPageScope(),
+                                elementId = "menu_button"
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = getConfig().getIcon()),
+                                    contentDescription = null,
+                                    tint = AmityTheme.colors.base,
+                                    modifier = modifier
+                                        .size(24.dp)
+                                        .align(Alignment.CenterEnd)
+                                        .clickableWithoutRipple {
+                                            post?.let {
+                                                sheetViewModel.updateSheetUIState(
+                                                    AmityPostMenuSheetUIState.OpenSheet(it.getPostId())
+                                                )
+                                            }
+                                        }
+                                        .testTag(getAccessibilityId()),
+                                )
+                            }
+                        }
+                        if (hasScrolled) {
+                            HorizontalDivider(
+                                color = AmityTheme.colors.baseShade4,
+                            )
+                        }
+                    }
+
                     item {
                         AmityPostContentComponent(
                             modifier = modifier,
+                            pageScope = getPageScope(),
                             post = post ?: return@item,
                             style = style,
                             category = category,

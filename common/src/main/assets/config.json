@@ -708,8 +708,17 @@
     "communities_by_category_page/*/community_private_badge": {
       "image": "lockIcon"
     },
-    "all_categories_page/*/*": {
-
+    "all_categories_page/*/*": {},
+    "poll_post_composer_page/*/*": {},
+    "select_poll_target_page/*/close_button": {
+      "image": "closeIcon"
+    },
+    "select_poll_target_page/*/my_timeline_avatar": {},
+    "select_poll_target_page/*/title": {
+      "text": "Post to"
+    },
+    "select_poll_target_page/*/my_timeline_text": {
+      "text": "My Timeline"
     }
   }
 }

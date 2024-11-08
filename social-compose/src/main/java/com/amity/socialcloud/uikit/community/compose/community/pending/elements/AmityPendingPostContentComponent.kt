@@ -21,8 +21,11 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.showToast
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
+import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponentStyle
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostContentElement
+import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostLivestreamElement
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostMediaElement
+import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostPollElement
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuDialogUIState
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuSheetUIState
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuViewModel
@@ -33,7 +36,7 @@ fun AmityPendingPostContentComponent(
     pageScope: AmityComposePageScope? = null,
     post: AmityPost,
     onAcceptAction: (AmityPost) -> Unit,
-    onDeclineAction: (AmityPost) -> Unit
+    onDeclineAction: (AmityPost) -> Unit,
 ) {
     val context = LocalContext.current
     val behavior by lazy {
@@ -94,6 +97,10 @@ fun AmityPendingPostContentComponent(
 
         }
 
+        is AmityPostMenuDialogUIState.OpenConfirmClosePollDialog -> {
+
+        }
+
         is AmityPostMenuDialogUIState.CloseDialog -> {
             viewModel.updateDialogUIState(AmityPostMenuDialogUIState.CloseDialog)
         }
@@ -118,22 +125,41 @@ fun AmityPendingPostContentComponent(
                     viewModel.updateSheetUIState(AmityPostMenuSheetUIState.OpenSheet(it.getPostId()))
                 }
             )
-            AmityPostContentElement(
-                modifier = modifier,
-                post = post,
-                onClick = {},
-                onMentionedUserClick = {
-                    behavior.goToUserProfilePage(context = context, userId = it)
-                }
-            )
-            AmityPostPreviewLinkView(
-                modifier = modifier,
-                post = post,
-            )
-            AmityPostMediaElement(
-                modifier = modifier,
-                post = post
-            )
+
+            if (post.getChildren().any { it.getData() is AmityPost.Data.LIVE_STREAM }) {
+                AmityPostLivestreamElement(
+                    modifier = modifier,
+                    post = post
+                )
+            } else if (post.getChildren().any { it.getData() is AmityPost.Data.POLL }) {
+
+                AmityPostPollElement(
+                    modifier = modifier,
+                    componentScope = getComponentScope(),
+                    post = post,
+                    style = AmityPostContentComponentStyle.FEED,
+                    onClick = {},
+                    onMentionedUserClick = {},
+                )
+            } else {
+                AmityPostContentElement(
+                    modifier = modifier,
+                    post = post,
+                    style = AmityPostContentComponentStyle.FEED,
+                    onClick = {},
+                    onMentionedUserClick = {
+                        behavior.goToUserProfilePage(context = context, userId = it)
+                    }
+                )
+                AmityPostPreviewLinkView(
+                    modifier = modifier,
+                    post = post,
+                )
+                AmityPostMediaElement(
+                    modifier = modifier,
+                    post = post
+                )
+            }
 
             AmityPendingPostMenuBottomSheet(
                 post = post

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -92,6 +93,7 @@ fun AmityPostAdView(
 
                 Column {
                     Text(
+                        modifier = Modifier.padding(end = 16.dp),
                         text = ad.getAdvertiser()?.getName() ?: "",
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -99,6 +101,7 @@ fun AmityPostAdView(
                             fontWeight = FontWeight.SemiBold
                         )
                     )
+                    Spacer(modifier = Modifier.height(2.dp))
                     AmityAdBadge()
                 }
             }

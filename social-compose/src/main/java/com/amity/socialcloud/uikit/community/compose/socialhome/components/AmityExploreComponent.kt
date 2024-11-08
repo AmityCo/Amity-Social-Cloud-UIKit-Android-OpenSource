@@ -80,6 +80,8 @@ fun AmityExploreComponent(
         }
     )
 
+    val scrollState = rememberScrollState()
+
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -101,7 +103,7 @@ fun AmityExploreComponent(
             }
         } else {
             Column(
-                modifier = Modifier.verticalScroll(rememberScrollState())
+                modifier = Modifier.verticalScroll(scrollState)
             ) {
                 AmityNewsFeedDivider()
                 AmityCommunityCategoriesComponent(

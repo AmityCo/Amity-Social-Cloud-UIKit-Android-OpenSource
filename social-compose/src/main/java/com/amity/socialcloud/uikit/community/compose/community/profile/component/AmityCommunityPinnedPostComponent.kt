@@ -10,6 +10,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.model.core.pin.AmityPinnedPost
+import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageBehavior
 import com.amity.socialcloud.uikit.community.compose.paging.feed.community.amityCommunityPinnedFeedLLS
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.catch
 @Composable
 fun AmityCommunityPinnedPostComponent(
     modifier: Modifier = Modifier, communityId: String,
+    pageScope: AmityComposePageScope? = null,
     shouldRefresh: Boolean = false,
 ) {
     val context = LocalContext.current
@@ -62,6 +64,7 @@ fun AmityCommunityPinnedPostComponent(
     LazyColumn {
         amityCommunityPinnedFeedLLS(
             modifier = modifier,
+            pageScope = pageScope,
             pinPosts = pinPosts,
             announcementPosts = announcementPosts,
             onClick = {

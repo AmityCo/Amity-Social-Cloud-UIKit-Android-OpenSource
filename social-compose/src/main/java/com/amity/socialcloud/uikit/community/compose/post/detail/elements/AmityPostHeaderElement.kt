@@ -381,6 +381,7 @@ fun calculateWeight(primaryTextWidth: Int, secondaryTextWidth: Int): Float {
     return if (primaryTextWidth + secondaryTextWidth == 0) {
         1f
     } else {
-        primaryTextWidth.toFloat() / (primaryTextWidth + secondaryTextWidth)
+        val calculatedWeight = primaryTextWidth.toFloat() / (primaryTextWidth + secondaryTextWidth)
+        if(calculatedWeight == 0.0f) 0.01f else calculatedWeight
     }
 }

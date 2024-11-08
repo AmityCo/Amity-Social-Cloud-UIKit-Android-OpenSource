@@ -32,7 +32,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
+import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunityPostSettings
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
@@ -51,6 +56,8 @@ import com.amity.socialcloud.uikit.community.compose.paging.feed.community.amity
 import com.amity.socialcloud.uikit.community.compose.paging.feed.community.amityCommunityPinnedFeedLLS
 import com.amity.socialcloud.uikit.community.compose.paging.feed.community.amityCommunityVideoFeedLLS
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostCategory
+import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostShimmer
+import kotlinx.coroutines.flow.catch
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @SuppressLint("UnrememberedMutableState")
@@ -90,6 +97,14 @@ fun AmityCommunityProfilePage(
 
     var selectedTabIndex by remember { mutableIntStateOf(0) }
 
+    val hasCreatePrivilege by AmityCoreClient.hasPermission(AmityPermission.CREATE_PRIVILEGED_POST)
+        .atCommunity(communityId)
+        .check()
+        .asFlow()
+        .catch {
+            emit(false)
+        }
+        .collectAsState(initial = false)
 
     LaunchedEffect(state.isRefreshing) {
         if (state.isRefreshing) {
@@ -181,6 +196,7 @@ fun AmityCommunityProfilePage(
                     if (shouldShowAnnouncement) {
                         amityCommunityAnnouncementFeedLLS(
                             modifier = modifier,
+                            pageScope = getPageScope(),
                             announcementPosts = announcementPosts,
                             hasAnnouncementPin = hasAnnouncementPin,
                             onClick = {
@@ -200,26 +216,36 @@ fun AmityCommunityProfilePage(
                     }
                     when (selectedTabIndex) {
                         0 -> {
-                            amityCommunityFeedLLS(
-                                modifier = modifier,
-                                communityPosts = communityPosts,
-                                pinPosts = pinPosts,
-                                announcementPosts = announcementPosts,
-                                onClick = { post, category ->
-                                    behavior.goToPostDetailPage(
-                                        AmityCommunityProfilePageBehavior.Context(
-                                            pageContext = context,
-                                        ),
-                                        postId = post.getPostId(),
-                                        category = category,
-                                    )
+                            if(communityPosts.loadState.refresh == LoadState.Loading) {
+                                repeat(4) {
+                                    item {
+                                        AmityPostShimmer()
+                                    }
                                 }
-                            )
+                            } else {
+                                amityCommunityFeedLLS(
+                                    modifier = modifier,
+                                    pageScope = getPageScope(),
+                                    communityPosts = communityPosts,
+                                    pinPosts = pinPosts,
+                                    announcementPosts = announcementPosts,
+                                    onClick = { post, category ->
+                                        behavior.goToPostDetailPage(
+                                            AmityCommunityProfilePageBehavior.Context(
+                                                pageContext = context,
+                                            ),
+                                            postId = post.getPostId(),
+                                            category = category,
+                                        )
+                                    }
+                                )
+                            }
                         }
 
                         1 -> {
                             amityCommunityPinnedFeedLLS(
                                 modifier = modifier,
+                                pageScope = getPageScope(),
                                 pinPosts = pinPosts,
                                 announcementPosts = announcementPosts,
                                 onClick = {
@@ -253,23 +279,25 @@ fun AmityCommunityProfilePage(
                     pageScope = getPageScope(),
                     elementId = "community_create_post_button",
                 ) {
-                    FloatingActionButton(
-                        onClick = {
-                            expanded = true
-                        },
-                        shape = RoundedCornerShape(size = 32.dp),
-                        containerColor = AmityTheme.colors.primary,
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .size(64.dp)
-                            .align(Alignment.BottomEnd)
-                    ) {
-                        Icon(
-                            painter = painterResource(id = getConfig().getIcon()),
-                            contentDescription = "create post",
-                            tint = Color.White,
-                            modifier = Modifier.size(32.dp)
-                        )
+                    if((community != null && community!!.isJoined() && community!!.getPostSettings() != AmityCommunityPostSettings.ADMIN_CAN_POST_ONLY) || hasCreatePrivilege) {
+                        FloatingActionButton(
+                            onClick = {
+                                expanded = true
+                            },
+                            shape = RoundedCornerShape(size = 32.dp),
+                            containerColor = AmityTheme.colors.primary,
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .size(64.dp)
+                                .align(Alignment.BottomEnd)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = getConfig().getIcon()),
+                                contentDescription = "create post",
+                                tint = Color.White,
+                                modifier = Modifier.size(32.dp)
+                            )
+                        }
                     }
                 }
                 if (community != null) {

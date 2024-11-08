@@ -113,5 +113,7 @@ sealed class AmityPostMenuDialogUIState {
 
     data class OpenConfirmEditDialog(val postId: String) : AmityPostMenuDialogUIState()
 
+    data class OpenConfirmClosePollDialog(val pollId: String) : AmityPostMenuDialogUIState()
+
     object CloseDialog : AmityPostMenuDialogUIState()
 }

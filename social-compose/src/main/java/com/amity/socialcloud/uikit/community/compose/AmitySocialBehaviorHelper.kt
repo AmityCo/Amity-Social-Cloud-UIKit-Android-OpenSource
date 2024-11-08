@@ -22,6 +22,7 @@ import com.amity.socialcloud.uikit.community.compose.socialhome.components.Amity
 import com.amity.socialcloud.uikit.community.compose.story.create.AmityCreateStoryPageBehavior
 import com.amity.socialcloud.uikit.community.compose.story.target.AmityStoryTabComponentBehavior
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageBehavior
+import com.amity.socialcloud.uikit.community.compose.target.poll.AmityPollTargetSelectionPageBehavior
 import com.amity.socialcloud.uikit.community.compose.target.post.AmityPostTargetSelectionPageBehavior
 import com.amity.socialcloud.uikit.community.compose.target.story.AmityStoryTargetSelectionPageBehavior
 import com.amity.socialcloud.uikit.community.compose.user.blocked.AmityBlockedUsersPageBehavior
@@ -32,6 +33,8 @@ import com.amity.socialcloud.uikit.community.compose.user.profile.components.Ami
 import com.amity.socialcloud.uikit.community.compose.user.relationship.AmityUserRelationshipPageBehavior
 
 object AmitySocialBehaviorHelper {
+
+    var showPollResultInDetailFirst = false
 
     var createStoryPageBehavior: AmityCreateStoryPageBehavior =
         AmityCreateStoryPageBehavior()
@@ -53,6 +56,9 @@ object AmitySocialBehaviorHelper {
 
     var storyTargetSelectionPageBehavior: AmityStoryTargetSelectionPageBehavior =
         AmityStoryTargetSelectionPageBehavior()
+
+    var pollTargetSelectionPageBehavior: AmityPollTargetSelectionPageBehavior =
+        AmityPollTargetSelectionPageBehavior()
 
     var createPostMenuComponentBehavior: AmityCreatePostMenuComponentBehavior =
         AmityCreatePostMenuComponentBehavior()

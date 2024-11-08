@@ -18,6 +18,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -25,10 +26,13 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.amity.socialcloud.sdk.api.social.AmitySocialClient
+import com.amity.socialcloud.sdk.helper.core.coroutines.await
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
 import com.amity.socialcloud.uikit.common.ui.elements.AmityPostPreviewLinkView
+import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.isVisible
@@ -44,66 +48,83 @@ import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityP
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostLivestreamElement
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostMediaElement
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostNonMemberSection
+import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostPollElement
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuBottomSheet
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuDialogUIState
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuSheetUIState
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun AmityPostContentComponent(
-	modifier: Modifier = Modifier,
-	post: AmityPost,
-	style: AmityPostContentComponentStyle,
-	category: AmityPostCategory = AmityPostCategory.GENERAL,
-	hideMenuButton: Boolean,
-	hideTarget: Boolean = false,
-	onTapAction: () -> Unit = {},
+    modifier: Modifier = Modifier,
+    pageScope: AmityComposePageScope? = null,
+    post: AmityPost,
+    style: AmityPostContentComponentStyle,
+    category: AmityPostCategory = AmityPostCategory.GENERAL,
+    hideMenuButton: Boolean,
+    hideTarget: Boolean = false,
+    onTapAction: () -> Unit = {},
 ) {
-	val context = LocalContext.current
-	val behavior by lazy {
-		AmitySocialBehaviorHelper.postContentComponentBehavior
-	}
-	val isPostDetailPage = remember(style) {
-		style == AmityPostContentComponentStyle.DETAIL
-	}
+    val context = LocalContext.current
+    val behavior by lazy {
+        AmitySocialBehaviorHelper.postContentComponentBehavior
+    }
+    val isPostDetailPage = remember(style) {
+        style == AmityPostContentComponentStyle.DETAIL
+    }
 
-	val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
-		"No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
-	}
-	val viewModel =
-		viewModel<AmityPostMenuViewModel>(viewModelStoreOwner = viewModelStoreOwner)
+    val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
+        "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
+    }
+    val viewModel =
+        viewModel<AmityPostMenuViewModel>(viewModelStoreOwner = viewModelStoreOwner)
 
-	val dialogState by viewModel.dialogUIState.collectAsState()
+    val dialogState by viewModel.dialogUIState.collectAsState()
 
-	when (dialogState) {
-		is AmityPostMenuDialogUIState.OpenConfirmDeleteDialog -> {
-			val data = dialogState as AmityPostMenuDialogUIState.OpenConfirmDeleteDialog
-			if (data.postId == post.getPostId()) {
-				AmityAlertDialog(
-					dialogTitle = context.getString(R.string.amity_delete_post_title),
-					dialogText = context.getString(R.string.amity_delete_post_warning_message),
-					confirmText = context.getString(R.string.amity_delete),
-					dismissText = context.getString(R.string.amity_cancel),
-					onConfirmation = {
-						AmityPostComposerHelper.deletePost(data.postId)
-						viewModel.deletePost(
-							postId = data.postId,
-							onSuccess = {
-								context.showToast("Post deleted")
-								viewModel.updateDialogUIState(AmityPostMenuDialogUIState.CloseDialog)
-							},
-							onError = {
-								context.showToast("Failed to delete post")
-								viewModel.updateDialogUIState(AmityPostMenuDialogUIState.CloseDialog)
-							}
-						)
-					},
-					onDismissRequest = {
-						viewModel.updateDialogUIState(AmityPostMenuDialogUIState.CloseDialog)
-					}
-				)
-			}
-		}
+    var scope = rememberCoroutineScope()
+
+    when (dialogState) {
+        is AmityPostMenuDialogUIState.OpenConfirmDeleteDialog -> {
+            val data = dialogState as AmityPostMenuDialogUIState.OpenConfirmDeleteDialog
+            if (data.postId == post.getPostId()) {
+                AmityAlertDialog(
+                    dialogTitle = context.getString(R.string.amity_delete_post_title),
+                    dialogText = context.getString(R.string.amity_delete_post_warning_message),
+                    confirmText = context.getString(R.string.amity_delete),
+                    dismissText = context.getString(R.string.amity_cancel),
+                    onConfirmation = {
+                        AmityPostComposerHelper.deletePost(data.postId)
+                        viewModel.deletePost(
+                            postId = data.postId,
+                            onSuccess = {
+                                val text =
+                                    "Post deleted"
+                                pageScope?.showSnackbar(
+                                    message = text,
+                                    drawableRes = R.drawable.amity_ic_check_circle,
+                                    additionalHeight = 52,
+                                )
+                                viewModel.updateDialogUIState(AmityPostMenuDialogUIState.CloseDialog)
+                            },
+                            onError = {
+                                val text =
+                                    "Failed to delete post. Please try again."
+                                pageScope?.showSnackbar(
+                                    message = text,
+                                    drawableRes = R.drawable.amity_ic_snack_bar_warning,
+                                    additionalHeight = 52,
+                                )
+                                viewModel.updateDialogUIState(AmityPostMenuDialogUIState.CloseDialog)
+                            }
+                        )
+                    },
+                    onDismissRequest = {
+                        viewModel.updateDialogUIState(AmityPostMenuDialogUIState.CloseDialog)
+                    }
+                )
+            }
+        }
 
         is AmityPostMenuDialogUIState.OpenConfirmEditDialog -> {
             val data = dialogState as AmityPostMenuDialogUIState.OpenConfirmEditDialog
@@ -114,7 +135,7 @@ fun AmityPostContentComponent(
                     confirmText = "Edit",
                     dismissText = context.getString(R.string.amity_cancel),
                     onConfirmation = {
-						viewModel.updateDialogUIState(AmityPostMenuDialogUIState.CloseDialog)
+                        viewModel.updateDialogUIState(AmityPostMenuDialogUIState.CloseDialog)
                         behavior.goToPostComposerPage(
                             context = context,
                             post = post,
@@ -127,26 +148,58 @@ fun AmityPostContentComponent(
             }
         }
 
-		AmityPostMenuDialogUIState.CloseDialog -> {
-			viewModel.updateDialogUIState(AmityPostMenuDialogUIState.CloseDialog)
-		}
-	}
+        is AmityPostMenuDialogUIState.OpenConfirmClosePollDialog -> {
+            val data = dialogState as AmityPostMenuDialogUIState.OpenConfirmClosePollDialog
+            AmityAlertDialog(
+                dialogTitle = "Close poll?",
+                dialogText = "The Poll duration you've set will be ignored and your poll will be closed immediately.",
+                confirmText = "Close poll",
+                dismissText = context.getString(R.string.amity_cancel),
+                onConfirmation = {
+                    scope.launch {
+                        try {
+                            AmitySocialClient.newPollRepository()
+                                .closePoll(data.pollId)
+                                .await()
 
-	var isVisible by remember {
-		mutableStateOf(false)
-	}
+                        } catch (e: Exception) {
+                            val text =
+                                "Oops, something went wrong."
+                            pageScope?.showSnackbar(
+                                message = text,
+                                drawableRes = R.drawable.amity_ic_snack_bar_warning,
+                                additionalHeight = 52,
+                            )
+                        }
+                    }
+                    viewModel.updateDialogUIState(AmityPostMenuDialogUIState.CloseDialog)
+                },
+                onDismissRequest = {
+                    viewModel.updateDialogUIState(AmityPostMenuDialogUIState.CloseDialog)
+                }
+            )
+        }
 
-	LaunchedEffect(isVisible) {
-		if (!isPostDetailPage && isVisible) {
-			post
-				.analytics()
-				.markAsViewed()
-		}
-	}
+        AmityPostMenuDialogUIState.CloseDialog -> {
+            viewModel.updateDialogUIState(AmityPostMenuDialogUIState.CloseDialog)
+        }
+    }
 
-	AmityBaseComponent(componentId = "post_content") {
-		Column(
-			modifier = modifier
+    var isVisible by remember {
+        mutableStateOf(false)
+    }
+
+    LaunchedEffect(isVisible) {
+        if (!isPostDetailPage && isVisible) {
+            post
+                .analytics()
+                .markAsViewed()
+        }
+    }
+
+    AmityBaseComponent(componentId = "post_content") {
+        Column(
+            modifier = modifier
                 .fillMaxWidth()
                 .background(AmityTheme.colors.background)
                 .clickableWithoutRipple {
@@ -156,95 +209,115 @@ fun AmityPostContentComponent(
                 }
                 .isVisible { isVisible = it }
                 .testTag(getAccessibilityId())
-		) {
-			AmityPostHeaderElement(
-				modifier = modifier,
-				componentScope = getComponentScope(),
-				post = post,
-				hideMenuButton = hideMenuButton,
-				style = style,
-				category = category,
-				hideTarget = hideTarget,
-				onMenuClick = {
-					viewModel.updateSheetUIState(AmityPostMenuSheetUIState.OpenSheet(it.getPostId()))
-				}
-			)
-			if (post.getChildren().any { it.getData() is AmityPost.Data.LIVE_STREAM }) {
-				AmityPostLivestreamElement(
-					modifier = modifier,
-					post = post
-				)
-			} else {
-				AmityPostContentElement(
-					modifier = modifier,
-					post = post,
-					onClick = {
-						if (!isPostDetailPage) {
-							onTapAction()
-						}
-					},
-					onMentionedUserClick = {
-//                    behavior.goToUserProfilePage(
-//                        context = context,
-//                        userId = it,
-//                    )
-					},
-				)
-				AmityPostPreviewLinkView(
-					modifier = modifier,
-					post = post,
-				)
-				AmityPostMediaElement(
-					modifier = modifier,
-					post = post
-				)
-			}
-			if (viewModel.isNotMember(post)) {
-				AmityPostNonMemberSection()
-			} else {
-				AmityPostEngagementView(
-					modifier = modifier,
-					componentScope = getComponentScope(),
-					post = post,
-					isPostDetailPage = isPostDetailPage,
-				)
-			}
+        ) {
+            AmityPostHeaderElement(
+                modifier = modifier,
+                componentScope = getComponentScope(),
+                post = post,
+                hideMenuButton = hideMenuButton,
+                style = style,
+                category = category,
+                hideTarget = hideTarget,
+                onMenuClick = {
+                    viewModel.updateSheetUIState(AmityPostMenuSheetUIState.OpenSheet(it.getPostId()))
+                }
+            )
+            if (post.getChildren().any { it.getData() is AmityPost.Data.LIVE_STREAM }) {
+                AmityPostLivestreamElement(
+                    modifier = modifier,
+                    post = post
+                )
+            } else if (post.getChildren().any { it.getData() is AmityPost.Data.POLL }) {
 
-			AmityPostMenuBottomSheet(
-				post = post,
+                AmityPostPollElement(
+                    modifier = modifier,
+                    componentScope = getComponentScope(),
+                    post = post,
+                    style = style,
+                    onClick = {
+                        if (!isPostDetailPage) {
+                            onTapAction()
+                        }
+                    },
+                    onMentionedUserClick = {
+                        behavior.goToUserProfilePage(
+                            context = context,
+                            userId = it,
+                        )
+                    },
+                )
+            } else {
+                AmityPostContentElement(
+                    modifier = modifier,
+                    post = post,
+                    style = style,
+                    onClick = {
+                        if (!isPostDetailPage) {
+                            onTapAction()
+                        }
+                    },
+                    onMentionedUserClick = {
+                        behavior.goToUserProfilePage(
+                            context = context,
+                            userId = it,
+                        )
+                    },
+                )
+                AmityPostPreviewLinkView(
+                    modifier = modifier,
+                    post = post,
+                )
+                AmityPostMediaElement(
+                    modifier = modifier,
+                    post = post
+                )
+            }
+            if (viewModel.isNotMember(post)) {
+                AmityPostNonMemberSection()
+            } else {
+                AmityPostEngagementView(
+                    modifier = modifier,
+                    componentScope = getComponentScope(),
+                    post = post,
+                    isPostDetailPage = isPostDetailPage,
+                )
+            }
+
+            AmityPostMenuBottomSheet(
+                post = post,
                 category = category
-			)
-		}
-	}
+            )
+        }
+    }
 }
 
 @Composable
 fun AmityPostShimmer(
-	modifier: Modifier = Modifier
+	modifier: Modifier = Modifier,
 ) {
-	Column(
-		verticalArrangement = Arrangement.spacedBy(12.dp),
-		modifier = modifier
+    Column(
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        modifier = modifier
             .fillMaxWidth()
             .height(200.dp)
             .padding(horizontal = 16.dp, vertical = 12.dp)
-	) {
-		Row {
-			Box(
-				modifier = modifier
+    ) {
+        Row {
+            Box(
+                modifier = modifier
                     .size(40.dp)
                     .shimmerBackground(
                         color = AmityTheme.colors.baseShade4,
                         shape = RoundedCornerShape(40.dp)
                     )
-			)
-			Column(
-				verticalArrangement = Arrangement.SpaceBetween,
-				modifier = modifier
+            )
+            Column(
+                verticalArrangement = Arrangement.SpaceBetween,
+                modifier = modifier
                     .height(40.dp)
                     .padding(horizontal = 8.dp, vertical = 6.dp)
-			) {
-				Box(
+            ) {
+                Box(
                     Modifier
                         .width(120.dp)
                         .height(8.dp)
@@ -252,8 +325,8 @@ fun AmityPostShimmer(
                             color = AmityTheme.colors.baseShade4,
                             shape = RoundedCornerShape(12.dp)
                         )
-				)
-				Box(
+                )
+                Box(
                     Modifier
                         .width(88.dp)
                         .height(8.dp)
@@ -261,11 +334,11 @@ fun AmityPostShimmer(
                             color = AmityTheme.colors.baseShade4,
                             shape = RoundedCornerShape(12.dp)
                         )
-				)
-			}
-		}
+                )
+            }
+        }
 
-		Box(
+        Box(
             Modifier
                 .width(240.dp)
                 .height(8.dp)
@@ -273,8 +346,8 @@ fun AmityPostShimmer(
                     color = AmityTheme.colors.baseShade4,
                     shape = RoundedCornerShape(12.dp)
                 )
-		)
-		Box(
+        )
+        Box(
             Modifier
                 .width(300.dp)
                 .height(8.dp)
@@ -282,8 +355,8 @@ fun AmityPostShimmer(
                     color = AmityTheme.colors.baseShade4,
                     shape = RoundedCornerShape(12.dp)
                 )
-		)
-		Box(
+        )
+        Box(
             Modifier
                 .width(180.dp)
                 .height(8.dp)
@@ -291,10 +364,10 @@ fun AmityPostShimmer(
                     color = AmityTheme.colors.baseShade4,
                     shape = RoundedCornerShape(12.dp)
                 )
-		)
-	}
-}
+        )
+    }
 
+}
 
 @Composable
 fun AmityMediaPostShimmer(

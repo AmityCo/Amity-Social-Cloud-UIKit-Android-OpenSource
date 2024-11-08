@@ -64,7 +64,7 @@ fun AmityPostEngagementView(
         mutableIntStateOf(post.getReactionCount())
     }
 
-    val reactionCount = pluralStringResource(
+    val reactionCount = if(localReactionCount == 0) "0" else pluralStringResource(
         id = R.plurals.amity_feed_reaction_count,
         count = localReactionCount,
         localReactionCount.readableNumber()
@@ -87,7 +87,7 @@ fun AmityPostEngagementView(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = if (isPostDetailPage) 8.dp else 0.dp)
+            .padding(start = 16.dp, end = 16.dp, bottom = 0.dp, top = if (isPostDetailPage) 8.dp else 0.dp)
     ) {
         if (isPostDetailPage) {
             Box(

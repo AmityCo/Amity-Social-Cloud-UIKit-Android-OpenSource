@@ -16,6 +16,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityPostPreviewLinkView
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.showToast
+import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponentStyle
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostContentElement
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostMediaElement
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuDialogUIState
@@ -85,6 +86,10 @@ fun AmityPendingPostContent(
 
         }
 
+        is AmityPostMenuDialogUIState.OpenConfirmClosePollDialog -> {
+
+        }
+
         is AmityPostMenuDialogUIState.CloseDialog -> {
             viewModel.updateDialogUIState(AmityPostMenuDialogUIState.CloseDialog)
         }
@@ -112,6 +117,7 @@ fun AmityPendingPostContent(
             AmityPostContentElement(
                 modifier = modifier,
                 post = post,
+                style = AmityPostContentComponentStyle.FEED,
                 onClick = {},
             )
             AmityPostPreviewLinkView(

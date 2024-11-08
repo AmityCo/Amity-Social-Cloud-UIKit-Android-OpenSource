@@ -26,6 +26,7 @@ import com.google.android.material.shape.ShapeAppearanceModel
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import org.joda.time.DateTime
+import org.joda.time.Duration
 import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
@@ -307,6 +308,37 @@ fun Double.formatCount(): String {
     } else {
         val exp = (ln(this) / ln(1000.0)).toInt()
         formatter.format(this / 1000.0.pow(exp.toDouble())) + suffixChars[exp - 1]
+    }
+}
+
+fun DateTime.readableTimeLeft(startTime: DateTime = DateTime.now()): String {
+
+    if (this.isBefore(startTime) || this == startTime) {
+        return "0 m left"
+    }
+
+    val duration = Duration(startTime, this)
+
+    // Calculate total hours and days
+    val totalHours = duration.standardHours
+    val totalMinutes = duration.standardMinutes
+    val totalDays = duration.standardDays
+
+    return when {
+        totalDays > 0 -> {
+            // Round up to the next day if hours are greater than 0
+            val daysLeft = if (duration.standardHours % 24 > 0) totalDays + 1 else totalDays
+            "$daysLeft d left"
+        }
+        totalHours > 0 -> {
+            "$totalHours h left"
+        }
+        totalMinutes > 0 -> {
+            "$totalMinutes m left"
+        }
+        else -> {
+            "0 m left" // In case the target time is in the past or very close to now
+        }
     }
 }
 

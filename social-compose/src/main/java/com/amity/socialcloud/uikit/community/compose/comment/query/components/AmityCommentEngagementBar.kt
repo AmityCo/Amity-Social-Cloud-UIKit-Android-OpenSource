@@ -86,8 +86,7 @@ fun AmityCommentEngagementBar(
 
                 Text(
                     text = context.getString(
-                        if (isReacted) R.string.amity_liked
-                        else R.string.amity_like
+                        R.string.amity_like
                     ),
                     style = AmityTheme.typography.caption.copy(
                         color = if (isReacted) AmityTheme.colors.primary

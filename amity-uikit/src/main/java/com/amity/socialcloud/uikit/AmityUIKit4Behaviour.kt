@@ -21,6 +21,7 @@ import com.amity.socialcloud.uikit.community.compose.socialhome.components.Amity
 import com.amity.socialcloud.uikit.community.compose.story.create.AmityCreateStoryPageBehavior
 import com.amity.socialcloud.uikit.community.compose.story.target.AmityStoryTabComponentBehavior
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageBehavior
+import com.amity.socialcloud.uikit.community.compose.target.poll.AmityPollTargetSelectionPageBehavior
 import com.amity.socialcloud.uikit.community.compose.target.post.AmityPostTargetSelectionPageBehavior
 import com.amity.socialcloud.uikit.community.compose.target.story.AmityStoryTargetSelectionPageBehavior
 import com.amity.socialcloud.uikit.community.compose.user.blocked.AmityBlockedUsersPageBehavior
@@ -72,6 +73,13 @@ class AmityUIKit4Behavior {
         set(value) {
             field = value
             AmitySocialBehaviorHelper.postTargetSelectionPageBehavior = value
+        }
+
+    var pollTargetSelectionPageBehavior: AmityPollTargetSelectionPageBehavior =
+        AmitySocialBehaviorHelper.pollTargetSelectionPageBehavior
+        set(value) {
+            field = value
+            AmitySocialBehaviorHelper.pollTargetSelectionPageBehavior = value
         }
 
     var storyTargetSelectionPageBehavior: AmityStoryTargetSelectionPageBehavior =

@@ -3,6 +3,7 @@ package com.amity.socialcloud.uikit.community.compose.community.profile
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.uikit.common.behavior.AmityBaseBehavior
 import com.amity.socialcloud.uikit.common.behavior.AmityBaseBehaviorContext
@@ -12,6 +13,7 @@ import com.amity.socialcloud.uikit.community.compose.community.setting.AmityComm
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerOptions
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerPageActivity
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostTargetType
+import com.amity.socialcloud.uikit.community.compose.post.composer.poll.AmityPollPostComposerPageActivity
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostCategory
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetailPageActivity
 import com.amity.socialcloud.uikit.community.compose.story.create.AmityCreateStoryPageActivity
@@ -74,6 +76,18 @@ open class AmityCommunityProfilePageBehavior : AmityBaseBehavior() {
             context = context.pageContext,
             targetId = context.community?.getCommunityId()!!,
             targetType = AmityStory.TargetType.COMMUNITY,
+        )
+        context.pageContext.startActivity(intent)
+    }
+
+    open fun goToCreatePollPage(
+        context: Context,
+    ) {
+        val intent = AmityPollPostComposerPageActivity.newIntent(
+            context = context.pageContext,
+            targetId = context.community?.getCommunityId()!!,
+            targetType = AmityPost.TargetType.COMMUNITY,
+            community = context.community,
         )
         context.pageContext.startActivity(intent)
     }

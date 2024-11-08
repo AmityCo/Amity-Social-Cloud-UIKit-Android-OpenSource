@@ -1,16 +1,26 @@
 package com.amity.socialcloud.uikit.community.compose.socialhome
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCompositionContext
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,7 +36,9 @@ import com.amity.socialcloud.uikit.community.compose.socialhome.components.Amity
 import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmityNewsFeedComponent
 import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmitySocialHomeTopNavigationComponent
 import com.amity.socialcloud.uikit.community.compose.socialhome.elements.AmitySocialHomeTabButton
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AmitySocialHomePage(
     modifier: Modifier = Modifier,
@@ -39,6 +51,11 @@ fun AmitySocialHomePage(
     var selectedTab by remember {
         mutableStateOf(AmitySocialHomePageTab.NEWSFEED)
     }
+
+    val pagerState = rememberPagerState(
+        pageCount = { 3 }
+    )
+    val scrollScope = rememberCoroutineScope()
 
     AmityBasePage(
         pageId = "social_home_page"
@@ -66,9 +83,9 @@ fun AmitySocialHomePage(
             LazyRow(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
                 modifier = modifier
                     .wrapContentHeight()
-                    .padding(horizontal = 16.dp, vertical = 12.dp)
             ) {
                 item {
                     AmityBaseElement(
@@ -82,6 +99,9 @@ fun AmitySocialHomePage(
                             modifier = modifier.testTag(getAccessibilityId()),
                         ) {
                             selectedTab = it
+                            scrollScope.launch {
+                                pagerState.scrollToPage(0)
+                            }
                         }
                     }
                 }
@@ -97,6 +117,9 @@ fun AmitySocialHomePage(
                             modifier = modifier.testTag(getAccessibilityId()),
                         ) {
                             selectedTab = it
+                            scrollScope.launch {
+                                pagerState.scrollToPage(1)
+                            }
                         }
                     }
                 }
@@ -112,6 +135,9 @@ fun AmitySocialHomePage(
                             modifier = modifier.testTag(getAccessibilityId()),
                         ) {
                             selectedTab = it
+                            scrollScope.launch {
+                                pagerState.scrollToPage(2)
+                            }
                         }
                     }
                 }
@@ -121,28 +147,39 @@ fun AmitySocialHomePage(
                 modifier = modifier
                     .fillMaxSize()
             ) {
-                when (selectedTab) {
-                    AmitySocialHomePageTab.NEWSFEED -> {
-                        AmityNewsFeedComponent(
-                            pageScope = getPageScope(),
-                            onExploreRequested = {
-                                selectedTab = AmitySocialHomePageTab.EXPLORE
-                            }
-                        )
-                    }
 
-                    AmitySocialHomePageTab.EXPLORE -> {
-                        AmityExploreComponent(
-                            pageScope = getPageScope(),
-                        )
-                    }
+                HorizontalPager(
+                    state = pagerState,
+                    beyondBoundsPageCount = 6,
+                    userScrollEnabled = false,
+                    ) { page ->
+                    when (page) {
+                        0 -> {
+                            AmityNewsFeedComponent(
+                                pageScope = getPageScope(),
+                                onExploreRequested = {
+                                    selectedTab = AmitySocialHomePageTab.EXPLORE
+                                }
+                            )
+                        }
 
-                    AmitySocialHomePageTab.MY_COMMUNITIES -> {
-                        AmityMyCommunitiesComponent(
-                            pageScope = getPageScope(),
-                        )
+                        1 -> {
+                            AmityExploreComponent(
+                                pageScope = getPageScope(),
+                            )
+                        }
+
+                        2 -> {
+                            AmityMyCommunitiesComponent(
+                                pageScope = getPageScope(),
+                            )
+                        }
+                        else -> {
+
+                        }
                     }
                 }
+
             }
         }
     }

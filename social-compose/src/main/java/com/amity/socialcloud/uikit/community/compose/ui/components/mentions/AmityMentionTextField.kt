@@ -24,6 +24,7 @@ fun AmityMentionTextField(
     mentionMetadata: List<AmityMentionMetadata.USER> = emptyList(),
     mentionees: List<AmityMentionee> = emptyList(),
     onValueChange: (String) -> Unit = {},
+    isEnabled: Boolean = true,
     onMentionAdded: () -> Unit = {},
     onQueryToken: (String?) -> Unit = {},
     onUserMentions: (List<AmityMentionMetadata.USER>) -> Unit = {},
@@ -80,6 +81,8 @@ fun AmityMentionTextField(
                 view.insertMention(AmityUserMention(it))
                 onMentionAdded()
             }
+
+            view.isFocusable = isEnabled
         }
     )
 }

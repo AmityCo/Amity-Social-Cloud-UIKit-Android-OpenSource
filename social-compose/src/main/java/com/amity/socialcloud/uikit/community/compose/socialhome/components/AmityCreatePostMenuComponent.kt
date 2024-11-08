@@ -27,6 +27,7 @@ import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.uikit.common.common.isNotEmptyOrBlank
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
@@ -37,6 +38,7 @@ import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getText
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
+import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostTargetType
 import com.amity.socialcloud.uikit.community.compose.target.AmityPostTargetSelectionPageType
 
@@ -60,6 +62,10 @@ fun AmityCreatePostMenuComponent(
     }
     val targetStoryBehavior by lazy {
         AmitySocialBehaviorHelper.storyTargetSelectionPageBehavior
+    }
+
+    val targetPollBehavior by lazy {
+        AmitySocialBehaviorHelper.pollTargetSelectionPageBehavior
     }
 
     val launcher = rememberLauncherForActivityResult(
@@ -176,8 +182,6 @@ fun AmityCreatePostMenuComponent(
                     }
                 )
 
-                /*
-                // TODO: 17/6/24 enable when feature is ready
                 DropdownMenuItem(
                     text = {
                         Row(
@@ -186,7 +190,7 @@ fun AmityCreatePostMenuComponent(
                             modifier = modifier.padding(horizontal = 8.dp),
                         ) {
                             Icon(
-                                painter = painterResource(id = R.drawable.ic_amity_ic_poll_create),
+                                painter = painterResource(R.drawable.ic_amity_ic_poll_create),
                                 contentDescription = "Create Poll Post",
                                 tint = AmityTheme.colors.base,
                                 modifier = modifier.size(20.dp)
@@ -200,13 +204,21 @@ fun AmityCreatePostMenuComponent(
                         }
                     },
                     onClick = {
-                        expanded = false
-                        behavior.goToTargetSelectionPage(
-                            context = context,
-                            type = AmityTargetSelectionPageType.POLL
-                        )
+                        onDismiss()
+                        if (targetType == CreatePostTargetType.COMMUNITY && targetId?.isNotEmptyOrBlank() == true) {
+                            targetPollBehavior.goToPollPostComposerPage(
+                                context = context,
+                                launcher = launcher,
+                                targetId = targetId,
+                                targetType = AmityPost.TargetType.COMMUNITY,
+                            )
+                        } else {
+                            behavior.goToSelectPollTargetPage(context)
+                        }
                     }
                 )
+                /*
+                // TODO: 17/6/24 enable when feature is ready
                 DropdownMenuItem(
                     text = {
                         Row(

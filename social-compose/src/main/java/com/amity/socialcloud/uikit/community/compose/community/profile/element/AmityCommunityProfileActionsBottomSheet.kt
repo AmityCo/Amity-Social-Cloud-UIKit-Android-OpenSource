@@ -124,6 +124,21 @@ fun AmityCommunityProfileActionsContainer(
                 )
             }
 
+            AmityBottomSheetActionItem(
+                icon = R.drawable.ic_amity_ic_poll_create,
+                text = "Poll",
+                modifier = modifier,
+            ) {
+                onDismiss()
+                behavior.goToCreatePollPage(
+                    AmityCommunityProfilePageBehavior.Context(
+                        pageContext = context,
+                        activityLauncher = launcher,
+                        community = community,
+                    )
+                )
+            }
+
         }
     }
 }

@@ -9,6 +9,7 @@ import androidx.paging.compose.LazyPagingItems
 import com.amity.socialcloud.sdk.model.core.pin.AmityPinnedPost
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.ui.elements.AmityNewsFeedDivider
+import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.utils.isSupportedDataTypes
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostCategory
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponent
@@ -17,6 +18,7 @@ import com.amity.socialcloud.uikit.community.compose.ui.components.feed.communit
 
 fun LazyListScope.amityCommunityPinnedFeedLLS(
     modifier: Modifier = Modifier,
+    pageScope: AmityComposePageScope? = null,
     pinPosts: LazyPagingItems<AmityPinnedPost>,
     announcementPosts: LazyPagingItems<AmityPinnedPost>,
     onClick: (AmityPost) -> Unit,
@@ -35,6 +37,7 @@ fun LazyListScope.amityCommunityPinnedFeedLLS(
 
             AmityPostContentComponent(
                 post = post,
+                pageScope = pageScope,
                 style = AmityPostContentComponentStyle.FEED,
                 category = AmityPostCategory.PIN,
                 hideMenuButton = false,

@@ -131,6 +131,8 @@ class AmitySocialHomePageViewModel : AmityBaseViewModel() {
     fun getGlobalPinnedPosts(): Flow<List<AmityPinnedPost>> {
         return AmitySocialClient.newPostRepository()
             .getGlobalPinnedPosts()
+            .onBackpressureBuffer()
+            .throttleLatest(2000, TimeUnit.MILLISECONDS)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .asFlow()
