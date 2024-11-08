@@ -120,13 +120,10 @@ class AmityFeatureListActivity : AppCompatActivity() {
                 )
             }
             playground.setOnClickListener {
-//                val intent = Intent(
-//                    this@AmityFeatureListActivity,
-//                    AmityPlaygroundActivity::class.java
-//                )
-                //val categoryId = "58c355dcaf3f821538a9ff41cd1d75cd"
-                //val intent = AmityCommunitiesByCategoryPageActivity.newIntent(this@AmityFeatureListActivity, categoryId)
-                val intent = AmityAllCategoriesPageActivity.newIntent(this@AmityFeatureListActivity)
+                val intent = Intent(
+                    this@AmityFeatureListActivity,
+                    AmityPlaygroundActivity::class.java
+                )
                 startActivity(intent)
             }
         }

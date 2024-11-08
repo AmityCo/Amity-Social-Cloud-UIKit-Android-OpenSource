@@ -71,7 +71,8 @@ fun calculateDynamicWeight(index: Int, textWidths: List<Int>): Float {
     return if (totalWidth == 0) {
         1f // Default weight if all text widths are 0 (initial state)
     } else {
-        textWidths[index].toFloat() / totalWidth // Relative weight based on text width
+        val calculatedWeight = textWidths[index].toFloat() / totalWidth // Relative weight based on text width
+        if(calculatedWeight == 0.0f) 0.01f else calculatedWeight
     }
 }
 

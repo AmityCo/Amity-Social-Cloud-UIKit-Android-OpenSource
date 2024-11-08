@@ -173,6 +173,7 @@ fun AmityNewsFeedComponent(
                     if (posts.itemCount > 0) {
                         amityGlobalPinnedFeedLLS(
                             modifier = modifier,
+                            pageScope = pageScope,
                             pinnedPosts = pinnedPosts,
                             onClick = {
                                 behavior.goToPostDetailPage(

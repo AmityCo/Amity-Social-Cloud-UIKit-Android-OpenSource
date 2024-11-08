@@ -60,6 +60,18 @@ fun AmityUserActionsBottomSheet(
                     userId = user.getUserId(),
                 )
             }
+
+            AmityBottomSheetActionItem(
+                icon = R.drawable.ic_amity_ic_poll_create,
+                text = "Poll",
+                modifier = modifier,
+            ) {
+                onDismiss()
+                behavior.goToPollComposerPage(
+                    context = context,
+                    userId = user.getUserId(),
+                )
+            }
         }
     }
 }

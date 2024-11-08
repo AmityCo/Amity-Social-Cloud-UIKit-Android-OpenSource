@@ -13,6 +13,7 @@ import com.amity.socialcloud.sdk.model.core.ad.AmityAdPlacement
 import com.amity.socialcloud.sdk.model.core.pin.AmityPinnedPost
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.ad.AmityAdInjector
+import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageBehavior
 import com.amity.socialcloud.uikit.community.compose.paging.feed.community.amityCommunityFeedLLS
@@ -25,6 +26,7 @@ import java.util.concurrent.TimeUnit
 @Composable
 fun AmityCommunityFeedComponent(
     modifier: Modifier = Modifier,
+    pageScope: AmityComposePageScope? = null,
     communityId: String,
     shouldRefresh: Boolean = false,
 ) {
@@ -86,6 +88,7 @@ fun AmityCommunityFeedComponent(
     LazyColumn {
         amityCommunityFeedLLS(
             modifier = modifier,
+            pageScope = pageScope,
             communityPosts = communityPosts,
             pinPosts = pinPosts,
             announcementPosts = announcementPosts,

@@ -116,7 +116,9 @@ fun AmityPostMenuBottomSheet(
                         modifier = modifier
                             .padding(start = 16.dp, end = 16.dp, bottom = 64.dp)
                     ) {
-                        if (post.getCreatorId() == AmityCoreClient.getUserId()) {
+                        val isPollPost = post.getChildren().any { it.getData() is AmityPost.Data.POLL }
+
+                        if (post.getCreatorId() == AmityCoreClient.getUserId() && !isPollPost) {
                             AmityBottomSheetActionItem(
                                 icon = R.drawable.amity_ic_edit_profile,
                                 text = "Edit post",
@@ -137,6 +139,22 @@ fun AmityPostMenuBottomSheet(
                                         post = post,
                                     )
                                 }
+                            }
+                        }
+
+                        val postData = post.getChildren().firstOrNull()?.getData() as? AmityPost.Data.POLL
+                        val poll = postData?.getPoll()?.blockingFirst()
+                        val isPollActive = poll?.getClosedAt()?.isAfterNow ?: false
+                        if (post.getCreatorId() == AmityCoreClient.getUserId() && post.getReviewStatus() != AmityReviewStatus.UNDER_REVIEW && isPollActive) {
+                            AmityBottomSheetActionItem(
+                                icon = R.drawable.ic_amity_ic_poll_create,
+                                text = "Close poll",
+                                modifier = modifier.testTag("bottom_sheet_edit_button"),
+                            ) {
+                                viewModel.updateSheetUIState(AmityPostMenuSheetUIState.CloseSheet)
+                                viewModel.updateDialogUIState(
+                                    AmityPostMenuDialogUIState.OpenConfirmClosePollDialog(pollId = poll!!.getPollId())
+                                )
                             }
                         }
 

@@ -6,6 +6,7 @@ import androidx.compose.ui.Modifier
 import com.amity.socialcloud.sdk.model.core.pin.AmityPinnedPost
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.ui.elements.AmityNewsFeedDivider
+import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.utils.isSupportedDataTypes
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostCategory
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponent
@@ -14,6 +15,7 @@ import com.amity.socialcloud.uikit.community.compose.post.detail.components.Amit
 
 fun LazyListScope.amityGlobalPinnedFeedLLS(
     modifier: Modifier = Modifier,
+    pageScope: AmityComposePageScope? = null,
     pinnedPosts: State<List<AmityPinnedPost>>,
     onClick: (AmityPost) -> Unit,
 ) {
@@ -30,6 +32,7 @@ fun LazyListScope.amityGlobalPinnedFeedLLS(
 
             AmityPostContentComponent(
                 post = post,
+                pageScope = pageScope,
                 style = AmityPostContentComponentStyle.FEED,
                 category = AmityPostCategory.GLOBAL,
                 hideMenuButton = false,

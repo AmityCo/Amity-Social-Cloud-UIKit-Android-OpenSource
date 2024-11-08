@@ -10,12 +10,14 @@ import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.ui.elements.AmityExpandableText
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponentStyle
 import com.google.gson.JsonObject
 
 @Composable
 fun AmityPostContentElement(
     modifier: Modifier = Modifier,
     post: AmityPost,
+    style: AmityPostContentComponentStyle,
     onClick: () -> Unit,
     onMentionedUserClick: (String) -> Unit = {},
 ) {
@@ -35,6 +37,7 @@ fun AmityPostContentElement(
             mentionGetter = mentionGetter,
             mentionees = post.getMentionees(),
             style = AmityTheme.typography.body,
+            intialExpand = style == AmityPostContentComponentStyle.DETAIL,
             onClick = onClick,
             onMentionedUserClick = onMentionedUserClick,
         )

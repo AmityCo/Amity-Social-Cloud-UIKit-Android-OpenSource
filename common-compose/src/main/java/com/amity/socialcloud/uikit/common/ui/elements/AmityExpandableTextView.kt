@@ -34,6 +34,7 @@ fun AmityExpandableText(
     mentionees: List<AmityMentionee> = emptyList(),
     style: TextStyle = AmityTheme.typography.body,
     previewLines: Int = 8,
+    intialExpand: Boolean = false,
     onClick: () -> Unit = {},
     onMentionedUserClick: (String) -> Unit = {},
 ) {
@@ -60,7 +61,7 @@ fun AmityExpandableText(
             )
         }
         var isReadMoreClicked by rememberSaveable(text, trimmedText) {
-            mutableStateOf(text == trimmedText)
+            mutableStateOf(intialExpand || text == trimmedText)
         }
 
         val annotatedString = buildAnnotatedString {

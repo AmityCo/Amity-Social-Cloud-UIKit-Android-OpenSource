@@ -183,7 +183,8 @@ fun AmityUserAvatarView(
                 40.dp -> 20.sp
                 32.dp -> 17.sp
                 28.dp -> 15.sp
-                else -> 14.sp
+                16.dp -> 10.sp
+                else -> 10.sp
             }
 
             val lineHeight = when (size) {
@@ -192,7 +193,8 @@ fun AmityUserAvatarView(
                 40.dp -> 24.sp
                 32.dp -> 20.sp
                 28.dp -> 20.sp
-                else -> 14.sp
+                16.dp -> 13.sp
+                else -> 13.sp
             }
 
             Box(

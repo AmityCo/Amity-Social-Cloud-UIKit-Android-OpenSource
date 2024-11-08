@@ -44,6 +44,7 @@ fun LazyListScope.amityGlobalFeedLLS(
         }
         AmityPostContentComponent(
             post = post,
+            pageScope = pageScope,
             style = AmityPostContentComponentStyle.FEED,
             hideMenuButton = false,
             onTapAction = {
@@ -71,6 +72,7 @@ fun LazyListScope.amityGlobalFeedLLS(
 
                         AmityPostContentComponent(
                             post = post,
+                            pageScope = pageScope,
                             style = AmityPostContentComponentStyle.FEED,
                             hideMenuButton = false,
                             onTapAction = {

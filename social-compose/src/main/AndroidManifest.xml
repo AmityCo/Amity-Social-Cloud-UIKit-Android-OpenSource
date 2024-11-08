@@ -127,6 +127,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/AmitySocialTheme" />
         <activity
+            android:name=".target.poll.AmityPollTargetSelectionPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme" />
+        <activity
             android:name=".community.bycategory.AmityCommunitiesByCategoryPageActivity"
             android:configChanges="uiMode"
             android:screenOrientation="portrait"
@@ -170,6 +175,12 @@
             android:theme="@style/AmitySocialTheme" />
         <activity
             android:name=".livestream.AmityLivestreamPlayerPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".post.composer.poll.AmityPollPostComposerPageActivity"
             android:configChanges="uiMode"
             android:screenOrientation="portrait"
             android:theme="@style/AmitySocialTheme"

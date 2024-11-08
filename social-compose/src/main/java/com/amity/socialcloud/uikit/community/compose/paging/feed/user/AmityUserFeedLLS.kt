@@ -124,6 +124,7 @@ fun LazyListScope.amityUserFeedLLS(
                         AmityPostContentComponent(
                             modifier = modifier,
                             post = post,
+                            pageScope = pageScope,
                             style = AmityPostContentComponentStyle.FEED,
                             hideMenuButton = false,
                             hideTarget = true,

@@ -1,8 +1,11 @@
 package com.amity.socialcloud.uikit.community.compose.ui.components.mentions
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.TypedArray
 import android.graphics.Rect
 import android.util.TypedValue
+import android.view.View
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
@@ -129,9 +132,22 @@ class AmityCommentComposeView(context: Context) : MentionsEditText(context) {
             .find { it?.getUserId() == userId }
     }
 
+    @SuppressLint("DiscouragedPrivateApi")
     private fun applyStyle() {
         setBackgroundColor(ContextCompat.getColor(context, android.R.color.transparent))
         setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
+        val typedArray = context.obtainStyledAttributes(null, intArrayOf())
+        try {
+            val method =
+                View::class.java.getDeclaredMethod("initializeScrollbars", TypedArray::class.java)
+            method.invoke(this, typedArray)
+
+            typedArray.recycle()
+            isVerticalScrollBarEnabled = true
+            isScrollbarFadingEnabled = false
+        } catch (e: Exception) {
+            // unable to set scroll bar
+        }
     }
 
     fun setStyle(@ColorInt textColor: Int, @ColorInt hintColor: Int) {
