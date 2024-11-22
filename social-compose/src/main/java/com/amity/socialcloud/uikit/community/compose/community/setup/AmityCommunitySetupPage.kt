@@ -3,7 +3,6 @@ package com.amity.socialcloud.uikit.community.compose.community.setup
 import android.app.Activity
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -71,6 +70,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityTextField
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.AmityCameraUtil
+import com.amity.socialcloud.uikit.common.utils.amityStringResource
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.closePage
 import com.amity.socialcloud.uikit.common.utils.closePageWithResult
@@ -272,7 +272,11 @@ fun AmityCommunitySetupPage(
                         elementId = if (isInEditMode) "community_edit_title" else "title"
                     ) {
                         Text(
-                            text = getConfig().getText(),
+                            text = amityStringResource(
+                                configString = getConfig().getText(),
+                                id = if (isInEditMode) R.string.amity_v4_community_setup_edit_title
+                                else R.string.amity_v4_community_setup_create_title,
+                            ),
                             style = AmityTheme.typography.title,
                             modifier = modifier
                                 .fillMaxWidth()
@@ -331,7 +335,10 @@ fun AmityCommunitySetupPage(
                         elementId = "community_name_title"
                     ) {
                         Text(
-                            text = getConfig().getText(),
+                            text = amityStringResource(
+                                configString = getConfig().getText(),
+                                id = R.string.amity_v4_community_setup_name_title
+                            ),
                             style = AmityTheme.typography.title,
                             modifier = modifier.testTag(getAccessibilityId())
                         )
@@ -349,7 +356,7 @@ fun AmityCommunitySetupPage(
                 AmityTextField(
                     maxCharacters = 30,
                     text = name,
-                    hint = context.getString(R.string.amity_cc_hint),
+                    hint = amityStringResource(id = R.string.amity_v4_community_setup_name_description),
                     onValueChange = { name = it },
                 )
 
@@ -374,13 +381,18 @@ fun AmityCommunitySetupPage(
                             elementId = "community_about_title"
                         ) {
                             Text(
-                                text = getConfig().getText(),
+                                text = amityStringResource(
+                                    configString = getConfig().getText(),
+                                    id = R.string.amity_v4_community_setup_about_title,
+                                ),
                                 style = AmityTheme.typography.title,
                                 modifier = modifier.testTag(getAccessibilityId())
                             )
                         }
                         Text(
-                            text = " (Optional)",
+                            text = " " + amityStringResource(
+                                id = R.string.amity_v4_community_setup_about_optional_title,
+                            ),
                             style = AmityTheme.typography.body.copy(
                                 color = AmityTheme.colors.baseShade3,
                             )
@@ -399,7 +411,7 @@ fun AmityCommunitySetupPage(
                 AmityTextField(
                     maxCharacters = 180,
                     text = description,
-                    hint = context.getString(R.string.amity_enter_description),
+                    hint = amityStringResource(id = R.string.amity_v4_community_setup_about_description),
                     onValueChange = { description = it },
                 )
 
@@ -414,7 +426,10 @@ fun AmityCommunitySetupPage(
                     elementId = "community_category_title"
                 ) {
                     Text(
-                        text = getConfig().getText(),
+                        text = amityStringResource(
+                            configString = getConfig().getText(),
+                            id = R.string.amity_v4_community_setup_categories_title,
+                        ),
                         style = AmityTheme.typography.title,
                         modifier = modifier
                             .padding(horizontal = 16.dp)
@@ -429,7 +444,7 @@ fun AmityCommunitySetupPage(
                 ) {
                     if (selectedCategories.isEmpty()) {
                         Text(
-                            text = context.getString(R.string.amity_select_category),
+                            text = context.getString(R.string.amity_v4_community_setup_categories_description),
                             style = AmityTheme.typography.body.copy(
                                 color = AmityTheme.colors.baseShade3,
                             ),
@@ -485,7 +500,10 @@ fun AmityCommunitySetupPage(
                     elementId = "community_privacy_title"
                 ) {
                     Text(
-                        text = getConfig().getText(),
+                        text = amityStringResource(
+                            configString = getConfig().getText(),
+                            id = R.string.amity_v4_community_setup_privacy_title,
+                        ),
                         style = AmityTheme.typography.title,
                         modifier = modifier
                             .padding(horizontal = 16.dp)
@@ -530,7 +548,10 @@ fun AmityCommunitySetupPage(
                             elementId = "community_privacy_public_title"
                         ) {
                             Text(
-                                text = context.getString(R.string.amity_public),
+                                text = amityStringResource(
+                                    configString = getConfig().getText(),
+                                    id = R.string.amity_v4_community_setup_privacy_public_title,
+                                ),
                                 style = AmityTheme.typography.body.copy(
                                     fontWeight = FontWeight.SemiBold
                                 ),
@@ -543,7 +564,10 @@ fun AmityCommunitySetupPage(
                             elementId = "community_privacy_public_description"
                         ) {
                             Text(
-                                text = getConfig().getText(),
+                                text = amityStringResource(
+                                    configString = getConfig().getText(),
+                                    id = R.string.amity_v4_community_setup_privacy_public_description,
+                                ),
                                 style = AmityTheme.typography.caption.copy(
                                     color = AmityTheme.colors.baseShade1,
                                     fontWeight = FontWeight.Normal,
@@ -601,7 +625,10 @@ fun AmityCommunitySetupPage(
                             elementId = "community_privacy_private_title"
                         ) {
                             Text(
-                                text = context.getString(R.string.amity_private),
+                                text = amityStringResource(
+                                    configString = getConfig().getText(),
+                                    id = R.string.amity_v4_community_setup_privacy_private_title,
+                                ),
                                 style = AmityTheme.typography.body.copy(
                                     fontWeight = FontWeight.SemiBold
                                 ),
@@ -614,7 +641,10 @@ fun AmityCommunitySetupPage(
                             elementId = "community_privacy_private_description"
                         ) {
                             Text(
-                                text = context.getString(R.string.amity_private_description),
+                                text = amityStringResource(
+                                    configString = getConfig().getText(),
+                                    id = R.string.amity_v4_community_setup_privacy_private_description,
+                                ),
                                 style = AmityTheme.typography.caption.copy(
                                     color = AmityTheme.colors.baseShade1,
                                     fontWeight = FontWeight.Normal,
@@ -648,7 +678,10 @@ fun AmityCommunitySetupPage(
                         elementId = "community_add_member_title"
                     ) {
                         Text(
-                            text = getConfig().getText(),
+                            text = amityStringResource(
+                                configString = getConfig().getText(),
+                                id = R.string.amity_v4_community_setup_create_button,
+                            ),
                             style = AmityTheme.typography.title,
                             modifier = modifier
                                 .padding(horizontal = 16.dp)
@@ -721,7 +754,12 @@ fun AmityCommunitySetupPage(
                                 )
                             }
                         } else {
-                            getPageScope().showProgressSnackbar("Creating...")
+                            getPageScope().showProgressSnackbar(
+                                context.amityStringResource(
+                                    id = R.string.amity_v4_community_setup_toast_creating
+                                )
+                            )
+
                             viewModel.createCommunity(
                                 avatarUri = avatarUri,
                                 displayName = name,
@@ -730,7 +768,11 @@ fun AmityCommunitySetupPage(
                                 categoryIds = selectedCategories.map { it.getCategoryId() },
                                 userIds = selectedUsers.map { it.getUserId() },
                                 onSuccess = {
-                                    context.showToast("Successfully created community!")
+                                    context.showToast(
+                                        context.amityStringResource(
+                                            id = R.string.amity_v4_community_setup_toast_create_success
+                                        )
+                                    )
                                     context.closePageWithResult(Activity.RESULT_OK)
                                     behavior.goToCommunityProfilePage(
                                         AmityCommunitySetupPageBehavior.Context(
@@ -740,7 +782,11 @@ fun AmityCommunitySetupPage(
                                     )
                                 },
                                 onError = {
-                                    context.showToast("Failed to create community. Please try again.")
+                                    context.showToast(
+                                        context.amityStringResource(
+                                            id = R.string.amity_v4_community_setup_toast_create_failed
+                                        )
+                                    )
                                 }
                             )
                         }
@@ -760,7 +806,11 @@ fun AmityCommunitySetupPage(
                             Spacer(modifier = modifier.width(8.dp))
                         }
                         Text(
-                            text = getConfig().getText(),
+                            text = context.amityStringResource(
+                                configString = getConfig().getText(),
+                                id = if (isInEditMode) R.string.amity_v4_community_setup_edit_button
+                                else R.string.amity_v4_community_setup_create_button
+                            ),
                             style = AmityTheme.typography.caption.copy(
                                 color = Color.White,
                             ),
@@ -777,10 +827,10 @@ fun AmityCommunitySetupPage(
 
         if (showPrivacyConfirmDialog) {
             AmityAlertDialog(
-                dialogTitle = "Change community privacy settings",
-                dialogText = "This community has globally featured posts. Changing the community from public to private will remove these posts from being featured globally",
-                confirmText = "Confirm",
-                dismissText = context.getString(R.string.amity_cancel),
+                dialogTitle = context.amityStringResource(id = R.string.amity_v4_community_setup_dialog_change_privacy_title),
+                dialogText = context.amityStringResource(id = R.string.amity_v4_community_setup_dialog_change_privacy_message),
+                confirmText = context.amityStringResource(id = R.string.amity_v4_dialog_confirm_button),
+                dismissText = context.amityStringResource(id = R.string.amity_v4_dialog_cancel_button),
                 onConfirmation = {
                     showPrivacyConfirmDialog = false
                     updateCommunity(
@@ -829,10 +879,10 @@ fun AmityCommunitySetupPage(
             if (shouldActionButtonEnable) {
                 if (isInEditMode) {
                     AmityAlertDialog(
-                        dialogTitle = context.getString(R.string.amity_ec_leave_title),
-                        dialogText = context.getString(R.string.amity_ec_leave_description),
-                        confirmText = context.getString(R.string.amity_discard),
-                        dismissText = context.getString(R.string.amity_cancel),
+                        dialogTitle = context.amityStringResource(id = R.string.amity_v4_community_setup_dialog_leave_edit_title),
+                        dialogText = context.amityStringResource(id = R.string.amity_v4_community_setup_dialog_leave_edit_description),
+                        confirmText = context.amityStringResource(id = R.string.amity_v4_dialog_discard_button),
+                        dismissText = context.amityStringResource(id = R.string.amity_v4_dialog_cancel_button),
                         confirmTextColor = AmityTheme.colors.alert,
                         onConfirmation = {
                             context.closePage()
@@ -843,10 +893,10 @@ fun AmityCommunitySetupPage(
                     )
                 } else {
                     AmityAlertDialog(
-                        dialogTitle = context.getString(R.string.amity_cc_leave_title),
-                        dialogText = context.getString(R.string.amity_cc_leave_description),
-                        confirmText = context.getString(R.string.amity_leave),
-                        dismissText = context.getString(R.string.amity_cancel),
+                        dialogTitle = context.amityStringResource(id = R.string.amity_v4_community_setup_dialog_leave_title),
+                        dialogText = context.amityStringResource(id = R.string.amity_v4_community_setup_dialog_leave_description),
+                        confirmText = context.amityStringResource(id = R.string.amity_v4_dialog_leave_button),
+                        dismissText = context.amityStringResource(id = R.string.amity_v4_dialog_cancel_button),
                         confirmTextColor = AmityTheme.colors.alert,
                         onConfirmation = {
                             context.closePage()
@@ -874,7 +924,7 @@ fun updateCommunity(
     pageScope: AmityComposePageScope,
     context: Context,
 ) {
-    pageScope.showProgressSnackbar("Updating...")
+    pageScope.showProgressSnackbar(context.amityStringResource(id = R.string.amity_v4_community_setup_toast_updating))
     viewModel.editCommunity(
         communityId = communityId,
         avatarUri = avatarUri,
@@ -883,11 +933,11 @@ fun updateCommunity(
         isPublic = isPublic,
         categoryIds = categoryIds,
         onSuccess = {
-            context.showToast("Successfully updated community profile!")
+            context.showToast(context.amityStringResource(id = R.string.amity_v4_community_setup_toast_update_success))
             context.closePageWithResult(Activity.RESULT_OK)
         },
         onError = {
-            context.showToast("Failed to save your community profile. Please try again.")
+            context.showToast(context.amityStringResource(id = R.string.amity_v4_community_setup_toast_update_failed))
             context.closePageWithResult(Activity.RESULT_OK)
         }
     )

@@ -37,7 +37,7 @@ fun AmityCommunityTargetListShimmer(
                         .size(40.dp)
                         .aspectRatio(1f)
                         .shimmerBackground(
-                            color = AmityTheme.colors.baseShade3,
+                            color = AmityTheme.colors.baseShade4,
                             shape = CircleShape
                         )
                 )
@@ -47,7 +47,7 @@ fun AmityCommunityTargetListShimmer(
                         .height(8.dp)
                         .width(140.dp)
                         .shimmerBackground(
-                            color = AmityTheme.colors.baseShade3,
+                            color = AmityTheme.colors.baseShade4,
                             shape = RoundedCornerShape(6.dp)
                         )
                 )

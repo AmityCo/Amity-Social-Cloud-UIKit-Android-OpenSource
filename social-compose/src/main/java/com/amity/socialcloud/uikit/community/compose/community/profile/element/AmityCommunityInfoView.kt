@@ -73,7 +73,9 @@ fun AmityCommunityInfoView(
 				.height(20.dp)
 				.background(color = AmityTheme.colors.baseShade4)
             ) {}
-			Row(modifier = Modifier.clickable {
+			Row(
+				verticalAlignment = Alignment.CenterVertically,
+				modifier = Modifier.clickable {
 				community?.let{
                     behavior.goToMemberListPage(
 						AmityCommunityProfilePageBehavior.Context(

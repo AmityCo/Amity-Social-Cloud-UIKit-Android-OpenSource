@@ -5,6 +5,7 @@ import android.content.ContextWrapper
 import android.content.Intent
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.annotation.StringRes
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -20,6 +21,7 @@ import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
@@ -37,6 +39,8 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
@@ -48,6 +52,7 @@ import androidx.palette.graphics.Palette.Swatch
 import com.amity.socialcloud.uikit.common.common.toDp
 import com.amity.socialcloud.uikit.common.common.views.AmityColorPaletteUtil
 import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
+import com.amity.socialcloud.uikit.common.compose.R
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
@@ -226,4 +231,23 @@ fun measureTextWidth(text: String, style: TextStyle): Dp {
     val textMeasurer = rememberTextMeasurer()
     val widthInPixels = textMeasurer.measure(text, style).size.width
     return with(LocalDensity.current) { widthInPixels.toDp() }
+}
+
+@Composable
+@ReadOnlyComposable
+fun amityStringResource(
+    configString: String = "",
+    @StringRes id: Int = R.string.empty_string,
+): String {
+    LocalConfiguration.current
+    val resources = LocalContext.current.resources
+    return configString.ifEmpty { resources.getString(id) }
+}
+
+fun Context.amityStringResource(
+    configString: String = "",
+    @StringRes id: Int = R.string.empty_string,
+): String {
+    val resources = this.resources
+    return configString.ifEmpty { resources.getString(id) }
 }

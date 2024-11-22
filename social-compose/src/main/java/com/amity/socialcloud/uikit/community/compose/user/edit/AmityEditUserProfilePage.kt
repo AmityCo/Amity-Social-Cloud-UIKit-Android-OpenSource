@@ -41,6 +41,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.coerceAtMost
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
@@ -54,6 +56,7 @@ import com.amity.socialcloud.uikit.common.utils.isKeyboardVisible
 import com.amity.socialcloud.uikit.common.utils.showToast
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.user.edit.elements.AmityEditUserAvatar
+import kotlinx.coroutines.flow.catch
 
 @Composable
 fun AmityEditUserProfilePage(
@@ -90,6 +93,17 @@ fun AmityEditUserProfilePage(
     val isKeyboardOpen by isKeyboardVisible()
     val keyboardHeight by getKeyboardHeight()
     val systemBarPadding = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()
+
+    val shouldAllowDisplayNameEditing by remember {
+        AmityCoreClient.getCoreUserSettings()
+            .map {
+                it.isAllowUpdateDisplayName()
+            }
+            .asFlow()
+            .catch {
+                emit(false)
+            }
+    }.collectAsState(false)
 
     val saveButtonBarBottomOffset by remember(systemBarPadding) {
         derivedStateOf {
@@ -175,7 +189,7 @@ fun AmityEditUserProfilePage(
                         text = displayName,
                         hint = getConfig().getText(),
                         maxCharacters = UserDisplayNameLimit,
-                        enabled = false,
+                        enabled = shouldAllowDisplayNameEditing,
                         maxLines = 3,
                         onValueChange = {
                             displayName = it

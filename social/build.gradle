@@ -36,6 +36,6 @@ dependencies {
 
     api("com.linkedin.android.spyglass:spyglass:3.0.1")
 
-    api("co.amity.android:amity-video-publisher:$amityMessagingSdkVersion")
-    api("co.amity.android:amity-video-player:$amityMessagingSdkVersion")
+    api("$amitySDKDependency:amity-video-publisher:$amityMessagingSdkVersion")
+    api("$amitySDKDependency:amity-video-player:$amityMessagingSdkVersion")
 }

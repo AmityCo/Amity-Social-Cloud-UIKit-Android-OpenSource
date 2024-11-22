@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunityPostSettings
@@ -58,6 +59,7 @@ import com.amity.socialcloud.uikit.community.compose.paging.feed.community.amity
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostCategory
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostShimmer
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @SuppressLint("UnrememberedMutableState")
@@ -105,6 +107,51 @@ fun AmityCommunityProfilePage(
             emit(false)
         }
         .collectAsState(initial = false)
+
+    val hasManageStoryPermission by AmityCoreClient.hasPermission(AmityPermission.MANAGE_COMMUNITY_STORY)
+        .atCommunity(communityId)
+        .check()
+        .asFlow()
+        .catch {
+            emit(false)
+        }
+        .collectAsState(initial = false)
+
+    val allowAllUserStoryCreation by AmitySocialClient.getSettings()
+        .asFlow()
+        .map { it.getStorySettings().isAllowAllUserToCreateStory() }
+        .catch {
+            emit(false)
+        }
+        .collectAsState(initial = false)
+
+    val isOnlyAdminCanPost by remember(community?.getPostSettings()) {
+        derivedStateOf {
+            community?.getPostSettings() == AmityCommunityPostSettings.ADMIN_CAN_POST_ONLY
+        }
+    }
+
+    val shouldShowPostCreationButton by remember(
+        isOnlyAdminCanPost,
+        hasCreatePrivilege,
+        community?.isJoined()
+    ) {
+        derivedStateOf {
+            (!isOnlyAdminCanPost || hasCreatePrivilege)
+                    && (community?.isJoined() == true)
+        }
+    }
+
+    val shouldShowStoryCreationButton by remember(
+        allowAllUserStoryCreation,
+        hasManageStoryPermission,
+        community?.isJoined()
+    ) {
+        derivedStateOf {
+            (allowAllUserStoryCreation || hasManageStoryPermission)
+                    && (community?.isJoined() == true)
+        }
+    }
 
     LaunchedEffect(state.isRefreshing) {
         if (state.isRefreshing) {
@@ -216,7 +263,7 @@ fun AmityCommunityProfilePage(
                     }
                     when (selectedTabIndex) {
                         0 -> {
-                            if(communityPosts.loadState.refresh == LoadState.Loading) {
+                            if (communityPosts.loadState.refresh == LoadState.Loading) {
                                 repeat(4) {
                                     item {
                                         AmityPostShimmer()
@@ -279,7 +326,8 @@ fun AmityCommunityProfilePage(
                     pageScope = getPageScope(),
                     elementId = "community_create_post_button",
                 ) {
-                    if((community != null && community!!.isJoined() && community!!.getPostSettings() != AmityCommunityPostSettings.ADMIN_CAN_POST_ONLY) || hasCreatePrivilege) {
+                    if (shouldShowPostCreationButton || shouldShowStoryCreationButton) {
+
                         FloatingActionButton(
                             onClick = {
                                 expanded = true
@@ -305,6 +353,8 @@ fun AmityCommunityProfilePage(
                         modifier = Modifier,
                         community = community!!,
                         shouldShow = expanded,
+                        shouldShowPostCreationButton = shouldShowPostCreationButton,
+                        shouldShowStoryCreationButton = shouldShowStoryCreationButton,
                         onDismiss = { expanded = false },
                     )
                 }

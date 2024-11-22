@@ -63,6 +63,7 @@ import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.sdk.model.social.story.AmityStoryImageDisplayMode
 import com.amity.socialcloud.sdk.model.social.story.AmityStoryTarget
 import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
+import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
@@ -367,10 +368,14 @@ fun AmityDraftStoryPage(
                                             hyperlinkUrlText = hyperlinkUrlText,
                                             hyperlinkCustomText = hyperlinkCustomText,
                                             onSuccess = {
-                                                context.showToast("Successfully shared story")
+                                                AmityUIKitSnackbar.publishSnackbarMessage(
+                                                    "Successfully shared story"
+                                                )
                                             },
                                             onError = { message ->
-                                                context.showToast(message)
+                                                AmityUIKitSnackbar.publishSnackbarMessage(
+                                                    message
+                                                )
                                             }
                                         )
                                         context.closePageWithResult(Activity.RESULT_OK)
@@ -384,10 +389,14 @@ fun AmityDraftStoryPage(
                                             hyperlinkUrlText = hyperlinkUrlText,
                                             hyperlinkCustomText = hyperlinkCustomText,
                                             onSuccess = {
-                                                context.showToast("Successfully shared story")
+                                                AmityUIKitSnackbar.publishSnackbarMessage(
+                                                    "Successfully shared story"
+                                                )
                                             },
                                             onError = { message ->
-                                                context.showToast(message)
+                                                AmityUIKitSnackbar.publishSnackbarMessage(
+                                                    message
+                                                )
                                             }
                                         )
                                         context.closePageWithResult(Activity.RESULT_OK)

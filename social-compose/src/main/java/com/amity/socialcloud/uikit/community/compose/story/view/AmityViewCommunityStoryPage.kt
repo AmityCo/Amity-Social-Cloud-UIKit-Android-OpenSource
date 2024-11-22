@@ -213,7 +213,11 @@ fun AmityViewCommunityStoryPage(
 
     LaunchedEffect(isTargetVisible, isShowingVideoStory, shouldPauseTimer) {
         if (!isTargetVisible) return@LaunchedEffect
-        val storyId = currentStory?.getStoryId() ?: return@LaunchedEffect
+        val storyId = currentStory?.getStoryId()
+        if(storyId == null) {
+            exoPlayer.pause()
+            return@LaunchedEffect
+        }
         if (isShowingVideoStory) {
             AmityStoryVideoPlayerHelper.playMediaItem(storyId = storyId)
         } else {

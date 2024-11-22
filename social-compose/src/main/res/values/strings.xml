@@ -53,34 +53,12 @@
     <string name="amity_post_to">Post to</string>
     <string name="amity_story_to">Story to</string>
 
-    <string name="amity_discard">Discard</string>
     <string name="amity_discard_post_title">Discard post?</string>
     <string name="amity_discard_post_message">Do you want to discard your post?</string>
-
-    <string name="amity_create_community">Create Community</string>
-    <string name="amity_community_name_v4">Community name</string>
-    <string name="amity_cc_hint">Name your community</string>
-    <string name="amity_about">About</string>
-    <string name="amity_enter_description">Enter description</string>
-    <string name="amity_categories">Categories</string>
-    <string name="amity_select_category">Select category</string>
-    <string name="amity_privacy">Privacy</string>
-    <string name="amity_public">Public</string>
-    <string name="amity_admin_description">Choose to allow Only Admins to create posts in this community.</string>
-    <string name="amity_public_description">Anyone can join, view, and search the posts in this community.</string>
-    <string name="amity_private">Private</string>
-    <string name="amity_private_description">Only members invited by the moderators can join, view, and search the posts in this community.</string>
     <string name="amity_only_admin">Only admin can post</string>
     <string name="amity_add_members">Add members<font fgcolor='#FF0000'>*</font></string>
     <string name="amity_cancel_request">Cancel request</string>
     <string name="amity_select_members">Select members</string>
-    <string name="amity_cc_leave_title">Leave without finishing</string>
-    <string name="amity_cc_leave_description">Your progress won\'t be saved and your community won\'t be created.</string>
-    <string name="amity_leave">Leave</string>
-    <string name="amity_close">Close</string>
-    <string name="amity_save">Save</string>
-    <string name="amity_ec_leave_title">Unsaved changes</string>
-    <string name="amity_ec_leave_description">Are you sure you want to discard the changes? They will be lost when you leave this page.</string>
 
     <string name="amity_close_community">Close community</string>
     <string name="amity_close_community_description">Closing this community will remove the community page and all its content and comments.</string>
@@ -92,4 +70,51 @@
     <string name="amity_leave_community_msg">You won\’t no longer be able to post and interact in this community after leaving.</string>
     <string name="amity_leave_community_error_title">Unable to leave community</string>
     <string name="amity_close_community_error_title">Unable to close community</string>
+
+    <!--dialog action button-->
+    <string name="amity_v4_dialog_confirm_button">Confirm</string>
+    <string name="amity_v4_dialog_cancel_button">Cancel</string>
+    <string name="amity_v4_dialog_leave_button">Leave</string>
+    <string name="amity_v4_dialog_close_button">Close</string>
+    <string name="amity_v4_dialog_save_button">Save</string>
+    <string name="amity_v4_dialog_discard_button">Discard</string>
+
+    <!--community setup page-->
+    <string name="amity_v4_community_setup_create_title">Create community</string>
+    <string name="amity_v4_community_setup_edit_title">Edit community</string>
+    <string name="amity_v4_community_setup_name_title">Community name</string>
+    <string name="amity_v4_community_setup_name_description">Name your community</string>
+    <string name="amity_v4_community_setup_about_title">About</string>
+    <string name="amity_v4_community_setup_about_optional_title">(Optional)</string>
+    <string name="amity_v4_community_setup_about_description">Enter description</string>
+    <string name="amity_v4_community_setup_categories_title">Categories</string>
+    <string name="amity_v4_community_setup_categories_description">Select category</string>
+    <string name="amity_v4_community_setup_privacy_title">Privacy</string>
+    <string name="amity_v4_community_setup_privacy_public_title">Public</string>
+    <string name="amity_v4_community_setup_privacy_public_description">Anyone can join, view, and search the posts in this community.</string>
+    <string name="amity_v4_community_setup_privacy_private_title">Private</string>
+    <string name="amity_v4_community_setup_privacy_private_description">Only members invited by the moderators can join, view, and search the posts in this community.</string>
+    <string name="amity_v4_community_setup_create_button">Create community</string>
+    <string name="amity_v4_community_setup_edit_button">Save</string>
+
+    <!--community setup page toast-->
+    <string name="amity_v4_community_setup_toast_creating">Creating…</string>
+    <string name="amity_v4_community_setup_toast_create_success">Successfully created community!</string>
+    <string name="amity_v4_community_setup_toast_create_failed">Failed to create community. Please try again.</string>
+    <string name="amity_v4_community_setup_toast_updating">Updating…</string>
+    <string name="amity_v4_community_setup_toast_update_success">Successfully updated community profile!</string>
+    <string name="amity_v4_community_setup_toast_update_failed">Failed to save your community profile. Please try again.</string>
+
+    <!--community setup page dialog-->
+    <string name="amity_v4_community_setup_dialog_change_privacy_title">Change community privacy settings</string>
+    <string name="amity_v4_community_setup_dialog_change_privacy_message">This community has globally featured posts. Changing the community from public to private will remove these posts from being featured globally</string>
+    <string name="amity_v4_community_setup_dialog_leave_title">Leave without finishing</string>
+    <string name="amity_v4_community_setup_dialog_leave_description">Your progress won\'t be saved and your community won\'t be created.</string>
+    <string name="amity_v4_community_setup_dialog_leave_edit_title">Unsaved changes</string>
+    <string name="amity_v4_community_setup_dialog_leave_edit_description">Are you sure you want to discard the changes? They will be lost when you leave this page.</string>
+
+    <!--general community related pages dialog-->
+    <string name="amity_v4_community_dialog_leave_title">Leave without finishing</string>
+    <string name="amity_v4_community_dialog_leave_description">Your changes that you made may not be saved.</string>
+
 </resources>

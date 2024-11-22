@@ -87,7 +87,7 @@ dependencies {
     implementation 'com.afollestad.material-dialogs:core:3.3.0'
     implementation 'com.afollestad.material-dialogs:input:3.3.0'
 
-    implementation "co.amity.android:amity-push-fcm:$amityMessagingSdkVersion"
+    implementation "$amitySDKDependency:amity-push-fcm:$amityMessagingSdkVersion"
 
 
     implementation 'androidx.activity:activity-compose:1.7.0'

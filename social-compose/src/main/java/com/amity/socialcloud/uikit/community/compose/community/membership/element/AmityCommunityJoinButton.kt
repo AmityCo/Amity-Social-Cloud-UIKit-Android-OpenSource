@@ -43,10 +43,10 @@ fun AmityCommunityJoinButton(
     modifier: Modifier = Modifier,
     community: AmityCommunity,
 ) {
-    var isJoined by remember {
+    var isJoined by remember(community.getCommunityId()) {
         mutableStateOf(community.isJoined())
     }
-    var isInProgress by remember {
+    var isInProgress by remember(community.getCommunityId()) {
         mutableStateOf(false)
     }
 

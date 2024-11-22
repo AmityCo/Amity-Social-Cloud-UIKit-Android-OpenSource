@@ -16,6 +16,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -27,6 +29,7 @@ import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.uikit.common.common.isNotEmptyOrBlank
@@ -73,6 +76,9 @@ fun AmityCreatePostMenuComponent(
     ) {
         context.closePageWithResult(Activity.RESULT_OK)
     }
+
+    val viewModel = viewModel<AmityCreatePostMenuComponentViewModel>()
+    val showStoryAction by viewModel.showStoryAction.collectAsState()
 
     AmityBaseComponent(
         pageScope = pageScope,
@@ -138,49 +144,52 @@ fun AmityCreatePostMenuComponent(
                         }
                     },
                 )
-                DropdownMenuItem(
-                    text = {
-                        AmityBaseElement(
-                            pageScope = pageScope,
-                            componentScope = getComponentScope(),
-                            elementId = "create_story_button"
-                        ) {
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = modifier
-                                    .padding(horizontal = 8.dp)
-                                    .testTag(getAccessibilityId()),
+
+                if (showStoryAction) {
+                    DropdownMenuItem(
+                        text = {
+                            AmityBaseElement(
+                                pageScope = pageScope,
+                                componentScope = getComponentScope(),
+                                elementId = "create_story_button"
                             ) {
-                                Icon(
-                                    painter = painterResource(id = getConfig().getIcon()),
-                                    contentDescription = "Create Story",
-                                    tint = AmityTheme.colors.base,
-                                    modifier = modifier.size(20.dp)
-                                )
-                                Text(
-                                    text = getConfig().getText(),
-                                    style = AmityTheme.typography.body.copy(
-                                        fontWeight = FontWeight.SemiBold
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = modifier
+                                        .padding(horizontal = 8.dp)
+                                        .testTag(getAccessibilityId()),
+                                ) {
+                                    Icon(
+                                        painter = painterResource(id = getConfig().getIcon()),
+                                        contentDescription = "Create Story",
+                                        tint = AmityTheme.colors.base,
+                                        modifier = modifier.size(20.dp)
                                     )
+                                    Text(
+                                        text = getConfig().getText(),
+                                        style = AmityTheme.typography.body.copy(
+                                            fontWeight = FontWeight.SemiBold
+                                        )
+                                    )
+                                }
+                            }
+                        },
+                        onClick = {
+                            onDismiss()
+                            if (targetType == CreatePostTargetType.COMMUNITY && targetId?.isNotEmptyOrBlank() == true) {
+                                targetStoryBehavior.goToStoryCreationPage(
+                                    context = context,
+                                    launcher = launcher,
+                                    targetId = targetId,
+                                    targetType = AmityStory.TargetType.COMMUNITY,
                                 )
+                            } else {
+                                behavior.goToSelectStoryTargetPage(context)
                             }
                         }
-                    },
-                    onClick = {
-                        onDismiss()
-                        if (targetType == CreatePostTargetType.COMMUNITY && targetId?.isNotEmptyOrBlank() == true) {
-                            targetStoryBehavior.goToStoryCreationPage(
-                                context = context,
-                                launcher = launcher,
-                                targetId = targetId,
-                                targetType = AmityStory.TargetType.COMMUNITY,
-                            )
-                        } else {
-                            behavior.goToSelectStoryTargetPage(context)
-                        }
-                    }
-                )
+                    )
+                }
 
                 DropdownMenuItem(
                     text = {

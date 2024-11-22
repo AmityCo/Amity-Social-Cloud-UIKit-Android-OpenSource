@@ -28,6 +28,7 @@ import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
 import com.amity.socialcloud.uikit.common.ui.elements.AmityToolBar
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.utils.amityStringResource
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.closePage
 import com.amity.socialcloud.uikit.common.utils.closePageWithResult
@@ -155,10 +156,10 @@ fun AmityCommunityPostPermissionPage(
         if (showLeaveConfirmDialog) {
             if (shouldAllowToSave) {
                 AmityAlertDialog(
-                    dialogTitle = context.getString(R.string.amity_cc_leave_title),
-                    dialogText = "Your changes that you made may not be saved.",
-                    confirmText = context.getString(R.string.amity_leave),
-                    dismissText = context.getString(R.string.amity_cancel),
+                    dialogTitle = context.amityStringResource(id = R.string.amity_v4_community_dialog_leave_title),
+                    dialogText = context.amityStringResource(id = R.string.amity_v4_community_dialog_leave_description),
+                    confirmText = context.getString(R.string.amity_v4_dialog_leave_button),
+                    dismissText = context.getString(R.string.amity_v4_dialog_cancel_button),
                     confirmTextColor = AmityTheme.colors.alert,
                     onConfirmation = {
                         context.closePage()

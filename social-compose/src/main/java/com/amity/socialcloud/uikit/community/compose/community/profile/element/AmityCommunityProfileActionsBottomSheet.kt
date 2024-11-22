@@ -33,6 +33,8 @@ fun AmityCommunityProfileActionsBottomSheet(
     componentScope: AmityComposeComponentScope? = null,
     community: AmityCommunity,
     shouldShow: Boolean,
+    shouldShowPostCreationButton: Boolean,
+    shouldShowStoryCreationButton: Boolean,
     onDismiss: () -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState()
@@ -53,6 +55,8 @@ fun AmityCommunityProfileActionsBottomSheet(
                 modifier = modifier,
                 componentScope = componentScope,
                 community = community,
+                shouldShowPostCreationButton = shouldShowPostCreationButton,
+                shouldShowStoryCreationButton = shouldShowStoryCreationButton,
             ) {
                 scope.launch {
                     sheetState.hide()
@@ -71,9 +75,12 @@ fun AmityCommunityProfileActionsContainer(
     modifier: Modifier = Modifier,
     componentScope: AmityComposeComponentScope? = null,
     community: AmityCommunity,
+    shouldShowPostCreationButton: Boolean,
+    shouldShowStoryCreationButton: Boolean,
     onDismiss: () -> Unit,
 ) {
     val context = LocalContext.current
+
     AmityBaseElement(
         componentScope = componentScope,
         elementId = "community_profile_actions"
@@ -83,9 +90,6 @@ fun AmityCommunityProfileActionsContainer(
                 .background(AmityTheme.colors.background)
                 .padding(start = 16.dp, end = 16.dp, bottom = 20.dp)
         ) {
-            val targetType = CommunityCreatePostTargetType.COMMUNITY
-            val context = LocalContext.current
-
             val behavior by lazy {
                 AmitySocialBehaviorHelper.communityProfilePageBehavior
             }
@@ -94,51 +98,56 @@ fun AmityCommunityProfileActionsContainer(
                 contract = ActivityResultContracts.StartActivityForResult()
             ) {}
 
-            AmityBottomSheetActionItem(
-                icon = R.drawable.amity_ic_post_create,
-                text = "Post",
-                modifier = modifier,
-            ) {
-                onDismiss()
-                behavior.goToPostComposerPage(
-                    AmityCommunityProfilePageBehavior.Context(
-                        pageContext = context,
-                        activityLauncher = launcher,
-                        community = community,
+            if (shouldShowPostCreationButton) {
+                AmityBottomSheetActionItem(
+                    icon = R.drawable.amity_ic_post_create,
+                    text = "Post",
+                    modifier = modifier,
+                ) {
+                    onDismiss()
+                    behavior.goToPostComposerPage(
+                        AmityCommunityProfilePageBehavior.Context(
+                            pageContext = context,
+                            activityLauncher = launcher,
+                            community = community,
+                        )
                     )
-                )
+                }
             }
 
-            AmityBottomSheetActionItem(
-                icon = R.drawable.amity_ic_create_story_social,
-                text = "Story",
-                modifier = modifier,
-            ) {
-                onDismiss()
-                behavior.goToCreateStoryPage(
-                    AmityCommunityProfilePageBehavior.Context(
-                        pageContext = context,
-                        activityLauncher = launcher,
-                        community = community,
+            if (shouldShowStoryCreationButton) {
+                AmityBottomSheetActionItem(
+                    icon = R.drawable.amity_ic_create_story_social,
+                    text = "Story",
+                    modifier = modifier,
+                ) {
+                    onDismiss()
+                    behavior.goToCreateStoryPage(
+                        AmityCommunityProfilePageBehavior.Context(
+                            pageContext = context,
+                            activityLauncher = launcher,
+                            community = community,
+                        )
                     )
-                )
+                }
             }
 
-            AmityBottomSheetActionItem(
-                icon = R.drawable.ic_amity_ic_poll_create,
-                text = "Poll",
-                modifier = modifier,
-            ) {
-                onDismiss()
-                behavior.goToCreatePollPage(
-                    AmityCommunityProfilePageBehavior.Context(
-                        pageContext = context,
-                        activityLauncher = launcher,
-                        community = community,
+            if (shouldShowPostCreationButton) {
+                AmityBottomSheetActionItem(
+                    icon = R.drawable.ic_amity_ic_poll_create,
+                    text = "Poll",
+                    modifier = modifier,
+                ) {
+                    onDismiss()
+                    behavior.goToCreatePollPage(
+                        AmityCommunityProfilePageBehavior.Context(
+                            pageContext = context,
+                            activityLauncher = launcher,
+                            community = community,
+                        )
                     )
-                )
+                }
             }
-
         }
     }
 }
