@@ -16,6 +16,7 @@ import com.amity.socialcloud.uikit.community.compose.search.components.AmityUser
 import com.amity.socialcloud.uikit.community.compose.search.global.AmitySocialGlobalSearchPageBehavior
 import com.amity.socialcloud.uikit.community.compose.socialhome.AmitySocialHomePageBehavior
 import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmityCreatePostMenuComponentBehavior
+import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmityExploreComponentBehavior
 import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmityGlobalFeedComponentBehavior
 import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmityMyCommunitiesComponentBehavior
 import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmitySocialHomeTopNavigationComponentBehavior
@@ -123,6 +124,8 @@ object AmitySocialBehaviorHelper {
 
     var pendingPostContentComponentBehavior: AmityPendingPostContentComponentBehavior =
         AmityPendingPostContentComponentBehavior()
+
+    var exploreComponentBehavior: AmityExploreComponentBehavior = AmityExploreComponentBehavior()
 
     var commentTrayComponentBehavior: AmityCommentTrayComponentBehavior =
         AmityCommentTrayComponentBehavior()

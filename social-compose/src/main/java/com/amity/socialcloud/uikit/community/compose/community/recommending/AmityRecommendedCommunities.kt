@@ -23,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,8 +51,8 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.getIcon
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.community.membership.element.AmityCommunityJoinButton
-import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageActivity
 import com.amity.socialcloud.uikit.community.compose.socialhome.elements.AmityCommunityCategoryView
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityRecommendedCommunityShimmer
 import kotlinx.coroutines.Dispatchers
@@ -61,9 +62,12 @@ import kotlinx.coroutines.Dispatchers
 fun AmityRecommendedCommunitiesComponent(
     modifier: Modifier = Modifier,
     pageScope: AmityComposePageScope? = null,
-    onStateChanged: (AmityRecommendedCommunitiesViewModel.CommunityListState) -> Unit = {}
+    onStateChanged: (AmityRecommendedCommunitiesViewModel.CommunityListState) -> Unit = {},
 ) {
     val context = LocalContext.current
+    val behavior by lazy {
+        AmitySocialBehaviorHelper.exploreComponentBehavior
+    }
 
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
@@ -71,7 +75,12 @@ fun AmityRecommendedCommunitiesComponent(
     val viewModel =
         viewModel<AmityRecommendedCommunitiesViewModel>(viewModelStoreOwner = viewModelStoreOwner)
 
-    val communities = viewModel.getRecommendedCommunities().collectAsState(initial = emptyList())
+    // Remember the Flow of communities
+    val communitiesFlow = remember {
+        viewModel.getRecommendedCommunities()
+    }
+
+    val communities = communitiesFlow.collectAsState(initial = emptyList())
     val communityListState by viewModel.communityListState.collectAsState()
 
     AmityBaseComponent(
@@ -115,13 +124,11 @@ fun AmityRecommendedCommunitiesComponent(
                                 componentScope = getComponentScope(),
                                 community = community,
                                 onClick = {
-                                    val intent =
-                                        AmityCommunityProfilePageActivity.newIntent(
-                                            context = context,
-                                            communityId = community.getCommunityId()
-                                        )
-                                    context.startActivity(intent)
-                                }
+                                    behavior.goToCommunityProfilePage(
+                                        context = context,
+                                        communityId = community.getCommunityId(),
+                                    )
+                                },
                             )
                         }
                     }
@@ -347,7 +354,6 @@ fun AmityRecommendedCommunityView(
                             )
                         }
                     }
-
                     AmityBaseElement(
                         pageScope = pageScope,
                         componentScope = componentScope,
@@ -366,15 +372,12 @@ fun AmityRecommendedCommunityView(
                     }
                 }
 
-                Column(
-
-                ) {
+                Column {
                     Spacer(modifier = Modifier.weight(1f))
                     AmityCommunityJoinButton(
                         community = community
                     )
                 }
-
             }
         }
     }

@@ -1,17 +1,16 @@
 package com.amity.socialcloud.uikit.community.compose.community.trending
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -21,17 +20,21 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageActivity
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.socialhome.elements.AmityJoinCommunityView
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityTrendingCommunityShimmer
+
 
 @Composable
 fun AmityTrendingCommunitiesComponent(
     modifier: Modifier = Modifier,
     pageScope: AmityComposePageScope? = null,
-    onStateChanged: (AmityTrendingCommunitiesViewModel.CommunityListState) -> Unit = {}
+    onStateChanged: (AmityTrendingCommunitiesViewModel.CommunityListState) -> Unit = {},
 ) {
     val context = LocalContext.current
+    val behavior by lazy {
+        AmitySocialBehaviorHelper.exploreComponentBehavior
+    }
 
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
@@ -39,41 +42,36 @@ fun AmityTrendingCommunitiesComponent(
     val viewModel =
         viewModel<AmityTrendingCommunitiesViewModel>(viewModelStoreOwner = viewModelStoreOwner)
 
-    val communities = viewModel.getTrendingCommunities().collectAsState(initial = emptyList())
+    // Remember the Flow of communities to prevent recreating on recomposition
+    val communitiesFlow = remember {
+        viewModel.getTrendingCommunities()
+    }
+
+    val communities = communitiesFlow.collectAsState(initial = emptyList())
     val communityListState by viewModel.communityListState.collectAsState()
 
     AmityBaseComponent(
         pageScope = pageScope,
         componentId = "trending_communities"
     ) {
-        LazyColumn(
-            modifier = modifier
-                .fillMaxWidth()
-                .heightIn(min = 0.dp, max = 554.dp)
-                .padding(horizontal = 16.dp)
+        Column(
+            modifier = modifier.fillMaxWidth()
         ) {
             when (communityListState) {
                 AmityTrendingCommunitiesViewModel.CommunityListState.SUCCESS -> {
-                    item {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.height(38.dp)
-                        ) {
-                            Text(
-                                text = "Trending now",
-                                style = AmityTheme.typography.title
-                            )
-                        }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .height(38.dp)
+                            .padding(horizontal = 16.dp)
+                    ) {
+                        Text(
+                            text = "Trending now",
+                            style = AmityTheme.typography.title
+                        )
                     }
-                    item {
-                        Spacer(modifier = modifier.height(8.dp))
-                    }
-                    items(
-                        count = communities.value.size,
-                        key = { index -> index }
-                    ) { index ->
-                        val community = communities.value[index]
 
+                    communities.value.forEachIndexed { index, community ->
                         AmityJoinCommunityView(
                             modifier = modifier,
                             pageScope = pageScope,
@@ -81,38 +79,29 @@ fun AmityTrendingCommunitiesComponent(
                             community = community,
                             label = "0" + (index + 1),
                             onClick = {
-                                val intent =
-                                    AmityCommunityProfilePageActivity.newIntent(
-                                        context = context,
-                                        communityId = community.getCommunityId()
-                                    )
-                                context.startActivity(intent)
-                            })
-
-                        Spacer(modifier = modifier.height(8.dp))
-                        if (index < communities.value.size - 1) {
-                            HorizontalDivider(
-                                color = AmityTheme.colors.divider
-                            )
-                            Spacer(modifier = modifier.height(8.dp))
-                        }
+                                behavior.goToCommunityProfilePage(
+                                    context = context,
+                                    communityId = community.getCommunityId(),
+                                )
+                            },
+                        )
                     }
                 }
 
                 AmityTrendingCommunitiesViewModel.CommunityListState.LOADING -> {
-                    item {
-                        AmityTrendingCommunityShimmer()
-                    }
+                    AmityTrendingCommunityShimmer()
                 }
 
                 AmityTrendingCommunitiesViewModel.CommunityListState.EMPTY -> {
-
+                    // Empty state handler if needed
                 }
 
                 AmityTrendingCommunitiesViewModel.CommunityListState.ERROR -> {
-
+                    // Error state handler if needed
                 }
+
             }
+            Spacer(modifier = modifier.height(100.dp))
             onStateChanged(communityListState)
         }
     }

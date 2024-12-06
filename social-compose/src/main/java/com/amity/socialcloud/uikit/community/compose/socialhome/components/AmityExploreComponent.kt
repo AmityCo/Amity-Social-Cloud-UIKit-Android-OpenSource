@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -33,7 +34,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -80,7 +80,6 @@ fun AmityExploreComponent(
         }
     )
 
-    val scrollState = rememberScrollState()
 
     Box(
         modifier = modifier
@@ -91,19 +90,21 @@ fun AmityExploreComponent(
             Column {
                 AmityNewsFeedDivider()
                 AmityExploreCategoryShimmer(
-                    modifier = Modifier.padding(
-                        start = 16.dp,
-                        top = 16.dp,
-                        bottom = 16.dp,
-                        end = 0.dp
-                    )
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            start = 16.dp,
+                            top = 16.dp,
+                            bottom = 16.dp,
+                            end = 0.dp
+                        )
                 )
                 AmityRecommendedCommunityShimmer()
                 AmityTrendingCommunityShimmer(modifier = Modifier.padding(start = 16.dp))
             }
         } else {
             Column(
-                modifier = Modifier.verticalScroll(scrollState)
+                modifier = Modifier.verticalScroll(rememberScrollState())
             ) {
                 AmityNewsFeedDivider()
                 AmityCommunityCategoriesComponent(
@@ -222,29 +223,30 @@ fun AmityExploreComponent(
                             text = "Something went wrong",
                             modifier = Modifier.padding(top = 16.dp),
                             style = AmityTheme.typography.title.copy(
-                                color = AmityTheme.colors.baseShade3
+                                color = AmityTheme.colors.baseShade3,
                             )
                         )
                         Text(
                             text = "Please try again.",
                             modifier = Modifier.padding(top = 4.dp),
                             style = AmityTheme.typography.caption.copy(
-                                color = AmityTheme.colors.baseShade3
+                                color = AmityTheme.colors.baseShade3,
                             )
                         )
                     }
                 }
+
                 AmityRecommendedCommunitiesComponent(
                     pageScope = pageScope,
                     onStateChanged = {
                         viewModel.setRecommendedState(it)
-                    }
+                    },
                 )
                 AmityTrendingCommunitiesComponent(
                     pageScope = pageScope,
                     onStateChanged = {
                         viewModel.setTrendingState(it)
-                    }
+                    },
                 )
             }
             PullRefreshIndicator(
@@ -254,10 +256,4 @@ fun AmityExploreComponent(
             )
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun AmityExploreComponentPreview() {
-    AmityExploreComponent()
 }
