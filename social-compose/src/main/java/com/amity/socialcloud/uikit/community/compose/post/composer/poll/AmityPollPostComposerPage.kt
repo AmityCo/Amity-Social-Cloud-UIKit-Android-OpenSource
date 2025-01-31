@@ -695,8 +695,7 @@ fun AmityPollPostComposerPage(
                         )
                         Icon(
                             Icons.Filled.KeyboardArrowDown,
-                            //painter = painterResource(R.drawable.),
-                            contentDescription = "Select category",
+                            contentDescription = "Select duration",
                             tint = AmityTheme.colors.baseShade2,
                             modifier = modifier
                                 .size(24.dp)
@@ -988,33 +987,6 @@ fun AmityPollDurationOptionContainer(
 
             Spacer(modifier = Modifier.height(40.dp))
 
-//            Row(
-//                verticalAlignment = Alignment.CenterVertically,
-//                modifier = Modifier
-//                    .height(56.dp)
-//                    .fillMaxWidth()
-//                    .clickableWithoutRipple {
-//                        onSelected(-1)
-//                    }
-//                    .padding(start = 16.dp, end = 18.dp),
-//
-//            ) {
-//                Text(
-//                    text = "Custom end date",
-//                    style = AmityTheme.typography.body.copy(
-//                        fontWeight = FontWeight.SemiBold,
-//                    ),
-//                    modifier = modifier
-//                        .weight(1f)
-//                        .testTag("custom_poll_duration")
-//                )
-//                Icon(
-//                    modifier = Modifier.size(18.dp),
-//                    painter = painterResource(R.drawable.amity_ic_chevron_right),
-//                    contentDescription = "pick date time",
-//                    tint = AmityTheme.colors.baseShade1
-//                )
-//            }
 
         }
     }

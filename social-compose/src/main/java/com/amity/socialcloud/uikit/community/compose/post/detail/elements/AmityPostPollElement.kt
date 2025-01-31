@@ -398,7 +398,8 @@ fun AmityPostPollElement(
                             "Voted by 1 participant"
                         }else {
                             val plusSign = if(voteCount > 1000) "+" else ""
-                            "Voted by ${voteCount.readableNumber()}${plusSign} participants".apply {
+                            val displayVoteCount = if(answer.isVotedByUser) (voteCount - 1).readableNumber() else voteCount.readableNumber()
+                            "Voted by ${displayVoteCount}${plusSign} participants".apply {
                                 if (answer.isVotedByUser) {
                                     this.plus(" and you")
                                 }

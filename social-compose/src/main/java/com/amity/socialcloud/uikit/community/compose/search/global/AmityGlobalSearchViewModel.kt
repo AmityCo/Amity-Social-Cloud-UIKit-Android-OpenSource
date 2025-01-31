@@ -5,6 +5,7 @@ import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.api.core.user.search.AmityUserSearchMatchType
 import com.amity.socialcloud.sdk.api.core.user.search.AmityUserSortOption
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
@@ -83,6 +84,7 @@ class AmityGlobalSearchViewModel : AmityBaseViewModel() {
         return AmityCoreClient.newUserRepository()
             .searchUsers(_keyword.value)
             .sortBy(AmityUserSortOption.DISPLAYNAME)
+            .matchType(AmityUserSearchMatchType.PARTIAL)
             .build()
             .query()
             .subscribeOn(Schedulers.io())
