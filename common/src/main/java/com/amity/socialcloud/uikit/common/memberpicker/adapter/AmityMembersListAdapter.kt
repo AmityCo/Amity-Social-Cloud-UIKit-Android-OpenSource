@@ -51,7 +51,7 @@ class AmityMembersListAdapter(
                 } else if (currentUserDisplayName.isNotEmpty() && prevUserDisplayName.isEmpty()) {
                     R.layout.amity_item_header_select_member
                 } else {
-                    if (currentUserDisplayName[0].equals(prevUserDisplayName[0], true)
+                    if (DisplayNameGrouper.getGroupingKey(currentUserDisplayName) == DisplayNameGrouper.getGroupingKey(prevUserDisplayName)
                     ) {
                         R.layout.amity_item_select_member
                     } else {
