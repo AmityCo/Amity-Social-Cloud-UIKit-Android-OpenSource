@@ -2,14 +2,14 @@
 
 buildscript {
     ext {
-        gradleBuildVersion = '7.4.2'
-        kotlinVersion = "1.7.20"
+        gradleBuildVersion = '8.2.0'
+        kotlinVersion = "1.8.21"
         jacocoVersion = '0.8.5'
     }
     repositories {
+        maven { url 'https://jitpack.io' }
         mavenCentral()
         google()
-        maven { url 'https://jitpack.io' }
         maven {
             url 'https://maven.google.com/'
         }
@@ -24,7 +24,7 @@ buildscript {
         classpath "com.android.tools.build:gradle:$gradleBuildVersion"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath "org.jacoco:org.jacoco.core:$jacocoVersion"
-        classpath 'com.google.gms:google-services:4.3.10'
+        classpath 'com.google.gms:google-services:4.4.1'
         classpath "com.google.firebase:firebase-crashlytics-gradle:2.9.9"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -44,6 +44,6 @@ allprojects {
 
 apply from: "buildsystem/dependencies.gradle"
 
-task clean(type: Delete) {
+tasks.register('clean', Delete) {
     delete rootProject.buildDir
 }

@@ -20,8 +20,8 @@ class AmityMyCommunityListViewModel : AmityBaseViewModel() {
 
     fun getCommunityList(): Flowable<PagingData<AmityCommunity>> {
         val communityRepository = AmitySocialClient.newCommunityRepository()
-        return communityRepository.getCommunities()
-            .withKeyword(searchString.get() ?: "")
+        return communityRepository
+            .searchCommunities(searchString.get() ?: "")
             .filter(AmityCommunityFilter.MEMBER).sortBy(AmityCommunitySortOption.DISPLAY_NAME)
             .includeDeleted(false)
             .build()

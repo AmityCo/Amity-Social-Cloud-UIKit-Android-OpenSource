@@ -25,8 +25,12 @@ import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
+import org.joda.time.DateTime
+import org.joda.time.Duration
 import java.math.RoundingMode
 import java.text.DecimalFormat
+import java.text.SimpleDateFormat
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 import kotlin.math.ln
 import kotlin.math.pow
@@ -84,16 +88,19 @@ fun Long.readableFeedPostTime(context: Context): String {
             days.toInt(),
             days
         )
+
         hours > 0 -> context.resources.getQuantityString(
             R.plurals.amity_number_of_hours,
             hours.toInt(),
             hours
         )
+
         minutes > 0 -> context.resources.getQuantityString(
             R.plurals.amity_number_of_mins,
             minutes.toInt(),
             minutes
         )
+
         else -> context.getString(R.string.amity_just_now)
     }
 }
@@ -105,9 +112,65 @@ fun isPlurals(number: Long): Boolean {
 fun Int.readableNumber(): String {
     if (this < 1000) return "" + this
     val exp = (ln(this.toDouble()) / ln(1000.0)).toInt()
-    val format = DecimalFormat("0.0")
+    val format = DecimalFormat("0.#")
     val value: String = format.format(this / 1000.0.pow(exp.toDouble()))
     return String.format("%s%c", value, "KMBTPE"[exp - 1])
+}
+
+fun DateTime.readableTimeDiff(): String {
+    val diff = DateTime.now().millis - this.millis
+    diff.let {
+        val days = TimeUnit.MILLISECONDS.toDays(diff)
+        val hours = TimeUnit.MILLISECONDS.toHours(diff)
+        val minutes = TimeUnit.MILLISECONDS.toMinutes(diff)
+        val seconds = TimeUnit.MILLISECONDS.toSeconds(diff)
+
+        return when {
+            days > 0 -> days.toString() + "d"
+            hours > 0 -> hours.toString() + "h"
+            minutes > 0 -> minutes.toString() + "m"
+            seconds > 1 -> seconds.toString() + "s"
+            else -> "Just now"
+        }
+    }
+}
+
+fun DateTime.readableSocialTimeDiff(): String {
+    val now = DateTime.now()
+
+    if (now.year().get() > this.year().get()) {
+        val formatter = SimpleDateFormat("d MMM yyyy", Locale.getDefault())
+        val formattedDateTime: String = formatter.format(this.toDate())
+        return formattedDateTime
+    } else {
+        if (now.dayOfYear - this.dayOfYear <= 7) {
+            //  within 7 days
+            val diff = now.millis - this.millis
+            diff.let {
+                val days = TimeUnit.MILLISECONDS.toDays(diff)
+                val hours = TimeUnit.MILLISECONDS.toHours(diff)
+                val minutes = TimeUnit.MILLISECONDS.toMinutes(diff)
+
+                return when {
+                    days > 0 -> days.toString() + "d"
+                    hours > 0 -> hours.toString() + "h"
+                    minutes > 0 -> minutes.toString() + "m"
+                    else -> "Just now"
+                }
+            }
+        } else {
+            val formatter = SimpleDateFormat("d MMM", Locale.getDefault())
+            val formattedDateTime: String = formatter.format(this.toDate())
+            return formattedDateTime
+        }
+    }
+}
+
+fun Int.readableMinuteSeconds(): String {
+    val minutes = this / 60
+    val seconds = this % 60
+
+    return "%02d:%02d".format(minutes, seconds)
 }
 
 fun <T : Any> List<T>.toPagedList(pageSize: Int): PagedList<T> {
@@ -160,7 +223,8 @@ fun View.setShape(
     val shapeDrawable = MaterialShapeDrawable(modal.build())
 
     if (fillColor == null) {
-        shapeDrawable.fillColor = ContextCompat.getColorStateList(this.context, R.color.amityColorWhite)
+        shapeDrawable.fillColor =
+            ContextCompat.getColorStateList(this.context, R.color.amityColorWhite)
     } else {
         if (colorShade == null)
             shapeDrawable.fillColor = ContextCompat.getColorStateList(this.context, fillColor)
@@ -221,7 +285,10 @@ fun View.toCircularShape(fillColor: Int, strokeWidth: Float? = null) {
     val shapeDrawable = MaterialShapeDrawable(modal.build())
     shapeDrawable.setTint(fillColor)
     if (strokeWidth != null) {
-        shapeDrawable.setStroke(strokeWidth, ContextCompat.getColor(this.context, R.color.amityColorWhite))
+        shapeDrawable.setStroke(
+            strokeWidth,
+            ContextCompat.getColor(this.context, R.color.amityColorWhite)
+        )
     }
     ViewCompat.setBackground(this, shapeDrawable)
 }
@@ -244,6 +311,37 @@ fun Double.formatCount(): String {
     }
 }
 
+fun DateTime.readableTimeLeft(startTime: DateTime = DateTime.now()): String {
+
+    if (this.isBefore(startTime) || this == startTime) {
+        return "0 m left"
+    }
+
+    val duration = Duration(startTime, this)
+
+    // Calculate total hours and days
+    val totalHours = duration.standardHours
+    val totalMinutes = duration.standardMinutes
+    val totalDays = duration.standardDays
+
+    return when {
+        totalDays > 0 -> {
+            // Round up to the next day if hours are greater than 0
+            val daysLeft = if (duration.standardHours % 24 > 0) totalDays + 1 else totalDays
+            "$daysLeft d left"
+        }
+        totalHours > 0 -> {
+            "$totalHours h left"
+        }
+        totalMinutes > 0 -> {
+            "$totalMinutes m left"
+        }
+        else -> {
+            "0 m left" // In case the target time is in the past or very close to now
+        }
+    }
+}
+
 fun View.expandViewHitArea(): View? {
     val parent = (this.parent as? View)
     parent?.post {
@@ -263,7 +361,10 @@ fun View.expandViewHitArea(): View? {
 
 fun Int.toDp(): Int = (this / Resources.getSystem().displayMetrics.density).toInt()
 
-fun View.showSnackBar(msg: String, @BaseTransientBottomBar.Duration duration: Int = Snackbar.LENGTH_LONG) {
+fun View.showSnackBar(
+    msg: String,
+    @BaseTransientBottomBar.Duration duration: Int = Snackbar.LENGTH_LONG
+) {
     Snackbar.make(this, msg, duration).show()
 }
 

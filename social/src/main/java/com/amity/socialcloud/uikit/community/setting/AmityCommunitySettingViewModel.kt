@@ -68,67 +68,74 @@ class AmityCommunitySettingViewModel(private val savedState: SavedStateHandle) :
             hasCommunityPermission(
                 communitySource,
                 getCommunityPermissionSource(communityId!!, AmityPermission.REVIEW_COMMUNITY_POST)
-            ),
-            { hasEditPermission, hasDeletePermission, hasReviewPermission ->
-                val settingsItems = mutableListOf<AmitySettingsItem>()
-                val separator = AmitySettingsItem.Separator
-                val basicInfo = AmitySettingsItem.Header(title = R.string.amity_basic_info)
-                val paddingXXS = AmitySettingsItem.Margin(R.dimen.amity_padding_xxs)
+            )
+        ) { hasEditPermission, hasDeletePermission, hasReviewPermission ->
+            val settingsItems = mutableListOf<AmitySettingsItem>()
+            val separator = AmitySettingsItem.Separator
+            val basicInfo = AmitySettingsItem.Header(title = R.string.amity_basic_info)
+            val paddingXXS = AmitySettingsItem.Margin(R.dimen.amity_padding_xxs)
 
-                settingsItems.add(basicInfo)
-                if (hasEditPermission) {
-                    val editProfile = menuCreator.createEditProfileMenu(communityId!!)
-                    settingsItems.add(editProfile)
-                    settingsItems.add(paddingXXS)
-                }
-
-                val members = menuCreator.createMembersMenu(communityId!!)
-                settingsItems.add(members)
+            settingsItems.add(basicInfo)
+            if (hasEditPermission) {
+                val editProfile = menuCreator.createEditProfileMenu(communityId!!)
+                settingsItems.add(editProfile)
                 settingsItems.add(paddingXXS)
+            }
 
-                if (isGlobalPushEnabled && (isPostEnabled || isCommentEnabled)) {
-                    val pushStatus = getPushStatus()
-                    val notification = menuCreator.createNotificationMenu(communityId!!, pushStatus)
-                    settingsItems.add(notification)
-                }
+            val members = menuCreator.createMembersMenu(communityId!!)
+            settingsItems.add(members)
+            settingsItems.add(paddingXXS)
 
+            if (isGlobalPushEnabled && (isPostEnabled || isCommentEnabled)) {
+                val pushStatus = getPushStatus()
+                val notification = menuCreator.createNotificationMenu(communityId!!, pushStatus)
+                settingsItems.add(notification)
+            }
+
+            settingsItems.add(AmitySettingsItem.Margin(R.dimen.amity_padding_xs))
+            settingsItems.add(separator)
+
+            if (hasEditPermission) {
+                val communityPermission =
+                    AmitySettingsItem.Header(title = R.string.amity_community_permissions)
+                settingsItems.add(AmitySettingsItem.Margin(R.dimen.amity_padding_xs))
+                settingsItems.add(communityPermission)
+            }
+
+            if (hasReviewPermission) {
+                val postReview = menuCreator.createPostReviewMenu(communityId!!)
+                settingsItems.add(AmitySettingsItem.Margin(R.dimen.amity_padding_xs))
+                settingsItems.add(postReview)
+            }
+
+            if (hasReviewPermission) {
+                val storySetting = menuCreator.createStorySettingMenu(communityId!!)
+                settingsItems.add(AmitySettingsItem.Margin(R.dimen.amity_padding_xs))
+                settingsItems.add(storySetting)
+            }
+
+            if (hasEditPermission || hasDeletePermission) {
                 settingsItems.add(AmitySettingsItem.Margin(R.dimen.amity_padding_xs))
                 settingsItems.add(separator)
+            }
 
-                if (hasEditPermission) {
-                    val communityPermission =
-                        AmitySettingsItem.Header(title = R.string.amity_community_permissions)
-                    settingsItems.add(AmitySettingsItem.Margin(R.dimen.amity_padding_xs))
-                    settingsItems.add(communityPermission)
-                }
+            val leaveCommunity =
+                menuCreator.createLeaveCommunityMenu(communityId!!, hasDeletePermission)
+            settingsItems.add(AmitySettingsItem.Margin(R.dimen.amity_padding_s))
+            settingsItems.add(leaveCommunity)
+            settingsItems.add(AmitySettingsItem.Margin(R.dimen.amity_padding_m1))
+            settingsItems.add(separator)
 
-                if (hasReviewPermission) {
-                    val postReview = menuCreator.createPostReviewMenu(communityId!!)
-                    settingsItems.add(AmitySettingsItem.Margin(R.dimen.amity_padding_xs))
-                    settingsItems.add(postReview)
-                }
-
-                if (hasEditPermission || hasDeletePermission) {
-                    settingsItems.add(AmitySettingsItem.Margin(R.dimen.amity_padding_xs))
-                    settingsItems.add(separator)
-                }
-
-                val leaveCommunity = menuCreator.createLeaveCommunityMenu(communityId!!, hasDeletePermission)
+            if (hasDeletePermission) {
+                val closeCommunity = menuCreator.createCloseCommunityMenu(communityId!!)
                 settingsItems.add(AmitySettingsItem.Margin(R.dimen.amity_padding_s))
-                settingsItems.add(leaveCommunity)
+                settingsItems.add(closeCommunity)
                 settingsItems.add(AmitySettingsItem.Margin(R.dimen.amity_padding_m1))
                 settingsItems.add(separator)
+            }
 
-                if (hasDeletePermission) {
-                    val closeCommunity = menuCreator.createCloseCommunityMenu(communityId!!)
-                    settingsItems.add(AmitySettingsItem.Margin(R.dimen.amity_padding_s))
-                    settingsItems.add(closeCommunity)
-                    settingsItems.add(AmitySettingsItem.Margin(R.dimen.amity_padding_m1))
-                    settingsItems.add(separator)
-                }
-
-                settingsItems
-            })
+            settingsItems
+        }
     }
 
     private fun getPushStatus(): Int {

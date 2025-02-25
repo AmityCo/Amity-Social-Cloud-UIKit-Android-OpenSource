@@ -2,14 +2,18 @@ package com.amity.socialcloud.uikit.chat.messages.fragment
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
@@ -74,14 +78,21 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
     private var isReachBottom = true
     private lateinit var imagePickerLauncher: ActivityResultLauncher<PickVisualMediaRequest>
 
-    private val requiredPermissions = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+    private val requiredPermissions = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+        arrayOf(
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
+    } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
         arrayOf(
             Manifest.permission.RECORD_AUDIO,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
         )
-    }  else {
+    } else {
         arrayOf(
-            Manifest.permission.RECORD_AUDIO
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.READ_MEDIA_AUDIO
         )
     }
 
@@ -96,17 +107,6 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
             recordPermissionGranted = isGranted
         }
 
-    private val pickMultipleImagesPermission =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-            if (it) {
-                isImagePermissionGranted = true
-                pickMultipleImages()
-            } else {
-                isImagePermissionGranted = false
-                view?.showSnackBar("Permission denied", Snackbar.LENGTH_SHORT)
-            }
-        }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         essentialViewModel =
@@ -117,7 +117,7 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
+        savedInstanceState: Bundle?
     ): View {
         binding = DataBindingUtil.inflate(
             inflater,
@@ -138,27 +138,10 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
         setupComposebar()
         observeViewModelEvents()
         initMessageLoader()
+        registerImagePickerResult()
 //        observeRefreshStatus()
 //        observeConnectionStatus()
-        imagePickerLauncher = registerForActivityResult(
-            ActivityResultContracts.PickMultipleVisualMedia(
-                AmityConstants.MAX_SELECTION_COUNT
-            )
-        ) { uris ->
-            // Callback is invoked after the user selects media items or closes the
-            // photo picker.
-            for (uri in uris) {
-                disposable.add(messageListViewModel.sendImageMessage(uri)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .doOnComplete {
-                        msgSent = true
-                    }.doOnError {
-                        msgSent = false
-                    }.subscribe()
-                )
-            }
-        }
+
     }
 
     private fun setupComposebar() {
@@ -207,6 +190,28 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
             .subscribe()
     }
      */
+    
+    private fun registerImagePickerResult() {
+        imagePickerLauncher = registerForActivityResult(
+            ActivityResultContracts.PickMultipleVisualMedia(
+                AmityConstants.MAX_SELECTION_COUNT
+            )
+        ) { uris ->
+            // Callback is invoked after the user selects media items or closes the
+            // photo picker.
+            for (uri in uris) {
+                disposable.add(messageListViewModel.sendImageMessage(uri)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnComplete {
+                        msgSent = true
+                    }.doOnError {
+                        msgSent = false
+                    }.subscribe()
+                )
+            }
+        }
+    }
 
     private fun presentDisconnectedView() {
         if (essentialViewModel.enableConnectionBar) {
@@ -569,6 +574,19 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
         val textView = layout.findViewById<TextView>(R.id.tvMessage)
         textView.setShape(null, null, null, null, R.color.amityColorBase, null, null)
         layout.showSnackBar("", Snackbar.LENGTH_SHORT)
+    }
+
+
+    private fun addImageToList(uri: Uri) {
+        disposable.add(messageListViewModel.sendImageMessage(uri)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnComplete {
+                msgSent = true
+            }.doOnError {
+                msgSent = false
+            }.subscribe()
+        )
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

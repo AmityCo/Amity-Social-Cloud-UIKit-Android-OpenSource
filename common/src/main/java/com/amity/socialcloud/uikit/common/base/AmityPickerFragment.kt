@@ -16,11 +16,9 @@ import java.io.File
 
 abstract class AmityPickerFragment : AmityBaseFragment() {
 
-
     private var photoFile: File? = null
 
     private lateinit var imagePickerLauncher: ActivityResultLauncher<PickVisualMediaRequest>
-
 
     private val pickFile = registerForActivityResult(AmityPickFileContract()) { data ->
         onFilePicked(data)
@@ -66,14 +64,6 @@ abstract class AmityPickerFragment : AmityBaseFragment() {
         imagePickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        imagePickerLauncher = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            onImagePicked(uri)
-        }
-    }
-
-
     fun pickFile() {
 
         //pickFilePermission.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -83,7 +73,6 @@ abstract class AmityPickerFragment : AmityBaseFragment() {
         val permissions = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
             arrayOf(
                 Manifest.permission.CAMERA,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
             )
         } else {
             arrayOf(
@@ -91,6 +80,14 @@ abstract class AmityPickerFragment : AmityBaseFragment() {
             )
         }
         cameraPermission.launch(permissions)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        imagePickerLauncher =
+            registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+                onImagePicked(uri)
+            }
     }
 
 }

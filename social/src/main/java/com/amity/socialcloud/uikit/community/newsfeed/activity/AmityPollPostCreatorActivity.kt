@@ -55,8 +55,8 @@ class AmityPollPostCreatorActivity : AmityBaseToolbarFragmentContainerActivity()
             }.build()
     }
 
-    class AmityPollCreatorActivityContract : ActivityResultContract<String, String?>() {
-        override fun createIntent(context: Context, communityId: String): Intent {
+    class AmityPollCreatorActivityContract : ActivityResultContract<String?, String?>() {
+        override fun createIntent(context: Context, communityId: String?): Intent {
             return Intent(context, AmityPollPostCreatorActivity::class.java).apply {
                 putExtra(EXTRA_PARAM_COMMUNITY_ID, communityId)
             }

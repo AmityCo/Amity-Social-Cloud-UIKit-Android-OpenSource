@@ -49,3 +49,4 @@
 
 -dontwarn com.zhihu.matisse.R$plurals
 -keepclassmembers class com.linkedin.android.** { *; }
+

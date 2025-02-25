@@ -1,0 +1,87 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+}
+
+android {
+    namespace 'com.amity.socialcloud.uikit.common.compose'
+    compileSdk 34
+
+    defaultConfig {
+        minSdk 21
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+    buildFeatures {
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.4.7"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+
+    packagingOptions {
+        pickFirst("META-INF/*.kotlin_module")
+        exclude 'META-INF/INDEX.LIST'
+        exclude 'META-INF/io.netty.versions.properties'
+    }
+}
+
+dependencies {
+    api project(path: ':common')
+
+    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.11.0'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+    def composeBom = platform('androidx.compose:compose-bom:2024.01.00')
+    api composeBom
+    androidTestApi composeBom
+
+    // Material Design 3
+    api 'androidx.compose.material3:material3-android:1.2.1'
+    api 'androidx.compose.material:material-android:1.6.7'
+    // Android Studio Preview support
+    api 'androidx.compose.ui:ui-tooling'
+    // Optional - Integration with activities
+    api 'androidx.activity:activity-compose'
+    // Optional - Integration with ViewModels
+    api 'androidx.lifecycle:lifecycle-viewmodel-compose'
+    // Optional - Integration with RxJava
+    api 'androidx.compose.runtime:runtime-rxjava3'
+    api 'androidx.compose.ui:ui-viewbinding'
+
+    // image loading
+    api "io.coil-kt:coil-compose:2.4.0"
+    api "io.coil-kt:coil-video:2.4.0"
+    //  extract colors from images with palette
+    api "androidx.palette:palette-ktx:1.0.0"
+
+    api "androidx.constraintlayout:constraintlayout-compose:1.0.1"
+    api "androidx.paging:paging-compose:3.2.1"
+    api "com.linkedin.android.spyglass:spyglass:3.0.1"
+
+    def room_version = "2.5.1"
+    api "androidx.room:room-runtime:$room_version"
+    api "androidx.room:room-rxjava3:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+}

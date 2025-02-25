@@ -70,10 +70,9 @@ class AmityPostListAdapter(
                 oldItem: AmityBasePostItem,
                 newItem: AmityBasePostItem
             ): Boolean {
-                // TODO: 1/8/23 need to add more fields check
-                return oldItem.post.getPostId() == newItem.post.getPostId()
-                        && oldItem.post.getEditedAt() == newItem.post.getEditedAt()
-                        && oldItem.post.isDeleted() == newItem.post.isDeleted()
+                // Do not change
+                // Delegate diff check to lower level adapters (header, content, footer)
+                return false
             }
 
         }

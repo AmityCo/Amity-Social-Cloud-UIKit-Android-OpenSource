@@ -17,10 +17,13 @@ import com.amity.socialcloud.sdk.api.chat.AmityChatClient
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.uikit.chat.home.AmityChatHomePageActivity
 import com.amity.socialcloud.uikit.chat.messages.AmityMessageListActivity
+import com.amity.socialcloud.uikit.community.compose.community.category.AmityAllCategoriesPageActivity
+import com.amity.socialcloud.uikit.community.compose.socialhome.AmitySocialHomePageActivity
 import com.amity.socialcloud.uikit.community.home.activity.AmityCommunityHomePageActivity
 import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityCustomPostRankingFeedActivity
 import com.amity.socialcloud.uikit.community.utils.AmityCommunityNavigation
 import com.amity.socialcloud.uikit.sample.databinding.AmityActivityFeatureListBinding
+import com.amity.socialcloud.uikit.sample.liveChat.AmityLiveChatListActivity
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 
@@ -45,6 +48,23 @@ class AmityFeatureListActivity : AppCompatActivity() {
                 startActivity(communityIntent)
             }
 
+            communityHomeV4.setOnClickListener {
+                val communityIntent = Intent(
+                    this@AmityFeatureListActivity,
+                    AmitySocialHomePageActivity::class.java
+                )
+                startActivity(communityIntent)
+            }
+
+            socialV4Compatible.setOnClickListener {
+                startActivity(
+                    AmityCommunityHomePageActivity.newIntent(
+                        this@AmityFeatureListActivity,
+                        useNewsFeedV4 = true
+                    )
+                )
+            }
+
             customRankingFeed.setOnClickListener {
                 val communityIntent = Intent(
                     this@AmityFeatureListActivity,
@@ -66,6 +86,13 @@ class AmityFeatureListActivity : AppCompatActivity() {
                 )
             }
 
+            userProfileV4.setOnClickListener {
+                AmityCommunityNavigation.navigateToUserProfileV4(
+                    this@AmityFeatureListActivity,
+                    AmityCoreClient.getUserId()
+                )
+            }
+
             textComposebar.setOnClickListener {
                 presentJoinDialog(callback = { d, input ->
                     run {
@@ -82,6 +109,22 @@ class AmityFeatureListActivity : AppCompatActivity() {
                         AmityPostCreatorSettingsActivity::class.java
                     )
                 )
+            }
+
+            liveChat.setOnClickListener {
+                startActivity(
+                    Intent(
+                        this@AmityFeatureListActivity,
+                        AmityLiveChatListActivity::class.java
+                    )
+                )
+            }
+            playground.setOnClickListener {
+                val intent = Intent(
+                    this@AmityFeatureListActivity,
+                    AmityPlaygroundActivity::class.java
+                )
+                startActivity(intent)
             }
         }
     }

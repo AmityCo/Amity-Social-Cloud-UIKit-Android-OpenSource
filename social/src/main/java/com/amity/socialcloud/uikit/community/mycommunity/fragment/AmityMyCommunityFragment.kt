@@ -2,7 +2,13 @@ package com.amity.socialcloud.uikit.community.mycommunity.fragment
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.*
+import android.view.KeyEvent
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -33,6 +39,8 @@ private const val ARG_SHOW_OPTIONS_MENU = "ARG_SHOW_OPTIONS_MENU"
 
 class AmityMyCommunityFragment : AmityBaseFragment(),
     AmityMyCommunityItemClickListener {
+
+    private val ID_MENU_ITEM_CREATE_COMMUNITY: Int = 1
 
     private val viewModel: AmityMyCommunityListViewModel by viewModels()
     lateinit var binding: AmityFragmentMyCommunityBinding
@@ -152,7 +160,12 @@ class AmityMyCommunityFragment : AmityBaseFragment(),
             resources.getBoolean(R.bool.amity_uikit_social_community_creation_button_visible)
         if (shouldShowAddButton) {
             val drawable = ContextCompat.getDrawable(requireContext(), R.drawable.amity_ic_add)
-            menu.add(Menu.NONE, 1, Menu.NONE, getString(R.string.amity_add))
+            menu.add(
+                Menu.NONE,
+                ID_MENU_ITEM_CREATE_COMMUNITY,
+                Menu.NONE,
+                getString(R.string.amity_add)
+            )
                 ?.setIcon(drawable)
                 ?.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
         }
@@ -160,17 +173,19 @@ class AmityMyCommunityFragment : AmityBaseFragment(),
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val createCommunityIntent =
-            Intent(requireActivity(), AmityCommunityCreatorActivity::class.java)
-        startActivity(createCommunityIntent)
+        if (item.itemId == ID_MENU_ITEM_CREATE_COMMUNITY) {
+            val createCommunityIntent =
+                Intent(requireActivity(), AmityCommunityCreatorActivity::class.java)
+            startActivity(createCommunityIntent)
+        }
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onCommunitySelected(ekoCommunity: AmityCommunity?) {
+    override fun onCommunitySelected(community: AmityCommunity?) {
         if (viewModel.myCommunityItemClickListener != null) {
-            viewModel.myCommunityItemClickListener?.onCommunitySelected(ekoCommunity)
+            viewModel.myCommunityItemClickListener?.onCommunitySelected(community)
         } else {
-            navigateToCommunityDetails(ekoCommunity)
+            navigateToCommunityDetails(community)
         }
     }
 

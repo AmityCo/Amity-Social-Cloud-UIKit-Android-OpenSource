@@ -12,8 +12,8 @@ import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.base.AmityBaseFragment
 import com.amity.socialcloud.uikit.common.utils.AmityExceptionCatchLinearLayoutManager
 import com.amity.socialcloud.uikit.community.R
+import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageActivity
 import com.amity.socialcloud.uikit.community.databinding.AmityFragmentRecommendedCommunityBinding
-import com.amity.socialcloud.uikit.community.detailpage.AmityCommunityPageActivity
 import com.amity.socialcloud.uikit.community.explore.adapter.AmityCommunityItemDecoration
 import com.amity.socialcloud.uikit.community.explore.adapter.AmityRecommendedCommunitiesAdapter
 import com.amity.socialcloud.uikit.community.explore.viewmodel.AmityExploreCommunityViewModel
@@ -110,9 +110,11 @@ class AmityRecommendedCommunityFragment : AmityBaseFragment(),
 
     private fun navigateToCommunityDetails(community: AmityCommunity?) {
         if (community != null) {
-            val intent =
-                AmityCommunityPageActivity.newIntent(requireContext(), community)
-            startActivity(intent)
+            val intent = AmityCommunityProfilePageActivity.newIntent(
+                context = requireContext(),
+                communityId = community.getCommunityId(),
+            )
+            requireContext().startActivity(intent)
         }
     }
 

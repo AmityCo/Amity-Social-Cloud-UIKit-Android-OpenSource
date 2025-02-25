@@ -5,11 +5,13 @@ apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion rootProject.amityCompileSdkVersion
-    buildToolsVersion "30.0.3"
+    buildToolsVersion "34.0.0"
 
     defaultConfig {
         minSdkVersion rootProject.amityMinSdkVersion
         targetSdkVersion rootProject.amityTargetSdkVersion
+        versionCode 1
+        versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -17,8 +19,9 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
+
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17
+        jvmTarget = '17'
     }
 
     buildTypes {
@@ -45,11 +48,19 @@ android {
         // execution 'ANDROIDX_TEST_ORCHESTRATOR'
     }
 
+    lintOptions {
+        quiet true
+        xmlReport false
+        checkDependencies false
+        abortOnError false
+        checkAllWarnings true
+        warningsAsErrors true
 
-    configurations.configureEach {
-        resolutionStrategy {
-            force("androidx.core:core-ktx:1.9.0")
-        }
+        disable "GoogleAppIndexingWarning"
+        disable "NewerVersionAvailable"
+        disable "UnusedResources"
+        disable "LogNotTimber", "StringFormatInTimber", "ThrowableNotAtBeginning", "BinaryOperationInTimber",
+                "TimberArgCount", "TimberArgTypes", "TimberTagLength", "TimberExceptionLogging"
     }
 
 
@@ -57,7 +68,6 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk$rootProject.amityKotlinJDKVersion:$rootProject.amityKotlinVersion"
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test:runner:1.3.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'

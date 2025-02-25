@@ -35,7 +35,6 @@ import com.amity.socialcloud.uikit.community.newsfeed.adapter.AmityUserMentionAd
 import com.amity.socialcloud.uikit.community.newsfeed.adapter.AmityUserMentionPagingDataAdapter
 import com.amity.socialcloud.uikit.community.newsfeed.adapter.AmityUserMentionViewHolder
 import com.amity.socialcloud.uikit.community.newsfeed.model.AmityUserMention
-import com.amity.socialcloud.uikit.community.newsfeed.model.PostMedia
 import com.amity.socialcloud.uikit.community.newsfeed.viewmodel.AmityLiveStreamPostCreatorViewModel
 import com.amity.socialcloud.uikit.community.views.createpost.AmityPostComposeView
 import com.bumptech.glide.Glide
@@ -57,6 +56,7 @@ private const val REQUEST_LIVE_STREAM_STORAGE_PERMISSIONS = 20002
 
 
 class AmityLiveStreamPostCreatorFragment : RxFragment() {
+
 
     private lateinit var binding: AmityFragmentLiveStreamPostCreatorBinding
 
@@ -108,14 +108,6 @@ class AmityLiveStreamPostCreatorFragment : RxFragment() {
         registerImagePickerResult()
     }
 
-    private fun registerImagePickerResult() {
-        imagePickerLauncher = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            if (uri != null) {
-                uploadThumbnail(uri)
-            }
-        }
-    }
-
     private fun grantCameraPermissions(requestCode: Int, onPermissionGrant: () -> Unit) {
         if (hasPermission(Manifest.permission.CAMERA) && hasPermission(Manifest.permission.RECORD_AUDIO)) {
             onPermissionGrant()
@@ -134,6 +126,15 @@ class AmityLiveStreamPostCreatorFragment : RxFragment() {
             onPermissionGrant()
         } else {
             requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), requestCode)
+        }
+    }
+
+    private fun registerImagePickerResult() {
+        imagePickerLauncher =
+            registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+                if (uri != null) {
+                    uploadThumbnail(uri)
+            }
         }
     }
 
@@ -168,9 +169,13 @@ class AmityLiveStreamPostCreatorFragment : RxFragment() {
         binding.iconClose.setOnClickListener { activity?.finish() }
         binding.togglePublish.setOnClickListener { startStreaming() }
         binding.iconAddThumbnail.setOnClickListener {
-            grantStoragePermission(
-                REQUEST_LIVE_STREAM_STORAGE_PERMISSIONS
-            ) { openImagePicker() }
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                grantStoragePermission(
+                    REQUEST_LIVE_STREAM_STORAGE_PERMISSIONS
+                ) { openImagePicker() }
+            } else {
+                openImagePicker()
+            }
         }
         binding.thumbnailContainer.setOnClickListener {
             presentEditThumbnailDialog()
@@ -188,7 +193,7 @@ class AmityLiveStreamPostCreatorFragment : RxFragment() {
                     .load(imageUrl)
                     .centerCrop()
                     .dontAnimate()
-                    .placeholder(R.drawable.amity_ic_default_community_avatar)
+                    .placeholder(R.drawable.amity_ic_default_community_avatar_circular)
                     .into(binding.communityAvatar)
             }
         }
@@ -564,7 +569,7 @@ class AmityLiveStreamPostCreatorFragment : RxFragment() {
             COMPOSE.DESCRIPTION -> descriptionUserMentionPagingDataAdapter
         }
     }
-
+    
     internal enum class COMPOSE { DESCRIPTION }
 
     class Builder internal constructor() {

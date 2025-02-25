@@ -54,11 +54,14 @@ class AmityCommunityPostNotificationSettingsActivity : AppCompatActivity(),
         )
         binding.pushDetailToolBar.setClickListener(this)
         val postType = intent?.extras?.getString(EXTRA_PARAM_NOTIFICATION_SETTING_TYPE)
-        if (postType == SettingType.POSTS.name) {
-            binding.pushDetailToolBar.setLeftString(getString(R.string.amity_Posts))
-        } else {
-            binding.pushDetailToolBar.setLeftString(getString(R.string.amity_comments))
+        val leftString = when (postType) {
+            SettingType.POSTS.name -> getString(R.string.amity_Posts)
+            SettingType.COMMENTS.name -> getString(R.string.amity_comments)
+            SettingType.STORIES.name -> getString(R.string.amity_stories)
+            else -> ""
         }
+        binding.pushDetailToolBar.setLeftString(leftString)
+
         binding.pushDetailToolBar.setRightString(getString(R.string.amity_save))
         supportActionBar?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
         setSupportActionBar(binding.pushDetailToolBar)
@@ -70,10 +73,17 @@ class AmityCommunityPostNotificationSettingsActivity : AppCompatActivity(),
             ?: SettingType.POSTS.name
         val fragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
-        fragment = if (settingType == SettingType.POSTS.name) {
-            AmityCommunityPostNotificationSettingsFragment.newInstance(communityId).build()
-        } else {
-            AmityCommunityCommentNotificationSettingsFragment.newInstance(communityId).build()
+
+        fragment = when (settingType) {
+            SettingType.POSTS.name -> AmityCommunityPostNotificationSettingsFragment.newInstance(
+                communityId
+            ).build()
+
+            SettingType.COMMENTS.name -> AmityCommunityCommentNotificationSettingsFragment.newInstance(
+                communityId
+            ).build()
+
+            else -> AmityCommunityStoryNotificationSettingsFragment.newInstance(communityId).build()
         }
 
         fragmentTransaction.replace(R.id.fragmentContainer, fragment)
@@ -90,6 +100,7 @@ class AmityCommunityPostNotificationSettingsActivity : AppCompatActivity(),
 
     enum class SettingType {
         POSTS,
-        COMMENTS
+        COMMENTS,
+        STORIES
     }
 }

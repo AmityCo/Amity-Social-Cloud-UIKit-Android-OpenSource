@@ -3,7 +3,13 @@ package com.amity.socialcloud.uikit.community.home.fragments
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
-import android.view.*
+import android.view.KeyEvent
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.TextView
@@ -22,7 +28,9 @@ import com.amity.socialcloud.uikit.common.utils.AmityAndroidUtil
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.databinding.AmityFragmentCommunityHomePageBinding
 import com.amity.socialcloud.uikit.community.explore.fragments.AmityCommunityExplorerFragment
+import com.amity.socialcloud.uikit.community.mycommunity.fragment.AmityMyCommunityFragment
 import com.amity.socialcloud.uikit.community.newsfeed.fragment.AmityNewsFeedFragment
+import com.amity.socialcloud.uikit.community.newsfeed.fragment.AmityNewsFeedV4Fragment
 import com.amity.socialcloud.uikit.community.search.AmityUserSearchFragment
 import com.amity.socialcloud.uikit.community.setting.AmityCommunitySearchFragment
 import io.reactivex.rxjava3.disposables.Disposable
@@ -40,7 +48,7 @@ class AmityCommunityHomePageFragment : Fragment() {
     private var textChangeDisposable: Disposable? = null
     private val textChangeSubject: PublishSubject<String> = PublishSubject.create()
     private val searchString = ObservableField("")
-
+    private var useNewsFeedV4: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,13 +62,16 @@ class AmityCommunityHomePageFragment : Fragment() {
         )
         binding.viewModel = viewModel
         binding.tabLayout.disableSwipe()
-        binding.tabLayout.setOffscreenPageLimit(2)
+        binding.tabLayout.setOffscreenPageLimit(3)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
+
+        useNewsFeedV4 = requireArguments().getBoolean(EXTRA_USE_NEWS_FEED_V4, false)
+
         initTabLayout()
         setUpSearchTabLayout()
         addViewModelListeners()
@@ -92,6 +103,10 @@ class AmityCommunityHomePageFragment : Fragment() {
                 AmityFragmentStateAdapter.AmityPagerModel(
                     getString(R.string.amity_title_explore),
                     getExploreFragment()
+                ),
+                AmityFragmentStateAdapter.AmityPagerModel(
+                    getString(R.string.amity_title_my_communities),
+                    getMyCommunityFragment()
                 )
             )
         )
@@ -102,8 +117,17 @@ class AmityCommunityHomePageFragment : Fragment() {
         return AmityCommunityExplorerFragment.newInstance().build()
     }
 
+
     private fun getNewsFeedFragment(): Fragment {
-        return AmityNewsFeedFragment.newInstance().build()
+        return if (useNewsFeedV4) {
+            AmityNewsFeedV4Fragment.newInstance().build()
+        } else {
+            AmityNewsFeedFragment.newInstance().build()
+        }
+    }
+
+    private fun getMyCommunityFragment(): Fragment {
+        return AmityMyCommunityFragment.newInstance().build()
     }
 
     private fun addViewModelListeners() {
@@ -113,6 +137,7 @@ class AmityCommunityHomePageFragment : Fragment() {
                     //searchMenuItem.expandActionView()
                     binding.tabLayout.switchTab(1)
                 }
+
                 else -> {
 
                 }
@@ -218,15 +243,31 @@ class AmityCommunityHomePageFragment : Fragment() {
     }
 
     class Builder internal constructor() {
+        private var mUseNewsFeedV4: Boolean = false
+
         fun build(): AmityCommunityHomePageFragment {
-            return AmityCommunityHomePageFragment()
+            return AmityCommunityHomePageFragment().apply {
+                arguments = Bundle().apply {
+                    putBoolean(EXTRA_USE_NEWS_FEED_V4, mUseNewsFeedV4)
+                }
+            }
+        }
+
+        internal fun useNewsFeedV4(): Builder {
+            mUseNewsFeedV4 = true
+            return this
         }
     }
 
     companion object {
+        private const val EXTRA_USE_NEWS_FEED_V4 = "EXTRA_USE_NEWS_FEED_V4"
 
-        fun newInstance(): Builder {
-            return Builder()
+        fun newInstance(useNewsFeedV4: Boolean? = false): Builder {
+            return if (useNewsFeedV4 == true) {
+                Builder().useNewsFeedV4()
+            } else {
+                Builder()
+            }
         }
     }
 }

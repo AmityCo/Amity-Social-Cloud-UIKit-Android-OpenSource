@@ -9,6 +9,7 @@ import com.amity.socialcloud.sdk.model.core.file.upload.AmityUploadResult
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import com.amity.socialcloud.uikit.common.model.AmityEventIdentifier
+import com.amity.socialcloud.uikit.common.service.AmityFileService
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
 
@@ -33,8 +34,12 @@ class AmityEditUserProfileViewModel : AmityBaseViewModel() {
 
 
     fun updateUser(): Single<AmityUser> {
-        val updateUserBuilder = AmityCoreClient.updateUser()
-            .displayName(displayName.value!!)
+        val updateUserBuilder = AmityCoreClient.editUser()
+            .apply {
+                if (displayName.value != user?.getDisplayName()) {
+                    displayName(displayName.value!!)
+                }
+            }
             .description(about.value!!)
 
         if (profileImage != null) {
@@ -46,7 +51,7 @@ class AmityEditUserProfileViewModel : AmityBaseViewModel() {
     fun uploadProfilePicture(uri: Uri): Flowable<AmityUploadResult<AmityImage>> {
         updating = true
         checkProfileUpdate()
-        return AmityCoreClient.newFileRepository().uploadImage(uri)
+        return AmityFileService().uploadImage(uri)
     }
 
     fun updateImageUploadStatus(ekoImageUpload: AmityUploadResult<AmityImage>) {

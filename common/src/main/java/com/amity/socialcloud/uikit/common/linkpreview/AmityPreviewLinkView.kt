@@ -107,10 +107,9 @@ class AmityPreviewLinkView : ConstraintLayout {
 
     private fun getPostPreviewUrl(post: AmityPost, postUrl: String?): AmityPreviewUrlCacheItem? {
         val postId = post.getPostId()
-        val postText = (post.getData() as? AmityPost.Data.TEXT)?.getText() ?: ""
         val editedAt = post.getEditedAt()
 
-        return AmityPreviewUrl.getPostPreviewUrl(postId, postText, postUrl, editedAt)
+        return AmityPreviewUrl.getPostPreviewUrl(postId, postUrl, editedAt)
     }
 
     private fun getPostPreviewMetadata(url: String): Single<AmityPreviewMetadataCacheItem> {

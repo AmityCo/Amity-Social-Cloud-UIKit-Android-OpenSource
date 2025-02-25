@@ -53,6 +53,7 @@ class AmityCommunityMembersViewModel : AmityBaseViewModel() {
                     .membership(communityId)
                     .getMembers()
                     .filter(AmityCommunityMembershipFilter.MEMBER)
+                    .includeDeleted(false)
                     .build()
                     .query()
             }
@@ -65,7 +66,7 @@ class AmityCommunityMembersViewModel : AmityBaseViewModel() {
 
     private fun getCommunity(): Flowable<AmityCommunity> {
         if (community != null) {
-            return Flowable.just(community)
+            return Flowable.just(community!!)
         }
         return AmitySocialClient.newCommunityRepository().getCommunity(communityId)
             .subscribeOn(Schedulers.io())
@@ -99,6 +100,7 @@ class AmityCommunityMembersViewModel : AmityBaseViewModel() {
             .filter(AmityCommunityMembershipFilter.MEMBER)
             .sortBy(AmityCommunityMembershipSortOption.FIRST_CREATED)
             .roles(listOf(AmityConstants.CHANNEL_MODERATOR_ROLE, AmityConstants.COMMUNITY_MODERATOR_ROLE))
+            .includeDeleted(false)
             .build()
             .query()
             .subscribeOn(Schedulers.io())

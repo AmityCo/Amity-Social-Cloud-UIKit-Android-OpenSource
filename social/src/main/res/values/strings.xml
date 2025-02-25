@@ -10,48 +10,26 @@
     <string name="amity_following">Following</string>
     <string name="amity_title_news_feed">Newsfeed</string>
     <string name="amity_title_explore">Explore</string>
+    <string name="amity_title_my_communities">My Communities</string>
     <string name="amity_community">Community</string>
-    <string name="amity_create_community">Create Community</string>
-    <string name="amity_cc_hint">Name your community</string>
-    <string name="amity_about">About</string>
-    <string name="amity_enter_description">Enter description</string>
-    <string name="amity_tv_public">Public</string>
-    <string name="amity_admin_description">Choose to allow Only Admins to create posts in this community.</string>
-    <string name="amity_public_description">Anyone can join, view, and search the posts in this community.</string>
-    <string name="amity_tv_private">Private</string>
-    <string name="amity_private_description">Only members invited by the moderators can join, view, and search the posts in this community.</string>
-    <string name="amity_only_admin">Only admin can post</string>
-    <string name="amity_add_members">Add members<font fgcolor='#FF0000'>*</font></string>
-    <string name="amity_cancel">Cancel</string>
-    <string name="amity_cancel_request">Cancel request</string>
-    <string name="amity_select_members">Select members</string>
     <string name="amity_add">Add</string>
     <string name="amity_selected">Selected</string>
     <string name="amity_hello_blank_fragment">Hello blank fragment</string>
     <string name="amity_feed_post_time">%d mins</string>
     <string name="amity_post_compose_hint">What\'s going on…</string>
+    <string name="amity_story">Story</string>
+    <string name="amity_stories">Stories</string>
     <string name="amity_post">Post</string>
     <string name="amity_post_caps">POST</string>
     <string name="amity_new_post">New Post</string>
     <string name="amity_attachment_size_limit_exceed">One or more file exceed max file size limit 1GB</string>
     <string name="amity_attachment_count_limit_exceed">Can not select more than 10 files</string>
-    <string name="amity_discard">Discard</string>
-    <string name="amity_discard_post_title">Discard post?</string>
-    <string name="amity_discard_post_message">Do you want to discard your post?</string>
     <string name="amity_share">Share</string>
     <string name="amity_comment">Comment</string>
-    <string name="amity_like">Like</string>
-    <string name="amity_liked">Liked</string>
     <string name="amity_image_count">+%d</string>
     <string name="amity_view_all_files">View all files</string>
-    <string name="amity_delete">Delete</string>
-    <string name="amity_leave">Leave</string>
-    <string name="amity_close">Close</string>
     <string name="amity_successfully_created_community">Successfully created community</string>
-    <string name="amity_delete_post_title">Delete this post?</string>
-    <string name="amity_delete_post_warning_message">This post will be permanently deleted. You’ll no longer to see and find this post</string>
     <string name="amity_my_timeline">My Timeline</string>
-    <string name="amity_post_to">Post to</string>
     <string name="amity_post_as_community">Post as Community</string>
     <string name="amity_moderator">Moderator</string>
     <string name="amity_edited">Edited</string>
@@ -63,34 +41,19 @@
     <string name="amity_find_community">Find community or create your own</string>
     <string name="amity_explore_community">Explore Community</string>
     <string name="amity_post_comment_hint">Say something nice</string>
-    <string name="amity_reply">Reply</string>
     <string name="amity_view_replies">View replies</string>
-    <string name="amity_view_more_replies">View more replies</string>
     <string name="amity_view_all_replies">View all %d replies</string>
     <string name="amity_view_all_comments">View all comments…</string>
-    <string name="amity_edit_reply">Edit Reply</string>
-    <string name="amity_delete_reply">Delete Reply</string>
-    <string name="amity_delete_reply_title">Delete reply</string>
-    <string name="amity_delete_reply_warning_message">"This reply will be permanently removed."</string>
-    <string name="amity_add_reply_error_message">Unable to add reply</string>
     <string name="amity_discard_reply_message">Do you want to discard your reply?</string>
     <string name="amity_update_reply_error_message">Unable to update reply</string>
     <string name="amity_reply_to">Reply to</string>
-    <string name="amity_reply_deleted_message">This reply has been deleted</string>
     <string name="amity_discard_reply_title">Discard Reply?</string>
     <string name="amity_community_name">Community name<font fgcolor='#FF0000'>*</font></string>
     <string name="amity_category">Category</string>
     <string name="amity_category_required_field">Category<font fgcolor='#FF0000'>*</font></string>
     <string name="amity_please_select_category">Please Select Category</string>
-    <string name="amity_categories">Categories</string>
     <string name="amity_error_name">This name has already been taken.</string>
-    <string name="amity_cc_leave">Leave without finishing</string>
-    <string name="amity_cc_dialog_msg">Your progress won\'t be saved and your group won\'t be created.</string>
     <string name="amity_done">DONE</string>
-    <string name="amity_delete_comment">Delete Comment</string>
-    <string name="amity_edit_comment">Edit Comment</string>
-    <string name="amity_delete_comment_title">Delete Comment</string>
-    <string name="amity_delete_comment_warning_message">"This comment will be permanently removed. "</string>
     <string name="amity_discard_comment_title">Discard Comment?</string>
     <string name="amity_discard_comment_message">Do you want to discard your comment?</string>
     <string name="amity_members">members</string>
@@ -106,8 +69,6 @@
     <string name="amity_join_community_message">Join community to interact with all posts</string>
     <string name="amity_timeline">TIMELINE</string>
     <string name="amity_no_post">No posts yet</string>
-    <string name="amity_comment_deleted_message">This comment has been deleted</string>
-    <string name="amity_select_category">Select category</string>
     <string name="amity_start_post">Start your first post</string>
     <string name="amity_no_user_found">No user found</string>
     <string name="amity_my_community">My Community</string>
@@ -122,16 +83,6 @@
     <string name="amity_community_setting">Community Settings</string>
     <string name="amity_basic_info">Basic Info</string>
     <string name="amity_community_permissions">Community Permissions</string>
-    <string name="amity_close_community">Close community</string>
-    <string name="amity_close_community_description">Closing this community will remove the community page and all its content and comments.</string>
-    <string name="amity_leave_community">Leave community</string>
-    <string name="amity_moderator_leave_community_msg">Leaving community, you’ll give up your moderator status and won’t no longer be able to post and interact in this community.</string>
-    <string name="amity_moderator_leave_community_error_msg">You’re the only moderator in this group. To leave community, nominate other members to moderator role.</string>
-    <string name="amity_last_moderator_leave_community_msg">As you’re the last moderator and member, leaving will also close this community. All posts shared in community will be deleted. This cannot be undone.</string>
-    <string name="amity_close_community_msg">All members will be removed from the community. All posts, messages, reactions, and media shared in community will be deleted. This cannot be undone.</string>
-    <string name="amity_leave_community_msg">You won\’t no longer be able to post and interact in this community after leaving.</string>
-    <string name="amity_leave_community_error_title">Unable to leave community</string>
-    <string name="amity_close_community_error_title">Unable to close community</string>
     <string name="amity_mention_error_title">Unable to mention user</string>
     <string name="amity_mention_error_msg">You have reached maximum 30 mentioned users in a post.</string>
     <string name="amity_post_characters_limit_error_title">Unable to type text into post</string>
@@ -160,9 +111,6 @@
     <string name="amity_connectivity_issue">Unable to reach server</string>
     <string name="amity_add_comment">Add comment</string>
     <string name="amity_general">General</string>
-    <string name="amity_add_comment_error_message">Unable to add comment</string>
-    <string name="amity_update_comment_error_message">Unable to update comment</string>
-    <string name="amity_add_blocked_words_comment_error_message">Your comment wasn’t created as it contained blocked words. Only you can see this</string>
     <plurals name="amity_feed_number_of_likes">
         <item quantity="one">%s like</item>
         <item quantity="other">%s likes</item>
@@ -192,11 +140,17 @@
     <string name="amity_reacts_post_description">Receive notifications when someone make a reaction to your posts in this community.</string>
     <string name="amity_reacts_comments">Reacts Comments</string>
     <string name="amity_reacts_comments_description">Receive notifications when someone like your comment in this community.</string>
-    <string name="amity_comments">Comments</string>
     <string name="amity_new_comments">New Comments</string>
     <string name="amity_new_comments_description">Receive notifications when someone comment to your posts in this community.</string>
     <string name="amity_replies">Replies</string>
     <string name="amity_replies_description">Receive notifications when someone comment to your comments in this community.</string>
+    <string name="amity_new_stories">New stories</string>
+    <string name="amity_new_stories_description">Receive notifications when someone creates a new story in this community.</string>
+    <string name="amity_story_reactions">Story reactions</string>
+    <string name="amity_story_reaction_description">Receive notifications when someone reacts to your story in this community.</string>
+    <string name="amity_story_comments">Story comments</string>
+    <string name="amity_story_comments_description">Receive notifications when someone comments on your story in this community.</string>
+
     <string name="amity_notification_settings">Notification Settings</string>
     <string name="amity_settings_error">There was an error fetching the data</string>
     <string name="amity_Posts">Posts</string>
@@ -206,7 +160,6 @@
     <string name="amity_report">Report</string>
     <string name="amity_report_user">Report user</string>
     <string name="amity_un_report_user">Unreport user</string>
-    <string name="amity_undo_report">Undo Report</string>
     <string name="amity_manage">Manage</string>
     <string name="amity_others">Others</string>
     <string name="amity_unfollow_user">Unfollow %s</string>
@@ -222,7 +175,7 @@
     <string name="amity_follow_user">Follow this user to see all posts</string>
     <string name="amity_follow_error">Unable to follow %s</string>
     <string name="amity_unfollow_error">Unable to unfollow %s</string>
-    <string name="amity_block_error">Unable to unblock %s</string>
+    <string name="amity_block_error">Unable to block %s</string>
     <string name="amity_unblock_error">Unable to unblock %s</string>
     <string name="amity_pending_requests">Pending requests</string>
     <string name="amity_requests_review"> Your requests are waiting for review</string>
@@ -348,5 +301,104 @@
     <string name="amity_delete_poll">Delete Poll</string>
     <string name="amity_close_poll">Close Poll</string>
     <string name="amity_reaction_separator">•</string>
+
+    <string name="amity_story_setting">Story setting</string>
+    <string name="amity_allow_comment">Allow comments on community stories</string>
+    <string name="amity_allow_comment_description">Turn on to receive comments on stories in this community.</string>
+    <string name="amity_unable_turn_off_story_allow_comment_title">Unable to turn off allow comment</string>
+    <string name="amity_unable_turn_on_story_allow_comment_title">Unable to turn on allow comment</string>
+
+    <string name="take_photo">Take Photo</string>
+    <string name="start_capture">Start Capture</string>
+    <string name="stop_capture">Stop Capture</string>
+
+    <string name="amity_like">Like</string>
+    <string name="amity_liked">Liked</string>
+    <string name="amity_reply">Reply</string>
+
+    <string name="amity_join_community_to_interact">Join community to interact with all stories</string>
+
+    <string name="amity_comments">Comments</string>
+    <string name="amity_comments_disabled_message">Comments are disabled for this story</string>
+    <string name="amity_delete_comment">Delete Comment</string>
+    <string name="amity_comment_deleted_toast_message">Comment deleted</string>
+    <string name="amity_edit_comment">Edit Comment</string>
+    <string name="amity_report_comment">Report Comment</string>
+    <string name="amity_comment_reported_toast_message">Comment reported</string>
+    <string name="amity_comment_unreported_toast_message">Report retracted</string>
+    <string name="amity_undo_report">Undo Report</string>
+    <string name="amity_edit_reply">Edit Reply</string>
+    <string name="amity_delete_reply">Delete Reply</string>
+    <string name="amity_report_reply">Report Reply</string>
+    <string name="amity_reply_deleted_message">This reply has been deleted</string>
+    <string name="amity_comment_deleted_message">This comment has been deleted</string>
+    <string name="amity_view_more_replies">View more replies</string>
+    <string name="amity_delete_comment_title">Delete Comment</string>
+    <string name="amity_delete_comment_warning_message">This comment will be permanently removed.</string>
+    <string name="amity_delete_reply_title">Delete reply</string>
+    <string name="amity_delete_reply_warning_message">This reply will be permanently removed.</string>
+    <string name="amity_add_reply_error_message">Unable to add reply</string>
+    <string name="amity_add_comment_error_message">Unable to add comment</string>
+    <string name="amity_add_blocked_words_comment_error_message">Your comment wasn’t created as it contained blocked words. Only you can see this</string>
+    <string name="amity_update_comment_error_message">Unable to update comment</string>
+    <string name="amity_update_blocked_words_comment_error_message">Your comment wasn’t updated as it contained blocked words. Only you can see this</string>
+
+    <string name="amity_cancel">Cancel</string>
+    <string name="amity_delete">Delete</string>
+
+    <plurals name="amity_feed_reaction_count">
+        <item quantity="one">%s like</item>
+        <item quantity="other">%s likes</item>
+    </plurals>
+    <plurals name="amity_feed_comment_count">
+        <item quantity="one">%s comment</item>
+        <item quantity="other">%s comments</item>
+    </plurals>
+
+    <string name="amity_delete_post_title">Delete this post?</string>
+    <string name="amity_delete_post_warning_message">This post will be permanently deleted. You’ll no longer to see and find this post</string>
+
+    <string name="amity_post_to">Post to</string>
+    <string name="amity_story_to">Story to</string>
+
+    <string name="amity_discard">Discard</string>
+    <string name="amity_discard_post_title">Discard post?</string>
+    <string name="amity_discard_post_message">Do you want to discard your post?</string>
+
+    <string name="amity_create_community">Create Community</string>
+    <string name="amity_community_name_v4">Community name</string>
+    <string name="amity_cc_hint">Name your community</string>
+    <string name="amity_about">About</string>
+    <string name="amity_enter_description">Enter description</string>
+    <string name="amity_categories">Categories</string>
+    <string name="amity_select_category">Select category</string>
+    <string name="amity_privacy">Privacy</string>
+    <string name="amity_public">Public</string>
+    <string name="amity_admin_description">Choose to allow Only Admins to create posts in this community.</string>
+    <string name="amity_public_description">Anyone can join, view, and search the posts in this community.</string>
+    <string name="amity_private">Private</string>
+    <string name="amity_private_description">Only members invited by the moderators can join, view, and search the posts in this community.</string>
+    <string name="amity_only_admin">Only admin can post</string>
+    <string name="amity_add_members">Add members<font fgcolor='#FF0000'>*</font></string>
+    <string name="amity_cancel_request">Cancel request</string>
+    <string name="amity_select_members">Select members</string>
+    <string name="amity_cc_leave_title">Leave without finishing</string>
+    <string name="amity_cc_leave_description">Your progress won\'t be saved and your community won\'t be created.</string>
+    <string name="amity_leave">Leave</string>
+    <string name="amity_close">Close</string>
+    <string name="amity_save">Save</string>
+    <string name="amity_ec_leave_title">Unsaved changes</string>
+    <string name="amity_ec_leave_description">Are you sure you want to discard the changes? They will be lost when you leave this page.</string>
+
+    <string name="amity_close_community">Close community</string>
+    <string name="amity_close_community_description">Closing this community will remove the community page and all its content and comments.</string>
+    <string name="amity_leave_community">Leave community</string>
+    <string name="amity_moderator_leave_community_msg">Leaving community, you’ll give up your moderator status and won’t no longer be able to post and interact in this community.</string>
+    <string name="amity_moderator_leave_community_error_msg">You’re the only moderator in this group. To leave community, nominate other members to moderator role.</string>
+    <string name="amity_last_moderator_leave_community_msg">As you’re the last moderator and member, leaving will also close this community. All posts shared in community will be deleted. This cannot be undone.</string>
+    <string name="amity_close_community_msg">All members will be removed from the community. All posts, messages, reactions, and media shared in community will be deleted. This cannot be undone.</string>
+    <string name="amity_leave_community_msg">You won\’t no longer be able to post and interact in this community after leaving.</string>
+    <string name="amity_leave_community_error_title">Unable to leave community</string>
+    <string name="amity_close_community_error_title">Unable to close community</string>
 
 </resources>

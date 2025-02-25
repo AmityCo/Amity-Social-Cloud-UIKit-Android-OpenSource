@@ -21,9 +21,9 @@ import com.amity.socialcloud.uikit.common.common.showSnackBar
 import com.amity.socialcloud.uikit.common.utils.AmityAlertDialogUtil
 import com.amity.socialcloud.uikit.common.utils.AmityConstants
 import com.amity.socialcloud.uikit.community.R
+import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageActivity
 import com.amity.socialcloud.uikit.community.data.AmitySelectCategoryItem
 import com.amity.socialcloud.uikit.community.databinding.AmityFragmentCreateCommunityBinding
-import com.amity.socialcloud.uikit.community.detailpage.AmityCommunityPageActivity
 import com.amity.socialcloud.uikit.community.explore.activity.AmityCategoryPickerActivity
 import com.amity.socialcloud.uikit.community.home.activity.AmityCommunityHomePageActivity
 import com.amity.socialcloud.uikit.community.ui.viewModel.AmityCreateCommunityViewModel
@@ -45,7 +45,6 @@ abstract class AmityCommunityCreateBaseFragment : RxFragment() {
 
     private lateinit var imagePickerLauncher: ActivityResultLauncher<PickVisualMediaRequest>
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -61,7 +60,9 @@ abstract class AmityCommunityCreateBaseFragment : RxFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(requireActivity() as AppCompatActivity).get(AmityCreateCommunityViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity() as AppCompatActivity).get(
+            AmityCreateCommunityViewModel::class.java
+        )
         binding.viewModel = viewModel
 
         binding.category.setOnClickListener {
@@ -75,17 +76,17 @@ abstract class AmityCommunityCreateBaseFragment : RxFragment() {
         setUpBackPress()
         setAvatar()
         uploadImageAndCreateCommunity()
-        imagePickerLauncher = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            if(uri != null) {
-                imageUri = uri
-                viewModel.initialStateChanged.set(true)
-                Glide.with(this)
-                    .load(imageUri)
-                    .centerCrop()
-                    .placeholder(R.drawable.amity_ic_default_community_avatar)
-                    .into(binding.ccAvatar)
+        imagePickerLauncher =
+            registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+                if (uri != null) {
+                    imageUri = uri
+                    viewModel.initialStateChanged.set(true)
+                    Glide.with(this)
+                        .load(imageUri)
+                        .centerCrop()
+                        .into(binding.ccAvatar)
+                }
             }
-        }
     }
 
     private fun uploadImageAndCreateCommunity() {
@@ -113,10 +114,6 @@ abstract class AmityCommunityCreateBaseFragment : RxFragment() {
     }
 
     open fun renderAvatar() {
-        Glide.with(requireContext())
-            .load(R.drawable.amity_ic_default_community_avatar)
-            .centerCrop()
-            .into(binding.ccAvatar)
     }
 
     private fun setAvatar() {
@@ -167,8 +164,8 @@ abstract class AmityCommunityCreateBaseFragment : RxFragment() {
             .doOnSuccess {
                 viewModel.communityId.set(it.getCommunityId())
                 viewModel.savedCommunityId = it.getCommunityId()
-                val detailIntent = AmityCommunityPageActivity
-                    .newIntent(requireContext(), it, true)
+                val detailIntent = AmityCommunityProfilePageActivity
+                    .newIntent(requireContext(), it.getCommunityId())
                 startActivity(detailIntent)
                 requireActivity().finish()
             }
@@ -202,8 +199,8 @@ abstract class AmityCommunityCreateBaseFragment : RxFragment() {
 
     private fun showDialog() {
         AmityAlertDialogUtil.showDialog(requireContext(),
-            getString(R.string.amity_cc_leave),
-            getString(R.string.amity_cc_dialog_msg),
+            getString(R.string.amity_cc_leave_title),
+            getString(R.string.amity_cc_leave_description),
             getString(R.string.amity_leave),
             getString(R.string.amity_cancel),
             DialogInterface.OnClickListener { dialog, which ->
@@ -236,10 +233,15 @@ abstract class AmityCommunityCreateBaseFragment : RxFragment() {
                                 createCommunity()
                             }
                         }
+
                         is AmityUploadResult.ERROR, AmityUploadResult.CANCELLED -> {
                             binding.btnCreateCommunity.isEnabled = true
-                            view?.showSnackBar(getString(R.string.amity_image_upload_error), Snackbar.LENGTH_SHORT)
+                            view?.showSnackBar(
+                                getString(R.string.amity_image_upload_error),
+                                Snackbar.LENGTH_SHORT
+                            )
                         }
+
                         else -> {
                         }
                     }

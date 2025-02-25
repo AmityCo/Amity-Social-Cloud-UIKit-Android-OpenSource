@@ -29,8 +29,8 @@ class AmityPostEditorActivity : AmityBaseToolbarFragmentContainerActivity() {
         }
     }
 
-    class AmityEditPostActivityContract : ActivityResultContract<AmityPost, String?>() {
-        override fun createIntent(context: Context, input: AmityPost): Intent {
+    class AmityEditPostActivityContract : ActivityResultContract<AmityPost?, String?>() {
+        override fun createIntent(context: Context, input: AmityPost?): Intent {
             return Intent(context, AmityPostEditorActivity::class.java).apply {
                 putExtra(EXTRA_PARAM_POST_ID, input?.getPostId())
             }

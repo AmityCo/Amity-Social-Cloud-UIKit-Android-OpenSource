@@ -13,6 +13,7 @@ import com.amity.socialcloud.sdk.model.core.file.upload.AmityUploadResult
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import com.amity.socialcloud.uikit.common.model.AmitySelectMemberItem
+import com.amity.socialcloud.uikit.common.service.AmityFileService
 import com.amity.socialcloud.uikit.community.data.AmitySelectCategoryItem
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
@@ -62,8 +63,7 @@ class AmityCreateCommunityViewModel(private val savedState: SavedStateHandle) :
     }
 
     fun uploadProfilePicture(uri: Uri): Flowable<AmityUploadResult<AmityImage>> {
-        val fileRepository = AmityCoreClient.newFileRepository()
-        return fileRepository.uploadImage(uri)
+        return AmityFileService().uploadImage(uri = uri)
     }
 
     fun setCategory(categoryAmity: AmitySelectCategoryItem) {

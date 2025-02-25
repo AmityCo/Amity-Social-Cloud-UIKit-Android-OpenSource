@@ -16,10 +16,9 @@ class AmityPickMemberContract :
         }
     }
 
-    override fun parseResult(resultCode: Int, intent: Intent?): ArrayList<AmitySelectMemberItem>? {
-        return if (resultCode == Activity.RESULT_OK) intent?.getParcelableArrayListExtra(
-            AmityConstants.MEMBERS_LIST
-        )
-        else null
+    override fun parseResult(resultCode: Int, intent: Intent?): ArrayList<AmitySelectMemberItem> {
+        return if (resultCode == Activity.RESULT_OK)
+            intent?.getParcelableArrayListExtra(AmityConstants.MEMBERS_LIST) ?: ArrayList()
+        else ArrayList()
     }
 }

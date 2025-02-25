@@ -1,0 +1,724 @@
+{
+  "preferred_theme": "light",
+  "theme": {
+    "light": {
+      "primary_color": "#1054DE",
+      "secondary_color": "#292B32",
+      "base_color": "#292b32",
+      "base_shade1_color": "#636878",
+      "base_shade2_color": "#898e9e",
+      "base_shade3_color": "#a5a9b5",
+      "base_shade4_color": "#ebecef",
+      "base_inverse_color": "#000000",
+      "alert_color": "#FA4D30",
+      "background_color": "#FFFFFF",
+      "background_shade1_color": "#F6F7F8"
+    },
+    "dark": {
+      "primary_color": "#1054DE",
+      "secondary_color": "#292B32",
+      "base_color": "#ebecef",
+      "base_shade1_color": "#a5a9b5",
+      "base_shade2_color": "#6e7487",
+      "base_shade3_color": "#40434e",
+      "base_shade4_color": "#292b32",
+      "base_inverse_color": "#ffffff",
+      "alert_color": "#FA4D30",
+      "background_color": "#191919",
+      "background_shade1_color": "#40434E"
+    }
+  },
+  "excludes": [
+    "*/post_content/share_button"
+  ],
+  "message_reactions": [
+    {
+      "name": "heart",
+      "image": "message_reaction_heart.png"
+    },
+    {
+      "name": "like",
+      "image": "message_reaction_like.png"
+    },
+    {
+      "name": "fire",
+      "image": "message_reaction_fire.png"
+    },
+    {
+      "name": "grinning",
+      "image": "message_reaction_grinning.png"
+    },
+    {
+      "name": "sad",
+      "image": "message_reaction_sad.png"
+    }
+  ],
+  "customizations": {
+    "camera_page/*/*": {
+      "resolution": "720p"
+    },
+    "camera_page/*/close_button": {
+      "close_icon": "close.png",
+      "background_color": "#80000000"
+    },
+    "create_story_page/*/*": {},
+    "create_story_page/*/back_button": {
+      "back_icon": "back.png",
+      "background_color": "#80000000"
+    },
+    "create_story_page/*/aspect_ratio_button": {
+      "aspect_ratio_icon": "aspect_ratio.png",
+      "background_color": "#80000000"
+    },
+    "create_story_page/*/story_hyperlink_button": {
+      "hyperlink_button_icon": "hyperlink_button.png",
+      "background_color": "#80000000"
+    },
+    "create_story_page/*/hyper_link": {
+      "hyper_link_icon": "hyper_link.png",
+      "background_color": "#80000000"
+    },
+    "create_story_page/*/share_story_button": {
+      "share_icon": "share_story_button.png",
+      "background_color": "#FFFFFF",
+      "hide_avatar": false
+    },
+    "story_page/*/*": {},
+    "story_page/*/progress_bar": {
+      "progress_color": "#FFFFFF",
+      "background_color": "#50FFFFFF"
+    },
+    "story_page/*/overflow_menu": {
+      "overflow_menu_icon": "threeDot.png"
+    },
+    "story_page/*/close_button": {
+      "close_icon": "close.png"
+    },
+    "story_page/*/story_impression_button": {
+      "impression_icon": "impressionIcon.png"
+    },
+    "story_page/*/story_comment_button": {
+      "comment_icon": "comment.png",
+      "background_color": "#1234DD"
+    },
+    "story_page/*/story_reaction_button": {
+      "reaction_icon": "like.png",
+      "background_color": "#1243EE"
+    },
+    "story_page/*/create_new_story_button": {
+      "create_new_story_icon": "plus.png",
+      "background_color": "#1243EE"
+    },
+    "story_page/*/speaker_button": {
+      "mute_icon": "mute.png",
+      "unmute_icon": "unmute.png",
+      "background_color": "#1243EE"
+    },
+    "*/edit_comment_component/*": {
+    },
+    "*/edit_comment_component/cancel_button": {
+      "cancel_icon": "",
+      "cancel_button_text": "Cancel",
+      "background_color": "#FFFFFF"
+    },
+    "*/edit_comment_component/save_button": {
+      "save_icon": "",
+      "save_button_text": "Save",
+      "background_color": "#1054DE"
+    },
+    "*/hyper_link_config_component/*": {
+    },
+    "*/hyper_link_config_component/done_button": {
+      "done_icon": "",
+      "done_button_text": "Done",
+      "background_color": "#1243EE"
+    },
+    "*/hyper_link_config_component/cancel_button": {
+      "cancel_icon": "",
+      "cancel_button_text": "Cancel"
+    },
+    "*/comment_tray_component/*": {
+    },
+    "*/story_tab_component/*": {
+    },
+    "*/story_tab_component/story_ring": {
+      "progress_color": [
+        "#339AF9",
+        "#78FA58"
+      ],
+      "background_color": [
+        "#EBECEF"
+      ]
+    },
+    "*/story_tab_component/create_new_story_button": {
+      "create_new_story_icon": "plus.png",
+      "background_color": "#1243EE"
+    },
+    "*/*/close_button": {
+      "close_icon": "close.png"
+    },
+    "live_chat_page/*/*": {
+      "theme": {
+        "light": {
+          "primary_color": "#1054DE",
+          "secondary_color": "#292B32",
+          "base_color": "#292B32",
+          "base_shade1_color": "#636878",
+          "base_shade2_color": "#898E9E",
+          "base_shade3_color": "#A5A9b5",
+          "base_shade4_color": "#EBECEF",
+          "alert_color": "#FA4D30",
+          "background_color": "#FFFFFF",
+          "base_inverse_color": "#000000",
+          "background_shade1_color": "#F6F7F8"
+        },
+        "dark": {
+          "primary_color": "#1054DE",
+          "secondary_color": "#292B32",
+          "base_color": "#EBECEF",
+          "base_shade1_color": "#A5A9B5",
+          "base_shade2_color": "#6E7487",
+          "base_shade3_color": "#40434E",
+          "base_shade4_color": "#292B32",
+          "alert_color": "#FA4D30",
+          "background_color": "#191919",
+          "base_inverse_color": "#FFFFFF",
+          "background_shade1_color": "#40434E"
+        }
+      }
+    },
+    "live_chat_page/chat_header/*": {},
+    "live_chat_page/message_list/*": {},
+    "live_chat_page/message_composer/*": {
+      "message_limit": 200,
+      "placeholder_text": "Write a message"
+    },
+    "live_chat_page/message_list/message_reaction_preview": {},
+    "live_chat_page/message_list/message_quick_reaction": {
+      "reaction": "heart",
+      "reaction_icon": "amity_ic_message_quick_reaction.png"
+    },
+    "live_chat_page/message_list/message_reaction_picker": {},
+    "message_reaction_list_page/*/*": {},
+    "message_reaction_list_page/message_reaction_list_header/*": {},
+    "message_reaction_list_page/message_reaction_list_header/message_reaction_list_tab": {},
+    "message_reaction_list_page/message_reaction_list/*": {},
+    "message_reaction_list_page/message_reaction_list/user_avatar_view": {},
+    "message_reaction_list_page/message_reaction_list/user_display_name": {},
+    "message_reaction_list_page/message_reaction_list/reaction_image_view": {},
+    "social_home_page/*/*": {},
+    "social_home_page/top_navigation/header_label": {
+      "text": "Community"
+    },
+    "social_home_page/top_navigation/global_search_button": {
+      "icon": "searchButtonIcon"
+    },
+    "social_home_page/top_navigation/post_creation_button": {
+      "icon": "postCreationIcon"
+    },
+    "social_home_page/*/newsfeed_button": {
+      "text": "Newsfeed"
+    },
+    "social_home_page/*/explore_button": {
+      "text": "Explore"
+    },
+    "social_home_page/*/my_communities_button": {
+      "text": "My Communities"
+    },
+    "social_home_page/empty_newsfeed/illustration": {
+      "icon": "emptyFeedIcon"
+    },
+    "social_home_page/empty_newsfeed/title": {
+      "text": "Your Feed is empty"
+    },
+    "social_home_page/empty_newsfeed/description": {
+      "text": "Find community or create your own"
+    },
+    "social_home_page/empty_newsfeed/explore_communities_button": {
+      "icon": "exploreCommunityIcon",
+      "text": "Explore Community"
+    },
+    "social_home_page/empty_newsfeed/create_community_button": {
+      "icon": "createCommunityIcon"
+    },
+    "social_home_page/my_communities/community_avatar": {},
+    "social_home_page/my_communities/community_display_name": {},
+    "social_home_page/my_communities/community_private_badge": {
+      "icon": "lockIcon"
+    },
+    "social_home_page/my_communities/community_official_badge": {
+      "icon": "officialBadgeIcon"
+    },
+    "social_home_page/my_communities/community_category_name": {},
+    "social_home_page/my_communities/community_members_count": {},
+    "social_home_page/newsfeed/*": {},
+    "social_home_page/global_feed/*": {},
+    "post_detail_page/*/back_button": {
+      "icon": "backIcon"
+    },
+    "post_detail_page/*/menu_button": {
+      "icon": "menuIcon"
+    },
+    "*/post_content/moderator_badge": {
+      "icon": "badgeIcon",
+      "text": "Moderator"
+    },
+    "*/post_content/timestamp": {},
+    "*/post_content/menu_button": {
+      "icon": "menuIcon"
+    },
+    "*/post_content/post_content_view_count": {},
+    "*/post_content/reaction_button": {
+      "icon": "likeButtonIcon",
+      "text": "Like"
+    },
+    "*/post_content/comment_button": {
+      "icon": "commentButtonIcon",
+      "text": "Comment"
+    },
+    "*/post_content/share_button": {
+      "icon": "shareButtonIcon",
+      "text": "Share"
+    },
+    "*/post_content/announcement_badge": {
+      "image": "communityAnnouncementBadge"
+    },
+    "*/post_content/pin_badge": {
+      "image": "communityPinBadge"
+    },
+    "*/post_content/non_member_section": {},
+    "social_global_search_page/*/*": {},
+    "social_global_search_page/top_search_bar/*": {},
+    "social_global_search_page/top_search_bar/search_icon": {
+      "icon": "search"
+    },
+    "social_global_search_page/top_search_bar/clear_button": {
+      "icon": "clear"
+    },
+    "social_global_search_page/top_search_bar/cancel_button": {
+      "text": "Cancel"
+    },
+    "social_global_search_page/community_search_result/community_avatar": {},
+    "social_global_search_page/community_search_result/community_display_name": {},
+    "social_global_search_page/community_search_result/community_private_badge": {
+      "icon": "lockIcon"
+    },
+    "social_global_search_page/community_search_result/community_official_badge": {
+      "icon": "officialBadgeIcon"
+    },
+    "social_global_search_page/community_search_result/community_category_name": {},
+    "social_global_search_page/community_search_result/community_members_count": {},
+    "social_global_search_page/user_search_result/*": {},
+    "my_communities_search_page/*/*": {},
+    "my_communities_search_page/top_search_bar/*": {},
+    "my_communities_search_page/top_search_bar/search_icon": {
+      "icon": "search"
+    },
+    "my_communities_search_page/top_search_bar/clear_button": {
+      "icon": "clear"
+    },
+    "my_communities_search_page/top_search_bar/cancel_button": {
+      "text": "Cancel"
+    },
+    "my_communities_search_page/*/community_avatar": {},
+    "my_communities_search_page/*/community_display_name": {},
+    "my_communities_search_page/*/community_private_badge": {
+      "icon": "lockIcon"
+    },
+    "my_communities_search_page/*/community_official_badge": {
+      "icon": "officialBadgeIcon"
+    },
+    "my_communities_search_page/*/community_category_name": {},
+    "my_communities_search_page/*/community_members_count": {},
+    "my_communities_search_page/user_search_result/*": {},
+    "post_composer_page/*/*": {},
+    "post_composer_page/*/close_button": {
+      "image": "closeIcon"
+    },
+    "post_composer_page/*/community_display_name": {},
+    "post_composer_page/*/create_new_post_button": {
+      "text": "Post"
+    },
+    "post_composer_page/*/edit_post_button": {
+      "text": "Save"
+    },
+    "post_composer_page/*/edit_post_title": {
+      "text": "Edit post"
+    },
+    "post_composer_page/media_attachment/*": {},
+    "post_composer_page/media_attachment/camera_button": {
+      "image": "postAttachmentCamera"
+    },
+    "post_composer_page/media_attachment/image_button": {
+      "image": "postAttachmentPhoto"
+    },
+    "post_composer_page/media_attachment/video_button": {
+      "image": "postAttachmentVideo"
+    },
+    "post_composer_page/media_attachment/file_button": {
+      "image": "postAttachmentFile"
+    },
+    "post_composer_page/media_attachment/detailed_button": {
+      "image": "platformValue"
+    },
+    "post_composer_page/detailed_media_attachment/*": {},
+    "post_composer_page/detailed_media_attachment/camera_button": {
+      "text": "Camera",
+      "image": "postAttachmentCamera"
+    },
+    "post_composer_page/detailed_media_attachment/image_button": {
+      "text": "Photo",
+      "image": "postAttachmentPhoto"
+    },
+    "post_composer_page/detailed_media_attachment/video_button": {
+      "text": "Video",
+      "image": "postAttachmentVideo"
+    },
+    "post_composer_page/detailed_media_attachment/file_button": {
+      "text": "Attachment",
+      "image": "postAttachmentFile"
+    },
+    "social_home_page/create_post_menu/*": {},
+    "social_home_page/create_post_menu/create_post_button": {
+      "text": "Post",
+      "image": "postCreate"
+    },
+    "social_home_page/create_post_menu/create_story_button": {
+      "text": "Story",
+      "image": "storyCreate"
+    },
+    "social_home_page/create_post_menu/create_poll_button": {
+      "text": "Poll",
+      "image": "platformValue"
+    },
+    "social_home_page/create_post_menu/create_livestream_button": {
+      "text": "Livestream",
+      "image": "platformValue"
+    },
+    "select_post_target_page/*/close_button": {
+      "image": "closeIcon"
+    },
+    "select_post_target_page/*/my_timeline_avatar": {},
+    "select_post_target_page/*/title": {
+      "text": "Post to"
+    },
+    "select_post_target_page/*/my_timeline_text": {
+      "text": "My Timeline"
+    },
+    "select_story_target_page/*/close_button": {
+      "image": "closeIcon"
+    },
+    "select_story_target_page/*/title": {
+      "text": "Story to"
+    },
+    "*/*/community_official_badge": {
+      "image": "officialBadgeIcon"
+    },
+    "*/*/community_private_badge": {
+      "image": "lockIcon"
+    },
+    "community_profile_page/*/*": {},
+    "community_profile_page/community_header/*": {},
+    "community_profile_page/community_header/community_cover": {},
+    "community_profile_page/community_header/community_name": {},
+    "community_profile_page/community_header/community_verify_badge": {
+      "image": "verifiedBadge"
+    },
+    "community_profile_page/community_header/community_category": {},
+    "community_profile_page/community_header/community_description": {},
+    "community_profile_page/community_header/community_info": {},
+    "community_profile_page/community_header/community_join_button": {
+      "image": "plusIcon"
+    },
+    "community_profile_page/community_header/community_pending_post": {
+    },
+    "community_profile_page/*/back_button": {
+      "image": "backIcon"
+    },
+    "community_profile_page/*/menu_button": {
+      "image": "threeDotIcon"
+    },
+    "community_profile_page/*/community_profile_tab": {},
+    "community_profile_page/community_feed/*": {},
+    "community_profile_page/community_pin/*": {},
+    "community_profile_page/*/community_create_post_button": {
+      "image": "plusIcon"
+    },
+    "community_setup_page/*/*": {},
+    "community_setup_page/*/close_button": {
+      "image": "closeIcon"
+    },
+    "community_setup_page/*/title": {
+      "text": "Create community"
+    },
+    "community_setup_page/*/community_edit_title": {
+      "text": "Edit community"
+    },
+    "community_setup_page/*/community_name_title": {
+      "text": "Community name"
+    },
+    "community_setup_page/*/community_about_title": {
+      "text": "About"
+    },
+    "community_setup_page/*/community_category_title": {
+      "text": "Categories"
+    },
+    "community_setup_page/*/community_privacy_title": {
+      "text": "Privacy"
+    },
+    "community_setup_page/*/community_privacy_private_icon": {
+      "image": "privacyPrivateIcon"
+    },
+    "community_setup_page/*/community_privacy_private_title": {
+      "text": "Privacy"
+    },
+    "community_setup_page/*/community_privacy_private_description": {
+      "text": "Only members invited by the moderators can join, view, and search the posts in this community."
+    },
+    "community_setup_page/*/community_privacy_public_icon": {
+      "image": "privacyPublicIcon"
+    },
+    "community_setup_page/*/community_privacy_public_title": {
+      "text": "Public"
+    },
+    "community_setup_page/*/community_privacy_public_description": {
+      "text": "Anyone can join, view, and search the posts in this community."
+    },
+    "community_setup_page/*/community_add_member_title": {
+      "text": "Member"
+    },
+    "community_setup_page/*/community_add_member_button": {
+      "text": "Add",
+      "image": "addIcon"
+    },
+    "community_setup_page/*/community_create_button": {
+      "text": "Create community",
+      "image": "plusIcon"
+    },
+    "community_setup_page/*/community_edit_button": {
+      "text": "Save",
+      "image": ""
+    },
+    "community_setup_page/*/image_button": {
+      "text": "Photo",
+      "image": "postAttachmentPhoto"
+    },
+    "community_setup_page/*/camera_button": {
+      "text": "Camera",
+      "image": "postAttachmentCamera"
+    },
+    "community_add_category_page/*/*": {},
+    "community_add_member_page/*/*": {},
+    "community_membership_page/*/*": {},
+    "community_setting_page/*/*": {},
+    "community_setting_page/*/edit_profile": {
+      "text": "Edit profile"
+    },
+    "community_setting_page/*/members": {
+      "text": "Members"
+    },
+    "community_setting_page/*/notifications": {
+      "text": "Notifications"
+    },
+    "community_setting_page/*/post_permission": {
+      "text": "Post permissions"
+    },
+    "community_setting_page/*/story_setting": {
+      "text": "Story comments"
+    },
+    "community_setting_page/*/leave_community": {
+      "text": "Leave community"
+    },
+    "community_setting_page/*/close_community": {
+      "text": "Close community"
+    },
+    "community_setting_page/*/close_community_description": {
+      "text": "Closing this community will remove the community page and all its content and comments."
+    },
+    "community_post_permission_page/*/*": {},
+    "community_story_setting_page/*/*": {},
+    "community_notification_page/*/*": {},
+    "community_posts_notification_page/*/*": {},
+    "community_comments_notification_page/*/*": {},
+    "community_stories_notification_page/*/*": {},
+    "pending_posts_page/*/*": {},
+    "pending_posts_page/*/back_button": {
+      "image": "backIcon"
+    },
+    "pending_posts_page/*/title": {
+      "text": "Pending posts"
+    },
+    "pending_posts_page/pending_post_content/*": {},
+    "pending_posts_page/pending_post_content/timestamp": {},
+    "pending_posts_page/pending_post_content/post_accept_button": {
+      "text": "Accept"
+    },
+    "pending_posts_page/pending_post_content/post_decline_button": {
+      "text": "Decline"
+    },
+    "user_profile_page/*/*": {},
+    "user_profile_page/*/back_button": {
+      "image": "backIcon"
+    },
+    "user_profile_page/*/menu_button": {
+      "image": "menuIcon"
+    },
+    "user_profile_page/*/user_feed_tab_button": {
+      "image": "profileFeedIcon"
+    },
+    "user_profile_page/*/user_image_feed_tab_button": {
+      "image": "profileImageFeedIcon"
+    },
+    "user_profile_page/*/user_video_feed_tab_button": {
+      "image": "profileVideoFeedIcon"
+    },
+    "user_profile_page/user_profile_header/*": {},
+    "user_profile_page/user_feed/*": {},
+    "user_profile_page/user_image_feed/*": {},
+    "user_profile_page/user_video_feed/*": {},
+    "user_relationship_page/*/*": {},
+    "user_pending_follow_request_page/*/*": {},
+    "user_profile_page/user_profile_header/follow_user_button": {
+      "text": "Follow",
+      "image": "plusIcon"
+    },
+    "user_profile_page/user_profile_header/following_user_button": {
+      "text": "Following",
+      "image": "followingIcon"
+    },
+    "user_profile_page/user_profile_header/pending_user_button": {
+      "text": "Cancel request",
+      "image": "pendingIcon"
+    },
+    "user_profile_page/user_profile_header/unblock_user_button": {
+      "text": "Unblock",
+      "image": "blockedIcon"
+    },
+    "user_profile_page/user_profile_header/user_avatar": {},
+    "user_profile_page/user_profile_header/user_name": {},
+    "user_profile_page/user_profile_header/user_description": {},
+    "user_profile_page/user_profile_header/user_following": {
+      "text": "following"
+    },
+    "user_profile_page/user_profile_header/user_follower": {
+      "text": "followers"
+    },
+    "user_profile_page/user_feed/empty_user_feed": {
+      "text": "No post yet",
+      "image": "emptyProfileFeedIcon"
+    },
+    "user_profile_page/user_feed/private_user_feed": {
+      "text": "This account is private",
+      "image": "lockIcon"
+    },
+    "user_profile_page/user_feed/private_user_feed_info": {
+      "text": "Follow this user to see their posts."
+    },
+    "user_profile_page/user_feed/blocked_user_feed": {
+      "text": "You've blocked this user",
+      "image": "blockedIcon"
+    },
+    "user_profile_page/user_feed/blocked_user_feed_info": {
+      "text": "Unblock to see their posts."
+    },
+    "user_profile_page/user_image_feed/empty_user_image_feed": {
+      "text": "No photo yet",
+      "image": "emptyPhotoIcon"
+    },
+    "user_profile_page/user_image_feed/private_user_image_feed": {
+      "text": "This account is private",
+      "image": "lockIcon"
+    },
+    "user_profile_page/user_image_feed/private_user_image_feed_info": {
+      "text": "Follow this user to see their posts."
+    },
+    "user_profile_page/user_image_feed/blocked_user_image_feed": {
+      "text": "You've blocked this user",
+      "image": "blockedIcon"
+    },
+    "user_profile_page/user_image_feed/blocked_user_image_feed_info": {
+      "text": "Unblock to see their posts."
+    },
+    "user_profile_page/user_video_feed/empty_user_video_feed": {
+      "text": "No video yet",
+      "image": "emptyVideoIcon"
+    },
+    "user_profile_page/user_video_feed/private_user_video_feed": {
+      "text": "This account is private",
+      "image": "lockIcon"
+    },
+    "user_profile_page/user_video_feed/private_user_video_feed_info": {
+      "text": "Follow this user to see their posts."
+    },
+    "user_profile_page/user_video_feed/blocked_user_video_feed": {
+      "text": "You've blocked this user",
+      "image": "blockedIcon"
+    },
+    "user_profile_page/user_video_feed/blocked_user_video_feed_info": {
+      "text": "Unblock to see their posts."
+    },
+    "edit_user_profile_page/*/*": {},
+    "edit_user_profile_page/*/back_button": {
+      "image": "backIcon"
+    },
+    "edit_user_profile_page/*/title": {
+      "text": "Edit profile"
+    },
+    "edit_user_profile_page/*/user_display_name_title": {
+      "text": "Display name"
+    },
+    "edit_user_profile_page/*/user_about_title": {
+      "text": "About"
+    },
+    "edit_user_profile_page/*/update_user_profile_button": {
+      "text": "Save"
+    },
+    "blocked_users_page/*/*": {},
+    "blocked_users_page/*/back_button": {
+      "image": "backIcon"
+    },
+    "blocked_users_page/*/title": {
+      "text": "Manage blocked users"
+    },
+    "blocked_users_page/*/unblock_user_button": {
+      "text": "Unblock"
+    },
+    "social_home_page/trending_communities/*": {
+    },
+    "social_home_page/trending_communities/community_official_badge": {
+      "image": "officialBadgeIcon"
+    },
+    "social_home_page/trending_communities/community_private_badge": {
+      "image": "lockIcon"
+    },
+    "social_home_page/recommended_communities/*": {
+    },
+    "social_home_page/recommended_communities/community_official_badge": {
+      "image": "officialBadgeIcon"
+    },
+    "social_home_page/recommended_communities/community_private_badge": {
+      "image": "lockIcon"
+    },
+    "communities_by_category_page/*/*": {
+      "image": "lockIcon"
+    },
+    "communities_by_category_page/*/community_official_badge": {
+      "image": "officialBadgeIcon"
+    },
+    "communities_by_category_page/*/community_private_badge": {
+      "image": "lockIcon"
+    },
+    "all_categories_page/*/*": {},
+    "poll_post_composer_page/*/*": {},
+    "select_poll_target_page/*/close_button": {
+      "image": "closeIcon"
+    },
+    "select_poll_target_page/*/my_timeline_avatar": {},
+    "select_poll_target_page/*/title": {
+      "text": "Post to"
+    },
+    "select_poll_target_page/*/my_timeline_text": {
+      "text": "My Timeline"
+    }
+  }
+}

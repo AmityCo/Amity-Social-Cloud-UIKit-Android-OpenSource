@@ -2,10 +2,9 @@ package com.amity.socialcloud.uikit.chat.messages.viewModel
 
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
-import com.amity.socialcloud.sdk.api.core.AmityCoreClient
-import com.amity.socialcloud.sdk.api.core.file.AmityFileRepository
 import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
+import com.amity.socialcloud.uikit.common.service.AmityFileService
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 import java.io.File
@@ -42,8 +41,7 @@ class AmityImageMsgViewModel : AmitySelectableMessageViewModel() {
                 }
             } else {
                 if (message.getState() == AmityMessage.State.UPLOADING) {
-                    val fileRepository: AmityFileRepository = AmityCoreClient.newFileRepository()
-                    addDisposable(fileRepository.getUploadInfo(message.getMessageId())
+                    addDisposable(AmityFileService().getUploadInfo(message.getMessageId())
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .doOnNext { uploadInfo ->

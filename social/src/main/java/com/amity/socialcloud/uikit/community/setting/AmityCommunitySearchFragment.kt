@@ -19,6 +19,7 @@ import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
 import com.amity.socialcloud.uikit.common.model.AmityEventIdentifier
 import com.amity.socialcloud.uikit.common.utils.AmityRecyclerViewItemDecoration
 import com.amity.socialcloud.uikit.community.R
+import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageActivity
 import com.amity.socialcloud.uikit.community.databinding.AmityFragmentCommunityGlobalSearchBinding
 import com.amity.socialcloud.uikit.community.detailpage.AmityCommunityPageActivity
 import com.amity.socialcloud.uikit.community.mycommunity.adapter.AmityMyCommunitiesAdapter
@@ -128,9 +129,9 @@ class AmityCommunitySearchFragment :
 
     override fun onCommunitySelected(ekoCommunity: AmityCommunity?) {
         if (ekoCommunity != null) {
-            val detailIntent = AmityCommunityPageActivity.newIntent(
+            val detailIntent = AmityCommunityProfilePageActivity.newIntent(
                 requireContext(),
-                ekoCommunity
+                ekoCommunity.getCommunityId()
             )
             startActivity(detailIntent)
         }

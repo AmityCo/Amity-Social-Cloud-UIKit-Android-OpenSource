@@ -5,11 +5,10 @@ import android.util.Log
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
-import com.amity.socialcloud.sdk.api.core.AmityCoreClient
-import com.amity.socialcloud.sdk.api.core.file.AmityFileRepository
 import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
 import com.amity.socialcloud.uikit.chat.R
 import com.amity.socialcloud.uikit.common.model.AmityEventIdentifier
+import com.amity.socialcloud.uikit.common.service.AmityFileService
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 
@@ -64,8 +63,7 @@ class AmityAudioMsgViewModel : AmitySelectableMessageViewModel() {
                 }
                 AmityMessage.State.UPLOADING, AmityMessage.State.FAILED -> {
                     uploading.set(ekoMessage.getState() == AmityMessage.State.UPLOADING)
-                    val fileRepository: AmityFileRepository = AmityCoreClient.newFileRepository()
-                    addDisposable(fileRepository.getUploadInfo(ekoMessage.getMessageId())
+                    addDisposable(AmityFileService().getUploadInfo(ekoMessage.getMessageId())
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .doOnNext { uploadInfo ->

@@ -1,7 +1,5 @@
 package com.amity.socialcloud.uikit.chat.messages.fragment
 
-import android.Manifest
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -11,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -65,19 +62,7 @@ class AmityChatRoomWithTextComposeBarFragment() : AmityPickerFragment(),
     private var viewHolderListener: AmityMessagePagingAdapter.CustomViewHolderListener? = null
     private var messageListDisposable: Disposable? = null
     private var currentCount = 0
-    private var isImagePermissionGranted = false
     private var isReachBottom = true
-
-    private val pickMultipleImagesPermission =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-            if (it) {
-                isImagePermissionGranted = true
-                pickMultipleImages()
-            } else {
-                isImagePermissionGranted = false
-                view?.showSnackBar("Permission denied", Snackbar.LENGTH_SHORT)
-            }
-        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -372,7 +357,6 @@ class AmityChatRoomWithTextComposeBarFragment() : AmityPickerFragment(),
             when (event.type) {
                 AmityEventIdentifier.CAMERA_CLICKED -> takePicture()
                 AmityEventIdentifier.PICK_FILE -> pickFile()
-                AmityEventIdentifier.PICK_IMAGE -> pickMultipleImages()
                 AmityEventIdentifier.MSG_SEND_ERROR -> {
                     CoroutineScope(Dispatchers.Main).launch {
                         val snackBar =
@@ -422,10 +406,6 @@ class AmityChatRoomWithTextComposeBarFragment() : AmityPickerFragment(),
                 messageListViewModel.keyboardHeight.set(height)
             }
         }
-    }
-
-    private fun pickMultipleImages() {
-        pickMultipleImagesPermission.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     }
 
     override fun onFilePicked(data: Uri?) {
@@ -503,6 +483,18 @@ class AmityChatRoomWithTextComposeBarFragment() : AmityPickerFragment(),
         if (messageListDisposable?.isDisposed == false) {
             messageListDisposable?.dispose()
         }
+    }
+    
+    private fun addImageToList(uri: Uri) {
+        disposable.add(messageListViewModel.sendImageMessage(uri)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnComplete {
+                msgSent = true
+            }.doOnError {
+                msgSent = false
+            }.subscribe()
+        )
     }
 
     class Builder internal constructor(private val channelId: String) {

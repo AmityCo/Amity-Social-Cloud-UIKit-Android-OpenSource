@@ -2,17 +2,7 @@ apply from: "../buildsystem/activity.gradle"
 apply plugin: 'com.android.library'
 
 android {
-
     namespace 'com.amity.socialcloud.uikit'
-    lint {
-        abortOnError false
-        checkAllWarnings true
-        checkDependencies false
-        disable 'GoogleAppIndexingWarning', 'NewerVersionAvailable', 'UnusedResources', 'LogNotTimber', 'StringFormatInTimber', 'ThrowableNotAtBeginning', 'BinaryOperationInTimber', 'TimberArgCount', 'TimberArgTypes', 'TimberTagLength', 'TimberExceptionLogging'
-        quiet true
-        warningsAsErrors true
-        xmlReport false
-    }
     buildTypes {
         release {
             consumerProguardFiles 'amity-proguard-rules.pro'
@@ -21,16 +11,16 @@ android {
             consumerProguardFiles 'amity-proguard-rules.pro'
         }
     }
-    configurations.configureEach {
-        resolutionStrategy {
-            force("androidx.core:core-ktx:1.9.0")
-        }
+    packagingOptions {
+        pickFirst("META-INF/*.kotlin_module")
+        exclude 'META-INF/INDEX.LIST'
+        exclude 'META-INF/io.netty.versions.properties'
     }
 }
-
 
 dependencies {
     api project(path: ':social')
     api project(path: ':chat')
-    api "com.github.AmityCo.Amity-Social-Cloud-SDK-Android:amity-sdk:$amityMessagingSdkVersion"
+
+    api "$amitySDKDependency:amity-sdk:$amityMessagingSdkVersion"
 }

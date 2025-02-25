@@ -33,4 +33,12 @@
     <color name="amityTranslucentBackground">#4D000000</color>
     <color name="amityTransparentBackground">#00000000</color>
 
+    <color name="amityColorBaseBGDark">#191919</color>
+    <color name="amityColorBaseShade1Dark">#292B32</color>
+    <color name="amityColorBaseShade2Dark">#898E9E</color>
+    <color name="amityColorBaseShade3Dark">#A5A9B5</color>
+    <color name="amityColorBaseInvertDark">#FFFFFF</color>
+
+
+
 </resources>

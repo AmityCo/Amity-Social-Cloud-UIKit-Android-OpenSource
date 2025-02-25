@@ -25,11 +25,12 @@
 
             <ImageView
                 android:id="@+id/ivAvatar"
+                amityBackgroundColor="@{@color/amityColorPrimary}"
+                backgroundColorShade="@{AmityColorShade.SHADE3}"
                 android:layout_width="match_parent"
                 android:layout_height="260dp"
                 android:adjustViewBounds="true"
-                android:scaleType="centerCrop"
-                android:src="@drawable/amity_ic_default_community_avatar" />
+                android:scaleType="centerCrop" />
 
             <ImageView
                 android:layout_width="match_parent"
@@ -48,8 +49,8 @@
                     style="@style/AmityTextStyleHeadline"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:drawableTint="@color/amityColorBaseInverse"
                     android:drawablePadding="@dimen/amity_padding_xxs"
+                    android:drawableTint="@color/amityColorBaseInverse"
                     android:ellipsize="end"
                     android:maxLines="2"
                     android:text="Commmunity"
@@ -104,8 +105,8 @@
             <View
                 android:layout_width="1dp"
                 android:layout_height="@dimen/amity_twenty_four"
-                android:background="@color/amityPlaceHolderColor"
-                android:layout_gravity="center_vertical" />
+                android:layout_gravity="center_vertical"
+                android:background="@color/amityPlaceHolderColor" />
 
             <LinearLayout
                 android:id="@+id/layoutMemberCount"
@@ -144,11 +145,18 @@
             android:text="description"
             android:textColor="@color/amityColorBase" />
 
+        <androidx.compose.ui.platform.ComposeView
+            android:id="@+id/cvStoryTarget"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/amity_padding_m1"
+            android:layout_marginVertical="@dimen/amity_padding_xs" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginHorizontal="@dimen/amity_padding_m1">
+            android:layout_marginHorizontal="@dimen/amity_padding_m1"
+            android:orientation="vertical">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -209,19 +217,19 @@
                 android:layout_height="wrap_content"
                 android:background=" @drawable/amity_btn_inactive"
                 android:backgroundTint="@color/amityPlaceHolderColor"
-                android:orientation="vertical"
                 android:gravity="center"
+                android:orientation="vertical"
                 android:visibility="gone">
 
                 <TextView
                     style="@style/AmityTextStyleBody"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/amity_padding_m1"
                     android:drawablePadding="@dimen/amity_padding_xxs"
                     android:text="@string/amity_pending_posts"
                     android:textColor="@color/amityColorSecondary"
                     android:textSize="@dimen/amity_text_size_body"
-                    android:layout_marginTop="@dimen/amity_padding_m1"
                     app:drawableStartCompat="@drawable/amity_ic_ellipse" />
 
                 <TextView

@@ -12,20 +12,40 @@
             android:id="@+id/communityHome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="36dp"
             android:layout_marginTop="@dimen/amity_sixty_two"
             android:text="Test News Feed"
-            android:layout_marginStart="36dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/customRankingFeed"
-            android:layout_marginTop="@dimen/amity_padding_m1"
+            android:id="@+id/communityHomeV4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Test Custom Ranking Posts"
-            app:layout_constraintStart_toStartOf="@id/communityHome"
+            android:layout_marginStart="36dp"
+            android:layout_marginTop="@dimen/amity_padding_m1"
+            android:text="Test V4 News Feed"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/communityHome" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/socialV4Compatible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="36dp"
+            android:layout_marginTop="@dimen/amity_padding_m1"
+            android:text="Test Social V4 Compatible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/communityHomeV4" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/customRankingFeed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/amity_padding_m1"
+            android:text="Test Custom Ranking Posts"
+            app:layout_constraintStart_toStartOf="@id/communityHomeV4"
+            app:layout_constraintTop_toBottomOf="@id/socialV4Compatible" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/chatHome"
@@ -46,13 +66,22 @@
             app:layout_constraintTop_toBottomOf="@id/chatHome" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/userProfileV4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/amity_padding_m1"
+            android:text="LoggedIn User Profile V4"
+            app:layout_constraintStart_toStartOf="@id/communityHome"
+            app:layout_constraintTop_toBottomOf="@id/userProfile" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/textComposebar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/amity_padding_m1"
             android:text="Text only composebar"
             app:layout_constraintStart_toStartOf="@id/communityHome"
-            app:layout_constraintTop_toBottomOf="@id/userProfile" />
+            app:layout_constraintTop_toBottomOf="@id/userProfileV4" />
 
 
         <com.google.android.material.button.MaterialButton
@@ -63,6 +92,25 @@
             android:text="Post creator with attachment options"
             app:layout_constraintStart_toStartOf="@id/communityHome"
             app:layout_constraintTop_toBottomOf="@id/textComposebar" />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/liveChat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/amity_padding_m1"
+            android:text="Live Chat Test"
+            app:layout_constraintStart_toStartOf="@id/communityHome"
+            app:layout_constraintTop_toBottomOf="@id/customPostCreation" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/playground"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/amity_padding_m1"
+            android:text="Playground"
+            app:layout_constraintStart_toStartOf="@id/communityHome"
+            app:layout_constraintTop_toBottomOf="@id/liveChat" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
