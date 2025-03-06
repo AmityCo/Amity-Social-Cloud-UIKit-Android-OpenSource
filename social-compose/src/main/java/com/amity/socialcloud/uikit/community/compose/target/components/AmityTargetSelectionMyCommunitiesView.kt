@@ -7,9 +7,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -20,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunityPostSettings
@@ -30,25 +33,28 @@ import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.pagingLoadStateItem
 import com.amity.socialcloud.uikit.community.compose.target.AmityTargetSelectionPageViewModel
-import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityCommunityListShimmer
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityCommunityTargetListShimmer
+
 
 @Composable
 fun AmityTargetSelectionMyCommunitiesView(
     modifier: Modifier = Modifier,
+    contentType: AmityTargetContentType,
     onClick: (AmityCommunity) -> Unit,
 ) {
-    val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
-        "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
-    }
-    val viewModel =
-        viewModel<AmityTargetSelectionPageViewModel>(viewModelStoreOwner = viewModelStoreOwner)
+    val viewModel = viewModel<AmityTargetSelectionPageViewModel>()
 
-    val communities = remember(viewModel) {
+    LaunchedEffect(contentType) {
+        viewModel.setContentType(contentType)
+    }
+
+    val communities = remember(viewModel, contentType) {
         viewModel.getCommunities()
     }.collectAsLazyPagingItems()
 
-    val allowToCreateMap = remember(viewModel) { viewModel.allowToCreateMap }.collectAsState()
+    val allowToCreateMap = remember(viewModel) {
+        viewModel.allowToCreateMap
+    }.collectAsState()
 
     Text(
         text = "My Communities",
@@ -59,83 +65,81 @@ fun AmityTargetSelectionMyCommunitiesView(
     )
 
     LazyColumn(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth(),
+        state = rememberLazyListState()
     ) {
-        pagingLoadStateItem(
-            loadState = communities.loadState.refresh,
-            loading = {
-                AmityCommunityTargetListShimmer(
-                    modifier = modifier.padding(horizontal = 16.dp)
-                )
-            },
-        )
-        items(
-            count = communities.itemCount,
-            key = { communities[it]?.getCommunityId() ?: it }
-        ) { index ->
-            val community = communities[index] ?: return@items
-            if (!allowToCreateMap.value.containsKey(community.getCommunityId())) {
-                if (community.getPostSettings() != AmityCommunityPostSettings.ADMIN_CAN_POST_ONLY) {
-                    viewModel.setAllowToCreate(community.getCommunityId(), true)
-                } else {
-                    viewModel.handlePermissionCheck(community)
+        when {
+            communities.loadState.refresh is LoadState.Loading -> {
+                item {
+                    AmityCommunityTargetListShimmer(
+                        modifier = modifier.padding(horizontal = 16.dp)
+                    )
                 }
             }
-            if (allowToCreateMap.value[community.getCommunityId()] != false) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                        .clickableWithoutRipple {
-                            onClick(community)
-                        }
-                ) {
-                    AmityCommunityAvatarView(
-                        modifier = modifier,
-                        size = 40.dp,
-                        community = community,
-                    )
+            communities.loadState.refresh is LoadState.Error -> {
+            }
+            else -> {
+                items(
+                    count = communities.itemCount,
+                    key = { communities[it]?.getCommunityId() ?: it }
+                ) { index ->
+                    val community = communities[index] ?: return@items
 
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        if (!community.isPublic()) {
-                            AmityBaseElement(
-                                elementId = "community_private_badge"
+                    LaunchedEffect(community.getCommunityId()) {
+                        viewModel.checkPermissionIfNeeded(community)
+                    }
+
+                    if (allowToCreateMap.value[community.getCommunityId()] == true) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            modifier = modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                                .clickableWithoutRipple { onClick(community) }
+                        ) {
+                            AmityCommunityAvatarView(
+                                modifier = modifier,
+                                size = 40.dp,
+                                community = community,
+                            )
+
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Icon(
-                                    painter = painterResource(id = getConfig().getIcon()),
-                                    tint = AmityTheme.colors.baseShade1,
-                                    contentDescription = "Private Community",
-                                    modifier = Modifier
-                                        .size(16.dp)
-                                        .testTag(getAccessibilityId()),
-                                )
-                            }
-                        }
+                                if (!community.isPublic()) {
+                                    AmityBaseElement(elementId = "community_private_badge") {
+                                        Icon(
+                                            painter = painterResource(id = getConfig().getIcon()),
+                                            tint = AmityTheme.colors.baseShade1,
+                                            contentDescription = "Private Community",
+                                            modifier = Modifier
+                                                .size(16.dp)
+                                                .testTag(getAccessibilityId()),
+                                        )
+                                    }
+                                }
 
-                        Text(
-                            text = community.getDisplayName(),
-                            style = AmityTheme.typography.body.copy(
-                                fontWeight = FontWeight.SemiBold
-                            ),
-                            modifier = modifier,
-                        )
-
-                        if (community.isOfficial()) {
-                            AmityBaseElement(
-                                elementId = "community_official_badge"
-                            ) {
-                                Image(
-                                    painter = painterResource(id = getConfig().getIcon()),
-                                    contentDescription = "Verified Community",
-                                    modifier = Modifier
-                                        .size(16.dp)
-                                        .testTag(getAccessibilityId()),
+                                Text(
+                                    text = community.getDisplayName(),
+                                    style = AmityTheme.typography.body.copy(
+                                        fontWeight = FontWeight.SemiBold
+                                    ),
+                                    modifier = modifier,
                                 )
+
+                                if (community.isOfficial()) {
+                                    AmityBaseElement(elementId = "community_official_badge") {
+                                        Image(
+                                            painter = painterResource(id = getConfig().getIcon()),
+                                            contentDescription = "Verified Community",
+                                            modifier = Modifier
+                                                .size(16.dp)
+                                                .testTag(getAccessibilityId()),
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
@@ -143,4 +147,8 @@ fun AmityTargetSelectionMyCommunitiesView(
             }
         }
     }
+}
+enum class AmityTargetContentType {
+    POST,
+    STORY
 }

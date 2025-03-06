@@ -157,7 +157,7 @@ class AmityFileService {
         }
     }
 
-    private fun rewriteImageFile(context: Context, fileUri: Uri): Single<File> {
+    fun rewriteImageFile(context: Context, fileUri: Uri): Single<File> {
         return Single.create { emitter ->
             val filename = "img_cache_${UUID.randomUUID()}.png"
             val file = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {

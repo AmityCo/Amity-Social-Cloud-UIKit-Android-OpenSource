@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.Flow
 class AmityEditUserProfilePageViewModel : AmityBaseViewModel() {
 
     fun getUser(): Flow<AmityUser> {
-        return AmityCoreClient.newUserRepository()
+        return AmityCoreClient
             .getCurrentUser()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

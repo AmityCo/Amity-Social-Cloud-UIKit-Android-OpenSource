@@ -29,6 +29,7 @@ import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getText
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
+import com.amity.socialcloud.uikit.community.compose.target.components.AmityTargetContentType
 import com.amity.socialcloud.uikit.community.compose.target.components.AmityTargetSelectionMyCommunitiesView
 
 @Composable
@@ -91,6 +92,7 @@ fun AmityStoryTargetSelectionPage(
 
             AmityTargetSelectionMyCommunitiesView(
                 modifier = modifier,
+                contentType = AmityTargetContentType.STORY,
             ) { community ->
                 behavior.goToStoryCreationPage(
                     context = context,

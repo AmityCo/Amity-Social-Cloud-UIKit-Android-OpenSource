@@ -7,6 +7,7 @@ import com.amity.socialcloud.sdk.api.core.user.search.AmityUserSortOption
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
+import com.amity.socialcloud.sdk.model.core.reaction.AmityReactionReferenceType
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.feed.AmityFeedType
 import com.amity.socialcloud.sdk.model.social.member.AmityCommunityMember
@@ -56,15 +57,23 @@ interface PostViewModel {
     }
 
     fun addPostReaction(post: AmityPost): Completable {
-        return post.react()
-            .addReaction(AmityConstants.POST_REACTION)
+        return AmityCoreClient.newReactionRepository()
+            .addReaction(
+                referenceType = AmityReactionReferenceType.POST,
+                referenceId = post.getPostId(),
+                reactionName = AmityConstants.POST_REACTION
+            )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }
 
     fun removePostReaction(post: AmityPost): Completable {
-        return post.react()
-            .removeReaction(AmityConstants.POST_REACTION)
+        return AmityCoreClient.newReactionRepository()
+            .removeReaction(
+                referenceType = AmityReactionReferenceType.POST,
+                referenceId = post.getPostId(),
+                reactionName = AmityConstants.POST_REACTION
+            )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }
@@ -74,7 +83,10 @@ interface PostViewModel {
         onSuccess: () -> Unit,
         onError: () -> Unit
     ): Completable {
-        return post.report().flag()
+        return AmitySocialClient.newPostRepository()
+            .flagPost(
+                postId = post.getPostId(),
+            )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnComplete {
@@ -90,7 +102,10 @@ interface PostViewModel {
         onSuccess: () -> Unit,
         onError: () -> Unit
     ): Completable {
-        return post.report().unflag()
+        return AmitySocialClient.newPostRepository()
+            .unflagPost(
+                postId = post.getPostId(),
+            )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnComplete {
@@ -106,7 +121,10 @@ interface PostViewModel {
         onSuccess: () -> Unit,
         onError: () -> Unit
     ): Completable {
-        return post.delete()
+        return AmitySocialClient.newPostRepository()
+            .hardDeletePost(
+                postId = post.getPostId(),
+            )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnComplete {
@@ -140,8 +158,7 @@ interface PostViewModel {
         onError: () -> Unit,
     ): Completable {
         return AmitySocialClient.newPostRepository()
-            .reviewPost(postId)
-            .approve()
+            .approvePost(postId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnError {
@@ -159,8 +176,7 @@ interface PostViewModel {
         onError: () -> Unit
     ): Completable {
         return AmitySocialClient.newPostRepository()
-            .reviewPost(postId)
-            .decline()
+            .declinePost(postId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnError {
@@ -310,7 +326,7 @@ interface PostViewModel {
 
     fun vote(pollId: String, answerIds: List<String>): Completable {
         return AmitySocialClient.newPollRepository()
-            .vote(pollId = pollId, answerIds = answerIds)
+            .votePoll(pollId = pollId, answerIds = answerIds)
     }
 
     @OptIn(ExperimentalPagingApi::class)
@@ -318,7 +334,7 @@ interface PostViewModel {
         keyword: String,
         onResult: (users: PagingData<AmityUser>) -> Unit
     ): Completable {
-        return AmityCoreClient.newUserRepository().searchUserByDisplayName(keyword)
+        return AmityCoreClient.newUserRepository().searchUsers(keyword)
             .sortBy(AmityUserSortOption.DISPLAYNAME)
             .build()
             .query()

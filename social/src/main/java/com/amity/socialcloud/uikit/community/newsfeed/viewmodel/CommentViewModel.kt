@@ -5,6 +5,7 @@ import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadata
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataCreator
 import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
+import com.amity.socialcloud.sdk.model.core.reaction.AmityReactionReferenceType
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.common.views.dialog.bottomsheet.BottomSheetMenuItem
@@ -62,13 +63,23 @@ interface CommentViewModel {
     }
 
     fun addCommentReaction(comment: AmityComment): Completable {
-        return comment.react().addReaction(AmityConstants.POST_REACTION)
+        return AmityCoreClient.newReactionRepository()
+                .addReaction(
+                    referenceType = AmityReactionReferenceType.COMMENT,
+                    referenceId = comment.getCommentId(),
+                    reactionName = AmityConstants.POST_REACTION
+                )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }
 
     fun removeCommentReaction(comment: AmityComment): Completable {
-        return comment.react().removeReaction(AmityConstants.POST_REACTION)
+        return AmityCoreClient.newReactionRepository()
+            .removeReaction(
+                referenceType = AmityReactionReferenceType.COMMENT,
+                referenceId = comment.getCommentId(),
+                reactionName = AmityConstants.POST_REACTION
+            )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }
@@ -78,8 +89,10 @@ interface CommentViewModel {
         onSuccess: () -> Unit,
         onError: () -> Unit
     ): Completable {
-        return comment.report()
-            .flag()
+        return AmitySocialClient.newCommentRepository()
+            .flagComment(
+               comment.getCommentId()
+            )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnComplete {
@@ -95,8 +108,10 @@ interface CommentViewModel {
         onSuccess: () -> Unit,
         onError: () -> Unit
     ): Completable {
-        return comment.report()
-            .unflag()
+        return AmitySocialClient.newCommentRepository()
+            .unflagComment(
+                comment.getCommentId()
+            )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnComplete {

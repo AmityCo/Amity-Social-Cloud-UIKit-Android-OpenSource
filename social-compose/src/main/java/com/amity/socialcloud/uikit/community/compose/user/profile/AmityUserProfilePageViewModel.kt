@@ -18,6 +18,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
@@ -55,6 +56,10 @@ class AmityUserProfilePageViewModel(val userId: String) : AmityBaseViewModel() {
         _videoPostListState.value = state
     }
 
+    private val fetchUserError = MutableStateFlow<Throwable?>(null)
+
+    fun getFetchErrorState() = fetchUserError.asStateFlow()
+
     init {
         refresh()
     }
@@ -66,44 +71,99 @@ class AmityUserProfilePageViewModel(val userId: String) : AmityBaseViewModel() {
                 isRefreshing = true,
             )
         }
+        fetchUserError.value = null
 
         if (userId == AmityCoreClient.getUserId()) {
-            Flowable.combineLatest(
-                AmityCoreClient.newUserRepository().getUser(userId),
-                getMyFollowInfo(),
-            ) { user, myFollowInfo ->
-                viewModelScope.launch {
-                    delay(100)
-                    _userProfileState.value = _userProfileState.value.copy(
-                        user = user,
-                        myFollowInfo = myFollowInfo,
-                        userFollowInfo = null,
-                        isRefreshing = false,
-                    )
-                }
-            }
+            AmityCoreClient.getCurrentUser()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext {
+                    viewModelScope.launch {
+                        delay(100)
+                        _userProfileState.value = _userProfileState.value.copy(
+                            user = it,
+                            userFollowInfo = null,
+                            isRefreshing = false,
+                        )
+                    }
+                }
+                .doOnError {
+                    viewModelScope.launch {
+                        fetchUserError.emit(it)
+                    }
+                }
+                .subscribe()
+                .let(compositeDisposable::add)
+
+            getMyFollowInfo()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext {
+                    viewModelScope.launch {
+                        delay(100)
+                        _userProfileState.value = _userProfileState.value.copy(
+                            myFollowInfo = it,
+                            userFollowInfo = null,
+                        )
+                    }
+                }
+                .doOnError {
+                    // ignore error
+                }
                 .subscribe()
                 .let(compositeDisposable::add)
         } else {
-            Flowable.combineLatest(
-                AmityCoreClient.newUserRepository().getUser(userId),
-                getMyFollowInfo(),
-                getUserFollowInfo(),
-            ) { user, myFollowInfo, userFollowInfo ->
-                viewModelScope.launch {
-                    delay(100)
-                    _userProfileState.value = _userProfileState.value.copy(
-                        user = user,
-                        myFollowInfo = myFollowInfo,
-                        userFollowInfo = userFollowInfo,
-                        isRefreshing = false,
-                    )
-                }
-            }
+            AmityCoreClient.newUserRepository().getUser(userId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext {
+                    viewModelScope.launch {
+                        delay(100)
+                        _userProfileState.value = _userProfileState.value.copy(
+                            user = it,
+                            isRefreshing = false,
+                        )
+                    }
+                }
+                .doOnError {
+                    viewModelScope.launch {
+                        fetchUserError.emit(it)
+                    }
+                }
+                .subscribe()
+                .let(compositeDisposable::add)
+
+            getMyFollowInfo()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext {
+                    viewModelScope.launch {
+                        delay(100)
+                        _userProfileState.value = _userProfileState.value.copy(
+                            myFollowInfo = it,
+                        )
+                    }
+                }
+                .doOnError {
+                    // ignore error
+                }
+                .subscribe()
+                .let(compositeDisposable::add)
+
+            getUserFollowInfo()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext {
+                    viewModelScope.launch {
+                        delay(100)
+                        _userProfileState.value = _userProfileState.value.copy(
+                            userFollowInfo = it,
+                        )
+                    }
+                }
+                .doOnError {
+                    // ignore error
+                }
                 .subscribe()
                 .let(compositeDisposable::add)
         }

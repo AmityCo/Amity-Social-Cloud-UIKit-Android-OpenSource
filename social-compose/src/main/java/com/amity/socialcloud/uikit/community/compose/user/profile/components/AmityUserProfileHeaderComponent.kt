@@ -70,6 +70,9 @@ fun AmityUserProfileHeaderComponent(
     var showUnfollowSheet by remember { mutableStateOf(false) }
     var showUnblockUserDialog by remember { mutableStateOf(false) }
     var showUserIsBlockedDialog by remember { mutableStateOf(false) }
+    var showFollowErrorDialog by remember { mutableStateOf(false) }
+    var showCancelErrorDialog by remember { mutableStateOf(false) }
+    var showUnFollowErrorDialog by remember { mutableStateOf(false) }
 
     val behavior by lazy {
         AmitySocialBehaviorHelper.userProfileHeaderComponentBehavior
@@ -280,6 +283,9 @@ fun AmityUserProfileHeaderComponent(
                             AmityFollowStatus.PENDING -> {
                                 viewModel.unfollowUser(
                                     targetUserId = user.getUserId(),
+                                    onError = {
+                                        showCancelErrorDialog = true
+                                    }
                                 )
                             }
 
@@ -289,6 +295,9 @@ fun AmityUserProfileHeaderComponent(
                                     onError = {
                                         if (it == AmityError.PERMISSION_DENIED) {
                                             showUserIsBlockedDialog = true
+                                        }
+                                        else {
+                                            showFollowErrorDialog = true
                                         }
                                     }
                                 )
@@ -335,6 +344,9 @@ fun AmityUserProfileHeaderComponent(
                 showUnfollowPopupDialog = false
                 viewModel.unfollowUser(
                     targetUserId = user.getUserId(),
+                    onError = {
+                        showUnFollowErrorDialog = true
+                    }
                 )
             },
             onDismissRequest = {
@@ -392,6 +404,39 @@ fun AmityUserProfileHeaderComponent(
             dismissText = "OK",
             onDismissRequest = {
                 showUserIsBlockedDialog = false
+            }
+        )
+    }
+
+    if (showFollowErrorDialog) {
+        AmityAlertDialog(
+            dialogTitle = "Unable to follow this user",
+            dialogText = "Oops! something went wrong. Please try again later.",
+            dismissText = "OK",
+            onDismissRequest = {
+                showFollowErrorDialog = false
+            }
+        )
+    }
+
+    if (showCancelErrorDialog) {
+        AmityAlertDialog(
+            dialogTitle = "Unable to cancel the follow request",
+            dialogText = "Oops! something went wrong. Please try again later.",
+            dismissText = "OK",
+            onDismissRequest = {
+                showCancelErrorDialog = false
+            }
+        )
+    }
+
+    if (showUnFollowErrorDialog) {
+        AmityAlertDialog(
+            dialogTitle = "Unable to unfollow this user",
+            dialogText = "Oops! something went wrong. Please try again later.",
+            dismissText = "OK",
+            onDismissRequest = {
+                showUnFollowErrorDialog = false
             }
         )
     }

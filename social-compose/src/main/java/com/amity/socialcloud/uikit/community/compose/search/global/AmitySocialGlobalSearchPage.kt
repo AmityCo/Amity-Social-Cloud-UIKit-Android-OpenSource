@@ -19,6 +19,7 @@ import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityTabRow
 import com.amity.socialcloud.uikit.common.ui.elements.AmityTabRowItem
 import com.amity.socialcloud.uikit.community.compose.search.components.AmityCommunitySearchResultComponent
+import com.amity.socialcloud.uikit.community.compose.search.components.AmityPostSearchResultComponent
 import com.amity.socialcloud.uikit.community.compose.search.components.AmityTopSearchBarComponent
 import com.amity.socialcloud.uikit.community.compose.search.components.AmityUserSearchResultComponent
 
@@ -35,6 +36,7 @@ fun AmitySocialGlobalSearchPage(
 
     val tabs = remember {
         listOf(
+            //AmityTabRowItem(title = "Posts"),
             AmityTabRowItem(title = "Communities"),
             AmityTabRowItem(title = "Users"),
         )
@@ -45,6 +47,9 @@ fun AmitySocialGlobalSearchPage(
         when (selectedTabIndex) {
             0 -> viewModel.setSearchType(AmityGlobalSearchType.COMMUNITY)
             1 -> viewModel.setSearchType(AmityGlobalSearchType.USER)
+//            0 -> viewModel.setSearchType(AmityGlobalSearchType.POST)
+//            1 -> viewModel.setSearchType(AmityGlobalSearchType.COMMUNITY)
+//            2 -> viewModel.setSearchType(AmityGlobalSearchType.USER)
         }
     }
 
@@ -58,6 +63,7 @@ fun AmitySocialGlobalSearchPage(
                 modifier = modifier,
                 pageScope = getPageScope(),
                 viewModel = viewModel,
+                shouldShowKeyboard = true
             )
 
             AmityTabRow(
@@ -70,6 +76,12 @@ fun AmitySocialGlobalSearchPage(
             Spacer(modifier.height(8.dp))
 
             when (selectedTabIndex) {
+//                0 -> AmityPostSearchResultComponent(
+//                    modifier = modifier,
+//                    pageScope = getPageScope(),
+//                    viewModel = viewModel
+//                )
+
                 0 -> {
                     AmityBaseComponent(
                         pageScope = getPageScope(),

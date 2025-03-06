@@ -16,6 +16,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,6 +33,7 @@ fun AmityExpandableText(
     text: String,
     mentionGetter: AmityMentionMetadataGetter = AmityMentionMetadataGetter(JsonObject()),
     mentionees: List<AmityMentionee> = emptyList(),
+    boldWhenMatches: List<String> = emptyList(),
     style: TextStyle = AmityTheme.typography.body,
     previewLines: Int = 8,
     intialExpand: Boolean = false,
@@ -118,7 +120,28 @@ fun AmityExpandableText(
                 )
             }
 
+            boldWhenMatches.forEach {
+                val matches = findMatchIndices(displayText, it)
+                matches.forEach { match ->
+                    addStyle(
+                        style = SpanStyle(
+                            fontWeight = FontWeight.SemiBold,
+                            color = AmityTheme.colors.base
+                        ),
+                        start = match.first,
+                        end = match.second,
+                    )
+                    addStringAnnotation(
+                        tag = "BOLDED",
+                        annotation = it,
+                        start = match.first,
+                        end = match.second
+                    )
+                }
+            }
+
             if (!isReadMoreClicked) {
+                append("...")
                 withStyle(style = SpanStyle(AmityTheme.colors.primary)) {
                     pushStringAnnotation(tag = readMore, annotation = readMore)
                     append(readMore)
@@ -182,6 +205,13 @@ fun AmityExpandableText(
     }
 }
 
+private fun findMatchIndices(input: String, pattern: String): List<Pair<Int, Int>> {
+    val regex = Regex(pattern)
+    return regex.findAll(input).map { matchResult ->
+        matchResult.range.first to matchResult.range.last + 1 // +1 for exclusive end
+    }.toList()
+}
+
 private fun getTrimmedText(
     text: String,
     textLayoutResult: TextLayoutResult,
@@ -209,7 +239,7 @@ private fun getTrimmedText(
     }
 }
 
-private const val readMore = "…See more"
+private const val readMore = "See more"
 
 @Preview(showBackground = true)
 @Composable

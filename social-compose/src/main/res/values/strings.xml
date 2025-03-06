@@ -15,23 +15,29 @@
     <string name="amity_delete_comment">Delete Comment</string>
     <string name="amity_comment_deleted_toast_message">Comment deleted</string>
     <string name="amity_edit_comment">Edit Comment</string>
-    <string name="amity_report_comment">Report Comment</string>
+    <string name="amity_report_comment">Report comment</string>
+    <string name="amity_unreport_comment">Unreport comment</string>
     <string name="amity_comment_reported_toast_message">Comment reported</string>
-    <string name="amity_comment_unreported_toast_message">Report retracted</string>
+    <string name="amity_comment_reported_failed_toast_message">Failed to report comment. Please try again.</string>
+    <string name="amity_comment_unreported_toast_message">Comment unreported</string>
+    <string name="amity_comment_unreported_failed_toast_message">Failed to unreport comment. Please try again.</string>
     <string name="amity_undo_report">Undo Report</string>
-    <string name="amity_edit_reply">Edit Reply</string>
-    <string name="amity_delete_reply">Delete Reply</string>
-    <string name="amity_report_reply">Report Reply</string>
+    <string name="amity_edit_reply">Edit reply</string>
+    <string name="amity_delete_reply">Delete reply</string>
+    <string name="amity_report_reply">Report reply</string>
     <string name="amity_reply_deleted_message">This reply has been deleted</string>
     <string name="amity_comment_deleted_message">This comment has been deleted</string>
+    <string name="amity_comment_delete_failed_toast_message">Failed to delete comment. Please try again.</string>
     <string name="amity_view_more_replies">View more replies</string>
     <string name="amity_delete_comment_title">Delete Comment</string>
     <string name="amity_delete_comment_warning_message">This comment will be permanently removed.</string>
     <string name="amity_delete_reply_title">Delete reply</string>
     <string name="amity_delete_reply_warning_message">This reply will be permanently removed.</string>
-    <string name="amity_add_reply_error_message">Unable to add reply</string>
-    <string name="amity_add_comment_error_message">Unable to add comment</string>
-    <string name="amity_add_blocked_words_comment_error_message">Your comment wasn’t created as it contained blocked words. Only you can see this</string>
+    <string name="amity_add_reply_error_message">Failed to add reply. Please try again.</string>
+    <string name="amity_add_comment_error_message">Failed to add comment. Please try again.</string>
+    <string name="amity_add_blocked_words_comment_error_message">Your comment contains inappropriate word. Please review and delete it.</string>
+    <string name="amity_add_blocked_links_comment_error_message">Your comment contains a link that\'s not allowed. Please review and delete it.</string>
+
     <string name="amity_update_comment_error_message">Unable to update comment</string>
     <string name="amity_update_blocked_words_comment_error_message">Your comment wasn’t updated as it contained blocked words. Only you can see this</string>
 
@@ -55,6 +61,12 @@
 
     <string name="amity_discard_post_title">Discard post?</string>
     <string name="amity_discard_post_message">Do you want to discard your post?</string>
+    <string name="amity_add_blocked_words_post_error_message">Your post wasn\'t posted because it contains a blocked word.</string>
+    <string name="amity_add_blocked_links_post_error_message">Your post wasn\'t posted because it contains a link that is not allowed.</string>
+    <string name="amity_post_text_exceed_error_message">Your post wasn\'t posted because it exceeds the %1$s characters limit</string>
+    <string name="amity_post_create_generic_error_message">Failed to create post. Please try again.</string>
+    <string name="amity_post_edit_generic_error_message">Failed to edit post. Please try again.</string>
+
     <string name="amity_only_admin">Only admin can post</string>
     <string name="amity_add_members">Add members<font fgcolor='#FF0000'>*</font></string>
     <string name="amity_cancel_request">Cancel request</string>

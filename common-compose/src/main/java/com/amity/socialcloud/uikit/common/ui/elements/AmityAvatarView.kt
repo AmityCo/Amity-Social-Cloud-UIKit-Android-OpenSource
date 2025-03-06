@@ -10,6 +10,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,10 +25,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImagePainter
-import coil.compose.rememberAsyncImagePainter
-import coil.request.CachePolicy
-import coil.request.ImageRequest
+import coil3.compose.AsyncImagePainter
+import coil3.compose.rememberAsyncImagePainter
+import coil3.request.CachePolicy
+import coil3.request.ImageRequest
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.category.AmityCommunityCategory
@@ -63,11 +65,11 @@ fun AmityCommunityAvatarWithRoundedCornerView(
         model = ImageRequest
             .Builder(LocalContext.current)
             .data(url)
-            .dispatcher(Dispatchers.IO)
             .diskCachePolicy(CachePolicy.ENABLED)
             .memoryCachePolicy(CachePolicy.ENABLED)
             .build()
     )
+    val painterState by painter.state.collectAsState()
 
     Box(modifier = modifier) {
         Image(
@@ -78,7 +80,7 @@ fun AmityCommunityAvatarWithRoundedCornerView(
                 .size(size)
                 .clip(roundedCornerShape)
         )
-        if (painter.state !is AsyncImagePainter.State.Success) {
+        if (painterState !is AsyncImagePainter.State.Success) {
             Box(
                 modifier = Modifier
                     .size(size)
@@ -158,11 +160,12 @@ fun AmityUserAvatarView(
         model = ImageRequest
             .Builder(LocalContext.current)
             .data(url)
-            .dispatcher(Dispatchers.IO)
             .diskCachePolicy(CachePolicy.ENABLED)
             .memoryCachePolicy(CachePolicy.ENABLED)
             .build()
     )
+
+    val painterState by painter.state.collectAsState()
 
     Box(modifier = modifier) {
         Image(
@@ -173,7 +176,7 @@ fun AmityUserAvatarView(
                 .size(size)
                 .clip(CircleShape)
         )
-        if (painter.state !is AsyncImagePainter.State.Success) {
+        if (painterState !is AsyncImagePainter.State.Success) {
             val displayNameFirstCharacter =
                 (user?.getDisplayName()?.trim() ?: "").firstOrNull()?.uppercase() ?: ""
 
@@ -231,12 +234,11 @@ fun AmityCategoryAvatarView(
         model = ImageRequest
             .Builder(LocalContext.current)
             .data(url)
-            .dispatcher(Dispatchers.IO)
             .diskCachePolicy(CachePolicy.ENABLED)
             .memoryCachePolicy(CachePolicy.ENABLED)
             .build()
     )
-
+    val painterState by painter.state.collectAsState()
     Box(modifier = modifier) {
         Image(
             painter = painter,
@@ -246,7 +248,7 @@ fun AmityCategoryAvatarView(
                 .size(size)
                 .clip(roundedCornerShape)
         )
-        if (painter.state !is AsyncImagePainter.State.Success) {
+        if (painterState !is AsyncImagePainter.State.Success) {
             Image(
                 painter = painterResource(id = R.drawable.amity_ic_category_placeholder),
                 contentScale = ContentScale.Crop,
@@ -276,11 +278,11 @@ fun AmityAvatarView(
         model = ImageRequest
             .Builder(LocalContext.current)
             .data(url)
-            .dispatcher(Dispatchers.IO)
             .diskCachePolicy(CachePolicy.ENABLED)
             .memoryCachePolicy(CachePolicy.ENABLED)
             .build()
     )
+    val painterState by painter.state.collectAsState()
 
     Box(modifier = modifier) {
         Image(
@@ -291,7 +293,7 @@ fun AmityAvatarView(
                 .size(size)
                 .clip(roundedCornerShape)
         )
-        if (painter.state !is AsyncImagePainter.State.Success) {
+        if (painterState !is AsyncImagePainter.State.Success) {
             Icon(
                 painter = painterResource(id = placeholder),
                 contentDescription = null,

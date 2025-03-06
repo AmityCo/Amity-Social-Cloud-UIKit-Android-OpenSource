@@ -49,7 +49,7 @@ class AmityCommunityProfileViewModel(private val communityId: String) :
         Flowable.combineLatest(
             AmitySocialClient.newCommunityRepository().getCommunity(communityId).doOnError { },
             AmityCoreClient.hasPermission(AmityPermission.EDIT_COMMUNITY).atCommunity(communityId)
-                .check().onErrorReturn { communityProfileState.value.isModerator }
+                .check().timeout (1, TimeUnit.SECONDS).onErrorReturn { communityProfileState.value.isModerator }
         ) { community, hasPermission -> Pair(community, hasPermission) }
             .doOnNext { (community, isModerator) ->
                 val isMember = community.isJoined()

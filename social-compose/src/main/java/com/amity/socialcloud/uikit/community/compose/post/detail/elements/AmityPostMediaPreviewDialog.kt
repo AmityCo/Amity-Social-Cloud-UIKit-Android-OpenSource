@@ -34,13 +34,16 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
-import coil.compose.AsyncImage
-import coil.request.CachePolicy
-import coil.request.ImageRequest
+import coil3.compose.AsyncImage
+import coil3.request.CachePolicy
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.file.AmityVideo
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.ui.elements.AmityMenuButton
+import com.amity.socialcloud.uikit.common.ui.image.rememberZoomState
+import com.amity.socialcloud.uikit.common.ui.image.zoomable
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.R
@@ -85,8 +88,8 @@ fun AmityPostMediaPreviewDialog(
     LaunchedEffect(selectedFileId) {
         pagerState.scrollToPage(childPosts.indexOfFirst {
             when (it) {
-                is AmityPost.Data.IMAGE -> it.getImage()?.getFileId() == selectedFileId
-                is AmityPost.Data.VIDEO -> it.getThumbnailImage()?.getFileId() == selectedFileId
+                is AmityPost.Data.IMAGE -> it.getPostId() == selectedFileId
+                is AmityPost.Data.VIDEO -> it.getPostId() == selectedFileId
                 else -> false
             }
         })
@@ -146,6 +149,7 @@ fun AmityPostMediaPreviewDialog(
                         contentDescription = "Image Post",
                         contentScale = ContentScale.Fit,
                         modifier = modifier.fillMaxSize()
+                            .zoomable(rememberZoomState()),
                     )
                 }
 
@@ -229,7 +233,7 @@ fun AmityPostMediaPreviewDialog(
 fun prepareVideoUrl(childPosts: List<AmityPost.Data>): Single<List<AmityVideo>> {
     return Single.zip(childPosts
         .filterIsInstance<AmityPost.Data.VIDEO>()
-        .map { it.getVideo(AmityVideo.Quality.ORIGINAL) }
+        .map { it.getVideo() }
     ) { videoList ->
         videoList.mapNotNull { video -> video as AmityVideo }
     }.subscribeOn(Schedulers.io())

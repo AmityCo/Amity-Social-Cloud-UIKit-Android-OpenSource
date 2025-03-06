@@ -58,11 +58,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImage
+import coil3.compose.AsyncImage
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
 import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
+import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
@@ -77,7 +78,6 @@ import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getText
 import com.amity.socialcloud.uikit.common.utils.shade
-import com.amity.socialcloud.uikit.common.utils.showToast
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.community.category.AmityCommunityAddCategoryPageActivity
@@ -190,11 +190,12 @@ fun AmityCommunitySetupPage(
             isCapturedImageReady = false
             isCameraPermissionGranted = permissions.entries.all { it.value }
             if (!isCameraPermissionGranted) {
-                context.showToast("Camera permission not granted")
+                AmityUIKitSnackbar.publishSnackbarErrorMessage("Camera permission not granted")
             } else {
                 val imageFile = AmityCameraUtil.createImageFile(context)
                 if (imageFile == null) {
-                    context.showToast("Failed to create image file")
+                    AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to create image file")
+
                 } else {
                     avatarUri = AmityCameraUtil.createPhotoUri(context, imageFile)
                     imageCaptureLauncher.launch(avatarUri)
@@ -768,11 +769,7 @@ fun AmityCommunitySetupPage(
                                 categoryIds = selectedCategories.map { it.getCategoryId() },
                                 userIds = selectedUsers.map { it.getUserId() },
                                 onSuccess = {
-                                    context.showToast(
-                                        context.amityStringResource(
-                                            id = R.string.amity_v4_community_setup_toast_create_success
-                                        )
-                                    )
+                                    AmityUIKitSnackbar.publishSnackbarMessage(context.getString(R.string.amity_v4_community_setup_toast_create_success))
                                     context.closePageWithResult(Activity.RESULT_OK)
                                     behavior.goToCommunityProfilePage(
                                         AmityCommunitySetupPageBehavior.Context(
@@ -782,11 +779,7 @@ fun AmityCommunitySetupPage(
                                     )
                                 },
                                 onError = {
-                                    context.showToast(
-                                        context.amityStringResource(
-                                            id = R.string.amity_v4_community_setup_toast_create_failed
-                                        )
-                                    )
+                                    AmityUIKitSnackbar.publishSnackbarMessage(context.getString(R.string.amity_v4_community_setup_toast_create_failed))
                                 }
                             )
                         }
@@ -933,11 +926,11 @@ fun updateCommunity(
         isPublic = isPublic,
         categoryIds = categoryIds,
         onSuccess = {
-            context.showToast(context.amityStringResource(id = R.string.amity_v4_community_setup_toast_update_success))
+            AmityUIKitSnackbar.publishSnackbarMessage(context.getString(R.string.amity_v4_community_setup_toast_update_success))
             context.closePageWithResult(Activity.RESULT_OK)
         },
         onError = {
-            context.showToast(context.amityStringResource(id = R.string.amity_v4_community_setup_toast_update_failed))
+            AmityUIKitSnackbar.publishSnackbarMessage(context.getString(R.string.amity_v4_community_setup_toast_update_failed))
             context.closePageWithResult(Activity.RESULT_OK)
         }
     )

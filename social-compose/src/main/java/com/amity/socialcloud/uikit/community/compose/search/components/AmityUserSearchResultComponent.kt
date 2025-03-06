@@ -30,7 +30,7 @@ fun AmityUserSearchResultComponent(
         AmitySocialBehaviorHelper.userSearchResultComponentBehavior
     }
 
-    val keyword by viewModel.keyword.collectAsState()
+    val keyword by viewModel.keyword.collectAsState("")
 
     val users = remember(keyword) {
         viewModel.searchUsers()
@@ -49,9 +49,16 @@ fun AmityUserSearchResultComponent(
                 AmityGlobalSearchViewModel.UserListState.from(
                     loadState = users.loadState.refresh,
                     itemCount = users.itemCount,
+                    keyword = keyword
                 ).let(viewModel::setUserListState)
 
                 when (loadState) {
+                    AmityGlobalSearchViewModel.UserListState.SHORT_INPUT -> {
+                        item {
+                            AmityShortSearchInputComponent(modifier)
+                        }
+                    }
+
                     AmityGlobalSearchViewModel.UserListState.EMPTY -> {
                         item {
                             AmityEmptySearchResultComponent(modifier)

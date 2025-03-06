@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,14 +24,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.media3.common.util.UnstableApi
-import coil.compose.AsyncImage
-import coil.compose.AsyncImagePainter
-import coil.compose.rememberAsyncImagePainter
-import coil.request.CachePolicy
-import coil.request.ImageRequest
+import coil3.compose.AsyncImage
+import coil3.compose.AsyncImagePainter
+import coil3.compose.rememberAsyncImagePainter
+import coil3.request.CachePolicy
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.ui.elements.AmityMenuButton
+import com.amity.socialcloud.uikit.common.ui.image.rememberZoomState
+import com.amity.socialcloud.uikit.common.ui.image.zoomable
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.R
@@ -86,13 +90,14 @@ fun AmityProfileImageFeedItemPreviewDialog(
     val painter = rememberAsyncImagePainter(
         model = ImageRequest
             .Builder(LocalContext.current)
-            .data(data?.getUrl(AmityImage.Size.FULL))
+            .data(data?.getUrl(AmityImage.Size.LARGE))
             .crossfade(true)
-            .dispatcher(Dispatchers.IO)
             .diskCachePolicy(CachePolicy.ENABLED)
             .memoryCachePolicy(CachePolicy.ENABLED)
             .build()
     )
+
+    val painterState by painter.state.collectAsState()
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -110,6 +115,7 @@ fun AmityProfileImageFeedItemPreviewDialog(
                 contentDescription = "Image Post",
                 contentScale = ContentScale.Fit,
                 modifier = modifier.fillMaxSize()
+                    .zoomable(rememberZoomState()),
             )
 
             AmityMenuButton(
@@ -126,7 +132,7 @@ fun AmityProfileImageFeedItemPreviewDialog(
                 }
             )
 
-            if (painter.state !is AsyncImagePainter.State.Success) {
+            if (painterState !is AsyncImagePainter.State.Success) {
                 Box(
                     modifier = modifier
                         .fillMaxWidth()

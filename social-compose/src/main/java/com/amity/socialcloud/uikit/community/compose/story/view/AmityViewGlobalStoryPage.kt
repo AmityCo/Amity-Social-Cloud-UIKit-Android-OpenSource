@@ -87,7 +87,7 @@ fun AmityViewGlobalStoryPage(
         if (selectedTarget.first >= 0) {
             HorizontalPager(
                 state = targetPagerState,
-                beyondBoundsPageCount = 2,
+                beyondViewportPageCount = 2,
                 key = {
                     targets[it].getTargetId()
                 },
@@ -119,7 +119,7 @@ fun AmityViewGlobalStoryPage(
                         targetType = target.getTargetType(),
                         exoPlayer = exoPlayer,
                         isSingleTarget = false,
-                        isTargetVisible = targetPagerState.targetPage == index,
+                        isTargetVisible = targetPagerState.targetPage == index && !targetPagerState.isScrollInProgress,
                         shouldRestartTimer = shouldRestartTimer,
                         navigateToCommunityProfilePage = { community ->
                             behavior.goToCommunityProfilePage(

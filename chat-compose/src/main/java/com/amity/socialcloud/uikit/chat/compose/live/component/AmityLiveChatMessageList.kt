@@ -267,7 +267,7 @@ fun AmityLiveChatMessageList(
                                             )
                                         },
                                         onError = {
-                                            getComponentScope().showSnackbar(
+                                            getComponentScope().showErrorSnackbar(
                                                 message = "This message failed to be reported. Please try again."
                                             )
                                         }

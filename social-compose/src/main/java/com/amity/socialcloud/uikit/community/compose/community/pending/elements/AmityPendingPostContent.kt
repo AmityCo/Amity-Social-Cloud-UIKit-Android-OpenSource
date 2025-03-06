@@ -11,11 +11,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
+import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.elements.AmityPostPreviewLinkView
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.common.utils.showToast
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponentStyle
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostContentElement
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostMediaElement
@@ -47,38 +47,14 @@ fun AmityPendingPostContent(
                 viewModel.deletePost(
                     postId = data.postId,
                     onSuccess = {
-                        context.showToast("Post deleted")
+                        AmityUIKitSnackbar.publishSnackbarMessage("Post deleted")
                         viewModel.updateDialogUIState(AmityPostMenuDialogUIState.CloseDialog)
                     },
                     onError = {
-                        context.showToast("Failed to delete post")
+                        AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to delete post")
                         viewModel.updateDialogUIState(AmityPostMenuDialogUIState.CloseDialog)
                     }
                 )
-                /*
-                AmityAlertDialog(
-                    dialogTitle = context.getString(R.string.amity_delete_post_title),
-                    dialogText = context.getString(R.string.amity_delete_post_warning_message),
-                    confirmText = context.getString(R.string.amity_delete),
-                    dismissText = context.getString(R.string.amity_cancel),
-                    onConfirmation = {
-                        viewModel.deletePost(
-                            postId = data.postId,
-                            onSuccess = {
-                                context.showToast("Post deleted")
-                                viewModel.updateDialogUIState(AmityPostMenuDialogUIState.CloseDialog)
-                            },
-                            onError = {
-                                context.showToast("Failed to delete post")
-                                viewModel.updateDialogUIState(AmityPostMenuDialogUIState.CloseDialog)
-                            }
-                        )
-                    },
-                    onDismissRequest = {
-                        viewModel.updateDialogUIState(AmityPostMenuDialogUIState.CloseDialog)
-                    }
-                )
-                 */
             }
         }
 

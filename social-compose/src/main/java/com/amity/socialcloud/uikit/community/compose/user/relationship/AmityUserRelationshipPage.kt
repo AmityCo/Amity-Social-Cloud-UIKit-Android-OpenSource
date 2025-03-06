@@ -100,7 +100,7 @@ fun AmityUserRelationshipPage(
             HorizontalPager(
                 state = pagerState,
                 userScrollEnabled = false,
-                beyondBoundsPageCount = 2,
+                beyondViewportPageCount = 2,
                 key = { index -> tabs[index].title ?: index },
                 modifier = Modifier
                     .fillMaxWidth()

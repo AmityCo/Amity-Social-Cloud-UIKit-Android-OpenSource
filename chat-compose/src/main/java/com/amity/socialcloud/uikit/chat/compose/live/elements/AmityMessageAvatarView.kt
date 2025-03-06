@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -17,10 +19,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImagePainter
-import coil.compose.rememberAsyncImagePainter
-import coil.request.CachePolicy
-import coil.request.ImageRequest
+import coil3.compose.AsyncImagePainter
+import coil3.compose.rememberAsyncImagePainter
+import coil3.request.CachePolicy
+import coil3.request.ImageRequest
 import com.amity.socialcloud.uikit.chat.compose.R
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
@@ -46,11 +48,11 @@ fun AmityMessageAvatarView(
         model = ImageRequest
             .Builder(LocalContext.current)
             .data(avatarUrl)
-            .dispatcher(Dispatchers.IO)
             .diskCachePolicy(CachePolicy.ENABLED)
             .memoryCachePolicy(CachePolicy.ENABLED)
             .build()
     )
+    val painterState by painter.state.collectAsState()
     AmityBaseElement(
         pageScope = pageScope,
         componentScope = componentScope,
@@ -74,7 +76,7 @@ fun AmityMessageAvatarView(
                         .size(size)
                         .clip(CircleShape)
                 )
-                if (painter.state !is AsyncImagePainter.State.Success) {
+                if (painterState !is AsyncImagePainter.State.Success) {
                     Image(
                         painter = placeholder,
                         contentDescription = null,

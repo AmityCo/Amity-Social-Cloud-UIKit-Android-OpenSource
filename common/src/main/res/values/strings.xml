@@ -30,6 +30,7 @@
     <string name="amity_message">Message</string>
     <string name="amity_display_name">Display Name</string>
     <string name="amity_report_msg">Report sent.</string>
+    <string name="amity_unreport_msg">Report retracted.</string>
     <string name="amity_max_image_selected">Reached max image selection limit</string>
     <string name="amity_unable_to_delete">Unable to delete the file</string>
     <string name="amity_try_again">Please try again</string>

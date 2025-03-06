@@ -15,11 +15,11 @@ import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
+import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.elements.AmityPostPreviewLinkView
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.common.utils.showToast
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponentStyle
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostContentElement
@@ -58,11 +58,11 @@ fun AmityPendingPostContentComponent(
                 viewModel.deletePost(
                     postId = data.postId,
                     onSuccess = {
-                        context.showToast("Post deleted")
+                        AmityUIKitSnackbar.publishSnackbarMessage("Post deleted")
                         viewModel.updateDialogUIState(AmityPostMenuDialogUIState.CloseDialog)
                     },
                     onError = {
-                        context.showToast("Failed to delete post")
+                        AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to delete post")
                         viewModel.updateDialogUIState(AmityPostMenuDialogUIState.CloseDialog)
                     }
                 )

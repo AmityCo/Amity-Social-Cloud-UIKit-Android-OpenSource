@@ -9,19 +9,17 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 
 class AmityFollowersItemViewModel : AmityBaseViewModel() {
 
-    fun reportUser(ekoUser: AmityUser, onSuccess: () -> Unit): Completable {
-        return ekoUser
-            .report()
-            .flag()
+    fun reportUser(user: AmityUser, onSuccess: () -> Unit): Completable {
+        return AmityCoreClient.newUserRepository()
+            .flagUser(user.getUserId())
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnComplete(onSuccess)
     }
 
-    fun unReportUser(ekoUser: AmityUser, onSuccess: () -> Unit): Completable {
-        return ekoUser
-            .report()
-            .unflag()
+    fun unReportUser(user: AmityUser, onSuccess: () -> Unit): Completable {
+        return  AmityCoreClient.newUserRepository()
+            .unflagUser(user.getUserId())
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnComplete(onSuccess)

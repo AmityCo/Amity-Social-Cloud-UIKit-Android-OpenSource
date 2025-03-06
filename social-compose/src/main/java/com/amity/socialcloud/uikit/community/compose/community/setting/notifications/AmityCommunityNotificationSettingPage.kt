@@ -30,6 +30,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityToolBar
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
@@ -38,7 +39,6 @@ import com.amity.socialcloud.uikit.common.utils.isCommentNotificationEnabled
 import com.amity.socialcloud.uikit.common.utils.isPostNotificationEnabled
 import com.amity.socialcloud.uikit.common.utils.isSocialNotificationEnabled
 import com.amity.socialcloud.uikit.common.utils.isStoryNotificationEnabled
-import com.amity.socialcloud.uikit.common.utils.showToast
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.community.setting.elements.AmityCommunitySettingItem
@@ -130,10 +130,10 @@ fun AmityCommunityNotificationSettingPage(
                         viewModel.updateCommunityNotificationSetting(
                             enable = isChecked,
                             onSuccess = {
-                                context.showToast("Successfully updated community profile!")
+                                AmityUIKitSnackbar.publishSnackbarMessage("Successfully updated community profile!")
                             },
                             onError = {
-                                context.showToast("Failed")
+                                AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to update community group")
                             }
                         )
                     }

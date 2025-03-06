@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -27,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -35,24 +37,31 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.api.social.AmitySocialClient
+import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.model.core.ad.AmityAd
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.story.AmityStory
+import com.amity.socialcloud.sdk.model.social.story.AmityStoryTarget
 import com.amity.socialcloud.uikit.common.ad.AmityAdBadge
 import com.amity.socialcloud.uikit.common.common.readableTimeDiff
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAvatarView
+import com.amity.socialcloud.uikit.common.ui.elements.AmityCommunityAvatarView
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.AmityConstants
 import com.amity.socialcloud.uikit.common.utils.asDrawableRes
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.utils.closePage
 import com.amity.socialcloud.uikit.common.utils.getValue
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityStoryModalSheetUIState
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageViewModel
 import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmityStorySegmentTimerElement
 import com.amity.socialcloud.uikit.community.compose.utils.AmityStoryVideoPlayerHelper
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
 
 @Composable
 fun AmityStoryHeaderRow(
@@ -70,6 +79,9 @@ fun AmityStoryHeaderRow(
     navigateToCreatePage: () -> Unit,
     navigateToCommunityProfilePage: (AmityCommunity) -> Unit,
 ) {
+
+    val context = LocalContext.current
+
     val isAd = remember(story, ad) {
         story == null && ad != null
     }
@@ -85,29 +97,29 @@ fun AmityStoryHeaderRow(
     val viewModel =
         viewModel<AmityViewStoryPageViewModel>(viewModelStoreOwner = viewModelStoreOwner)
 
-    val hasManageStoryPermission by remember(viewModel.community?.getCommunityId()) {
+    val hasManageStoryPermission by remember(story?.getTargetId()) {
         viewModel.checkMangeStoryPermission(
-            communityId = viewModel.community?.getCommunityId() ?: ""
+            communityId = story?.getTargetId() ?: ""
         )
     }.subscribeAsState(initial = false)
 
-    val displayName by remember(viewModel.community?.getCommunityId()) {
-        derivedStateOf {
-            if (isAd) {
-                ad?.getAdvertiser()?.getName() ?: ""
-            } else {
-                viewModel.community?.getDisplayName() ?: ""
-            }
-        }
-    }
 
-    val avatarImage by remember(viewModel.community?.getCommunityId()) {
+    val allowAllUserStoryCreation by AmitySocialClient.getSettings()
+        .asFlow()
+        .map { it.getStorySettings().isAllowAllUserToCreateStory() }
+        .catch {
+            emit(false)
+        }
+        .collectAsState(initial = false)
+
+    val shouldShowStoryCreationButton by remember(
+        allowAllUserStoryCreation,
+        hasManageStoryPermission,
+        viewModel.community?.isJoined()
+    ) {
         derivedStateOf {
-            if (isAd) {
-                ad?.getAdvertiser()?.getAvatar()
-            } else {
-                viewModel.community?.getAvatar()
-            }
+            (allowAllUserStoryCreation || hasManageStoryPermission)
+                    && (viewModel.community?.isJoined() == true)
         }
     }
 
@@ -148,6 +160,7 @@ fun AmityStoryHeaderRow(
 
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = modifier
             ) {
                 Box(
@@ -162,21 +175,32 @@ fun AmityStoryHeaderRow(
                                     onCloseClicked()
                                 } else {
                                     viewModel.community?.let {
+                                        context.closePage() // Avoid multiple ExoPlayer instances
                                         navigateToCommunityProfilePage(it)
                                     }
                                 }
                             }
                         }
                 ) {
-                    AmityAvatarView(
-                        image = avatarImage,
-                        size = 40.dp,
-                        modifier = modifier
-                            .clip(CircleShape)
-                            .testTag("community_avatar")
-                    )
-
-                    if (hasManageStoryPermission && !isAd) {
+                    if (isAd) {
+                        AmityAvatarView(
+                            image = ad?.getAdvertiser()?.getAvatar(),
+                            placeholder = R.drawable.amity_ic_default_advertiser,
+                            iconPadding = 8.dp,
+                            modifier = modifier.padding(vertical = 8.dp)
+                        )
+                    } else {
+                        val community = (story?.getTarget() as? AmityStoryTarget.COMMUNITY)?.getCommunity()
+                        AmityCommunityAvatarView(
+                            community = community,
+                            size = 40.dp,
+                            modifier = modifier
+                                .clip(CircleShape)
+                                .testTag("community_avatar")
+                        )
+                    }
+                    val canCreate = !isAd && shouldShowStoryCreationButton
+                    if (canCreate) {
                         Image(
                             painter = painterResource(id = R.drawable.amity_ic_plus_circle),
                             contentDescription = "",
@@ -191,25 +215,48 @@ fun AmityStoryHeaderRow(
                 Column(
                     modifier = Modifier.weight(1f),
                 ) {
-                    Text(
-                        text = displayName,
-                        style = AmityTheme.typography.body.copy(
-                            color = Color.White,
-                            fontWeight = FontWeight.SemiBold
-                        ),
-                        modifier = Modifier
-                            .clickableWithoutRipple {
-                                if (isAd) return@clickableWithoutRipple
-                                if (isSingleTarget) {
-                                    onCloseClicked()
-                                } else {
-                                    if (viewModel.community != null) {
-                                        navigateToCommunityProfilePage(viewModel.community!!)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        val displayName = if (isAd) {
+                            ad?.getAdvertiser()?.getName() ?: ""
+                        } else {
+                            (story?.getTarget() as? AmityStoryTarget.COMMUNITY)?.getCommunity()?.getDisplayName() ?: ""
+                        }
+                        Text(
+                            text = displayName,
+                            style = AmityTheme.typography.body.copy(
+                                color = Color.White,
+                                fontWeight = FontWeight.SemiBold
+                            ),
+                            modifier = Modifier
+                                .clickableWithoutRipple {
+                                    if (isAd) return@clickableWithoutRipple
+                                    if (isSingleTarget) {
+                                        onCloseClicked()
+                                    } else {
+                                        if (viewModel.community != null) {
+                                            context.closePage() // Avoid multiple ExoPlayer instances
+                                            navigateToCommunityProfilePage(viewModel.community!!)
+                                        }
                                     }
                                 }
-                            }
-                            .testTag("community_display_name")
-                    )
+                                .testTag("community_display_name")
+                        )
+
+                        val isOfficialCommunity = if (isAd) {
+                            false
+                        } else {
+                            (story?.getTarget() as? AmityStoryTarget.COMMUNITY)?.getCommunity()?.isOfficial() ?: false
+                        }
+                        if (isOfficialCommunity) {
+                            Spacer(modifier.width(2.dp))
+                            Icon(
+                                painter = painterResource(R.drawable.amity_ic_verified_community),
+                                tint = Color.White,
+                                contentDescription = "Community Official Icon",
+                                modifier = modifier.size(20.dp)
+                            )
+                        }
+                    }
 
                     if (isAd) {
                         AmityAdBadge()

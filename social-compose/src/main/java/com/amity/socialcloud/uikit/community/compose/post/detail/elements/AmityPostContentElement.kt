@@ -18,11 +18,12 @@ fun AmityPostContentElement(
     modifier: Modifier = Modifier,
     post: AmityPost,
     style: AmityPostContentComponentStyle,
+    boldedText: String? = null,
     onClick: () -> Unit,
     onMentionedUserClick: (String) -> Unit = {},
 ) {
     val mentionGetter = AmityMentionMetadataGetter(post.getMetadata() ?: JsonObject())
-    val text = remember(post.getPostId(), post.getUpdatedAt()) {
+    val text = remember(post.getPostId(), post.getEditedAt(), post.getUpdatedAt()) {
         (post.getData() as? AmityPost.Data.TEXT)?.getText() ?: ""
     }
 
@@ -38,6 +39,7 @@ fun AmityPostContentElement(
             mentionees = post.getMentionees(),
             style = AmityTheme.typography.body,
             intialExpand = style == AmityPostContentComponentStyle.DETAIL,
+            boldWhenMatches = boldedText?.let { listOf(it) } ?: emptyList(),
             onClick = onClick,
             onMentionedUserClick = onMentionedUserClick,
         )

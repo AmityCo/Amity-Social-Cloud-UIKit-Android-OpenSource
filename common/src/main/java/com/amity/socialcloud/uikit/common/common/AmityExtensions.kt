@@ -13,6 +13,8 @@ import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.paging.PagedList
+import com.amity.socialcloud.sdk.model.core.content.AmityContentFeedType
+import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.uikit.common.R
 import com.amity.socialcloud.uikit.common.common.views.AmityColorPaletteUtil
 import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
@@ -328,16 +330,16 @@ fun DateTime.readableTimeLeft(startTime: DateTime = DateTime.now()): String {
         totalDays > 0 -> {
             // Round up to the next day if hours are greater than 0
             val daysLeft = if (duration.standardHours % 24 > 0) totalDays + 1 else totalDays
-            "$daysLeft d left"
+            "${daysLeft}d left"
         }
         totalHours > 0 -> {
-            "$totalHours h left"
+            "${totalHours}h left"
         }
         totalMinutes > 0 -> {
-            "$totalMinutes m left"
+            "${totalMinutes}m left"
         }
         else -> {
-            "0 m left" // In case the target time is in the past or very close to now
+            "0m left" // In case the target time is in the past or very close to now
         }
     }
 }
@@ -373,4 +375,51 @@ fun View.setSafeOnClickListener(onSafeClick: (View) -> Unit) {
         onSafeClick(it)
     }
     setOnClickListener(safeClickListener)
+}
+
+fun Throwable.toImageUploadError(): String {
+    if(AmityError.from(this) == AmityError.FILE_SIZE_EXCEEDED) {
+        return "Oops, photo can be maxed 30 MB"
+    }
+
+    val errorMessage = this.message ?: "Oops, photo upload failed"
+    val localizedMessages = mapOf(
+        Regex("""Image uploading failed: Image size in bytes: \d+ is more than the maximum limit""")
+                to "Oops, photo can be maxed 30 MB",
+        Regex("""Image uploading failed: Request has invalid image format""")
+                to "Oops, photo formats accepted: JPG and PNG",
+    )
+
+    for ((pattern, localizedMessage) in localizedMessages) {
+        if (pattern.matches(errorMessage)) {
+            return localizedMessage
+        }
+    }
+
+    return errorMessage
+}
+
+fun Throwable.toVideoUploadError(contentType: AmityContentFeedType): String {
+    if(AmityError.from(this) == AmityError.FILE_SIZE_EXCEEDED) {
+        return "Oops, video can be maxed 1 GB"
+    }
+
+    val maxDuration = if(contentType == AmityContentFeedType.STORY) 15 else 7200
+
+    val errorMessage = this.message ?: "Oops, video upload failed"
+    val localizedMessages = mapOf(
+        Regex("""Failed to upload video. Video duration exceeds the maximum limit of \d+s\.""")
+                to "Oops, video can be maxed $maxDuration seconds",
+        Regex("""Video uploading failed: Video size in bytes: \d+ is more than the maximum limit""")
+                to "Oops, video can be maxed 1 GB",
+        Regex("""Video uploading failed: Request has invalid video format""")
+                to "Oops, video formats accepted: 3gp, avi, f4v, flv, m4v, mov, mp4, ogv, 3g2, wmv, vob, webm, and mkv",
+    )
+
+    for ((pattern, localizedMessage) in localizedMessages) {
+        if (pattern.matches(errorMessage)) {
+            return localizedMessage
+        }
+    }
+    return errorMessage
 }

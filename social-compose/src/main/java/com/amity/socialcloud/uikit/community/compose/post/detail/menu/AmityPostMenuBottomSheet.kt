@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.waterfall
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -26,9 +27,9 @@ import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.social.post.review.AmityReviewStatus
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunityPostSettings
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
+import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.common.utils.showToast
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostCategory
@@ -101,7 +102,7 @@ fun AmityPostMenuBottomSheet(
             },
             sheetState = sheetState,
             containerColor = AmityTheme.colors.background,
-            windowInsets = WindowInsets(top = 54.dp),
+            contentWindowInsets = { WindowInsets.waterfall },
             modifier = modifier
                 .semantics {
                     testTagsAsResourceId = true
@@ -158,20 +159,6 @@ fun AmityPostMenuBottomSheet(
                             }
                         }
 
-                        if (shouldShowDeletePostOption) {
-                            AmityBottomSheetActionItem(
-                                icon = R.drawable.amity_ic_delete_story,
-                                text = "Delete post",
-                                color = AmityTheme.colors.alert,
-                                modifier = modifier.testTag("bottom_sheet_delete_button"),
-                            ) {
-                                viewModel.updateSheetUIState(AmityPostMenuSheetUIState.CloseSheet)
-                                viewModel.updateDialogUIState(
-                                    AmityPostMenuDialogUIState.OpenConfirmDeleteDialog(postId = post.getPostId())
-                                )
-                            }
-                        }
-
                         if (post.getCreatorId() != AmityCoreClient.getUserId()) {
                             AmityBottomSheetActionItem(
                                 icon = R.drawable.amity_ic_report_comment,
@@ -183,27 +170,37 @@ fun AmityPostMenuBottomSheet(
                                     viewModel.unflagPost(
                                         postId = post.getPostId(),
                                         onSuccess = {
-                                            context.showToast("Post unreported")
+                                            AmityUIKitSnackbar.publishSnackbarMessage("Post unreported")
                                         },
                                         onError = {
-                                            it.message?.let { message ->
-                                                context.showToast(message)
-                                            }
+                                            AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to unreport post")
                                         }
                                     )
                                 } else {
                                     viewModel.flagPost(
                                         postId = post.getPostId(),
                                         onSuccess = {
-                                            context.showToast("Post reported")
+                                            AmityUIKitSnackbar.publishSnackbarMessage("Post reported")
                                         },
                                         onError = {
-                                            it.message?.let { message ->
-                                                context.showToast(message)
-                                            }
+                                            AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to report post")
                                         }
                                     )
                                 }
+                            }
+                        }
+
+                        if (shouldShowDeletePostOption) {
+                            AmityBottomSheetActionItem(
+                                icon = R.drawable.amity_ic_delete_story,
+                                text = "Delete post",
+                                color = AmityTheme.colors.alert,
+                                modifier = modifier.testTag("bottom_sheet_delete_button"),
+                            ) {
+                                viewModel.updateSheetUIState(AmityPostMenuSheetUIState.CloseSheet)
+                                viewModel.updateDialogUIState(
+                                    AmityPostMenuDialogUIState.OpenConfirmDeleteDialog(postId = post.getPostId())
+                                )
                             }
                         }
                     }

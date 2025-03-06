@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
+import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
@@ -53,7 +54,6 @@ import com.amity.socialcloud.uikit.common.utils.closePage
 import com.amity.socialcloud.uikit.common.utils.getKeyboardHeight
 import com.amity.socialcloud.uikit.common.utils.getText
 import com.amity.socialcloud.uikit.common.utils.isKeyboardVisible
-import com.amity.socialcloud.uikit.common.utils.showToast
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.user.edit.elements.AmityEditUserAvatar
 import kotlinx.coroutines.flow.catch
@@ -296,15 +296,12 @@ fun AmityEditUserProfilePage(
                                 avatarUri = avatarUri,
                                 onSuccess = {
                                     shouldDisabledClicking = false
-                                    context.showToast("Successfully updated your profile!")
+                                    AmityUIKitSnackbar.publishSnackbarMessage("Successfully updated your profile!")
                                     context.closePage()
                                 },
                                 onError = {
                                     shouldDisabledClicking = false
-                                    getPageScope().showSnackbar(
-                                        message = "Failed to save your profile. Please try again.",
-                                        drawableRes = R.drawable.amity_ic_snack_bar_warning,
-                                    )
+                                    AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to save your profile. Please try again.")
                                 },
                                 onInappropriateImageError = {
                                     showInappropriateImageDialog = true

@@ -417,7 +417,7 @@ class AmityPushSettingsDetailViewModel : AmityPushNotificationBaseViewModel() {
     }
 
     private fun getPushNotificationSettings(): Single<AmityCommunityNotificationSettings> {
-        return AmitySocialClient.newCommunityRepository().notification(communityId)
+        return AmityCoreClient.notifications().community(communityId)
             .getSettings()
     }
 

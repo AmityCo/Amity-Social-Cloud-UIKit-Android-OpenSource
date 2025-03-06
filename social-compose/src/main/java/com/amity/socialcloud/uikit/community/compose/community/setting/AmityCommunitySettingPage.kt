@@ -41,6 +41,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
@@ -53,7 +54,6 @@ import com.amity.socialcloud.uikit.common.utils.isCommentNotificationEnabled
 import com.amity.socialcloud.uikit.common.utils.isPostNotificationEnabled
 import com.amity.socialcloud.uikit.common.utils.isSocialNotificationEnabled
 import com.amity.socialcloud.uikit.common.utils.isStoryNotificationEnabled
-import com.amity.socialcloud.uikit.common.utils.showToast
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.community.setting.elements.AmityCommunitySettingItem
@@ -133,7 +133,7 @@ fun AmityCommunitySettingPage(
 
             is AmityCommunitySettingUIState.CloseCommunityFailed -> {
                 val error = (uiState as AmityCommunitySettingUIState.CloseCommunityFailed).error
-                context.showToast(error.name)
+                AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to close community. Please try again later.")
                 showUnableToCloseCommunityDialog = true
             }
 
@@ -429,35 +429,40 @@ fun AmityCommunitySettingPage(
                 }
             }
 
-            AmityBaseElement(
-                pageScope = getPageScope(),
-                elementId = "leave_community"
-            ) {
-                Text(
-                    text = getConfig().getText(),
-                    style = AmityTheme.typography.body.copy(
-                        color = AmityTheme.colors.alert,
-                        fontWeight = FontWeight.SemiBold,
-                    ),
-                    modifier = modifier
-                        .padding(vertical = 12.dp, horizontal = 8.dp)
-                        .testTag(getAccessibilityId())
-                        .clickableWithoutRipple {
-                            viewModel.updateUIEvent(
-                                if (hasDeletePermission) {
-                                    AmityCommunitySettingUIEvent.ConfirmModeratorLeaveCommunity
-                                } else {
-                                    AmityCommunitySettingUIEvent.ConfirmUserLeaveCommunity
-                                }
-                            )
-                        }
-                )
+            if(communityVM?.isJoined() == true) {
+                AmityBaseElement(
+                    pageScope = getPageScope(),
+                    elementId = "leave_community"
+                ) {
+                    Text(
+                        text = getConfig().getText(),
+                        style = AmityTheme.typography.body.copy(
+                            color = AmityTheme.colors.alert,
+                            fontWeight = FontWeight.SemiBold,
+                        ),
+                        modifier = modifier
+                            .padding(vertical = 12.dp, horizontal = 8.dp)
+                            .testTag(getAccessibilityId())
+                            .clickableWithoutRipple {
+                                viewModel.updateUIEvent(
+                                    if (hasDeletePermission) {
+                                        AmityCommunitySettingUIEvent.ConfirmModeratorLeaveCommunity
+                                    } else {
+                                        AmityCommunitySettingUIEvent.ConfirmUserLeaveCommunity
+                                    }
+                                )
+                            }
+                    )
+
+                    HorizontalDivider(
+                        color = AmityTheme.colors.divider,
+                        modifier = modifier.padding(top = 4.dp, bottom = 8.dp)
+                    )
+                }
+
+
             }
 
-            HorizontalDivider(
-                color = AmityTheme.colors.divider,
-                modifier = modifier.padding(top = 4.dp, bottom = 8.dp)
-            )
             Spacer(modifier = modifier.height(8.dp))
 
             if (hasDeletePermission) {

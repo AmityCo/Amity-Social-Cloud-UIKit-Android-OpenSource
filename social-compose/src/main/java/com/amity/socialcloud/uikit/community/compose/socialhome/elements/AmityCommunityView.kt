@@ -230,7 +230,9 @@ fun AmityJoinCommunityView(
                         ),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        modifier = modifier.testTag(getAccessibilityId()),
+                        modifier = Modifier
+                            .weight(1f)
+                            .testTag(getAccessibilityId()),
                     )
                 }
 

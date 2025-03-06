@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.notification.AmityCommunityNotificationEvent
 import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
+import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
 import com.amity.socialcloud.uikit.common.ui.elements.AmityToolBar
@@ -32,7 +33,6 @@ import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.closePage
 import com.amity.socialcloud.uikit.common.utils.getEnabledCommentNotificationSettings
 import com.amity.socialcloud.uikit.common.utils.shade
-import com.amity.socialcloud.uikit.common.utils.showToast
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.community.setting.notifications.AmityCommunityNotificationSettingDataType
 import com.amity.socialcloud.uikit.community.compose.community.setting.notifications.AmityCommunityNotificationSettingPageViewModel
@@ -126,11 +126,11 @@ fun AmityCommunityCommentsNotificationSettingPage(
                             repliedCommentSetting = repliedCommentSetting,
                             repliedCommentDefaultSetting = repliedCommentDefaultSetting,
                             onSuccess = {
-                                context.showToast("Successfully updated community profile!")
+                                AmityUIKitSnackbar.publishSnackbarMessage("Successfully updated community profile!")
                                 context.closePage()
                             },
                             onError = {
-                                context.showToast(it.name)
+                                AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to update community profile")
                             }
                         )
                     }

@@ -32,19 +32,23 @@ class AmityUserSettingsViewModel (private val savedState: SavedStateHandle) : Am
 
     fun unfollowUser(userId: String): Completable {
         return AmityCoreClient.newUserRepository()
-            .relationship().me().unfollow(userId)
+            .relationship().unfollow(userId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }
 
     fun reportUser(user: AmityUser): Completable {
-        return user.report().flag()
+        return AmityCoreClient.newUserRepository().flagUser(
+            user.getUserId()
+        )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }
 
     fun unReportUser(user: AmityUser): Completable {
-        return user.report().unflag()
+        return AmityCoreClient.newUserRepository().unflagUser(
+            user.getUserId()
+        )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }

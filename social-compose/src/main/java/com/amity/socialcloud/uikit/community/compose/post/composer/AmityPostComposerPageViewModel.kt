@@ -30,7 +30,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.util.UUID
 
+
 class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
+
+    private val MAX_CHAR_LIMIT = 50000
 
     private var options: AmityPostComposerOptions? = null
 
@@ -238,10 +241,11 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnComplete {
+                AmityPostComposerHelper.updatePost(postId)
                 setPostCreationEvent(AmityPostCreationEvent.Success)
             }
             .doOnError {
-                setPostCreationEvent(AmityPostCreationEvent.Failed)
+                setPostCreationEvent(AmityPostCreationEvent.Failed(it))
             }
             .subscribe()
     }
@@ -253,7 +257,8 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
                     when (val postData = ekoPostItem.getData()) {
                         is AmityPost.Data.IMAGE -> {
                             if (postData.getImage()?.getFileId() in deletedImageIds) {
-                                ekoPostItem.delete()
+                                AmitySocialClient.newPostRepository()
+                                    .hardDeletePost(ekoPostItem.getPostId())
                             } else {
                                 Completable.complete()
                             }
@@ -261,7 +266,8 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
 
                         is AmityPost.Data.VIDEO -> {
                             if (postData.getThumbnailImage()?.getFileId() in deletedImageIds) {
-                                ekoPostItem.delete()
+                                AmitySocialClient.newPostRepository()
+                                    .hardDeletePost(ekoPostItem.getPostId())
                             } else {
                                 Completable.complete()
                             }
@@ -361,6 +367,11 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
         postText: String,
         mentionedUsers: List<AmityMentionMetadata.USER>
     ) {
+        if(postText.length > MAX_CHAR_LIMIT) {
+            setPostCreationEvent(AmityPostCreationEvent.Failed(TextPostExceedException(MAX_CHAR_LIMIT)))
+            return
+        }
+
         setPostCreationEvent(AmityPostCreationEvent.Creating)
         val target = getTargetForPostCreation()
         val metadata = mentionedUsers.takeIf { it.isNotEmpty() }?.let {
@@ -423,7 +434,7 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
                 }
             }
             .doOnError {
-                setPostCreationEvent(AmityPostCreationEvent.Failed)
+                setPostCreationEvent(AmityPostCreationEvent.Failed(it))
             }
             .subscribe()
     }
@@ -706,7 +717,9 @@ sealed class AmityPostCreationEvent {
     object Initial : AmityPostCreationEvent()
     object Creating : AmityPostCreationEvent()
     object Updating : AmityPostCreationEvent()
-    object Failed : AmityPostCreationEvent()
+    class Failed(val throwable: Throwable) : AmityPostCreationEvent()
     object Success : AmityPostCreationEvent()
     object Pending : AmityPostCreationEvent()
 }
+
+class TextPostExceedException(val charLimit: Int) : Exception()

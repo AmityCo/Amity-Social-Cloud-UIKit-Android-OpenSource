@@ -124,7 +124,7 @@ class AmityCreatePostViewModel : AmityBaseViewModel() {
         keyword: String,
         onResult: (users: PagingData<AmityUser>) -> Unit
     ): Completable {
-        return userRepository.searchUserByDisplayName(keyword)
+        return userRepository.searchUsers(keyword)
             .sortBy(AmityUserSortOption.DISPLAYNAME)
             .build()
             .query()
@@ -500,21 +500,24 @@ class AmityCreatePostViewModel : AmityBaseViewModel() {
                     when (val postData = ekoPostItem.getData()) {
                         is AmityPost.Data.IMAGE -> {
                             if (postData.getImage()?.getFileId() in deletedImageIds) {
-                                ekoPostItem.delete()
+                                AmitySocialClient.newPostRepository()
+                                    .hardDeletePost(ekoPostItem.getPostId())
                             } else {
                                 Completable.complete()
                             }
                         }
                         is AmityPost.Data.VIDEO -> {
                             if (postData.getThumbnailImage()?.getFileId() in deletedImageIds) {
-                                ekoPostItem.delete()
+                                AmitySocialClient.newPostRepository()
+                                    .hardDeletePost(ekoPostItem.getPostId())
                             } else {
                                 Completable.complete()
                             }
                         }
                         is AmityPost.Data.FILE -> {
                             if (postData.getFile()?.getFileId() in deletedFileIds) {
-                                ekoPostItem.delete()
+                                AmitySocialClient.newPostRepository()
+                                    .hardDeletePost(ekoPostItem.getPostId())
                             } else {
                                 Completable.complete()
                             }

@@ -36,16 +36,14 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.sdk.model.video.stream.AmityStream
 import com.amity.socialcloud.uikit.common.ui.elements.AmityExpandableText
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.livestream.AmityLivestreamPlayerPageActivity
 import kotlinx.coroutines.flow.Flow
@@ -117,13 +115,7 @@ fun AmityChildLivestreamPostElement(
                                 .fillMaxWidth(),
                             text = title,
                             textAlign = TextAlign.Left,
-                            style = TextStyle(
-                                fontSize = 15.sp,
-                                lineHeight = 20.sp,
-                                textAlign = TextAlign.Left,
-                                fontWeight = FontWeight(800),
-                                color = AmityTheme.colors.base,
-                            )
+                            style = AmityTheme.typography.body,
                         )
                     }
                     stream.getDescription()?.let { description ->
@@ -165,21 +157,24 @@ fun AmityChildLivestreamPostElement(
             ) {
                 streamState?.value?.let { stream ->
                     if (image != null) {
-                        AmityPostMediaImageChildrenOne(
+                        Box(
                             modifier = modifier
                                 .height(219.dp)
                                 .fillMaxWidth(),
-                            isVideoPost = false,
-                            image = image!!
                         ) {
-                            AmityLivestreamPlayerPageActivity
-                                .newIntent(
-                                    context = context,
-                                    post = post
-                                )
-                                .let {
-                                    context.startActivity(it)
+                            AmityPostImageView(
+                                post = post,
+                                onClick = {
+                                    AmityLivestreamPlayerPageActivity
+                                        .newIntent(
+                                            context = context,
+                                            post = post
+                                        )
+                                        .let {
+                                            context.startActivity(it)
+                                        }
                                 }
+                            )
                         }
                     } else {
                         Image(
@@ -234,12 +229,9 @@ fun AmityLivestreamPostRecordedLabel(
     ) {
         Text(
             text = "RECORDED",
-            style = TextStyle(
-                fontSize = 13.sp,
-                lineHeight = 18.sp,
-                fontWeight = FontWeight(600),
+            style = AmityTheme.typography.caption.copy(
                 color = AmityTheme.colors.background,
-            )
+            ),
         )
     }
 }
@@ -256,12 +248,9 @@ fun AmityLivestreamPostLiveLabel(
     ) {
         Text(
             text = "LIVE",
-            style = TextStyle(
-                fontSize = 13.sp,
-                lineHeight = 18.sp,
-                fontWeight = FontWeight(600),
+            style = AmityTheme.typography.caption.copy(
                 color = AmityTheme.colors.background,
-            )
+            ),
         )
     }
 }
@@ -347,7 +336,7 @@ fun AmityLivestreamNoticeView(
                 Box(
                     modifier = Modifier
                         .size(40.dp)
-                ) {  LivestreamLoadingIndicator() }
+                ) { LivestreamLoadingIndicator() }
                 Spacer(modifier = Modifier.height(12.dp))
             }
             Box(
@@ -358,13 +347,9 @@ fun AmityLivestreamNoticeView(
             ) {
                 Text(
                     text = title,
-                    style = TextStyle(
-                        fontSize = 17.sp,
-                        lineHeight = 24.sp,
-                        fontWeight = FontWeight(600),
+                    style = AmityTheme.typography.title.copy(
                         color = Color.White,
-                        textAlign = TextAlign.Center,
-                    )
+                    ),
                 )
             }
             Spacer(modifier = Modifier.height(4.dp))
@@ -376,13 +361,10 @@ fun AmityLivestreamNoticeView(
             ) {
                 Text(
                     text = description,
-                    style = TextStyle(
-                        fontSize = 13.sp,
-                        lineHeight = 18.sp,
-                        fontWeight = FontWeight(400),
+                    style = AmityTheme.typography.caption.copy(
                         color = Color.White,
                         textAlign = TextAlign.Center,
-                    )
+                    ),
                 )
             }
         }

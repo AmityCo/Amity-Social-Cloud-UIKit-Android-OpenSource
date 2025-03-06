@@ -19,6 +19,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,10 +31,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImagePainter
-import coil.compose.rememberAsyncImagePainter
-import coil.request.CachePolicy
-import coil.request.ImageRequest
+import coil3.compose.AsyncImagePainter
+import coil3.compose.rememberAsyncImagePainter
+import coil3.request.CachePolicy
+import coil3.request.ImageRequest
 import com.amity.socialcloud.sdk.model.social.category.AmityCommunityCategory
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
@@ -71,11 +73,11 @@ fun AmityCommunityCategoryElement(
         model = ImageRequest
             .Builder(LocalContext.current)
             .data(category.getAvatar()?.getUrl())
-            .dispatcher(Dispatchers.IO)
             .diskCachePolicy(CachePolicy.ENABLED)
             .memoryCachePolicy(CachePolicy.ENABLED)
             .build()
     )
+    val painterState by painter.state.collectAsState()
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -103,7 +105,7 @@ fun AmityCommunityCategoryElement(
                     .clip(CircleShape)
                     .background(AmityTheme.colors.baseShade4)
             )
-            if (painter.state !is AsyncImagePainter.State.Success) {
+            if (painterState !is AsyncImagePainter.State.Success) {
                 Image(
                     painter = painterResource(id = com.amity.socialcloud.uikit.common.compose.R.drawable.amity_ic_category_placeholder),
                     contentScale = ContentScale.Crop,

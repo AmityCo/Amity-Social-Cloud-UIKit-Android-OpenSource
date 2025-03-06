@@ -15,7 +15,7 @@ import io.reactivex.rxjava3.subjects.PublishSubject
 
 
 private const val COMMENT_PREVIEW_SIZE = 0
-private const val TYPICAL_REPLY_PAGE_SIZE = 5
+private const val TYPICAL_REPLY_PAGE_SIZE = 15
 
 class AmityStoryCommentReplyLoader(
     referenceId: String,

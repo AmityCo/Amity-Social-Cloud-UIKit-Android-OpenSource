@@ -3,6 +3,7 @@ package com.amity.socialcloud.uikit.community.compose.post.composer
 import android.app.Activity
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -36,8 +37,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadata
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
+import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
+import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
@@ -47,7 +50,6 @@ import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getText
-import com.amity.socialcloud.uikit.common.utils.showToast
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.AmitySelectedMediaComponent
 import com.amity.socialcloud.uikit.community.compose.post.composer.elements.AmityMediaAttachmentElement
@@ -115,11 +117,16 @@ fun AmityPostComposerPage(
     val isAllMediaSuccessfullyUploaded by viewModel.isAllMediaSuccessfullyUploaded.collectAsState()
 
     val shouldAllowToPost by remember(isInEditMode) {
+        fun isContentReady(text: String, mediaFiles: List<AmityPostMedia>): Boolean {
+            return (text.trim().isNotEmpty() && mediaFiles.isEmpty()) ||
+                    (mediaFiles.isNotEmpty() && isAllMediaSuccessfullyUploaded)
+        }
         derivedStateOf {
             if (isInEditMode) {
-                localPostText != postText && localPostText.trim().isNotEmpty() || post?.getChildren()?.size != selectedMediaFiles.size
+                (localPostText != postText || post?.getChildren()?.size != selectedMediaFiles.size)
+                        && isContentReady(localPostText, selectedMediaFiles)
             } else {
-                localPostText.trim().isNotEmpty() || isAllMediaSuccessfullyUploaded
+                isContentReady(localPostText, selectedMediaFiles)
             }
         }
     }
@@ -154,7 +161,7 @@ fun AmityPostComposerPage(
         rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
             isCameraPermissionGranted = permissions.entries.all { it.value }
             if (!isCameraPermissionGranted) {
-                context.showToast("Camera permission not granted")
+                AmityUIKitSnackbar.publishSnackbarErrorMessage("Camera permission not granted")
             }
         }
 
@@ -198,13 +205,14 @@ fun AmityPostComposerPage(
                 if (isCameraPermissionGranted) {
                     val imageFile = AmityCameraUtil.createImageFile(context)
                     if (imageFile == null) {
-                        context.showToast("Failed to create image file")
+                        AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to create image file")
                     } else {
                         capturedMediaUri = AmityCameraUtil.createPhotoUri(context, imageFile)
                         imageCaptureLauncher.launch(capturedMediaUri)
                     }
                 } else {
-                    context.showToast("Camera permission not granted")
+                    AmityUIKitSnackbar.publishSnackbarErrorMessage("Camera permission not granted")
+
 
                     val permissions = arrayOf(
                         android.Manifest.permission.CAMERA,
@@ -227,13 +235,15 @@ fun AmityPostComposerPage(
                 if (isCameraPermissionGranted) {
                     val videoFile = AmityCameraUtil.createVideoFile(context)
                     if (videoFile == null) {
-                        context.showToast("Failed to create video file")
+                        AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to create video file")
+
                     } else {
                         capturedMediaUri = AmityCameraUtil.createVideoUri(context, videoFile)
                         videoCaptureLauncher.launch(capturedMediaUri)
                     }
                 } else {
-                    context.showToast("Camera permission not granted")
+                    AmityUIKitSnackbar.publishSnackbarErrorMessage("Camera permission not granted")
+
 
                     val permissions = arrayOf(
                         android.Manifest.permission.CAMERA,
@@ -273,7 +283,21 @@ fun AmityPostComposerPage(
     }
 
     BackHandler {
-        showDiscardPostDialog = true
+        if(isInEditMode) {
+            val hasEdited = localPostText != postText || post?.getChildren()?.size != selectedMediaFiles.size
+            if (hasEdited) {
+                showDiscardPostDialog = true
+            } else {
+                context.closePageWithResult(Activity.RESULT_CANCELED)
+            }
+        } else {
+            val hasInput = localPostText.trim().isNotEmpty() || selectedMediaFiles.isNotEmpty()
+            if (hasInput) {
+                showDiscardPostDialog = true
+            } else {
+                context.closePageWithResult(Activity.RESULT_CANCELED)
+            }
+        }
     }
 
     AmityBasePage(
@@ -297,13 +321,18 @@ fun AmityPostComposerPage(
                     showPendingPostDialog = true
                 }
 
-                AmityPostCreationEvent.Failed -> {
-                    val text =
-                        "Failed to " + if (isInEditMode) "edit" else "create" + " post. Please try again."
-                    getPageScope().showSnackbar(
+                is AmityPostCreationEvent.Failed -> {
+                    val exception = (postCreationEvent as AmityPostCreationEvent.Failed).throwable
+                    val error = AmityError.from(exception)
+                    val text = when(error) {
+                        AmityError.LINK_NOT_ALLOWED -> context.getString(R.string.amity_add_blocked_links_post_error_message)
+                        AmityError.BAN_WORD_FOUND -> context.getString(R.string.amity_add_blocked_words_post_error_message)
+                        else -> if(exception is TextPostExceedException) context.getString(R.string.amity_post_text_exceed_error_message)
+                        else if (isInEditMode) context.getString(R.string.amity_post_edit_generic_error_message) else context.getString(R.string.amity_post_create_generic_error_message)
+                    }
+                    AmityUIKitSnackbar.publishSnackbarErrorMessage(
                         message = text,
-                        drawableRes = R.drawable.amity_ic_snack_bar_warning,
-                        additionalHeight = if (isInEditMode) 0 else 52,
+                        offsetFromBottom = 52
                     )
                 }
 
@@ -337,7 +366,21 @@ fun AmityPostComposerPage(
                         tint = AmityTheme.colors.base,
                         modifier = modifier
                             .clickableWithoutRipple {
-                                showDiscardPostDialog = true
+                                if(isInEditMode) {
+                                    val hasEdited = localPostText != postText || post?.getChildren()?.size != selectedMediaFiles.size
+                                    if (hasEdited) {
+                                        showDiscardPostDialog = true
+                                    } else {
+                                        context.closePageWithResult(Activity.RESULT_CANCELED)
+                                    }
+                                } else {
+                                    val hasInput = localPostText.trim().isNotEmpty() || selectedMediaFiles.isNotEmpty()
+                                    if (hasInput) {
+                                        showDiscardPostDialog = true
+                                    } else {
+                                        context.closePageWithResult(Activity.RESULT_CANCELED)
+                                    }
+                                }
                             }
                             .testTag(getAccessibilityId()),
                     )
@@ -539,7 +582,7 @@ fun AmityPostComposerPage(
         if (showDiscardPostDialog) {
             AmityAlertDialog(
                 dialogTitle = "Discard this post?",
-                dialogText = "The post will be permanently deleted. It cannot be undone.",
+                dialogText = "The post will be permanently discarded. It cannot be undone.",
                 confirmText = "Discard",
                 dismissText = "Keep editing",
                 confirmTextColor = AmityTheme.colors.alert,

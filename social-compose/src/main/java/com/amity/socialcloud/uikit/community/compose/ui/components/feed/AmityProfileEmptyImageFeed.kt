@@ -32,7 +32,7 @@ fun AmityProfileEmptyImageFeed(
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "No photo yet",
+            text = "No photos yet",
             style = AmityTheme.typography.title.copy(
                 color = AmityTheme.colors.baseShade3,
             ),

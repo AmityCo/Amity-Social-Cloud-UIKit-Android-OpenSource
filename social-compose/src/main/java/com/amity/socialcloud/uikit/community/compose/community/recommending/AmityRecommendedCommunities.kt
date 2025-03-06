@@ -36,10 +36,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImagePainter
-import coil.compose.rememberAsyncImagePainter
-import coil.request.CachePolicy
-import coil.request.ImageRequest
+import coil3.compose.AsyncImagePainter
+import coil3.compose.rememberAsyncImagePainter
+import coil3.request.CachePolicy
+import coil3.request.ImageRequest
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.common.readableNumber
@@ -162,11 +162,11 @@ fun AmityRecommendedCommunityAvatarView(
         model = ImageRequest
             .Builder(LocalContext.current)
             .data(url)
-            .dispatcher(Dispatchers.IO)
             .diskCachePolicy(CachePolicy.ENABLED)
             .memoryCachePolicy(CachePolicy.ENABLED)
             .build()
     )
+    val painterState by painter.state.collectAsState()
 
     Box(
         modifier = modifier
@@ -199,7 +199,7 @@ fun AmityRecommendedCommunityAvatarView(
                 )
 
         )
-        if (painter.state !is AsyncImagePainter.State.Success) {
+        if (painterState !is AsyncImagePainter.State.Success) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()

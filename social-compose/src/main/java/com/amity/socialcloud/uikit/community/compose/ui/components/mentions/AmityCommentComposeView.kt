@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Rect
+import android.graphics.drawable.GradientDrawable
+import android.os.Build
 import android.util.TypedValue
 import android.view.View
 import androidx.annotation.ColorInt
@@ -157,6 +159,19 @@ class AmityCommentComposeView(context: Context) : MentionsEditText(context) {
 
     fun setHintText(text: String) {
         setHint(text)
+    }
+
+    fun setCursorColor(color: Int) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // Create a custom drawable for the cursor with the specified color
+            val cursorDrawable = GradientDrawable()
+            cursorDrawable.shape = GradientDrawable.RECTANGLE
+            cursorDrawable.setSize(4, this.lineHeight) // Set cursor width and height
+            cursorDrawable.setColor(color) // Set cursor color
+
+            // Set the cursor drawable programmatically
+            this.textCursorDrawable = cursorDrawable
+        }
     }
 }
 

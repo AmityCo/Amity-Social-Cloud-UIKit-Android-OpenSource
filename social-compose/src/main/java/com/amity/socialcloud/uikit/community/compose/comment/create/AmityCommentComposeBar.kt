@@ -19,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,6 +30,7 @@ import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.sdk.model.social.comment.AmityCommentReferenceType
+import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
@@ -66,6 +68,7 @@ fun AmityCommentComposerBar(
     val shouldAllowToPost by remember { derivedStateOf { commentText.isNotEmpty() } }
     var isCommentPosted by remember { mutableStateOf(false) }
     var isReplyingToComment by remember { mutableStateOf(false) }
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(replyComment) {
         isReplyingToComment = replyComment != null
@@ -151,41 +154,50 @@ fun AmityCommentComposerBar(
                     .padding(start = 4.dp, bottom = 12.dp)
                     .testTag("comment_tray_component/comment_composer_post_button")
                     .clickableWithoutRipple(enabled = shouldAllowToPost) {
+
+                        val text = commentText
+                        commentText = ""
+                        keyboardController?.hide()
                         isCommentPosted = true
 
                         viewModel.addComment(
                             referenceId = referenceId,
                             referenceType = referenceType,
                             replyCommentId = if (isReplyingToComment) replyComment?.getCommentId() else null,
-                            commentText = commentText,
+                            commentText = text,
                             mentionedUsers = mentionedUsers,
                             onSuccess = {
-                                commentText = ""
                                 selectedUserToMention = null
 
                                 isReplyingToComment = false
                                 isCommentPosted = false
                                 onClose()
+                                keyboardController?.hide()
                             },
                             onError = {
-                                commentText = ""
-                                selectedUserToMention = null
-
-                                isReplyingToComment = false
-                                isCommentPosted = false
-                                onClose()
-
                                 val errorMessage =
                                     if (AmityError.from(it) == AmityError.BAN_WORD_FOUND) {
-                                        "Your comment contains inappropriate word. Please review and delete it."
-                                    } else {
+                                        context.getString(R.string.amity_add_blocked_words_comment_error_message)
+                                       // "Your comment contains inappropriate word. Please review and delete it."
+                                    } else if(AmityError.from(it) == AmityError.LINK_NOT_ALLOWED) {
+                                        context.getString(R.string.amity_add_blocked_links_comment_error_message)
+                                        //"Your comment contains a link that's not allowed. Please review and delete it."
+                                    }
+                                    else {
                                         if (isReplyingToComment) {
                                             context.getString(R.string.amity_add_reply_error_message)
                                         } else {
                                             context.getString(R.string.amity_add_comment_error_message)
                                         }
                                     }
-                                componentScope?.showSnackbar(errorMessage)
+                                AmityUIKitSnackbar.publishSnackbarErrorMessage(errorMessage)
+
+                                commentText = ""
+                                selectedUserToMention = null
+
+                                isReplyingToComment = false
+                                isCommentPosted = false
+                                onClose()
                             }
                         )
                     }

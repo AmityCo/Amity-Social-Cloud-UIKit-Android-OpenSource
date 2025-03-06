@@ -45,7 +45,7 @@ internal class AmityVideoPostPlayerFragment : AmityBaseFragment() {
         val videoData = arguments?.getParcelable<AmityPost.Data.VIDEO>(ARGS_VIDEO_DATA)
         safeLet(context, videoData) { nonNullContext, nonNullVideoData ->
             setupPlayer(nonNullContext)
-            nonNullVideoData.getVideo(AmityVideo.Quality.ORIGINAL)
+            nonNullVideoData.getVideo()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSuccess { prepareVideo(it.getUrl()) }

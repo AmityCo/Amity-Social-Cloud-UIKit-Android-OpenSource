@@ -21,12 +21,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.media3.common.util.UnstableApi
-import coil.compose.AsyncImage
-import coil.request.CachePolicy
-import coil.request.ImageRequest
+import coil3.compose.AsyncImage
+import coil3.request.CachePolicy
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.ui.elements.AmityMenuButton
+import com.amity.socialcloud.uikit.common.ui.image.rememberZoomState
+import com.amity.socialcloud.uikit.common.ui.image.zoomable
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.R
@@ -92,7 +95,7 @@ fun AmityCommunityImagePreviewDialog(
             AsyncImage(
                 model = ImageRequest
                     .Builder(LocalContext.current)
-                    .data(data?.getImage()?.getUrl(AmityImage.Size.FULL))
+                    .data(data?.getImage()?.getUrl(AmityImage.Size.LARGE))
                     .crossfade(true)
                     .networkCachePolicy(CachePolicy.ENABLED)
                     .diskCachePolicy(CachePolicy.ENABLED)
@@ -101,6 +104,7 @@ fun AmityCommunityImagePreviewDialog(
                 contentDescription = "Image Post",
                 contentScale = ContentScale.Fit,
                 modifier = modifier.fillMaxSize()
+                    .zoomable(rememberZoomState()),
             )
 
             AmityMenuButton(

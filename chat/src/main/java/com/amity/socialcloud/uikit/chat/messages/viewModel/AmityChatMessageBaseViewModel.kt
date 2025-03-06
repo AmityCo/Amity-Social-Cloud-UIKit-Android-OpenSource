@@ -2,6 +2,7 @@ package com.amity.socialcloud.uikit.chat.messages.viewModel
 
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
+import com.amity.socialcloud.sdk.api.chat.AmityChatClient
 import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
 import com.amity.socialcloud.uikit.chat.R
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
@@ -23,6 +24,8 @@ open class AmityChatMessageBaseViewModel : AmityBaseViewModel() {
     val isFailed = ObservableBoolean(false)
 
     fun deleteMessage(): Completable? {
-        return amityMessage?.delete()
+        return amityMessage?.let {
+            AmityChatClient.newMessageRepository().softDeleteMessage(it.getMessageId())
+        }
     }
 }

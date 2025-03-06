@@ -19,7 +19,7 @@ class AmityUsersGlobalSearchViewModel : AmityBaseViewModel() {
 
     fun searchUsers(onResult: (list: PagingData<AmityUser>) -> Unit): Completable {
         val userRepository = AmityCoreClient.newUserRepository()
-        return userRepository.searchUserByDisplayName(searchString.get() ?: "")
+        return userRepository.searchUsers(searchString.get() ?: "")
             .sortBy(AmityUserSortOption.DISPLAYNAME)
             .build()
             .query()

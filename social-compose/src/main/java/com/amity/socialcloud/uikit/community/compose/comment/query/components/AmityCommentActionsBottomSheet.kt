@@ -20,13 +20,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.amity.socialcloud.uikit.community.compose.R
-import com.amity.socialcloud.uikit.common.compose.R as CommonR
-import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentViewModel
+import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
 import com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
@@ -119,20 +119,16 @@ fun AmityCommentActionsContainer(
                 viewModel.deleteComment(
                     commentId = commentId,
                     onSuccess = {
-                        componentScope?.showSnackbar(
+                        AmityUIKitSnackbar.publishSnackbarMessage(
                             message = context.getString(
                                 if (isReplyComment) R.string.amity_reply_deleted_message
-                                else R.string.amity_comment_deleted_message
-                            ),
-                            drawableRes = CommonR.drawable.amity_ic_check_circle
+                                else R.string.amity_comment_deleted_message)
                         )
                     },
                     onError = {
-                        it.message?.let { message ->
-                            componentScope?.showSnackbar(
-                                message = message,
-                            )
-                        }
+                        AmityUIKitSnackbar.publishSnackbarErrorMessage(
+                            message = context.getString(R.string.amity_comment_delete_failed_toast_message),
+                        )
                     }
                 )
             },
@@ -166,16 +162,17 @@ fun AmityCommentActionsContainer(
                     if (isReplyComment) R.string.amity_delete_reply
                     else R.string.amity_delete_comment
                 ),
+                color = AmityTheme.colors.alert,
                 modifier = modifier.testTag("comment_tray_component/bottom_sheet_delete_comment_button"),
             ) {
                 openDeleteAlertDialog.value = true
             }
         } else {
             AmityBottomSheetActionItem(
-                icon = R.drawable.amity_ic_report_comment,
+                icon = if(isFlaggedByMe) R.drawable.amity_ic_unreport else R.drawable.amity_ic_report_comment,
                 text = context.getString(
                     if (isFlaggedByMe) {
-                        R.string.amity_undo_report
+                        R.string.amity_unreport_comment
                     } else {
                         if (isReplyComment) R.string.amity_report_reply
                         else R.string.amity_report_comment
@@ -188,34 +185,28 @@ fun AmityCommentActionsContainer(
                     viewModel.unflagComment(
                         commentId = commentId,
                         onSuccess = {
-                            componentScope?.showSnackbar(
+                            AmityUIKitSnackbar.publishSnackbarMessage(
                                 message = context.getString(R.string.amity_comment_unreported_toast_message),
-                                drawableRes = CommonR.drawable.amity_ic_check_circle
                             )
                         },
                         onError = {
-                            it.message?.let { message ->
-                                componentScope?.showSnackbar(
-                                    message = message,
-                                )
-                            }
+                            AmityUIKitSnackbar.publishSnackbarErrorMessage(
+                                message = context.getString(R.string.amity_comment_unreported_failed_toast_message),
+                            )
                         }
                     )
                 } else {
                     viewModel.flagComment(
                         commentId = commentId,
                         onSuccess = {
-                            componentScope?.showSnackbar(
+                            AmityUIKitSnackbar.publishSnackbarMessage(
                                 message = context.getString(R.string.amity_comment_reported_toast_message),
-                                drawableRes = CommonR.drawable.amity_ic_check_circle
                             )
                         },
                         onError = {
-                            it.message?.let { message ->
-                                componentScope?.showSnackbar(
-                                    message = message,
-                                )
-                            }
+                            AmityUIKitSnackbar.publishSnackbarErrorMessage(
+                                message = context.getString(R.string.amity_comment_reported_toast_message),
+                            )
                         }
                     )
                 }

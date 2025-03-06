@@ -44,7 +44,10 @@ class AmityCommentViewModel : AmityBaseViewModel() {
         onError: (Throwable) -> Unit
     ): Completable {
         return (comment?.getData() as? AmityComment.Data.TEXT)?.let { textComment ->
-            val textCommentEditor = textComment.edit().text(commentText)
+
+            val textCommentEditor = AmitySocialClient.newCommentRepository()
+                .editComment(textComment.getCommentId())
+                .text(commentText)
             textCommentEditor
                 .metadata(AmityMentionMetadataCreator(userMentions).create())
                 .mentionUsers(userMentions.map { it.getUserId() })
@@ -128,7 +131,7 @@ class AmityCommentViewModel : AmityBaseViewModel() {
         keyword: String,
         onResult: (users: PagingData<AmityUser>) -> Unit
     ): Completable {
-        return userRepository.searchUserByDisplayName(keyword)
+        return userRepository.searchUsers(keyword)
             .sortBy(AmityUserSortOption.DISPLAYNAME)
             .build()
             .query()

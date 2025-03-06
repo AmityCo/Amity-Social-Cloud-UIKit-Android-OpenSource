@@ -3,6 +3,7 @@ package com.amity.socialcloud.uikit.common.ui.elements
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -20,6 +21,7 @@ fun AmityTextField(
     maxLines: Int = 1,
     maxCharacters: Int = -1,
     enabled: Boolean = true,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     onValueChange: (String) -> Unit,
 ) {
     TextField(
@@ -50,6 +52,7 @@ fun AmityTextField(
         textStyle = AmityTheme.typography.body.copy(
             color = if (enabled) AmityTheme.colors.base else AmityTheme.colors.baseShade2,
         ),
+        keyboardOptions = keyboardOptions,
         modifier = modifier
             .fillMaxWidth()
             .background(Color.Transparent)
