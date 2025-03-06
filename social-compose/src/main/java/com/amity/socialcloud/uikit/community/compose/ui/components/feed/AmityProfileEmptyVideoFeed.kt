@@ -31,7 +31,7 @@ fun AmityProfileEmptyVideoFeed(
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "No video yet",
+            text = "No videos yet",
             style = AmityTheme.typography.title.copy(
                 color = AmityTheme.colors.baseShade3,
             ),

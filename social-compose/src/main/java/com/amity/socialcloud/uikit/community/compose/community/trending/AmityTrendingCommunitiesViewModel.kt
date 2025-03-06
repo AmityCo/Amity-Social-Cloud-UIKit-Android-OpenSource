@@ -9,44 +9,40 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 
 class AmityTrendingCommunitiesViewModel : AmityBaseViewModel() {
+    private val _communityListState = MutableStateFlow<CommunityListState>(CommunityListState.EMPTY)
+    val communityListState: StateFlow<CommunityListState> = _communityListState.asStateFlow()
 
-    private val _communityListState by lazy {
-        MutableStateFlow<CommunityListState>(CommunityListState.EMPTY)
-    }
-
-    val communityListState get() = _communityListState
-
-    private fun setCommunityListState(state: CommunityListState) {
-        _communityListState.value = state
-    }
+    private val trendingCommunitiesFlow = AmitySocialClient.newCommunityRepository()
+        .getTrendingCommunities()
+        .map {
+            if (it.size > 5) {
+                it.subList(0, 5)
+            } else {
+                it
+            }
+        }
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .doOnNext {
+            if (it.isEmpty() && _communityListState.value != CommunityListState.EMPTY) {
+                _communityListState.value = CommunityListState.EMPTY
+            } else if (it.isNotEmpty() && _communityListState.value != CommunityListState.SUCCESS) {
+                _communityListState.value = CommunityListState.SUCCESS
+            }
+        }
+        .asFlow()
+        .catch {
+            _communityListState.value = CommunityListState.ERROR
+        }
 
     fun getTrendingCommunities(): Flow<List<AmityCommunity>> {
-        setCommunityListState(CommunityListState.LOADING)
-        return AmitySocialClient.newCommunityRepository()
-            .getTrendingCommunities()
-            .map {
-                if (it.size > 5) {
-                    it.subList(0, 5)
-                } else {
-                    it
-                }
-            }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext {
-                if (it.isEmpty() && communityListState.value != CommunityListState.EMPTY) {
-                    setCommunityListState(CommunityListState.EMPTY)
-                } else if (it.isNotEmpty() && communityListState.value != CommunityListState.SUCCESS) {
-                    setCommunityListState(CommunityListState.SUCCESS)
-                }
-            }
-            .asFlow()
-            .catch {
-                setCommunityListState(CommunityListState.ERROR)
-            }
+        _communityListState.value = CommunityListState.LOADING
+        return trendingCommunitiesFlow
     }
 
     sealed class CommunityListState {
@@ -72,5 +68,4 @@ class AmityTrendingCommunitiesViewModel : AmityBaseViewModel() {
             }
         }
     }
-
 }

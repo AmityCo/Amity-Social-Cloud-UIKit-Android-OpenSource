@@ -29,7 +29,7 @@ fun AmityCommunitySearchResultComponent(
         AmitySocialBehaviorHelper.communitySearchResultComponentBehavior
     }
 
-    val keyword by viewModel.keyword.collectAsState()
+    val keyword by viewModel.keyword.collectAsState("")
     val searchType by viewModel.searchType.collectAsState()
 
     val communities = remember(keyword, searchType) {

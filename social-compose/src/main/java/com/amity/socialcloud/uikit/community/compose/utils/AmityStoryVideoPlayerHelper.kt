@@ -49,11 +49,9 @@ object AmityStoryVideoPlayerHelper {
                     _isVideoPlaybackReady.value = true
                 }
 
-                Player.STATE_BUFFERING -> {
+                else -> {
                     _isVideoPlaybackReady.value = false
                 }
-
-                else -> {}
             }
         }
     }

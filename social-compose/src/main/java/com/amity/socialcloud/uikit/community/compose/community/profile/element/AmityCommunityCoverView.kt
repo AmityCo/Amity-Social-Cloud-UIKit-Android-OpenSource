@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,10 +34,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.drawable.toBitmap
-import coil.compose.AsyncImagePainter
-import coil.compose.rememberAsyncImagePainter
-import coil.request.CachePolicy
-import coil.request.ImageRequest
+import coil3.compose.AsyncImagePainter
+import coil3.compose.rememberAsyncImagePainter
+import coil3.request.CachePolicy
+import coil3.request.ImageRequest
+import coil3.request.allowHardware
+import coil3.request.crossfade
+import coil3.toBitmap
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
@@ -81,18 +85,20 @@ fun AmityCommunityCoverView(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(coverUrl)
                 .allowHardware(false)
-                .dispatcher(Dispatchers.IO)
                 .diskCachePolicy(CachePolicy.ENABLED)
                 .memoryCachePolicy(CachePolicy.ENABLED)
+                .diskCacheKey(coverUrl ?: community.getCommunityId())
+                .memoryCacheKey(coverUrl ?: community.getCommunityId())
+                .crossfade(true)
                 .build(),
         )
+        val painterState by painter.state.collectAsState()
+
         var bitmap: Bitmap? by remember {
             mutableStateOf(null)
         }
-        val paintState = painter.state
-        if (paintState is AsyncImagePainter.State.Success) {
-            val drawable = paintState.result.drawable
-            bitmap = drawable.toBitmap()
+        if (painterState is AsyncImagePainter.State.Success) {
+            bitmap = (painterState as AsyncImagePainter.State.Success).result.image.toBitmap()
         }
         if (style == AmityCommunityHeaderStyle.EXPANDED) {
             Box(

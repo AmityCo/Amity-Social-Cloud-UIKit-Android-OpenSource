@@ -1,6 +1,7 @@
 package com.amity.socialcloud.uikit.community.compose.comment.query
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,6 +45,12 @@ fun AmityDeletedCommentView(
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
                 modifier = modifier
                     .background(
+                        color = Color.Transparent,//AmityTheme.colors.baseShade4,
+                        shape = RoundedCornerShape(size = 4.dp)
+
+                    )
+                    .border(
+                        width = 1.dp,
                         color = AmityTheme.colors.baseShade4,
                         shape = RoundedCornerShape(size = 4.dp)
                     )

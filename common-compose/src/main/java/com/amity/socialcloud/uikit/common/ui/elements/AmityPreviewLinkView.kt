@@ -4,14 +4,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,9 +28,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.request.CachePolicy
-import coil.request.ImageRequest
+import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
+import coil3.request.CachePolicy
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.compose.R
@@ -120,7 +121,6 @@ fun AmityPreviewLinkView(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .aspectRatio(2f)
             .border(
                 width = 1.dp,
                 color = AmityTheme.colors.baseShade4,
@@ -134,7 +134,7 @@ fun AmityPreviewLinkView(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp))
-                .weight(1f)
+                .height(200.dp)
                 .background(color = AmityTheme.colors.baseShade4)
         ) {
             if (previewMetadata != null) {
@@ -176,6 +176,11 @@ fun AmityPreviewLinkView(
             }
         }
 
+        HorizontalDivider(
+            thickness = 1.dp,
+            color = AmityTheme.colors.baseShade4,
+        )
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -188,10 +193,12 @@ fun AmityPreviewLinkView(
                         fontWeight = FontWeight.Normal,
                         color = AmityTheme.colors.baseShade1,
                     ),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 6.dp),
                 )
-                Spacer(modifier = Modifier.height(2.dp))
                 Text(
+                    modifier = Modifier.padding(top = 6.dp, bottom = 2.dp),
                     text = previewMetadata!!.title,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
@@ -201,15 +208,18 @@ fun AmityPreviewLinkView(
                 )
             } else {
                 Text(
+                    modifier = Modifier.padding(top = 6.dp),
                     text = context.getString(R.string.amity_preview_not_available_title),
+                    lineHeight = 10.sp,
                     style = AmityTheme.typography.body.copy(
                         fontWeight = FontWeight.SemiBold,
                     ),
                 )
-                Spacer(modifier = Modifier.height(2.dp))
                 Text(
+                    modifier = Modifier.padding(top = 6.dp),
                     text = context.getString(R.string.amity_preview_not_available_message),
                     maxLines = 2,
+                    lineHeight = 14.sp,
                     overflow = TextOverflow.Ellipsis,
                     style = AmityTheme.typography.body.copy(
                         color = AmityTheme.colors.baseShade1,

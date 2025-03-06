@@ -13,7 +13,6 @@ class AmityCommunityStorySettingPageActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
 
         val community = intent.getCommunity(EXTRA_PARAM_COMMUNITY) ?: return
 

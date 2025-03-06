@@ -36,6 +36,7 @@ fun AmityMyCommunitiesSearchPage(
                 modifier = modifier,
                 pageScope = getPageScope(),
                 viewModel = viewModel,
+                shouldShowKeyboard = true,
             )
 
             AmityCommunitySearchResultComponent(

@@ -323,9 +323,9 @@
     <string name="amity_delete_comment">Delete Comment</string>
     <string name="amity_comment_deleted_toast_message">Comment deleted</string>
     <string name="amity_edit_comment">Edit Comment</string>
-    <string name="amity_report_comment">Report Comment</string>
+    <string name="amity_report_comment">Report comment</string>
     <string name="amity_comment_reported_toast_message">Comment reported</string>
-    <string name="amity_comment_unreported_toast_message">Report retracted</string>
+    <string name="amity_comment_unreported_toast_message">Comment unreported</string>
     <string name="amity_undo_report">Undo Report</string>
     <string name="amity_edit_reply">Edit Reply</string>
     <string name="amity_delete_reply">Delete Reply</string>

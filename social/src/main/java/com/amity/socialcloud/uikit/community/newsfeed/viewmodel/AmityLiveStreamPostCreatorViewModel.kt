@@ -97,7 +97,7 @@ class AmityLiveStreamPostCreatorViewModel :
     }
 
     private fun getCurrentUser(onProfileLoaded: (title: String?, imageUrl: String?) -> Unit): Completable {
-        return AmityCoreClient.newUserRepository()
+        return AmityCoreClient
             .getCurrentUser()
             .firstOrError()
             .subscribeOn(Schedulers.io())
@@ -238,7 +238,7 @@ class AmityLiveStreamPostCreatorViewModel :
         keyword: String,
         onResult: (users: PagingData<AmityUser>) -> Unit
     ): Completable {
-        return userRepository.searchUserByDisplayName(keyword)
+        return userRepository.searchUsers(keyword)
             .sortBy(AmityUserSortOption.DISPLAYNAME)
             .build()
             .query()

@@ -1,6 +1,7 @@
 package com.amity.socialcloud.uikit.community.notificationsettings
 
 import androidx.lifecycle.SavedStateHandle
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.setting.AmitySettingsItem
@@ -95,7 +96,7 @@ class AmityPushNotificationSettingsViewModel(private val savedState: SavedStateH
 
     fun updatePushNotificationSettings(enable: Boolean, onError: () -> Unit): Completable {
         val communityNotification =
-            AmitySocialClient.newCommunityRepository().notification(communityId)
+            AmityCoreClient.notifications().community(communityId)
         val settingsCompletable = if (enable) {
             communityNotification.enable()
         } else {

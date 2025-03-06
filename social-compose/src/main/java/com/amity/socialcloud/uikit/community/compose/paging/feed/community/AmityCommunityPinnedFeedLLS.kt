@@ -15,6 +15,7 @@ import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostCatego
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponent
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponentStyle
 import com.amity.socialcloud.uikit.community.compose.ui.components.feed.community.AmityCommunityEmptyFeedView
+import com.amity.socialcloud.uikit.community.compose.ui.components.feed.community.AmityCommunityEmptyPinnedFeedView
 
 fun LazyListScope.amityCommunityPinnedFeedLLS(
     modifier: Modifier = Modifier,
@@ -53,7 +54,7 @@ fun LazyListScope.amityCommunityPinnedFeedLLS(
     if (announcementPosts.itemCount == 0 && pinPosts.itemCount == 0) {
         item {
             Box(modifier = Modifier.height(480.dp)) {
-                AmityCommunityEmptyFeedView()
+                AmityCommunityEmptyPinnedFeedView()
             }
         }
     }

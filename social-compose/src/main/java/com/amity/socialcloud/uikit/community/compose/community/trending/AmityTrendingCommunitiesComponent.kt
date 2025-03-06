@@ -101,7 +101,7 @@ fun AmityTrendingCommunitiesComponent(
                 }
 
             }
-            Spacer(modifier = modifier.height(100.dp))
+            Spacer(modifier = modifier.height(24.dp))
             onStateChanged(communityListState)
         }
     }

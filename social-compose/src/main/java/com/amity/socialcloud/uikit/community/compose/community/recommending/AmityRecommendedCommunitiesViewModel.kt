@@ -26,31 +26,33 @@ class AmityRecommendedCommunitiesViewModel : AmityBaseViewModel() {
         _communityListState.value = state
     }
 
+    private val recommendedCommunitiesFlow = AmitySocialClient.newCommunityRepository()
+        .getRecommendedCommunities()
+        .map {
+            val recommendedCommunities = it.filter { community -> !community.isJoined() }
+            if (recommendedCommunities.size > 4) {
+                recommendedCommunities.subList(0, 4)
+            } else {
+                recommendedCommunities
+            }
+        }
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .doOnNext {
+            if (it.isEmpty() && _communityListState.value != CommunityListState.EMPTY) {
+                _communityListState.value = CommunityListState.EMPTY
+            } else if (it.isNotEmpty() && _communityListState.value != CommunityListState.SUCCESS) {
+                _communityListState.value = CommunityListState.SUCCESS
+            }
+        }
+        .asFlow()
+        .catch {
+            _communityListState.value = CommunityListState.ERROR
+        }
+
     fun getRecommendedCommunities(): Flow<List<AmityCommunity>> {
-        setCommunityListState(CommunityListState.LOADING)
-        return AmitySocialClient.newCommunityRepository()
-            .getRecommendedCommunities()
-            .map {
-                val recommendedCommunities = it.filter { community -> !community.isJoined() }
-                if (recommendedCommunities.size > 4) {
-                    recommendedCommunities.subList(0, 4)
-                } else {
-                    recommendedCommunities
-                }
-            }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext {
-                if (it.isEmpty() && communityListState.value != CommunityListState.EMPTY) {
-                    setCommunityListState(CommunityListState.EMPTY)
-                } else if (it.isNotEmpty() && communityListState.value != CommunityListState.SUCCESS) {
-                    setCommunityListState(CommunityListState.SUCCESS)
-                }
-            }
-            .asFlow()
-            .catch {
-                setCommunityListState(CommunityListState.ERROR)
-            }
+        _communityListState.value = CommunityListState.LOADING
+        return recommendedCommunitiesFlow
     }
 
     fun updateMembership(community: AmityCommunity) {

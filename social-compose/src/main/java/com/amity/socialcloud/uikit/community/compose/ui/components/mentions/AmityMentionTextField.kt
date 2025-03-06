@@ -1,7 +1,9 @@
 package com.amity.socialcloud.uikit.community.compose.ui.components.mentions
 
+import android.view.View
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidView
@@ -23,11 +25,13 @@ fun AmityMentionTextField(
     shouldClearText: Boolean = false,
     mentionMetadata: List<AmityMentionMetadata.USER> = emptyList(),
     mentionees: List<AmityMentionee> = emptyList(),
+    cursorColor: Color = AmityTheme.colors.base,
     onValueChange: (String) -> Unit = {},
     isEnabled: Boolean = true,
     onMentionAdded: () -> Unit = {},
     onQueryToken: (String?) -> Unit = {},
     onUserMentions: (List<AmityMentionMetadata.USER>) -> Unit = {},
+    onFocusChanged: (Boolean) -> Unit = {}
 ) {
     val baseColor = AmityTheme.colors.base.toArgb()
     val baseShade2Color = AmityTheme.colors.baseShade2.toArgb()
@@ -43,6 +47,8 @@ fun AmityMentionTextField(
                     hintColor = baseShade2Color,
                 )
                 setHintText(hintText)
+
+                setCursorColor(cursorColor.toArgb())
 
                 setMentionMetadata(mentionMetadata, mentionees)
 
@@ -64,6 +70,12 @@ fun AmityMentionTextField(
                     }
 
                     onUserMentions(getUserMentions())
+                }
+
+                onFocusChangeListener = object: View.OnFocusChangeListener {
+                    override fun onFocusChange(v: View?, hasFocus: Boolean) {
+                        onFocusChanged(hasFocus)
+                    }
                 }
             }
         },

@@ -3,6 +3,7 @@ package com.amity.socialcloud.uikit.chat.messages.viewHolder
 import android.content.Context
 import android.content.DialogInterface
 import android.view.View
+import com.amity.socialcloud.sdk.api.chat.AmityChatClient
 import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
 import com.amity.socialcloud.uikit.chat.R
 import com.amity.socialcloud.uikit.chat.messages.viewModel.AmitySelectableMessageViewModel
@@ -113,40 +114,39 @@ abstract class AmitySelectableMessageViewHolder(
     }
 
     private fun reportMessage() {
-        itemViewModel.amityMessage?.report()?.flag()
-            ?.subscribe(object : DisposableCompletableObserver() {
-                override fun onComplete() {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        val snackBar = Snackbar.make(
-                            itemView,
-                            context.getString(R.string.amity_report_msg), Snackbar.LENGTH_SHORT
-                        )
-                        snackBar.show()
-                    }
-                }
 
-                override fun onError(e: Throwable) {
+        itemViewModel.amityMessage?.let {
+            AmityChatClient.newMessageRepository().flagMessage(it.getMessageId())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnComplete {
+                    val snackBar = Snackbar.make(
+                        itemView,
+                        context.getString(R.string.amity_report_msg), Snackbar.LENGTH_SHORT
+                    )
+                    snackBar.show()
+                }.doOnError {
 
                 }
-            })
+                .subscribe()
+        }
     }
 
     private fun unreportMessage() {
-        itemViewModel.amityMessage?.report()?.unflag()
-            ?.subscribe(object : DisposableCompletableObserver() {
-                override fun onComplete() {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        val snackBar = Snackbar.make(
-                            itemView,
-                            context.getString(R.string.amity_report_msg), Snackbar.LENGTH_SHORT
-                        )
-                        snackBar.show()
-                    }
-                }
-
-                override fun onError(e: Throwable) {
+        itemViewModel.amityMessage?.let {
+            AmityChatClient.newMessageRepository().flagMessage(it.getMessageId())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnComplete {
+                    val snackBar = Snackbar.make(
+                        itemView,
+                        context.getString(R.string.amity_unreport_msg), Snackbar.LENGTH_SHORT
+                    )
+                    snackBar.show()
+                }.doOnError {
 
                 }
-            })
+                .subscribe()
+        }
     }
 }

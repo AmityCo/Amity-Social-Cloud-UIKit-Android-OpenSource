@@ -42,6 +42,7 @@ import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostTargetType
 import com.amity.socialcloud.uikit.community.compose.target.AmityPostTargetSelectionPageType
 import com.amity.socialcloud.uikit.community.compose.target.AmityTargetSelectionPageViewModel
+import com.amity.socialcloud.uikit.community.compose.target.components.AmityTargetContentType
 import com.amity.socialcloud.uikit.community.compose.target.components.AmityTargetSelectionMyCommunitiesView
 
 @Composable
@@ -160,6 +161,7 @@ fun AmityPostTargetSelectionPage(
 
             AmityTargetSelectionMyCommunitiesView(
                 modifier = modifier,
+                contentType = AmityTargetContentType.POST
             ) {
                 behavior.goToPostComposerPage(
                     context = context,

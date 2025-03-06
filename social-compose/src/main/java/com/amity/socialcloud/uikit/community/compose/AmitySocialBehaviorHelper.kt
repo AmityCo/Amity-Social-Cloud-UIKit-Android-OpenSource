@@ -12,6 +12,7 @@ import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetail
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponentBehavior
 import com.amity.socialcloud.uikit.community.compose.search.community.AmityMyCommunitiesSearchPageBehavior
 import com.amity.socialcloud.uikit.community.compose.search.components.AmityCommunitySearchResultComponentBehavior
+import com.amity.socialcloud.uikit.community.compose.search.components.AmityPostSearchResultComponentBehaviour
 import com.amity.socialcloud.uikit.community.compose.search.components.AmityUserSearchResultComponentBehavior
 import com.amity.socialcloud.uikit.community.compose.search.global.AmitySocialGlobalSearchPageBehavior
 import com.amity.socialcloud.uikit.community.compose.socialhome.AmitySocialHomePageBehavior
@@ -75,6 +76,9 @@ object AmitySocialBehaviorHelper {
 
     var userSearchResultComponentBehavior: AmityUserSearchResultComponentBehavior =
         AmityUserSearchResultComponentBehavior()
+
+    var postSearchResultComponentBehavior: AmityPostSearchResultComponentBehaviour =
+        AmityPostSearchResultComponentBehaviour()
 
     var myCommunitiesComponentBehavior: AmityMyCommunitiesComponentBehavior =
         AmityMyCommunitiesComponentBehavior()

@@ -242,6 +242,7 @@ fun AmityCommunityAddMemberItem(
                 style = AmityTheme.typography.body.copy(
                     fontWeight = FontWeight.SemiBold,
                 ),
+                modifier = Modifier.weight(1f, fill = false)
             )
             val isBrandUser = user.isBrand()
             if (isBrandUser) {

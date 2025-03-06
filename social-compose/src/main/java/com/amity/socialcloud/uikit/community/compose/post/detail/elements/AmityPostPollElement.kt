@@ -20,6 +20,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalMinimumInteractiveComponentEnforcement
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
@@ -71,6 +72,10 @@ import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import java.text.NumberFormat
 import java.util.Locale
+import kotlin.math.ceil
+import kotlin.math.floor
+import kotlin.math.log
+import kotlin.math.pow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -216,7 +221,7 @@ fun AmityPostPollElement(
                     )
 
                     if (poll.getAnswerType() == AmityPoll.AnswerType.SINGLE) {
-                        CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
+                        CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
                             RadioButton(
                                 modifier = modifier.testTag(text),
                                 enabled = canVote,
@@ -390,19 +395,52 @@ fun AmityPostPollElement(
 
                     Row {
                         val voteCount = answer.voteCount
-                        val votedBy = if (voteCount == 0) {
-                            "No votes"
-                        } else if (voteCount == 1 && answer.isVotedByUser) {
-                            "Voted by you"
-                        } else if(voteCount == 1) {
-                            "Voted by 1 participant"
-                        }else {
-                            val plusSign = if(voteCount > 1000) "+" else ""
-                            val displayVoteCount = if(answer.isVotedByUser) (voteCount - 1).readableNumber() else voteCount.readableNumber()
-                            "Voted by ${displayVoteCount}${plusSign} participants".apply {
-                                if (answer.isVotedByUser) {
-                                    this.plus(" and you")
+                        fun getNextThreshold(count: Int): Int {
+                            // If count is below 1000, just return it as-is
+                            if (count < 1000) return count
+
+                            // Calculate exponent as in Flutter: floor(log(count) / log(1000))
+                            val exp = floor(log(count.toDouble(), 1000.0)).toInt()
+
+                            // Calculate the “scale” (1000^exp)
+                            val scale = 1000.0.pow(exp)
+
+                            // Next threshold is scale * ceil(count / scale)
+                            return (scale * ceil(count / scale)).toInt()
+                        }
+                        val votedBy = when {
+                            voteCount == 0 -> {
+                                "No votes"
+                            }
+                            voteCount == 1 && answer.isVotedByUser -> {
+                                "Voted by you"
+                            }
+                            voteCount == 1 -> {
+                                "Voted by 1 participant"
+                            }
+                            else -> {
+                                // Determine if plus sign is needed
+                                val nextThreshold = getNextThreshold(voteCount)
+                                val plusSign = if (voteCount > nextThreshold) "+" else ""
+
+                                // Adjust display count if current user is among the voters
+                                val displayVoteCount = if (answer.isVotedByUser) {
+                                    (voteCount - 1).readableNumber()
+                                } else {
+                                    voteCount.readableNumber()
                                 }
+
+                                // Construct the base text
+                                var text = "Voted by $displayVoteCount${plusSign} participants"
+                                if(displayVoteCount == "1") {
+                                    text = "Voted by 1 participant"
+                                }
+
+                                // Append "and you" if the current user is also a voter
+                                if (answer.isVotedByUser) {
+                                    text += " and you"
+                                }
+                                text
                             }
                         }
 
@@ -535,6 +573,7 @@ fun AmityPostPollElement(
                 post.getCreatorId() == AmityCoreClient.getUserId()
                 && !poll.isVoted()
                 && poll.getStatus() != AmityPoll.Status.CLOSED
+                && post.getReviewStatus() != AmityReviewStatus.UNDER_REVIEW
             ) {
                 Text(
                     modifier = Modifier.clickable {

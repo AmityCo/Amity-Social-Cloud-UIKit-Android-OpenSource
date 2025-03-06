@@ -107,7 +107,7 @@ class AmityCreateCommunityViewModel(private val savedState: SavedStateHandle) :
     fun editCommunity(): Single<AmityCommunity> {
         val communityRepository: AmityCommunityRepository =
             AmitySocialClient.newCommunityRepository()
-        val builder = communityRepository.updateCommunity(communityId.get()!!)
+        val builder = communityRepository.editCommunity(communityId.get()!!)
         if (amityImage != null) {
             builder.avatar(amityImage!!)
         }

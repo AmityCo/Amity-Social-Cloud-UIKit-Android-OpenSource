@@ -122,6 +122,7 @@ fun AmityCommunityMembersMembershipComponent(
                             ) {
                                 val user = member.getUser()
                                 Text(
+                                    modifier = Modifier.weight(1f, fill = false),
                                     text = user?.getDisplayName() ?: "",
                                     overflow = TextOverflow.Ellipsis,
                                     maxLines = 1,

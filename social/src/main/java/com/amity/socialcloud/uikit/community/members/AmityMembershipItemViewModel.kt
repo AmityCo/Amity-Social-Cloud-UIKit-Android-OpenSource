@@ -126,12 +126,14 @@ class AmityMembershipItemViewModel : AmityBaseViewModel() {
         return hasPermissionAtCommunity(permission, communityId)
     }
 
-    fun reportUser(ekoUser: AmityUser): Completable {
-        return ekoUser.report().flag()
+    fun reportUser(user: AmityUser): Completable {
+        return AmityCoreClient.newUserRepository()
+            .flagUser(user.getUserId())
     }
 
-    fun unReportUser(ekoUser: AmityUser): Completable {
-        return ekoUser.report().unflag()
+    fun unReportUser(user: AmityUser): Completable {
+        return AmityCoreClient.newUserRepository()
+            .unflagUser(user.getUserId())
     }
 
     fun getUser(userId: String): Flowable<AmityUser> {

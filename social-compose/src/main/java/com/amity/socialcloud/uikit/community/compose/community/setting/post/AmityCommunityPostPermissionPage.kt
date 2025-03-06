@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunityPostSettings
 import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
+import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
 import com.amity.socialcloud.uikit.common.ui.elements.AmityToolBar
@@ -33,7 +34,6 @@ import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.closePage
 import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.common.utils.shade
-import com.amity.socialcloud.uikit.common.utils.showToast
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.community.setting.AmityCommunitySettingPageViewModel
 import com.amity.socialcloud.uikit.community.compose.community.setting.elements.AmityCommunitySettingRadioDataItem
@@ -114,10 +114,12 @@ fun AmityCommunityPostPermissionPage(
                                 setting = it as AmityCommunityPostSettings,
                                 onSuccess = {
                                     context.closePageWithResult(Activity.RESULT_OK)
-                                    context.showToast("Successfully updated community profile!")
+                                    AmityUIKitSnackbar.publishSnackbarMessage("Successfully updated community profile!")
                                 },
                                 onError = {
-                                    context.showToast("Failed")
+                                    AmityUIKitSnackbar.publishSnackbarErrorMessage(
+                                        "Failed to update community profile"
+                                    )
                                 }
                             )
                         }

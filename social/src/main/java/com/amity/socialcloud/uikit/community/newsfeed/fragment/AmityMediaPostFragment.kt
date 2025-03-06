@@ -188,7 +188,7 @@ class AmityMediaPostFragment : AmityBaseFragment() {
 
     private fun openVideoPlayer(post: AmityPost) {
         safeCast<AmityPost.Data.VIDEO>(post.getData())?.let { videoData ->
-            videoData.getVideo(AmityVideo.Quality.ORIGINAL)
+            videoData.getVideo()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSuccess {
@@ -208,7 +208,7 @@ class AmityMediaPostFragment : AmityBaseFragment() {
                     imagePosition = 0,
                     showImageCount = false,
                     imageAmities = arrayListOf(
-                        AmityPreviewImage(imageData.getImage()?.getUrl(AmityImage.Size.FULL) ?: "")
+                        AmityPreviewImage(imageData.getImage()?.getUrl(AmityImage.Size.LARGE) ?: "")
                     )
                 )
             requireContext().startActivity(intent)

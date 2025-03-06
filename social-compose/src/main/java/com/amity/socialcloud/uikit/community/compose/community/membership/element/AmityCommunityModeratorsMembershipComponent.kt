@@ -142,7 +142,7 @@ fun AmityCommunityModeratorsMembershipComponent(
                                 style = AmityTheme.typography.body.copy(
                                     fontWeight = FontWeight.SemiBold,
                                 ),
-                                modifier = modifier.weight(1f)
+                                modifier = modifier.weight(1f, fill = false)
                             )
 
                             if (member.getUserId() != AmityCoreClient.getUserId()) {

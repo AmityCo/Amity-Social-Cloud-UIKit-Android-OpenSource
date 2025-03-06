@@ -25,9 +25,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
-import coil.request.CachePolicy
-import coil.request.ImageRequest
+import coil3.compose.rememberAsyncImagePainter
+import coil3.request.CachePolicy
+import coil3.request.ImageRequest
+import coil3.request.allowHardware
 import com.amity.socialcloud.sdk.model.core.ad.AmityAd
 import com.amity.socialcloud.sdk.model.core.ad.AmityAdPlacement
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
@@ -70,9 +71,8 @@ fun AmityStoryAdView(
 
     val painter = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
-            .data(ad.getImage9_16()?.getUrl(AmityImage.Size.FULL))
+            .data(ad.getImage9_16()?.getUrl(AmityImage.Size.LARGE))
             .allowHardware(false)
-            .dispatcher(Dispatchers.IO)
             .diskCachePolicy(CachePolicy.ENABLED)
             .memoryCachePolicy(CachePolicy.ENABLED)
             .build()

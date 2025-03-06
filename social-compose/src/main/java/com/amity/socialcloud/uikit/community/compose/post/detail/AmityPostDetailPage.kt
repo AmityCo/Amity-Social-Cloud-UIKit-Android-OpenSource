@@ -252,7 +252,7 @@ fun AmityPostDetailPage(
                     }
                 }
 
-                if(!sheetViewModel.isNotMember(post)) {
+                if(!sheetViewModel.isNotMember(post) && editingCommentId == null) {
                     AmityCommentComposerBar(
                         modifier = modifier.offset(y = commentComposeBarBottomOffset),
                         componentScope = getComponentScope(),

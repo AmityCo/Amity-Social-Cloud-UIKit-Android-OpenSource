@@ -73,11 +73,11 @@ class AmityMessageListViewModel : AmityChatMessageBaseViewModel() {
     }
 
     fun startReading() {
-        AmityChatClient.newSubChannelRepository().startReading(channelID)
+        AmityChatClient.newSubChannelRepository().startMessageReceiptSync(channelID)
     }
 
     fun stopReading() {
-        AmityChatClient.newSubChannelRepository().stopReading(channelID)
+        AmityChatClient.newSubChannelRepository().stopMessageReceiptSync(channelID)
     }
 
     fun getAllMessages(): Flowable<PagingData<AmityMessage>> {
@@ -102,9 +102,11 @@ class AmityMessageListViewModel : AmityChatMessageBaseViewModel() {
         if (!isVoiceMsgUi.get()) {
             val messageRepository: AmityMessageRepository = AmityChatClient.newMessageRepository()
             addDisposable(
-                messageRepository.createMessage(channelID).with()
-                    .text(text.get()!!.trim())
-                    .build().send().observeOn(AndroidSchedulers.mainThread())
+                messageRepository.createTextMessage(
+                    subChannelId = channelID,
+                    text = text.get()!!.trim()
+                ).build().send()
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribeWith(object : DisposableCompletableObserver() {
                         override fun onComplete() {
                             triggerEvent(AmityEventIdentifier.MSG_SEND_SUCCESS)
@@ -121,14 +123,18 @@ class AmityMessageListViewModel : AmityChatMessageBaseViewModel() {
 
     fun sendImageMessage(imageUri: Uri): Completable {
         val messageRepository: AmityMessageRepository = AmityChatClient.newMessageRepository()
-        return messageRepository.createMessage(channelID).with()
-            .image(imageUri).build().send()
+        return messageRepository.createImageMessage(
+            subChannelId = channelID,
+            imageUri = imageUri
+        ).build().send()
     }
 
     fun sendAudioMessage(audioFileUri: Uri): Completable {
         val messageRepository: AmityMessageRepository = AmityChatClient.newMessageRepository()
-        return messageRepository.createMessage(channelID).with()
-            .audio(audioFileUri).build().send()
+        return messageRepository.createAudioMessage(
+            subChannelId = channelID,
+            audioUri = audioFileUri
+        ).build().send()
     }
 
     fun toggleComposeBar() {

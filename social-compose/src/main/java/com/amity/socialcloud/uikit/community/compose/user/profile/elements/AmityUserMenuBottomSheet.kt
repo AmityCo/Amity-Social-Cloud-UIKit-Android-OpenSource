@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.waterfall
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -46,7 +47,7 @@ fun AmityUserMenuBottomSheet(
         onDismissRequest = onCloseSheet,
         sheetState = sheetState,
         containerColor = AmityTheme.colors.background,
-        windowInsets = WindowInsets(top = 54.dp),
+        contentWindowInsets = { WindowInsets.waterfall },
         modifier = modifier
             .semantics {
                 testTagsAsResourceId = true

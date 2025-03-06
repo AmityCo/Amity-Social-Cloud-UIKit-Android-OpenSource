@@ -150,7 +150,7 @@ fun AmitySocialHomePage(
 
                 HorizontalPager(
                     state = pagerState,
-                    beyondBoundsPageCount = 6,
+                    beyondViewportPageCount = 6,
                     userScrollEnabled = false,
                     ) { page ->
                     when (page) {

@@ -86,7 +86,7 @@ class AmityPollCreatorViewModel : AmityBaseViewModel() {
         keyword: String,
         onResult: (users: PagingData<AmityUser>) -> Unit
     ): Completable {
-        return userRepository.searchUserByDisplayName(keyword)
+        return userRepository.searchUsers(keyword)
             .sortBy(AmityUserSortOption.DISPLAYNAME)
             .build()
             .query()

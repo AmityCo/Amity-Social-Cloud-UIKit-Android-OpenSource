@@ -4,6 +4,12 @@ apply plugin: 'kotlin-android'
 
 android {
     namespace 'com.amity.socialcloud.uikit.chat'
+
+    packagingOptions {
+        pickFirst("META-INF/*.kotlin_module")
+        exclude 'META-INF/INDEX.LIST'
+        exclude 'META-INF/io.netty.versions.properties'
+    }
 }
 
 dependencies {

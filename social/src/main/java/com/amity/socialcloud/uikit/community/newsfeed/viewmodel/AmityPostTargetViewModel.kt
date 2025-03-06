@@ -36,7 +36,6 @@ class AmityPostTargetViewModel(private val savedState: SavedStateHandle) : ViewM
             .subscribe()
     }
 
-
     fun getCommunityList(): Flowable<PagingData<AmityCommunity>> {
         val communityRepository = AmitySocialClient.newCommunityRepository()
         return communityRepository.getCommunities()

@@ -45,11 +45,11 @@ import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.sdk.model.social.story.AmityStoryTarget
 import com.amity.socialcloud.sdk.model.social.story.analytics
 import com.amity.socialcloud.uikit.common.ad.AmityListItem
+import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.closePage
-import com.amity.socialcloud.uikit.common.utils.showToast
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.story.view.components.AmityStoryAdView
@@ -233,8 +233,11 @@ fun AmityViewCommunityStoryPage(
 
     LaunchedEffect(isVideoPlaybackReady, isShowingVideoStory) {
         if (isShowingVideoStory) {
-            viewModel.handleSegmentTimer(shouldPause = !isVideoPlaybackReady)
             shouldShowLoading = !isVideoPlaybackReady
+            viewModel.handleSegmentTimer(shouldPause = shouldShowLoading)
+        } else {
+            viewModel.handleSegmentTimer(shouldPause = false)
+            shouldShowLoading = false
         }
     }
 
@@ -273,6 +276,13 @@ fun AmityViewCommunityStoryPage(
         }
     }
 
+    DisposableEffect(Unit) {
+        onDispose {
+            exoPlayer.release()
+            AmityStoryVideoPlayerHelper.clear()
+        }
+    }
+
     val dialogState by viewModel.dialogUIState.collectAsState()
 
     when (dialogState) {
@@ -281,8 +291,8 @@ fun AmityViewCommunityStoryPage(
             viewModel.handleSegmentTimer(true)
             val data = dialogState as AmityStoryModalDialogUIState.OpenConfirmDeleteDialog
             AmityAlertDialog(
-                dialogTitle = "Discard this story?",
-                dialogText = "The story will be permanently deleted. It cannot be undone.",
+                dialogTitle = "Discard story?",
+                dialogText = "The story will be permanently discarded. It cannot be undone.",
                 confirmText = "Discard",
                 dismissText = "Cancel",
                 onConfirmation = {
@@ -291,7 +301,7 @@ fun AmityViewCommunityStoryPage(
                         storyId = data.storyId,
                         onSuccess = {
                             shouldShowLoading = false
-                            context.showToast("Story deleted")
+                            AmityUIKitSnackbar.publishSnackbarMessage("Story deleted")
                             viewModel.updateDialogUIState(AmityStoryModalDialogUIState.CloseDialog)
                             viewModel.handleSegmentTimer(false)
 
@@ -311,7 +321,7 @@ fun AmityViewCommunityStoryPage(
                         },
                         onError = {
                             shouldShowLoading = false
-                            context.showToast("Failed to delete story")
+                            AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to delete story")
                             viewModel.updateDialogUIState(AmityStoryModalDialogUIState.CloseDialog)
                             viewModel.handleSegmentTimer(false)
                         }
@@ -337,7 +347,7 @@ fun AmityViewCommunityStoryPage(
         ) {
             HorizontalPager(
                 state = storyPagerState,
-                beyondBoundsPageCount = 3,
+                beyondViewportPageCount = 3,
                 userScrollEnabled = false,
                 key = {
                     (stories[it] as? AmityListItem.StoryItem)?.story?.getStoryId() ?: it

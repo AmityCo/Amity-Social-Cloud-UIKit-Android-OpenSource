@@ -23,6 +23,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
@@ -47,14 +49,16 @@ fun AmityTopSearchBarComponent(
     modifier: Modifier = Modifier,
     pageScope: AmityComposePageScope? = null,
     viewModel: AmityGlobalSearchViewModel,
+    shouldShowKeyboard: Boolean? = false
 ) {
     val context = LocalContext.current
     var keyword by remember { mutableStateOf(TextFieldValue("")) }
     val searchType by viewModel.searchType.collectAsState()
+    val focusRequester = remember { FocusRequester() }
     val title by remember(searchType) {
         derivedStateOf {
             if (searchType == AmityGlobalSearchType.MY_COMMUNITY) {
-                "Search my community"
+                "Search my communities"
             } else {
                 "Search community and user"
             }
@@ -63,6 +67,12 @@ fun AmityTopSearchBarComponent(
 
     LaunchedEffect(keyword.text) {
         viewModel.setKeyword(keyword.text)
+    }
+
+    LaunchedEffect(Unit) {
+        if (shouldShowKeyboard == true) {
+            focusRequester.requestFocus()
+        }
     }
 
     AmityBaseComponent(
@@ -111,7 +121,8 @@ fun AmityTopSearchBarComponent(
                     cursorBrush = SolidColor(AmityTheme.colors.highlight),
                     modifier = modifier
                         .weight(1f)
-                        .padding(vertical = 10.dp),
+                        .padding(vertical = 14.dp)
+                        .focusRequester(focusRequester),
                     decorationBox = { innerTextField ->
                         if (keyword.text.isEmpty()) {
                             Text(

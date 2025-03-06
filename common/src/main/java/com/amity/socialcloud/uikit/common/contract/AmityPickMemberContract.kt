@@ -9,7 +9,7 @@ import com.amity.socialcloud.uikit.common.model.AmitySelectMemberItem
 import com.amity.socialcloud.uikit.common.utils.AmityConstants
 
 class AmityPickMemberContract :
-    ActivityResultContract<ArrayList<AmitySelectMemberItem>, ArrayList<AmitySelectMemberItem>?>() {
+    ActivityResultContract<ArrayList<AmitySelectMemberItem>, ArrayList<AmitySelectMemberItem>>() {
     override fun createIntent(context: Context, input: ArrayList<AmitySelectMemberItem>): Intent {
         return Intent(context, AmityMemberPickerActivity::class.java).apply {
             putParcelableArrayListExtra(AmityConstants.MEMBERS_LIST, input)

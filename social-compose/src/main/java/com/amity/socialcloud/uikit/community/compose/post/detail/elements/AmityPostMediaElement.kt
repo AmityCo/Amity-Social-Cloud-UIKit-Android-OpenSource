@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.post.detail.elements
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,9 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -37,7 +36,7 @@ fun AmityPostMediaElement(
     modifier: Modifier = Modifier,
     post: AmityPost
 ) {
-    val postChildren = remember(post.getPostId(), post.getUpdatedAt()) {
+    val postChildren = remember(post.getPostId(), post.getEditedAt(), post.getUpdatedAt(), post.getChildren().size) {
         post.getChildren()
     }
     if (postChildren.isEmpty()) return
@@ -109,41 +108,44 @@ fun AmityChildPostMediaElement(
         )
     }
 
-    when (images.size) {
+    when (post.getChildren().size) {
         0 -> {}
         1 -> AmityPostMediaImageChildrenOne(
             modifier = modifier,
             isVideoPost = isVideoPost,
-            image = images.first()
+            postChild = post.getChildren().first(),
         ) {
-            selectedFileId.value = it.getFileId()
+            selectedFileId.value = it.getPostId()
             showMediaDialog.value = true
         }
 
         2 -> AmityPostMediaImageChildrenTwo(
             modifier = modifier,
+            postChildren = post.getChildren(),
             images = images,
             isVideoPost = isVideoPost,
         ) {
-            selectedFileId.value = it.getFileId()
+            selectedFileId.value = it.getPostId()
             showMediaDialog.value = true
         }
 
         3 -> AmityPostMediaImageChildrenThree(
             modifier = modifier,
+            postChildren = post.getChildren(),
             images = images,
             isVideoPost = isVideoPost,
         ) {
-            selectedFileId.value = it.getFileId()
+            selectedFileId.value = it.getPostId()
             showMediaDialog.value = true
         }
 
         else -> AmityPostMediaImageChildrenFour(
             modifier = modifier,
+            postChildren = post.getChildren(),
             images = images,
             isVideoPost = isVideoPost,
         ) {
-            selectedFileId.value = it.getFileId()
+            selectedFileId.value = it.getPostId()
             showMediaDialog.value = true
         }
     }
@@ -152,16 +154,16 @@ fun AmityChildPostMediaElement(
 @Composable
 fun AmityPostMediaImageChildrenOne(
     modifier: Modifier = Modifier,
-    image: AmityImage,
+    postChild: AmityPost,
     isVideoPost: Boolean,
-    onClick: (AmityImage) -> Unit,
+    onClick: (AmityPost) -> Unit,
 ) {
     Box(
         modifier = modifier.fillMaxSize()
     ) {
         AmityPostImageView(
-            image = image,
-            onClick = { onClick(image) }
+            post = postChild,
+            onClick = { onClick(postChild) }
         )
         if (isVideoPost) {
             AmityPostMediaPlayButton(
@@ -174,9 +176,10 @@ fun AmityPostMediaImageChildrenOne(
 @Composable
 fun AmityPostMediaImageChildrenTwo(
     modifier: Modifier = Modifier,
+    postChildren: List<AmityPost>,
     images: List<AmityImage>,
     isVideoPost: Boolean,
-    onClick: (AmityImage) -> Unit,
+    onClick: (AmityPost) -> Unit,
 ) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -188,8 +191,8 @@ fun AmityPostMediaImageChildrenTwo(
                 .weight(1f)
         ) {
             AmityPostImageView(
-                image = images[0],
-                onClick = { onClick(images[0]) }
+                post = postChildren[0],
+                onClick = { onClick(postChildren[0]) }
             )
             if (isVideoPost) {
                 AmityPostMediaPlayButton(
@@ -204,8 +207,8 @@ fun AmityPostMediaImageChildrenTwo(
                 .weight(1f)
         ) {
             AmityPostImageView(
-                image = images[1],
-                onClick = { onClick(images[1]) }
+                post = postChildren[1],
+                onClick = { onClick(postChildren[1]) }
             )
             if (isVideoPost) {
                 AmityPostMediaPlayButton(
@@ -219,9 +222,10 @@ fun AmityPostMediaImageChildrenTwo(
 @Composable
 fun AmityPostMediaImageChildrenThree(
     modifier: Modifier = Modifier,
+    postChildren: List<AmityPost>,
     images: List<AmityImage>,
     isVideoPost: Boolean,
-    onClick: (AmityImage) -> Unit,
+    onClick: (AmityPost) -> Unit,
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -233,8 +237,8 @@ fun AmityPostMediaImageChildrenThree(
                 .weight(1f)
         ) {
             AmityPostImageView(
-                image = images[0],
-                onClick = { onClick(images[0]) }
+                post = postChildren[0],
+                onClick = { onClick(postChildren[0]) }
             )
             if (isVideoPost) {
                 AmityPostMediaPlayButton(
@@ -247,7 +251,7 @@ fun AmityPostMediaImageChildrenThree(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             modifier = modifier
                 .fillMaxWidth()
-                .height(140.dp)
+                .weight(1f)
         ) {
             Box(
                 modifier = modifier
@@ -255,8 +259,8 @@ fun AmityPostMediaImageChildrenThree(
                     .weight(1f)
             ) {
                 AmityPostImageView(
-                    image = images[1],
-                    onClick = { onClick(images[1]) }
+                    post = postChildren[1],
+                    onClick = { onClick(postChildren[1]) }
                 )
                 if (isVideoPost) {
                     AmityPostMediaPlayButton(
@@ -271,8 +275,8 @@ fun AmityPostMediaImageChildrenThree(
                     .weight(1f)
             ) {
                 AmityPostImageView(
-                    image = images[2],
-                    onClick = { onClick(images[2]) }
+                    post = postChildren[2],
+                    onClick = { onClick(postChildren[2]) }
                 )
                 if (isVideoPost) {
                     AmityPostMediaPlayButton(
@@ -287,9 +291,10 @@ fun AmityPostMediaImageChildrenThree(
 @Composable
 fun AmityPostMediaImageChildrenFour(
     modifier: Modifier = Modifier,
+    postChildren: List<AmityPost>,
     images: List<AmityImage>,
     isVideoPost: Boolean,
-    onClick: (AmityImage) -> Unit,
+    onClick: (AmityPost) -> Unit,
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -301,8 +306,8 @@ fun AmityPostMediaImageChildrenFour(
                 .weight(2f)
         ) {
             AmityPostImageView(
-                image = images[0],
-                onClick = { onClick(images[0]) }
+                post = postChildren[0],
+                onClick = { onClick(postChildren[0]) }
             )
             if (isVideoPost) {
                 AmityPostMediaPlayButton(
@@ -323,8 +328,8 @@ fun AmityPostMediaImageChildrenFour(
                     .weight(1f)
             ) {
                 AmityPostImageView(
-                    image = images[1],
-                    onClick = { onClick(images[1]) }
+                    post = postChildren[1],
+                    onClick = { onClick(postChildren[1]) }
                 )
                 if (isVideoPost) {
                     AmityPostMediaPlayButton(
@@ -338,8 +343,8 @@ fun AmityPostMediaImageChildrenFour(
                     .weight(1f)
             ) {
                 AmityPostImageView(
-                    image = images[2],
-                    onClick = { onClick(images[2]) }
+                    post = postChildren[2],
+                    onClick = { onClick(postChildren[2]) }
                 )
                 if (isVideoPost) {
                     AmityPostMediaPlayButton(
@@ -354,18 +359,18 @@ fun AmityPostMediaImageChildrenFour(
                     .weight(1f)
             ) {
                 AmityPostImageView(
-                    image = images[3],
-                    onClick = { onClick(images[3]) }
+                    post = postChildren[3],
+                    onClick = { onClick(postChildren[3]) }
                 )
 
-                if (images.size > 4) {
+                if (postChildren.size > 4) {
                     Box(
                         modifier = modifier
                             .fillMaxSize()
                             .background(Color.Black.copy(0.5f))
                     ) {
                         Text(
-                            text = "+${images.size - 3}",
+                            text = "+${postChildren.size - 3}",
                             style = AmityTheme.typography.title.copy(
                                 fontSize = 20.sp,
                                 lineHeight = 24.sp,
@@ -394,22 +399,9 @@ fun getChildPostData(post: AmityPost): List<AmityPost.Data> {
 fun AmityPostMediaPlayButton(
     modifier: Modifier = Modifier,
 ) {
-    Box(
-        modifier = modifier
-            .size(40.dp)
-            .background(
-                color = Color.Black.copy(0.5f),
-                shape = CircleShape
-            )
-    ) {
-        Icon(
-            painter = painterResource(id = R.drawable.amity_ic_play),
-            contentDescription = null,
-            tint = Color.White,
-            modifier = modifier
-                .size(24.dp)
-                .align(Alignment.Center)
-                .padding(start = 6.dp, end = 4.dp)
-        )
-    }
+    Image(
+        painter = painterResource(id = R.drawable.amity_ic_play),
+        contentDescription = null,
+        modifier = modifier.size(40.dp)
+    )
 }

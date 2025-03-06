@@ -31,7 +31,7 @@ class AmityMemberPickerViewModel : AmityBaseViewModel() {
     @OptIn(ExperimentalPagingApi::class)
     fun getAllUsers(): Flowable<PagingData<AmityUser>> {
         val userRepo = AmityCoreClient.newUserRepository()
-        return userRepo.searchUserByDisplayName("")
+        return userRepo.searchUsers("")
             .build()
             .query()
     }
@@ -39,7 +39,7 @@ class AmityMemberPickerViewModel : AmityBaseViewModel() {
     @OptIn(ExperimentalPagingApi::class)
     fun searchUser(onResult: (list: PagingData<AmityUser>) -> Unit): Completable {
         val userRepo = AmityCoreClient.newUserRepository()
-        return userRepo.searchUserByDisplayName(searchString.get() ?: "")
+        return userRepo.searchUsers(searchString.get() ?: "")
             .sortBy(AmityUserSortOption.DISPLAYNAME)
             .build()
             .query()

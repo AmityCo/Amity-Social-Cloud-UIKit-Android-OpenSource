@@ -29,6 +29,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.sdk.helper.core.coroutines.await
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
+import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
 import com.amity.socialcloud.uikit.common.ui.elements.AmityPostPreviewLinkView
@@ -37,7 +38,6 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.isVisible
 import com.amity.socialcloud.uikit.common.utils.shimmerBackground
-import com.amity.socialcloud.uikit.common.utils.showToast
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerHelper
@@ -62,6 +62,7 @@ fun AmityPostContentComponent(
     post: AmityPost,
     style: AmityPostContentComponentStyle,
     category: AmityPostCategory = AmityPostCategory.GENERAL,
+    boldedText: String? = null,
     hideMenuButton: Boolean,
     hideTarget: Boolean = false,
     onTapAction: () -> Unit = {},
@@ -100,20 +101,18 @@ fun AmityPostContentComponent(
                             onSuccess = {
                                 val text =
                                     "Post deleted"
-                                pageScope?.showSnackbar(
+                                AmityUIKitSnackbar.publishSnackbarMessage(
                                     message = text,
-                                    drawableRes = R.drawable.amity_ic_check_circle,
-                                    additionalHeight = 52,
+                                    offsetFromBottom = 52
                                 )
                                 viewModel.updateDialogUIState(AmityPostMenuDialogUIState.CloseDialog)
                             },
                             onError = {
                                 val text =
                                     "Failed to delete post. Please try again."
-                                pageScope?.showSnackbar(
+                                AmityUIKitSnackbar.publishSnackbarErrorMessage(
                                     message = text,
-                                    drawableRes = R.drawable.amity_ic_snack_bar_warning,
-                                    additionalHeight = 52,
+                                            offsetFromBottom = 52
                                 )
                                 viewModel.updateDialogUIState(AmityPostMenuDialogUIState.CloseDialog)
                             }
@@ -165,10 +164,9 @@ fun AmityPostContentComponent(
                         } catch (e: Exception) {
                             val text =
                                 "Oops, something went wrong."
-                            pageScope?.showSnackbar(
+                            AmityUIKitSnackbar.publishSnackbarErrorMessage(
                                 message = text,
-                                drawableRes = R.drawable.amity_ic_snack_bar_warning,
-                                additionalHeight = 52,
+                                offsetFromBottom = 52
                             )
                         }
                     }
@@ -251,6 +249,7 @@ fun AmityPostContentComponent(
                     modifier = modifier,
                     post = post,
                     style = style,
+                    boldedText = boldedText,
                     onClick = {
                         if (!isPostDetailPage) {
                             onTapAction()

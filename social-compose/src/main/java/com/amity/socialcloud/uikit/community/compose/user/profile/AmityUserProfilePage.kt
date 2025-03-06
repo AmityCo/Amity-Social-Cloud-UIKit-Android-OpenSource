@@ -67,7 +67,9 @@ fun AmityUserProfilePage(
 ) {
     val context = LocalContext.current
     val lazyListState = rememberLazyListState()
+    val viewModelKey = remember(userId) { "profile_$userId" }
     val viewModel = viewModel<AmityUserProfilePageViewModel>(
+        key = viewModelKey,
         factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 return AmityUserProfilePageViewModel(userId) as T
@@ -75,7 +77,11 @@ fun AmityUserProfilePage(
         }
     )
 
-    val state by remember { viewModel.userProfileState }.collectAsState()
+    LaunchedEffect(userId) {
+        viewModel.refresh()
+    }
+
+    val state by viewModel.userProfileState.collectAsState()
     val user by remember(state) { derivedStateOf { state.user } }
     val isBlockedByMe by remember(state) { derivedStateOf { state.userFollowInfo?.getStatus() == AmityFollowStatus.BLOCKED } }
 

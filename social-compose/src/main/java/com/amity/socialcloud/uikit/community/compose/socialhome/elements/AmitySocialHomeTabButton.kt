@@ -39,10 +39,11 @@ fun AmitySocialHomeTabButton(
                 color = if (isSelected) AmityTheme.colors.primary else Color.Transparent,
                 shape = RoundedCornerShape(size = 24.dp)
             )
-            .padding(horizontal = 12.dp, vertical = 8.dp)
+            .padding(horizontal = 16.dp, vertical = 6.dp)
             .clickableWithoutRipple { onClick(item) }
     ) {
         Text(
+            modifier = Modifier.padding(horizontal = 2.dp, vertical = 6.dp),
             text = title,
             style = AmityTheme.typography.title.copy(
                 color = if (isSelected) Color.White else AmityTheme.colors.secondaryShade1,

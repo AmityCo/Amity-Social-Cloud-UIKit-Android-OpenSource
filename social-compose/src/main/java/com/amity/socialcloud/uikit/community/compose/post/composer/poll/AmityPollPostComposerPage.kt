@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.waterfall
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -32,7 +33,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalMinimumInteractiveComponentEnforcement
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
@@ -178,7 +179,13 @@ fun AmityPollPostComposerPage(
     }
 
     BackHandler {
-        showDiscardPostDialog = true
+        val hasNoInput = question.trim().isEmpty()
+                && textFields.none { it.text.trim().isNotEmpty() }
+        if(hasNoInput) {
+            context.closePageWithResult(Activity.RESULT_CANCELED)
+        } else {
+            showDiscardPostDialog = true
+        }
     }
 
     val scrollState = rememberLazyListState()
@@ -218,7 +225,13 @@ fun AmityPollPostComposerPage(
                                     .size(24.dp)
                                     .padding(2.dp)
                                     .clickableWithoutRipple {
-                                        showDiscardPostDialog = true
+                                        val hasNoInput = question.trim().isEmpty()
+                                                && textFields.none { it.text.trim().isNotEmpty() }
+                                        if(hasNoInput) {
+                                            context.closePageWithResult(Activity.RESULT_CANCELED)
+                                        } else {
+                                            showDiscardPostDialog = true
+                                        }
                                     }
                                     .testTag(getAccessibilityId())
                             )
@@ -344,7 +357,9 @@ fun AmityPollPostComposerPage(
                     Spacer(modifier = modifier.height(4.dp))
 
                     AmityMentionTextField(
-                        modifier = Modifier.padding(horizontal = 16.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
                         maxLines = 30,
                         hintText = "What's your poll question?",
                         mentionedUser = selectedUserToMention,
@@ -491,6 +506,7 @@ fun AmityPollPostComposerPage(
                                         top = 12.dp,
                                         bottom = 12.dp
                                     ),
+                                    maxLines = 5,
                                 )
 
                                 IconButton(
@@ -795,7 +811,7 @@ fun AmityPollPostComposerPage(
             if (showDiscardPostDialog) {
                 AmityAlertDialog(
                     dialogTitle = "Discard this post?",
-                    dialogText = "The post will be permanently deleted. It cannot be undone.",
+                    dialogText = "The post will be permanently discarded. It cannot be undone.",
                     confirmText = "Discard",
                     dismissText = "Keep editing",
                     confirmTextColor = AmityTheme.colors.alert,
@@ -937,7 +953,7 @@ fun AmityPollDurationSelectionBottomSheet(
             },
             sheetState = sheetState,
             containerColor = AmityTheme.colors.background,
-            windowInsets = WindowInsets(top = 54.dp),
+            contentWindowInsets = { WindowInsets.waterfall },
             modifier = modifier.semantics {
                 testTagsAsResourceId = true
             }
@@ -1017,7 +1033,7 @@ fun AmityPollDurationOptionItem(
                 .weight(1f)
                 .testTag(text)
         )
-        CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
+        CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
             RadioButton(
                 modifier = Modifier.testTag(text),
                 selected = isSelected,

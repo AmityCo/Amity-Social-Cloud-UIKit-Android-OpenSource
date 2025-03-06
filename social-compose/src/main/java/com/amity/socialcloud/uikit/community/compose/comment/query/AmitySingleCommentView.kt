@@ -20,6 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.sdk.model.social.comment.AmityCommentReferenceType
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
@@ -165,7 +166,10 @@ fun AmitySingleCommentView(
             confirmTextColor = AmityTheme.colors.alert,
             dismissTextColor = AmityTheme.colors.highlight,
             onConfirmation = {
-                comment.delete().subscribeOn(Schedulers.io()).subscribe()
+                AmitySocialClient.newCommentRepository()
+                    .softDeleteComment(comment.getCommentId())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe()
                 showDeleteBannedWordCommentDialog = false
             },
             onDismissRequest = { showDeleteBannedWordCommentDialog = false }

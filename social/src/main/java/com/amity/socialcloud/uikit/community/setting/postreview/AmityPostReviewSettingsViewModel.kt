@@ -137,7 +137,7 @@ class AmityPostReviewSettingsViewModel(private val savedState: SavedStateHandle)
             AmityCommunityPostSettings.ANYONE_CAN_POST
         }
         return AmitySocialClient.newCommunityRepository()
-            .updateCommunity(communityId)
+            .editCommunity(communityId)
             .postSettings(postSettings)
             .build()
             .apply()
