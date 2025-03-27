@@ -104,7 +104,7 @@ fun AmityBlockedUsersPage(
                                 Spacer(modifier = modifier.size(8.dp))
                                 Text(
                                     "Nothing here to see yet",
-                                    style = AmityTheme.typography.title.copy(
+                                    style = AmityTheme.typography.titleLegacy.copy(
                                         color = AmityTheme.colors.baseShade3
                                     )
                                 )
@@ -157,7 +157,7 @@ fun AmityBlockedUsersPage(
                                         ) {
                                             Text(
                                                 text = "Unblock",
-                                                style = AmityTheme.typography.caption.copy(
+                                                style = AmityTheme.typography.captionLegacy.copy(
                                                     fontWeight = FontWeight.SemiBold
                                                 ),
                                             )

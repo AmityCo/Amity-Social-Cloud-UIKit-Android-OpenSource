@@ -106,7 +106,7 @@ fun AmityPostTargetSelectionPage(
                 ) {
                     Text(
                         text = getConfig().getText(),
-                        style = AmityTheme.typography.title,
+                        style = AmityTheme.typography.titleLegacy,
                         modifier = modifier
                             .align(Alignment.Center)
                             .testTag(getAccessibilityId()),
@@ -146,7 +146,7 @@ fun AmityPostTargetSelectionPage(
                 ) {
                     Text(
                         text = getConfig().getText(),
-                        style = AmityTheme.typography.body.copy(
+                        style = AmityTheme.typography.bodyLegacy.copy(
                             fontWeight = FontWeight.SemiBold
                         ),
                         modifier = modifier.testTag(getAccessibilityId()),

@@ -46,6 +46,7 @@ fun AmityDetailedMediaAttachmentComponent(
                         pageScope = pageScope,
                         componentScope = getComponentScope(),
                         elementId = "camera_button",
+                        isEnabled = allowedPickerType.isEnabled
                     ) {
                         viewModel.setPostAttachmentPickerEvent(AmityPostAttachmentPickerEvent.OpenImageOrVideoSelectionSheet)
                     }
@@ -53,6 +54,7 @@ fun AmityDetailedMediaAttachmentComponent(
                         pageScope = pageScope,
                         componentScope = getComponentScope(),
                         elementId = "image_button",
+                        isEnabled = allowedPickerType.isEnabled
                     ) {
                         viewModel.setPostAttachmentPickerEvent(AmityPostAttachmentPickerEvent.OpenImagePicker)
                     }
@@ -60,6 +62,7 @@ fun AmityDetailedMediaAttachmentComponent(
                         pageScope = pageScope,
                         componentScope = getComponentScope(),
                         elementId = "video_button",
+                        isEnabled = allowedPickerType.isEnabled
                     ) {
                         viewModel.setPostAttachmentPickerEvent(AmityPostAttachmentPickerEvent.OpenVideoPicker)
                     }
@@ -74,11 +77,12 @@ fun AmityDetailedMediaAttachmentComponent(
                      */
                 }
 
-                AmityPostAttachmentAllowedPickerType.Image -> {
+                is AmityPostAttachmentAllowedPickerType.Image -> {
                     AmityDetailedMediaAttachmentElement(
                         pageScope = pageScope,
                         componentScope = getComponentScope(),
                         elementId = "camera_button",
+                        isEnabled = allowedPickerType.isEnabled
                     ) {
                         viewModel.setPostAttachmentPickerEvent(AmityPostAttachmentPickerEvent.OpenImageCamera)
                     }
@@ -86,16 +90,18 @@ fun AmityDetailedMediaAttachmentComponent(
                         pageScope = pageScope,
                         componentScope = getComponentScope(),
                         elementId = "image_button",
+                        isEnabled = allowedPickerType.isEnabled
                     ) {
                         viewModel.setPostAttachmentPickerEvent(AmityPostAttachmentPickerEvent.OpenImagePicker)
                     }
                 }
 
-                AmityPostAttachmentAllowedPickerType.Video -> {
+                is AmityPostAttachmentAllowedPickerType.Video -> {
                     AmityDetailedMediaAttachmentElement(
                         pageScope = pageScope,
                         componentScope = getComponentScope(),
                         elementId = "camera_button",
+                        isEnabled = allowedPickerType.isEnabled
                     ) {
                         viewModel.setPostAttachmentPickerEvent(AmityPostAttachmentPickerEvent.OpenVideoCamera)
                     }
@@ -103,12 +109,13 @@ fun AmityDetailedMediaAttachmentComponent(
                         pageScope = pageScope,
                         componentScope = getComponentScope(),
                         elementId = "video_button",
+                        isEnabled = allowedPickerType.isEnabled
                     ) {
                         viewModel.setPostAttachmentPickerEvent(AmityPostAttachmentPickerEvent.OpenVideoPicker)
                     }
                 }
 
-                AmityPostAttachmentAllowedPickerType.File -> {
+                is AmityPostAttachmentAllowedPickerType.File -> {
                     /*
                     AmityDetailedMediaAttachmentElement(
                         pageScope = pageScope,
@@ -130,6 +137,7 @@ fun AmityDetailedMediaAttachmentElement(
     pageScope: AmityComposePageScope? = null,
     componentScope: AmityComposeComponentScope? = null,
     elementId: String,
+    isEnabled: Boolean,
     onClick: () -> Unit
 ) {
     AmityBaseElement(
@@ -144,7 +152,7 @@ fun AmityDetailedMediaAttachmentElement(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 12.dp)
                 .clickableWithoutRipple {
-                    onClick()
+                    if(isEnabled) onClick()
                 }
         ) {
             AmityPostAttachmentButton(
@@ -152,11 +160,13 @@ fun AmityDetailedMediaAttachmentElement(
                 componentScope = componentScope,
                 elementId = elementId,
                 onClick = onClick,
+                isEnabled = isEnabled
             )
             Text(
                 text = getConfig().getText(),
-                style = AmityTheme.typography.body.copy(
-                    fontWeight = FontWeight.SemiBold
+                style = AmityTheme.typography.bodyLegacy.copy(
+                    fontWeight = FontWeight.SemiBold,
+                    color = if(isEnabled) AmityTheme.colors.base else AmityTheme.colors.baseShade3
                 )
             )
         }

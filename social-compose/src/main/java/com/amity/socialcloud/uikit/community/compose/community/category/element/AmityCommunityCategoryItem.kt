@@ -76,7 +76,7 @@ fun AmityCommunityCategoryItem(
         Spacer(modifier.width(12.dp))
         Text(
             text = category.getName(),
-            style = AmityTheme.typography.body.copy(
+            style = AmityTheme.typography.bodyLegacy.copy(
                 fontWeight = FontWeight.SemiBold,
             ),
             modifier = modifier.weight(1f)

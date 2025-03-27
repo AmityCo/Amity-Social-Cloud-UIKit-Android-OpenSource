@@ -148,6 +148,23 @@ fun AmityCommunityProfileActionsContainer(
                     )
                 }
             }
+
+            if (shouldShowPostCreationButton) {
+                AmityBottomSheetActionItem(
+                    icon = R.drawable.ic_amity_ic_live_stream_create,
+                    text = "Live stream",
+                    modifier = modifier,
+                ) {
+                    onDismiss()
+                    behavior.goToCreateLivestreamPage(
+                        AmityCommunityProfilePageBehavior.Context(
+                            pageContext = context,
+                            activityLauncher = launcher,
+                            community = community,
+                        )
+                    )
+                }
+            }
         }
     }
 }

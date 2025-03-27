@@ -2,7 +2,6 @@ package com.amity.socialcloud.uikit.chat.compose.live.composer
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -83,7 +82,7 @@ fun AmityMentionSuggestionView(
                     text = text,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    style = AmityTheme.typography.body.copy(
+                    style = AmityTheme.typography.bodyLegacy.copy(
                         fontWeight = FontWeight.SemiBold,
                         color = AmityTheme.colors.baseShade1,
                     ),

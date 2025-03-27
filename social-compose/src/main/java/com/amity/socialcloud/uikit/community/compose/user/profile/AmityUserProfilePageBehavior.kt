@@ -1,8 +1,12 @@
 package com.amity.socialcloud.uikit.community.compose.user.profile
 
 import android.content.Context
+import android.content.Intent
+import androidx.activity.result.ActivityResultLauncher
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.behavior.AmityBaseBehavior
+import com.amity.socialcloud.uikit.community.compose.livestream.create.AmityCreateLivestreamPageActivity
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerOptions
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerPageActivity
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostTargetType
@@ -52,6 +56,21 @@ open class AmityUserProfilePageBehavior : AmityBaseBehavior() {
             context = context,
             targetId = userId,
             targetType = AmityPost.TargetType.USER,
+        )
+        context.startActivity(intent)
+    }
+
+    open fun goToLivestreamPostComposerPage(
+        context: Context,
+        targetId: String,
+        targetType: AmityPost.TargetType,
+        community: AmityCommunity? = null,
+    ) {
+        val intent = AmityCreateLivestreamPageActivity.newIntent(
+            context = context,
+            targetId = targetId,
+            targetType = targetType,
+            community = community,
         )
         context.startActivity(intent)
     }

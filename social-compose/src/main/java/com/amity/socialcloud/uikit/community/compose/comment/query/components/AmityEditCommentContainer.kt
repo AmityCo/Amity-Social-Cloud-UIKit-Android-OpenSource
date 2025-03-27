@@ -14,7 +14,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,8 +22,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
@@ -42,9 +41,10 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.getBackgroundColor
 import com.amity.socialcloud.uikit.common.utils.getValue
 import com.amity.socialcloud.uikit.common.utils.shade
+import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentViewModel
-import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.AmityMentionSuggestionView
 import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.AmityMentionTextField
+import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.AmityMentionSuggestionView
 import com.google.gson.JsonObject
 
 @Composable
@@ -78,10 +78,10 @@ fun AmityEditCommentContainer(
 
     var selectedUserToMention by remember { mutableStateOf<AmityUser?>(null) }
     var mentionedUsers by remember { mutableStateOf<List<AmityMentionMetadata.USER>>(emptyList()) }
+    val context = LocalContext.current
 
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-    }
+    // Define character limit constant for comments
+    val COMMENT_MAX_CHAR_LIMIT = 50000
 
     AmityBaseComponent(
         modifier = modifier,
@@ -109,12 +109,11 @@ fun AmityEditCommentContainer(
                 AmityMentionTextField(
                     modifier = Modifier
                         .weight(1f)
-                        .focusRequester(focusRequester)
                         .background(
                             color = AmityTheme.colors.baseShade4,
                             shape = RoundedCornerShape(20.dp)
                         )
-                        .padding(horizontal = 12.dp)
+                        .padding(horizontal = 12.dp) // Match exact padding from original component
                         .testTag(getAccessibilityId("text_field")),
                     value = localCommentText,
                     mentionedUser = selectedUserToMention,
@@ -128,11 +127,12 @@ fun AmityEditCommentContainer(
                     },
                     onQueryToken = {
                         queryToken = it ?: ""
-                        shouldShowSuggestion = (it != null)
+                        shouldShowSuggestion = (it != null) // This will hide suggestions when token is null
                     },
                     onUserMentions = {
                         mentionedUsers = it
-                    }
+                    },
+                    autoFocus = true, // Enable auto-focus for edit container
                 )
             }
             if (shouldShowSuggestion) {
@@ -168,7 +168,7 @@ fun AmityEditCommentContainer(
                     ) {
                         Text(
                             text = getElementScope().getConfig().getValue("cancel_button_text"),
-                            style = AmityTheme.typography.caption.copy(
+                            style = AmityTheme.typography.captionLegacy.copy(
                                 color = AmityTheme.colors.baseShade1,
                             ),
                             modifier = modifier.testTag(getAccessibilityId())
@@ -191,6 +191,14 @@ fun AmityEditCommentContainer(
                         enabled = isAllowedToSave,
                         modifier = modifier.height(30.dp),
                         onClick = {
+                            // Check character limit before proceeding
+                            if (localCommentText.length > COMMENT_MAX_CHAR_LIMIT) {
+                                AmityUIKitSnackbar.publishSnackbarErrorMessage(
+                                    context.getString(R.string.amity_add_comment_exceed_error_message, COMMENT_MAX_CHAR_LIMIT)
+                                )
+                                return@Button
+                            }
+
                             onEditFinished()
 
                             viewModel.editComment(
@@ -209,7 +217,7 @@ fun AmityEditCommentContainer(
                     ) {
                         Text(
                             text = getElementScope().getConfig().getValue("save_button_text"),
-                            style = AmityTheme.typography.caption.copy(
+                            style = AmityTheme.typography.captionLegacy.copy(
                                 color = Color.White,
                             ),
                             modifier = modifier.testTag(getAccessibilityId())

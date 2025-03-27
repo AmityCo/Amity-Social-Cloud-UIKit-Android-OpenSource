@@ -94,7 +94,7 @@ fun AmityCommunityVideoFeedItem(
 
         Text(
             text = videoDuration.formatVideoDuration(),
-            style = AmityTheme.typography.body.copy(
+            style = AmityTheme.typography.bodyLegacy.copy(
                 color = Color.White,
             ),
             modifier = Modifier

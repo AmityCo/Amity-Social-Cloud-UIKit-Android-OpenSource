@@ -97,7 +97,7 @@ fun AmityCommunityJoinButton(
             Text(
                 modifier = Modifier.padding(end = 12.dp),
                 text = "Join",
-                style = AmityTheme.typography.caption.copy(
+                style = AmityTheme.typography.captionLegacy.copy(
                     color = Color.White,
                 ),
             )
@@ -137,7 +137,7 @@ fun AmityCommunityJoinButton(
             Text(
                 modifier = Modifier.padding(end = 12.dp),
                 text = "Joined",
-                style = AmityTheme.typography.caption
+                style = AmityTheme.typography.captionLegacy
             )
         }
     }

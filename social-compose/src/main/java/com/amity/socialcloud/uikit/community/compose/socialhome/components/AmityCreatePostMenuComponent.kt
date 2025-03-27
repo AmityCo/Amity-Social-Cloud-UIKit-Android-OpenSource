@@ -66,10 +66,13 @@ fun AmityCreatePostMenuComponent(
     val targetStoryBehavior by lazy {
         AmitySocialBehaviorHelper.storyTargetSelectionPageBehavior
     }
-
     val targetPollBehavior by lazy {
         AmitySocialBehaviorHelper.pollTargetSelectionPageBehavior
     }
+    val targetLivestreamBehavior by lazy {
+        AmitySocialBehaviorHelper.livestreamTargetSelectionPageBehavior
+    }
+
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
@@ -120,7 +123,7 @@ fun AmityCreatePostMenuComponent(
                                 )
                                 Text(
                                     text = getConfig().getText(),
-                                    style = AmityTheme.typography.body.copy(
+                                    style = AmityTheme.typography.bodyLegacy.copy(
                                         fontWeight = FontWeight.SemiBold
                                     )
                                 )
@@ -168,7 +171,7 @@ fun AmityCreatePostMenuComponent(
                                     )
                                     Text(
                                         text = getConfig().getText(),
-                                        style = AmityTheme.typography.body.copy(
+                                        style = AmityTheme.typography.bodyLegacy.copy(
                                             fontWeight = FontWeight.SemiBold
                                         )
                                     )
@@ -206,7 +209,7 @@ fun AmityCreatePostMenuComponent(
                             )
                             Text(
                                 "Poll",
-                                style = AmityTheme.typography.body.copy(
+                                style = AmityTheme.typography.bodyLegacy.copy(
                                     fontWeight = FontWeight.SemiBold
                                 )
                             )
@@ -226,8 +229,6 @@ fun AmityCreatePostMenuComponent(
                         }
                     }
                 )
-                /*
-                // TODO: 17/6/24 enable when feature is ready
                 DropdownMenuItem(
                     text = {
                         Row(
@@ -242,22 +243,29 @@ fun AmityCreatePostMenuComponent(
                                 modifier = modifier.size(20.dp)
                             )
                             Text(
-                                "Livestream",
-                                style = AmityTheme.typography.body.copy(
+                                "Live stream",
+                                style = AmityTheme.typography.bodyLegacy.copy(
                                     fontWeight = FontWeight.SemiBold
                                 )
                             )
                         }
                     },
                     onClick = {
-                        expanded = false
-                        behavior.goToTargetSelectionPage(
-                            context = context,
-                            type = AmityTargetSelectionPageType.LIVESTREAM
-                        )
+                        onDismiss()
+                        if (targetType == CreatePostTargetType.COMMUNITY && targetId?.isNotEmptyOrBlank() == true) {
+                            targetLivestreamBehavior.goToLivestreamPostComposerPage(
+                                context = context,
+                                launcher = launcher,
+                                targetId = targetId,
+                                targetType = AmityPost.TargetType.COMMUNITY,
+                            )
+                        } else {
+                            behavior.goToSelectLivestreamTargetPage(
+                                context = context
+                            )
+                        }
                     }
                 )
-                 */
             }
         }
     }

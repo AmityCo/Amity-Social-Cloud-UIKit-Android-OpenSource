@@ -65,7 +65,7 @@ fun AmityToolBar(
             val text = getConfig().getText().takeIf { it.isNotEmptyOrBlank() } ?: title
             Text(
                 text = text,
-                style = AmityTheme.typography.title,
+                style = AmityTheme.typography.titleLegacy,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = modifier

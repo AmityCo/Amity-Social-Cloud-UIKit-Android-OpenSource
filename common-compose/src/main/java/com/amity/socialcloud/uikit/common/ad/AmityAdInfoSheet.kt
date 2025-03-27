@@ -47,7 +47,7 @@ fun AmityAdInfoSheet(
         ) {
             Text(
                 text = "About this advertisement",
-                style = AmityTheme.typography.title,
+                style = AmityTheme.typography.titleLegacy,
                 modifier = modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 12.dp)
@@ -63,7 +63,7 @@ fun AmityAdInfoSheet(
 
             Text(
                 text = "Why this advertisement?",
-                style = AmityTheme.typography.body.copy(
+                style = AmityTheme.typography.bodyLegacy.copy(
                     fontWeight = FontWeight.SemiBold,
                 ),
                 modifier = modifier.padding(horizontal = 16.dp),
@@ -90,7 +90,7 @@ fun AmityAdInfoSheet(
 
                 Text(
                     text = "You're seeing this advertisement because it was displayed to all users in the system.",
-                    style = AmityTheme.typography.body.copy(
+                    style = AmityTheme.typography.bodyLegacy.copy(
                         color = AmityTheme.colors.baseShade3
                     )
                 )
@@ -100,7 +100,7 @@ fun AmityAdInfoSheet(
 
             Text(
                 text = "About this advertiser",
-                style = AmityTheme.typography.body.copy(
+                style = AmityTheme.typography.bodyLegacy.copy(
                     fontWeight = FontWeight.SemiBold,
                 ),
                 modifier = modifier.padding(horizontal = 16.dp),
@@ -127,7 +127,7 @@ fun AmityAdInfoSheet(
 
                 Text(
                     text = "Advertiser name: $name",
-                    style = AmityTheme.typography.body.copy(
+                    style = AmityTheme.typography.bodyLegacy.copy(
                         color = AmityTheme.colors.baseShade3
                     )
                 )

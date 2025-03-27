@@ -57,7 +57,7 @@ fun AmityUserListItem(
                     text = user.getDisplayName() ?: "",
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
-                    style = AmityTheme.typography.body.copy(
+                    style = AmityTheme.typography.bodyLegacy.copy(
                         fontWeight = FontWeight.SemiBold,
                     ),
                     modifier = modifier

@@ -47,7 +47,7 @@ fun AmityPostPreviewLinkView(
     modifier: Modifier = Modifier,
     post: AmityPost,
 ) {
-    val isAllowedPostDataType by remember(post.getPostId()) {
+    val isAllowedPostDataType by remember(post.getPostId(), post.getUpdatedAt()) {
         derivedStateOf {
             post.getType() == AmityPost.DataType.TEXT && post.getChildren().isEmpty()
         }
@@ -189,7 +189,7 @@ fun AmityPreviewLinkView(
             if (previewMetadata != null) {
                 Text(
                     text = previewMetadata!!.domain,
-                    style = AmityTheme.typography.caption.copy(
+                    style = AmityTheme.typography.captionLegacy.copy(
                         fontWeight = FontWeight.Normal,
                         color = AmityTheme.colors.baseShade1,
                     ),
@@ -202,7 +202,7 @@ fun AmityPreviewLinkView(
                     text = previewMetadata!!.title,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
-                    style = AmityTheme.typography.body.copy(
+                    style = AmityTheme.typography.bodyLegacy.copy(
                         fontWeight = FontWeight.SemiBold,
                     ),
                 )
@@ -211,7 +211,7 @@ fun AmityPreviewLinkView(
                     modifier = Modifier.padding(top = 6.dp),
                     text = context.getString(R.string.amity_preview_not_available_title),
                     lineHeight = 10.sp,
-                    style = AmityTheme.typography.body.copy(
+                    style = AmityTheme.typography.bodyLegacy.copy(
                         fontWeight = FontWeight.SemiBold,
                     ),
                 )
@@ -221,7 +221,7 @@ fun AmityPreviewLinkView(
                     maxLines = 2,
                     lineHeight = 14.sp,
                     overflow = TextOverflow.Ellipsis,
-                    style = AmityTheme.typography.body.copy(
+                    style = AmityTheme.typography.bodyLegacy.copy(
                         color = AmityTheme.colors.baseShade1,
                     ),
                 )

@@ -3,6 +3,7 @@ package com.amity.socialcloud.uikit.community.compose.comment.create
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -18,6 +19,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
@@ -37,8 +40,8 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentViewModel
-import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.AmityMentionSuggestionView
 import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.AmityMentionTextField
+import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.AmityMentionSuggestionView
 
 @Composable
 fun AmityCommentComposerBar(
@@ -57,6 +60,9 @@ fun AmityCommentComposerBar(
     }
     val viewModel =
         viewModel<AmityCommentTrayComponentViewModel>(viewModelStoreOwner = viewModelStoreOwner)
+
+    // Define character limit constant for comments
+    val COMMENT_MAX_CHAR_LIMIT = 50000
 
     var shouldShowSuggestion by remember { mutableStateOf(false) }
     var queryToken by remember { mutableStateOf("") }
@@ -90,8 +96,11 @@ fun AmityCommentComposerBar(
 
         if (shouldShowSuggestion) {
             AmityMentionSuggestionView(
+                modifier = Modifier,
                 community = viewModel.community,
-                keyword = queryToken
+                keyword = queryToken,
+                heightIn = 220.dp,
+                shape = RoundedCornerShape(8.dp),
             ) {
                 selectedUserToMention = it
                 shouldShowSuggestion = false
@@ -120,14 +129,17 @@ fun AmityCommentComposerBar(
             AmityMentionTextField(
                 modifier = Modifier
                     .weight(1f)
-                    .testTag("comment_tray_component/comment_composer_text_field")
-                    .background(
-                        color = AmityTheme.colors.baseShade4,
-                        shape = RoundedCornerShape(20.dp)
-                    )
-                    .padding(horizontal = 12.dp),
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(color = AmityTheme.colors.baseShade4)
+                    .testTag("comment_tray_component/comment_composer_text_field"),
+                value = commentText,
                 mentionedUser = selectedUserToMention,
+                horizontalPadding = 12.dp,
+                verticalPadding = 12.dp,
+                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 12.dp),
+                backgroundColor = Color.Transparent,
                 shouldClearText = isCommentPosted,
+                maxLines = 6,
                 onValueChange = {
                     commentText = it
                 },
@@ -145,7 +157,7 @@ fun AmityCommentComposerBar(
 
             Text(
                 text = "Post",
-                style = AmityTheme.typography.body.copy(
+                style = AmityTheme.typography.bodyLegacy.copy(
                     color = if (shouldAllowToPost) AmityTheme.colors.primary
                     else AmityTheme.colors.primaryShade2,
                 ),
@@ -154,9 +166,14 @@ fun AmityCommentComposerBar(
                     .padding(start = 4.dp, bottom = 12.dp)
                     .testTag("comment_tray_component/comment_composer_post_button")
                     .clickableWithoutRipple(enabled = shouldAllowToPost) {
+                        // Check character limit before proceeding
+                        if (commentText.length > COMMENT_MAX_CHAR_LIMIT) {
+                            AmityUIKitSnackbar.publishSnackbarErrorMessage(
+                                context.getString(R.string.amity_add_comment_exceed_error_message, COMMENT_MAX_CHAR_LIMIT)
+                            )
+                            return@clickableWithoutRipple
+                        }
 
-                        val text = commentText
-                        commentText = ""
                         keyboardController?.hide()
                         isCommentPosted = true
 
@@ -164,11 +181,10 @@ fun AmityCommentComposerBar(
                             referenceId = referenceId,
                             referenceType = referenceType,
                             replyCommentId = if (isReplyingToComment) replyComment?.getCommentId() else null,
-                            commentText = text,
+                            commentText = commentText,
                             mentionedUsers = mentionedUsers,
                             onSuccess = {
                                 selectedUserToMention = null
-
                                 isReplyingToComment = false
                                 isCommentPosted = false
                                 onClose()
@@ -178,12 +194,9 @@ fun AmityCommentComposerBar(
                                 val errorMessage =
                                     if (AmityError.from(it) == AmityError.BAN_WORD_FOUND) {
                                         context.getString(R.string.amity_add_blocked_words_comment_error_message)
-                                       // "Your comment contains inappropriate word. Please review and delete it."
                                     } else if(AmityError.from(it) == AmityError.LINK_NOT_ALLOWED) {
                                         context.getString(R.string.amity_add_blocked_links_comment_error_message)
-                                        //"Your comment contains a link that's not allowed. Please review and delete it."
-                                    }
-                                    else {
+                                    } else {
                                         if (isReplyingToComment) {
                                             context.getString(R.string.amity_add_reply_error_message)
                                         } else {
@@ -194,7 +207,6 @@ fun AmityCommentComposerBar(
 
                                 commentText = ""
                                 selectedUserToMention = null
-
                                 isReplyingToComment = false
                                 isCommentPosted = false
                                 onClose()

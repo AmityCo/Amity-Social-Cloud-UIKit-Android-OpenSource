@@ -3,16 +3,17 @@ package com.amity.socialcloud.uikit.community.compose.post.composer
 import android.app.Activity
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,10 +27,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
@@ -55,14 +58,14 @@ import com.amity.socialcloud.uikit.community.compose.post.composer.components.Am
 import com.amity.socialcloud.uikit.community.compose.post.composer.elements.AmityMediaAttachmentElement
 import com.amity.socialcloud.uikit.community.compose.post.composer.elements.AmityMediaCameraSelectionSheet
 import com.amity.socialcloud.uikit.community.compose.post.model.AmityPostMedia
-import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.AmityMentionSuggestionView
 import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.AmityMentionTextField
+import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.AmityMentionSuggestionView
 import com.google.gson.JsonObject
 
 @Composable
 fun AmityPostComposerPage(
     modifier: Modifier = Modifier,
-    options: AmityPostComposerOptions
+    options: AmityPostComposerOptions,
 ) {
     val context = LocalContext.current
 
@@ -80,6 +83,9 @@ fun AmityPostComposerPage(
     var showDiscardPostDialog by remember { mutableStateOf(false) }
     var showPendingPostDialog by remember { mutableStateOf(false) }
     var isCameraPermissionGranted by remember { mutableStateOf(false) }
+
+    var existingAttachmentType by remember { mutableStateOf<AmityPostMedia.Type?>(null) }
+    val originalAttachmentIds = remember { mutableStateOf(emptyList<String>()) }
 
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
@@ -116,16 +122,35 @@ fun AmityPostComposerPage(
     val selectedMediaFiles by viewModel.selectedMediaFiles.collectAsState()
     val isAllMediaSuccessfullyUploaded by viewModel.isAllMediaSuccessfullyUploaded.collectAsState()
 
-    val shouldAllowToPost by remember(isInEditMode) {
+    val shouldAllowToPost by remember(isInEditMode, localPostText, selectedMediaFiles, isAllMediaSuccessfullyUploaded, postCreationEvent) {
         fun isContentReady(text: String, mediaFiles: List<AmityPostMedia>): Boolean {
-            return (text.trim().isNotEmpty() && mediaFiles.isEmpty()) ||
-                    (mediaFiles.isNotEmpty() && isAllMediaSuccessfullyUploaded)
-        }
-        derivedStateOf {
-            if (isInEditMode) {
-                (localPostText != postText || post?.getChildren()?.size != selectedMediaFiles.size)
-                        && isContentReady(localPostText, selectedMediaFiles)
+            return if (mediaFiles.isEmpty()) {
+                // If no attachments, text must not be empty
+                text.trim().isNotEmpty()
             } else {
+                // If attachments exist, only care if they're uploaded successfully
+                // (text is optional when attachments exist)
+                isAllMediaSuccessfullyUploaded
+            }
+        }
+        
+        // Don't allow posting when creation/update operation is in progress
+        val isOperationInProgress = postCreationEvent == AmityPostCreationEvent.Creating || 
+                                    postCreationEvent == AmityPostCreationEvent.Updating
+        
+        derivedStateOf {
+            if (isOperationInProgress) {
+                // Disable button during operations
+                false
+            } else if (isInEditMode) {
+                // Edit mode validation
+                val hasTextChanged = localPostText.trim() != postText.trim()
+                val hasAttachmentsChanged = hasAttachmentsChanged(originalAttachmentIds.value, selectedMediaFiles)
+                val isContentValid = isContentReady(localPostText, selectedMediaFiles)
+                
+                (hasTextChanged || hasAttachmentsChanged) && isContentValid
+            } else {
+                // Create mode validation
                 isContentReady(localPostText, selectedMediaFiles)
             }
         }
@@ -238,8 +263,13 @@ fun AmityPostComposerPage(
                         AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to create video file")
 
                     } else {
-                        capturedMediaUri = AmityCameraUtil.createVideoUri(context, videoFile)
-                        videoCaptureLauncher.launch(capturedMediaUri)
+                        val videoUri = AmityCameraUtil.createVideoUri(context, videoFile)
+                        if (videoUri == null) {
+                            AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to create video URI")
+                        } else {
+                            capturedMediaUri = videoUri
+                            videoCaptureLauncher.launch(videoUri)
+                        }
                     }
                 } else {
                     AmityUIKitSnackbar.publishSnackbarErrorMessage("Camera permission not granted")
@@ -282,9 +312,39 @@ fun AmityPostComposerPage(
         }
     }
 
+
+    LaunchedEffect(post) {
+        // Set existing type if the post already has any attachment
+        val firstAttachment = post?.getChildren()?.firstOrNull()
+        existingAttachmentType = when {
+            firstAttachment?.getData() is AmityPost.Data.IMAGE -> AmityPostMedia.Type.IMAGE
+            firstAttachment?.getData() is AmityPost.Data.VIDEO -> AmityPostMedia.Type.VIDEO
+            else -> null
+        }
+
+        val children = post?.getChildren().orEmpty()
+        originalAttachmentIds.value = children.mapNotNull { childPost ->
+            when (val data = childPost.getData()) {
+                is AmityPost.Data.IMAGE -> data.getImage()?.getFileId()
+                is AmityPost.Data.VIDEO -> data.getThumbnailImage()?.getFileId()
+                else -> null
+            }
+        }
+    }
+
+    LaunchedEffect(selectedMediaFiles) {
+        if (selectedMediaFiles.isEmpty()) {
+            existingAttachmentType = null
+        } else {
+            // Update to the type of the first selected media
+            existingAttachmentType = selectedMediaFiles.first().type
+        }
+    }
+
     BackHandler {
         if(isInEditMode) {
-            val hasEdited = localPostText != postText || post?.getChildren()?.size != selectedMediaFiles.size
+            val hasEdited = localPostText != postText ||
+                hasAttachmentsChanged(originalAttachmentIds.value, selectedMediaFiles)
             if (hasEdited) {
                 showDiscardPostDialog = true
             } else {
@@ -318,16 +378,18 @@ fun AmityPostComposerPage(
                 }
 
                 AmityPostCreationEvent.Pending -> {
+                    getPageScope().dismissSnackbar()
                     showPendingPostDialog = true
                 }
 
                 is AmityPostCreationEvent.Failed -> {
+                    getPageScope().dismissSnackbar()
                     val exception = (postCreationEvent as AmityPostCreationEvent.Failed).throwable
                     val error = AmityError.from(exception)
                     val text = when(error) {
                         AmityError.LINK_NOT_ALLOWED -> context.getString(R.string.amity_add_blocked_links_post_error_message)
                         AmityError.BAN_WORD_FOUND -> context.getString(R.string.amity_add_blocked_words_post_error_message)
-                        else -> if(exception is TextPostExceedException) context.getString(R.string.amity_post_text_exceed_error_message)
+                        else -> if(exception is TextPostExceedException) context.getString(R.string.amity_post_text_exceed_error_message, exception.charLimit)
                         else if (isInEditMode) context.getString(R.string.amity_post_edit_generic_error_message) else context.getString(R.string.amity_post_create_generic_error_message)
                     }
                     AmityUIKitSnackbar.publishSnackbarErrorMessage(
@@ -410,7 +472,7 @@ fun AmityPostComposerPage(
                 ) {
                     Text(
                         text = if (isInEditMode) getConfig().getText() else title,
-                        style = AmityTheme.typography.title,
+                        style = AmityTheme.typography.titleLegacy,
                         modifier = modifier.testTag(getAccessibilityId()),
                     )
                 }
@@ -420,8 +482,8 @@ fun AmityPostComposerPage(
                     elementId = if (isInEditMode) "edit_post_button" else "create_new_post_button"
                 ) {
                     Text(
-                        text = getConfig().getText(),
-                        style = AmityTheme.typography.body.copy(
+                        text = if(isInEditMode) "Save" else getConfig().getText(),
+                        style = AmityTheme.typography.bodyLegacy.copy(
                             color = if (shouldAllowToPost) AmityTheme.colors.primary else AmityTheme.colors.primaryShade2
                         ),
                         modifier = modifier
@@ -446,12 +508,28 @@ fun AmityPostComposerPage(
             if (isInEditMode) {
                 if (post != null) {
                     AmityMentionTextField(
-                        maxLines = 30,
-                        hintText = "What's going on...",
-                        mentionedUser = selectedUserToMention,
+                        modifier = modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 20.dp)
+                            .constrainAs(content) {
+                                top.linkTo(header.bottom)
+                                start.linkTo(parent.start)
+                                end.linkTo(parent.end)
+                            },
                         value = localPostText,
+                        hintText = "What's going on...",
+                        maxLines = 30,
+                        mentionedUser = selectedUserToMention,
                         mentionMetadata = mentionGetter.getMentionedUsers(),
                         mentionees = post?.getMentionees() ?: emptyList(),
+                        textStyle = AmityTheme.typography.body.copy(
+                            color = AmityTheme.colors.base,
+                            fontSize = 16.sp  // Match original post composer font size
+                        ),
+                        contentPadding = PaddingValues(0.dp), // Post composer has minimal padding
+                        verticalPadding = 0.dp,
+                        horizontalPadding = 0.dp,
+                        backgroundColor = Color.Transparent,
                         onValueChange = {
                             localPostText = it
                         },
@@ -465,22 +543,30 @@ fun AmityPostComposerPage(
                         onUserMentions = {
                             mentionedUsers = it
                         },
-                        modifier = modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 20.dp)
-                            .constrainAs(content) {
-                                top.linkTo(header.bottom)
-                                start.linkTo(parent.start)
-                                end.linkTo(parent.end)
-                            }
                     )
                 }
             } else {
                 AmityMentionTextField(
-                    maxLines = 30,
-                    hintText = "What's going on...",
-                    mentionedUser = selectedUserToMention,
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 20.dp)
+                        .constrainAs(content) {
+                            top.linkTo(header.bottom)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                        },
                     value = localPostText,
+                    hintText = "What's going on...",
+                    maxLines = 30,
+                    mentionedUser = selectedUserToMention,
+                    textStyle = AmityTheme.typography.body.copy(
+                        color = AmityTheme.colors.base,
+                        fontSize = 16.sp  // Match original post composer font size
+                    ),
+                    contentPadding = PaddingValues(0.dp), // Post composer has minimal padding
+                    verticalPadding = 0.dp,
+                    horizontalPadding = 0.dp,
+                    backgroundColor = Color.Transparent, 
                     onValueChange = {
                         localPostText = it
                     },
@@ -494,29 +580,13 @@ fun AmityPostComposerPage(
                     onUserMentions = {
                         mentionedUsers = it
                     },
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 20.dp)
-                        .constrainAs(content) {
-                            top.linkTo(header.bottom)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                        }
                 )
             }
 
-            AmitySelectedMediaComponent(
-                modifier = Modifier
-                    .constrainAs(media) {
-                        top.linkTo(content.bottom)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    }
-            )
-
             if (shouldShowSuggestion) {
                 AmityMentionSuggestionView(
-                    heightIn = 150.dp,
+                    heightIn = 220.dp, // Match the height we used for comments
+                    shape = RoundedCornerShape(8.dp), // Apply rounded corners
                     community = viewModel.community,
                     keyword = queryToken,
                     modifier = Modifier
@@ -531,17 +601,24 @@ fun AmityPostComposerPage(
                 }
             }
 
-            if (!isInEditMode) {
-                AmityMediaAttachmentElement(
-                    modifier = Modifier
-                        .constrainAs(attachment) {
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                            bottom.linkTo(parent.bottom)
-                        },
-                    pageScope = getPageScope(),
-                )
-            }
+            AmitySelectedMediaComponent(
+                modifier = Modifier
+                    .constrainAs(media) {
+                        top.linkTo(content.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+            )
+
+            AmityMediaAttachmentElement(
+                modifier = Modifier
+                    .constrainAs(attachment) {
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        bottom.linkTo(parent.bottom)
+                    },
+                pageScope = getPageScope(),
+            )
         }
 
         if (showMediaCameraSelectionSheet) {
@@ -598,8 +675,8 @@ fun AmityPostComposerPage(
 
         if (showPendingPostDialog) {
             AmityAlertDialog(
-                dialogTitle = "",
-                dialogText = "Your post has been submitted to the pending list. It will be reviewed by community moderator.",
+                dialogTitle = "Posts sent for review",
+                dialogText = "Your post has been submitted to the pending list. It will be published once approved by the community moderator.",
                 dismissText = "OK",
             ) {
                 showPendingPostDialog = false
@@ -607,4 +684,13 @@ fun AmityPostComposerPage(
             }
         }
     }
+}
+
+fun hasAttachmentsChanged(originalIds: List<String>, newMedia: List<AmityPostMedia>): Boolean {
+    // Different sizes => changed
+    if (originalIds.size != newMedia.size) return true
+    
+    // Compare IDs instead of URIs
+    val newIds = newMedia.mapNotNull { it.id }
+    return originalIds.toSet() != newIds.toSet()
 }

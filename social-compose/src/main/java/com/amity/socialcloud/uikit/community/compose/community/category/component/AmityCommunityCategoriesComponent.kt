@@ -134,7 +134,7 @@ fun AmityCommunityCategoriesComponent(
 
                                         Text(
                                             text = "See more",
-                                            style = AmityTheme.typography.body.copy(fontWeight = FontWeight.SemiBold)
+                                            style = AmityTheme.typography.bodyLegacy.copy(fontWeight = FontWeight.SemiBold)
                                         )
                                         Spacer(modifier.width(4.dp))
                                         Icon(

@@ -357,7 +357,7 @@ class AmityLiveStreamPostCreatorFragment : RxFragment() {
                 val second = durationMs / 1000 % 60
                 val min = durationMs / 1000 / 60
                 binding.liveLabel.text = getString(
-                    R.string.amity_video_stream_live_with_time,
+                    R.string.amity_v4_create_livestream_live_timer_status,
                     min.format(),
                     second.format()
                 )

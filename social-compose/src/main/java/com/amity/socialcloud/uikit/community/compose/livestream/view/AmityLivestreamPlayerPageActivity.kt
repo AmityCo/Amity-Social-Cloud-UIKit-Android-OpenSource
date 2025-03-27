@@ -1,4 +1,4 @@
-package com.amity.socialcloud.uikit.community.compose.livestream
+package com.amity.socialcloud.uikit.community.compose.livestream.view
 
 import android.content.Context
 import android.content.Intent
@@ -29,7 +29,6 @@ class AmityLivestreamPlayerPageActivity : AppCompatActivity() {
                 AmityLivestreamPlayerPage(
                     modifier = Modifier,
                     post = post,
-                    onClose = { finish() }
                 )
             }
         }

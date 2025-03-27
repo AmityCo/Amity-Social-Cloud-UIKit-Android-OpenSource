@@ -69,7 +69,7 @@ fun AmitySearchBarView(
                     onSearch(it.text)
                 },
                 singleLine = true,
-                textStyle = AmityTheme.typography.body.copy(
+                textStyle = AmityTheme.typography.bodyLegacy.copy(
                     color = AmityTheme.colors.base,
                 ),
                 cursorBrush = SolidColor(AmityTheme.colors.highlight),
@@ -80,7 +80,7 @@ fun AmitySearchBarView(
                     if (keyword.text.isEmpty()) {
                         Text(
                             text = hint,
-                            style = AmityTheme.typography.body.copy(
+                            style = AmityTheme.typography.bodyLegacy.copy(
                                 color = AmityTheme.colors.baseShade2
                             ),
                         )

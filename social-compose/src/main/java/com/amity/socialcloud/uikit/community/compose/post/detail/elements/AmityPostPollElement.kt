@@ -19,7 +19,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LocalMinimumInteractiveComponentEnforcement
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
@@ -155,7 +154,7 @@ fun AmityPostPollElement(
             text = (post.getData() as? AmityPost.Data.TEXT)?.getText() ?: poll.getQuestion(),
             mentionGetter = mentionGetter,
             mentionees = post.getMentionees(),
-            style = AmityTheme.typography.body,
+            style = AmityTheme.typography.bodyLegacy,
             intialExpand = style == AmityPostContentComponentStyle.DETAIL,
             onClick = onClick,
             onMentionedUserClick = onMentionedUserClick,
@@ -166,7 +165,7 @@ fun AmityPostPollElement(
         if (!isResultState) {
 
             Text(
-                style = AmityTheme.typography.caption.copy(
+                style = AmityTheme.typography.captionLegacy.copy(
                     color = AmityTheme.colors.baseShade2,
                     fontWeight = FontWeight.SemiBold
                 ),
@@ -212,7 +211,7 @@ fun AmityPostPollElement(
                         modifier = Modifier
                             .weight(1f)
                             .padding(end = 12.dp),
-                        style = AmityTheme.typography.body.copy(
+                        style = AmityTheme.typography.bodyLegacy.copy(
                             fontWeight = FontWeight.SemiBold,
                             color = if(canVote) AmityTheme.colors.base else AmityTheme.colors.baseShade3
                         ),
@@ -273,7 +272,7 @@ fun AmityPostPollElement(
                 ) {
                     Text(
                         text = "See ${poll.getAnswers().size - MAX_OPTION_PREVIEWS} more options",//getConfig().getText(),
-                        style = AmityTheme.typography.caption.copy(
+                        style = AmityTheme.typography.captionLegacy.copy(
                             color = AmityTheme.colors.secondary,
                         ),
                         textAlign = TextAlign.Center,
@@ -308,7 +307,7 @@ fun AmityPostPollElement(
                             isResultState = true
                         } catch (e: Exception) {
                             val text =
-                                "Failed to create post. Please try again."
+                                "Failed to vote poll. Please try again."
                             componentScope.showSnackbar(
                                 message = text,
                                 drawableRes = R.drawable.amity_ic_snack_bar_warning,
@@ -322,7 +321,7 @@ fun AmityPostPollElement(
             ) {
                 Text(
                     text = "Vote",
-                    style = AmityTheme.typography.caption.copy(
+                    style = AmityTheme.typography.captionLegacy.copy(
                         color = Color.White,
                     ),
                     textAlign = TextAlign.Center,
@@ -360,7 +359,7 @@ fun AmityPostPollElement(
                         Text(
                             modifier = Modifier.weight(1f),
                             text = answer.data,
-                            style = AmityTheme.typography.body.copy(
+                            style = AmityTheme.typography.bodyLegacy.copy(
                                 color = AmityTheme.colors.base,
                                 fontWeight = FontWeight.SemiBold,
                             ),
@@ -382,7 +381,7 @@ fun AmityPostPollElement(
 
                         Text(
                             text = formattedPercentage,
-                            style = AmityTheme.typography.body.copy(
+                            style = AmityTheme.typography.bodyLegacy.copy(
                                 color = if (isTopAnswer) AmityTheme.colors.primary else AmityTheme.colors.baseShade1,
                                 fontWeight = FontWeight.SemiBold,
                             ),
@@ -446,7 +445,7 @@ fun AmityPostPollElement(
 
                         Text(
                             text = votedBy,
-                            style = AmityTheme.typography.caption.copy(
+                            style = AmityTheme.typography.captionLegacy.copy(
                                 color = AmityTheme.colors.baseShade2,
                             ),
                         )
@@ -532,7 +531,7 @@ fun AmityPostPollElement(
                 ) {
                     Text(
                         text = "See full results",
-                        style = AmityTheme.typography.caption.copy(
+                        style = AmityTheme.typography.captionLegacy.copy(
                             color = AmityTheme.colors.secondary,
                         ),
                         textAlign = TextAlign.Center,
@@ -562,7 +561,7 @@ fun AmityPostPollElement(
 
             Text(
                 modifier = Modifier.weight(1f),
-                style = AmityTheme.typography.caption.copy(
+                style = AmityTheme.typography.captionLegacy.copy(
                     color = AmityTheme.colors.baseShade2,
                     fontWeight = FontWeight.SemiBold
                 ),
@@ -586,7 +585,7 @@ fun AmityPostPollElement(
                             onClick()
                         }
                     },
-                    style = AmityTheme.typography.caption.copy(
+                    style = AmityTheme.typography.captionLegacy.copy(
                         color = AmityTheme.colors.primary,
                         fontWeight = FontWeight.SemiBold
                     ),

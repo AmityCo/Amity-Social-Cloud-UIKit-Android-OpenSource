@@ -1,10 +1,10 @@
-package com.amity.snipet.verifier.video.player
+package com.amity.snipet.verifier.livestream.view
 
 import android.content.Context
 import androidx.compose.runtime.Composable
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
-import com.amity.socialcloud.uikit.community.compose.livestream.AmityLivestreamPlayerPage
-import com.amity.socialcloud.uikit.community.compose.livestream.AmityLivestreamPlayerPageActivity
+import com.amity.socialcloud.uikit.community.compose.livestream.view.AmityLivestreamPlayerPage
+import com.amity.socialcloud.uikit.community.compose.livestream.view.AmityLivestreamPlayerPageActivity
 
 class AmityLivestreamPlayerPageSample {
     /* begin_sample_code
@@ -14,17 +14,14 @@ class AmityLivestreamPlayerPageSample {
       description: Amity Livestream player page
       */
     @Composable
-    fun composeLivestreamPlayerPage(post: AmityPost, onClose: () -> Unit) {
+    fun composeLivestreamPlayerPage(post: AmityPost) {
         AmityLivestreamPlayerPage(
             post = post,
-            onClose = {
-                // For example: activity.finish()
-            },
         )
     }
 
     fun startAnActivity(context: Context, post: AmityPost) {
-        val intent = AmityLivestreamPlayerPageActivity.newIntent(
+        val intent = AmityLivestreamPlayerPageActivity.Companion.newIntent(
             context = context,
             post = post,
         )

@@ -38,7 +38,7 @@ fun AmityEmptySearchResultComponent(
         Spacer(modifier = modifier.size(8.dp))
         Text(
             "No results found",
-            style = AmityTheme.typography.title.copy(
+            style = AmityTheme.typography.titleLegacy.copy(
                 color = AmityTheme.colors.baseShade3
             )
         )

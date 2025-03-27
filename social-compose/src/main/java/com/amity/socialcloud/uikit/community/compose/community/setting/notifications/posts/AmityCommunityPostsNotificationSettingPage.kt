@@ -100,7 +100,7 @@ fun AmityCommunityPostsNotificationSettingPage(
             ) {
                 Text(
                     text = "Save",
-                    style = AmityTheme.typography.body.copy(
+                    style = AmityTheme.typography.bodyLegacy.copy(
                         color = if (shouldAllowToSave) AmityTheme.colors.highlight
                         else AmityTheme.colors.highlight.shade(AmityColorShade.SHADE2),
                     ),

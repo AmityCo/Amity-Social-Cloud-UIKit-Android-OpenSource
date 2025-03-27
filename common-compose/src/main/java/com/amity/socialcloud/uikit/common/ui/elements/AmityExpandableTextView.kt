@@ -34,7 +34,7 @@ fun AmityExpandableText(
     mentionGetter: AmityMentionMetadataGetter = AmityMentionMetadataGetter(JsonObject()),
     mentionees: List<AmityMentionee> = emptyList(),
     boldWhenMatches: List<String> = emptyList(),
-    style: TextStyle = AmityTheme.typography.body,
+    style: TextStyle = AmityTheme.typography.bodyLegacy,
     previewLines: Int = 8,
     intialExpand: Boolean = false,
     onClick: () -> Unit = {},
@@ -248,7 +248,7 @@ fun AmityExpandableTextPreview() {
         text = "www.google.com Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur neque urna, malesuada sit amet mattis sit amet, fringilla vitae eros. Phasellus tristique dolor ut nulla tincidunt sollicitudin. Sed eu bibendum nibh. Cras sed ligula nunc. Fusce mollis hendrerit erat, in tempus nisl rhoncus nec. Vivamus vel dictum lectus. Sed suscipit ante sit amet nulla hendrerit, at tincidunt odio suscipit. Nam cursus malesuada eros, et aliquet sem. Quisque ligula nunc, aliquet sit amet scelerisque eleifend, cursus ut nisl. Sed condimentum eleifend sollicitudin. Nam nec magna egestas, ullamcorper diam in, eleifend justo. Quisque aliquam elit sollicitudin, viverra ex non, ultrices erat. Morbi fermentum, turpis et accumsan ultrices, felis metus posuere sem, at feugiat mi velit quis risus.",
         mentionGetter = AmityMentionMetadataGetter(JsonObject()),
         mentionees = emptyList(),
-        style = AmityTheme.typography.body,
+        style = AmityTheme.typography.bodyLegacy,
         onClick = {}
     )
 }

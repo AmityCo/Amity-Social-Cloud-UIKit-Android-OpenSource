@@ -67,7 +67,7 @@ fun AmityTrendingCommunitiesComponent(
                     ) {
                         Text(
                             text = "Trending now",
-                            style = AmityTheme.typography.title
+                            style = AmityTheme.typography.titleLegacy
                         )
                     }
 

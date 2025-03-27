@@ -112,7 +112,7 @@ fun AmityPostEngagementView(
                     Spacer(modifier = modifier.width(4.dp))
                     Text(
                         text = reactionCount,
-                        style = AmityTheme.typography.caption.copy(
+                        style = AmityTheme.typography.captionLegacy.copy(
                             fontWeight = FontWeight.Normal,
                             color = AmityTheme.colors.baseShade2
                         )
@@ -121,7 +121,7 @@ fun AmityPostEngagementView(
 
                 Text(
                     text = commentCount,
-                    style = AmityTheme.typography.caption.copy(
+                    style = AmityTheme.typography.captionLegacy.copy(
                         fontWeight = FontWeight.Normal,
                         color = AmityTheme.colors.baseShade2
                     ),
@@ -175,7 +175,7 @@ fun AmityPostEngagementView(
                     Text(
                         text = if (isPostDetailPage) getConfig().getText()
                         else localReactionCount.readableNumber(),
-                        style = AmityTheme.typography.body.copy(
+                        style = AmityTheme.typography.bodyLegacy.copy(
                             fontWeight = FontWeight.SemiBold,
                             color = if (isReacted) AmityTheme.colors.primary
                             else AmityTheme.colors.baseShade2
@@ -198,7 +198,7 @@ fun AmityPostEngagementView(
                     Text(
                         text = if (isPostDetailPage) getConfig().getText()
                         else post.getCommentCount().readableNumber(),
-                        style = AmityTheme.typography.body.copy(
+                        style = AmityTheme.typography.bodyLegacy.copy(
                             fontWeight = FontWeight.SemiBold,
                             color = AmityTheme.colors.baseShade2
                         ),

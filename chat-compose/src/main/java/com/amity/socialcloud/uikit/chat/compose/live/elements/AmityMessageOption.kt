@@ -146,7 +146,7 @@ fun AmityMessageOption(
 fun AmityMessageOptionItem(
 	option: String,
 	icon: ImageVector,
-	tint: Color = AmityTheme.typography.body.color,
+	tint: Color = AmityTheme.typography.bodyLegacy.color,
 	onDismiss: () -> Unit,
 	action: () -> Unit,
 ) {

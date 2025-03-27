@@ -115,7 +115,7 @@ fun AmityTopSearchBarComponent(
                         keyword = it
                     },
                     singleLine = true,
-                    textStyle = AmityTheme.typography.body.copy(
+                    textStyle = AmityTheme.typography.bodyLegacy.copy(
                         color = AmityTheme.colors.base,
                     ),
                     cursorBrush = SolidColor(AmityTheme.colors.highlight),
@@ -127,7 +127,7 @@ fun AmityTopSearchBarComponent(
                         if (keyword.text.isEmpty()) {
                             Text(
                                 text = title,
-                                style = AmityTheme.typography.body.copy(
+                                style = AmityTheme.typography.bodyLegacy.copy(
                                     color = AmityTheme.colors.baseShade2
                                 ),
                             )
@@ -172,7 +172,7 @@ fun AmityTopSearchBarComponent(
             ) {
                 Text(
                     text = getConfig().getText(),
-                    style = AmityTheme.typography.body.copy(
+                    style = AmityTheme.typography.bodyLegacy.copy(
                         color = AmityTheme.colors.primary
                     ),
                     modifier = modifier

@@ -43,7 +43,7 @@ fun AmityDisabledCommentView(
             )
             Text(
                 text = context.getString(R.string.amity_comments_disabled_message),
-                style = AmityTheme.typography.body.copy(
+                style = AmityTheme.typography.bodyLegacy.copy(
                     color = AmityTheme.colors.baseShade2
                 ),
                 modifier = Modifier.testTag("comment_tray_component/disabled_text_view")

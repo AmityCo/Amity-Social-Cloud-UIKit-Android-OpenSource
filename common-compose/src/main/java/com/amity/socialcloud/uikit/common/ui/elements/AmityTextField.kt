@@ -49,7 +49,7 @@ fun AmityTextField(
             disabledContainerColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent,
         ),
-        textStyle = AmityTheme.typography.body.copy(
+        textStyle = AmityTheme.typography.bodyLegacy.copy(
             color = if (enabled) AmityTheme.colors.base else AmityTheme.colors.baseShade2,
         ),
         keyboardOptions = keyboardOptions,

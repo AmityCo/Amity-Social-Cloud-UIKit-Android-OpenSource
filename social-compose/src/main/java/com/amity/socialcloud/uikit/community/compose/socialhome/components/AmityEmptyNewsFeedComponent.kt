@@ -73,7 +73,7 @@ fun AmityEmptyNewsFeedComponent(
                 ) {
                     Text(
                         text = getConfig().getText(),
-                        style = AmityTheme.typography.title.copy(
+                        style = AmityTheme.typography.titleLegacy.copy(
                             color = AmityTheme.colors.secondaryShade3
                         ),
                         modifier = modifier.testTag(getAccessibilityId()),
@@ -86,7 +86,7 @@ fun AmityEmptyNewsFeedComponent(
                 ) {
                     Text(
                         text = getConfig().getText(),
-                        style = AmityTheme.typography.caption.copy(
+                        style = AmityTheme.typography.captionLegacy.copy(
                             fontWeight = FontWeight.Normal,
                             color = AmityTheme.colors.secondaryShade3
                         ),
@@ -123,7 +123,7 @@ fun AmityEmptyNewsFeedComponent(
 
                         Text(
                             text = getConfig().getText(),
-                            style = AmityTheme.typography.body.copy(
+                            style = AmityTheme.typography.bodyLegacy.copy(
                                 color = Color.White
                             ),
                         )
@@ -139,7 +139,7 @@ fun AmityEmptyNewsFeedComponent(
                 ) {
                     Text(
                         text = "Create community",
-                        style = AmityTheme.typography.body.copy(
+                        style = AmityTheme.typography.bodyLegacy.copy(
                             color = AmityTheme.colors.primary
                         ),
                         modifier = modifier

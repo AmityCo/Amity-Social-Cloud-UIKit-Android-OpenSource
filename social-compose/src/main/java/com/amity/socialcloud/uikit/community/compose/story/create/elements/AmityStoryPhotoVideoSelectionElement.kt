@@ -57,7 +57,7 @@ fun AmityStoryPhotoVideoSelectionElement(
         ) {
             Text(
                 text = "Photo",
-                style = AmityTheme.typography.body.copy(
+                style = AmityTheme.typography.bodyLegacy.copy(
                     color = if (isPhotoSelected) AmityTheme.colors.secondaryShade1
                     else AmityTheme.colors.secondaryShade2,
                 ),
@@ -79,7 +79,7 @@ fun AmityStoryPhotoVideoSelectionElement(
         ) {
             Text(
                 text = "Video",
-                style = AmityTheme.typography.body.copy(
+                style = AmityTheme.typography.bodyLegacy.copy(
                     color = if (isPhotoSelected) AmityTheme.colors.secondaryShade2
                     else AmityTheme.colors.secondaryShade1,
                 ),

@@ -50,7 +50,7 @@ fun AmityStoryHyperlinkView(
         )
         Text(
             text = text,
-            style = AmityTheme.typography.body.copy(
+            style = AmityTheme.typography.bodyLegacy.copy(
                 color = AmityTheme.colors.secondary,
                 fontWeight = FontWeight.SemiBold,
             ),
@@ -82,7 +82,7 @@ fun AmityStoryAdHyperlinkView(
     ) {
         Text(
             text = text,
-            style = AmityTheme.typography.body.copy(
+            style = AmityTheme.typography.bodyLegacy.copy(
                 color = AmityTheme.colors.secondary,
                 fontWeight = FontWeight.SemiBold,
             ),

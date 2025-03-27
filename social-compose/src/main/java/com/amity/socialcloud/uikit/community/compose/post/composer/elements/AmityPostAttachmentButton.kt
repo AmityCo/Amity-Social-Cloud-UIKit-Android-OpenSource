@@ -26,6 +26,7 @@ fun AmityPostAttachmentButton(
     pageScope: AmityComposePageScope? = null,
     componentScope: AmityComposeComponentScope? = null,
     elementId: String,
+    isEnabled: Boolean,
     onClick: () -> Unit = {},
 ) {
     AmityBaseElement(
@@ -40,17 +41,19 @@ fun AmityPostAttachmentButton(
                     color = if (isUIKitInDarkTheme()) {
                         AmityTheme.colors.baseShade3
                     } else {
-                        AmityTheme.colors.baseShade4
+                        AmityTheme.colors.backgroundShade1
                     },
                 )
                 .size(32.dp)
-                .clickableWithoutRipple(onClick = onClick)
+                .clickableWithoutRipple(onClick = {
+                    if(isEnabled) onClick.invoke()
+                })
                 .testTag(getAccessibilityId()),
         ) {
             Icon(
                 painter = painterResource(id = getConfig().getIcon()),
                 contentDescription = null,
-                tint = AmityTheme.colors.base,
+                tint = if(isEnabled) AmityTheme.colors.base else AmityTheme.colors.baseShade3,
                 modifier = Modifier
                     .size(24.dp)
                     .align(Alignment.Center),

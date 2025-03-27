@@ -229,10 +229,10 @@ fun AmityLiveChatMessageComposeBar(
                                         when (AmityError.from(exception.code)) {
                                             AmityError.BAN_WORD_FOUND -> "Your message wasn't sent as it contained a blocked word."
                                             AmityError.LINK_NOT_ALLOWED -> "Your message wasn't sent as it contained a link that's not allowed."
-                                            else -> exception.message ?: "unknown error"
+                                            else -> exception.message ?: "This message failed to be sent. Please try again."
                                         }
                                     } else {
-                                        exception.message ?: "unknown error"
+                                        exception.message ?: "This message failed to be sent. Please try again."
                                     }
                                     getComponentScope().showSnackbar(
                                         message = errorMessage

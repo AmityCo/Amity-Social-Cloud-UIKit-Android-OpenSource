@@ -65,13 +65,13 @@ fun AmityCommunityStorySettingPage(
                 ) {
                     Text(
                         text = "Allow comments on community stories",
-                        style = AmityTheme.typography.body.copy(
+                        style = AmityTheme.typography.bodyLegacy.copy(
                             fontWeight = FontWeight.SemiBold
                         )
                     )
                     Text(
                         text = "Turn on to receive comments on stories in this community.",
-                        style = AmityTheme.typography.caption.copy(
+                        style = AmityTheme.typography.captionLegacy.copy(
                             fontWeight = FontWeight.Normal,
                             color = AmityTheme.colors.baseShade1,
                         )

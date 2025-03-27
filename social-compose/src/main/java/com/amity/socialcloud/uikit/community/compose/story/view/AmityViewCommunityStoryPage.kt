@@ -321,7 +321,7 @@ fun AmityViewCommunityStoryPage(
                         },
                         onError = {
                             shouldShowLoading = false
-                            AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to delete story")
+                            AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to delete story. Please try again.")
                             viewModel.updateDialogUIState(AmityStoryModalDialogUIState.CloseDialog)
                             viewModel.handleSegmentTimer(false)
                         }

@@ -45,7 +45,7 @@ fun AmitySocialHomeTabButton(
         Text(
             modifier = Modifier.padding(horizontal = 2.dp, vertical = 6.dp),
             text = title,
-            style = AmityTheme.typography.title.copy(
+            style = AmityTheme.typography.titleLegacy.copy(
                 color = if (isSelected) Color.White else AmityTheme.colors.secondaryShade1,
                 fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
             )

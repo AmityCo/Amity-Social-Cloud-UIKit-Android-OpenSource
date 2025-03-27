@@ -35,7 +35,6 @@ import com.amity.socialcloud.sdk.model.social.category.AmityCommunityCategory
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.compose.R
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
-import kotlinx.coroutines.Dispatchers
 
 @Composable
 fun AmityCommunityAvatarView(
@@ -134,7 +133,7 @@ fun AmityCommunityAvatarWithLabelView(
             ) {
                 Text(
                     text = label,
-                    style = AmityTheme.typography.body.copy(
+                    style = AmityTheme.typography.bodyLegacy.copy(
                         color = Color.White
                     ),
                     modifier = Modifier

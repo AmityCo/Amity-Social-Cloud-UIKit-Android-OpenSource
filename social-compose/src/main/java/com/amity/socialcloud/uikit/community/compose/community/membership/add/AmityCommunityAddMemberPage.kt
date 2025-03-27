@@ -105,7 +105,7 @@ fun AmityCommunityAddMemberPage(
 
                     Text(
                         text = "Add member",
-                        style = AmityTheme.typography.title,
+                        style = AmityTheme.typography.titleLegacy,
                         modifier = modifier
                             .padding(vertical = 17.dp)
                             .align(Alignment.Center)
@@ -230,7 +230,7 @@ fun AmityCommunityAddMemberPage(
                 ) {
                     Text(
                         text = "Add member",
-                        style = AmityTheme.typography.caption.copy(
+                        style = AmityTheme.typography.captionLegacy.copy(
                             Color.White
                         ),
                     )

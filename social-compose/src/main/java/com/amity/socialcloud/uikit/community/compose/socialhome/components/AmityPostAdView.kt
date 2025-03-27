@@ -97,7 +97,7 @@ fun AmityPostAdView(
                         text = ad.getAdvertiser()?.getName() ?: "",
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        style = AmityTheme.typography.body.copy(
+                        style = AmityTheme.typography.bodyLegacy.copy(
                             fontWeight = FontWeight.SemiBold
                         )
                     )
@@ -122,7 +122,7 @@ fun AmityPostAdView(
         if (ad.getBody().isNotEmpty()) {
             Text(
                 text = ad.getBody(),
-                style = AmityTheme.typography.body,
+                style = AmityTheme.typography.bodyLegacy,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
             )
         }
@@ -157,7 +157,7 @@ fun AmityPostAdView(
                     text = ad.getDescription(),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    style = AmityTheme.typography.caption.copy(
+                    style = AmityTheme.typography.captionLegacy.copy(
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Normal,
                         color = AmityTheme.colors.baseShade1,
@@ -167,7 +167,7 @@ fun AmityPostAdView(
                     text = ad.getHeadline(),
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
-                    style = AmityTheme.typography.caption.copy()
+                    style = AmityTheme.typography.captionLegacy.copy()
                 )
             }
 
@@ -190,7 +190,7 @@ fun AmityPostAdView(
                         text = ad.getCallToAction(),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        style = AmityTheme.typography.caption.copy(
+                        style = AmityTheme.typography.captionLegacy.copy(
                             color = Color.White,
                         ),
                         modifier = modifier

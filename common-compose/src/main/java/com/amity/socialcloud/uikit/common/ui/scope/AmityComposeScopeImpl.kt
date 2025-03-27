@@ -228,4 +228,10 @@ interface SnackbarScope {
         }
     }
 
+    fun dismissSnackbar() {
+        getCoroutineScope().launch {
+            getSnackbarHostState().currentSnackbarData?.dismiss()
+        }
+    }
+
 }

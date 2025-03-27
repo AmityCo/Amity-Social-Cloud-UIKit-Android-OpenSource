@@ -54,7 +54,6 @@ import com.amity.socialcloud.uikit.common.utils.closePage
 import com.amity.socialcloud.uikit.common.utils.getKeyboardHeight
 import com.amity.socialcloud.uikit.common.utils.getText
 import com.amity.socialcloud.uikit.common.utils.isKeyboardVisible
-import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.user.edit.elements.AmityEditUserAvatar
 import kotlinx.coroutines.flow.catch
 
@@ -167,7 +166,7 @@ fun AmityEditUserProfilePage(
                     ) {
                         Text(
                             text = getConfig().getText(),
-                            style = AmityTheme.typography.title.copy(
+                            style = AmityTheme.typography.titleLegacy.copy(
                                 textAlign = TextAlign.Start,
                             ),
                             modifier = modifier
@@ -177,7 +176,7 @@ fun AmityEditUserProfilePage(
 
                         Text(
                             text = "${displayName.length}/$UserDisplayNameLimit",
-                            style = AmityTheme.typography.caption.copy(
+                            style = AmityTheme.typography.captionLegacy.copy(
                                 fontWeight = FontWeight.Normal,
                                 color = AmityTheme.colors.baseShade1
                             ),
@@ -225,7 +224,7 @@ fun AmityEditUserProfilePage(
                                     append(" (Optional)")
                                 }
                             },
-                            style = AmityTheme.typography.title.copy(
+                            style = AmityTheme.typography.titleLegacy.copy(
                                 textAlign = TextAlign.Start,
                             ),
                             modifier = modifier
@@ -235,7 +234,7 @@ fun AmityEditUserProfilePage(
 
                         Text(
                             text = "${about.length}/$UserAboutLimit",
-                            style = AmityTheme.typography.caption.copy(
+                            style = AmityTheme.typography.captionLegacy.copy(
                                 fontWeight = FontWeight.Normal,
                                 color = AmityTheme.colors.baseShade1
                             ),
@@ -312,7 +311,7 @@ fun AmityEditUserProfilePage(
                     ) {
                         Text(
                             text = getConfig().getText(),
-                            style = AmityTheme.typography.body.copy(
+                            style = AmityTheme.typography.bodyLegacy.copy(
                                 color = if (isSaveButtonEnabled) Color.White else AmityTheme.colors.baseShade3,
                             ),
                         )

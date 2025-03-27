@@ -84,7 +84,7 @@ fun AmityStoryTargetSelectionPage(
                 ) {
                     Text(
                         text = getConfig().getText(),
-                        style = AmityTheme.typography.title,
+                        style = AmityTheme.typography.titleLegacy,
                         modifier = modifier.align(Alignment.Center)
                     )
                 }

@@ -20,18 +20,15 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
-import com.amity.socialcloud.sdk.model.social.community.AmityCommunityPostSettings
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.elements.AmityCommunityAvatarView
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.getIcon
-import com.amity.socialcloud.uikit.common.utils.pagingLoadStateItem
 import com.amity.socialcloud.uikit.community.compose.target.AmityTargetSelectionPageViewModel
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityCommunityTargetListShimmer
 
@@ -58,7 +55,7 @@ fun AmityTargetSelectionMyCommunitiesView(
 
     Text(
         text = "My Communities",
-        style = AmityTheme.typography.body.copy(
+        style = AmityTheme.typography.bodyLegacy.copy(
             color = AmityTheme.colors.base.copy(alpha = 0.4f),
         ),
         modifier = modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -123,7 +120,7 @@ fun AmityTargetSelectionMyCommunitiesView(
 
                                 Text(
                                     text = community.getDisplayName(),
-                                    style = AmityTheme.typography.body.copy(
+                                    style = AmityTheme.typography.bodyLegacy.copy(
                                         fontWeight = FontWeight.SemiBold
                                     ),
                                     modifier = modifier,

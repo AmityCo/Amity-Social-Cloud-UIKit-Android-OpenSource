@@ -172,7 +172,7 @@ fun AmityReactionTab(
                     }
                     Text(
                         text = "$title $count",
-                        style = AmityTheme.typography.title.copy(
+                        style = AmityTheme.typography.titleLegacy.copy(
                             color = if (isSelected) AmityTheme.colors.highlight else AmityTheme.colors.base
                         ),
                         modifier = modifier.padding(vertical = 12.dp)
@@ -210,7 +210,7 @@ fun AmityReactionItems(
             Text(
                 modifier = Modifier.padding(top = 16.dp),
                 text = "No reactions yet",
-                style = AmityTheme.typography.body.copy(
+                style = AmityTheme.typography.bodyLegacy.copy(
                     color = AmityTheme.colors.baseShade2,
                 ),
             )
@@ -219,7 +219,7 @@ fun AmityReactionItems(
             Text(
                 modifier = Modifier.padding(top = 4.dp),
                 text = text,
-                style = AmityTheme.typography.caption.copy(
+                style = AmityTheme.typography.captionLegacy.copy(
                     color = AmityTheme.colors.baseShade2,
                 ),
             )
@@ -270,7 +270,7 @@ fun AmityReactionItems(
                         Text(
                             modifier = Modifier.padding(top = 16.dp),
                             text = "Unable to load content",
-                            style = AmityTheme.typography.body.copy(
+                            style = AmityTheme.typography.bodyLegacy.copy(
                                 color = AmityTheme.colors.baseShade2,
                             ),
                         )
@@ -279,7 +279,7 @@ fun AmityReactionItems(
                         Text(
                             modifier = Modifier.padding(top = 4.dp),
                             text = text,
-                            style = AmityTheme.typography.caption.copy(
+                            style = AmityTheme.typography.captionLegacy.copy(
                                 color = AmityTheme.colors.baseShade2,
                             ),
                         )
@@ -307,7 +307,7 @@ fun AmityReactionItems(
                             Text(
                                 modifier = Modifier.padding(top = 16.dp),
                                 text = "Unable to load reactions",
-                                style = AmityTheme.typography.body.copy(
+                                style = AmityTheme.typography.bodyLegacy.copy(
                                     color = AmityTheme.colors.baseShade2,
                                 ),
                             )

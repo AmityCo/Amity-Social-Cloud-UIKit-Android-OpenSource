@@ -45,7 +45,7 @@ fun AmityCommentComposeReplyLabel(
 
         Text(
             text = text,
-            style = AmityTheme.typography.body.copy(
+            style = AmityTheme.typography.bodyLegacy.copy(
                 color = AmityTheme.colors.baseShade1,
             ),
         )

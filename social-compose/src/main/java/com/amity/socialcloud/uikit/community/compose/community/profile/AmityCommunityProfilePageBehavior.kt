@@ -10,6 +10,7 @@ import com.amity.socialcloud.uikit.common.behavior.AmityBaseBehaviorContext
 import com.amity.socialcloud.uikit.community.compose.community.membership.list.AmityCommunityMembershipPageActivity
 import com.amity.socialcloud.uikit.community.compose.community.pending.AmityPendingPostsPageActivity
 import com.amity.socialcloud.uikit.community.compose.community.setting.AmityCommunitySettingPageActivity
+import com.amity.socialcloud.uikit.community.compose.livestream.create.AmityCreateLivestreamPageActivity
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerOptions
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerPageActivity
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostTargetType
@@ -84,6 +85,18 @@ open class AmityCommunityProfilePageBehavior : AmityBaseBehavior() {
         context: Context,
     ) {
         val intent = AmityPollPostComposerPageActivity.newIntent(
+            context = context.pageContext,
+            targetId = context.community?.getCommunityId()!!,
+            targetType = AmityPost.TargetType.COMMUNITY,
+            community = context.community,
+        )
+        context.pageContext.startActivity(intent)
+    }
+
+    open fun goToCreateLivestreamPage(
+        context: Context,
+    ) {
+        val intent = AmityCreateLivestreamPageActivity.newIntent(
             context = context.pageContext,
             targetId = context.community?.getCommunityId()!!,
             targetType = AmityPost.TargetType.COMMUNITY,

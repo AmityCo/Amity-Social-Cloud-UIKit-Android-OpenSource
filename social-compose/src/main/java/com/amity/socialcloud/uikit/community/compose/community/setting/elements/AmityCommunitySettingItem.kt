@@ -25,7 +25,7 @@ import com.amity.socialcloud.uikit.community.compose.R
 fun AmityCommunitySettingItem(
     modifier: Modifier = Modifier,
     title: String,
-    titleStyle: TextStyle = AmityTheme.typography.body,
+    titleStyle: TextStyle = AmityTheme.typography.bodyLegacy,
     icon: @Composable () -> Unit,
     onClick: () -> Unit,
 ) {

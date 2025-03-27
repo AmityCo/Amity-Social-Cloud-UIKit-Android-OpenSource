@@ -148,7 +148,7 @@ fun AmityPostHeaderElement(
                     firstText = post.getCreator()?.getDisplayName()?.trim() ?: ""
                     Text(
                         text = firstText,
-                        style = AmityTheme.typography.body.copy(
+                        style = AmityTheme.typography.bodyLegacy.copy(
                             fontWeight = FontWeight.SemiBold
                         ),
                         maxLines = 1,
@@ -214,7 +214,7 @@ fun AmityPostHeaderElement(
                                     text = secondText,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
-                                    style = AmityTheme.typography.body.copy(
+                                    style = AmityTheme.typography.bodyLegacy.copy(
                                         fontWeight = FontWeight.SemiBold
                                     ),
                                     onTextLayout = {
@@ -262,7 +262,7 @@ fun AmityPostHeaderElement(
                                         text = secondText,
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis,
-                                        style = AmityTheme.typography.body.copy(
+                                        style = AmityTheme.typography.bodyLegacy.copy(
                                             fontWeight = FontWeight.SemiBold
                                         ),
                                         onTextLayout = {
@@ -314,7 +314,7 @@ fun AmityPostHeaderElement(
 
                         Text(
                             text = " • ",
-                            style = AmityTheme.typography.caption.copy(
+                            style = AmityTheme.typography.captionLegacy.copy(
                                 fontWeight = FontWeight.Normal,
                                 color = AmityTheme.colors.baseShade2
                             )
@@ -328,7 +328,7 @@ fun AmityPostHeaderElement(
                         Text(
                             text = (post.getCreatedAt()?.readableSocialTimeDiff() ?: "")
                                     + if (post.isEdited()) " (edited)" else "",
-                            style = AmityTheme.typography.caption.copy(
+                            style = AmityTheme.typography.captionLegacy.copy(
                                 fontWeight = FontWeight.Normal,
                                 color = AmityTheme.colors.baseShade2
                             ),

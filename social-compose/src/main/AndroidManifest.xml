@@ -132,6 +132,26 @@
             android:screenOrientation="portrait"
             android:theme="@style/AmitySocialTheme" />
         <activity
+            android:name=".target.livestream.AmityLivestreamPostTargetSelectionPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme" />
+        <activity
+            android:name=".livestream.create.AmityCreateLivestreamPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmityStoryDarkTheme" />
+        <activity
+            android:name=".livestream.create.thumbnailpreview.AmityThumbnailPreviewPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmityStoryDarkTheme" />
+        <activity
+            android:name=".livestream.create.nopermission.AmityNoPermissionPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmityStoryDarkTheme" />
+        <activity
             android:name=".community.bycategory.AmityCommunitiesByCategoryPageActivity"
             android:configChanges="uiMode"
             android:screenOrientation="portrait"
@@ -174,7 +194,19 @@
             android:screenOrientation="portrait"
             android:theme="@style/AmitySocialTheme" />
         <activity
-            android:name=".livestream.AmityLivestreamPlayerPageActivity"
+            android:name=".livestream.view.AmityLivestreamPlayerPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".livestream.errorhandling.AmityLivestreamTerminatedPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".livestream.errorhandling.AmityLivestreamDeletedPageActivity"
             android:configChanges="uiMode"
             android:screenOrientation="portrait"
             android:theme="@style/AmitySocialTheme"

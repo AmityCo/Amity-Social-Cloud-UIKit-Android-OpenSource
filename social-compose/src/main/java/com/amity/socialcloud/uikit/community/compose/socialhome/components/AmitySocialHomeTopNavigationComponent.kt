@@ -57,7 +57,7 @@ fun AmitySocialHomeTopNavigationComponent(
             ) {
                 Text(
                     text = getConfig().getText(),
-                    style = AmityTheme.typography.caption.copy(
+                    style = AmityTheme.typography.captionLegacy.copy(
                         fontSize = 20.sp,
                     ),
                     modifier = modifier

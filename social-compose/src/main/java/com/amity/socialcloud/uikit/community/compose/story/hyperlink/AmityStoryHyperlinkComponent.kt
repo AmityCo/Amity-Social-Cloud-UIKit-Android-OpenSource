@@ -156,7 +156,7 @@ fun AmityStoryHyperlinkComponent(
                 ) {
                     Text(
                         text = "Cancel",
-                        style = AmityTheme.typography.body,
+                        style = AmityTheme.typography.bodyLegacy,
                         modifier = modifier
                             .clickableWithoutRipple {
                                 openUnsavedAlertDialog.value = true
@@ -167,7 +167,7 @@ fun AmityStoryHyperlinkComponent(
 
                 Text(
                     text = "Add Link",
-                    style = AmityTheme.typography.title,
+                    style = AmityTheme.typography.titleLegacy,
                     modifier = modifier.testTag(getAccessibilityId("title_text_view"))
                 )
                 AmityBaseElement(
@@ -176,7 +176,7 @@ fun AmityStoryHyperlinkComponent(
                 ) {
                     Text(
                         text = "Done",
-                        style = AmityTheme.typography.body.copy(
+                        style = AmityTheme.typography.bodyLegacy.copy(
                             color = if (isAllFieldsValid) AmityTheme.colors.primary else AmityTheme.colors.primaryShade2
                         ),
                         modifier = modifier
@@ -204,7 +204,7 @@ fun AmityStoryHyperlinkComponent(
                         append("*")
                     }
                 },
-                style = AmityTheme.typography.title.copy(
+                style = AmityTheme.typography.titleLegacy.copy(
                     textAlign = TextAlign.Start,
                 ),
                 modifier = modifier
@@ -233,7 +233,7 @@ fun AmityStoryHyperlinkComponent(
             if (urlValidationError.isNotEmpty()) {
                 Text(
                     text = urlValidationError,
-                    style = AmityTheme.typography.caption.copy(
+                    style = AmityTheme.typography.captionLegacy.copy(
                         fontWeight = FontWeight.Normal,
                         color = AmityTheme.colors.alert
                     ),
@@ -253,7 +253,7 @@ fun AmityStoryHyperlinkComponent(
             ) {
                 Text(
                     text = "Customize link text",
-                    style = AmityTheme.typography.title,
+                    style = AmityTheme.typography.titleLegacy,
                     modifier = Modifier
                         .align(Alignment.CenterStart)
                         .testTag(getAccessibilityId("hyper_link_custom_text_title_text_view"))
@@ -261,7 +261,7 @@ fun AmityStoryHyperlinkComponent(
 
                 Text(
                     text = "${customText.length}/$CustomTextLimit",
-                    style = AmityTheme.typography.caption.copy(
+                    style = AmityTheme.typography.captionLegacy.copy(
                         fontWeight = FontWeight.Normal,
                         color = AmityTheme.colors.baseShade1
                     ),
@@ -289,7 +289,7 @@ fun AmityStoryHyperlinkComponent(
 
             Text(
                 text = textValidationError.ifEmpty { "This text will show on the link instead of URL." },
-                style = AmityTheme.typography.caption.copy(
+                style = AmityTheme.typography.captionLegacy.copy(
                     fontWeight = FontWeight.Normal,
                     color = if (textValidationError.isEmpty()) AmityTheme.colors.baseShade2
                     else AmityTheme.colors.alert
@@ -322,7 +322,7 @@ fun AmityStoryHyperlinkComponent(
 
                     Text(
                         text = "Remove link",
-                        style = AmityTheme.typography.body.copy(
+                        style = AmityTheme.typography.bodyLegacy.copy(
                             color = AmityTheme.colors.alert
                         ),
                         modifier = modifier.testTag(getAccessibilityId("remove_link_button_text_view"))

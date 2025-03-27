@@ -209,14 +209,14 @@ fun AmityUserProfileHeaderComponent(
                         ) {
                             Text(
                                 text = getNumberAbbreveation(followingCount),
-                                style = AmityTheme.typography.body.copy(
+                                style = AmityTheme.typography.bodyLegacy.copy(
                                     fontWeight = FontWeight.SemiBold,
                                 ),
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
                                 text = getConfig().getText(),
-                                style = AmityTheme.typography.caption.copy(
+                                style = AmityTheme.typography.captionLegacy.copy(
                                     fontWeight = FontWeight.Normal,
                                     color = AmityTheme.colors.baseShade2,
                                 ),
@@ -252,14 +252,14 @@ fun AmityUserProfileHeaderComponent(
                     ) {
                         Text(
                             text = getNumberAbbreveation(followerCount),
-                            style = AmityTheme.typography.body.copy(
+                            style = AmityTheme.typography.bodyLegacy.copy(
                                 fontWeight = FontWeight.SemiBold,
                             ),
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             text = getConfig().getText(),
-                            style = AmityTheme.typography.caption.copy(
+                            style = AmityTheme.typography.captionLegacy.copy(
                                 fontWeight = FontWeight.Normal,
                                 color = AmityTheme.colors.baseShade2,
                             ),

@@ -27,7 +27,7 @@ fun AmityCommunityNotificationSettingMenuItem(
         Spacer(modifier.height(8.dp))
         Text(
             text = title,
-            style = AmityTheme.typography.body.copy(
+            style = AmityTheme.typography.bodyLegacy.copy(
                 fontWeight = FontWeight.SemiBold
             ),
             modifier = modifier.padding(horizontal = 16.dp)
@@ -35,7 +35,7 @@ fun AmityCommunityNotificationSettingMenuItem(
         Spacer(modifier.height(4.dp))
         Text(
             text = description,
-            style = AmityTheme.typography.caption.copy(
+            style = AmityTheme.typography.captionLegacy.copy(
                 fontWeight = FontWeight.Normal,
                 color = AmityTheme.colors.baseShade1,
             ),

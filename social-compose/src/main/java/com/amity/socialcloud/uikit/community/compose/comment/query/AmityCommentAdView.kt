@@ -130,7 +130,7 @@ fun AmityCommentAdView(
                             text = ad.getAdvertiser()?.getName() ?: "",
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
-                            style = AmityTheme.typography.caption,
+                            style = AmityTheme.typography.captionLegacy,
                             modifier = Modifier
                                 .testTag("comment_list/comment_bubble_creator_display_name")
                                 .padding(top = 12.dp, end = 24.dp)
@@ -157,7 +157,7 @@ fun AmityCommentAdView(
                             text = ad.getBody(),
                             mentionGetter = AmityMentionMetadataGetter(JsonObject()),
                             mentionees = listOf(),
-                            style = AmityTheme.typography.body,
+                            style = AmityTheme.typography.bodyLegacy,
                             modifier = Modifier
                                 .testTag("comment_list/comment_bubble_comment_text_view")
                                 .padding(end = 12.dp)
@@ -207,7 +207,7 @@ fun AmityCommentAdView(
                                 text = ad.getDescription(),
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
-                                style = AmityTheme.typography.caption.copy(
+                                style = AmityTheme.typography.captionLegacy.copy(
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Normal,
                                     color = AmityTheme.colors.baseShade1
@@ -218,7 +218,7 @@ fun AmityCommentAdView(
                                 text = ad.getHeadline(),
                                 maxLines = 2,
                                 overflow = TextOverflow.Ellipsis,
-                                style = AmityTheme.typography.caption.copy(
+                                style = AmityTheme.typography.captionLegacy.copy(
                                     fontWeight = FontWeight.SemiBold
                                 ),
                                 modifier = Modifier
@@ -246,7 +246,7 @@ fun AmityCommentAdView(
                                         text = ad.getCallToAction(),
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis,
-                                        style = AmityTheme.typography.body.copy(
+                                        style = AmityTheme.typography.bodyLegacy.copy(
                                             fontWeight = FontWeight.SemiBold,
                                             color = Color.White
                                         ),

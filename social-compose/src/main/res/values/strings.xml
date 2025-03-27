@@ -29,14 +29,15 @@
     <string name="amity_comment_deleted_message">This comment has been deleted</string>
     <string name="amity_comment_delete_failed_toast_message">Failed to delete comment. Please try again.</string>
     <string name="amity_view_more_replies">View more replies</string>
-    <string name="amity_delete_comment_title">Delete Comment</string>
-    <string name="amity_delete_comment_warning_message">This comment will be permanently removed.</string>
+    <string name="amity_delete_comment_title">Delete comment</string>
+    <string name="amity_delete_comment_warning_message">This comment will be permanently deleted.</string>
     <string name="amity_delete_reply_title">Delete reply</string>
-    <string name="amity_delete_reply_warning_message">This reply will be permanently removed.</string>
+    <string name="amity_delete_reply_warning_message">This reply will be permanently deleted.</string>
     <string name="amity_add_reply_error_message">Failed to add reply. Please try again.</string>
     <string name="amity_add_comment_error_message">Failed to add comment. Please try again.</string>
     <string name="amity_add_blocked_words_comment_error_message">Your comment contains inappropriate word. Please review and delete it.</string>
     <string name="amity_add_blocked_links_comment_error_message">Your comment contains a link that\'s not allowed. Please review and delete it.</string>
+    <string name="amity_add_comment_exceed_error_message">Your comment exceeds the maximum character limit of %d. Please shorten your comment.</string>
 
     <string name="amity_update_comment_error_message">Unable to update comment</string>
     <string name="amity_update_blocked_words_comment_error_message">Your comment wasn’t updated as it contained blocked words. Only you can see this</string>
@@ -54,7 +55,9 @@
     </plurals>
 
     <string name="amity_delete_post_title">Delete this post?</string>
-    <string name="amity_delete_post_warning_message">This post will be permanently deleted. You’ll no longer to see and find this post</string>
+
+    <string name="amity_v4_delete_post_warning_message">This post will be permanently deleted.</string>
+    <string name="amity_delete_post_warning_message">This post will be permanently deleted. You’ll no longer to see and find this post.</string>
 
     <string name="amity_post_to">Post to</string>
     <string name="amity_story_to">Story to</string>
@@ -63,7 +66,7 @@
     <string name="amity_discard_post_message">Do you want to discard your post?</string>
     <string name="amity_add_blocked_words_post_error_message">Your post wasn\'t posted because it contains a blocked word.</string>
     <string name="amity_add_blocked_links_post_error_message">Your post wasn\'t posted because it contains a link that is not allowed.</string>
-    <string name="amity_post_text_exceed_error_message">Your post wasn\'t posted because it exceeds the %1$s characters limit</string>
+    <string name="amity_post_text_exceed_error_message">Your post wasn\'t posted because it exceeds the %1$d characters limit</string>
     <string name="amity_post_create_generic_error_message">Failed to create post. Please try again.</string>
     <string name="amity_post_edit_generic_error_message">Failed to edit post. Please try again.</string>
 
@@ -128,5 +131,35 @@
     <!--general community related pages dialog-->
     <string name="amity_v4_community_dialog_leave_title">Leave without finishing</string>
     <string name="amity_v4_community_dialog_leave_description">Your changes that you made may not be saved.</string>
+
+    <!--create livestream pages-->
+    <string name="amity_v4_create_livestream_target_title">Live on</string>
+    <string name="amity_v4_create_livestream_title_placeholder">Add live stream title…</string>
+    <string name="amity_v4_create_livestream_desc_placeholder">Add description (optional)</string>
+    <string name="amity_v4_create_livestream_no_camera_permission_title">Allow access to your\ncamera and microphone</string>
+    <string name="amity_v4_create_livestream_no_camera_permission_desc">This lets you recode and live stream\nfrom this device.</string>
+    <string name="amity_v4_create_livestream_connecting_text">Starting live stream</string>
+    <string name="amity_v4_create_livestream_live_timer_status">LIVE %s:%s</string>
+    <string name="amity_v4_create_livestream_discard_livestream_dialog_title">Unsaved changes</string>
+    <string name="amity_v4_create_livestream_discard_livestream_dialog_desc">Are you sure you want to discard the changes? They will be lost when you leave this page.</string>
+    <string name="amity_v4_create_livestream_discard_livestream_dialog_confirm_text">Discard</string>
+    <string name="amity_v4_create_livestream_dialog_dismiss_text">Cancel</string>
+    <string name="amity_v4_create_livestream_end_livestream_dialog_title">End live stream?</string>
+    <string name="amity_v4_create_livestream_end_livestream_dialog_desc">If you end your live stream, it will also end for all your viewers.</string>
+    <string name="amity_v4_create_livestream_end_livestream_dialog_confirm_text">End</string>
+    <string name="amity_v4_create_livestream_terminated_toolbar_title">Live terminated</string>
+    <string name="amity_v4_create_livestream_terminated_title">Your live stream has been\nterminated.</string>
+    <string name="amity_v4_create_livestream_terminated_watch_part_title">The live stream has been\nterminated..</string>
+    <string name="amity_v4_create_livestream_terminated_desc">It looks like your live stream goes against our\ncontent moderation guidelines.</string>
+    <string name="amity_v4_create_livestream_terminated_watch_part_desc">It looks like the live stream you’re watching goes\nagainst our content moderation guidelines.</string>
+    <string name="amity_v4_create_livestream_terminated_question">What does it mean?</string>
+    <string name="amity_v4_create_livestream_terminated_first_reason">The live stream has also been terminated for\nall your viewers.</string>
+    <string name="amity_v4_create_livestream_terminated_second_reason">There will be no playback of this live stream\non any feeds.</string>
+    <string name="amity_v4_create_livestream_count_down_title">Live stream ends in</string>
+    <string name="amity_v4_create_livestream_duration_exceed_snackbar">Your live will automatically end once it\nreaches 4-hour limit.</string>
+    <string name="amity_v4_create_livestream_no_internet_view_title">Reconnecting</string>
+    <string name="amity_v4_create_livestream_no_internet_view_desc">Due to poor connection, this live stream has been\npaused. It will resume automatically\nonce the connection is stable.</string>
+    <string name="amity_v4_livestream_deleted_page_title">Something went wrong</string>
+    <string name="amity_v4_livestream_deleted_page_desc">The content you’re looking for is unavailable.</string>
 
 </resources>

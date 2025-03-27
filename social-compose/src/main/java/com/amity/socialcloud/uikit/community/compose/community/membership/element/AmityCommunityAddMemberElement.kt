@@ -136,7 +136,7 @@ fun AmityCommunityAddMemberElement(
         Spacer(modifier.height(4.dp))
         Text(
             text = user.getDisplayName() ?: "",
-            style = AmityTheme.typography.body,
+            style = AmityTheme.typography.bodyLegacy,
             modifier = modifier.fillMaxWidth(),
             overflow = TextOverflow.Ellipsis,
             maxLines = 1,
@@ -177,7 +177,7 @@ fun AmityCommunityAddMemberButton(
             Spacer(modifier.height(4.dp))
             Text(
                 text = getConfig().getText(),
-                style = AmityTheme.typography.body,
+                style = AmityTheme.typography.bodyLegacy,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
             )
@@ -239,7 +239,7 @@ fun AmityCommunityAddMemberItem(
                 text = user.getDisplayName() ?: user.getUserId(),
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
-                style = AmityTheme.typography.body.copy(
+                style = AmityTheme.typography.bodyLegacy.copy(
                     fontWeight = FontWeight.SemiBold,
                 ),
                 modifier = Modifier.weight(1f, fill = false)

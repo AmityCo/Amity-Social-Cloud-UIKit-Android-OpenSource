@@ -66,7 +66,7 @@ fun AmityCommentContentContainer(
         ) {
             Text(
                 text = comment.getCreator()?.getDisplayName()?.trim() ?: "",
-                style = AmityTheme.typography.caption,
+                style = AmityTheme.typography.captionLegacy,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = modifier
@@ -100,7 +100,7 @@ fun AmityCommentContentContainer(
             text = commentText,
             mentionGetter = mentionGetter,
             mentionees = comment.getMentionees(),
-            style = AmityTheme.typography.body,
+            style = AmityTheme.typography.bodyLegacy,
             modifier = modifier.testTag("comment_list/comment_bubble_comment_text_view"),
             onMentionedUserClick = {
                 behavior.goToUserProfilePage(context, it)

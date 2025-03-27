@@ -24,7 +24,6 @@ fun AmityMediaAttachmentComponent(
     viewModel: AmityMediaAttachmentViewModel,
 ) {
     val allowedPickerType by viewModel.postAttachmentAllowedPickerType.collectAsState()
-
     AmityBaseComponent(
         pageScope = pageScope,
         componentId = "media_attachment"
@@ -42,6 +41,7 @@ fun AmityMediaAttachmentComponent(
                         pageScope = pageScope,
                         componentScope = getComponentScope(),
                         elementId = "camera_button",
+                        isEnabled = allowedPickerType.isEnabled
                     ) {
                         viewModel.setPostAttachmentPickerEvent(AmityPostAttachmentPickerEvent.OpenImageOrVideoSelectionSheet)
                     }
@@ -49,6 +49,7 @@ fun AmityMediaAttachmentComponent(
                         pageScope = pageScope,
                         componentScope = getComponentScope(),
                         elementId = "image_button",
+                        isEnabled = allowedPickerType.isEnabled
                     ) {
                         viewModel.setPostAttachmentPickerEvent(AmityPostAttachmentPickerEvent.OpenImagePicker)
                     }
@@ -56,6 +57,7 @@ fun AmityMediaAttachmentComponent(
                         pageScope = pageScope,
                         componentScope = getComponentScope(),
                         elementId = "video_button",
+                        isEnabled = allowedPickerType.isEnabled
                     ) {
                         viewModel.setPostAttachmentPickerEvent(AmityPostAttachmentPickerEvent.OpenVideoPicker)
                     }
@@ -70,11 +72,12 @@ fun AmityMediaAttachmentComponent(
                      */
                 }
 
-                AmityPostAttachmentAllowedPickerType.Image -> {
+                is AmityPostAttachmentAllowedPickerType.Image -> {
                     AmityPostAttachmentButton(
                         pageScope = pageScope,
                         componentScope = getComponentScope(),
                         elementId = "camera_button",
+                        isEnabled = allowedPickerType.isEnabled
                     ) {
                         viewModel.setPostAttachmentPickerEvent(AmityPostAttachmentPickerEvent.OpenImageCamera)
                     }
@@ -82,16 +85,18 @@ fun AmityMediaAttachmentComponent(
                         pageScope = pageScope,
                         componentScope = getComponentScope(),
                         elementId = "image_button",
+                        isEnabled = allowedPickerType.isEnabled
                     ) {
                         viewModel.setPostAttachmentPickerEvent(AmityPostAttachmentPickerEvent.OpenImagePicker)
                     }
                 }
 
-                AmityPostAttachmentAllowedPickerType.Video -> {
+                is AmityPostAttachmentAllowedPickerType.Video -> {
                     AmityPostAttachmentButton(
                         pageScope = pageScope,
                         componentScope = getComponentScope(),
                         elementId = "camera_button",
+                        isEnabled = allowedPickerType.isEnabled
                     ) {
                         viewModel.setPostAttachmentPickerEvent(AmityPostAttachmentPickerEvent.OpenVideoCamera)
                     }
@@ -99,12 +104,13 @@ fun AmityMediaAttachmentComponent(
                         pageScope = pageScope,
                         componentScope = getComponentScope(),
                         elementId = "video_button",
+                        isEnabled = allowedPickerType.isEnabled
                     ) {
                         viewModel.setPostAttachmentPickerEvent(AmityPostAttachmentPickerEvent.OpenVideoPicker)
                     }
                 }
 
-                AmityPostAttachmentAllowedPickerType.File -> {
+                is AmityPostAttachmentAllowedPickerType.File -> {
                     /*
                     AmityPostAttachmentButton(
                         pageScope = pageScope,

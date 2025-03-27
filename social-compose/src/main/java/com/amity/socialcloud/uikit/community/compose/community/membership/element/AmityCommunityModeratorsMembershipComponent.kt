@@ -139,7 +139,7 @@ fun AmityCommunityModeratorsMembershipComponent(
 
                             Text(
                                 text = member.getUser()?.getDisplayName() ?: "",
-                                style = AmityTheme.typography.body.copy(
+                                style = AmityTheme.typography.bodyLegacy.copy(
                                     fontWeight = FontWeight.SemiBold,
                                 ),
                                 modifier = modifier.weight(1f, fill = false)
