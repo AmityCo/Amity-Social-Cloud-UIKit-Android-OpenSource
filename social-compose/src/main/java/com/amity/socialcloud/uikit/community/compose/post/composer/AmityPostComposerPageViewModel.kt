@@ -1,6 +1,7 @@
 package com.amity.socialcloud.uikit.community.compose.post.composer
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
@@ -29,11 +30,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.util.UUID
+import androidx.core.net.toUri
 
 
 class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
 
     private val MAX_CHAR_LIMIT = 50000
+    private val MAX_ATTACHMENTS = 10
 
     private var options: AmityPostComposerOptions? = null
 
@@ -97,11 +100,12 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
 
                 setPostAttachmentAllowedPickerType(
                     when (post.getChildren().firstOrNull()?.getData()) {
-                        is AmityPost.Data.IMAGE -> AmityPostAttachmentAllowedPickerType.Image
-                        is AmityPost.Data.VIDEO -> AmityPostAttachmentAllowedPickerType.Video
+                        is AmityPost.Data.IMAGE -> AmityPostAttachmentAllowedPickerType.Image(canAddMore = post.getChildren().size < MAX_ATTACHMENTS)
+                        is AmityPost.Data.VIDEO -> AmityPostAttachmentAllowedPickerType.Video(canAddMore = post.getChildren().size < MAX_ATTACHMENTS)
                         else -> AmityPostAttachmentAllowedPickerType.All
                     }
                 )
+                checkAllMediaUploadedSuccessfully()
             },
             onPostLoadFailed = {
 
@@ -116,7 +120,7 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
         postId: String,
         onPostLoading: () -> Unit,
         onPostLoaded: (AmityPost) -> Unit,
-        onPostLoadFailed: (Throwable) -> Unit
+        onPostLoadFailed: (Throwable) -> Unit,
     ): Completable {
         return AmitySocialClient.newPostRepository()
             .getPost(postId)
@@ -195,7 +199,7 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
         return AmityPostMedia(
             id = image.getFileId(),
             uploadId = null,
-            url = Uri.parse(image.getUrl(AmityImage.Size.MEDIUM)),
+            url = image.getUrl(AmityImage.Size.MEDIUM).toUri(),
             uploadState = AmityFileUploadState.COMPLETE,
             currentProgress = 100,
             type = type
@@ -217,18 +221,18 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
         return fileData?.getFile()
     }
 
-//    fun getImages(): MutableLiveData<MutableList<AmityPostMedia>> {
-//        return postMediaLiveData
-//    }
-
     fun updatePost(
         postText: String,
         mentionedUsers: List<AmityMentionMetadata.USER>,
     ) {
+        if(postText.length > MAX_CHAR_LIMIT) {
+            setPostCreationEvent(AmityPostCreationEvent.Failed(TextPostExceedException(MAX_CHAR_LIMIT)))
+            return
+        }
+
         setPostCreationEvent(AmityPostCreationEvent.Updating)
 
         val postId = _post.value!!.getPostId()
-        val textData = _post.value!!.getData() as AmityPost.Data.TEXT
 
         deleteImageOrFileInPost()
             .andThen(Completable.defer {
@@ -236,13 +240,22 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
                     ?.map { it.getData() }
                     ?: emptyList()
                 val newAttachments = uploadedMediaMap.values.toList()
-                updateParentPost(postId, postText, attachments, newAttachments, mentionedUsers)
+                updateParentPost(postId, postText.trim(), attachments, newAttachments, mentionedUsers)
+            })
+            .andThen(Single.defer {
+                AmitySocialClient.newPostRepository()
+                    .getPost(postId)
+                    .firstOrError()
             })
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .doOnComplete {
-                AmityPostComposerHelper.updatePost(postId)
-                setPostCreationEvent(AmityPostCreationEvent.Success)
+            .doOnSuccess {
+                if (it.getReviewStatus() == AmityReviewStatus.UNDER_REVIEW) {
+                    setPostCreationEvent(AmityPostCreationEvent.Pending)
+                } else {
+                    AmityPostComposerHelper.updatePost(postId)
+                    setPostCreationEvent(AmityPostCreationEvent.Success)
+                }
             }
             .doOnError {
                 setPostCreationEvent(AmityPostCreationEvent.Failed(it))
@@ -288,38 +301,37 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
         postText: String,
         attachments: List<AmityPost.Data>,
         newAttachments: List<AmityFileInfo>,
-        userMentions: List<AmityMentionMetadata.USER>
+        mentionedUsers: List<AmityMentionMetadata.USER>,
     ): Completable {
-        val attachmentType: Type? =
-            attachments.firstOrNull()?.let {
-                when (it) {
-                    is AmityPost.Data.IMAGE -> {
-                        if (it.getImage()?.getFileId() in deletedImageIds) {
-                            null
-                        } else {
-                            Type.IMAGE
-                        }
-                    }
-
-                    is AmityPost.Data.VIDEO -> {
-                        if (it.getThumbnailImage()?.getFileId() in deletedImageIds) {
-                            null
-                        } else {
-                            Type.VIDEO
-                        }
-                    }
-
+        // Determine attachment type by examining all attachments, not just the first one
+        val attachmentType: Type? = run {
+            // Check if there are any non-deleted IMAGE attachments
+            val hasImages = attachments.any { 
+                it is AmityPost.Data.IMAGE && 
+                !(it.getImage()?.getFileId() in deletedImageIds) 
+            }
+            
+            if (hasImages) return@run Type.IMAGE
+            
+            // Check if there are any non-deleted VIDEO attachments
+            val hasVideos = attachments.any { 
+                it is AmityPost.Data.VIDEO && 
+                !(it.getThumbnailImage()?.getFileId() in deletedImageIds)
+            }
+            
+            if (hasVideos) return@run Type.VIDEO
+            
+            // If no existing attachments remain, check new attachments
+            if (newAttachments.isNotEmpty()) {
+                when (newAttachments.first()) {
+                    is AmityImage -> Type.IMAGE
+                    is AmityVideo -> Type.VIDEO
                     else -> null
                 }
-            }.let {
-                it ?: newAttachments.firstOrNull()?.let { newAttachment ->
-                    when (newAttachment) {
-                        is AmityImage -> Type.IMAGE
-                        is AmityVideo -> Type.VIDEO
-                        else -> null
-                    }
-                }
+            } else {
+                null // No attachments at all
             }
+        }
 
         val postEditor = AmitySocialClient.newPostRepository()
             .editPost(postId = postId)
@@ -345,6 +357,7 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
                     .filter {
                         !deletedImageIds.contains(it.getFileId())
                     } + newAttachments.map { it as AmityImage }
+
                 postEditor.attachments(*images.toTypedArray())
             }
 
@@ -354,9 +367,17 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
             }
         }
 
+        val metadata = mentionedUsers.takeIf { it.isNotEmpty() }?.let {
+            AmityMentionMetadataCreator(mentionedUsers).create()
+        }
+        val mentionUserIds = mentionedUsers.map { it.getUserId() }.toSet()
         postEditor
-            .metadata(AmityMentionMetadataCreator(userMentions).create())
-            .mentionUsers(userMentions.map { it.getUserId() })
+            .apply {
+                metadata?.let {
+                    this.metadata(metadata)
+                    this.mentionUsers(mentionUserIds.toList())
+                }
+            }
 
         return postEditor
             .build()
@@ -365,7 +386,7 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
 
     fun createPost(
         postText: String,
-        mentionedUsers: List<AmityMentionMetadata.USER>
+        mentionedUsers: List<AmityMentionMetadata.USER>,
     ) {
         if(postText.length > MAX_CHAR_LIMIT) {
             setPostCreationEvent(AmityPostCreationEvent.Failed(TextPostExceedException(MAX_CHAR_LIMIT)))
@@ -505,8 +526,8 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
         if (medias.isNotEmpty()) {
             setPostAttachmentAllowedPickerType(
                 when (mediaType) {
-                    Type.IMAGE -> AmityPostAttachmentAllowedPickerType.Image
-                    Type.VIDEO -> AmityPostAttachmentAllowedPickerType.Video
+                    Type.IMAGE -> AmityPostAttachmentAllowedPickerType.Image(canAddMore = mediaMap.size < MAX_ATTACHMENTS)
+                    Type.VIDEO -> AmityPostAttachmentAllowedPickerType.Video(canAddMore = mediaMap.size < MAX_ATTACHMENTS)
                 }
             )
         }
@@ -532,6 +553,14 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
 
         if (mediaMap.isEmpty()) {
             setPostAttachmentAllowedPickerType(AmityPostAttachmentAllowedPickerType.All)
+        } else {
+            val mediaType = mediaMap.values.first().type
+            setPostAttachmentAllowedPickerType(
+                when (mediaType) {
+                    Type.IMAGE -> AmityPostAttachmentAllowedPickerType.Image(canAddMore = mediaMap.size < MAX_ATTACHMENTS)
+                    Type.VIDEO -> AmityPostAttachmentAllowedPickerType.Video(canAddMore = mediaMap.size < MAX_ATTACHMENTS)
+                }
+            )
         }
     }
 
@@ -554,7 +583,7 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
     private fun checkAllMediaUploadedSuccessfully() {
         viewModelScope.launch {
             _isAllMediaSuccessfullyUploaded.value = if (mediaMap.isEmpty()) {
-                false
+                true
             } else {
                 mediaMap.values.all { it.uploadState == AmityFileUploadState.COMPLETE }
             }
@@ -615,7 +644,7 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
 
     private fun updateMediaUploadStatus(
         postMedia: AmityPostMedia,
-        result: AmityUploadResult<AmityFileInfo>
+        result: AmityUploadResult<AmityFileInfo>,
     ) {
         when (result) {
             is AmityUploadResult.PROGRESS -> {
@@ -706,11 +735,13 @@ sealed class AmityPostAttachmentPickerEvent {
     object MaxUploadLimitReached : AmityPostAttachmentPickerEvent()
 }
 
-sealed class AmityPostAttachmentAllowedPickerType {
-    object All : AmityPostAttachmentAllowedPickerType()
-    object Image : AmityPostAttachmentAllowedPickerType()
-    object Video : AmityPostAttachmentAllowedPickerType()
-    object File : AmityPostAttachmentAllowedPickerType()
+sealed class AmityPostAttachmentAllowedPickerType(
+    val isEnabled: Boolean
+) {
+    object All : AmityPostAttachmentAllowedPickerType(true)
+    data class Image(val canAddMore: Boolean) : AmityPostAttachmentAllowedPickerType(canAddMore)
+    data class Video(val canAddMore: Boolean) : AmityPostAttachmentAllowedPickerType(canAddMore)
+    data class File(val canAddMore: Boolean) : AmityPostAttachmentAllowedPickerType(canAddMore)
 }
 
 sealed class AmityPostCreationEvent {

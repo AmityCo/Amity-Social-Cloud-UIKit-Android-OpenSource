@@ -64,7 +64,7 @@ fun AmityReactionListItem(
         ) {
             Text(
                 text = displayName,
-                style = AmityTheme.typography.body.copy(
+                style = AmityTheme.typography.bodyLegacy.copy(
                     fontWeight = FontWeight.SemiBold,
                     color = AmityTheme.colors.base
                 ),
@@ -76,7 +76,7 @@ fun AmityReactionListItem(
             if (isMyReaction) {
                 Text(
                     text = "Tap to remove reaction",
-                    style = AmityTheme.typography.caption.copy(
+                    style = AmityTheme.typography.captionLegacy.copy(
                         color = AmityTheme.colors.baseShade1
                     ),
                 )

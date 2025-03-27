@@ -103,13 +103,13 @@ fun AmityCommunityAddCategoryPage(
 
                     Text(
                         text = "Select category",
-                        style = AmityTheme.typography.title,
+                        style = AmityTheme.typography.titleLegacy,
                         modifier = modifier.padding(vertical = 17.dp)
                     )
 
                     Text(
                         text = "${selectedCategories.size}/10",
-                        style = AmityTheme.typography.body.copy(
+                        style = AmityTheme.typography.bodyLegacy.copy(
                             color = AmityTheme.colors.baseShade2
                         ),
                     )
@@ -210,7 +210,7 @@ fun AmityCommunityAddCategoryPage(
                 ) {
                     Text(
                         text = "Add category",
-                        style = AmityTheme.typography.caption.copy(
+                        style = AmityTheme.typography.captionLegacy.copy(
                             color = Color.White,
                         ),
                     )

@@ -25,6 +25,7 @@ import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.social.post.review.AmityReviewStatus
+import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunityPostSettings
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
@@ -118,8 +119,9 @@ fun AmityPostMenuBottomSheet(
                             .padding(start = 16.dp, end = 16.dp, bottom = 64.dp)
                     ) {
                         val isPollPost = post.getChildren().any { it.getData() is AmityPost.Data.POLL }
+                        val isLiveStreamPost = post.getChildren().any { it.getData() is AmityPost.Data.LIVE_STREAM }
 
-                        if (post.getCreatorId() == AmityCoreClient.getUserId() && !isPollPost) {
+                        if (post.getCreatorId() == AmityCoreClient.getUserId() && !isPollPost && !isLiveStreamPost) {
                             AmityBottomSheetActionItem(
                                 icon = R.drawable.amity_ic_edit_profile,
                                 text = "Edit post",
@@ -130,6 +132,7 @@ fun AmityPostMenuBottomSheet(
                                 if(category == AmityPostCategory.GLOBAL
                                     && target is AmityPost.Target.COMMUNITY
                                     && target.getCommunity()?.getPostSettings() == AmityCommunityPostSettings.ADMIN_REVIEW_POST_REQUIRED
+                                    && !AmityCoreClient.hasPermission(AmityPermission.EDIT_COMMUNITY_POST).atCommunity(target.getCommunityId()).check().blockingFirst()
                                     && post.getReviewStatus() == AmityReviewStatus.PUBLISHED) {
                                     viewModel.updateDialogUIState(
                                         AmityPostMenuDialogUIState.OpenConfirmEditDialog(postId = post.getPostId())
@@ -173,7 +176,7 @@ fun AmityPostMenuBottomSheet(
                                             AmityUIKitSnackbar.publishSnackbarMessage("Post unreported")
                                         },
                                         onError = {
-                                            AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to unreport post")
+                                            AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to unreport post. Please try again.")
                                         }
                                     )
                                 } else {
@@ -183,7 +186,7 @@ fun AmityPostMenuBottomSheet(
                                             AmityUIKitSnackbar.publishSnackbarMessage("Post reported")
                                         },
                                         onError = {
-                                            AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to report post")
+                                            AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to report post. Please try again.")
                                         }
                                     )
                                 }

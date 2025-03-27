@@ -91,7 +91,7 @@ fun AmityPostContentComponent(
             if (data.postId == post.getPostId()) {
                 AmityAlertDialog(
                     dialogTitle = context.getString(R.string.amity_delete_post_title),
-                    dialogText = context.getString(R.string.amity_delete_post_warning_message),
+                    dialogText = context.getString(R.string.amity_v4_delete_post_warning_message),
                     confirmText = context.getString(R.string.amity_delete),
                     dismissText = context.getString(R.string.amity_cancel),
                     onConfirmation = {
@@ -130,7 +130,7 @@ fun AmityPostContentComponent(
             if (data.postId == post.getPostId()) {
                 AmityAlertDialog(
                     dialogTitle = "Edit globally featured post?",
-                    dialogText = "The post you're editing has been featured globally. If you edit your post, it will need to be re-approved and will no longer be globally featured.",
+                    dialogText = "The post you're editing has been featured globally. If you edit your post, it would need to be re-approved, and will no longer be globally featured.",
                     confirmText = "Edit",
                     dismissText = context.getString(R.string.amity_cancel),
                     onConfirmation = {

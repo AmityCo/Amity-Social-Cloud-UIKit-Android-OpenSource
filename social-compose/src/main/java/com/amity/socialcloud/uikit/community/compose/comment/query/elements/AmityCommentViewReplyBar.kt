@@ -56,7 +56,7 @@ fun AmityCommentViewReplyBar(
 
         Text(
             text = text,
-            style = AmityTheme.typography.caption.copy(
+            style = AmityTheme.typography.captionLegacy.copy(
                 color = AmityTheme.colors.baseShade1,
             ),
             modifier = modifier.testTag("comment_list/comment_bubble_view_reply_button")

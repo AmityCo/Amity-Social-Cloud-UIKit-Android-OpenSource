@@ -16,10 +16,12 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageBehavior
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -71,6 +73,20 @@ fun AmityUserActionsBottomSheet(
                 behavior.goToPollComposerPage(
                     context = context,
                     userId = user.getUserId(),
+                )
+            }
+
+            AmityBottomSheetActionItem(
+                icon = R.drawable.ic_amity_ic_live_stream_create,
+                text = "Live stream",
+                modifier = modifier,
+            ) {
+                onDismiss()
+                behavior.goToLivestreamPostComposerPage(
+                    context = context,
+                    targetId = user.getUserId(),
+                    targetType = AmityPost.TargetType.USER,
+                    community = null
                 )
             }
         }

@@ -65,7 +65,7 @@ fun AmityDeletedCommentView(
                 )
                 Text(
                     text = context.getString(R.string.amity_reply_deleted_message),
-                    style = AmityTheme.typography.caption.copy(
+                    style = AmityTheme.typography.captionLegacy.copy(
                         fontWeight = FontWeight.Normal,
                         color = AmityTheme.colors.baseShade2,
                     )
@@ -96,7 +96,7 @@ fun AmityDeletedCommentView(
                 )
                 Text(
                     text = context.getString(R.string.amity_comment_deleted_message),
-                    style = AmityTheme.typography.caption.copy(
+                    style = AmityTheme.typography.captionLegacy.copy(
                         fontWeight = FontWeight.Normal,
                         color = AmityTheme.colors.baseShade2,
                     )

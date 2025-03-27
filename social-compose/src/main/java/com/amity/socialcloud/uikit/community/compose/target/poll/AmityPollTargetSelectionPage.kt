@@ -39,7 +39,6 @@ import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getText
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
-import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostTargetType
 import com.amity.socialcloud.uikit.community.compose.target.AmityTargetSelectionPageViewModel
 import com.amity.socialcloud.uikit.community.compose.target.components.AmityTargetContentType
 import com.amity.socialcloud.uikit.community.compose.target.components.AmityTargetSelectionMyCommunitiesView
@@ -104,7 +103,7 @@ fun AmityPollTargetSelectionPage(
                 ) {
                     Text(
                         text = getConfig().getText(),
-                        style = AmityTheme.typography.title,
+                        style = AmityTheme.typography.titleLegacy,
                         modifier = modifier
                             .align(Alignment.Center)
                             .testTag(getAccessibilityId()),
@@ -145,7 +144,7 @@ fun AmityPollTargetSelectionPage(
                 ) {
                     Text(
                         text = getConfig().getText(),
-                        style = AmityTheme.typography.body.copy(
+                        style = AmityTheme.typography.bodyLegacy.copy(
                             fontWeight = FontWeight.SemiBold
                         ),
                         modifier = modifier.testTag(getAccessibilityId()),

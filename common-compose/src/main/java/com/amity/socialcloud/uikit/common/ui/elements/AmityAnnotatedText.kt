@@ -1,7 +1,5 @@
 package com.amity.socialcloud.uikit.common.ui.elements
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -9,14 +7,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.core.content.ContextCompat.startActivity
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionee
 import com.amity.socialcloud.uikit.common.extionsions.extractUrls
@@ -29,7 +25,7 @@ fun AmityAnnotatedText(
     text: String,
     mentionGetter: AmityMentionMetadataGetter,
     mentionees: List<AmityMentionee>,
-    style: TextStyle = AmityTheme.typography.body,
+    style: TextStyle = AmityTheme.typography.bodyLegacy,
     onLongPress: () -> Unit = {},
 ) {
     val uriHandler = LocalUriHandler.current

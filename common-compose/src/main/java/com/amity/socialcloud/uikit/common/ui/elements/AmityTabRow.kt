@@ -78,7 +78,7 @@ fun AmityTabRow(
             itemsIndexed(tabs) { _: Int, tab: AmityTabRowItem ->
                 val isSelected = tab == tabs[selectedIndex]
 
-                val titleStyle = AmityTheme.typography.title
+                val titleStyle = AmityTheme.typography.titleLegacy
                 val titleWidth = measureTextWidth(tab.title ?: "", titleStyle)
 
                 val iconWidth = tab.icon?.let { 24.dp } ?: 0.dp

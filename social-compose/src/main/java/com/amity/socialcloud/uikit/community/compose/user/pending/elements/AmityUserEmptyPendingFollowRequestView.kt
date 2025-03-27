@@ -34,7 +34,7 @@ fun AmityUserEmptyPendingFollowRequestView(
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = "No requests to review",
-            style = AmityTheme.typography.title.copy(
+            style = AmityTheme.typography.titleLegacy.copy(
                 color = AmityTheme.colors.baseShade3,
             ),
         )

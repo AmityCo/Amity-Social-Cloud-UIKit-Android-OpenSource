@@ -14,7 +14,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -63,7 +62,7 @@ fun AmityMessageComposeReplyLabel(
                 text = text,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                style = AmityTheme.typography.body.copy(
+                style = AmityTheme.typography.bodyLegacy.copy(
                     fontWeight = FontWeight.SemiBold,
                     color = AmityTheme.colors.baseShade1,
                 ),
@@ -73,7 +72,7 @@ fun AmityMessageComposeReplyLabel(
                 text = parentText,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                style = AmityTheme.typography.body.copy(
+                style = AmityTheme.typography.bodyLegacy.copy(
                     color = AmityTheme.colors.baseShade1,
                 ),
             )

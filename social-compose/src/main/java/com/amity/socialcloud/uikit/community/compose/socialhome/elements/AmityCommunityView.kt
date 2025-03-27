@@ -96,7 +96,7 @@ fun AmityCommunityView(
                 ) {
                     Text(
                         text = community.getDisplayName().trim(),
-                        style = AmityTheme.typography.body.copy(
+                        style = AmityTheme.typography.bodyLegacy.copy(
                             fontWeight = FontWeight.SemiBold
                         ),
                         maxLines = 1,
@@ -145,7 +145,7 @@ fun AmityCommunityView(
             ) {
                 Text(
                     text = "${community.getMemberCount().readableNumber()} members",
-                    style = AmityTheme.typography.caption.copy(
+                    style = AmityTheme.typography.captionLegacy.copy(
                         fontWeight = FontWeight.Normal,
                         color = AmityTheme.colors.baseShade1,
                     ),
@@ -225,7 +225,7 @@ fun AmityJoinCommunityView(
                 ) {
                     Text(
                         text = community.getDisplayName(),
-                        style = AmityTheme.typography.body.copy(
+                        style = AmityTheme.typography.bodyLegacy.copy(
                             fontWeight = FontWeight.SemiBold
                         ),
                         maxLines = 1,
@@ -285,7 +285,7 @@ fun AmityJoinCommunityView(
                     ) {
                         Text(
                             text = "${community.getMemberCount().readableNumber()} members",
-                            style = AmityTheme.typography.caption.copy(
+                            style = AmityTheme.typography.captionLegacy.copy(
                                 fontWeight = FontWeight.Normal,
                                 color = AmityTheme.colors.baseShade1,
                             ),

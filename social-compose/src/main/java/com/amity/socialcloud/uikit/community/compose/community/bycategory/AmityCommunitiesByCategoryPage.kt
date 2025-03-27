@@ -95,7 +95,7 @@ fun AmityCommunitiesByCategoryPage(
                         Text(
                             text = "No community yet",
                             modifier = Modifier.padding(top = 8.dp),
-                            style = AmityTheme.typography.title.copy(
+                            style = AmityTheme.typography.titleLegacy.copy(
                                 color = AmityTheme.colors.baseShade3
                             )
                         )
@@ -119,14 +119,14 @@ fun AmityCommunitiesByCategoryPage(
                         Text(
                             text = "Something went wrong",
                             modifier = Modifier.padding(top = 16.dp),
-                            style = AmityTheme.typography.title.copy(
+                            style = AmityTheme.typography.titleLegacy.copy(
                                 color = AmityTheme.colors.baseShade3
                             )
                         )
                         Text(
                             text = "Please try again.",
                             modifier = Modifier.padding(top = 4.dp),
-                            style = AmityTheme.typography.caption.copy(
+                            style = AmityTheme.typography.captionLegacy.copy(
                                 color = AmityTheme.colors.baseShade3
                             )
                         )

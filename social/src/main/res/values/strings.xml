@@ -235,7 +235,7 @@
     <string name="amity_video_stream_title_hint">Livestream title</string>
     <string name="amity_video_stream_description_hint">Tap to add post description…</string>
     <string name="amity_video_stream_connecting">Connecting</string>
-    <string name="amity_video_stream_live_with_time">LIVE %s:%s</string>
+    <string name="amity_v4_create_livestream_live_timer_status">LIVE %s:%s</string>
     <string name="amity_video_stream_finish">Finish</string>
     <string name="amity_video_stream_stop_confirmation_title">Stop livestream</string>
     <string name="amity_video_stream_stop_confirmation_description">Are you sure you want to stop the stream?</string>

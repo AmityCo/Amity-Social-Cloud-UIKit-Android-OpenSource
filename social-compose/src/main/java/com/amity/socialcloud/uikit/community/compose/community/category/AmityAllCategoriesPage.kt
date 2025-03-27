@@ -138,7 +138,7 @@ fun AmityAllCategoriesPage(
                                         ) {
                                             Text(
                                                 text = category.getName(),
-                                                style = AmityTheme.typography.body.copy(
+                                                style = AmityTheme.typography.bodyLegacy.copy(
                                                     fontWeight = FontWeight.SemiBold
                                                 ),
                                                 maxLines = 1,

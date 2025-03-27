@@ -30,6 +30,7 @@ object AmityUIKitDrawableResolver {
         "badgeIcon" to R.drawable.amity_ic_moderator_social,
         "commentButtonIcon" to R.drawable.amity_ic_post_comment,
         "closeIcon" to R.drawable.amity_ic_close,
+        "closeCircleButton" to R.drawable.amity_close_circle_buttons,
         "postAttachmentCamera" to R.drawable.amity_ic_post_attachment_camera,
         "postAttachmentPhoto" to R.drawable.amity_ic_post_attachment_photo,
         "postAttachmentVideo" to R.drawable.amity_ic_post_attachment_video,
@@ -55,6 +56,10 @@ object AmityUIKitDrawableResolver {
         "lockIcon" to R.drawable.amity_ic_lock1,
         "emptyPhotoIcon" to R.drawable.amity_ic_photo_empty,
         "emptyVideoIcon" to R.drawable.amity_ic_video_empty,
+        "startLivestream" to R.drawable.amity_start_live_stream_button_enable,
+        "addThumbNail" to R.drawable.amity_ic_add_thumnail,
+        "switchCamera" to R.drawable.amity_v4_switch_camera_button,
+        "deleteThumbnail" to R.drawable.amity_v4_ic_trash,
     )
 
     @DrawableRes

@@ -55,7 +55,6 @@ import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.community.membership.element.AmityCommunityJoinButton
 import com.amity.socialcloud.uikit.community.compose.socialhome.elements.AmityCommunityCategoryView
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityRecommendedCommunityShimmer
-import kotlinx.coroutines.Dispatchers
 
 
 @Composable
@@ -97,7 +96,7 @@ fun AmityRecommendedCommunitiesComponent(
                 ) {
                     Text(
                         text = "Recommended for you",
-                        style = AmityTheme.typography.title,
+                        style = AmityTheme.typography.titleLegacy,
                         modifier = Modifier.padding(
                             start = 16.dp,
                             top = 8.dp,
@@ -307,7 +306,7 @@ fun AmityRecommendedCommunityView(
                 ) {
                     Text(
                         text = community.getDisplayName().trim(),
-                        style = AmityTheme.typography.body.copy(
+                        style = AmityTheme.typography.bodyLegacy.copy(
                             fontWeight = FontWeight.SemiBold
                         ),
                         modifier = modifier.testTag(getAccessibilityId()),
@@ -361,7 +360,7 @@ fun AmityRecommendedCommunityView(
                     ) {
                         Text(
                             text = "${community.getMemberCount().readableNumber()} members",
-                            style = AmityTheme.typography.caption.copy(
+                            style = AmityTheme.typography.captionLegacy.copy(
                                 fontWeight = FontWeight.Normal,
                                 color = AmityTheme.colors.baseShade1,
                             ),

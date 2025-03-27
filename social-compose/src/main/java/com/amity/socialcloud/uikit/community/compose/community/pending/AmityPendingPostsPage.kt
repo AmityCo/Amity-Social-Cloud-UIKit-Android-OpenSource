@@ -70,7 +70,7 @@ fun AmityPendingPostsPage(
             if (isModerator && postListState == AmityPendingPostsPageViewModel.PostListState.SUCCESS) {
                 Text(
                     text = "Decline pending post will permanently delete the selected post from community.",
-                    style = AmityTheme.typography.body.copy(
+                    style = AmityTheme.typography.bodyLegacy.copy(
                         color = AmityTheme.colors.baseShade1
                     ),
                     modifier = modifier

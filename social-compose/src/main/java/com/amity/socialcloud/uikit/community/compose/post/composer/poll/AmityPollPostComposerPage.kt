@@ -71,13 +71,12 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.social.post.review.AmityReviewStatus
 import com.amity.socialcloud.sdk.helper.core.coroutines.await
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadata
-import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
@@ -245,7 +244,7 @@ fun AmityPollPostComposerPage(
                                 text = title,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
-                                style = AmityTheme.typography.title,
+                                style = AmityTheme.typography.titleLegacy,
                                 modifier = modifier
                                     .align(Alignment.Center)
                                     .padding(vertical = 16.dp, horizontal = 48.dp)
@@ -259,7 +258,7 @@ fun AmityPollPostComposerPage(
                         ) {
                             Text(
                                 text = "Post",
-                                style = AmityTheme.typography.body.copy(
+                                style = AmityTheme.typography.bodyLegacy.copy(
                                     color = if (isEnabled) AmityTheme.colors.primary else AmityTheme.colors.primaryShade2
                                 ),
                                 modifier = modifier
@@ -340,14 +339,14 @@ fun AmityPollPostComposerPage(
                         ) {
                             Text(
                                 text = "Poll question",
-                                style = AmityTheme.typography.title,
+                                style = AmityTheme.typography.titleLegacy,
                                 modifier = modifier.testTag(getAccessibilityId())
                             )
                         }
 
                         Text(
                             text = "${question.length}/${QUESTION_MAX_CHAR}",
-                            style = AmityTheme.typography.caption.copy(
+                            style = AmityTheme.typography.captionLegacy.copy(
                                 fontWeight = FontWeight.Normal,
                                 color = AmityTheme.colors.baseShade1,
                             )
@@ -360,10 +359,20 @@ fun AmityPollPostComposerPage(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp),
-                        maxLines = 30,
-                        hintText = "What's your poll question?",
-                        mentionedUser = selectedUserToMention,
                         value = question,
+                        hintText = "What's your poll question?",
+                        maxLines = 30,
+                        mentionedUser = selectedUserToMention,
+                        // Poll-specific styling
+                        textStyle = AmityTheme.typography.body.copy(
+                            color = AmityTheme.colors.base,
+                            fontSize = 16.sp  // Match font size with post composer
+                        ),
+                        contentPadding = PaddingValues(vertical = 12.dp), // Minimal padding in the text field itself
+                        verticalPadding = 0.dp,
+                        horizontalPadding = 0.dp,
+                        backgroundColor = Color.Transparent,
+                        // Disable when creating poll
                         isEnabled = !isCreating,
                         onValueChange = {
                             question = it
@@ -391,7 +400,7 @@ fun AmityPollPostComposerPage(
                         Text(
                             modifier = Modifier.padding(horizontal = 16.dp),
                             text = "Poll question cannot exceed ${QUESTION_MAX_CHAR} characters.",
-                            style = AmityTheme.typography.caption.copy(
+                            style = AmityTheme.typography.captionLegacy.copy(
                                 fontWeight = FontWeight.Normal,
                                 color = AmityTheme.colors.alert,
                             )
@@ -416,7 +425,7 @@ fun AmityPollPostComposerPage(
                             ) {
                                 Text(
                                     text = "Options", //getConfig().getText(),
-                                    style = AmityTheme.typography.title,
+                                    style = AmityTheme.typography.titleLegacy,
                                     modifier = modifier.testTag(getAccessibilityId())
                                 )
                             }
@@ -432,7 +441,7 @@ fun AmityPollPostComposerPage(
                         Text(
                             modifier = Modifier.padding(horizontal = 16.dp),
                             text = "Poll must contain at least ${MIN_OPTIONS_REQUIRED} options",
-                            style = AmityTheme.typography.caption.copy(
+                            style = AmityTheme.typography.captionLegacy.copy(
                                 fontWeight = FontWeight.Normal,
                                 color = AmityTheme.colors.baseShade1,
                             )
@@ -466,7 +475,7 @@ fun AmityPollPostComposerPage(
                                             it[index] = textValue
                                         }
                                     },
-                                    textStyle = AmityTheme.typography.body.copy(
+                                    textStyle = AmityTheme.typography.bodyLegacy.copy(
                                         color = AmityTheme.colors.base
                                     ),
                                     modifier = Modifier
@@ -486,7 +495,7 @@ fun AmityPollPostComposerPage(
                                     placeholder = {
                                         Text(
                                             text = "Option ${index + 1}",
-                                            style = AmityTheme.typography.body.copy(
+                                            style = AmityTheme.typography.bodyLegacy.copy(
                                                 color = AmityTheme.colors.baseShade2
                                             )
                                         )
@@ -534,7 +543,7 @@ fun AmityPollPostComposerPage(
                                 Text(
                                     modifier = Modifier.padding(horizontal = 16.dp),
                                     text = "Poll option cannot exceed ${OPTION_MAX_CHAR} characters.",
-                                    style = AmityTheme.typography.caption.copy(
+                                    style = AmityTheme.typography.captionLegacy.copy(
                                         fontWeight = FontWeight.Normal,
                                         color = AmityTheme.colors.alert,
                                     )
@@ -579,7 +588,7 @@ fun AmityPollPostComposerPage(
 
                                     Text(
                                         text = "Add option",
-                                        style = AmityTheme.typography.caption.copy(
+                                        style = AmityTheme.typography.captionLegacy.copy(
                                             color = AmityTheme.colors.secondary,
                                         ),
                                         textAlign = TextAlign.Center,
@@ -614,7 +623,7 @@ fun AmityPollPostComposerPage(
                             ) {
                                 Text(
                                     text = "Multiple selection",
-                                    style = AmityTheme.typography.title,
+                                    style = AmityTheme.typography.titleLegacy,
                                     modifier = modifier
                                         .testTag(getAccessibilityId())
                                 )
@@ -628,7 +637,7 @@ fun AmityPollPostComposerPage(
                             ) {
                                 Text(
                                     text = "Let participants vote more than one option",
-                                    style = AmityTheme.typography.caption.copy(
+                                    style = AmityTheme.typography.captionLegacy.copy(
                                         fontWeight = FontWeight.Normal,
                                         color = AmityTheme.colors.baseShade1,
                                     )
@@ -669,7 +678,7 @@ fun AmityPollPostComposerPage(
                     ) {
                         Text(
                             text = "Poll duration",
-                            style = AmityTheme.typography.title,
+                            style = AmityTheme.typography.titleLegacy,
                             modifier = modifier
                                 .padding(horizontal = 16.dp)
                                 .testTag(getAccessibilityId())
@@ -681,7 +690,7 @@ fun AmityPollPostComposerPage(
                     Text(
                         modifier = Modifier.padding(horizontal = 16.dp),
                         text = "You can always close the poll before the set duration.",
-                        style = AmityTheme.typography.caption.copy(
+                        style = AmityTheme.typography.captionLegacy.copy(
                             fontWeight = FontWeight.Normal,
                             color = AmityTheme.colors.baseShade1,
                         )
@@ -697,7 +706,7 @@ fun AmityPollPostComposerPage(
                     ) {
                         Text(
                             text = if (selectedPollDurationIndex == -1) "Custom end date" else durationOptions[selectedPollDurationIndex],
-                            style = AmityTheme.typography.body.copy(
+                            style = AmityTheme.typography.bodyLegacy.copy(
                                 color = AmityTheme.colors.base,
                             ),
                             modifier = Modifier
@@ -741,7 +750,7 @@ fun AmityPollPostComposerPage(
                             Text(
                                 modifier = Modifier.weight(1f),
                                 text = "Ends on",
-                                style = AmityTheme.typography.body.copy(
+                                style = AmityTheme.typography.bodyLegacy.copy(
                                     fontWeight = FontWeight.Normal,
                                     color = AmityTheme.colors.base,
                                 )
@@ -761,7 +770,7 @@ fun AmityPollPostComposerPage(
                                         showDatePicker = true
                                     },
                                 text = selectedDate.toString(dayFormat),
-                                style = AmityTheme.typography.body.copy(
+                                style = AmityTheme.typography.bodyLegacy.copy(
                                     fontWeight = FontWeight.Normal,
                                     color = AmityTheme.colors.base,
                                 )
@@ -781,7 +790,7 @@ fun AmityPollPostComposerPage(
                                         showTimePicker = true
                                     },
                                 text = selectedDate.toString(timeFormat),
-                                style = AmityTheme.typography.body.copy(
+                                style = AmityTheme.typography.bodyLegacy.copy(
                                     fontWeight = FontWeight.Normal,
                                     color = AmityTheme.colors.base,
                                 )
@@ -797,7 +806,7 @@ fun AmityPollPostComposerPage(
                         Text(
                             modifier = Modifier.padding(horizontal = 16.dp),
                             text = endText,
-                            style = AmityTheme.typography.caption.copy(
+                            style = AmityTheme.typography.captionLegacy.copy(
                                 fontWeight = FontWeight.Normal,
                                 color = AmityTheme.colors.baseShade1,
                             )
@@ -827,8 +836,8 @@ fun AmityPollPostComposerPage(
 
             if (showPendingPostDialog) {
                 AmityAlertDialog(
-                    dialogTitle = "",
-                    dialogText = "Your post has been submitted to the pending list. It will be reviewed by community moderator.",
+                    dialogTitle = "Posts sent for review",
+                    dialogText = "Your post has been submitted to the pending list. It will be published once approved by the community moderator.",
                     dismissText = "OK",
                 ) {
                     showPendingPostDialog = false
@@ -919,7 +928,8 @@ fun AmityPollPostComposerPage(
 
             if (shouldShowSuggestion) {
                 AmityMentionSuggestionView(
-                    heightIn = 150.dp,
+                    heightIn = 150.dp,  // Slightly smaller than post composer
+                    shape = RoundedCornerShape(8.dp),
                     community = targetCommunity,
                     keyword = queryToken,
                     modifier = Modifier.align(Alignment.BottomStart),
@@ -1026,7 +1036,7 @@ fun AmityPollDurationOptionItem(
     ) {
         Text(
             text = text,
-            style = AmityTheme.typography.body.copy(
+            style = AmityTheme.typography.bodyLegacy.copy(
                 fontWeight = FontWeight.SemiBold,
             ),
             modifier = modifier

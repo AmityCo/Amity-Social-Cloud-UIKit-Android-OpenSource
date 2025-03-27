@@ -205,7 +205,7 @@ fun AmityCommentActionsContainer(
                         },
                         onError = {
                             AmityUIKitSnackbar.publishSnackbarErrorMessage(
-                                message = context.getString(R.string.amity_comment_reported_toast_message),
+                                message = context.getString(R.string.amity_comment_reported_failed_toast_message),
                             )
                         }
                     )

@@ -200,7 +200,7 @@ fun AmityCommunitySettingPage(
 
                 Text(
                     text = communityVM?.getDisplayName() ?: "",
-                    style = AmityTheme.typography.title,
+                    style = AmityTheme.typography.titleLegacy,
                     modifier = modifier
                         .padding(vertical = 16.dp)
                         .align(Alignment.Center)
@@ -211,7 +211,7 @@ fun AmityCommunitySettingPage(
 
             Text(
                 text = "Basic info",
-                style = AmityTheme.typography.title,
+                style = AmityTheme.typography.titleLegacy,
                 modifier = modifier.padding(vertical = 12.dp)
             )
 
@@ -332,7 +332,7 @@ fun AmityCommunitySettingPage(
 
                     Text(
                         text = "On",
-                        style = AmityTheme.typography.body.copy(
+                        style = AmityTheme.typography.bodyLegacy.copy(
                             color = AmityTheme.colors.baseShade1,
                         ),
                         modifier = Modifier
@@ -350,7 +350,7 @@ fun AmityCommunitySettingPage(
             if (hasReviewPermission || hasEditPermission) {
                 Text(
                     text = "Community permissions",
-                    style = AmityTheme.typography.title,
+                    style = AmityTheme.typography.titleLegacy,
                     modifier = modifier.padding(vertical = 12.dp)
                 )
             }
@@ -436,7 +436,7 @@ fun AmityCommunitySettingPage(
                 ) {
                     Text(
                         text = getConfig().getText(),
-                        style = AmityTheme.typography.body.copy(
+                        style = AmityTheme.typography.bodyLegacy.copy(
                             color = AmityTheme.colors.alert,
                             fontWeight = FontWeight.SemiBold,
                         ),
@@ -477,7 +477,7 @@ fun AmityCommunitySettingPage(
                     ) {
                         Text(
                             text = getConfig().getText(),
-                            style = AmityTheme.typography.body.copy(
+                            style = AmityTheme.typography.bodyLegacy.copy(
                                 color = AmityTheme.colors.alert,
                                 fontWeight = FontWeight.SemiBold,
                             ),
@@ -495,7 +495,7 @@ fun AmityCommunitySettingPage(
                     ) {
                         Text(
                             text = getConfig().getText(),
-                            style = AmityTheme.typography.caption.copy(
+                            style = AmityTheme.typography.captionLegacy.copy(
                                 fontWeight = FontWeight.Normal,
                                 color = AmityTheme.colors.baseShade1,
                             ),
@@ -554,7 +554,7 @@ fun AmityCommunitySettingPage(
             AmityAlertDialog(
                 dialogTitle = "Unable to leave community",
                 dialogText = "You're the only moderator in this group. To leave community, nominate other members to moderator role.",
-                dismissText = "Ok",
+                dismissText = "OK",
                 onDismissRequest = {
                     showUserIsLastModeratorDialog = false
                 }

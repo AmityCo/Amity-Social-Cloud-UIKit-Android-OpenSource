@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.post.detail.elements
 
+import android.app.Activity
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -37,21 +38,22 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.sdk.model.video.stream.AmityStream
 import com.amity.socialcloud.uikit.common.ui.elements.AmityExpandableText
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
-import com.amity.socialcloud.uikit.community.compose.livestream.AmityLivestreamPlayerPageActivity
+import com.amity.socialcloud.uikit.community.compose.livestream.view.AmityLivestreamPlayerPageActivity
+import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetailPageActivity.Companion.REQUEST_CODE_VIEW_LIVESTREAM
 import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun AmityPostLivestreamElement(
     modifier: Modifier = Modifier,
-    post: AmityPost
+    post: AmityPost,
 ) {
     val postChildren = remember(post.getPostId(), post.getUpdatedAt()) {
         post.getChildren()
@@ -86,6 +88,7 @@ fun AmityChildLivestreamPostElement(
     post: AmityPost,
 ) {
     val context = LocalContext.current
+    val activity = context as Activity
     val streamState = remember(post.getPostId(), post.getUpdatedAt()) {
         getLivestreamPostData(post)
     }?.collectAsState(null)
@@ -106,16 +109,15 @@ fun AmityChildLivestreamPostElement(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentSize()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .padding(16.dp)
             ) {
                 Column {
                     stream.getTitle()?.let { title ->
-                        Text(
-                            modifier = Modifier
-                                .fillMaxWidth(),
+                        AmityExpandableText(
+                            modifier = modifier.fillMaxWidth(),
                             text = title,
-                            textAlign = TextAlign.Left,
-                            style = AmityTheme.typography.body,
+                            style = AmityTheme.typography.bodyBold,
+                            onClick = {},
                         )
                     }
                     stream.getDescription()?.let { description ->
@@ -123,7 +125,7 @@ fun AmityChildLivestreamPostElement(
                             AmityExpandableText(
                                 modifier = modifier,
                                 text = "\n$description",
-                                style = AmityTheme.typography.body,
+                                style = AmityTheme.typography.bodyLegacy,
                                 onClick = {},
                             )
                         }
@@ -131,31 +133,38 @@ fun AmityChildLivestreamPostElement(
                 }
             }
 
-        }
-
-        if (streamState?.value?.getStatus() == AmityStream.Status.ENDED) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(203.dp)
-            ) {
-                AmityLivestreamEndedView(modifier = modifier)
-            }
-        } else {
-            Box(
-                modifier = modifier
-                    .clickable {
-                        AmityLivestreamPlayerPageActivity
-                            .newIntent(
-                                context = context,
-                                post = post
-                            )
-                            .let {
-                                context.startActivity(it)
+            if (stream.getStatus() == AmityStream.Status.ENDED) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(203.dp)
+                ) {
+                    AmityLivestreamEndedView(modifier = Modifier)
+                }
+            } else if (stream.isDeleted()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(203.dp)
+                ) {
+                    AmityLivestreamUnavailableView(modifier = Modifier)
+                }
+            } else {
+                Box(
+                    modifier = Modifier
+                        .clickable {
+                            if (stream.getStatus() != AmityStream.Status.IDLE) {
+                                AmityLivestreamPlayerPageActivity
+                                    .newIntent(context = context, post = post)
+                                    .let {
+                                        activity.startActivityForResult(
+                                            it,
+                                            REQUEST_CODE_VIEW_LIVESTREAM
+                                        )
+                                    }
                             }
-                    }
-            ) {
-                streamState?.value?.let { stream ->
+                        }
+                ) {
                     if (image != null) {
                         Box(
                             modifier = modifier
@@ -163,16 +172,18 @@ fun AmityChildLivestreamPostElement(
                                 .fillMaxWidth(),
                         ) {
                             AmityPostImageView(
-                                post = post,
+                                post = post.getChildren().first(),
                                 onClick = {
-                                    AmityLivestreamPlayerPageActivity
-                                        .newIntent(
-                                            context = context,
-                                            post = post
-                                        )
-                                        .let {
-                                            context.startActivity(it)
-                                        }
+                                    if (stream.getStatus() != AmityStream.Status.IDLE) {
+                                        AmityLivestreamPlayerPageActivity
+                                            .newIntent(context = context, post = post)
+                                            .let {
+                                                activity.startActivityForResult(
+                                                    it,
+                                                    REQUEST_CODE_VIEW_LIVESTREAM
+                                                )
+                                            }
+                                    }
                                 }
                             )
                         }
@@ -181,26 +192,40 @@ fun AmityChildLivestreamPostElement(
                             modifier = modifier
                                 .height(219.dp)
                                 .fillMaxWidth(),
-                            painter = painterResource(id = R.drawable.amity_ic_default_stream_thumbnail),
+                            painter = painterResource(id = R.drawable.amity_v4_ic_default_stream_thumbnail),
                             contentDescription = null,
                             contentScale = ContentScale.FillWidth,
                         )
                     }
-                    AmityPostMediaPlayButton(
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                    )
-                    val status = stream.getStatus()
-                    if (status == AmityStream.Status.RECORDED) {
-                        AmityLivestreamPostRecordedLabel(
-                            modifier = Modifier
-                                .padding(start = 12.dp, top = 12.dp)
+                    if (stream.getStatus() != AmityStream.Status.IDLE) {
+                        Image(
+                            painter = painterResource(id = R.drawable.amity_ic_play_v4),
+                            contentDescription = null,
+                            modifier = Modifier.align(Alignment.Center)
                         )
-                    } else if (status == AmityStream.Status.LIVE) {
-                        AmityLivestreamPostLiveLabel(
-                            modifier = Modifier
-                                .padding(start = 12.dp, top = 12.dp)
-                        )
+                    }
+                    when (stream.getStatus()) {
+                        AmityStream.Status.RECORDED -> {
+                            AmityLivestreamPostIdleOrRecordedLabel(
+                                modifier = Modifier.padding(start = 12.dp, top = 12.dp),
+                                text = "RECORDED"
+                            )
+                        }
+
+                        AmityStream.Status.LIVE -> {
+                            AmityLivestreamPostLiveLabel(
+                                modifier = Modifier.padding(start = 12.dp, top = 12.dp)
+                            )
+                        }
+
+                        AmityStream.Status.IDLE -> {
+                            AmityLivestreamPostIdleOrRecordedLabel(
+                                modifier = Modifier.padding(start = 12.dp, top = 12.dp),
+                                text = "UPCOMING LIVE"
+                            )
+                        }
+
+                        else -> {}
                     }
                 }
             }
@@ -218,8 +243,9 @@ fun getLivestreamPostData(post: AmityPost): Flow<AmityStream>? {
 }
 
 @Composable
-fun AmityLivestreamPostRecordedLabel(
+fun AmityLivestreamPostIdleOrRecordedLabel(
     modifier: Modifier = Modifier,
+    text: String,
 ) {
     Box(
         modifier = modifier
@@ -228,9 +254,9 @@ fun AmityLivestreamPostRecordedLabel(
             .padding(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 4.dp)
     ) {
         Text(
-            text = "RECORDED",
-            style = AmityTheme.typography.caption.copy(
-                color = AmityTheme.colors.background,
+            text = text,
+            style = AmityTheme.typography.captionBold.copy(
+                color = Color.White,
             ),
         )
     }
@@ -248,7 +274,7 @@ fun AmityLivestreamPostLiveLabel(
     ) {
         Text(
             text = "LIVE",
-            style = AmityTheme.typography.caption.copy(
+            style = AmityTheme.typography.captionLegacy.copy(
                 color = AmityTheme.colors.background,
             ),
         )
@@ -270,7 +296,6 @@ fun AmityLivestreamUnavailableView(modifier: Modifier = Modifier) {
         modifier = modifier,
         icon = R.drawable.amity_ic_warning,
         title = "This stream is currently unavailable.",
-        description = "Please try again later.",
     )
 }
 
@@ -291,6 +316,7 @@ fun AmityLivestreamDisconnectedView(modifier: Modifier = Modifier) {
         title = "Reconnecting",
         description = "Due to poor connection, this livestream has been\npaused. It will resume automatically\nonce the connection is stable.",
         shouldShowLoading = true,
+        background = Color.Black.copy(alpha = 0.5f)
     )
 }
 
@@ -309,14 +335,15 @@ fun AmityLivestreamNoticeView(
     modifier: Modifier = Modifier,
     @DrawableRes icon: Int? = null,
     title: String,
-    description: String,
+    description: String? = null,
     shouldShowLoading: Boolean = false,
+    background: Color = Color.Black,
 ) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
             .fillMaxSize()
-            .background(color = Color.Black)
+            .background(color = background)
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterVertically),
@@ -347,25 +374,27 @@ fun AmityLivestreamNoticeView(
             ) {
                 Text(
                     text = title,
-                    style = AmityTheme.typography.title.copy(
+                    style = AmityTheme.typography.titleLegacy.copy(
                         color = Color.White,
                     ),
                 )
             }
             Spacer(modifier = Modifier.height(4.dp))
-            Box(
-                modifier = Modifier
-                    .padding(start = 16.dp, end = 16.dp)
-                    .fillMaxWidth()
-                    .wrapContentSize()
-            ) {
-                Text(
-                    text = description,
-                    style = AmityTheme.typography.caption.copy(
-                        color = Color.White,
-                        textAlign = TextAlign.Center,
-                    ),
-                )
+            description?.let {
+                Box(
+                    modifier = Modifier
+                        .padding(start = 16.dp, end = 16.dp)
+                        .fillMaxWidth()
+                        .wrapContentSize()
+                ) {
+                    Text(
+                        text = description,
+                        style = AmityTheme.typography.captionLegacy.copy(
+                            color = Color.White,
+                            textAlign = TextAlign.Center,
+                        ),
+                    )
+                }
             }
         }
     }
@@ -401,4 +430,10 @@ fun LivestreamLoadingIndicator() {
             style = Stroke(width = 8.dp.value)
         )
     }
+}
+
+@Preview
+@Composable
+fun AmityLivestreamPostPreview() {
+    AmityLivestreamUnavailableView()
 }

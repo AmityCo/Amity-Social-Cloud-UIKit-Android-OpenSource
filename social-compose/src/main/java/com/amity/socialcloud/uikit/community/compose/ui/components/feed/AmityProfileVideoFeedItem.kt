@@ -44,7 +44,6 @@ import com.amity.socialcloud.uikit.common.utils.formatVideoDuration
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostVideoPlayerHelper
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostMediaVideoPlayer
-import kotlinx.coroutines.Dispatchers
 
 @Composable
 fun AmityProfileVideoFeedItem(
@@ -111,7 +110,7 @@ fun AmityProfileVideoFeedItem(
 
         Text(
             text = videoDuration.formatVideoDuration(),
-            style = AmityTheme.typography.body.copy(
+            style = AmityTheme.typography.bodyLegacy.copy(
                 color = Color.White,
             ),
             modifier = Modifier

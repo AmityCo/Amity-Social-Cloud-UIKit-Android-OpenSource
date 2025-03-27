@@ -39,7 +39,6 @@ import com.amity.socialcloud.sdk.model.social.category.AmityCommunityCategory
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.R
-import kotlinx.coroutines.Dispatchers
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -119,7 +118,7 @@ fun AmityCommunityCategoryElement(
         Spacer(modifier.width(8.dp))
         Text(
             text = category.getName().trim(),
-            style = AmityTheme.typography.body.copy(
+            style = AmityTheme.typography.bodyLegacy.copy(
                 fontWeight = FontWeight.SemiBold,
             ),
             maxLines = 1,

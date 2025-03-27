@@ -37,7 +37,7 @@ fun AmityPostContentElement(
             text = text,
             mentionGetter = mentionGetter,
             mentionees = post.getMentionees(),
-            style = AmityTheme.typography.body,
+            style = AmityTheme.typography.bodyLegacy,
             intialExpand = style == AmityPostContentComponentStyle.DETAIL,
             boldWhenMatches = boldedText?.let { listOf(it) } ?: emptyList(),
             onClick = onClick,

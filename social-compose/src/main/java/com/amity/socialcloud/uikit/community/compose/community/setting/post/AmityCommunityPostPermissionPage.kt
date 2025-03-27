@@ -104,7 +104,7 @@ fun AmityCommunityPostPermissionPage(
             ) {
                 Text(
                     text = "Save",
-                    style = AmityTheme.typography.body.copy(
+                    style = AmityTheme.typography.bodyLegacy.copy(
                         color = if (shouldAllowToSave) AmityTheme.colors.highlight
                         else AmityTheme.colors.highlight.shade(AmityColorShade.SHADE2),
                     ),
@@ -130,7 +130,7 @@ fun AmityCommunityPostPermissionPage(
             Spacer(modifier.height(8.dp))
             Text(
                 text = "Who can post on this community",
-                style = AmityTheme.typography.body.copy(
+                style = AmityTheme.typography.bodyLegacy.copy(
                     fontWeight = FontWeight.SemiBold
                 ),
                 modifier = modifier.padding(horizontal = 16.dp)
@@ -138,7 +138,7 @@ fun AmityCommunityPostPermissionPage(
             Spacer(modifier.height(4.dp))
             Text(
                 text = "You can control who can create posts in your community.",
-                style = AmityTheme.typography.caption.copy(
+                style = AmityTheme.typography.captionLegacy.copy(
                     fontWeight = FontWeight.Normal,
                     color = AmityTheme.colors.baseShade1,
                 ),

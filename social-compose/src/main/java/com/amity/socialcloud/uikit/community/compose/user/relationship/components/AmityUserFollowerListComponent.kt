@@ -71,7 +71,7 @@ fun AmityUserFollowerListComponent(
                         Spacer(modifier = modifier.size(8.dp))
                         Text(
                             "Nothing here to see yet",
-                            style = AmityTheme.typography.title.copy(
+                            style = AmityTheme.typography.titleLegacy.copy(
                                 color = AmityTheme.colors.baseShade3
                             )
                         )

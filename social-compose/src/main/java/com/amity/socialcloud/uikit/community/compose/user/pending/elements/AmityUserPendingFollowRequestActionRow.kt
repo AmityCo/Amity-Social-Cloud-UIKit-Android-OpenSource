@@ -42,7 +42,7 @@ fun AmityUserPendingFollowRequestActionRow(
         ) {
             Text(
                 text = "Accept",
-                style = AmityTheme.typography.caption.copy(
+                style = AmityTheme.typography.captionLegacy.copy(
                     color = AmityTheme.colors.background,
                 ),
             )
@@ -60,7 +60,7 @@ fun AmityUserPendingFollowRequestActionRow(
         ) {
             Text(
                 text = "Decline",
-                style = AmityTheme.typography.body,
+                style = AmityTheme.typography.bodyLegacy,
             )
         }
     }

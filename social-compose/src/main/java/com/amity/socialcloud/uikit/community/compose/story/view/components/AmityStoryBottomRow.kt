@@ -220,9 +220,9 @@ fun AmityStoryUploadFailedRow(
         AmityAlertDialog(
             dialogTitle = "Failed to upload story",
             dialogText = "Would you like to discard or retry uploading?",
-            dismissText = "CANCEL",
-            action1Text = "DISCARD",
-            action2Text = "RETRY",
+            dismissText = "Cancel",
+            action1Text = "Discard",
+            action2Text = "Retry",
             onAction1 = {
                 openAlertDialog.value = false
                 viewModel.updateDialogUIState(

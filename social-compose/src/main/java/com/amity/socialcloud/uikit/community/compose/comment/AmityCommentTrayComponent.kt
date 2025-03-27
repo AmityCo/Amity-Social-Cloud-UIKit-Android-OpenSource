@@ -98,7 +98,7 @@ fun AmityCommentTrayComponent(
                 if (referenceType == AmityCommentReferenceType.STORY) {
                     Text(
                         text = context.getString(R.string.amity_comments),
-                        style = AmityTheme.typography.title,
+                        style = AmityTheme.typography.titleLegacy,
                         modifier = modifier
                             .fillMaxWidth()
                             .testTag(getAccessibilityId("title_text_view")),

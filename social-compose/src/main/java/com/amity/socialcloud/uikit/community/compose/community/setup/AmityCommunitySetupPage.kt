@@ -278,7 +278,7 @@ fun AmityCommunitySetupPage(
                                 id = if (isInEditMode) R.string.amity_v4_community_setup_edit_title
                                 else R.string.amity_v4_community_setup_create_title,
                             ),
-                            style = AmityTheme.typography.title,
+                            style = AmityTheme.typography.titleLegacy,
                             modifier = modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 16.dp)
@@ -340,14 +340,14 @@ fun AmityCommunitySetupPage(
                                 configString = getConfig().getText(),
                                 id = R.string.amity_v4_community_setup_name_title
                             ),
-                            style = AmityTheme.typography.title,
+                            style = AmityTheme.typography.titleLegacy,
                             modifier = modifier.testTag(getAccessibilityId())
                         )
                     }
 
                     Text(
                         text = "${name.length}/30",
-                        style = AmityTheme.typography.caption.copy(
+                        style = AmityTheme.typography.captionLegacy.copy(
                             fontWeight = FontWeight.Normal,
                             color = AmityTheme.colors.baseShade1,
                         )
@@ -386,7 +386,7 @@ fun AmityCommunitySetupPage(
                                     configString = getConfig().getText(),
                                     id = R.string.amity_v4_community_setup_about_title,
                                 ),
-                                style = AmityTheme.typography.title,
+                                style = AmityTheme.typography.titleLegacy,
                                 modifier = modifier.testTag(getAccessibilityId())
                             )
                         }
@@ -394,7 +394,7 @@ fun AmityCommunitySetupPage(
                             text = " " + amityStringResource(
                                 id = R.string.amity_v4_community_setup_about_optional_title,
                             ),
-                            style = AmityTheme.typography.body.copy(
+                            style = AmityTheme.typography.bodyLegacy.copy(
                                 color = AmityTheme.colors.baseShade3,
                             )
                         )
@@ -402,7 +402,7 @@ fun AmityCommunitySetupPage(
 
                     Text(
                         text = "${description.length}/180",
-                        style = AmityTheme.typography.caption.copy(
+                        style = AmityTheme.typography.captionLegacy.copy(
                             fontWeight = FontWeight.Normal,
                             color = AmityTheme.colors.baseShade1,
                         )
@@ -431,7 +431,7 @@ fun AmityCommunitySetupPage(
                             configString = getConfig().getText(),
                             id = R.string.amity_v4_community_setup_categories_title,
                         ),
-                        style = AmityTheme.typography.title,
+                        style = AmityTheme.typography.titleLegacy,
                         modifier = modifier
                             .padding(horizontal = 16.dp)
                             .testTag(getAccessibilityId())
@@ -446,7 +446,7 @@ fun AmityCommunitySetupPage(
                     if (selectedCategories.isEmpty()) {
                         Text(
                             text = context.getString(R.string.amity_v4_community_setup_categories_description),
-                            style = AmityTheme.typography.body.copy(
+                            style = AmityTheme.typography.bodyLegacy.copy(
                                 color = AmityTheme.colors.baseShade3,
                             ),
                             modifier = modifier.clickableWithoutRipple {
@@ -505,7 +505,7 @@ fun AmityCommunitySetupPage(
                             configString = getConfig().getText(),
                             id = R.string.amity_v4_community_setup_privacy_title,
                         ),
-                        style = AmityTheme.typography.title,
+                        style = AmityTheme.typography.titleLegacy,
                         modifier = modifier
                             .padding(horizontal = 16.dp)
                             .testTag(getAccessibilityId())
@@ -553,7 +553,7 @@ fun AmityCommunitySetupPage(
                                     configString = getConfig().getText(),
                                     id = R.string.amity_v4_community_setup_privacy_public_title,
                                 ),
-                                style = AmityTheme.typography.body.copy(
+                                style = AmityTheme.typography.bodyLegacy.copy(
                                     fontWeight = FontWeight.SemiBold
                                 ),
                                 modifier = modifier.testTag(getAccessibilityId())
@@ -569,7 +569,7 @@ fun AmityCommunitySetupPage(
                                     configString = getConfig().getText(),
                                     id = R.string.amity_v4_community_setup_privacy_public_description,
                                 ),
-                                style = AmityTheme.typography.caption.copy(
+                                style = AmityTheme.typography.captionLegacy.copy(
                                     color = AmityTheme.colors.baseShade1,
                                     fontWeight = FontWeight.Normal,
                                 ),
@@ -630,7 +630,7 @@ fun AmityCommunitySetupPage(
                                     configString = getConfig().getText(),
                                     id = R.string.amity_v4_community_setup_privacy_private_title,
                                 ),
-                                style = AmityTheme.typography.body.copy(
+                                style = AmityTheme.typography.bodyLegacy.copy(
                                     fontWeight = FontWeight.SemiBold
                                 ),
                                 modifier = modifier.testTag(getAccessibilityId())
@@ -646,7 +646,7 @@ fun AmityCommunitySetupPage(
                                     configString = getConfig().getText(),
                                     id = R.string.amity_v4_community_setup_privacy_private_description,
                                 ),
-                                style = AmityTheme.typography.caption.copy(
+                                style = AmityTheme.typography.captionLegacy.copy(
                                     color = AmityTheme.colors.baseShade1,
                                     fontWeight = FontWeight.Normal,
                                 ),
@@ -683,7 +683,7 @@ fun AmityCommunitySetupPage(
                                 configString = getConfig().getText(),
                                 id = R.string.amity_v4_community_setup_create_button,
                             ),
-                            style = AmityTheme.typography.title,
+                            style = AmityTheme.typography.titleLegacy,
                             modifier = modifier
                                 .padding(horizontal = 16.dp)
                                 .testTag(getAccessibilityId())
@@ -804,7 +804,7 @@ fun AmityCommunitySetupPage(
                                 id = if (isInEditMode) R.string.amity_v4_community_setup_edit_button
                                 else R.string.amity_v4_community_setup_create_button
                             ),
-                            style = AmityTheme.typography.caption.copy(
+                            style = AmityTheme.typography.captionLegacy.copy(
                                 color = Color.White,
                             ),
                             textAlign = TextAlign.Center,

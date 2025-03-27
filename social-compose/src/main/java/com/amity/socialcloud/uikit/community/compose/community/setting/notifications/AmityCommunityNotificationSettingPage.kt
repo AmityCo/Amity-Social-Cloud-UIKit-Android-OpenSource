@@ -102,13 +102,13 @@ fun AmityCommunityNotificationSettingPage(
                 ) {
                     Text(
                         text = "Allow notifications",
-                        style = AmityTheme.typography.body.copy(
+                        style = AmityTheme.typography.bodyLegacy.copy(
                             fontWeight = FontWeight.SemiBold
                         )
                     )
                     Text(
                         text = "Turn on to receive push notifications from this community.",
-                        style = AmityTheme.typography.caption.copy(
+                        style = AmityTheme.typography.captionLegacy.copy(
                             fontWeight = FontWeight.Normal,
                             color = AmityTheme.colors.baseShade1,
                         )
@@ -133,7 +133,7 @@ fun AmityCommunityNotificationSettingPage(
                                 AmityUIKitSnackbar.publishSnackbarMessage("Successfully updated community profile!")
                             },
                             onError = {
-                                AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to update community group")
+                                AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to update community profile")
                             }
                         )
                     }
@@ -154,7 +154,7 @@ fun AmityCommunityNotificationSettingPage(
                     )
                     Text(
                         text = "Moderator has disabled notification for this community",
-                        style = AmityTheme.typography.caption.copy(
+                        style = AmityTheme.typography.captionLegacy.copy(
                             color = AmityTheme.colors.baseShade2,
                             fontWeight = FontWeight.Normal,
                         )
@@ -173,7 +173,7 @@ fun AmityCommunityNotificationSettingPage(
                 if (communityNotificationSettings?.isPostNotificationEnabled() == true) {
                     AmityCommunitySettingItem(
                         title = "Posts",
-                        titleStyle = AmityTheme.typography.body.copy(
+                        titleStyle = AmityTheme.typography.bodyLegacy.copy(
                             fontWeight = FontWeight.SemiBold
                         ),
                         modifier = modifier.padding(start = 16.dp, end = 8.dp),
@@ -198,7 +198,7 @@ fun AmityCommunityNotificationSettingPage(
                 if (communityNotificationSettings?.isCommentNotificationEnabled() == true) {
                     AmityCommunitySettingItem(
                         title = "Comments",
-                        titleStyle = AmityTheme.typography.body.copy(
+                        titleStyle = AmityTheme.typography.bodyLegacy.copy(
                             fontWeight = FontWeight.SemiBold
                         ),
                         modifier = modifier.padding(start = 16.dp, end = 8.dp),
@@ -223,7 +223,7 @@ fun AmityCommunityNotificationSettingPage(
                 if (communityNotificationSettings?.isStoryNotificationEnabled() == true) {
                     AmityCommunitySettingItem(
                         title = "Stories",
-                        titleStyle = AmityTheme.typography.body.copy(
+                        titleStyle = AmityTheme.typography.bodyLegacy.copy(
                             fontWeight = FontWeight.SemiBold
                         ),
                         modifier = modifier.padding(start = 16.dp, end = 8.dp),

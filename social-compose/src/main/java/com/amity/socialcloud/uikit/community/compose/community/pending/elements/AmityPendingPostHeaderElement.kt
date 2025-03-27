@@ -78,7 +78,7 @@ fun AmityPendingPostHeaderElement(
                 ) {
                     Text(
                         text = post.getCreator()?.getDisplayName() ?: "",
-                        style = AmityTheme.typography.body.copy(
+                        style = AmityTheme.typography.bodyLegacy.copy(
                             fontWeight = FontWeight.SemiBold
                         ),
                         maxLines = 1,
@@ -121,7 +121,7 @@ fun AmityPendingPostHeaderElement(
                         Text(
                             text = (post.getCreatedAt()?.readableSocialTimeDiff() ?: "")
                                     + if (post.isEdited()) " (edited)" else "",
-                            style = AmityTheme.typography.caption.copy(
+                            style = AmityTheme.typography.captionLegacy.copy(
                                 fontWeight = FontWeight.Normal,
                                 color = AmityTheme.colors.baseShade2
                             ),

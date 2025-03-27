@@ -56,7 +56,7 @@ fun AmityBlockedUserFeed(
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = getConfig().getText(),
-                style = AmityTheme.typography.title.copy(
+                style = AmityTheme.typography.titleLegacy.copy(
                     color = AmityTheme.colors.baseShade3,
                 ),
             )
@@ -69,7 +69,7 @@ fun AmityBlockedUserFeed(
         ) {
             Text(
                 text = getConfig().getText(),
-                style = AmityTheme.typography.caption.copy(
+                style = AmityTheme.typography.captionLegacy.copy(
                     fontWeight = FontWeight.Normal,
                     color = AmityTheme.colors.baseShade3,
                 ),

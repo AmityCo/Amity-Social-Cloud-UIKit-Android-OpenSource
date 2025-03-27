@@ -38,7 +38,6 @@ import com.amity.socialcloud.uikit.chat.compose.R
 import com.amity.socialcloud.uikit.chat.compose.live.component.AmityLiveChatHeader
 import com.amity.socialcloud.uikit.chat.compose.live.component.AmityLiveChatMessageList
 import com.amity.socialcloud.uikit.chat.compose.live.composer.AmityLiveChatMessageComposeBar
-import com.amity.socialcloud.uikit.common.eventbus.NetworkConnectionEventPublisher
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.asColor
@@ -153,7 +152,7 @@ fun AmityLiveChatPage(
                         text = message,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
-                        style = AmityTheme.typography.body.copy(
+                        style = AmityTheme.typography.bodyLegacy.copy(
                             fontWeight = FontWeight.SemiBold,
                             color = AmityTheme.colors.baseShade1,
                         ),

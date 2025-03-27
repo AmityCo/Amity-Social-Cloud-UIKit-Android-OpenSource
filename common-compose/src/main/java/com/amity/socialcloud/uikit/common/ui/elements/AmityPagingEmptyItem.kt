@@ -25,7 +25,7 @@ fun AmityPagingEmptyItem(
     ) {
         Text(
             text = text,
-            style = AmityTheme.typography.body.copy(
+            style = AmityTheme.typography.bodyLegacy.copy(
                 fontWeight = FontWeight.Normal,
                 color = AmityTheme.colors.baseShade2,
             ),

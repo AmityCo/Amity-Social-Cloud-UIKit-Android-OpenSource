@@ -77,7 +77,7 @@ fun AmityCommentEngagementBar(
                 Text(
                     text = comment.getCreatedAt()
                         .readableSocialTimeDiff() + if (comment.isEdited()) " (edited)" else "",
-                    style = AmityTheme.typography.caption.copy(
+                    style = AmityTheme.typography.captionLegacy.copy(
                         fontWeight = FontWeight.Normal,
                         color = AmityTheme.colors.baseShade2,
                     ),
@@ -88,7 +88,7 @@ fun AmityCommentEngagementBar(
                     text = context.getString(
                         R.string.amity_like
                     ),
-                    style = AmityTheme.typography.caption.copy(
+                    style = AmityTheme.typography.captionLegacy.copy(
                         color = if (isReacted) AmityTheme.colors.primary
                         else AmityTheme.colors.baseShade2,
                     ),
@@ -110,7 +110,7 @@ fun AmityCommentEngagementBar(
                 if (!isReplyComment) {
                     Text(
                         text = context.getString(R.string.amity_reply),
-                        style = AmityTheme.typography.caption.copy(
+                        style = AmityTheme.typography.captionLegacy.copy(
                             color = AmityTheme.colors.baseShade2,
                         ),
                         modifier = modifier
@@ -145,7 +145,7 @@ fun AmityCommentEngagementBar(
             ) {
                 Text(
                     text = localReactionCount.toString(),
-                    style = AmityTheme.typography.caption.copy(
+                    style = AmityTheme.typography.captionLegacy.copy(
                         fontWeight = FontWeight.Normal,
                         color = AmityTheme.colors.secondaryShade2,
                     ),

@@ -93,7 +93,7 @@ fun AmityCommunityCategoryItemView(
     ) {
         Text(
             text = categoryName,
-            style = AmityTheme.typography.caption.copy(
+            style = AmityTheme.typography.captionLegacy.copy(
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Normal
             ),
@@ -122,7 +122,7 @@ fun AmityCommunityCategoryOverflowCount(
     ) {
         Text(
             text = "+$remainingCount",
-            style = AmityTheme.typography.caption.copy(
+            style = AmityTheme.typography.captionLegacy.copy(
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Normal
             ),

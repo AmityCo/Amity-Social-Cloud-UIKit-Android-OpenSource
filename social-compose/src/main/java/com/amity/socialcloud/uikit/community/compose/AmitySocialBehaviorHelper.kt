@@ -7,6 +7,7 @@ import com.amity.socialcloud.uikit.community.compose.community.profile.AmityComm
 import com.amity.socialcloud.uikit.community.compose.community.setting.AmityCommunitySettingPageBehavior
 import com.amity.socialcloud.uikit.community.compose.community.setting.notifications.AmityCommunityNotificationSettingPageBehavior
 import com.amity.socialcloud.uikit.community.compose.community.setup.AmityCommunitySetupPageBehavior
+import com.amity.socialcloud.uikit.community.compose.livestream.create.AmityCreateLivestreamPageBehavior
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerPageBehavior
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetailPageBehavior
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponentBehavior
@@ -24,6 +25,7 @@ import com.amity.socialcloud.uikit.community.compose.socialhome.components.Amity
 import com.amity.socialcloud.uikit.community.compose.story.create.AmityCreateStoryPageBehavior
 import com.amity.socialcloud.uikit.community.compose.story.target.AmityStoryTabComponentBehavior
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageBehavior
+import com.amity.socialcloud.uikit.community.compose.target.livestream.AmityLivestreamPostTargetSelectionPageBehavior
 import com.amity.socialcloud.uikit.community.compose.target.poll.AmityPollTargetSelectionPageBehavior
 import com.amity.socialcloud.uikit.community.compose.target.post.AmityPostTargetSelectionPageBehavior
 import com.amity.socialcloud.uikit.community.compose.target.story.AmityStoryTargetSelectionPageBehavior
@@ -61,6 +63,12 @@ object AmitySocialBehaviorHelper {
 
     var pollTargetSelectionPageBehavior: AmityPollTargetSelectionPageBehavior =
         AmityPollTargetSelectionPageBehavior()
+
+    var createLivestreamPageBehavior: AmityCreateLivestreamPageBehavior =
+        AmityCreateLivestreamPageBehavior()
+
+    var livestreamTargetSelectionPageBehavior: AmityLivestreamPostTargetSelectionPageBehavior =
+        AmityLivestreamPostTargetSelectionPageBehavior()
 
     var createPostMenuComponentBehavior: AmityCreatePostMenuComponentBehavior =
         AmityCreatePostMenuComponentBehavior()

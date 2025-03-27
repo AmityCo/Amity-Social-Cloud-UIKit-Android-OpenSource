@@ -83,7 +83,7 @@ fun AmityUserFollowRelationshipButton(
 
                     Text(
                         text = getConfig().getText(),
-                        style = AmityTheme.typography.body.copy(
+                        style = AmityTheme.typography.bodyLegacy.copy(
                             fontWeight = FontWeight.SemiBold
                         ),
                     )
@@ -114,7 +114,7 @@ fun AmityUserFollowRelationshipButton(
 
                     Text(
                         text = getConfig().getText(),
-                        style = AmityTheme.typography.body.copy(
+                        style = AmityTheme.typography.bodyLegacy.copy(
                             color = Color.White,
                             fontWeight = FontWeight.SemiBold
                         ),

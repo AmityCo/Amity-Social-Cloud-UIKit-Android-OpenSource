@@ -5,6 +5,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,6 +22,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rxjava3.subscribeAsState
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
@@ -137,20 +139,37 @@ fun AmityPostMediaPreviewDialog(
             when (val data = childPosts[index]) {
                 is AmityPost.Data.IMAGE -> {
                     val image = data.getImage()
-                    AsyncImage(
-                        model = ImageRequest
-                            .Builder(LocalContext.current)
-                            .data(image?.getUrl(AmityImage.Size.MEDIUM))
-                            .crossfade(true)
-                            .networkCachePolicy(CachePolicy.ENABLED)
-                            .diskCachePolicy(CachePolicy.ENABLED)
-                            .memoryCachePolicy(CachePolicy.ENABLED)
-                            .build(),
-                        contentDescription = "Image Post",
-                        contentScale = ContentScale.Fit,
-                        modifier = modifier.fillMaxSize()
-                            .zoomable(rememberZoomState()),
-                    )
+                    val imageUrl = image?.getUrl(AmityImage.Size.MEDIUM)
+                    
+                    Box(
+                        modifier = modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        if (imageUrl != null) {
+                            AsyncImage(
+                                model = ImageRequest
+                                    .Builder(LocalContext.current)
+                                    .data(imageUrl)
+                                    .crossfade(true)
+                                    .networkCachePolicy(CachePolicy.ENABLED)
+                                    .diskCachePolicy(CachePolicy.ENABLED)
+                                    .memoryCachePolicy(CachePolicy.ENABLED)
+                                    .build(),
+                                contentDescription = "Image Post",
+                                contentScale = ContentScale.Fit,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .zoomable(rememberZoomState()),
+                            )
+                        } else {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(480.dp)
+                                    .background(AmityTheme.colors.baseShade4),
+                            )
+                        }
+                    }
                 }
 
                 is AmityPost.Data.VIDEO -> {
@@ -205,7 +224,7 @@ fun AmityPostMediaPreviewDialog(
 
             Text(
                 text = "${pagerState.currentPage + 1} / ${childPosts.size}",
-                style = AmityTheme.typography.title.copy(
+                style = AmityTheme.typography.titleLegacy.copy(
                     fontWeight = FontWeight.Normal,
                     color = Color.White
                 ),
@@ -235,7 +254,8 @@ fun prepareVideoUrl(childPosts: List<AmityPost.Data>): Single<List<AmityVideo>> 
         .filterIsInstance<AmityPost.Data.VIDEO>()
         .map { it.getVideo() }
     ) { videoList ->
-        videoList.mapNotNull { video -> video as AmityVideo }
+        videoList
+            .map { video -> video as AmityVideo }
     }.subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
 }

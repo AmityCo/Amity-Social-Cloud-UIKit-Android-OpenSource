@@ -46,7 +46,7 @@ fun AmityBottomSheetActionItem(
 
         Text(
             text = text,
-            style = AmityTheme.typography.body.copy(
+            style = AmityTheme.typography.bodyLegacy.copy(
                 fontWeight = FontWeight.SemiBold,
                 color = color ?: AmityTheme.colors.base
             )
@@ -74,7 +74,7 @@ fun AmityBottomSheetActionItem(
 
         Text(
             text = text,
-            style = AmityTheme.typography.body.copy(
+            style = AmityTheme.typography.bodyLegacy.copy(
                 fontWeight = FontWeight.SemiBold,
                 color = color ?: AmityTheme.colors.base
             )

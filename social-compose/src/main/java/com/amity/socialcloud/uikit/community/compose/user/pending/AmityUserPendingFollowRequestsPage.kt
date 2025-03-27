@@ -61,7 +61,7 @@ fun AmityUserPendingFollowRequestsPage(
             if (lazyPagingItems.itemCount > 0) {
                 Text(
                     text = "Declining a follow request is irreversible. The user must send a new request if declined.",
-                    style = AmityTheme.typography.caption.copy(
+                    style = AmityTheme.typography.captionLegacy.copy(
                         fontWeight = FontWeight.Normal,
                         color = AmityTheme.colors.baseShade1
                     ),
@@ -107,7 +107,7 @@ fun AmityUserPendingFollowRequestsPage(
                                         onError = {
                                             lazyPagingItems.refresh()
                                             getPageScope().showSnackbar(
-                                                message = it.name,
+                                                message = "Failed to accept follow request. Please try again.",
                                                 drawableRes = R.drawable.amity_ic_snack_bar_warning
                                             )
                                         }
@@ -126,7 +126,7 @@ fun AmityUserPendingFollowRequestsPage(
                                         onError = {
                                             lazyPagingItems.refresh()
                                             getPageScope().showSnackbar(
-                                                message = it.name,
+                                                message = "Failed to decline follow request. Please try again.",
                                                 drawableRes = R.drawable.amity_ic_snack_bar_warning
                                             )
                                         }

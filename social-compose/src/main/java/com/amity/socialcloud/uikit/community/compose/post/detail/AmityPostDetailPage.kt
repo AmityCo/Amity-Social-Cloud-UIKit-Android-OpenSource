@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.post.detail
 
+import android.app.Activity
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -34,29 +35,37 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.coerceAtMost
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.amity.socialcloud.sdk.core.session.model.NetworkConnectionEvent
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.sdk.model.social.comment.AmityCommentReferenceType
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.ad.AmityListItem
+import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
+import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
+import com.amity.socialcloud.uikit.common.ui.elements.DisposableEffectWithLifeCycle
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.closePage
+import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getKeyboardHeight
 import com.amity.socialcloud.uikit.common.utils.isKeyboardVisible
+import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentViewModel
 import com.amity.socialcloud.uikit.community.compose.comment.create.AmityCommentComposerBar
 import com.amity.socialcloud.uikit.community.compose.paging.comment.amityCommentListLLS
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponent
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponentStyle
+import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostShimmer
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuSheetUIState
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuViewModel
 
@@ -68,6 +77,7 @@ fun AmityPostDetailPage(
     style: AmityPostContentComponentStyle,
     category: AmityPostCategory = AmityPostCategory.GENERAL,
     hideTarget: Boolean,
+    showLivestreamPostExceeded: Boolean = false,
 ) {
     val context = LocalContext.current
 
@@ -80,6 +90,8 @@ fun AmityPostDetailPage(
         viewModel<AmityPostMenuViewModel>(viewModelStoreOwner = viewModelStoreOwner)
     val commentViewModel =
         viewModel<AmityCommentTrayComponentViewModel>(viewModelStoreOwner = viewModelStoreOwner)
+
+    val internetState by viewModel.internetState.collectAsState()
 
     val comments = remember(id) {
         commentViewModel.getComments(id, AmityCommentReferenceType.POST, null)
@@ -98,6 +110,8 @@ fun AmityPostDetailPage(
     var replyComment by remember { mutableStateOf<AmityComment?>(null) }
     var replyCommentId by remember { mutableStateOf("") }
     var editingCommentId by remember { mutableStateOf<String?>(null) }
+
+    var showLivestreamLimitExceededDialog by remember { mutableStateOf(showLivestreamPostExceeded) }
 
     LaunchedEffect(replyCommentId) {
         comments.itemSnapshotList.firstOrNull {
@@ -130,6 +144,17 @@ fun AmityPostDetailPage(
     val scrollState = rememberLazyListState()
     val hasScrolled by remember {
         derivedStateOf { scrollState.firstVisibleItemScrollOffset > 0 }
+    }
+
+    DisposableEffectWithLifeCycle(
+        onDestroy = {
+            post?.let {
+                viewModel.unSubscribePostRT(it)
+            }
+        }
+    )
+    post?.let {
+        viewModel.subscribePostRT(it)
     }
 
     AmityBasePage(pageId = "post_detail_page") {
@@ -176,7 +201,7 @@ fun AmityPostDetailPage(
 
                             Text(
                                 text = "Post",
-                                style = AmityTheme.typography.title,
+                                style = AmityTheme.typography.titleLegacy,
                                 modifier = modifier.align(Alignment.Center)
                             )
 
@@ -210,20 +235,23 @@ fun AmityPostDetailPage(
                     }
 
                     item {
-                        AmityPostContentComponent(
-                            modifier = modifier,
-                            pageScope = getPageScope(),
-                            post = post ?: return@item,
-                            style = style,
-                            category = category,
-                            hideTarget = hideTarget,
-                            hideMenuButton = true,
-                        )
-
-                        HorizontalDivider(
-                            color = AmityTheme.colors.baseShade4,
-                            modifier = modifier
-                        )
+                        if (post != null && post?.isDeleted() == false) {
+                            AmityPostContentComponent(
+                                modifier = modifier,
+                                pageScope = getPageScope(),
+                                post = post ?: return@item,
+                                style = style,
+                                category = category,
+                                hideTarget = hideTarget,
+                                hideMenuButton = true,
+                            )
+                            HorizontalDivider(
+                                color = AmityTheme.colors.baseShade4,
+                                modifier = modifier
+                            )
+                        } else {
+                            AmityPostShimmer()
+                        }
                     }
 
                     item {
@@ -252,7 +280,7 @@ fun AmityPostDetailPage(
                     }
                 }
 
-                if(!sheetViewModel.isNotMember(post) && editingCommentId == null) {
+                if (!sheetViewModel.isNotMember(post) && editingCommentId == null) {
                     AmityCommentComposerBar(
                         modifier = modifier.offset(y = commentComposeBarBottomOffset),
                         componentScope = getComponentScope(),
@@ -264,7 +292,29 @@ fun AmityPostDetailPage(
                         replyComment = null
                     }
                 }
+
+                if (showLivestreamLimitExceededDialog) {
+                    AmityAlertDialog(
+                        dialogTitle = "Live stream ended",
+                        dialogText = "Your live stream has been automatically terminated since you reached 4-hour limit.",
+                        dismissText = "OK",
+                        onDismissRequest = {
+                            showLivestreamLimitExceededDialog = false
+                        }
+                    )
+                }
+
+                if (internetState is NetworkConnectionEvent.Disconnected) {
+                    AmityUIKitSnackbar.publishSnackbarErrorMessage(
+                        message = "No internet connection.",
+                        offsetFromBottom = 70
+                    )
+                }
             }
+        }
+        if (post?.isDeleted() == true) {
+            getPageScope().showSnackbar("Post is deleted")
+            context.closePageWithResult(Activity.RESULT_OK)
         }
     }
 }

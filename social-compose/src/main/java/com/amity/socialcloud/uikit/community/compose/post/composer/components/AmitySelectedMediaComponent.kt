@@ -131,6 +131,7 @@ fun AmitySelectedMediaElement(
                 shape = RoundedCornerShape(4.dp)
             )
     ) {
+        // 1. First draw the media content
         when (media.type) {
             AmityPostMedia.Type.IMAGE -> {
                 AsyncImage(
@@ -175,7 +176,7 @@ fun AmitySelectedMediaElement(
                         )
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.amity_ic_play),
+                        painter = painterResource(id = R.drawable.amity_ic_play_v4),
                         contentDescription = null,
                         tint = Color.White,
                         modifier = Modifier
@@ -186,11 +187,55 @@ fun AmitySelectedMediaElement(
             }
         }
 
+        // Add overlay for states that need it
+        if (media.uploadState == AmityFileUploadState.FAILED
+            || media.uploadState == AmityFileUploadState.UPLOADING && media.currentProgress < 100) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color(0x80000000)) // Black overlay with 50% opacity
+            )
+
+            if(media.uploadState == AmityFileUploadState.FAILED) {
+                // Show warning icon for failed uploads
+                Image(
+                    painter = painterResource(id = R.drawable.amity_ic_warning),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .size(24.dp)
+                )
+            }
+
+            // Progress indicator for uploads in progress
+            if (media.uploadState == AmityFileUploadState.UPLOADING && media.currentProgress < 100) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .size(24.dp),
+                    color = Color.White, // Track color
+                    progress = 1.0f, // Full circle
+                    strokeWidth = 3.dp
+                )
+
+                // Then draw the actual progress indicator
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .size(24.dp),
+                    color = AmityTheme.colors.highlight,
+                    progress = media.currentProgress / 100f,
+                    strokeWidth = 3.dp
+                )
+            }
+        }
+
+        // Always show the remove button, regardless of media state
         Box(
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(8.dp)
-                .size(24.dp)
+                .size(20.dp)
                 .background(
                     color = Color(0x88000000),
                     shape = CircleShape
@@ -204,28 +249,8 @@ fun AmitySelectedMediaElement(
                 contentDescription = null,
                 tint = Color.White,
                 modifier = Modifier
-                    .size(10.dp)
+                    .size(8.dp)
                     .align(Alignment.Center),
-            )
-        }
-
-        if (media.currentProgress != 100) {
-            CircularProgressIndicator(
-                modifier = Modifier.align(Alignment.Center),
-                color = AmityTheme.colors.primary,
-                progress = {
-                    media.currentProgress / 100f
-                },
-            )
-        }
-
-        if (media.uploadState == AmityFileUploadState.FAILED) {
-            Image(
-                painter = painterResource(id = R.drawable.amity_ic_warning),
-                contentDescription = null,
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .size(24.dp)
             )
         }
     }

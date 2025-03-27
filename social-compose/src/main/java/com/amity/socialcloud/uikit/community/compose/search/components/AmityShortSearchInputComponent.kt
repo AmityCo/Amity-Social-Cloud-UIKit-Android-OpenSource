@@ -39,7 +39,7 @@ fun AmityShortSearchInputComponent(
         Spacer(modifier = modifier.size(8.dp))
         Text(
             "Start your search by typing at least 3 letters",
-            style = AmityTheme.typography.title.copy(
+            style = AmityTheme.typography.titleLegacy.copy(
                 color = AmityTheme.colors.baseShade2
             )
         )

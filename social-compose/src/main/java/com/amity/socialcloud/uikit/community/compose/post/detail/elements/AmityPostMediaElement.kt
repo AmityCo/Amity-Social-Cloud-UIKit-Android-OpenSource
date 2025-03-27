@@ -371,7 +371,7 @@ fun AmityPostMediaImageChildrenFour(
                     ) {
                         Text(
                             text = "+${postChildren.size - 3}",
-                            style = AmityTheme.typography.title.copy(
+                            style = AmityTheme.typography.titleLegacy.copy(
                                 fontSize = 20.sp,
                                 lineHeight = 24.sp,
                                 color = Color.White
@@ -400,7 +400,7 @@ fun AmityPostMediaPlayButton(
     modifier: Modifier = Modifier,
 ) {
     Image(
-        painter = painterResource(id = R.drawable.amity_ic_play),
+        painter = painterResource(id = R.drawable.amity_ic_play_v4),
         contentDescription = null,
         modifier = modifier.size(40.dp)
     )

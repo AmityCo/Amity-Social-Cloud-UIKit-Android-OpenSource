@@ -417,6 +417,80 @@
     "*/*/community_private_badge": {
       "image": "lockIcon"
     },
+    "livestream_post_target_selection_page/*/*": {
+      "theme": {}
+    },
+    "livestream_post_target_selection_page/*/close_button": {
+      "theme": {},
+      "image": "closeIcon"
+    },
+    "livestream_post_target_selection_page/*/my_timeline_avatar": {},
+    "livestream_post_target_selection_page/*/my_timeline_text": {
+      "theme": {},
+      "text": "My Timeline"
+    },
+    "livestream_post_target_selection_page/*/title": {
+      "text": "Live on"
+    },
+    "create_livestream_page/*/*": {
+    },
+    "create_livestream_page/*/start_livestream_button": {
+      "image": "startLivestream",
+      "background_color": "#FFFFFF"
+    },
+    "create_livestream_page/create_livestream_bottom_bar/*": {
+      "theme": {},
+      "background_color": "#000000"
+    },
+    "create_livestream_page/create_livestream_bottom_bar/add_thumbnail_button": {
+      "image": "addThumbNail",
+      "text": "Add thumbnail"
+    },
+    "create_livestream_page/create_livestream_bottom_bar/switch_camera_button": {
+      "image": "switchCamera"
+    },
+    "create_livestream_page/create_livestream_bottom_bar/end_live_stream_button": {
+      "theme": {},
+      "text": "End live"
+    },
+    "create_livestream_page/*/live_timer_status": {
+      "background_color": "#FF305A"
+    },
+    "create_livestream_page/*/total_view": {
+      "theme": {},
+      "image": "value"
+    },
+    "create_livestream_page/*/cancel_create_livestream_button": {
+      "image": "closeCircleButton",
+      "background_color": "#80000000"
+    },
+    "*/thumbnail_action/*": {
+      "theme": {}
+    },
+    "*/thumbnail_action/change_thumbnail_button": {
+      "image": "addThumbNail",
+      "text": "Change thumbnail"
+    },
+    "*/thumbnail_action/delete_thumbnail_button": {
+      "image": "deleteThumbnail",
+      "text": "Delete thumbnail"
+    },
+    "thumbnail_preview_page/*/*": {
+      "background_color": "#000000"
+    },
+    "thumbnail_preview_page/*/back_button": {
+      "image": "value"
+    },
+    "thumbnail_preview_page/*/save_thumbnail_button": {
+      "text": "value"
+    },
+    "livestream_terminated_page/*/*": {
+      "theme": {}
+    },
+    "livestream_terminated_page/*/livestream_terminated_action_button": {
+      "theme": {},
+      "text": "OK"
+    },
     "community_profile_page/*/*": {},
     "community_profile_page/community_header/*": {},
     "community_profile_page/community_header/community_cover": {},

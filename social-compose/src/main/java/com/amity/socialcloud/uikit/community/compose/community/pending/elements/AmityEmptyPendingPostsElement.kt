@@ -40,7 +40,7 @@ fun AmityEmptyPendingPostsElement(
             )
             Text(
                 text = "No post to review",
-                style = AmityTheme.typography.title.copy(
+                style = AmityTheme.typography.titleLegacy.copy(
                     color = AmityTheme.colors.baseShade3,
                 )
             )

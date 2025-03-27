@@ -60,7 +60,7 @@ fun AmityPendingPostActionRow(
                 ) {
                     Text(
                         text = getConfig().getText(),
-                        style = AmityTheme.typography.caption.copy(
+                        style = AmityTheme.typography.captionLegacy.copy(
                             color = AmityTheme.colors.background,
                         ),
                     )
@@ -85,7 +85,7 @@ fun AmityPendingPostActionRow(
                 ) {
                     Text(
                         text = getConfig().getText(),
-                        style = AmityTheme.typography.body,
+                        style = AmityTheme.typography.bodyLegacy,
                     )
                 }
             }

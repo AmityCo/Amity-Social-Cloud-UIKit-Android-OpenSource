@@ -148,14 +148,14 @@ fun AmityExploreComponent(
                         Text(
                             text = title,
                             modifier = Modifier.padding(top = 16.dp),
-                            style = AmityTheme.typography.title.copy(
+                            style = AmityTheme.typography.titleLegacy.copy(
                                 color = AmityTheme.colors.baseShade3
                             )
                         )
                         Text(
                             text = caption,
                             modifier = Modifier.padding(top = 4.dp),
-                            style = AmityTheme.typography.caption.copy(
+                            style = AmityTheme.typography.captionLegacy.copy(
                                 color = AmityTheme.colors.baseShade3
                             )
                         )
@@ -191,7 +191,7 @@ fun AmityExploreComponent(
                             Text(
                                 modifier = Modifier.padding(end = 16.dp),
                                 text = "Create community",
-                                style = AmityTheme.typography.body.copy(
+                                style = AmityTheme.typography.bodyLegacy.copy(
                                     fontWeight = FontWeight.SemiBold,
                                     color = Color.White,
                                 ),
@@ -222,14 +222,14 @@ fun AmityExploreComponent(
                         Text(
                             text = "Something went wrong",
                             modifier = Modifier.padding(top = 16.dp),
-                            style = AmityTheme.typography.title.copy(
+                            style = AmityTheme.typography.titleLegacy.copy(
                                 color = AmityTheme.colors.baseShade3,
                             )
                         )
                         Text(
                             text = "Please try again.",
                             modifier = Modifier.padding(top = 4.dp),
-                            style = AmityTheme.typography.caption.copy(
+                            style = AmityTheme.typography.captionLegacy.copy(
                                 color = AmityTheme.colors.baseShade3,
                             )
                         )
