@@ -1,6 +1,7 @@
 package com.amity.socialcloud.uikit.chat.messages.adapter
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
@@ -23,6 +24,7 @@ class AmityMessagePagingAdapter(
     private val audioMessageHelper = AmityAudioMessageHelper(context)
 
     var firstCompletelyVisibleItem = 0
+    var latestReadSegment = 0
 
     fun pauseAndResetPlayer() {
         audioMessageHelper.pauseAndResetPlayer()
@@ -56,6 +58,11 @@ class AmityMessagePagingAdapter(
 
         handleSenderVisibility(holder, position)
         handleDateVisibility(holder, position)
+
+        if (position==0 && ekoMessage != null && latestReadSegment < ekoMessage.getSegment()) {
+            ekoMessage.markRead()
+            latestReadSegment = ekoMessage.getSegment()
+        }
 
         if (ekoMessage?.getMessageId() == audioMessageHelper.playingMsgId) {
             if (holder is AmityAudioMsgSenderViewHolder) {

@@ -16,6 +16,7 @@ class AmityRecentChatAdapter : AmityBaseRecyclerViewPagingDataAdapter<AmityChann
         private val diffCallBack = object : DiffUtil.ItemCallback<AmityChannel>() {
             override fun areItemsTheSame(oldItem: AmityChannel, newItem: AmityChannel): Boolean =
                 oldItem.getChannelId() == newItem.getChannelId()
+                        && oldItem.getUnreadCount() == newItem.getUnreadCount()
 
 
             override fun areContentsTheSame(oldItem: AmityChannel, newItem: AmityChannel): Boolean =
