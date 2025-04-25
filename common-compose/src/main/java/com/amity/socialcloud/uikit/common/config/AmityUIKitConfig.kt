@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName
 
 data class AmityUIKitConfig(
     @SerializedName("preferred_theme")
-    val preferredTheme: String,
+    var preferredTheme: String,
     @SerializedName("theme")
     val globalTheme: GlobalTheme,
     @SerializedName("excludes")
@@ -18,9 +18,9 @@ data class AmityUIKitConfig(
 ) {
     data class GlobalTheme(
         @SerializedName("light")
-        val lightTheme: UIKitTheme,
+        var lightTheme: UIKitTheme,
         @SerializedName("dark")
-        val darkTheme: UIKitTheme,
+        var darkTheme: UIKitTheme,
     )
 
     data class UIKitTheme(

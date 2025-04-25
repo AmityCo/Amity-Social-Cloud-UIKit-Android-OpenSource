@@ -12,16 +12,16 @@ buildscript {
         amityMockkVersion = "1.10.0"
         amitySDKJitpackDependency = 'com.github.AmityCo.Amity-Social-Cloud-SDK-Android'
         amitySDKMavenDependency = 'co.amity.android'
-        amityMessagingSdkVersion = '7.1.0'
-        amitySDKDependency = amitySDKMavenDependency
+        amityMessagingSdkVersion = '7.1.1'
+        amitySDKDependency = amitySDKJitpackDependency
         amityRxLifeCycleVersion = '1.1.2-beta01'
         amityJacocoVersion = '0.8.5'
         amityExoplayerVersion = '2.18.5'
         media3Version = '1.1.0'
+        retrofitVersion = '2.9.0'
         // Will contain all support library dependencies
         sharedSupportLibraries = { dependencyHandler ->
             delegate = dependencyHandler
-
             implementation 'androidx.appcompat:appcompat:1.3.0'
             implementation 'androidx.core:core-ktx:1.9.0'
             implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
