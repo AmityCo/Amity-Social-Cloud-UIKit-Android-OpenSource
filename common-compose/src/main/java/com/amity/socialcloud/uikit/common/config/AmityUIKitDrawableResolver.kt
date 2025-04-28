@@ -60,6 +60,8 @@ object AmityUIKitDrawableResolver {
         "addThumbNail" to R.drawable.amity_ic_add_thumnail,
         "switchCamera" to R.drawable.amity_v4_switch_camera_button,
         "deleteThumbnail" to R.drawable.amity_v4_ic_trash,
+        "notificationTrayButtonIcon" to R.drawable.amity_ic_notification_tray_default,
+        "notificationTrayEmptyStateIcon" to R.drawable.amity_ic_notification_tray_empty,
     )
 
     @DrawableRes

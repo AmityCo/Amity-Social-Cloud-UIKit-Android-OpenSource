@@ -3,10 +3,12 @@ package com.amity.socialcloud.uikit.community.compose.socialhome
 import androidx.lifecycle.viewModelScope
 import androidx.paging.LoadState
 import androidx.paging.PagingData
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.sdk.api.social.community.query.AmityCommunitySortOption
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.model.core.ad.AmityAdPlacement
+import com.amity.socialcloud.sdk.model.core.notificationtray.AmityNotificationTraySeen
 import com.amity.socialcloud.sdk.model.core.pin.AmityPinnedPost
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunityFilter
@@ -20,8 +22,11 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
@@ -43,13 +48,17 @@ class AmitySocialHomePageViewModel : AmityBaseViewModel() {
 
     val isGlobalFeedRefreshing get() = _isGlobalFeedRefreshing
 
+    private val _notificationTraySeen = MutableStateFlow<AmityNotificationTraySeen?>(null)
+    val notificationTraySeen: StateFlow<AmityNotificationTraySeen?> get() = _notificationTraySeen.asStateFlow()
+
     private val _isPullRefreshIndicatorVisible by lazy {
         MutableStateFlow(false)
     }
 
     val isPullRefreshIndicatorVisible get() = _isPullRefreshIndicatorVisible
 
-    private var storyTabState: AmityStoryGlobalTabViewModel.TargetListState = AmityStoryGlobalTabViewModel.TargetListState.EMPTY
+    private var storyTabState: AmityStoryGlobalTabViewModel.TargetListState =
+        AmityStoryGlobalTabViewModel.TargetListState.EMPTY
 
     private val _storyTabVisible by lazy {
         MutableStateFlow(true)
@@ -70,9 +79,11 @@ class AmitySocialHomePageViewModel : AmityBaseViewModel() {
             AmityStoryGlobalTabViewModel.TargetListState.LOADING -> {
                 _storyTabVisible.value = true
             }
+
             AmityStoryGlobalTabViewModel.TargetListState.SUCCESS -> {
                 _storyTabVisible.value = true
             }
+
             AmityStoryGlobalTabViewModel.TargetListState.EMPTY -> {
                 _storyTabVisible.value = false
             }
@@ -139,8 +150,45 @@ class AmitySocialHomePageViewModel : AmityBaseViewModel() {
             .catch {}
     }
 
+    fun scheduleNotificationTraySeen() {
+        viewModelScope.launch {
+            while (true) {
+                getNotificationTraySeen()
+                delay(60000)
+            }
+        }
+    }
+
+    private fun getNotificationTraySeen() {
+        viewModelScope.launch {
+            AmityCoreClient.notificationTray()
+                .getNotificationTraySeen()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .asFlow()
+                .catch { }
+                .collectLatest {
+                    _notificationTraySeen.update { currentState ->
+                        it
+                    }
+                }
+        }
+    }
+
+    fun markTraySeen() {
+        viewModelScope.launch {
+            addDisposable(
+                AmityCoreClient.notificationTray()
+                    .markTraySeen()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe()
+            )
+        }
+    }
+
     suspend fun refreshGlobalPinnedPosts() {
-        getGlobalPinnedPosts().collectLatest{}
+        getGlobalPinnedPosts().collectLatest {}
     }
 
     sealed class PostListState {

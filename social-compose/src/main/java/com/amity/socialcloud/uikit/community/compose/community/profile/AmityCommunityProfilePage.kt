@@ -51,6 +51,7 @@ import com.amity.socialcloud.uikit.community.compose.community.profile.component
 import com.amity.socialcloud.uikit.community.compose.community.profile.element.AmityCommunityProfileActionsBottomSheet
 import com.amity.socialcloud.uikit.community.compose.community.profile.element.AmityCommunityProfileShimmer
 import com.amity.socialcloud.uikit.community.compose.community.profile.element.AmityCommunityProfileTabRow
+import com.amity.socialcloud.uikit.community.compose.livestream.errorhandling.AmityPostErrorPage
 import com.amity.socialcloud.uikit.community.compose.paging.feed.community.amityCommunityAnnouncementFeedLLS
 import com.amity.socialcloud.uikit.community.compose.paging.feed.community.amityCommunityFeedLLS
 import com.amity.socialcloud.uikit.community.compose.paging.feed.community.amityCommunityImageFeedLLS
@@ -165,204 +166,208 @@ fun AmityCommunityProfilePage(
 
     AmityBasePage(pageId = "community_profile_page") {
         Scaffold { padding ->
-            Box(
-                modifier = Modifier
-                    .padding(PaddingValues(bottom = padding.calculateBottomPadding()))
-                    .fillMaxSize()
-                    .pullRefresh(pullRefreshState)
-                    .background(AmityTheme.colors.newsfeedDivider),
-            ) {
-                LaunchedEffect(lazyListState) {
-                    snapshotFlow { lazyListState.firstVisibleItemIndex }
-                        .collect { index ->
-                            if (index > 1 && !isHeaderSticky) {
-                                isHeaderSticky = true
-                            } else if (index <= 1 && isHeaderSticky) {
-                                isHeaderSticky = false
-                            }
-                        }
-                }
-
-                LazyColumn(
-                    state = lazyListState,
+            if (state.community?.isDeleted() == true || state.error != null) {
+                AmityPostErrorPage()
+            } else {
+                Box(
                     modifier = Modifier
+                        .padding(PaddingValues(bottom = padding.calculateBottomPadding()))
                         .fillMaxSize()
-                        .background(AmityTheme.colors.background),
+                        .pullRefresh(pullRefreshState)
+                        .background(AmityTheme.colors.newsfeedDivider),
                 ) {
-                    if (community == null || state.isRefreshing) {
-                        item {
-                            AmityCommunityProfileShimmer()
-                        }
-                    } else {
-                        stickyHeader {
-                            if (isHeaderSticky) {
+                    LaunchedEffect(lazyListState) {
+                        snapshotFlow { lazyListState.firstVisibleItemIndex }
+                            .collect { index ->
+                                if (index > 1 && !isHeaderSticky) {
+                                    isHeaderSticky = true
+                                } else if (index <= 1 && isHeaderSticky) {
+                                    isHeaderSticky = false
+                                }
+                            }
+                    }
+
+                    LazyColumn(
+                        state = lazyListState,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(AmityTheme.colors.background),
+                    ) {
+                        if (community == null || state.isRefreshing) {
+                            item {
+                                AmityCommunityProfileShimmer()
+                            }
+                        } else {
+                            stickyHeader {
+                                if (isHeaderSticky) {
+                                    AmityCommunityHeaderComponent(
+                                        pageScope = getPageScope(),
+                                        community = community!!,
+                                        style = AmityCommunityHeaderStyle.COLLAPSE,
+                                    )
+                                    AmityCommunityProfileTabRow(
+                                        pageScope = getPageScope(),
+                                        selectedIndex = selectedTabIndex,
+                                    ) { index ->
+                                        selectedTabIndex = index
+                                    }
+                                }
+                            }
+
+                            item {
                                 AmityCommunityHeaderComponent(
                                     pageScope = getPageScope(),
                                     community = community!!,
-                                    style = AmityCommunityHeaderStyle.COLLAPSE,
+                                    style = AmityCommunityHeaderStyle.EXPANDED,
                                 )
-                                AmityCommunityProfileTabRow(
-                                    pageScope = getPageScope(),
-                                    selectedIndex = selectedTabIndex,
-                                ) { index ->
-                                    selectedTabIndex = index
-                                }
                             }
                         }
-
                         item {
-                            AmityCommunityHeaderComponent(
+                            AmityCommunityProfileTabRow(
                                 pageScope = getPageScope(),
-                                community = community!!,
-                                style = AmityCommunityHeaderStyle.EXPANDED,
-                            )
-                        }
-                    }
-                    item {
-                        AmityCommunityProfileTabRow(
-                            pageScope = getPageScope(),
-                            selectedIndex = selectedTabIndex,
-                        ) { index ->
-                            selectedTabIndex = index
-                        }
-                    }
-                    val hasAnnouncementPin = announcementPosts
-                        .itemSnapshotList
-                        .items
-                        .firstOrNull()
-                        ?.postId
-                        ?.let { announcementId ->
-                            pinPosts.itemSnapshotList.items
-                                .map {
-                                    it.postId
-                                }
-                                .contains(announcementId)
-                        } ?: false
-                    val shouldShowAnnouncement = announcementPosts.itemCount > 0
-                            && (selectedTabIndex == 0 || (selectedTabIndex == 1 && hasAnnouncementPin))
-                    if (shouldShowAnnouncement) {
-                        amityCommunityAnnouncementFeedLLS(
-                            modifier = modifier,
-                            pageScope = getPageScope(),
-                            announcementPosts = announcementPosts,
-                            hasAnnouncementPin = hasAnnouncementPin,
-                            onClick = {
-                                behavior.goToPostDetailPage(
-                                    AmityCommunityProfilePageBehavior.Context(
-                                        pageContext = context,
-                                    ),
-                                    postId = it.getPostId(),
-                                    category = if (hasAnnouncementPin) {
-                                        AmityPostCategory.PIN_AND_ANNOUNCEMENT
-                                    } else {
-                                        AmityPostCategory.ANNOUNCEMENT
-                                    }
-                                )
-                            }
-                        )
-                    }
-                    when (selectedTabIndex) {
-                        0 -> {
-                            if (communityPosts.loadState.refresh == LoadState.Loading) {
-                                repeat(4) {
-                                    item {
-                                        AmityPostShimmer()
-                                    }
-                                }
-                            } else {
-                                amityCommunityFeedLLS(
-                                    modifier = modifier,
-                                    pageScope = getPageScope(),
-                                    communityPosts = communityPosts,
-                                    pinPosts = pinPosts,
-                                    announcementPosts = announcementPosts,
-                                    onClick = { post, category ->
-                                        behavior.goToPostDetailPage(
-                                            AmityCommunityProfilePageBehavior.Context(
-                                                pageContext = context,
-                                            ),
-                                            postId = post.getPostId(),
-                                            category = category,
-                                        )
-                                    }
-                                )
+                                selectedIndex = selectedTabIndex,
+                            ) { index ->
+                                selectedTabIndex = index
                             }
                         }
-
-                        1 -> {
-                            amityCommunityPinnedFeedLLS(
+                        val hasAnnouncementPin = announcementPosts
+                            .itemSnapshotList
+                            .items
+                            .firstOrNull()
+                            ?.postId
+                            ?.let { announcementId ->
+                                pinPosts.itemSnapshotList.items
+                                    .map {
+                                        it.postId
+                                    }
+                                    .contains(announcementId)
+                            } ?: false
+                        val shouldShowAnnouncement = announcementPosts.itemCount > 0
+                                && (selectedTabIndex == 0 || (selectedTabIndex == 1 && hasAnnouncementPin))
+                        if (shouldShowAnnouncement) {
+                            amityCommunityAnnouncementFeedLLS(
                                 modifier = modifier,
                                 pageScope = getPageScope(),
-                                pinPosts = pinPosts,
                                 announcementPosts = announcementPosts,
+                                hasAnnouncementPin = hasAnnouncementPin,
                                 onClick = {
                                     behavior.goToPostDetailPage(
                                         AmityCommunityProfilePageBehavior.Context(
                                             pageContext = context,
                                         ),
                                         postId = it.getPostId(),
-                                        category = AmityPostCategory.PIN
+                                        category = if (hasAnnouncementPin) {
+                                            AmityPostCategory.PIN_AND_ANNOUNCEMENT
+                                        } else {
+                                            AmityPostCategory.ANNOUNCEMENT
+                                        }
                                     )
                                 }
                             )
                         }
+                        when (selectedTabIndex) {
+                            0 -> {
+                                if (communityPosts.loadState.refresh == LoadState.Loading) {
+                                    repeat(4) {
+                                        item {
+                                            AmityPostShimmer()
+                                        }
+                                    }
+                                } else {
+                                    amityCommunityFeedLLS(
+                                        modifier = modifier,
+                                        pageScope = getPageScope(),
+                                        communityPosts = communityPosts,
+                                        pinPosts = pinPosts,
+                                        announcementPosts = announcementPosts,
+                                        onClick = { post, category ->
+                                            behavior.goToPostDetailPage(
+                                                AmityCommunityProfilePageBehavior.Context(
+                                                    pageContext = context,
+                                                ),
+                                                postId = post.getPostId(),
+                                                category = category,
+                                            )
+                                        }
+                                    )
+                                }
+                            }
 
-                        2 -> {
-                            amityCommunityImageFeedLLS(
-                                modifier = modifier,
-                                imagePosts = imagePosts,
-                            )
-                        }
+                            1 -> {
+                                amityCommunityPinnedFeedLLS(
+                                    modifier = modifier,
+                                    pageScope = getPageScope(),
+                                    pinPosts = pinPosts,
+                                    announcementPosts = announcementPosts,
+                                    onClick = {
+                                        behavior.goToPostDetailPage(
+                                            AmityCommunityProfilePageBehavior.Context(
+                                                pageContext = context,
+                                            ),
+                                            postId = it.getPostId(),
+                                            category = AmityPostCategory.PIN
+                                        )
+                                    }
+                                )
+                            }
 
-                        3 -> {
-                            amityCommunityVideoFeedLLS(
-                                modifier = modifier,
-                                videoPosts = videoPosts,
-                            )
+                            2 -> {
+                                amityCommunityImageFeedLLS(
+                                    modifier = modifier,
+                                    imagePosts = imagePosts,
+                                )
+                            }
+
+                            3 -> {
+                                amityCommunityVideoFeedLLS(
+                                    modifier = modifier,
+                                    videoPosts = videoPosts,
+                                )
+                            }
                         }
                     }
-                }
-                AmityBaseElement(
-                    pageScope = getPageScope(),
-                    elementId = "community_create_post_button",
-                ) {
-                    if (shouldShowPostCreationButton || shouldShowStoryCreationButton) {
+                    AmityBaseElement(
+                        pageScope = getPageScope(),
+                        elementId = "community_create_post_button",
+                    ) {
+                        if (shouldShowPostCreationButton || shouldShowStoryCreationButton) {
 
-                        FloatingActionButton(
-                            onClick = {
-                                expanded = true
-                            },
-                            shape = RoundedCornerShape(size = 32.dp),
-                            containerColor = AmityTheme.colors.primary,
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .size(64.dp)
-                                .align(Alignment.BottomEnd)
-                        ) {
-                            Icon(
-                                painter = painterResource(id = getConfig().getIcon()),
-                                contentDescription = "create post",
-                                tint = Color.White,
-                                modifier = Modifier.size(32.dp)
-                            )
+                            FloatingActionButton(
+                                onClick = {
+                                    expanded = true
+                                },
+                                shape = RoundedCornerShape(size = 32.dp),
+                                containerColor = AmityTheme.colors.primary,
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .size(64.dp)
+                                    .align(Alignment.BottomEnd)
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = getConfig().getIcon()),
+                                    contentDescription = "create post",
+                                    tint = Color.White,
+                                    modifier = Modifier.size(32.dp)
+                                )
+                            }
                         }
                     }
-                }
-                if (community != null) {
-                    AmityCommunityProfileActionsBottomSheet(
-                        modifier = Modifier,
-                        community = community!!,
-                        shouldShow = expanded,
-                        shouldShowPostCreationButton = shouldShowPostCreationButton,
-                        shouldShowStoryCreationButton = shouldShowStoryCreationButton,
-                        onDismiss = { expanded = false },
+                    if (community != null) {
+                        AmityCommunityProfileActionsBottomSheet(
+                            modifier = Modifier,
+                            community = community!!,
+                            shouldShow = expanded,
+                            shouldShowPostCreationButton = shouldShowPostCreationButton,
+                            shouldShowStoryCreationButton = shouldShowStoryCreationButton,
+                            onDismiss = { expanded = false },
+                        )
+                    }
+                    PullRefreshIndicator(
+                        refreshing = state.isRefreshing,
+                        state = pullRefreshState,
+                        modifier = Modifier.align(Alignment.TopCenter),
                     )
                 }
-                PullRefreshIndicator(
-                    refreshing = state.isRefreshing,
-                    state = pullRefreshState,
-                    modifier = Modifier.align(Alignment.TopCenter),
-                )
             }
         }
     }

@@ -6,6 +6,8 @@ import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.model.core.ad.AmityAdPlacement
+import com.amity.socialcloud.sdk.model.core.error.AmityError
+import com.amity.socialcloud.sdk.model.core.error.AmityException
 import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
 import com.amity.socialcloud.sdk.model.core.pin.AmityPinnedPost
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
@@ -21,6 +23,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
@@ -47,7 +50,7 @@ class AmityCommunityProfileViewModel(private val communityId: String) :
         }
 
         Flowable.combineLatest(
-            AmitySocialClient.newCommunityRepository().getCommunity(communityId).doOnError { },
+            AmitySocialClient.newCommunityRepository().getCommunity(communityId).doOnError {},
             AmityCoreClient.hasPermission(AmityPermission.EDIT_COMMUNITY).atCommunity(communityId)
                 .check().timeout (1, TimeUnit.SECONDS).onErrorReturn { communityProfileState.value.isModerator }
         ) { community, hasPermission -> Pair(community, hasPermission) }
@@ -62,6 +65,15 @@ class AmityCommunityProfileViewModel(private val communityId: String) :
                         isMember = isMember,
                         isModerator = isModerator
                     )
+                }
+            }
+            .doOnError { error ->
+                if (error is AmityException) {
+                    _communityProfileState.update {
+                        it.copy(
+                            error = it.error,
+                        )
+                    }
                 }
             }
             .subscribeOn(Schedulers.io())
@@ -147,4 +159,5 @@ data class CommunityProfileState(
     val isRefreshing: Boolean = true,
     val isMember: Boolean = false,
     val isModerator: Boolean = false,
+    val error: AmityError? = null,
 )

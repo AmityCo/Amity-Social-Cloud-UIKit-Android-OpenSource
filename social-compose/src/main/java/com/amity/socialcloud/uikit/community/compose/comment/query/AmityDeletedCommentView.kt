@@ -29,7 +29,8 @@ import com.amity.socialcloud.uikit.community.compose.R
 @Composable
 fun AmityDeletedCommentView(
     modifier: Modifier = Modifier,
-    isReplyComment: Boolean
+    isReplyComment: Boolean,
+    replyCount: Int? = null,
 ) {
     val context = LocalContext.current
     if (isReplyComment) {
@@ -37,7 +38,7 @@ fun AmityDeletedCommentView(
             modifier = modifier
                 .fillMaxWidth()
                 .background(Color.Transparent)
-                .padding(vertical = 8.dp)
+                .padding(top = 8.dp, bottom = if (replyCount != null) 0.dp else 8.dp)
                 .testTag("comment_list/comment_bubble_deleted_view")
         ) {
             Row(

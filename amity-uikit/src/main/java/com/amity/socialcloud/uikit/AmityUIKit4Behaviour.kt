@@ -6,6 +6,7 @@ import com.amity.socialcloud.uikit.community.compose.community.profile.AmityComm
 import com.amity.socialcloud.uikit.community.compose.community.setting.AmityCommunitySettingPageBehavior
 import com.amity.socialcloud.uikit.community.compose.community.setting.notifications.AmityCommunityNotificationSettingPageBehavior
 import com.amity.socialcloud.uikit.community.compose.community.setup.AmityCommunitySetupPageBehavior
+import com.amity.socialcloud.uikit.community.compose.notificationtray.AmityNotificationTrayPageBehavior
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerPageBehavior
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetailPageBehavior
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponentBehavior
@@ -95,6 +96,13 @@ class AmityUIKit4Behavior {
         set(value) {
             field = value
             AmitySocialBehaviorHelper.livestreamTargetSelectionPageBehavior = value
+        }
+
+    var notificationTrayPageBehavior: AmityNotificationTrayPageBehavior =
+        AmitySocialBehaviorHelper.notificationTrayPageBehavior
+        set(value) {
+            field = value
+            AmitySocialBehaviorHelper.notificationTrayPageBehavior = value
         }
 
     var socialGlobalSearchPageBehavior: AmitySocialGlobalSearchPageBehavior =

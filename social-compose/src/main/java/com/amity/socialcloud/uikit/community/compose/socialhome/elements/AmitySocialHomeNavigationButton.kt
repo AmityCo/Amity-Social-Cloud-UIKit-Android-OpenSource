@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.socialhome.elements
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
@@ -26,7 +27,7 @@ fun AmitySocialHomeNavigationButton(
     iconSize: Dp = 20.dp,
     tint: Color = AmityTheme.colors.base,
     background: Color = Color(0xFFEBECEF),
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
 ) {
     Box(
         modifier = modifier
@@ -51,4 +52,16 @@ fun AmitySocialHomeNavigationButton(
 @Composable
 fun AmitySocialHomeNavigationButtonPreview() {
     AmitySocialHomeNavigationButton()
+}
+
+@Preview(showBackground = true)
+@Composable
+fun AmitySocialHomeNavigationNotificationButtonPreview() {
+    Image(
+        painter = painterResource(R.drawable.amity_ic_notification_tray_default),
+        contentDescription = "",
+        modifier =  Modifier
+            .clip(CircleShape)
+            .size(32.dp)
+    )
 }

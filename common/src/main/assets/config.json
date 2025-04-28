@@ -210,6 +210,9 @@
     "social_home_page/top_navigation/header_label": {
       "text": "Community"
     },
+    "social_home_page/top_navigation/notification_tray_button": {
+      "icon": "notificationTrayButtonIcon"
+    },
     "social_home_page/top_navigation/global_search_button": {
       "icon": "searchButtonIcon"
     },
@@ -253,6 +256,22 @@
     "social_home_page/my_communities/community_members_count": {},
     "social_home_page/newsfeed/*": {},
     "social_home_page/global_feed/*": {},
+    "notification_tray_page/*/*": {
+      "theme": {}
+    },
+    "notification_tray_page/*/back_button": {
+      "image": "backIcon"
+    },
+    "notification_tray_page/*/title": {
+      "text": "Notifications"
+    },
+    "notification_tray_page/*/empty_notification": {
+      "image": "notificationTrayEmptyStateIcon",
+      "text": "No notifications"
+    },
+    "*/*/notification_section_text": {
+      "text": "value"
+    },
     "post_detail_page/*/back_button": {
       "icon": "backIcon"
     },

@@ -167,7 +167,14 @@ fun AmityCommunityCoverView(
                 }
             }
         } else {
-            Box {
+            Box(modifier .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        AmityTheme.colors.baseShade3,
+                        AmityTheme.colors.baseShade2,
+                    )
+                )
+            )) {
                 if (coverUrl == null) {
                     Box(
                         modifier = modifier
