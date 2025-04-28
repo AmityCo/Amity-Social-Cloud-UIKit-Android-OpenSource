@@ -6,13 +6,25 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.amity.socialcloud.uikit.common.infra.db.dao.AmityAdAssetDao
 import com.amity.socialcloud.uikit.common.infra.db.dao.AmityAdRecencyDao
+import com.amity.socialcloud.uikit.common.infra.db.dao.AmityNetworkConfigDao
 import com.amity.socialcloud.uikit.common.infra.db.entity.AmityAdAsset
 import com.amity.socialcloud.uikit.common.infra.db.entity.AmityAdRecency
+import com.amity.socialcloud.uikit.common.infra.db.entity.AmityNetworkConfig
 import com.amity.socialcloud.uikit.common.infra.initializer.AmityAppContext
 
 
-@Database(entities = [AmityAdAsset::class, AmityAdRecency::class], version = 1)
-@TypeConverters(AmityDateTimeTypeConverter::class)
+@Database(
+    version = 2,
+    entities = [
+        AmityAdAsset::class,
+        AmityAdRecency::class,
+        AmityNetworkConfig::class
+    ],
+)
+@TypeConverters(
+    AmityDateTimeTypeConverter::class,
+    AmityJsonObjectTypeConverter::class
+)
 abstract class AmityUIKitDB : RoomDatabase() {
 
     companion object {
@@ -25,7 +37,9 @@ abstract class AmityUIKitDB : RoomDatabase() {
                     AmityAppContext.getContext(),
                     AmityUIKitDB::class.java,
                     "amitydb"
-                ).allowMainThreadQueries()
+                )
+                    .fallbackToDestructiveMigration()
+                    .allowMainThreadQueries()
                     .build()
                 INSTANCE = instance
                 instance
@@ -40,5 +54,7 @@ abstract class AmityUIKitDB : RoomDatabase() {
     abstract fun adAssetDao(): AmityAdAssetDao
 
     abstract fun adRecencyDao(): AmityAdRecencyDao
+
+    abstract fun networkConfigDao(): AmityNetworkConfigDao
 
 }

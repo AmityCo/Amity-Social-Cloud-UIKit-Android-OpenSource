@@ -8,6 +8,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
+import org.joda.time.DateTime
 
 
 val LocalAmityColors = staticCompositionLocalOf {
@@ -32,8 +33,10 @@ fun AmityComposeTheme(
     componentScope: AmityComposeComponentScope? = null,
     isSystemInDarkTheme: Boolean = isSystemInDarkTheme(),
     isUIKitInDarkTheme: Boolean = isUIKitInDarkTheme(),
+    lastThemeUpdate: DateTime = DateTime.now(),
     content: @Composable () -> Unit
 ) {
+
     AmityUIKitConfigController.setSystemInDarkTheme(isSystemInDarkTheme)
 
     val theme = componentScope?.getComponentTheme()

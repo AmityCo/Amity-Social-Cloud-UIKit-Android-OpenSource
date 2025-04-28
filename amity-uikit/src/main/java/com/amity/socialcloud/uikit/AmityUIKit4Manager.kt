@@ -10,6 +10,8 @@ import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import com.amity.socialcloud.uikit.common.eventbus.NetworkConnectionEventPublisher
 import com.amity.socialcloud.uikit.common.infra.db.AmityUIKitDB
 import com.amity.socialcloud.uikit.common.infra.initializer.AmityAppContext
+import com.amity.socialcloud.uikit.common.networkconfig.AmityNetworkConfigService
+import io.reactivex.rxjava3.core.Completable
 
 object AmityUIKit4Manager {
 
@@ -29,10 +31,15 @@ object AmityUIKit4Manager {
         AmityStreamBroadcasterClient.setup(AmityCoreClient.getConfiguration())
         AmityStreamPlayerClient.setup(AmityCoreClient.getConfiguration())
         AmityAdEngine.init()
+        AmityNetworkConfigService.init(apiKey)
         AmityUIKitConfigController.setup(AmityAppContext.getContext())
         NetworkConnectionEventPublisher.initPublisher(context = AmityAppContext.getContext())
 
         overrideCustomBehavior()
+    }
+
+    fun syncNetworkConfig(): Completable {
+        return AmityNetworkConfigService.syncNetworkConfig()
     }
 
     private fun overrideCustomBehavior() {

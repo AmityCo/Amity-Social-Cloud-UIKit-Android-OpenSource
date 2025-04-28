@@ -1,16 +1,8 @@
 package com.amity.socialcloud.uikit.common.ui.scope
 
-import androidx.annotation.DrawableRes
-import com.amity.socialcloud.uikit.common.compose.R
 import com.amity.socialcloud.uikit.common.config.AmityUIKitConfig
 import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
-import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
-import com.amity.socialcloud.uikit.common.ui.elements.AmityProgressSnackbarVisuals
-import com.amity.socialcloud.uikit.common.ui.elements.AmitySnackbarVisuals
 import com.google.gson.JsonObject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 
 interface AmityComposeScope {
