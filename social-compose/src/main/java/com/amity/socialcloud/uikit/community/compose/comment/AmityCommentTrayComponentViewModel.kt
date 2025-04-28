@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.comment
 
+import androidx.lifecycle.viewModelScope
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
@@ -23,6 +24,11 @@ import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
 class AmityCommentTrayComponentViewModel : AmityBaseViewModel() {
@@ -31,6 +37,9 @@ class AmityCommentTrayComponentViewModel : AmityBaseViewModel() {
         MutableStateFlow<CommentListState>(CommentListState.LOADING)
     }
     val commentListState get() = _commentListState
+
+    private val _comment = MutableStateFlow<AmityComment?>(null)
+    val comment get() = _comment.asStateFlow()
 
     var community: AmityCommunity? = null
         private set
@@ -47,6 +56,20 @@ class AmityCommentTrayComponentViewModel : AmityBaseViewModel() {
         return AmityCoreClient.getCurrentUser()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
+    }
+
+    fun getCommentById(commentId: String) {
+        viewModelScope.launch {
+            AmitySocialClient.newCommentRepository()
+                .getComment(commentId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .asFlow()
+                .catch {  }
+                .collectLatest { data ->
+                    _comment.update { data }
+                }
+        }
     }
 
     fun getComments(
@@ -81,7 +104,7 @@ class AmityCommentTrayComponentViewModel : AmityBaseViewModel() {
         commentText: String,
         mentionedUsers: List<AmityMentionMetadata.USER> = emptyList(),
         onSuccess: (AmityComment) -> Unit,
-        onError: (Throwable) -> Unit
+        onError: (Throwable) -> Unit,
     ) {
         val commentCreator = AmitySocialClient.newCommentRepository()
             .createComment()
@@ -114,7 +137,7 @@ class AmityCommentTrayComponentViewModel : AmityBaseViewModel() {
     }
 
     fun addReaction(
-        commentId: String
+        commentId: String,
     ) {
         AmityCoreClient.newReactionRepository()
             .addReaction(
@@ -127,7 +150,7 @@ class AmityCommentTrayComponentViewModel : AmityBaseViewModel() {
     }
 
     fun removeReaction(
-        commentId: String
+        commentId: String,
     ) {
         AmityCoreClient.newReactionRepository()
             .removeReaction(
@@ -144,7 +167,7 @@ class AmityCommentTrayComponentViewModel : AmityBaseViewModel() {
         commentText: String,
         userMentions: List<AmityMentionMetadata.USER> = emptyList(),
         onSuccess: (AmityComment) -> Unit,
-        onError: (Throwable) -> Unit
+        onError: (Throwable) -> Unit,
     ) {
         val textCommentEditor = AmitySocialClient.newCommentRepository()
             .editComment(commentId)

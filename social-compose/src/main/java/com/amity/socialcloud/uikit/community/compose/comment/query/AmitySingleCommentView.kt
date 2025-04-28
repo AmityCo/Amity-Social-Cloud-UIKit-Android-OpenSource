@@ -3,7 +3,9 @@ package com.amity.socialcloud.uikit.community.compose.comment.query
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -34,6 +36,7 @@ import com.amity.socialcloud.uikit.community.compose.comment.query.components.Am
 import com.amity.socialcloud.uikit.community.compose.comment.query.components.AmityCommentEngagementBar
 import com.amity.socialcloud.uikit.community.compose.comment.query.components.AmityEditCommentContainer
 import com.amity.socialcloud.uikit.community.compose.comment.query.components.AmityReplyCommentContainer
+import com.amity.socialcloud.uikit.community.compose.comment.query.elements.AmityCommentViewReplyBar
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlin.math.max
 
@@ -50,6 +53,10 @@ fun AmitySingleCommentView(
     editingCommentId: String?,
     onReply: (String) -> Unit,
     onEdit: (String?) -> Unit,
+    replyTargetId: String? = null,
+    showBounceEffect: Boolean = false,
+    replyCount: Int? = null,
+    shouldShowReplies: (Boolean) -> Unit = {},
 ) {
     val context = LocalContext.current
     val behavior by lazy {
@@ -70,6 +77,7 @@ fun AmitySingleCommentView(
             )
             .testTag("comment_list/*")
     ) {
+        //User avatar
         AmityUserAvatarView(
             user = comment.getCreator(),
             modifier = modifier
@@ -79,6 +87,7 @@ fun AmitySingleCommentView(
                 .testTag("comment_list/comment_bubble_avatar")
         )
 
+        //Comment content
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = modifier.wrapContentSize(),
@@ -153,7 +162,23 @@ fun AmitySingleCommentView(
                 replyCount = max(comment.getChildCount(), comment.getLatestReplies().size),
                 replies = comment.getLatestReplies(),
                 onEdit = onEdit,
+                replyTargetId = replyTargetId,
+                showBounceEffect = showBounceEffect
             )
+
+            if (isReplyComment) {
+                replyCount?.let {
+                    if (replyCount - 1 > 0) {
+                        AmityCommentViewReplyBar(
+                            modifier = modifier,
+                            isViewAllReplies = true,
+                            replyCount = replyCount - 1,
+                        ) {
+                            shouldShowReplies(true)
+                        }
+                    }
+                }
+            }
         }
     }
 

@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.sdk.model.social.comment.AmityCommentReferenceType
 import com.amity.socialcloud.uikit.common.ad.AmityListItem
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
@@ -14,11 +15,14 @@ import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayCom
 import com.amity.socialcloud.uikit.community.compose.comment.query.AmityCommentAdView
 import com.amity.socialcloud.uikit.community.compose.comment.query.AmityCommentView
 import com.amity.socialcloud.uikit.community.compose.comment.query.elements.AmityCommentItemShimmer
+import com.amity.socialcloud.uikit.community.compose.post.detail.bounceEffect
 
 fun LazyListScope.amityCommentListLLS(
     modifier: Modifier = Modifier,
     componentScope: AmityComposeComponentScope,
     comments: LazyPagingItems<AmityListItem>,
+    commentTarget: AmityComment? = null,
+    replyTargetId: String? = null,
     commentListState: AmityCommentTrayComponentViewModel.CommentListState,
     referenceId: String,
     referenceType: AmityCommentReferenceType,
@@ -26,7 +30,28 @@ fun LazyListScope.amityCommentListLLS(
     shouldAllowInteraction: Boolean,
     onReply: (String) -> Unit,
     onEdit: (String?) -> Unit,
+    showBounceEffect: Boolean = false,
 ) {
+    commentTarget?.let {
+        item(key = "highlighted_comment_${it.getCommentId()}") {
+            AmityCommentView(
+                modifier = modifier
+                    .let { if (showBounceEffect && replyTargetId == null) it.bounceEffect() else it },
+                componentScope = componentScope,
+                referenceId = referenceId,
+                referenceType = referenceType,
+                currentUserId = AmityCoreClient.getUserId(),
+                editingCommentId = editingCommentId,
+                comment = it,
+                allowInteraction = shouldAllowInteraction,
+                onReply = onReply,
+                onEdit = onEdit,
+                replyTargetId = replyTargetId,
+                showBounceEffect = showBounceEffect
+            )
+        }
+    }
+
     when (commentListState) {
         AmityCommentTrayComponentViewModel.CommentListState.SUCCESS -> {
             items(
@@ -35,18 +60,21 @@ fun LazyListScope.amityCommentListLLS(
             ) { index ->
                 when (val data = comments[index]) {
                     is AmityListItem.CommentItem -> {
-                        AmityCommentView(
-                            modifier = modifier,
-                            componentScope = componentScope,
-                            referenceId = referenceId,
-                            referenceType = referenceType,
-                            currentUserId = AmityCoreClient.getUserId(),
-                            editingCommentId = editingCommentId,
-                            comment = data.comment,
-                            allowInteraction = shouldAllowInteraction,
-                            onReply = onReply,
-                            onEdit = onEdit,
-                        )
+                        // Skip this item if it matches our highlighted comment ID
+                        if (commentTarget == null || data.comment.getCommentId() != commentTarget.getCommentId()) {
+                            AmityCommentView(
+                                modifier = modifier,
+                                componentScope = componentScope,
+                                referenceId = referenceId,
+                                referenceType = referenceType,
+                                currentUserId = AmityCoreClient.getUserId(),
+                                editingCommentId = editingCommentId,
+                                comment = data.comment,
+                                allowInteraction = shouldAllowInteraction,
+                                onReply = onReply,
+                                onEdit = onEdit,
+                            )
+                        }
                     }
 
                     is AmityListItem.AdItem -> {

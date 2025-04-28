@@ -31,6 +31,10 @@ class AmityPostDetailPageViewModel : AmityBaseViewModel() {
         MutableStateFlow<NetworkConnectionEvent>(NetworkConnectionEvent.Connected)
     val internetState = _internetState.asStateFlow()
 
+    private val _postErrorState =
+        MutableStateFlow<Boolean>(false)
+    val postErrorState = _postErrorState.asStateFlow()
+
     init {
         observeReactionChange()
     }
@@ -51,6 +55,8 @@ class AmityPostDetailPageViewModel : AmityBaseViewModel() {
                         _internetState.update {
                             NetworkConnectionEvent.Disconnected
                         }
+                    } else {
+                        _postErrorState.update { true }
                     }
                 }
             }

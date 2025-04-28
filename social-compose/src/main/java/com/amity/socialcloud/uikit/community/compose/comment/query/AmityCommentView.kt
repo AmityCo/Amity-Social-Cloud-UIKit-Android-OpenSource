@@ -18,9 +18,11 @@ fun AmityCommentView(
     allowInteraction: Boolean,
     onReply: (String) -> Unit,
     onEdit: (String?) -> Unit,
+    replyTargetId: String? = null,
+    showBounceEffect: Boolean = false,
 ) {
     if (comment.isDeleted()) {
-        AmityDeletedCommentView(isReplyComment = false)
+        AmityDeletedCommentView(modifier = modifier, isReplyComment = false)
     } else {
         AmitySingleCommentView(
             modifier = modifier,
@@ -34,6 +36,8 @@ fun AmityCommentView(
             editingCommentId = editingCommentId,
             onReply = onReply,
             onEdit = onEdit,
+            replyTargetId = replyTargetId,
+            showBounceEffect = showBounceEffect
         )
     }
 }

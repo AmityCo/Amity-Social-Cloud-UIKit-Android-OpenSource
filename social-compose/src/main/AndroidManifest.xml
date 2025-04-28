@@ -105,6 +105,11 @@
             android:configChanges="uiMode"
             android:screenOrientation="portrait"
             android:theme="@style/AmitySocialTheme" />
+        <activity
+            android:name=".notificationtray.AmityNotificationTrayPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme" />
 
         <activity
             android:name=".search.global.AmitySocialGlobalSearchPageActivity"

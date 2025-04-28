@@ -25,6 +25,7 @@ fun AmityReplyCommentListView(
     commentId: String,
     editingCommentId: String?,
     replyCount: Int,
+    replyTargetId: String? = null,
     replies: List<AmityComment>,
     onEdit: (String?) -> Unit,
 ) {
@@ -36,9 +37,17 @@ fun AmityReplyCommentListView(
         loader.showLoadMoreButton()
     }.subscribeAsState(initial = true)
 
-    val comments by remember {
+    val commentsRaw by remember {
         loader.getComments()
     }.subscribeAsState(initial = replies)
+
+    val comments = remember(commentsRaw, replyTargetId) {
+        if (replyTargetId != null) {
+            commentsRaw.sortedByDescending { it.getCommentId() == replyTargetId }
+        } else {
+            commentsRaw
+        }
+    }
 
     Column {
         comments.forEach { comment ->

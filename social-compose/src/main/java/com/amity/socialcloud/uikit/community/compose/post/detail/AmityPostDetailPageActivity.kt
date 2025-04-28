@@ -9,14 +9,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.ui.Modifier
-import com.amity.socialcloud.uikit.common.utils.getActivity
 import com.amity.socialcloud.uikit.community.compose.livestream.errorhandling.AmityLivestreamDeletedPageActivity
-import com.amity.socialcloud.uikit.community.compose.livestream.errorhandling.AmityLivestreamTerminatedPage
 import com.amity.socialcloud.uikit.community.compose.livestream.errorhandling.AmityLivestreamTerminatedPageActivity
 import com.amity.socialcloud.uikit.community.compose.livestream.util.LivestreamErrorScreenType
 import com.amity.socialcloud.uikit.community.compose.livestream.util.LivestreamScreenType
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponentStyle
-import kotlin.or
 
 class AmityPostDetailPageActivity : AppCompatActivity() {
 
@@ -30,6 +27,9 @@ class AmityPostDetailPageActivity : AppCompatActivity() {
         val showLivestreamPostExceeded =
             intent.getBooleanExtra(EXTRA_PARAM_SHOW_LIVESTREAM_POST_EXCEEDED, false)
 
+        val commentId = intent.getStringExtra(EXTRA_PARAM_COMMENT_ID)
+        val parentId = intent.getStringExtra(EXTRA_PARAM_PARENT_ID)
+
         setContent {
             AmityPostDetailPage(
                 modifier = Modifier
@@ -40,6 +40,8 @@ class AmityPostDetailPageActivity : AppCompatActivity() {
                 category = AmityPostCategory.fromString(category),
                 hideTarget = hideTarget,
                 showLivestreamPostExceeded = showLivestreamPostExceeded,
+                commentId = commentId,
+                parentId = parentId,
             )
         }
     }
@@ -79,6 +81,8 @@ class AmityPostDetailPageActivity : AppCompatActivity() {
             "show_livestream_post_exceeded"
         const val EXTRA_PARAM_LIVESTREAM_ERROR_TYPE = "livestream_deleted"
         const val REQUEST_CODE_VIEW_LIVESTREAM = 11010
+        private const val EXTRA_PARAM_COMMENT_ID = "comment_id"
+        private const val EXTRA_PARAM_PARENT_ID = "parent_id"
 
         fun newIntent(
             context: Context,
@@ -86,6 +90,8 @@ class AmityPostDetailPageActivity : AppCompatActivity() {
             category: AmityPostCategory = AmityPostCategory.GENERAL,
             hideTarget: Boolean = false,
             showLivestreamPostExceeded: Boolean = false,
+            commentId: String? = null,
+            parentId : String? = null,
         ): Intent {
             return Intent(
                 context,
@@ -95,6 +101,8 @@ class AmityPostDetailPageActivity : AppCompatActivity() {
                 putExtra(EXTRA_PARAM_POST_CATEGORY, category.name)
                 putExtra(EXTRA_PARAM_HIDE_TARGET, hideTarget)
                 putExtra(EXTRA_PARAM_SHOW_LIVESTREAM_POST_EXCEEDED, showLivestreamPostExceeded)
+                putExtra(EXTRA_PARAM_COMMENT_ID, commentId)
+                putExtra(EXTRA_PARAM_PARENT_ID, parentId)
             }
         }
     }

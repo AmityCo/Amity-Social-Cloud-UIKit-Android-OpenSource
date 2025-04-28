@@ -13,7 +13,7 @@ class AmityLivestreamDeletedPageActivity : AppCompatActivity() {
         enableEdgeToEdge()
 
         setContent {
-            AmityLivestreamDeletedPage()
+            AmityPostErrorPage()
         }
     }
 

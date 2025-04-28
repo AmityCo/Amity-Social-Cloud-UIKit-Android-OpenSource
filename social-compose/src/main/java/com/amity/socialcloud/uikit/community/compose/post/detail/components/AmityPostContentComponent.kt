@@ -1,5 +1,7 @@
 package com.amity.socialcloud.uikit.community.compose.post.detail.components
 
+import android.app.Activity
+import androidx.activity.result.ActivityResult
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,6 +38,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityPostPreviewLinkView
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.common.utils.isVisible
 import com.amity.socialcloud.uikit.common.utils.shimmerBackground
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
@@ -99,10 +102,11 @@ fun AmityPostContentComponent(
                         viewModel.deletePost(
                             postId = data.postId,
                             onSuccess = {
-                                val text =
-                                    "Post deleted"
+                                if (isPostDetailPage) {
+                                    context.closePageWithResult(Activity.RESULT_OK)
+                                }
                                 AmityUIKitSnackbar.publishSnackbarMessage(
-                                    message = text,
+                                    message = "Post deleted",
                                     offsetFromBottom = 52
                                 )
                                 viewModel.updateDialogUIState(AmityPostMenuDialogUIState.CloseDialog)
