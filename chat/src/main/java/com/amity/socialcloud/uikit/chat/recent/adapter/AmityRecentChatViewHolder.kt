@@ -98,9 +98,9 @@ class AmityRecentChatViewHolder(
     }
 
     private fun setupUnreadCount(data: AmityChannel) {
-        if (data.getDefaultSubChannelUnreadCount() > 0) {
+        if (data.getUnreadCount() > 0) {
             unreadCount.visibility = View.VISIBLE
-            unreadCount.text = data.getDefaultSubChannelUnreadCount().toString()
+            unreadCount.text = data.getUnreadCount().toString()
         } else {
             unreadCount.visibility = View.GONE
         }

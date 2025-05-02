@@ -77,15 +77,11 @@ open class AmityBaseFragment : RxFragment() {
 
     fun requestPermission(permission: Array<String>, requestCode: Int) {
         (activity as? Activity)?.let { activity ->
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-                ActivityCompat.requestPermissions(
-                    activity,
-                    permission,
-                    requestCode
-                )
-            } else {
-                requestPermissions(permission, requestCode)
-            }
+            ActivityCompat.requestPermissions(
+                activity,
+                permission,
+                requestCode
+            )
         }
 
     }

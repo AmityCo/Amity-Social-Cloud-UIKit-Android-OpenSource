@@ -21,6 +21,7 @@ class AmityMessagePagingAdapter(
 
     private val messageUtil = AmityMessageItemUtil()
     private val audioMessageHelper = AmityAudioMessageHelper(context)
+    private var latestReadSegment = 0
 
     var firstCompletelyVisibleItem = 0
 
@@ -56,6 +57,11 @@ class AmityMessagePagingAdapter(
 
         handleSenderVisibility(holder, position)
         handleDateVisibility(holder, position)
+
+        if (position==0 && ekoMessage != null && latestReadSegment < ekoMessage.getSegment()) {
+            ekoMessage.markRead()
+            latestReadSegment = ekoMessage.getSegment()
+        }
 
         if (ekoMessage?.getMessageId() == audioMessageHelper.playingMsgId) {
             if (holder is AmityAudioMsgSenderViewHolder) {
