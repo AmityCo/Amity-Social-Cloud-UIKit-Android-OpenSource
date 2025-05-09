@@ -95,7 +95,7 @@ import com.amity.socialcloud.uikit.community.compose.livestream.create.element.A
 import com.amity.socialcloud.uikit.community.compose.livestream.create.element.AmityCreateLivestreamNoInternetView
 import com.amity.socialcloud.uikit.community.compose.livestream.create.element.AmityCreateLivestreamNoPermissionView
 import com.amity.socialcloud.uikit.community.compose.livestream.create.element.AmityEditThumbnailSheet
-import com.amity.socialcloud.uikit.community.compose.livestream.create.element.AmityLivestreamTextField
+import com.amity.socialcloud.uikit.community.compose.livestream.create.element.AmityNoOutlineTextField
 import com.amity.socialcloud.uikit.community.compose.livestream.create.element.AmityThumbnailView
 import com.amity.socialcloud.uikit.community.compose.livestream.create.model.AmityCreateLivestreamPageUiState
 import com.amity.socialcloud.uikit.community.compose.livestream.create.model.LivestreamThumbnailUploadUiState
@@ -500,13 +500,22 @@ fun AmityCreateLivestreamPage(
                                         .drawVerticalScrollbar(scrollState)
                                         .verticalScroll(scrollState)
                                 ) {
-                                    AmityLivestreamTextField(
+                                    AmityNoOutlineTextField(
                                         value = uiState.liveTitle ?: "",
                                         onValueChange = {
                                             viewModel.setTitleText(it)
                                         },
                                         modifier = Modifier.padding(horizontal = 16.dp),
-                                        placeHolder = stringResource(R.string.amity_v4_create_livestream_title_placeholder),
+                                        placeHolder = {
+                                            Text(
+                                                text = stringResource(R.string.amity_v4_create_livestream_title_placeholder),
+                                                color = Color.White,
+                                                style = AmityTheme.typography.headLine.copy(
+                                                    color = Color.White,
+                                                    textAlign = TextAlign.Start,
+                                                )
+                                            )
+                                        },
                                         singleLine = true,
                                         maxCharLength = 30,
                                         textStyle = AmityTheme.typography.headLine.copy(
@@ -517,7 +526,7 @@ fun AmityCreateLivestreamPage(
 
                                     Spacer(Modifier.height(8.dp))
 
-                                    AmityLivestreamTextField(
+                                    AmityNoOutlineTextField(
                                         value = uiState.liveDesc ?: "",
                                         onValueChange = {
                                             viewModel.setDescText(it)
@@ -525,7 +534,16 @@ fun AmityCreateLivestreamPage(
                                         modifier = Modifier
                                             .padding(horizontal = 16.dp)
                                             .imePadding(),
-                                        placeHolder = stringResource(R.string.amity_v4_create_livestream_desc_placeholder),
+                                        placeHolder = {
+                                            Text(
+                                                text = stringResource(R.string.amity_v4_create_livestream_desc_placeholder),
+                                                color = Color.White,
+                                                style = AmityTheme.typography.headLine.copy(
+                                                    color = Color.White,
+                                                    textAlign = TextAlign.Start,
+                                                )
+                                            )
+                                        },
                                         singleLine = false,
                                         textStyle = AmityTheme.typography.body.copy(
                                             color = Color.White,

@@ -1,21 +1,29 @@
 package com.amity.socialcloud.uikit.community.compose.post.composer.components
 
+import android.content.Context
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.content.MediaType.Companion.Text
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -29,8 +37,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.ImageLoader
@@ -38,6 +48,7 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.allowHardware
 import coil3.video.VideoFrameDecoder
+import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.R
@@ -124,6 +135,11 @@ fun AmitySelectedMediaElement(
     media: AmityPostMedia,
     onRemove: (AmityPostMedia) -> Unit,
 ) {
+    val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
+        "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
+    }
+    val viewModel =
+        viewModel<AmityPostComposerPageViewModel>(viewModelStoreOwner = viewModelStoreOwner)
     Box(
         modifier = modifier
             .background(
@@ -189,14 +205,15 @@ fun AmitySelectedMediaElement(
 
         // Add overlay for states that need it
         if (media.uploadState == AmityFileUploadState.FAILED
-            || media.uploadState == AmityFileUploadState.UPLOADING && media.currentProgress < 100) {
+            || media.uploadState == AmityFileUploadState.UPLOADING && media.currentProgress < 100
+        ) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Color(0x80000000)) // Black overlay with 50% opacity
             )
 
-            if(media.uploadState == AmityFileUploadState.FAILED) {
+            if (media.uploadState == AmityFileUploadState.FAILED) {
                 // Show warning icon for failed uploads
                 Image(
                     painter = painterResource(id = R.drawable.amity_ic_warning),
@@ -252,6 +269,51 @@ fun AmitySelectedMediaElement(
                     .size(8.dp)
                     .align(Alignment.Center),
             )
+        }
+        if (media.uploadState == AmityFileUploadState.COMPLETE && media.uploadId != null) {
+            Row(
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(8.dp)
+                    .height(24.dp)
+                    .background(
+                        color = Color(0x88000000),
+                        shape = RoundedCornerShape(size = 9999.dp)
+                    )
+                    .padding(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 4.dp)
+                    .clickableWithoutRipple {
+                        (media.media as? AmityPostMedia.Media.Image)
+                            ?.image
+                            ?.let {
+                                viewModel.setAltTextMedia(
+                                    AltTextMedia.Image(it)
+                                )
+                                viewModel.showAltTextConfigSheet()
+                            }
+                    },
+            ) {
+                Text(
+                    text = "ALT",
+                    style = AmityTheme.typography.captionBold.copy(
+                        color = Color.White,
+                    ),
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .wrapContentSize()
+                )
+                (media.media as? AmityPostMedia.Media.Image)
+                    ?.image?.getAltText()?.let {
+                        // If alt text is set, show the check icon
+                        if (it.isNotEmpty()) {
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Icon(
+                                painter = painterResource(id = R.drawable.amity_ic_alt_check),
+                                contentDescription = "Check Icon",
+                                tint = Color.White,
+                            )
+                        }
+                    }
+            }
         }
     }
 }

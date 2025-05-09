@@ -4,6 +4,7 @@ import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadata
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataCreator
+import com.amity.socialcloud.sdk.model.core.flag.AmityContentFlagReason
 import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
 import com.amity.socialcloud.sdk.model.core.reaction.AmityReactionReferenceType
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
@@ -11,6 +12,7 @@ import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.common.views.dialog.bottomsheet.BottomSheetMenuItem
 import com.amity.socialcloud.uikit.common.utils.AmityConstants
 import com.amity.socialcloud.uikit.community.R
+import com.ekoapp.ekosdk.internal.api.socket.request.FlagContentRequest
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -64,11 +66,11 @@ interface CommentViewModel {
 
     fun addCommentReaction(comment: AmityComment): Completable {
         return AmityCoreClient.newReactionRepository()
-                .addReaction(
-                    referenceType = AmityReactionReferenceType.COMMENT,
-                    referenceId = comment.getCommentId(),
-                    reactionName = AmityConstants.POST_REACTION
-                )
+            .addReaction(
+                referenceType = AmityReactionReferenceType.COMMENT,
+                referenceId = comment.getCommentId(),
+                reactionName = AmityConstants.POST_REACTION
+            )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }
@@ -87,11 +89,12 @@ interface CommentViewModel {
     fun reportComment(
         comment: AmityComment,
         onSuccess: () -> Unit,
-        onError: () -> Unit
+        onError: () -> Unit,
     ): Completable {
         return AmitySocialClient.newCommentRepository()
             .flagComment(
-               comment.getCommentId()
+                commentId = comment.getCommentId(),
+                reason = AmityContentFlagReason.Others()
             )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -106,7 +109,7 @@ interface CommentViewModel {
     fun unReportComment(
         comment: AmityComment,
         onSuccess: () -> Unit,
-        onError: () -> Unit
+        onError: () -> Unit,
     ): Completable {
         return AmitySocialClient.newCommentRepository()
             .unflagComment(
@@ -173,6 +176,7 @@ interface CommentViewModel {
                                 items.add(deleteCommentMenuItem)
                             }
                         }
+
                         else -> {
                             val hasDeletePermission =
                                 AmityCoreClient.hasPermission(AmityPermission.DELETE_USER_FEED_COMMENT)
@@ -185,6 +189,7 @@ interface CommentViewModel {
                         }
                     }
                 }
+
                 else -> {}
             }
             if (comment.isFlaggedByMe()) {

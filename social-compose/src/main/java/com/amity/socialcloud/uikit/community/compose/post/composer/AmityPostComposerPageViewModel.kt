@@ -2,6 +2,7 @@ package com.amity.socialcloud.uikit.community.compose.post.composer
 
 import android.net.Uri
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
@@ -31,6 +32,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.util.UUID
 import androidx.core.net.toUri
+import com.amity.socialcloud.sdk.helper.core.asAmityImage
+import com.amity.socialcloud.sdk.model.core.file.AmityFileType
+import com.amity.socialcloud.sdk.model.core.file.AmityRawFile
+import com.amity.socialcloud.uikit.community.compose.post.composer.components.AltTextMedia
 
 
 class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
@@ -51,6 +56,28 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
     private val uploadedMediaMap = LinkedHashMap<String, AmityFileInfo>()
     private val deletedImageIds = mutableListOf<String>()
     private val uploadFailedMediaMap = LinkedHashMap<String, Boolean>()
+    private val showAltTextConfigSheet = mutableStateOf(false)
+    private val altTextMedia = mutableStateOf<AltTextMedia?>(null)
+
+    fun showAltTextConfigSheet() {
+        showAltTextConfigSheet.value = true
+    }
+
+    fun hideAltTextConfigSheet() {
+        showAltTextConfigSheet.value = false
+    }
+
+    fun shouldShowAltTextConfigSheet(): Boolean {
+        return showAltTextConfigSheet.value
+    }
+
+    fun setAltTextMedia(media: AltTextMedia?) {
+        altTextMedia.value = media
+    }
+
+    fun getAltTextMedia(): AltTextMedia? {
+        return altTextMedia.value
+    }
 
     private val _postCreationEvent by lazy {
         MutableStateFlow<AmityPostCreationEvent>(AmityPostCreationEvent.Initial)
@@ -202,7 +229,8 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
             url = image.getUrl(AmityImage.Size.MEDIUM).toUri(),
             uploadState = AmityFileUploadState.COMPLETE,
             currentProgress = 100,
-            type = type
+            type = type,
+            media = AmityPostMedia.Media.Image(image)
         )
     }
 
@@ -306,21 +334,21 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
         // Determine attachment type by examining all attachments, not just the first one
         val attachmentType: Type? = run {
             // Check if there are any non-deleted IMAGE attachments
-            val hasImages = attachments.any { 
-                it is AmityPost.Data.IMAGE && 
-                !(it.getImage()?.getFileId() in deletedImageIds) 
+            val hasImages = attachments.any {
+                it is AmityPost.Data.IMAGE &&
+                !(it.getImage()?.getFileId() in deletedImageIds)
             }
-            
+
             if (hasImages) return@run Type.IMAGE
-            
+
             // Check if there are any non-deleted VIDEO attachments
-            val hasVideos = attachments.any { 
-                it is AmityPost.Data.VIDEO && 
+            val hasVideos = attachments.any {
+                it is AmityPost.Data.VIDEO &&
                 !(it.getThumbnailImage()?.getFileId() in deletedImageIds)
             }
-            
+
             if (hasVideos) return@run Type.VIDEO
-            
+
             // If no existing attachments remain, check new attachments
             if (newAttachments.isNotEmpty()) {
                 when (newAttachments.first()) {
@@ -660,16 +688,22 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
             }
 
             is AmityUploadResult.COMPLETE -> {
+                val file = result.getFile()
                 uploadFailedMediaMap.remove(postMedia.url.toString())
-                uploadedMediaMap[result.getFile().getFileId()] = result.getFile()
-
+                uploadedMediaMap[file.getFileId()] = file
+                val media = if (file is AmityImage) {
+                    AmityPostMedia.Media.Image(file)
+                } else {
+                    null
+                }
                 val pm = AmityPostMedia(
                     id = result.getFile().getFileId(),
                     uploadId = postMedia.uploadId,
                     url = postMedia.url,
                     uploadState = AmityFileUploadState.COMPLETE,
                     currentProgress = 100,
-                    type = postMedia.type
+                    type = postMedia.type,
+                    media = media,
                 )
                 updateList(pm)
             }
@@ -721,6 +755,58 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
 
             else -> AmityPost.Target.USER.create(AmityCoreClient.getUserId())
         } ?: AmityPost.Target.USER.create(AmityCoreClient.getUserId())
+    }
+
+    fun updateAltText(
+        fileId: String,
+        altText: String,
+        onSuccess: (AmityImage) -> Unit = {},
+        onError: (Throwable) -> Unit = {},
+    ) {
+        AmityCoreClient.newFileRepository().let { fileRepository ->
+            fileRepository.updateAltText(fileId,altText)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnComplete {
+                    refreshMedia(fileId, onSuccess)
+                }
+                .doOnError {
+                    onError.invoke(it)
+                }
+                .subscribe()
+        }
+    }
+
+    private fun refreshMedia(fileId: String, onSuccess: (AmityImage) -> Unit) {
+        AmityCoreClient.newFileRepository().getFile (fileId)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSuccess { rawFile: AmityRawFile ->
+                if(rawFile.getFileType() == AmityFileType.IMAGE) {
+                    val imageFromRaw : AmityImage? = rawFile.asAmityImage() // null for incorrect file type
+                    imageFromRaw?.let { image ->
+                        updateMedia(image)
+                        onSuccess.invoke(image)
+                    }
+                }
+            }
+            .subscribe()
+    }
+
+    private fun updateMedia(image: AmityImage) {
+        val media = mediaMap.values.firstOrNull { it.id == image.getFileId() }
+        media?.let {
+            val pm = AmityPostMedia(
+                id = image.getFileId(),
+                uploadId = it.uploadId,
+                url = it.url,
+                uploadState = AmityFileUploadState.COMPLETE,
+                currentProgress = 100,
+                type = it.type,
+                media = AmityPostMedia.Media.Image(image)
+            )
+            updateList(pm)
+        }
     }
 }
 

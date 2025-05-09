@@ -7,7 +7,6 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -25,11 +24,12 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AmityLivestreamTextField(
-    value: String,
-    onValueChange: (String) -> Unit,
+fun AmityNoOutlineTextField(
     modifier: Modifier = Modifier,
-    placeHolder: String? = null,
+    value: String,
+    onValueChange: (String) -> Unit = {},
+    placeHolder: (@Composable () -> Unit)? = null,
+    cursorBrushColor: Color = Color.White,
     singleLine: Boolean = false,
     enable: Boolean = true,
     maxCharLength: Int = Int.MAX_VALUE,
@@ -43,14 +43,14 @@ fun AmityLivestreamTextField(
             .fillMaxWidth()
             .background(Color.Transparent),
         onValueChange = {
-            if (maxCharLength == -1) {
+            if (maxCharLength == -1 || it.length <= maxCharLength) {
                 onValueChange(it)
-            } else if (it.length <= maxCharLength) {
-                onValueChange(it)
+            } else {
+                onValueChange(it.substring(0, maxCharLength))
             }
         },
         textStyle = textStyle,
-        cursorBrush = SolidColor(Color.White),
+        cursorBrush = SolidColor(cursorBrushColor),
         singleLine = singleLine,
         decorationBox = @Composable { innerTextField ->
             TextFieldDefaults.DecorationBox(
@@ -75,7 +75,7 @@ fun AmityLivestreamTextField(
                     bottom = 0.dp
                 ),
                 container = {
-                    OutlinedTextFieldDefaults.ContainerBox(
+                    OutlinedTextFieldDefaults.Container(
                         enabled = enable,
                         isError = false,
                         interactionSource = interactionSource,
@@ -91,15 +91,7 @@ fun AmityLivestreamTextField(
                         unfocusedBorderThickness = 0.dp
                     )
                 },
-                placeholder = {
-                    placeHolder?.let {
-                        Text(
-                            text = placeHolder,
-                            color = Color.White,
-                            style = textStyle
-                        )
-                    }
-                }
+                placeholder = placeHolder
             )
         }
     )
@@ -109,11 +101,10 @@ fun AmityLivestreamTextField(
 @Preview
 private fun DefaultAmityLivestreamTextFieldPreview() {
     MaterialTheme {
-        AmityLivestreamTextField(
+        AmityNoOutlineTextField(
             value = "",
             onValueChange = {},
             modifier = Modifier,
-            placeHolder = "PlaceHolder",
             singleLine = false,
             maxCharLength = 30,
             textStyle = AmityTheme.typography.titleLegacy.copy(

@@ -17,6 +17,7 @@
     <string name="amity_edit_comment">Edit Comment</string>
     <string name="amity_report_comment">Report comment</string>
     <string name="amity_unreport_comment">Unreport comment</string>
+    <string name="amity_unreport_reply">Unreport reply</string>
     <string name="amity_comment_reported_toast_message">Comment reported</string>
     <string name="amity_comment_reported_failed_toast_message">Failed to report comment. Please try again.</string>
     <string name="amity_comment_unreported_toast_message">Comment unreported</string>
@@ -24,8 +25,12 @@
     <string name="amity_undo_report">Undo Report</string>
     <string name="amity_edit_reply">Edit reply</string>
     <string name="amity_delete_reply">Delete reply</string>
-    <string name="amity_report_reply">Report reply</string>
+    <string name="amity_report_reply_v4">Report reply</string>
     <string name="amity_reply_deleted_message">This reply has been deleted</string>
+    <string name="amity_reply_reported_toast_message">Reply reported</string>
+    <string name="amity_reply_reported_failed_toast_message">Failed to report reply. Please try again.</string>
+    <string name="amity_reply_unreported_toast_message">Reply unreported</string>
+    <string name="amity_reply_unreported_failed_toast_message">Failed to unreport reply. Please try again.</string>
     <string name="amity_comment_deleted_message">This comment has been deleted</string>
     <string name="amity_comment_delete_failed_toast_message">Failed to delete comment. Please try again.</string>
     <string name="amity_view_more_replies">View more replies</string>
@@ -70,6 +75,16 @@
     <string name="amity_post_create_generic_error_message">Failed to create post. Please try again.</string>
     <string name="amity_post_edit_generic_error_message">Failed to edit post. Please try again.</string>
 
+    <!-- Alt text-->
+    <string name="amity_image_add_alt_text_generic_error_message">Failed to add alt text. Please try again.</string>
+    <string name="amity_image_edit_alt_text_generic_error_message">Failed to edit alt text. Please try again.</string>
+    <string name="amity_image_alt_text_ban_word_error_message">Your alt text contains an inappropriate word.</string>
+    <string name="amity_image_alt_text_ban_url_error_message">Your alt text contains a link that is not allowed.</string>
+    <string name="amity_image_alt_text_updated_message">Alt text updated.</string>
+    <string name="amity_image_add_alt_text_title">Alt text</string>
+    <string name="amity_image_edit_alt_text_title">Edit alt text</string>
+    <string name="amity_image_alt_text_hint_message">Describe this photo briefly to help visually impaired users understand its content</string>
+
     <string name="amity_only_admin">Only admin can post</string>
     <string name="amity_add_members">Add members<font fgcolor='#FF0000'>*</font></string>
     <string name="amity_cancel_request">Cancel request</string>
@@ -92,6 +107,7 @@
     <string name="amity_v4_dialog_leave_button">Leave</string>
     <string name="amity_v4_dialog_close_button">Close</string>
     <string name="amity_v4_dialog_save_button">Save</string>
+    <string name="amity_v4_dialog_done_button">Done</string>
     <string name="amity_v4_dialog_discard_button">Discard</string>
 
     <!--community setup page-->
@@ -161,5 +177,12 @@
     <string name="amity_v4_create_livestream_no_internet_view_desc">Due to poor connection, this live stream has been\npaused. It will resume automatically\nonce the connection is stable.</string>
     <string name="amity_v4_livestream_deleted_page_title">Something went wrong</string>
     <string name="amity_v4_livestream_deleted_page_desc">The content you’re looking for is unavailable.</string>
+    <string name="amity_report_list_screen_description">Tell us why you\'re reporting this content. Your report will be reviewed by our moderators and kept confidential.</string>
+    <string name="amity_report_submit_button">Submit</string>
+    <string name="amity_report_other_reason_desc">Describe your reason</string>
+    <string name="amity_report_other_reason_optional">(Optional)</string>
+    <string name="amity_report_text_placeholder">Share more details about this issue</string>
 
+    <!--- Generic error -->
+    <string name="amity_no_internet_error_message">No internet connection.</string>
 </resources>

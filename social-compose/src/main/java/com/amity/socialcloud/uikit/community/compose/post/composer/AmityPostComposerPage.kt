@@ -41,12 +41,14 @@ import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadata
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
 import com.amity.socialcloud.sdk.model.core.error.AmityError
+import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
+import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.AmityCameraUtil
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
@@ -54,6 +56,9 @@ import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getText
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.post.composer.components.AltTextConfigMode
+import com.amity.socialcloud.uikit.community.compose.post.composer.components.AltTextMedia
+import com.amity.socialcloud.uikit.community.compose.post.composer.components.AmityAltTextConfigComponent
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.AmitySelectedMediaComponent
 import com.amity.socialcloud.uikit.community.compose.post.composer.elements.AmityMediaAttachmentElement
 import com.amity.socialcloud.uikit.community.compose.post.composer.elements.AmityMediaCameraSelectionSheet
@@ -133,11 +138,11 @@ fun AmityPostComposerPage(
                 isAllMediaSuccessfullyUploaded
             }
         }
-        
+
         // Don't allow posting when creation/update operation is in progress
-        val isOperationInProgress = postCreationEvent == AmityPostCreationEvent.Creating || 
+        val isOperationInProgress = postCreationEvent == AmityPostCreationEvent.Creating ||
                                     postCreationEvent == AmityPostCreationEvent.Updating
-        
+
         derivedStateOf {
             if (isOperationInProgress) {
                 // Disable button during operations
@@ -147,7 +152,7 @@ fun AmityPostComposerPage(
                 val hasTextChanged = localPostText.trim() != postText.trim()
                 val hasAttachmentsChanged = hasAttachmentsChanged(originalAttachmentIds.value, selectedMediaFiles)
                 val isContentValid = isContentReady(localPostText, selectedMediaFiles)
-                
+
                 (hasTextChanged || hasAttachmentsChanged) && isContentValid
             } else {
                 // Create mode validation
@@ -566,7 +571,7 @@ fun AmityPostComposerPage(
                     contentPadding = PaddingValues(0.dp), // Post composer has minimal padding
                     verticalPadding = 0.dp,
                     horizontalPadding = 0.dp,
-                    backgroundColor = Color.Transparent, 
+                    backgroundColor = Color.Transparent,
                     onValueChange = {
                         localPostText = it
                     },
@@ -683,14 +688,60 @@ fun AmityPostComposerPage(
                 context.closePageWithResult(Activity.RESULT_OK)
             }
         }
+        RenderAltTextConfigSheet(pageScope = getPageScope())
     }
 }
 
 fun hasAttachmentsChanged(originalIds: List<String>, newMedia: List<AmityPostMedia>): Boolean {
     // Different sizes => changed
     if (originalIds.size != newMedia.size) return true
-    
+
     // Compare IDs instead of URIs
     val newIds = newMedia.mapNotNull { it.id }
     return originalIds.toSet() != newIds.toSet()
+}
+
+@Composable
+fun RenderAltTextConfigSheet(
+    pageScope: AmityComposePageScope? = null,
+    forcedEditMode: Boolean = false,
+    onSucess: (AmityImage) -> Unit = {},
+    onDismiss: () -> Unit = {},
+) {
+    val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
+        "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
+    }
+    val viewModel =
+        viewModel<AmityPostComposerPageViewModel>(viewModelStoreOwner = viewModelStoreOwner)
+
+    val showUpdateAltTextSheet by remember {
+        derivedStateOf {  viewModel.shouldShowAltTextConfigSheet() }
+    }
+
+    val media by remember { derivedStateOf {  viewModel.getAltTextMedia() } }
+
+    val altText = if (media is AltTextMedia.Image) {
+        (media as? AltTextMedia.Image)?.image?.getAltText()
+    } else {
+        null
+    }
+    media?.let { m ->
+        if (showUpdateAltTextSheet) {
+            val mode = if (altText != null || forcedEditMode) {
+                AltTextConfigMode.Edit(altText ?: "", m)
+            } else {
+                AltTextConfigMode.Create(m)
+            }
+            AmityAltTextConfigComponent(
+                pageScope = pageScope,
+                mode = mode,
+                result = onSucess
+            ) {
+                viewModel.hideAltTextConfigSheet()
+                viewModel.setAltTextMedia(null)
+                onDismiss()
+            }
+        }
+    }
+
 }

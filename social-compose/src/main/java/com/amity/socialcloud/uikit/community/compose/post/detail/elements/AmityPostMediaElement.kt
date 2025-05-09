@@ -23,8 +23,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.common.isNotEmptyOrBlank
@@ -103,6 +108,7 @@ fun AmityChildPostMediaElement(
         AmityPostMediaPreviewDialog(
             childPosts = childPosts,
             isVideoPost = isVideoPost,
+            isPostCreator = post.getCreatorId() == AmityCoreClient.getUserId(),
             selectedFileId = selectedFileId.value,
             onDismiss = { showMediaDialog.value = false }
         )
@@ -161,7 +167,13 @@ fun AmityPostMediaImageChildrenOne(
     Box(
         modifier = modifier.fillMaxSize()
     ) {
+
         AmityPostImageView(
+            modifier = Modifier
+                .semantics {
+                    role = Role.Image
+                    contentDescription = if (isVideoPost) "Video 1 of 1" else "Photo 1 of 1: ${getAltText(postChild)}"
+                },
             post = postChild,
             onClick = { onClick(postChild) }
         )
@@ -191,6 +203,11 @@ fun AmityPostMediaImageChildrenTwo(
                 .weight(1f)
         ) {
             AmityPostImageView(
+                modifier = Modifier
+                    .semantics {
+                        role = Role.Image
+                        contentDescription = if (isVideoPost) "Video 1 of 2" else "Photo 1 of 2: ${getAltText(postChildren[0])}"
+                    },
                 post = postChildren[0],
                 onClick = { onClick(postChildren[0]) }
             )
@@ -207,6 +224,11 @@ fun AmityPostMediaImageChildrenTwo(
                 .weight(1f)
         ) {
             AmityPostImageView(
+                modifier = Modifier
+                    .semantics {
+                        role = Role.Image
+                        contentDescription = if (isVideoPost) "Video 2 of 2" else "Photo 2 of 2: ${getAltText(postChildren[1])}"
+                    },
                 post = postChildren[1],
                 onClick = { onClick(postChildren[1]) }
             )
@@ -237,6 +259,11 @@ fun AmityPostMediaImageChildrenThree(
                 .weight(1f)
         ) {
             AmityPostImageView(
+                modifier = Modifier
+                    .semantics {
+                        role = Role.Image
+                        contentDescription = if (isVideoPost) "Video 1 of 3" else "Photo 1 of 3: ${getAltText(postChildren[0])}"
+                    },
                 post = postChildren[0],
                 onClick = { onClick(postChildren[0]) }
             )
@@ -259,6 +286,11 @@ fun AmityPostMediaImageChildrenThree(
                     .weight(1f)
             ) {
                 AmityPostImageView(
+                    modifier = Modifier
+                        .semantics {
+                            role = Role.Image
+                            contentDescription = if (isVideoPost) "Video 2 of 3" else "Photo 2 of 3: ${getAltText(postChildren[1])}"
+                        },
                     post = postChildren[1],
                     onClick = { onClick(postChildren[1]) }
                 )
@@ -275,6 +307,11 @@ fun AmityPostMediaImageChildrenThree(
                     .weight(1f)
             ) {
                 AmityPostImageView(
+                    modifier = Modifier
+                        .semantics {
+                            role = Role.Image
+                            contentDescription = if (isVideoPost) "Video 3 of 3" else "Photo 3 of 3: ${getAltText(postChildren[2])}"
+                        },
                     post = postChildren[2],
                     onClick = { onClick(postChildren[2]) }
                 )
@@ -306,6 +343,11 @@ fun AmityPostMediaImageChildrenFour(
                 .weight(2f)
         ) {
             AmityPostImageView(
+                modifier = Modifier
+                    .semantics {
+                        role = Role.Image
+                        contentDescription = if (isVideoPost) "Video 1 of ${postChildren.size}" else "Photo 1 of ${postChildren.size}: ${getAltText(postChildren[0])}"
+                    },
                 post = postChildren[0],
                 onClick = { onClick(postChildren[0]) }
             )
@@ -328,6 +370,11 @@ fun AmityPostMediaImageChildrenFour(
                     .weight(1f)
             ) {
                 AmityPostImageView(
+                    modifier = Modifier
+                        .semantics {
+                            role = Role.Image
+                            contentDescription = if (isVideoPost) "Video 2 of ${postChildren.size}" else "Photo 2 of ${postChildren.size}: ${getAltText(postChildren[1])}"
+                        },
                     post = postChildren[1],
                     onClick = { onClick(postChildren[1]) }
                 )
@@ -343,6 +390,11 @@ fun AmityPostMediaImageChildrenFour(
                     .weight(1f)
             ) {
                 AmityPostImageView(
+                    modifier = Modifier
+                        .semantics {
+                            role = Role.Image
+                            contentDescription = if (isVideoPost) "Video 3 of ${postChildren.size}" else "Photo 3 of ${postChildren.size}: ${getAltText(postChildren[2])}"
+                        },
                     post = postChildren[2],
                     onClick = { onClick(postChildren[2]) }
                 )
@@ -359,6 +411,11 @@ fun AmityPostMediaImageChildrenFour(
                     .weight(1f)
             ) {
                 AmityPostImageView(
+                    modifier = Modifier
+                        .semantics {
+                            role = Role.Image
+                            contentDescription = if (isVideoPost) "Activate to view ${postChildren.size - 3} more videos" else "Activate to view ${postChildren.size - 3} more photos"
+                        },
                     post = postChildren[3],
                     onClick = { onClick(postChildren[3]) }
                 )
@@ -393,6 +450,10 @@ fun getChildPostData(post: AmityPost): List<AmityPost.Data> {
             else -> null
         }
     }
+}
+
+fun getAltText(post: AmityPost): String{
+    return (post.getData() as? AmityPost.Data.IMAGE)?.getImage()?.getAltText() ?: "No description available"
 }
 
 @Composable

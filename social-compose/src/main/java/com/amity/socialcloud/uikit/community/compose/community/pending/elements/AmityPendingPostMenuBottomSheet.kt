@@ -89,6 +89,8 @@ fun AmityPendingPostMenuBottomSheet(
                 }
 
                 AmityPostMenuSheetUIState.CloseSheet -> {}
+
+                else -> {}
             }
         }
     }

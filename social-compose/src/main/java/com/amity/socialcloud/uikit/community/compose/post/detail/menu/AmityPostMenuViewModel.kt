@@ -3,9 +3,11 @@ package com.amity.socialcloud.uikit.community.compose.post.detail.menu
 import androidx.lifecycle.viewModelScope
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
+import com.amity.socialcloud.sdk.model.core.flag.AmityContentFlagReason
 import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
+import com.ekoapp.ekosdk.internal.api.socket.request.FlagContentRequest
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -52,11 +54,12 @@ class AmityPostMenuViewModel : AmityBaseViewModel() {
 
     fun flagPost(
         postId: String,
+        reason: AmityContentFlagReason,
         onSuccess: () -> Unit,
         onError: (Throwable) -> Unit,
     ) {
         AmitySocialClient.newPostRepository()
-            .flagPost(postId)
+            .flagPost(postId, reason)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnComplete(onSuccess)
@@ -103,6 +106,12 @@ class AmityPostMenuViewModel : AmityBaseViewModel() {
 sealed class AmityPostMenuSheetUIState(val postId: String) {
 
     data class OpenSheet(val id: String) : AmityPostMenuSheetUIState(id)
+
+    data class OpenReportSheet(val id: String) : AmityPostMenuSheetUIState(id)
+
+    data class OpenReportOtherReasonSheet(val id: String) : AmityPostMenuSheetUIState(id)
+
+    data class OpenErrorSheet(val id: String) : AmityPostMenuSheetUIState(id)
 
     object CloseSheet : AmityPostMenuSheetUIState("")
 }

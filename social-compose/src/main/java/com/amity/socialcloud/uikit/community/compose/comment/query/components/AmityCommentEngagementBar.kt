@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -35,6 +36,8 @@ import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentViewModel
+import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentViewModel.CommentBottomSheetState
+import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuSheetUIState
 
 
 @Composable
@@ -62,7 +65,6 @@ fun AmityCommentEngagementBar(
 
     var isReacted by remember { mutableStateOf(comment.getMyReactions().isNotEmpty()) }
     var localReactionCount by remember { mutableIntStateOf(comment.getReactionCount()) }
-    var showCommentActionSheet by remember { mutableStateOf(false) }
     var showReactionListSheet by remember { mutableStateOf(false) }
 
     Row(
@@ -128,7 +130,7 @@ fun AmityCommentEngagementBar(
                     modifier = modifier
                         .size(20.dp)
                         .clickable {
-                            showCommentActionSheet = true
+                            viewModel.updateSheetUIState(CommentBottomSheetState.OpenSheet(comment.getCommentId()))
                         }
                         .testTag("comment_list/comment_bubble_meat_balls_button")
                 )
@@ -163,16 +165,14 @@ fun AmityCommentEngagementBar(
         AmityCommentActionsBottomSheet(
             modifier = modifier,
             componentScope = componentScope,
+            viewModel = viewModel,
             commentId = comment.getCommentId(),
-            shouldShow = showCommentActionSheet,
             isReplyComment = isReplyComment,
             isCommentCreatedByMe = isCreatedByMe,
             isFlaggedByMe = comment.isFlaggedByMe(),
             isFailed = false,
             onEdit = onEdit,
-        ) {
-            showCommentActionSheet = false
-        }
+        )
 
         if (showReactionListSheet) {
             AmityReactionList(

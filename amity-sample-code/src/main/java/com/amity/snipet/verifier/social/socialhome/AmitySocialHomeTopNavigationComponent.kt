@@ -16,6 +16,7 @@ class AmitySocialHomeTopNavigationComponent {
         AmitySocialHomeTopNavigationComponent(
             selectedTab = AmitySocialHomePageTab.NEWSFEED,
             searchButtonAction = {},
+            notificationButton = {}
         )
     }
     /* end_sample_code */
