@@ -10,6 +10,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 
@@ -21,6 +22,10 @@ fun AmityTextField(
     maxLines: Int = 1,
     maxCharacters: Int = -1,
     enabled: Boolean = true,
+    textStyle: TextStyle = AmityTheme.typography.bodyLegacy.copy(
+        color = if (enabled) AmityTheme.colors.base else AmityTheme.colors.baseShade2,
+    ),
+    hintColor: Color = AmityTheme.colors.baseShade3,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     onValueChange: (String) -> Unit,
 ) {
@@ -33,12 +38,14 @@ fun AmityTextField(
                 onValueChange(it)
             } else if (it.length <= maxCharacters) {
                 onValueChange(it)
+            } else{
+                onValueChange(it.take(maxCharacters))
             }
         },
         placeholder = {
             Text(
                 text = hint,
-                color = AmityTheme.colors.baseShade3
+                color = hintColor,
             )
         },
         colors = TextFieldDefaults.colors(
@@ -49,9 +56,7 @@ fun AmityTextField(
             disabledContainerColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent,
         ),
-        textStyle = AmityTheme.typography.bodyLegacy.copy(
-            color = if (enabled) AmityTheme.colors.base else AmityTheme.colors.baseShade2,
-        ),
+        textStyle = textStyle.copy(color = if (enabled) AmityTheme.colors.base else AmityTheme.colors.baseShade2),
         keyboardOptions = keyboardOptions,
         modifier = modifier
             .fillMaxWidth()

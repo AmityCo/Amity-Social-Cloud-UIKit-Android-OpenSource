@@ -86,6 +86,8 @@ fun AmityPostContentComponent(
 
     val dialogState by viewModel.dialogUIState.collectAsState()
 
+    val sheetState by viewModel.sheetUIState.collectAsState()
+
     var scope = rememberCoroutineScope()
 
     when (dialogState) {
@@ -286,10 +288,14 @@ fun AmityPostContentComponent(
                 )
             }
 
-            AmityPostMenuBottomSheet(
-                post = post,
-                category = category
-            )
+            // Replace the current bottom sheet with this conditional display
+            if (sheetState is AmityPostMenuSheetUIState.OpenSheet &&
+                (sheetState as AmityPostMenuSheetUIState.OpenSheet).postId == post.getPostId()) {
+                AmityPostMenuBottomSheet(
+                    post = post,
+                    category = category
+                )
+            }
         }
     }
 }

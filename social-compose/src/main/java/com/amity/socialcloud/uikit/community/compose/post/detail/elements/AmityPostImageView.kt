@@ -9,6 +9,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import coil3.ImageLoader
 import coil3.compose.AsyncImage
@@ -39,12 +42,15 @@ fun AmityPostImageView(
                 .diskCachePolicy(CachePolicy.ENABLED)
                 .memoryCachePolicy(CachePolicy.ENABLED)
                 .build(),
-            contentDescription = "Image Post",
+            contentDescription = data.getImage()?.getAltText() ?: "No description available",
             contentScale = ContentScale.Crop,
             modifier = modifier
                 .fillMaxSize()
                 .background(AmityTheme.colors.baseShade4)
                 .clickableWithoutRipple { onClick() }
+                .semantics {
+                    role = Role.Image
+                }
         )
     } else if(data is AmityPost.Data.VIDEO) {
         val thumbnail = data.getThumbnailImage()?.getUrl(AmityImage.Size.MEDIUM)
@@ -63,6 +69,9 @@ fun AmityPostImageView(
                 .fillMaxSize()
                 .background(AmityTheme.colors.baseShade4)
                 .clickableWithoutRipple { onClick() }
+                .semantics {
+                    role = Role.Image
+                }
         )
 //            val imageLoader = ImageLoader.Builder(LocalContext.current)
 //                .components {
@@ -99,6 +108,9 @@ fun AmityPostImageView(
                 .fillMaxSize()
                 .background(AmityTheme.colors.baseShade4)
                 .clickableWithoutRipple { onClick() }
+                .semantics {
+                    role = Role.Image
+                }
         )
     }
     else {
@@ -106,7 +118,10 @@ fun AmityPostImageView(
             modifier = Modifier
                 .fillMaxSize()
                 .background(AmityTheme.colors.baseShade4)
-                .clickableWithoutRipple { onClick() },
+                .clickableWithoutRipple { onClick() }
+                .semantics {
+                    role = Role.Image
+                },
         )
     }
 }
