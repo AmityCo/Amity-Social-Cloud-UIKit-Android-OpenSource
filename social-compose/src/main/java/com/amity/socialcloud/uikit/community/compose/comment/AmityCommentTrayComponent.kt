@@ -139,7 +139,7 @@ fun AmityCommentTrayComponent(
                                 referenceId = referenceId,
                                 referenceType = referenceType,
                                 editingCommentId = editingCommentId,
-                                shouldAllowInteraction = true,
+                                shouldAllowInteraction = shouldAllowInteraction,
                                 onReply = {
                                     replyCommentId = it
                                 },
