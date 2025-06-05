@@ -2,6 +2,7 @@ package com.amity.socialcloud.uikit.sample
 
 import android.app.Application
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import coil3.ImageLoader
 import coil3.PlatformContext
@@ -16,6 +17,7 @@ import com.amity.socialcloud.sdk.model.core.file.AmityFileAccessType
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.AmityUIKit4Manager
 import com.amity.socialcloud.uikit.AmityUIKitClient
+import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentBehavior
 import com.amity.socialcloud.uikit.feed.settings.AmityPostShareClickListener
 import com.amity.socialcloud.uikit.feed.settings.AmityPostSharingSettings
 import com.amity.socialcloud.uikit.feed.settings.AmityPostSharingTarget
@@ -38,6 +40,10 @@ class AmitySampleApp : Application()  {
                 SamplePreferences.getUploadUrl().get(),
             )
         )
+
+        AmityUIKit4Manager.behavior.commentTrayComponentBehavior = object: AmityCommentTrayComponentBehavior() {
+            override fun goToUserProfilePage(context: Context, userId: String) { }
+        }
 
         // V3 Ex. override post sharing event
         val settings = AmityPostSharingSettings()

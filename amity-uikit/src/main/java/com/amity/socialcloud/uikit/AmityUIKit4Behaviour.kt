@@ -1,6 +1,7 @@
 package com.amity.socialcloud.uikit
 
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
+import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentBehavior
 import com.amity.socialcloud.uikit.community.compose.community.membership.list.AmityCommunityMembershipPageBehavior
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageBehavior
 import com.amity.socialcloud.uikit.community.compose.community.setting.AmityCommunitySettingPageBehavior
@@ -250,5 +251,11 @@ class AmityUIKit4Behavior {
         set(value) {
             field = value
             AmitySocialBehaviorHelper.userRelationshipPageBehavior = value
+        }
+
+    var commentTrayComponentBehavior: AmityCommentTrayComponentBehavior =
+        AmitySocialBehaviorHelper.commentTrayComponentBehavior
+        set(value) {
+            AmitySocialBehaviorHelper.commentTrayComponentBehavior = value
         }
 }
