@@ -6,6 +6,7 @@ import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.behavior.AmityBaseBehavior
 import com.amity.socialcloud.uikit.common.behavior.AmityBaseBehaviorContext
 import com.amity.socialcloud.uikit.community.compose.community.membership.list.AmityCommunityMembershipPageActivity
+import com.amity.socialcloud.uikit.community.compose.community.pending.pending_invite.AmityCommunityPendingInviteMemberPageActivity
 import com.amity.socialcloud.uikit.community.compose.community.setting.notifications.AmityCommunityNotificationSettingPageActivity
 import com.amity.socialcloud.uikit.community.compose.community.setting.post.AmityCommunityPostPermissionPageActivity
 import com.amity.socialcloud.uikit.community.compose.community.setting.story.AmityCommunityStorySettingPageActivity
@@ -54,6 +55,14 @@ open class AmityCommunitySettingPageBehavior : AmityBaseBehavior() {
 
     open fun goToStorySettingPage(context: Context) {
         val intent = AmityCommunityStorySettingPageActivity.newIntent(
+            context = context.pageContext,
+            community = context.community!!,
+        )
+        context.launchActivity(intent)
+    }
+
+    open fun goToPendingInvitationsPage(context: Context) {
+        val intent = AmityCommunityPendingInviteMemberPageActivity.newIntent(
             context = context.pageContext,
             community = context.community!!,
         )

@@ -49,6 +49,7 @@
 
     <string name="amity_cancel">Cancel</string>
     <string name="amity_delete">Delete</string>
+    <string name="amity_decline">Decline</string>
 
     <plurals name="amity_feed_reaction_count">
         <item quantity="one">%s like</item>
@@ -124,8 +125,17 @@
     <string name="amity_v4_community_setup_privacy_public_title">Public</string>
     <string name="amity_v4_community_setup_privacy_public_description">Anyone can join, view, and search the posts in this community.</string>
     <string name="amity_v4_community_setup_privacy_private_title">Private</string>
+    <string name="amity_v4_community_setup_privacy_private_and_visible_title">Private &amp; visible</string>
+    <string name="amity_v4_community_setup_privacy_private_and_hidden_title">Private &amp; hidden</string>
     <string name="amity_v4_community_setup_privacy_private_description">Only members invited by the moderators can join, view, and search the posts in this community.</string>
+    <string name="amity_v4_community_setup_privacy_private_and_visible_description">Community is discoverable by anyone. Content is hidden from non-members.</string>
+    <string name="amity_v4_community_setup_privacy_private_and_hidden_description">Community and content are hidden from non-members, and cannot be discovered via search.</string>
+    <string name="amity_v4_community_setup_membership_title">Membership</string>
+    <string name="amity_v4_community_setup_membership_desc">Requires moderator approval</string>
+    <string name="amity_v4_community_setup_membership_sub_desc">Users will become members only when their join request is approved by a moderator of this community.</string>
     <string name="amity_v4_community_setup_create_button">Create community</string>
+    <string name="amity_v4_community_setup_invite_members_title">Invite members</string>
+    <string name="amity_v4_community_setup_invite_members_description">They will join as members after accepting your invitation.</string>
     <string name="amity_v4_community_setup_edit_button">Save</string>
 
     <!--community setup page toast-->
@@ -182,6 +192,27 @@
     <string name="amity_report_other_reason_desc">Describe your reason</string>
     <string name="amity_report_other_reason_optional">(Optional)</string>
     <string name="amity_report_text_placeholder">Share more details about this issue</string>
+
+    <!--community invitation-->
+    <string name="amity_v4_community_information_title">Community information</string>
+    <string name="amity_v4_community_permission_title">Community permissions</string>
+    <string name="amity_v4_community_your_preferences_title">Your preferences</string>
+    <string name="amity_v4_community_invitation_accept_button">Join</string>
+    <string name="amity_v4_community_invitation_reject_button">Decline</string>
+    <string name="amity_v4_community_invitation_message_template">%s invited you to join %s.</string>
+    <string name="amity_v4_community_invitation_unavailable_error">This invitation is no longer available.</string>
+    <string name="amity_v4_community_invitation_accept_success">You joined %s.</string>
+    <string name="amity_v4_community_invitation_reject_success">Invitation declined.</string>
+    <string name="amity_v4_community_invitation_fail_to_accept">Failed to accept invitation. Please try again.</string>
+    <string name="amity_v4_community_invitation_fail_to_reject">Failed to decline invitation. Please try again.</string>
+    <string name="amity_v4_community_invitation_create_success">Successfully invited members to this community.</string>
+    <string name="amity_v4_community_invitation_create_failed">Failed to invite members. Please try again.</string>
+    <string name="amity_v4_community_add_member_success">Successfully added members to this community!</string>
+    <string name="amity_v4_community_add_member_failed">Failed to add members to this community. Please try again!</string>
+    <string name="amity_v4_community_search_placeholder">Start your search by typing\nat least 3 letters</string>
+    <string name="amity_v4_community_invitation_reject_dialog_title">Decline invitation?</string>
+    <string name="amity_v4_community_invitation_reject_dialog_subtitle">If you change your mind, you’ll have to request to join again.</string>
+
 
     <!--- Generic error -->
     <string name="amity_no_internet_error_message">No internet connection.</string>

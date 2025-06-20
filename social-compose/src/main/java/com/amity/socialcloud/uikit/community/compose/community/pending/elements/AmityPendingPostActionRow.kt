@@ -32,7 +32,7 @@ fun AmityPendingPostActionRow(
 ) {
     AmityBaseComponent(
         pageScope = pageScope,
-        componentId = "pending_post_content"
+        componentId = "pending_post_list"
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -60,9 +60,8 @@ fun AmityPendingPostActionRow(
                 ) {
                     Text(
                         text = getConfig().getText(),
-                        style = AmityTheme.typography.captionLegacy.copy(
-                            color = AmityTheme.colors.background,
-                        ),
+                        style = AmityTheme.typography.bodyBold,
+                        color = Color.White
                     )
                 }
             }
@@ -85,16 +84,11 @@ fun AmityPendingPostActionRow(
                 ) {
                     Text(
                         text = getConfig().getText(),
-                        style = AmityTheme.typography.bodyLegacy,
+                        style = AmityTheme.typography.bodyBold,
+                        color = AmityTheme.colors.secondary
                     )
                 }
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun AmityPendingPostActionRowPreview() {
-    AmityPendingPostActionRow()
 }

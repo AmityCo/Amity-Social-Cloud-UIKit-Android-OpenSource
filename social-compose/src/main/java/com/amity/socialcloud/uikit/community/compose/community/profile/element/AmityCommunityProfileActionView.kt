@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.community.profile.element
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -13,12 +14,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,7 +44,11 @@ import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunityPostSettings
+import com.amity.socialcloud.sdk.model.social.community.AmityJoinRequest
+import com.amity.socialcloud.sdk.model.social.community.AmityJoinRequestStatus
+import com.amity.socialcloud.sdk.model.social.community.AmityJoinResult
 import com.amity.socialcloud.uikit.common.common.isNotEmptyOrBlank
+import com.amity.socialcloud.uikit.common.compose.R
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
@@ -47,26 +58,28 @@ import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageBehavior
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 
-@Composable
-fun AmityCommunityProfileActionView(
-    modifier: Modifier = Modifier,
-    pageScope: AmityComposePageScope? = null,
-    componentScope: AmityComposeComponentScope? = null,
-    community: AmityCommunity,
-) {
-    AmityCommunityPendingPost(
-        pageScope = pageScope,
-        componentScope = componentScope,
-        community = community
-    )
-    AmityCommunityJoinButton(
-        pageScope = pageScope,
-        componentScope = componentScope,
-        community = community
-    )
-}
+//@Composable
+//fun AmityCommunityProfileActionView(
+//    modifier: Modifier = Modifier,
+//    pageScope: AmityComposePageScope? = null,
+//    componentScope: AmityComposeComponentScope? = null,
+//    community: AmityCommunity,
+//) {
+//    AmityCommunityPendingPost(
+//        pageScope = pageScope,
+//        componentScope = componentScope,
+//        community = community
+//    )
+//    AmityCommunityJoinButton(
+//        pageScope = pageScope,
+//        componentScope = componentScope,
+//        community = community
+//    )
+//}
+
 
 @Composable
 fun AmityCommunityPendingPost(
@@ -100,23 +113,91 @@ fun AmityCommunityPendingPost(
                 .asFlow()
         }.collectAsLazyPagingItems()
 
-        val description by remember {
+        val joinRequest = remember {
+            community.getJoinRequests(AmityJoinRequestStatus.PENDING).asFlow()
+        }.collectAsLazyPagingItems()
+
+        val pendingPostItemCount by remember(pendingPosts) {
+            derivedStateOf { pendingPosts.itemCount }
+        }
+
+        val joinRequestItemCount by remember(joinRequest) {
+            derivedStateOf { joinRequest.itemCount }
+        }
+
+        val bannerContent by remember(
+            pendingPostItemCount,
+            joinRequestItemCount,
+            isModerator,
+            community
+        ) {
             derivedStateOf {
-                val pendingPostCount = pendingPosts.itemCount
-                if (pendingPosts.itemCount > 0 &&
-                    community.isJoined() &&
+                val communityRequiresJoinApproval = community.requiresJoinApproval()
+                val postReviewEnabled =
                     community.getPostSettings() == AmityCommunityPostSettings.ADMIN_REVIEW_POST_REQUIRED
-                ) {
-                    if (isModerator) {
-                        "${getNumberAbbreveation(pendingPostCount)} ${if (pendingPostCount == 1) "post" else "posts"} need approval"
+
+                val hasPendingPosts = pendingPostItemCount > 0
+                val hasPendingJoinRequests = joinRequestItemCount > 0
+
+                // Conditions for showing each type of information
+                val showPendingPostsInfo =
+                    postReviewEnabled && hasPendingPosts && community.isJoined()
+                val showJoinRequestsInfo =
+                    communityRequiresJoinApproval && hasPendingJoinRequests && isModerator
+
+                var title = "Pending requests"
+                var desc = ""
+
+                val postText = "${
+                    if (pendingPostItemCount > 10) {
+                        "10+"
                     } else {
-                        "Your posts are pending for review"
+                        getNumberAbbreveation(
+                            pendingPostItemCount
+                        )
                     }
-                } else {
-                    ""
+                } ${
+                    if (pendingPostItemCount == 1) {
+                        "post"
+                    } else {
+                        "posts"
+                    }
+                }"
+                val joinRequestText = "${
+                    if (joinRequestItemCount > 10) {
+                        "10+"
+                    } else {
+                        getNumberAbbreveation(
+                            joinRequestItemCount
+                        )
+                    }
+                } ${
+                    if (joinRequestItemCount == 1) {
+                        "join request"
+                    } else {
+                        "join requests"
+                    }
+                }"
+
+                val postsNeedApprovalText =
+                    "$postText ${if (pendingPostItemCount == 1) "requires" else "require"} approval"
+                val yourPostsPendingText = "Your posts are pending for review"
+                val joinRequestsText =
+                    "$joinRequestText ${if (joinRequestItemCount == 1) "requires" else "require"} approval"
+
+                if (showPendingPostsInfo && showJoinRequestsInfo) { // Both moderator-relevant items
+                    desc = "$postText and $joinRequestText require approval"
+                } else if (showPendingPostsInfo) { // Only Posts
+                    desc = if (isModerator) postsNeedApprovalText else yourPostsPendingText
+                } else if (showJoinRequestsInfo) { // Only Join Requests (implies isModerator)
+                    desc = joinRequestsText
                 }
+                Pair(title, desc)
             }
         }
+
+        val bannerTitle by remember { derivedStateOf { bannerContent.first } }
+        val description by remember { derivedStateOf { bannerContent.second } }
 
         if (description.isNotEmptyOrBlank()) {
             Row(modifier = Modifier.padding(bottom = 12.dp, start = 16.dp, end = 16.dp)) {
@@ -129,7 +210,7 @@ fun AmityCommunityPendingPost(
                             shape = RoundedCornerShape(size = 4.dp)
                         )
                         .clickable {
-                            behavior.goToPendingPostPage(
+                            behavior.goToPendingRequestPage(
                                 AmityCommunityProfilePageBehavior.Context(
                                     pageContext = context,
                                     community = community
@@ -152,7 +233,7 @@ fun AmityCommunityPendingPost(
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = "Pending posts",
+                                text = bannerTitle,
                                 style = TextStyle(
                                     fontSize = 15.sp,
                                     lineHeight = 20.sp,
@@ -185,49 +266,157 @@ fun AmityCommunityJoinButton(
     componentScope: AmityComposeComponentScope? = null,
     community: AmityCommunity,
 ) {
+    var isPendingJoinRequest by remember { mutableStateOf<Boolean>(false) }
+    var joinRequest by remember { mutableStateOf<AmityJoinRequest?>(null) }
+    var isLoadingStatus by remember { mutableStateOf(true) }
+
+    val compositeDisposable = remember { CompositeDisposable() }
+
+    DisposableEffect(community) {
+        val disposable = community.getMyJoinRequest()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ request ->
+                isPendingJoinRequest =
+                    request != null && request.getStatus() == AmityJoinRequestStatus.PENDING
+                joinRequest =
+                    if (request.getStatus() == AmityJoinRequestStatus.PENDING) request else null
+                isLoadingStatus = false
+            }, { error ->
+                // Request failed or no join request exists
+                isPendingJoinRequest = false
+                isLoadingStatus = false
+            })
+
+        compositeDisposable.add(disposable)
+
+        onDispose {
+            compositeDisposable.clear()
+        }
+    }
+
     AmityBaseElement(
         pageScope = pageScope,
         componentScope = componentScope,
-        elementId = "community_join_button"
+        elementId = if (!community.isJoined() && isPendingJoinRequest) "community_cancel_request_button" else "community_join_button"
     ) {
-        if (!community.isJoined()) {
-            Row(modifier = modifier.padding(16.dp)) {
-                Box(modifier = Modifier
-                    .clickable {
-                        AmitySocialClient
-                            .newCommunityRepository()
-                            .joinCommunity(community.getCommunityId())
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .doOnError { }
-                            .subscribe()
-                    }
-                    .fillMaxWidth()
-                    .height(40.dp)
-                    .background(
-                        color = AmityTheme.colors.primary,
-                        shape = RoundedCornerShape(size = 8.dp)
-                    )
-                    .padding(start = 12.dp, top = 10.dp, end = 16.dp, bottom = 10.dp),
-                    contentAlignment = Alignment.Center
+        if (!community.isJoined() && !isLoadingStatus) {
+            if (isPendingJoinRequest) {
+                OutlinedButton(
+                    onClick = {
+                        joinRequest?.let { request ->
+                            val disposable = request.cancel()
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .doOnComplete {
+                                    isPendingJoinRequest = false
+                                }
+                                .doOnError {
+                                    pageScope?.showSnackbar(
+                                        message = "Failed to cancel your request. Please try again.",
+                                        drawableRes = R.drawable.amity_ic_snack_bar_warning,
+                                    )
+                                }
+                                .subscribe()
+
+                            compositeDisposable.add(disposable)
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 12.dp, top = 10.dp, end = 16.dp, bottom = 10.dp),
+                    enabled = true,
+                    elevation = null,
+                    shape = RoundedCornerShape(8.dp),
+                    border = BorderStroke(width = 1.dp, color = AmityTheme.colors.secondaryShade3),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        containerColor = Color.White,
+                    ),
+                    contentPadding = ButtonDefaults.ContentPadding
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Image(
-                            painter = painterResource(id = getConfig().getIcon()),
-                            contentDescription = "Join community icon",
-                            modifier = Modifier
-                                .size(20.dp),
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "Join",
-                            style = TextStyle(
-                                fontSize = 15.sp,
-                                lineHeight = 20.sp,
-                                fontWeight = FontWeight(600),
-                                color = Color.White,
+                    Icon(
+                        painter = painterResource(id = getConfig().getIcon()),
+                        contentDescription = "Join community icon",
+                        modifier = Modifier
+                            .size(20.dp),
+                        tint = Color.Black
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Cancel request",
+                        style = AmityTheme.typography.bodyBold
+                    )
+                }
+            } else {
+                Row(modifier = modifier.padding(16.dp)) {
+                    Box(
+                        modifier = Modifier
+                            .clickable {
+                                isLoadingStatus = true
+                                val disposable = community.join()
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .doOnSuccess { result ->
+                                        isLoadingStatus = false
+                                        when (result) {
+                                            is AmityJoinResult.Success -> {
+                                                // Successfully joined the community
+                                                isPendingJoinRequest = false
+                                                pageScope?.showSnackbar(
+                                                    message = "You joined ${community.getDisplayName()}.",
+                                                    drawableRes = R.drawable.amity_ic_snack_bar_success,
+                                                )
+                                            }
+
+                                            is AmityJoinResult.Pending -> {
+                                                // Join request is pending
+                                                joinRequest = result.request
+                                                isPendingJoinRequest = true
+                                                pageScope?.showSnackbar(
+                                                    message = "Requested to join. You will be notified once your request is accepted.",
+                                                    drawableRes = R.drawable.amity_ic_snack_bar_success,
+                                                )
+                                            }
+                                        }
+                                    }
+                                    .doOnError {
+                                        isLoadingStatus = false
+                                        pageScope?.showSnackbar(
+                                            message = "Failed to join the community. Please try again.",
+                                            drawableRes = R.drawable.amity_ic_snack_bar_warning,
+                                        )
+                                    }
+                                    .subscribe()
+
+                                compositeDisposable.add(disposable)
+                            }
+                            .fillMaxWidth()
+                            .height(40.dp)
+                            .background(
+                                color = AmityTheme.colors.primary,
+                                shape = RoundedCornerShape(size = 8.dp)
                             )
-                        )
+                            .padding(start = 12.dp, top = 10.dp, end = 16.dp, bottom = 10.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Image(
+                                painter = painterResource(id = getConfig().getIcon()),
+                                contentDescription = "Join community icon",
+                                modifier = Modifier
+                                    .size(20.dp),
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "Join",
+                                style = TextStyle(
+                                    fontSize = 15.sp,
+                                    lineHeight = 20.sp,
+                                    fontWeight = FontWeight(600),
+                                    color = Color.White,
+                                )
+                            )
+                        }
                     }
                 }
             }

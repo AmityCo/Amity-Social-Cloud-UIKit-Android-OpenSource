@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -32,6 +33,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
@@ -39,11 +43,14 @@ import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunityPostSettings
+import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
+import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.community.membership.invite.AmityCommunityInviteMemberPageViewModel
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageBehavior
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfileViewModel
 import com.amity.socialcloud.uikit.community.compose.community.profile.component.AmityCommunityHeaderComponent
@@ -59,6 +66,8 @@ import com.amity.socialcloud.uikit.community.compose.paging.feed.community.amity
 import com.amity.socialcloud.uikit.community.compose.paging.feed.community.amityCommunityVideoFeedLLS
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostCategory
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostShimmer
+import com.amity.socialcloud.uikit.community.compose.ui.components.feed.community.AmityCommunityPrivateView
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 
@@ -68,8 +77,21 @@ import kotlinx.coroutines.flow.map
 fun AmityCommunityProfilePage(
     modifier: Modifier = Modifier,
     communityId: String,
+    isCommunityJustCreated: Boolean = false,
 ) {
-    val viewModel = remember { AmityCommunityProfileViewModel(communityId) }
+    val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
+        "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
+    }
+    val viewModel =
+        viewModel<AmityCommunityProfileViewModel>(viewModelStoreOwner = viewModelStoreOwner, factory =
+            object : ViewModelProvider.Factory {
+                override fun <VM : androidx.lifecycle.ViewModel> create(
+                    modelClass: Class<VM>
+                ): VM {
+                    return AmityCommunityProfileViewModel(communityId) as VM
+                }
+            }
+        )
     val context = LocalContext.current
     val lazyListState = rememberLazyListState()
     val state by remember { viewModel.communityProfileState }.collectAsState()
@@ -164,6 +186,16 @@ fun AmityCommunityProfilePage(
         }
     }
 
+    var isShowCompleteCreatedCommunity by remember { mutableStateOf(false) }
+    LaunchedEffect(isCommunityJustCreated) {
+        isShowCompleteCreatedCommunity = isCommunityJustCreated
+        if (isShowCompleteCreatedCommunity) {
+            AmityUIKitSnackbar.publishSnackbarMessage(context.getString(R.string.amity_v4_community_setup_toast_create_success))
+        }
+        delay(200L)
+        isShowCompleteCreatedCommunity = false
+    }
+
     AmityBasePage(pageId = "community_profile_page") {
         Scaffold { padding ->
             if (state.community?.isDeleted() == true || state.error != null) {
@@ -244,85 +276,96 @@ fun AmityCommunityProfilePage(
                             } ?: false
                         val shouldShowAnnouncement = announcementPosts.itemCount > 0
                                 && (selectedTabIndex == 0 || (selectedTabIndex == 1 && hasAnnouncementPin))
-                        if (shouldShowAnnouncement) {
-                            amityCommunityAnnouncementFeedLLS(
-                                modifier = modifier,
-                                pageScope = getPageScope(),
-                                announcementPosts = announcementPosts,
-                                hasAnnouncementPin = hasAnnouncementPin,
-                                onClick = {
-                                    behavior.goToPostDetailPage(
-                                        AmityCommunityProfilePageBehavior.Context(
-                                            pageContext = context,
-                                        ),
-                                        postId = it.getPostId(),
-                                        category = if (hasAnnouncementPin) {
-                                            AmityPostCategory.PIN_AND_ANNOUNCEMENT
-                                        } else {
-                                            AmityPostCategory.ANNOUNCEMENT
-                                        }
-                                    )
-                                }
-                            )
-                        }
-                        when (selectedTabIndex) {
-                            0 -> {
-                                if (communityPosts.loadState.refresh == LoadState.Loading) {
-                                    repeat(4) {
-                                        item {
-                                            AmityPostShimmer()
-                                        }
-                                    }
-                                } else {
-                                    amityCommunityFeedLLS(
-                                        modifier = modifier,
-                                        pageScope = getPageScope(),
-                                        communityPosts = communityPosts,
-                                        pinPosts = pinPosts,
-                                        announcementPosts = announcementPosts,
-                                        onClick = { post, category ->
-                                            behavior.goToPostDetailPage(
-                                                AmityCommunityProfilePageBehavior.Context(
-                                                    pageContext = context,
-                                                ),
-                                                postId = post.getPostId(),
-                                                category = category,
-                                            )
-                                        }
-                                    )
+                        if (community?.isJoined() == false && community?.isPublic() == false){
+                            item {
+                                Box(
+                                    modifier = Modifier
+                                        .height(360.dp),
+                                ) {
+                                    AmityCommunityPrivateView()
                                 }
                             }
-
-                            1 -> {
-                                amityCommunityPinnedFeedLLS(
+                        } else {
+                            if (shouldShowAnnouncement) {
+                                amityCommunityAnnouncementFeedLLS(
                                     modifier = modifier,
                                     pageScope = getPageScope(),
-                                    pinPosts = pinPosts,
                                     announcementPosts = announcementPosts,
+                                    hasAnnouncementPin = hasAnnouncementPin,
                                     onClick = {
                                         behavior.goToPostDetailPage(
                                             AmityCommunityProfilePageBehavior.Context(
                                                 pageContext = context,
                                             ),
                                             postId = it.getPostId(),
-                                            category = AmityPostCategory.PIN
+                                            category = if (hasAnnouncementPin) {
+                                                AmityPostCategory.PIN_AND_ANNOUNCEMENT
+                                            } else {
+                                                AmityPostCategory.ANNOUNCEMENT
+                                            }
                                         )
                                     }
                                 )
                             }
+                            when (selectedTabIndex) {
+                                0 -> {
+                                    if (communityPosts.loadState.refresh == LoadState.Loading) {
+                                        repeat(4) {
+                                            item {
+                                                AmityPostShimmer()
+                                            }
+                                        }
+                                    } else {
+                                        amityCommunityFeedLLS(
+                                            modifier = modifier,
+                                            pageScope = getPageScope(),
+                                            communityPosts = communityPosts,
+                                            pinPosts = pinPosts,
+                                            announcementPosts = announcementPosts,
+                                            onClick = { post, category ->
+                                                behavior.goToPostDetailPage(
+                                                    AmityCommunityProfilePageBehavior.Context(
+                                                        pageContext = context,
+                                                    ),
+                                                    postId = post.getPostId(),
+                                                    category = category,
+                                                )
+                                            }
+                                        )
+                                    }
+                                }
 
-                            2 -> {
-                                amityCommunityImageFeedLLS(
-                                    modifier = modifier,
-                                    imagePosts = imagePosts,
-                                )
-                            }
+                                1 -> {
+                                    amityCommunityPinnedFeedLLS(
+                                        modifier = modifier,
+                                        pageScope = getPageScope(),
+                                        pinPosts = pinPosts,
+                                        announcementPosts = announcementPosts,
+                                        onClick = {
+                                            behavior.goToPostDetailPage(
+                                                AmityCommunityProfilePageBehavior.Context(
+                                                    pageContext = context,
+                                                ),
+                                                postId = it.getPostId(),
+                                                category = AmityPostCategory.PIN
+                                            )
+                                        }
+                                    )
+                                }
 
-                            3 -> {
-                                amityCommunityVideoFeedLLS(
-                                    modifier = modifier,
-                                    videoPosts = videoPosts,
-                                )
+                                2 -> {
+                                    amityCommunityImageFeedLLS(
+                                        modifier = modifier,
+                                        imagePosts = imagePosts,
+                                    )
+                                }
+
+                                3 -> {
+                                    amityCommunityVideoFeedLLS(
+                                        modifier = modifier,
+                                        videoPosts = videoPosts,
+                                    )
+                                }
                             }
                         }
                     }

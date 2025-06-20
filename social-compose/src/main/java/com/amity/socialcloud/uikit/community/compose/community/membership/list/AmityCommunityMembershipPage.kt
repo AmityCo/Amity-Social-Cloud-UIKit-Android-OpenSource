@@ -19,13 +19,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rxjava3.subscribeAsState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.amity.socialcloud.sdk.model.chat.settings.AmityMembershipAcceptanceType
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.compose.R
+import com.amity.socialcloud.uikit.community.compose.R as SocialR
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityTabRow
 import com.amity.socialcloud.uikit.common.ui.elements.AmityTabRowItem
@@ -37,6 +41,7 @@ import com.amity.socialcloud.uikit.community.compose.community.membership.add.Am
 import com.amity.socialcloud.uikit.community.compose.community.membership.element.AmityCommunityMembersMembershipComponent
 import com.amity.socialcloud.uikit.community.compose.community.membership.element.AmityCommunityMembershipSheet
 import com.amity.socialcloud.uikit.community.compose.community.membership.element.AmityCommunityModeratorsMembershipComponent
+import com.amity.socialcloud.uikit.community.compose.community.membership.invite.AmityCommunityInviteMemberPageActivity
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -65,6 +70,14 @@ fun AmityCommunityMembershipPage(
 
     val pagerState = rememberPagerState { tabs.size }
 
+    val membershipAcceptance = viewModel.getMembershipAcceptanceType()
+        .subscribeAsState(initial = AmityMembershipAcceptanceType.AUTOMATIC)
+
+    val hasEditPermission by viewModel.hasEditPermission().subscribeAsState(initial = false)
+
+    val successMessage = stringResource(SocialR.string.amity_v4_community_add_member_success)
+    val failedToAddMessage = stringResource(SocialR.string.amity_v4_community_add_member_failed)
+
     AmityBasePage(pageId = "community_membership_page") {
         val addMembersLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.StartActivityForResult()
@@ -72,22 +85,32 @@ fun AmityCommunityMembershipPage(
             if (result.resultCode == Activity.RESULT_OK) {
                 result.data?.let {
                     val users = it.let(AmityCommunityAddMemberPageActivity::getUsers)
-
                     viewModel.addMembers(
                         userIds = users.map { user -> user.getUserId() },
                         onSuccess = {
                             getPageScope().showSnackbar(
-                                message = "Successfully added members to this community!",
+                                message = successMessage,
                                 drawableRes = R.drawable.amity_ic_snack_bar_success,
                             )
                         },
                         onError = {
                             getPageScope().showSnackbar(
-                                message = "Failed to add members to this community. Please try again!",
+                                message = failedToAddMessage,
                                 drawableRes = R.drawable.amity_ic_snack_bar_warning,
                             )
                         }
                     )
+                }
+            }
+        }
+
+        val inviteMembersLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                result.data?.let { data ->
+                    val users = data.let(AmityCommunityInviteMemberPageActivity::getUsers)
+                    viewModel.inviteUsers(community, users.map { it.getUserId() })
                 }
             }
         }
@@ -103,20 +126,36 @@ fun AmityCommunityMembershipPage(
                     context.closePageWithResult(Activity.RESULT_CANCELED)
                 }
             ) {
-                Icon(
-                    painter = painterResource(R.drawable.amity_ic_add),
-                    contentDescription = "Close",
-                    modifier = modifier
-                        .size(24.dp)
-                        .clickableWithoutRipple {
-                            behavior.goToAddMemberPage(
-                                AmityCommunityMembershipPageBehavior.Context(
-                                    pageContext = context,
-                                    launcher = addMembersLauncher,
-                                )
-                            )
-                        }
-                )
+                if ((membershipAcceptance.value
+                    == AmityMembershipAcceptanceType.INVITATION
+                    && hasEditPermission)
+                    || community.isJoined()
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.amity_ic_add),
+                        contentDescription = "Close",
+                        modifier = modifier
+                            .size(24.dp)
+                            .clickableWithoutRipple {
+                                if (membershipAcceptance.value == AmityMembershipAcceptanceType.INVITATION) {
+                                    behavior.goToInviteMemberPage(
+                                        AmityCommunityMembershipPageBehavior.Context(
+                                            pageContext = context,
+                                            launcher = inviteMembersLauncher,
+                                            community = community,
+                                        )
+                                    )
+                                } else {
+                                    behavior.goToAddMemberPage(
+                                        AmityCommunityMembershipPageBehavior.Context(
+                                            pageContext = context,
+                                            launcher = addMembersLauncher,
+                                        )
+                                    )
+                                }
+                            }
+                    )
+                }
             }
 
             AmityTabRow(tabs = tabs, selectedIndex = selectedTabIndex) {

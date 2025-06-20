@@ -523,6 +523,9 @@
     "community_profile_page/community_header/community_join_button": {
       "image": "plusIcon"
     },
+    "community_profile_page/community_header/community_cancel_request_button": {
+      "image": "clockIcon"
+    },
     "community_profile_page/community_header/community_pending_post": {
     },
     "community_profile_page/*/back_button": {
@@ -577,11 +580,38 @@
     "community_setup_page/*/community_privacy_public_description": {
       "text": "Anyone can join, view, and search the posts in this community."
     },
+    "community_setup_page/*/community_membership_title": {
+      "text": "Membership"
+    },
+    "community_setup_page/*/community_membership_description": {
+      "text": "Requires moderator approval"
+    },
+    "community_setup_page/*/community_membership_sub_description": {
+      "text": "Users will become members only when their join request is approved by a moderator of this community."
+    },
+    "community_setup_page/*/community_privacy_private_and_visible_icon": {
+      "image": "privacyAndVisibleIcon"
+    },
+    "community_setup_page/*/community_privacy_private_and_visible_title": {
+      "text": "Private & visible"
+    },
+    "community_setup_page/*/community_privacy_private_and_visible_description": {
+      "text": "Community is discoverable by anyone. Content is hidden from non-members."
+    },
+    "community_setup_page/*/community_privacy_private_and_hidden_icon": {
+      "image": "privacyPrivateIcon"
+    },
+    "community_setup_page/*/community_privacy_private_and_hidden_title": {
+      "text": "Private & hidden"
+    },
+    "community_setup_page/*/community_privacy_private_and_hidden_description": {
+      "text": "Community and content are hidden from non-members."
+    },
     "community_setup_page/*/community_add_member_title": {
       "text": "Member"
     },
     "community_setup_page/*/community_add_member_button": {
-      "text": "Add",
+      "text": "Invite",
       "image": "addIcon"
     },
     "community_setup_page/*/community_create_button": {
@@ -609,6 +639,9 @@
     },
     "community_setting_page/*/members": {
       "text": "Members"
+    },
+    "community_setting_page/*/pending_invitations": {
+      "text": "Pending invitations"
     },
     "community_setting_page/*/notifications": {
       "text": "Notifications"
@@ -647,6 +680,39 @@
       "text": "Accept"
     },
     "pending_posts_page/pending_post_content/post_decline_button": {
+      "text": "Decline"
+    },
+    "pending_request_page/*/*": {},
+    "pending_request_page/*/back_button": {
+      "image": "backIcon"
+    },
+    "pending_request_page/*/title": {
+      "text": "Pending posts"
+    },
+    "pending_request_page/pending_post_list/*": {},
+    "pending_request_page/pending_post_list/timestamp": {},
+    "pending_request_page/pending_post_list/post_accept_button": {
+      "text": "Accept"
+    },
+    "pending_request_page/pending_post_list/post_decline_button": {
+      "text": "Decline"
+    },
+    "pending_request_page/*/posts_button_tab": {
+      "text": "Posts"
+    },
+    "pending_request_page/pending_post_list/posts_tab_description": {
+      "text": "Decline pending post will permanently delete the selected post from community."
+    },
+    "pending_request_page/*/join_requests_button_tab": {
+      "text": "Join requests"
+    },
+    "pending_request_page/join_request_content/join_requests_tab_description": {
+      "text": "Declining a join request is irreversible. The user must send a new request if declined."
+    },
+    "pending_request_page/join_request_content/join_accept_button": {
+      "text": "Accept"
+    },
+    "pending_request_page/join_request_content/join_decline_button": {
       "text": "Decline"
     },
     "user_profile_page/*/*": {},
