@@ -145,24 +145,26 @@ fun AmityCommunityCoverView(
                         )
                     }
                     Spacer(modifier = Modifier.weight(1f))
-                    AmityBaseElement(
-                        pageScope = pageScope,
-                        elementId = "menu_button"
-                    ) {
-                        AmityMenuButton(
-                            icon = getConfig().getIcon(),
-                            size = 32.dp,
-                            iconPadding = 4.dp,
-                            modifier = Modifier.testTag(getAccessibilityId()),
-                            onClick = {
-                                behavior.goToCommunitySettingPage(
-                                    AmityCommunityProfilePageBehavior.Context(
-                                        pageContext = context,
-                                        community = community,
+                    if (community.isJoined()) {
+                        AmityBaseElement(
+                            pageScope = pageScope,
+                            elementId = "menu_button"
+                        ) {
+                            AmityMenuButton(
+                                icon = getConfig().getIcon(),
+                                size = 32.dp,
+                                iconPadding = 4.dp,
+                                modifier = Modifier.testTag(getAccessibilityId()),
+                                onClick = {
+                                    behavior.goToCommunitySettingPage(
+                                        AmityCommunityProfilePageBehavior.Context(
+                                            pageContext = context,
+                                            community = community,
+                                        )
                                     )
-                                )
-                            }
-                        )
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -255,24 +257,26 @@ fun AmityCommunityCoverView(
                                 .weight(1f)
                                 .padding(bottom = 4.dp)
                         )
-                        AmityBaseElement(
-                            pageScope = pageScope,
-                            elementId = "menu_button"
-                        ) {
-                            AmityMenuButton(
-                                icon = getConfig().getIcon(),
-                                size = 32.dp,
-                                iconPadding = 4.dp,
-                                modifier = Modifier.padding(start = 12.dp),
-                                onClick = {
-                                    behavior.goToCommunitySettingPage(
-                                        AmityCommunityProfilePageBehavior.Context(
-                                            pageContext = context,
-                                            community = community,
+                        if (community.isJoined()) {
+                            AmityBaseElement(
+                                pageScope = pageScope,
+                                elementId = "menu_button"
+                            ) {
+                                AmityMenuButton(
+                                    icon = getConfig().getIcon(),
+                                    size = 32.dp,
+                                    iconPadding = 4.dp,
+                                    modifier = Modifier.padding(start = 12.dp),
+                                    onClick = {
+                                        behavior.goToCommunitySettingPage(
+                                            AmityCommunityProfilePageBehavior.Context(
+                                                pageContext = context,
+                                                community = community,
+                                            )
                                         )
-                                    )
-                                }
-                            )
+                                    }
+                                )
+                            }
                         }
                     }
                 }

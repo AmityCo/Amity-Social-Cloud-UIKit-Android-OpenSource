@@ -9,6 +9,7 @@ import com.amity.socialcloud.uikit.common.behavior.AmityBaseBehavior
 import com.amity.socialcloud.uikit.common.behavior.AmityBaseBehaviorContext
 import com.amity.socialcloud.uikit.community.compose.community.membership.list.AmityCommunityMembershipPageActivity
 import com.amity.socialcloud.uikit.community.compose.community.pending.AmityPendingPostsPageActivity
+import com.amity.socialcloud.uikit.community.compose.community.pending.AmityPendingRequestPageActivity
 import com.amity.socialcloud.uikit.community.compose.community.setting.AmityCommunitySettingPageActivity
 import com.amity.socialcloud.uikit.community.compose.livestream.create.AmityCreateLivestreamPageActivity
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerOptions
@@ -119,6 +120,16 @@ open class AmityCommunityProfilePageBehavior : AmityBaseBehavior() {
         context: Context,
     ) {
         val intent = AmityPendingPostsPageActivity.newIntent(
+            context = context.pageContext,
+            community = context.community!!,
+        )
+        context.pageContext.startActivity(intent)
+    }
+
+    open fun goToPendingRequestPage(
+        context: Context,
+    ) {
+        val intent = AmityPendingRequestPageActivity.newIntent(
             context = context.pageContext,
             community = context.community!!,
         )

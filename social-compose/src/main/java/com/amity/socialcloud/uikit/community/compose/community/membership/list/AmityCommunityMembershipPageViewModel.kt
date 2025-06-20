@@ -7,8 +7,10 @@ import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.sdk.api.social.member.query.AmityCommunityMembershipSortOption
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
+import com.amity.socialcloud.sdk.model.chat.settings.AmityMembershipAcceptanceType
 import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.member.AmityCommunityMember
 import com.amity.socialcloud.sdk.model.social.member.AmityCommunityMembershipFilter
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
@@ -226,6 +228,33 @@ class AmityCommunityMembershipPageViewModel(val communityId: String) : AmityBase
                 onError(AmityError.from(it))
             }
             .subscribe()
+    }
+
+    fun inviteUsers(
+        community: AmityCommunity,
+        userIds: List<String>,
+        onSuccess: () -> Unit = {},
+        onError: (AmityError) -> Unit = {}
+    ) {
+        community.createInvitations(userIds)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread()).doOnComplete {
+                onSuccess()
+                triggerPagingRefresh()
+            }
+            .doOnError {
+                onError(AmityError.from(it))
+            }
+            .subscribe()
+    }
+
+    fun getMembershipAcceptanceType(): Flowable<AmityMembershipAcceptanceType> {
+        return AmitySocialClient.getSettings()
+            .map { setting ->
+                setting.getMembershipAcceptanceType()
+            }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
     }
 
     private fun triggerPagingRefresh() {

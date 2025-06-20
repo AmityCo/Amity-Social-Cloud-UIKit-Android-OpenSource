@@ -76,7 +76,7 @@ class AmityGlobalSearchViewModel : AmityBaseViewModel() {
 
     fun searchCommunities(): Flow<PagingData<AmityCommunity>> {
         return AmitySocialClient.newCommunityRepository()
-            .searchCommunities(_keyword.value)
+            .searchCommunities(_keyword.value, includeDiscoverablePrivateCommunity = true)
             .run {
                 if (_searchType.value == AmityGlobalSearchType.MY_COMMUNITY) {
                     filter(AmityCommunityFilter.MEMBER)

@@ -1,6 +1,7 @@
 package com.amity.socialcloud.uikit.community.compose.community.setting
 
 import android.app.Activity
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -35,6 +36,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -57,6 +59,7 @@ import com.amity.socialcloud.uikit.common.utils.isStoryNotificationEnabled
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.community.setting.elements.AmityCommunitySettingItem
+import kotlinx.coroutines.delay
 
 @Composable
 fun AmityCommunitySettingPage(
@@ -210,7 +213,7 @@ fun AmityCommunitySettingPage(
             Spacer(modifier.height(4.dp))
 
             Text(
-                text = "Basic info",
+                text = stringResource(R.string.amity_v4_community_information_title),
                 style = AmityTheme.typography.titleLegacy,
                 modifier = modifier.padding(vertical = 12.dp)
             )
@@ -286,70 +289,50 @@ fun AmityCommunitySettingPage(
                     )
                 }
             }
-
-            val isNotificationEnabled =
-                userNotificationSettings?.isSocialNotificationEnabled() == true
-                        && (communityNotificationSettings?.isPostNotificationEnabled() == true ||
-                        communityNotificationSettings?.isCommentNotificationEnabled() == true ||
-                        communityNotificationSettings?.isStoryNotificationEnabled() == true)
-
-            if (isNotificationEnabled) {
-                Box(modifier = modifier.fillMaxWidth()) {
-                    AmityBaseElement(
-                        pageScope = getPageScope(),
-                        elementId = "notifications"
-                    ) {
-                        AmityCommunitySettingItem(
-                            modifier = modifier.testTag(getAccessibilityId()),
-                            title = getConfig().getText(),
-                            icon = {
-                                Box(
-                                    modifier = modifier
-                                        .size(28.dp)
-                                        .background(
-                                            color = AmityTheme.colors.baseShade4,
-                                            shape = RoundedCornerShape(4.dp)
-                                        )
-                                ) {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.amity_ic_community_notifications),
-                                        contentDescription = "",
-                                        tint = AmityTheme.colors.base,
-                                        modifier = modifier.align(Alignment.Center)
+            if (hasEditPermission) {
+                AmityBaseElement(
+                    pageScope = getPageScope(),
+                    elementId = "pending_invitations"
+                ) {
+                    AmityCommunitySettingItem(
+                        modifier = modifier.testTag(getAccessibilityId()),
+                        title = getConfig().getText(),
+                        icon = {
+                            Box(
+                                modifier = modifier
+                                    .size(28.dp)
+                                    .background(
+                                        color = AmityTheme.colors.baseShade4,
+                                        shape = RoundedCornerShape(4.dp)
                                     )
-                                }
-                            }
-                        ) {
-                            behavior.goToNotificationPage(
-                                AmityCommunitySettingPageBehavior.Context(
-                                    pageContext = context,
-                                    activityLauncher = launcher,
-                                    community = communityVM,
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.amity_ic_pending_invitations),
+                                    contentDescription = "",
+                                    tint = AmityTheme.colors.base,
+                                    modifier = modifier.align(Alignment.Center)
                                 )
-                            )
+                            }
                         }
+                    ) {
+                        behavior.goToPendingInvitationsPage(
+                            AmityCommunitySettingPageBehavior.Context(
+                                pageContext = context,
+                                activityLauncher = launcher,
+                                community = communityVM,
+                            )
+                        )
                     }
-
-                    Text(
-                        text = "On",
-                        style = AmityTheme.typography.bodyLegacy.copy(
-                            color = AmityTheme.colors.baseShade1,
-                        ),
-                        modifier = Modifier
-                            .align(Alignment.CenterEnd)
-                            .offset((-18).dp, (-4).dp)
-                    )
                 }
             }
 
-            HorizontalDivider(
-                color = AmityTheme.colors.divider,
-                modifier = modifier.padding(top = 4.dp, bottom = 8.dp)
-            )
-
             if (hasReviewPermission || hasEditPermission) {
+                HorizontalDivider(
+                    color = AmityTheme.colors.divider,
+                    modifier = modifier.padding(top = 4.dp, bottom = 8.dp)
+                )
                 Text(
-                    text = "Community permissions",
+                    text = stringResource(R.string.amity_v4_community_permission_title),
                     style = AmityTheme.typography.titleLegacy,
                     modifier = modifier.padding(vertical = 12.dp)
                 )
@@ -429,6 +412,75 @@ fun AmityCommunitySettingPage(
                 }
             }
 
+
+            val isNotificationEnabled =
+                (userNotificationSettings?.isSocialNotificationEnabled() == true && communityNotificationSettings?.isEnabled() == true)
+                        && (communityNotificationSettings?.isPostNotificationEnabled() == true ||
+                        communityNotificationSettings?.isCommentNotificationEnabled() == true ||
+                        communityNotificationSettings?.isStoryNotificationEnabled() == true)
+
+            HorizontalDivider(
+                color = AmityTheme.colors.divider,
+                modifier = modifier.padding(top = 4.dp, bottom = 8.dp)
+            )
+            Text(
+                text = stringResource(R.string.amity_v4_community_your_preferences_title),
+                style = AmityTheme.typography.titleLegacy,
+                modifier = modifier.padding(vertical = 12.dp)
+            )
+
+            Box(modifier = modifier.fillMaxWidth()) {
+                AmityBaseElement(
+                    pageScope = getPageScope(),
+                    elementId = "notifications"
+                ) {
+                    AmityCommunitySettingItem(
+                        modifier = modifier.testTag(getAccessibilityId()),
+                        title = getConfig().getText(),
+                        icon = {
+                            Box(
+                                modifier = modifier
+                                    .size(28.dp)
+                                    .background(
+                                        color = AmityTheme.colors.baseShade4,
+                                        shape = RoundedCornerShape(4.dp)
+                                    )
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.amity_ic_community_notifications),
+                                    contentDescription = "",
+                                    tint = AmityTheme.colors.base,
+                                    modifier = modifier.align(Alignment.Center)
+                                )
+                            }
+                        }
+                    ) {
+                        behavior.goToNotificationPage(
+                            AmityCommunitySettingPageBehavior.Context(
+                                pageContext = context,
+                                activityLauncher = launcher,
+                                community = communityVM,
+                            )
+                        )
+                    }
+                }
+
+                Text(
+                    text = if (isNotificationEnabled) "On" else "Off",
+                    style = AmityTheme.typography.bodyLegacy.copy(
+                        color = AmityTheme.colors.baseShade1,
+                    ),
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .offset((-18).dp, (-4).dp)
+                )
+
+            }
+
+            HorizontalDivider(
+                color = AmityTheme.colors.divider,
+                modifier = modifier.padding(top = 4.dp, bottom = 4.dp),
+            )
             if(communityVM?.isJoined() == true) {
                 AmityBaseElement(
                     pageScope = getPageScope(),
@@ -453,17 +505,12 @@ fun AmityCommunitySettingPage(
                                 )
                             }
                     )
-
-                    HorizontalDivider(
-                        color = AmityTheme.colors.divider,
-                        modifier = modifier.padding(top = 4.dp, bottom = 8.dp)
-                    )
                 }
 
 
             }
 
-            Spacer(modifier = modifier.height(8.dp))
+            Spacer(modifier = modifier.height(32.dp))
 
             if (hasDeletePermission) {
                 Column(
@@ -506,11 +553,6 @@ fun AmityCommunitySettingPage(
                     }
 
                     Spacer(modifier = modifier.height(12.dp))
-
-                    HorizontalDivider(
-                        color = AmityTheme.colors.divider,
-                        modifier = modifier.padding(top = 4.dp, bottom = 8.dp)
-                    )
                 }
             }
         }
@@ -518,8 +560,8 @@ fun AmityCommunitySettingPage(
 
         if (showLeaveCommunityDialog) {
             AmityAlertDialog(
-                dialogTitle = "Leave community",
-                dialogText = "Leave the community. You will no longer be able to post and interact in this community.",
+                dialogTitle = "Leave community?",
+                dialogText = "You will no longer be able to post and interact in this community.",
                 confirmText = "Leave",
                 dismissText = "Cancel",
                 confirmTextColor = AmityTheme.colors.alert,
@@ -579,14 +621,13 @@ fun AmityCommunitySettingPage(
         }
 
         if (showUnableToLeaveCommunityDialog) {
-            AmityAlertDialog(
-                dialogTitle = "Unable to leave community",
-                dialogText = "Something went wrong. Please try again later.",
-                dismissText = "OK",
-                onDismissRequest = {
-                    showUnableToLeaveCommunityDialog = false
-                }
-            )
+            LaunchedEffect(Unit) {
+                AmityUIKitSnackbar.publishSnackbarErrorMessage(
+                    "Failed to leave the community. Please try again."
+                )
+                delay(200L)
+                showUnableToLeaveCommunityDialog = false
+            }
         }
 
         if (showUnableToCloseCommunityDialog) {

@@ -39,7 +39,7 @@ fun AmityPendingPostsPage(
     val context = LocalContext.current
 
     val viewModel = remember(community.getCommunityId()) {
-        AmityPendingPostsPageViewModel(community.getCommunityId())
+        AmityPendingRequestPageViewModel(community.getCommunityId())
     }
 
     val isModerator by AmityCoreClient.hasPermission(AmityPermission.EDIT_COMMUNITY)
@@ -67,7 +67,7 @@ fun AmityPendingPostsPage(
                 }
             )
 
-            if (isModerator && postListState == AmityPendingPostsPageViewModel.PostListState.SUCCESS) {
+            if (isModerator && postListState == AmityPendingRequestPageViewModel.RequestListState.SUCCESS) {
                 Text(
                     text = "Decline pending post will permanently delete the selected post from community.",
                     style = AmityTheme.typography.bodyLegacy.copy(
@@ -80,27 +80,27 @@ fun AmityPendingPostsPage(
             }
 
             LazyColumn {
-                AmityPendingPostsPageViewModel.PostListState.from(
+                AmityPendingRequestPageViewModel.RequestListState.from(
                     loadState = pendingPosts.loadState.refresh,
                     itemCount = pendingPosts.itemCount,
-                ).let(viewModel::setPostListState)
+                ).let(viewModel::setRequestListState)
 
                 when (postListState) {
-                    AmityPendingPostsPageViewModel.PostListState.ERROR,
-                    AmityPendingPostsPageViewModel.PostListState.EMPTY -> {
+                    AmityPendingRequestPageViewModel.RequestListState.ERROR,
+                    AmityPendingRequestPageViewModel.RequestListState.EMPTY -> {
                         item {
                             AmityEmptyPendingPostsElement()
                         }
                     }
 
-                    AmityPendingPostsPageViewModel.PostListState.LOADING -> {
+                    AmityPendingRequestPageViewModel.RequestListState.LOADING -> {
                         items(2) {
                             AmityPostShimmer()
                             AmityNewsFeedDivider()
                         }
                     }
 
-                    AmityPendingPostsPageViewModel.PostListState.SUCCESS -> {
+                    AmityPendingRequestPageViewModel.RequestListState.SUCCESS -> {
                         items(
                             count = pendingPosts.itemCount,
                             key = { pendingPosts[it]?.getPostId() ?: it }

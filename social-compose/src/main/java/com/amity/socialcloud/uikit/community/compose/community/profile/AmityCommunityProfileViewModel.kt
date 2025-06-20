@@ -8,6 +8,7 @@ import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.model.core.ad.AmityAdPlacement
 import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.core.error.AmityException
+import com.amity.socialcloud.sdk.model.core.invitation.AmityInvitation
 import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
 import com.amity.socialcloud.sdk.model.core.pin.AmityPinnedPost
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
@@ -57,7 +58,7 @@ class AmityCommunityProfileViewModel(private val communityId: String) :
             .doOnNext { (community, isModerator) ->
                 val isMember = community.isJoined()
                 viewModelScope.launch {
-                    delay(100)
+                    delay(1000)
                     _communityProfileState.value = _communityProfileState.value.copy(
                         communityId = communityId,
                         community = community,
@@ -150,6 +151,51 @@ class AmityCommunityProfileViewModel(private val communityId: String) :
             .observeOn(AndroidSchedulers.mainThread())
             .asFlow()
             .catch {}
+    }
+
+    fun acceptCommunityInvitation(
+        invitation: AmityInvitation,
+        onSuccess: () -> Unit,
+        onError: (Throwable) -> Unit,
+    ) {
+        addDisposable(
+            invitation.accept()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnComplete {
+                    onSuccess()
+                }
+                .doOnError {
+                    onError(it)
+                }
+                .subscribe()
+        )
+    }
+
+    fun rejectCommunityInvitation(
+        invitation: AmityInvitation,
+        onSuccess: () -> Unit,
+        onError: (Throwable) -> Unit,
+    ) {
+        addDisposable(
+            invitation.reject()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnComplete {
+                    onSuccess()
+                }
+                .doOnError {
+                    onError(it)
+                }
+                .subscribe()
+        )
+    }
+
+
+    companion object {
+        fun create(communityId: String): AmityCommunityProfileViewModel {
+            return AmityCommunityProfileViewModel(communityId)
+        }
     }
 }
 

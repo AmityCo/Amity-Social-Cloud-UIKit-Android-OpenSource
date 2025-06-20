@@ -1,7 +1,10 @@
 package com.amity.socialcloud.uikit.community.compose.community.setting
 
+import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.viewModelScope
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
+import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity

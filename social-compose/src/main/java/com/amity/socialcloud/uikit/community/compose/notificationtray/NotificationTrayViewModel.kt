@@ -1,10 +1,12 @@
 package com.amity.socialcloud.uikit.community.compose.notificationtray
 
+import androidx.compose.runtime.Composable
 import androidx.paging.PagingData
 import androidx.paging.insertSeparators
 import androidx.paging.map
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
+import com.amity.socialcloud.sdk.model.core.invitation.AmityInvitation
 import com.amity.socialcloud.sdk.model.core.notificationtray.AmityNotificationTrayItem
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -19,8 +21,8 @@ class NotificationTrayViewModel : AmityBaseViewModel() {
         return AmityCoreClient
             .notificationTray()
             .getNotificationTrayItems()
-            .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
             .asFlow()
             .catch {
             }
@@ -51,11 +53,57 @@ class NotificationTrayViewModel : AmityBaseViewModel() {
             }
     }
 
+    fun getCommunityInvitations(): Flow<PagingData<AmityInvitation>> {
+        return AmityCoreClient.newInvitationRepository()
+            .getMyCommunityInvitations()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .asFlow()
+    }
+
     fun markNotificationItemAsSeen(notiTray: AmityNotificationTrayItem) {
         addDisposable(
             notiTray.markSeen()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
+                .subscribe()
+        )
+    }
+
+    fun acceptCommunityInvitation(
+        invitation: AmityInvitation,
+        onSuccess: () -> Unit,
+        onError: (Throwable) -> Unit,
+    ) {
+        addDisposable(
+            invitation.accept()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnComplete {
+                    onSuccess()
+                }
+                .doOnError {
+                    onError(it)
+                }
+                .subscribe()
+        )
+    }
+
+    fun rejectCommunityInvitation(
+        invitation: AmityInvitation,
+        onSuccess: () -> Unit,
+        onError: (Throwable) -> Unit,
+    ) {
+        addDisposable(
+            invitation.reject()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnComplete {
+                    onSuccess()
+                }
+                .doOnError {
+                    onError(it)
+                }
                 .subscribe()
         )
     }

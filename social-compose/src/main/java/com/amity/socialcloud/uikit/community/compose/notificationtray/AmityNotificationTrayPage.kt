@@ -3,7 +3,6 @@ package com.amity.socialcloud.uikit.community.compose.notificationtray
 import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,6 +45,7 @@ import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.shimmerBackground
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.notificationtray.NotificationTrayViewModel.NotificationTrayListItem
+import com.amity.socialcloud.uikit.community.compose.notificationtray.component.AmityNotificationInvitationView
 import com.amity.socialcloud.uikit.community.compose.notificationtray.component.AmityNotificationTrayEmptyState
 import com.amity.socialcloud.uikit.community.compose.notificationtray.component.AmityNotificationTrayItemView
 import com.amity.socialcloud.uikit.community.compose.notificationtray.component.AmityNotificationTrayShimmer
@@ -72,6 +72,8 @@ fun AmityNotificationTrayPage(
     val viewModel =
         viewModel<NotificationTrayViewModel>(viewModelStoreOwner = viewModelStoreOwner)
     val notificationItems = viewModel.getNotificationTrayItem().collectAsLazyPagingItems()
+
+    val communityInvitations = viewModel.getCommunityInvitations().collectAsLazyPagingItems()
 
     // Add this state to track if error snackbar has been shown
     var errorSnackbarShown by remember { mutableStateOf(false) }
@@ -128,183 +130,250 @@ fun AmityNotificationTrayPage(
                     )
                 }
             }
-
-            when (notificationItems.loadState.refresh) {
-                is LoadState.Loading -> {
-                    item {
-                        AmityNotificationTrayShimmer(
-                            modifier = Modifier
-                        )
-                    }
-
+            if (communityInvitations.loadState.refresh is LoadState.Loading) {
+                item {
+                    AmityNotificationTrayShimmer(
+                        modifier = Modifier
+                    )
                 }
-
-                is LoadState.Error -> {
+            } else {
+                // Display community invitations if available, up to 3 items
+                val visibleInvitationCount = minOf(communityInvitations.itemCount, 3)
+                if (visibleInvitationCount > 0) {
                     item {
-                        AmityNotificationTrayShimmer(
-                            modifier = Modifier
+                        Text(
+                            text = "Requests",
+                            style = AmityTheme.typography.captionBold,
+                            color = AmityTheme.colors.baseShade1,
+                            modifier = Modifier.padding(16.dp, 8.dp)
                         )
-                    }
-
-                    if (!errorSnackbarShown) {
-                        showErrorSnackbar(
-                            message = "Oops, something went wrong.",
-                            additionalHeight = 20
-                        )
-                        errorSnackbarShown = true
                     }
                 }
+                items(
+                    count = visibleInvitationCount,
+                    key = { index ->
+                        communityInvitations[index]?.getInvitationId() ?: "invitation_$index"
+                    }
+                ) { index ->
+                    val listItem = communityInvitations[index]
+                    if (listItem == null) return@items
 
-                is LoadState.NotLoading -> {
-                    if (notificationItems.itemCount == 0) {
+                    AmityNotificationInvitationView(
+                        modifier = Modifier.clickableWithoutRipple {
+                            behavior.goToCommunityProfilePage(
+                                context = context,
+                                communityId = listItem.getTargetId()
+                            )
+                        },
+                        invitation = listItem,
+                        onInvitationAccepted = {
+                            behavior.goToCommunityProfilePage(
+                                context = context,
+                                communityId = listItem.getTargetId()
+                            )
+                        },
+                        onError = {}
+                    )
+                }
+
+                when (notificationItems.loadState.refresh) {
+                    is LoadState.Loading -> {
                         item {
-                            AmityNotificationTrayEmptyState(modifier = Modifier.fillParentMaxSize())
-                        }
-                    } else {
-                        items(
-                            count = notificationItems.itemCount,
-                            key = { index ->
-                                // Use uniqueId for notifications or title string for headers
-                                when (val listItem = notificationItems[index]) {
-                                    is NotificationTrayListItem.NotificationItem -> listItem.item.uniqueId()
-                                    is NotificationTrayListItem.Header -> "header_${listItem.title}"
-                                    else -> "unknown $index"
-                                }
-                            }
-                        ) { index ->
-                            when (val listItem = notificationItems[index]) {
-                                is NotificationTrayListItem.Header -> {
-                                    Text(
-                                        text = listItem.title,
-                                        style = AmityTheme.typography.captionBold,
-                                        color = AmityTheme.colors.baseShade1,
-                                        modifier = Modifier.padding(16.dp, 8.dp)
-                                    )
-                                }
-
-                                is NotificationTrayListItem.NotificationItem -> {
-                                    AmityNotificationTrayItemView(
-                                        modifier = Modifier.clickableWithoutRipple {
-                                            viewModel.markNotificationItemAsSeen(listItem.item)
-                                            var postId: String? = null
-                                            var commentId: String? = null
-                                            var parentId: String? = null
-                                            var communityId: String? = null
-
-                                            if (listItem.item.getTargetType() == "community") {
-                                                communityId = listItem.item.getTargetId()
-                                            }
-
-                                            when (listItem.item.getActionType()) {
-                                                "post", "poll" -> {
-                                                    postId =
-                                                        if (listItem.item.getTargetType() != "community")
-                                                            listItem.item.getActionReferenceId() else null
-                                                }
-
-                                                "comment" -> {
-                                                    postId = listItem.item.getReferenceId()
-                                                    commentId = listItem.item.getActionReferenceId()
-                                                }
-
-                                                "reply" -> {
-                                                    postId = listItem.item.getReferenceId()
-                                                    commentId = listItem.item.getActionReferenceId()
-                                                    parentId = listItem.item.getParentId()
-                                                }
-
-                                                "reaction" -> {
-                                                    when (listItem.item.getTrayItemCategory()) {
-                                                        "reaction_on_comment" -> {
-                                                            postId = listItem.item.getReferenceId()
-                                                            commentId = listItem.item.getActionReferenceId()
-                                                        }
-
-                                                        "reaction_on_reply" -> {
-                                                            postId = listItem.item.getReferenceId()
-                                                            commentId = listItem.item.getActionReferenceId()
-                                                            parentId = listItem.item.getParentId()
-                                                        }
-
-                                                        "reaction_on_post" -> {
-                                                            postId = listItem.item.getActionReferenceId()
-                                                        }
-                                                    }
-                                                }
-
-                                                "mention" -> {
-                                                    when (listItem.item.getTrayItemCategory()) {
-                                                        "mention_in_poll", "mention_in_post" -> {
-                                                            postId = listItem.item.getActionReferenceId()
-                                                        }
-
-                                                        "mention_in_comment" -> {
-                                                            postId = listItem.item.getReferenceId()
-                                                            commentId = listItem.item.getActionReferenceId()
-                                                        }
-
-                                                        "mention_in_reply" -> {
-                                                            postId = listItem.item.getReferenceId()
-                                                            commentId = listItem.item.getActionReferenceId()
-                                                            parentId = listItem.item.getParentId()
-                                                        }
-                                                    }
-                                                }
-                                            }
-
-                                            if (postId == null && communityId != null) {
-                                                behavior.goToCommunityProfilePage(
-                                                    context = context,
-                                                    communityId = listItem.item.getTargetId()
-                                                )
-                                            } else {
-                                                postId?.let {
-                                                    behavior.goToPostDetailPage(
-                                                        context = context,
-                                                        postId = postId,
-                                                        commentId = commentId,
-                                                        parentId = parentId,
-                                                    )
-                                                }
-                                            }
-                                        },
-                                        isSeen = listItem.item.isSeen() == true,
-                                        data = listItem.item,
-                                    )
-                                }
-
-                                else -> Unit
-                            }
+                            AmityNotificationTrayShimmer(
+                                modifier = Modifier
+                            )
                         }
 
-                        when (notificationItems.loadState.append) {
-                            is LoadState.Loading -> {
-                                item {
-                                    Column(verticalArrangement = Arrangement.SpaceBetween) {
-                                        Box(
-                                            Modifier
-                                                .width(233.dp)
-                                                .height(10.dp)
-                                                .shimmerBackground(
-                                                    color = AmityTheme.colors.baseShade4,
-                                                    shape = RoundedCornerShape(12.dp)
-                                                )
-                                        )
-                                        Spacer(Modifier.height(8.dp))
-                                        Box(
-                                            Modifier
-                                                .width(132.dp)
-                                                .height(10.dp)
-                                                .shimmerBackground(
-                                                    color = AmityTheme.colors.baseShade4,
-                                                    shape = RoundedCornerShape(12.dp)
-                                                )
-                                        )
+                    }
+
+                    is LoadState.Error -> {
+                        item {
+                            AmityNotificationTrayShimmer(
+                                modifier = Modifier
+                            )
+                        }
+
+                        if (!errorSnackbarShown) {
+                            showErrorSnackbar(
+                                message = "Oops, something went wrong.",
+                                additionalHeight = 20
+                            )
+                            errorSnackbarShown = true
+                        }
+                    }
+
+                    is LoadState.NotLoading -> {
+                        if (notificationItems.itemCount == 0 && visibleInvitationCount == 0) {
+                            item {
+                                AmityNotificationTrayEmptyState(modifier = Modifier.fillParentMaxSize())
+                            }
+                        } else {
+                            items(
+                                count = notificationItems.itemCount,
+                                key = { index ->
+                                    // Use uniqueId for notifications or title string for headers
+                                    when (val listItem = notificationItems[index]) {
+                                        is NotificationTrayListItem.NotificationItem -> listItem.item.uniqueId()
+                                        is NotificationTrayListItem.Header -> "header_${listItem.title}"
+                                        else -> "unknown $index"
                                     }
                                 }
+                            ) { index ->
+                                when (val listItem = notificationItems[index]) {
+                                    is NotificationTrayListItem.Header -> {
+                                        Text(
+                                            text = listItem.title,
+                                            style = AmityTheme.typography.captionBold,
+                                            color = AmityTheme.colors.baseShade1,
+                                            modifier = Modifier.padding(16.dp, 8.dp)
+                                        )
+                                    }
+
+                                    is NotificationTrayListItem.NotificationItem -> {
+                                        AmityNotificationTrayItemView(
+                                            modifier = Modifier.clickableWithoutRipple {
+                                                viewModel.markNotificationItemAsSeen(listItem.item)
+                                                var postId: String? = null
+                                                var commentId: String? = null
+                                                var parentId: String? = null
+                                                var communityId: String? = null
+
+                                                if (listItem.item.getTargetType() == "community") {
+                                                    communityId = listItem.item.getTargetId()
+                                                }
+
+                                                when (listItem.item.getActionType()) {
+                                                    "post", "poll" -> {
+                                                        postId =
+                                                            if (listItem.item.getTargetType() != "community")
+                                                                listItem.item.getActionReferenceId() else null
+                                                    }
+
+                                                    "join_request" -> {
+                                                        if (listItem.item.getTrayItemCategory() == "respond_on_join_request") {
+                                                            communityId =
+                                                                listItem.item.getTargetId()
+                                                        }
+                                                    }
+
+                                                    "comment" -> {
+                                                        postId = listItem.item.getReferenceId()
+                                                        commentId =
+                                                            listItem.item.getActionReferenceId()
+                                                    }
+
+                                                    "reply" -> {
+                                                        postId = listItem.item.getReferenceId()
+                                                        commentId =
+                                                            listItem.item.getActionReferenceId()
+                                                        parentId = listItem.item.getParentId()
+                                                    }
+
+                                                    "reaction" -> {
+                                                        when (listItem.item.getTrayItemCategory()) {
+                                                            "reaction_on_comment" -> {
+                                                                postId =
+                                                                    listItem.item.getReferenceId()
+                                                                commentId =
+                                                                    listItem.item.getActionReferenceId()
+                                                            }
+
+                                                            "reaction_on_reply" -> {
+                                                                postId =
+                                                                    listItem.item.getReferenceId()
+                                                                commentId =
+                                                                    listItem.item.getActionReferenceId()
+                                                                parentId =
+                                                                    listItem.item.getParentId()
+                                                            }
+
+                                                            "reaction_on_post" -> {
+                                                                postId =
+                                                                    listItem.item.getActionReferenceId()
+                                                            }
+                                                        }
+                                                    }
+
+                                                    "mention" -> {
+                                                        when (listItem.item.getTrayItemCategory()) {
+                                                            "mention_in_poll", "mention_in_post" -> {
+                                                                postId =
+                                                                    listItem.item.getActionReferenceId()
+                                                            }
+
+                                                            "mention_in_comment" -> {
+                                                                postId =
+                                                                    listItem.item.getReferenceId()
+                                                                commentId =
+                                                                    listItem.item.getActionReferenceId()
+                                                            }
+
+                                                            "mention_in_reply" -> {
+                                                                postId =
+                                                                    listItem.item.getReferenceId()
+                                                                commentId =
+                                                                    listItem.item.getActionReferenceId()
+                                                                parentId =
+                                                                    listItem.item.getParentId()
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+                                                if (postId == null && communityId != null) {
+                                                    behavior.goToCommunityProfilePage(
+                                                        context = context,
+                                                        communityId = listItem.item.getTargetId()
+                                                    )
+                                                } else {
+                                                    postId?.let {
+                                                        behavior.goToPostDetailPage(
+                                                            context = context,
+                                                            postId = postId,
+                                                            commentId = commentId,
+                                                            parentId = parentId,
+                                                        )
+                                                    }
+                                                }
+                                            },
+                                            isSeen = listItem.item.isSeen() == true,
+                                            data = listItem.item,
+                                        )
+                                    }
+
+                                    else -> Unit
+                                }
                             }
 
-                            else -> {}
+                            when (notificationItems.loadState.append) {
+                                is LoadState.Loading -> {
+                                    item {
+                                        Column(verticalArrangement = Arrangement.SpaceBetween) {
+                                            Box(
+                                                Modifier
+                                                    .width(233.dp)
+                                                    .height(10.dp)
+                                                    .shimmerBackground(
+                                                        color = AmityTheme.colors.baseShade4,
+                                                        shape = RoundedCornerShape(12.dp)
+                                                    )
+                                            )
+                                            Spacer(Modifier.height(8.dp))
+                                            Box(
+                                                Modifier
+                                                    .width(132.dp)
+                                                    .height(10.dp)
+                                                    .shimmerBackground(
+                                                        color = AmityTheme.colors.baseShade4,
+                                                        shape = RoundedCornerShape(12.dp)
+                                                    )
+                                            )
+                                        }
+                                    }
+                                }
+
+                                else -> {}
+                            }
                         }
                     }
                 }

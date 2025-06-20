@@ -77,12 +77,14 @@ fun AmityCommunityInfoView(
 				verticalAlignment = Alignment.CenterVertically,
 				modifier = Modifier.clickable {
 				community?.let{
-                    behavior.goToMemberListPage(
-						AmityCommunityProfilePageBehavior.Context(
-							pageContext = context,
-                            community = it
-                        )
-                    )
+					if (community.isPublic() || (!community.isPublic() && community.isJoined())) {
+						behavior.goToMemberListPage(
+							AmityCommunityProfilePageBehavior.Context(
+								pageContext = context,
+								community = it
+							)
+						)
+					}
 				}
 			}) {
 				Text(

@@ -40,8 +40,11 @@ import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.community.AmityJoinRequest
+import com.amity.socialcloud.sdk.model.social.community.AmityJoinRequestStatus
 import com.amity.socialcloud.uikit.common.common.readableNumber
 import com.amity.socialcloud.uikit.common.compose.R
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
@@ -79,8 +82,10 @@ fun AmityRecommendedCommunitiesComponent(
         viewModel.getRecommendedCommunities()
     }
 
-    val communities = communitiesFlow.collectAsState(initial = emptyList())
+    val communities by communitiesFlow.collectAsState(initial = emptyList())
     val communityListState by viewModel.communityListState.collectAsState()
+
+    val joinRequests by viewModel.joinRequestList.collectAsState()
 
     AmityBaseComponent(
         pageScope = pageScope,
@@ -112,10 +117,16 @@ fun AmityRecommendedCommunitiesComponent(
                         )
                     ) {
                         items(
-                            count = communities.value.size,
-                            key = { index -> index }
+                            count = communities.size,
+                            key = { index -> "$index + ${communities[index].getLocalJoinRequest()}" }
                         ) { index ->
-                            val community = communities.value[index]
+                            val community = communities[index]
+//                            val joinRequest = community.getLocalJoinRequest()?.find { it.getRequestorPublicId() == AmityCoreClient.getUserId() &&
+//                            it.getStatus() == AmityJoinRequestStatus.PENDING }
+
+//                                ?: joinRequests.firstOrNull {
+//                                it.getTargetId() == community.getCommunityId()
+//                            }
 
                             AmityRecommendedCommunityView(
                                 modifier = modifier,
@@ -374,7 +385,7 @@ fun AmityRecommendedCommunityView(
                 Column {
                     Spacer(modifier = Modifier.weight(1f))
                     AmityCommunityJoinButton(
-                        community = community
+                        community = community,
                     )
                 }
             }

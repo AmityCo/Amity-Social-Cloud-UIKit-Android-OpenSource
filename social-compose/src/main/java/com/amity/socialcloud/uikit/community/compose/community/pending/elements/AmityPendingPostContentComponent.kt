@@ -35,6 +35,7 @@ fun AmityPendingPostContentComponent(
     modifier: Modifier = Modifier,
     pageScope: AmityComposePageScope? = null,
     post: AmityPost,
+    componentId: String? = null,
     onAcceptAction: (AmityPost) -> Unit,
     onDeclineAction: (AmityPost) -> Unit,
 ) {
@@ -108,7 +109,7 @@ fun AmityPendingPostContentComponent(
 
     AmityBaseComponent(
         pageScope = pageScope,
-        componentId = "pending_post_content"
+        componentId = "pending_post_list"
     ) {
         Column(
             modifier = modifier

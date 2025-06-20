@@ -6,7 +6,9 @@ import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.category.AmityCommunityCategory
 import com.amity.socialcloud.uikit.community.compose.community.category.AmityCommunityAddCategoryPageActivity
 import com.amity.socialcloud.uikit.community.compose.community.membership.add.AmityCommunityAddMemberPageActivity
+import com.amity.socialcloud.uikit.community.compose.community.membership.invite.AmityCommunityInviteMemberPageActivity
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageActivity
+import com.amity.socialcloud.uikit.community.compose.community.setting.AmityCommunitySettingPageBehavior.Context
 
 open class AmityCommunitySetupPageBehavior {
 
@@ -16,12 +18,14 @@ open class AmityCommunitySetupPageBehavior {
         val communityId: String? = null,
         val categories: List<AmityCommunityCategory> = emptyList(),
         val users: List<AmityUser> = emptyList(),
+        val isCommunityJustCreated: Boolean = false,
     )
 
     open fun goToCommunityProfilePage(context: Context) {
         val intent = AmityCommunityProfilePageActivity.newIntent(
             context = context.pageContext,
             communityId = context.communityId!!,
+            isCommunityJustCreated = context.isCommunityJustCreated,
         )
         context.pageContext.startActivity(intent)
     }
@@ -36,6 +40,14 @@ open class AmityCommunitySetupPageBehavior {
 
     open fun goToAddMemberPage(context: Context) {
         val intent = AmityCommunityAddMemberPageActivity.newIntent(
+            context = context.pageContext,
+            users = context.users,
+        )
+        context.launcher?.launch(intent)
+    }
+
+    open fun goToPendingInvitationsPage(context: Context) {
+        val intent = AmityCommunityInviteMemberPageActivity.newIntent(
             context = context.pageContext,
             users = context.users,
         )

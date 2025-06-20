@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -21,25 +22,26 @@ import com.amity.socialcloud.uikit.community.compose.R
 @Composable
 fun AmityEmptyPendingPostsElement(
     modifier: Modifier = Modifier,
+    title: String? = null,
 ) {
     Box(
         modifier = modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .aspectRatio(1f)
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = modifier.align(Alignment.Center)
+            modifier = Modifier.align(Alignment.Center)
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.amity_ic_empty_pending_posts),
                 contentDescription = null,
                 tint = AmityTheme.colors.baseShade4,
-                modifier = modifier.size(60.dp)
+                modifier = Modifier.size(60.dp)
             )
             Text(
-                text = "No post to review",
+                text = title?: "No pending posts",
                 style = AmityTheme.typography.titleLegacy.copy(
                     color = AmityTheme.colors.baseShade3,
                 )
