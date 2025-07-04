@@ -83,6 +83,9 @@ fun AmityCommentTrayComponent(
 
     LaunchedEffect(community?.getCommunityId()) {
         viewModel.setCommunity(community)
+        viewModel.updateSheetUIState(
+            AmityCommentTrayComponentViewModel.CommentBottomSheetState.CloseSheet
+        )
     }
 
     AmityBaseComponent(
