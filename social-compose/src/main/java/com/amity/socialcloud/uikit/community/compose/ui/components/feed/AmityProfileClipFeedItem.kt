@@ -1,0 +1,196 @@
+package com.amity.socialcloud.uikit.community.compose.ui.components.feed
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rxjava3.subscribeAsState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.ExoPlayer
+import coil3.compose.AsyncImagePainter
+import coil3.compose.rememberAsyncImagePainter
+import coil3.request.CachePolicy
+import coil3.request.ImageRequest
+import coil3.request.crossfade
+import com.amity.socialcloud.sdk.model.core.file.AmityClip
+import com.amity.socialcloud.sdk.model.core.file.AmityImage
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
+import com.amity.socialcloud.uikit.common.ui.elements.AmityMenuButton
+import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.utils.formatVideoDuration
+import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostVideoPlayerHelper
+import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostMediaVideoPlayer
+
+@Composable
+fun AmityProfileClipFeedItem(
+    modifier: Modifier = Modifier,
+    data: AmityPost.Data.CLIP,
+    onClipClick: (postId: String) -> Unit = {},
+) {
+    val thumbnailUrl = remember(data) {
+        data.getThumbnailImage()?.getUrl(AmityImage.Size.MEDIUM)
+    }
+    val painter = rememberAsyncImagePainter(
+        model = ImageRequest
+            .Builder(LocalContext.current)
+            .data(thumbnailUrl)
+            .crossfade(true)
+            .diskCachePolicy(CachePolicy.ENABLED)
+            .memoryCachePolicy(CachePolicy.ENABLED)
+            .build()
+    )
+
+    val painterState by painter.state.collectAsState()
+
+    val clipData by remember {
+        data.getClip()
+    }.subscribeAsState(initial = null)
+
+    val clipDuration by remember(clipData) {
+        derivedStateOf {
+            clipData?.getMetadata()
+                ?.getAsJsonObject("video")
+                ?.get("duration")
+                ?.asNumber
+                ?: 0
+        }
+    }
+
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(8.dp))
+            .background(Color.Black)
+    ) {
+        Image(
+            painter = painter,
+            contentDescription = "Clip Post",
+            contentScale = if (data.getDisplayMode() == AmityClip.DisplayMode.FILL) ContentScale.Crop else ContentScale.Fit,
+            modifier = Modifier
+                .fillMaxSize()
+                .clickableWithoutRipple {
+                    onClipClick(data.getPostId())
+                }
+        )
+
+        if (painterState !is AsyncImagePainter.State.Success) {
+            Box(
+                modifier = modifier
+                    .fillMaxSize()
+                    .background(AmityTheme.colors.baseShade4)
+            )
+        }
+
+        Text(
+            text = clipDuration.formatVideoDuration(),
+            style = AmityTheme.typography.bodyLegacy.copy(
+                color = Color.White,
+            ),
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .offset(8.dp, (-8).dp)
+                .background(
+                    color = Color.Black.copy(alpha = 0.7f),
+                    shape = RoundedCornerShape(4.dp)
+                )
+                .padding(horizontal = 4.dp, vertical = 1.dp)
+        )
+    }
+
+//    if (showPopupDialog) {
+//        AmityProfileClipFeedItemPreviewDialog(data = data) {
+//            showPopupDialog = false
+//        }
+//    }
+}
+
+@androidx.annotation.OptIn(UnstableApi::class)
+@Composable
+fun AmityProfileClipFeedItemPreviewDialog(
+    modifier: Modifier = Modifier,
+    data: AmityPost.Data.VIDEO,
+    onDismiss: () -> Unit,
+) {
+    val context = LocalContext.current
+    val exoPlayer = remember {
+        ExoPlayer.Builder(context)
+            .setSeekBackIncrementMs(15_000)
+            .setSeekForwardIncrementMs(15_000)
+            .setPauseAtEndOfMediaItems(true)
+            .build()
+    }
+    val video by remember {
+        data.getVideo()
+    }.subscribeAsState(initial = null)
+
+    LaunchedEffect(exoPlayer) {
+        AmityPostVideoPlayerHelper.setup(exoPlayer)
+    }
+
+    LaunchedEffect(video) {
+        video?.let {
+            AmityPostVideoPlayerHelper.add(it)
+            AmityPostVideoPlayerHelper.playMediaItem(0)
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            exoPlayer.release()
+            AmityPostVideoPlayerHelper.clear()
+        }
+    }
+
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false
+        ),
+    ) {
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .background(Color.Black)
+        ) {
+            AmityPostMediaVideoPlayer(
+                exoPlayer = exoPlayer,
+                isVisible = true,
+            )
+
+            AmityMenuButton(
+                icon = R.drawable.amity_ic_close2,
+                size = 32.dp,
+                iconPadding = 10.dp,
+                tint = Color.Black.copy(0.5f),
+                background = Color.White.copy(0.8f),
+                modifier = modifier
+                    .align(Alignment.TopStart)
+                    .offset(16.dp, 32.dp),
+                onClick = {
+                    onDismiss()
+                }
+            )
+        }
+    }
+}
