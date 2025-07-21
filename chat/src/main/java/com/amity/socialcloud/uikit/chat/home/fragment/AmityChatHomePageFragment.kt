@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.amity.socialcloud.sdk.api.chat.AmityChatClient
 import com.amity.socialcloud.uikit.chat.R
 import com.amity.socialcloud.uikit.chat.databinding.AmityFragmentChatHomePageBinding
 import com.amity.socialcloud.uikit.chat.home.AmityChatHomePageViewModel
@@ -22,6 +23,8 @@ import com.amity.socialcloud.uikit.common.base.AmityFragmentStateAdapter
 import com.amity.socialcloud.uikit.common.common.showSnackBar
 import com.amity.socialcloud.uikit.common.contract.AmityPickMemberContract
 import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 class AmityChatHomePageFragment : Fragment() {
     private lateinit var mViewModel: AmityChatHomePageViewModel
@@ -29,6 +32,7 @@ class AmityChatHomePageFragment : Fragment() {
 
     private var _binding: AmityFragmentChatHomePageBinding? = null
     private val binding get() = _binding!!
+    private var totalUnreadCount = 0
 
     private val selectMembers = registerForActivityResult(AmityPickMemberContract()) { userList ->
         if (userList.isNotEmpty()) {
@@ -47,12 +51,24 @@ class AmityChatHomePageFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        totalUnreadCount = 0
         mViewModel =
             ViewModelProvider(requireActivity()).get(AmityChatHomePageViewModel::class.java)
         fragmentStateAdapter = AmityFragmentStateAdapter(
             childFragmentManager,
             requireActivity().lifecycle
         )
+        AmityChatClient.newChannelRepository()
+                .getTotalChannelUnread()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .map { it.unreadCount }
+                .distinctUntilChanged()
+                .doOnNext {
+                    totalUnreadCount = it
+                    initTabLayout()
+                }
+                .subscribe()
     }
 
     override fun onCreateView(
@@ -81,7 +97,7 @@ class AmityChatHomePageFragment : Fragment() {
         fragmentStateAdapter.setFragmentList(
             arrayListOf(
                 AmityFragmentStateAdapter.AmityPagerModel(
-                    getString(R.string.amity_title_recent_chat),
+                            "Recent ($totalUnreadCount)",
                     getRecentChatFragment()
                 )
             )
