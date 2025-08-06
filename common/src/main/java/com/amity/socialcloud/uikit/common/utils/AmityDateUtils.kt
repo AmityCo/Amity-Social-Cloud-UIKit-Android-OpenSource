@@ -12,9 +12,6 @@ object AmityDateUtils {
     private const val YEAR = "yyyy"
     private const val MONTH_WITH_DATE = "MMMM d"
     private const val TIME_FORMAT = "h:mm a"
-    const val TIME_MINUTE_FORMAT = "m:ss"
-    private const val HOUR_IN_MILLISECOND = 3600000
-    private var formatter = SimpleDateFormat(TIME_MINUTE_FORMAT, Locale.getDefault())
 
     private fun getTimeStr(timestamp: Long): String =
         SimpleDateFormat(TIME_FORMAT, Locale.getDefault()).format(Date(timestamp))
