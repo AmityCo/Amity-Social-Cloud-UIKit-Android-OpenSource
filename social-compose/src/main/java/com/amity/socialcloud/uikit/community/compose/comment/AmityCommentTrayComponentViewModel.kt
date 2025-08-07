@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.comment
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import androidx.paging.LoadState
 import androidx.paging.PagingData
@@ -82,15 +83,23 @@ class AmityCommentTrayComponentViewModel : AmityBaseViewModel() {
         referenceId: String,
         referenceType: AmityCommentReferenceType,
         communityId: String?,
+        includeDeleted: Boolean = true
     ): Flow<PagingData<AmityListItem>> {
         val injector = AmityAdInjector<AmityComment>(
             AmityAdPlacement.COMMENT,
             communityId,
         )
-        return getCommentQuery(
-            referenceId = referenceId,
-            referenceType = referenceType,
-        )
+
+        return AmitySocialClient.newCommentRepository()
+            .getComments()
+            .run {
+                when (referenceType) {
+                    AmityCommentReferenceType.POST -> post(referenceId)
+                    AmityCommentReferenceType.STORY -> story(referenceId)
+                    AmityCommentReferenceType.CONTENT -> content(referenceId)
+                }
+            }
+            .includeDeleted(includeDeleted)
             .build()
             .query()
             .onBackpressureBuffer()
@@ -241,21 +250,6 @@ class AmityCommentTrayComponentViewModel : AmityBaseViewModel() {
 
     fun updateSheetUIState(page: CommentBottomSheetState) {
         _sheetUiState.update { page }
-    }
-
-    private fun getCommentQuery(
-        referenceId: String,
-        referenceType: AmityCommentReferenceType,
-    ): AmityCommentQuery.Builder {
-        return AmitySocialClient.newCommentRepository()
-            .getComments()
-            .run {
-                when (referenceType) {
-                    AmityCommentReferenceType.POST -> post(referenceId)
-                    AmityCommentReferenceType.STORY -> story(referenceId)
-                    AmityCommentReferenceType.CONTENT -> content(referenceId)
-                }
-            }
     }
 
     sealed class CommentListState {
