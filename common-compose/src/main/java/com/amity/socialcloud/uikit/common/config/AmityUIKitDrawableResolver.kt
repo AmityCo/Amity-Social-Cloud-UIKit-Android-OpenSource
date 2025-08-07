@@ -45,6 +45,7 @@ object AmityUIKitDrawableResolver {
         "communityPinBadge" to R.drawable.amity_ic_pin_badge,
         "privacyPrivateIcon" to R.drawable.amity_ic_lock1,
         "privacyPublicIcon" to R.drawable.amity_ic_globe,
+        "privacyAndVisibleIcon" to R.drawable.ic_community_private_and_visible,
         "addIcon" to R.drawable.amity_ic_add,
         "profileFeedIcon" to R.drawable.amity_ic_community_feed,
         "profileImageFeedIcon" to R.drawable.amity_ic_community_image_feed,
@@ -62,6 +63,7 @@ object AmityUIKitDrawableResolver {
         "deleteThumbnail" to R.drawable.amity_v4_ic_trash,
         "notificationTrayButtonIcon" to R.drawable.amity_ic_notification_tray_default,
         "notificationTrayEmptyStateIcon" to R.drawable.amity_ic_notification_tray_empty,
+        "clockIcon" to R.drawable.amity_ic_clock,
     )
 
     @DrawableRes

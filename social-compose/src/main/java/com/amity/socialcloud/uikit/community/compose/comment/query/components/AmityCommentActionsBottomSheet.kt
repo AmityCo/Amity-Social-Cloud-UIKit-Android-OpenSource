@@ -114,9 +114,7 @@ fun AmityCommentActionsBottomSheet(
                             scope.launch {
                                 sheetState.hide()
                             }.invokeOnCompletion {
-                                if (!sheetState.isVisible) {
-                                    viewModel.updateSheetUIState(CommentBottomSheetState.CloseSheet)
-                                }
+                                viewModel.updateSheetUIState(CommentBottomSheetState.CloseSheet)
                             }
                         },
                         onReportClick = {

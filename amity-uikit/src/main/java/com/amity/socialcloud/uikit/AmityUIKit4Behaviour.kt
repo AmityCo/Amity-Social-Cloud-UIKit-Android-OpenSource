@@ -256,6 +256,7 @@ class AmityUIKit4Behavior {
     var commentTrayComponentBehavior: AmityCommentTrayComponentBehavior =
         AmitySocialBehaviorHelper.commentTrayComponentBehavior
         set(value) {
+            field = value
             AmitySocialBehaviorHelper.commentTrayComponentBehavior = value
         }
 }

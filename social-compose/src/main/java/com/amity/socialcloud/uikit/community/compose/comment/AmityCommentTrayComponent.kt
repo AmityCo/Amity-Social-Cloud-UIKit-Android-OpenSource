@@ -92,6 +92,9 @@ fun AmityCommentTrayComponent(
 
     LaunchedEffect(community?.getCommunityId()) {
         viewModel.setCommunity(community)
+        viewModel.updateSheetUIState(
+            AmityCommentTrayComponentViewModel.CommentBottomSheetState.CloseSheet
+        )
     }
 
     AmityBaseComponent(
@@ -151,7 +154,7 @@ fun AmityCommentTrayComponent(
                                 referenceId = referenceId,
                                 referenceType = referenceType,
                                 editingCommentId = editingCommentId,
-                                shouldAllowInteraction = shouldAllowInteraction,
+                                shouldAllowInteraction = true,
                                 onReply = {
                                     replyCommentId = it
                                 },

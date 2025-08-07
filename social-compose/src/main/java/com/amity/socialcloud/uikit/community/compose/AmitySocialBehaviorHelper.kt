@@ -3,6 +3,7 @@ package com.amity.socialcloud.uikit.community.compose
 import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentBehavior
 import com.amity.socialcloud.uikit.community.compose.community.membership.list.AmityCommunityMembershipPageBehavior
 import com.amity.socialcloud.uikit.community.compose.community.pending.elements.AmityPendingPostContentComponentBehavior
+import com.amity.socialcloud.uikit.community.compose.community.pending.elements.AmityPendingRequestComponentBehavior
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageBehavior
 import com.amity.socialcloud.uikit.community.compose.community.setting.AmityCommunitySettingPageBehavior
 import com.amity.socialcloud.uikit.community.compose.community.setting.notifications.AmityCommunityNotificationSettingPageBehavior
@@ -140,6 +141,9 @@ object AmitySocialBehaviorHelper {
 
     var pendingPostContentComponentBehavior: AmityPendingPostContentComponentBehavior =
         AmityPendingPostContentComponentBehavior()
+
+    var pendingRequestComponentBehavior: AmityPendingRequestComponentBehavior =
+        AmityPendingRequestComponentBehavior()
 
     var exploreComponentBehavior: AmityExploreComponentBehavior = AmityExploreComponentBehavior()
 

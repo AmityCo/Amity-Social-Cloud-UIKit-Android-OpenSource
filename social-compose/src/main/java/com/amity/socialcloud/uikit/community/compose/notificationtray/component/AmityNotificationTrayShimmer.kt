@@ -24,8 +24,8 @@ import com.amity.socialcloud.uikit.common.utils.shimmerBackground
 fun AmityNotificationTrayShimmer(modifier: Modifier = Modifier) {
     // Define shimmer directly within the component for better encapsulation
     val shimmerGroups = mapOf(
-        "Header" to listOf("1", "4"),
-        "Header2" to listOf("2", "6")
+        "Header" to listOf("1", "4", "8"),
+        "Header2" to listOf("2", "6", "10")
     )
 
     Column(modifier = modifier.fillMaxWidth().height(500.dp)) {

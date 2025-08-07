@@ -9,6 +9,7 @@ import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,6 +22,8 @@ class AmityCommunityAddMemberPageViewModel : AmityBaseViewModel() {
         MutableStateFlow<MutableList<AmityCommunityMemberItemState>>(mutableListOf())
     }
     val selectedItemStates get() = _selectedItemStates
+
+    val minKeywordLength = 3
 
     private val _userListState by lazy {
         MutableStateFlow<UserListState>(UserListState.SUCCESS)
@@ -51,15 +54,19 @@ class AmityCommunityAddMemberPageViewModel : AmityBaseViewModel() {
     }
 
     fun searchUsers(keyword: String): Flow<PagingData<AmityUser>> {
-        return AmityCoreClient.newUserRepository()
-            .searchUsers(keyword)
-            .sortBy(AmityUserSortOption.DISPLAYNAME)
-            .build()
-            .query()
-            .throttleLatest(1, TimeUnit.SECONDS, true)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .asFlow()
+        return  if (keyword.isEmpty() || keyword.length >= minKeywordLength) {
+            AmityCoreClient.newUserRepository()
+                .searchUsers(keyword)
+                .sortBy(AmityUserSortOption.DISPLAYNAME)
+                .build()
+                .query()
+                .throttleLatest(1, TimeUnit.SECONDS, true)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .asFlow()
+        } else {
+            Flowable.just(PagingData.empty<AmityUser>()).asFlow()
+        }
     }
 
     sealed class UserListState {

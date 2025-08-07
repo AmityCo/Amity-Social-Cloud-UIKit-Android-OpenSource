@@ -40,6 +40,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
+import com.amity.socialcloud.uikit.common.config.AmityUIKitConfig
+import com.amity.socialcloud.uikit.common.infra.provider.AmityUIKitContentProvider
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.elements.AmitySearchBarView
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
@@ -50,6 +52,7 @@ import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.community.membership.element.AmityCommunityAddMemberItem
 import com.amity.socialcloud.uikit.community.compose.community.membership.element.AmityCommunityAddMemberRowList
 import com.amity.socialcloud.uikit.community.compose.search.components.AmityEmptySearchResultComponent
+import com.amity.socialcloud.uikit.community.compose.search.components.AmitySearchPlaceholderComponent
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityUserListShimmer
 
 @Composable
@@ -151,15 +154,26 @@ fun AmityCommunityAddMemberPage(
                     when (loadState) {
                         AmityCommunityAddMemberPageViewModel.UserListState.EMPTY -> {
                             item {
-                                AmityEmptySearchResultComponent(modifier)
+                                if (keyword.isNotBlank() && keyword.length < viewModel.minKeywordLength) {
+                                    AmitySearchPlaceholderComponent(modifier)
+                                } else {
+                                    AmityEmptySearchResultComponent(modifier)
+                                }
                             }
                         }
 
                         AmityCommunityAddMemberPageViewModel.UserListState.LOADING -> {
                             item {
-                                AmityUserListShimmer(
-                                    modifier = modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                                )
+                                if (keyword.isNotBlank() && keyword.length < viewModel.minKeywordLength) {
+                                    AmitySearchPlaceholderComponent(modifier)
+                                } else {
+                                    AmityUserListShimmer(
+                                        modifier = modifier.padding(
+                                            horizontal = 16.dp,
+                                            vertical = 8.dp
+                                        )
+                                    )
+                                }
                             }
                         }
 

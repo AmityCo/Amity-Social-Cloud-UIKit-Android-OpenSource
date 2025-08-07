@@ -4,12 +4,20 @@ import androidx.paging.LoadState
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.community.AmityJoinRequest
+import com.amity.socialcloud.sdk.model.social.community.AmityJoinRequestStatus
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
+import io.reactivex.Flowable
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.update
+import kotlin.compareTo
+import kotlin.printStackTrace
 
 
 class AmityRecommendedCommunitiesViewModel : AmityBaseViewModel() {
@@ -26,14 +34,33 @@ class AmityRecommendedCommunitiesViewModel : AmityBaseViewModel() {
         _communityListState.value = state
     }
 
+    private val _joinRequestList: MutableStateFlow<List<AmityJoinRequest>> =
+        MutableStateFlow(emptyList())
+    val joinRequestList: StateFlow<List<AmityJoinRequest>> = _joinRequestList.asStateFlow()
+
+
     private val recommendedCommunitiesFlow = AmitySocialClient.newCommunityRepository()
-        .getRecommendedCommunities()
-        .map {
-            val recommendedCommunities = it.filter { community -> !community.isJoined() }
-            if (recommendedCommunities.size > 4) {
-                recommendedCommunities.subList(0, 4)
+        .getRecommendedCommunities(includeDiscoverablePrivateCommunity = true)
+        .map { communities ->
+            // Get all community IDs that are not already joined
+            val notJoinedCommunities = communities.filter { !it.isJoined() }
+
+            val communityIds = notJoinedCommunities.map { it.getCommunityId() }
+
+            getJoinRequestList(communityIds)
+
+            // Filter communities that don't have pending join requests
+            // Since getLocalJoinRequest() returns a list, check if any request has PENDING status
+            val filteredCommunities = notJoinedCommunities.filter { community ->
+                val localJoinRequests = community.getLocalJoinRequest()
+                localJoinRequests == null || localJoinRequests.none { it.getStatus() == AmityJoinRequestStatus.PENDING }
+            }
+
+            // Take up to 4 communities
+            if (filteredCommunities.size > 4) {
+                filteredCommunities.subList(0, 4)
             } else {
-                recommendedCommunities
+                filteredCommunities
             }
         }
         .subscribeOn(Schedulers.io())
@@ -49,6 +76,21 @@ class AmityRecommendedCommunitiesViewModel : AmityBaseViewModel() {
         .catch {
             _communityListState.value = CommunityListState.ERROR
         }
+
+    private fun getJoinRequestList(communityIds: List<String>) {
+        addDisposable(
+            AmitySocialClient.newCommunityRepository().getJoinRequestList(communityIds)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnError { it.printStackTrace() }
+                .doOnNext { requests ->
+                    _joinRequestList.update {
+                        requests
+                    }
+                }
+                .subscribe()
+        )
+    }
 
     fun getRecommendedCommunities(): Flow<List<AmityCommunity>> {
         _communityListState.value = CommunityListState.LOADING

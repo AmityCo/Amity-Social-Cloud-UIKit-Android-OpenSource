@@ -1,15 +1,27 @@
 package com.amity.socialcloud.uikit.community.compose.community.setup
 
 import android.net.Uri
+import androidx.paging.PagingData
+import androidx.paging.map
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
+import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
+import com.amity.socialcloud.sdk.model.chat.settings.AmityMembershipAcceptanceType
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.file.upload.AmityUploadResult
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.community.AmityJoinRequest
+import com.amity.socialcloud.sdk.model.social.community.AmityJoinRequestStatus
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 
 class AmityCommunitySetupPageViewModel : AmityBaseViewModel() {
@@ -21,8 +33,11 @@ class AmityCommunitySetupPageViewModel : AmityBaseViewModel() {
         displayName: String,
         description: String,
         isPublic: Boolean,
+        isDiscoverable: Boolean,
+        requiresJoinApproval: Boolean,
         categoryIds: List<String>,
         userIds: List<String>,
+        membershipAcceptanceType: AmityMembershipAcceptanceType = AmityMembershipAcceptanceType.AUTOMATIC,
         onSuccess: (AmityCommunity) -> Unit,
         onError: (String) -> Unit,
     ) {
@@ -32,8 +47,11 @@ class AmityCommunitySetupPageViewModel : AmityBaseViewModel() {
                 displayName = displayName,
                 description = description,
                 isPublic = isPublic,
+                isDiscoverable = isDiscoverable,
+                requiresJoinApproval = requiresJoinApproval,
                 categoryIds = categoryIds,
                 userIds = userIds,
+                membershipAcceptanceType = membershipAcceptanceType,
                 onSuccess = onSuccess,
                 onError = onError
             )
@@ -46,8 +64,11 @@ class AmityCommunitySetupPageViewModel : AmityBaseViewModel() {
                         displayName = displayName,
                         description = description,
                         isPublic = isPublic,
+                        isDiscoverable = isDiscoverable,
+                        requiresJoinApproval = requiresJoinApproval,
                         categoryIds = categoryIds,
                         userIds = userIds,
+                        membershipAcceptanceType = membershipAcceptanceType,
                         onSuccess = onSuccess,
                         onError = onError
                     )
@@ -63,6 +84,8 @@ class AmityCommunitySetupPageViewModel : AmityBaseViewModel() {
         displayName: String,
         description: String,
         isPublic: Boolean,
+        isDiscoverable: Boolean,
+        requiresJoinApproval: Boolean,
         categoryIds: List<String>,
         onSuccess: (AmityCommunity) -> Unit,
         onError: (String) -> Unit,
@@ -74,6 +97,8 @@ class AmityCommunitySetupPageViewModel : AmityBaseViewModel() {
                 displayName = displayName,
                 description = description,
                 isPublic = isPublic,
+                isDiscoverable = isDiscoverable,
+                requiresJoinApproval = requiresJoinApproval,
                 categoryIds = categoryIds,
                 onSuccess = onSuccess,
                 onError = onError
@@ -88,6 +113,8 @@ class AmityCommunitySetupPageViewModel : AmityBaseViewModel() {
                         displayName = displayName,
                         description = description,
                         isPublic = isPublic,
+                        isDiscoverable = isDiscoverable,
+                        requiresJoinApproval = requiresJoinApproval,
                         categoryIds = categoryIds,
                         onSuccess = onSuccess,
                         onError = onError
@@ -125,26 +152,38 @@ class AmityCommunitySetupPageViewModel : AmityBaseViewModel() {
         displayName: String,
         description: String,
         isPublic: Boolean,
+        isDiscoverable: Boolean,
+        requiresJoinApproval: Boolean,
         categoryIds: List<String>,
         userIds: List<String>,
+        membershipAcceptanceType: AmityMembershipAcceptanceType,
         onSuccess: (AmityCommunity) -> Unit,
         onError: (String) -> Unit,
     ) {
         AmitySocialClient.newCommunityRepository()
-            .createCommunity(displayName)
+            .createCommunity(displayName, isDiscoverable, requiresJoinApproval)
             .description(description)
             .isPublic(isPublic)
             .categoryIds(categoryIds)
             .apply {
                 if (avatar != null) avatar(avatar)
+                if (membershipAcceptanceType == AmityMembershipAcceptanceType.AUTOMATIC) {
+                    userIds(userIds)
+                }
             }
-            .userIds(userIds)
             .build()
             .create()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSuccess(onSuccess)
             .doOnError { onError(it.message ?: "Failed to create community") }
+            .flatMapCompletable { community ->
+                if (membershipAcceptanceType == AmityMembershipAcceptanceType.INVITATION && userIds.isNotEmpty()) {
+                    community.createInvitations(userIds)
+                } else {
+                    Completable.complete()
+                }
+            }
             .subscribe()
     }
 
@@ -154,12 +193,18 @@ class AmityCommunitySetupPageViewModel : AmityBaseViewModel() {
         displayName: String,
         description: String,
         isPublic: Boolean,
+        isDiscoverable: Boolean,
+        requiresJoinApproval: Boolean,
         categoryIds: List<String>,
         onSuccess: (AmityCommunity) -> Unit,
         onError: (String) -> Unit,
     ) {
         AmitySocialClient.newCommunityRepository()
-            .editCommunity(communityId)
+            .editCommunity(
+                communityId = communityId,
+                isDiscoverable = isDiscoverable,
+                requiresJoinApproval = requiresJoinApproval
+            )
             .displayName(displayName)
             .description(description)
             .isPublic(isPublic)
@@ -191,5 +236,14 @@ class AmityCommunitySetupPageViewModel : AmityBaseViewModel() {
 
             }
             .subscribe()
+    }
+
+    fun getMembershipAcceptanceType(): Flowable<AmityMembershipAcceptanceType> {
+        return AmitySocialClient.getSettings()
+            .map { setting ->
+                setting.getMembershipAcceptanceType()
+            }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
     }
 }

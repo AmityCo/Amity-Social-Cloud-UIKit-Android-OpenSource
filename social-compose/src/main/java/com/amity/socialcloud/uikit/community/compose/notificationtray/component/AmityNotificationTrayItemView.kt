@@ -66,7 +66,7 @@ fun AmityNotificationTrayItemView(
 
         Text(
             text = data?.getLastOccurredAt()?.readableSocialTimeDiff() ?: "",
-            style = AmityTheme.typography.caption,
+            style = AmityTheme.typography.caption.copy(fontSize = 13.sp),
             color = AmityTheme.colors.baseShade2
         )
 
@@ -134,14 +134,14 @@ fun HighlightText(
         Text(
             modifier = modifier,
             text = annotatedString,
-            style = AmityTheme.typography.body,
+            style = AmityTheme.typography.body.copy(fontSize = 15.sp),
             overflow = TextOverflow.Ellipsis,
             maxLines = 3
         )
     } else {
         Text(
             text = text,
-            style = AmityTheme.typography.body,
+            style = AmityTheme.typography.body.copy(fontSize = 15.sp),
             overflow = TextOverflow.Ellipsis,
             maxLines = 3,
             modifier = modifier

@@ -17,12 +17,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.model.social.community.AmityJoinRequestStatus
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.socialhome.elements.AmityJoinCommunityView
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityTrendingCommunityShimmer
+import kotlin.collections.map
 
 
 @Composable
@@ -47,8 +50,10 @@ fun AmityTrendingCommunitiesComponent(
         viewModel.getTrendingCommunities()
     }
 
-    val communities = communitiesFlow.collectAsState(initial = emptyList())
+    val communities by communitiesFlow.collectAsState(initial = emptyList())
     val communityListState by viewModel.communityListState.collectAsState()
+
+    val joinRequests by viewModel.joinRequestList.collectAsState()
 
     AmityBaseComponent(
         pageScope = pageScope,
@@ -71,12 +76,18 @@ fun AmityTrendingCommunitiesComponent(
                         )
                     }
 
-                    communities.value.forEachIndexed { index, community ->
+                    communities.forEachIndexed { index, community ->
+                        val joinRequest = community.getLocalJoinRequest()?.find {
+                            it.getRequestorPublicId() == AmityCoreClient.getUserId() &&
+                                    it.getStatus() == AmityJoinRequestStatus.PENDING
+                        }
+
                         AmityJoinCommunityView(
                             modifier = modifier,
                             pageScope = pageScope,
                             componentScope = getComponentScope(),
                             community = community,
+                            joinRequest = joinRequest,
                             label = "0" + (index + 1),
                             onClick = {
                                 behavior.goToCommunityProfilePage(

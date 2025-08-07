@@ -1,13 +1,16 @@
 package com.amity.socialcloud.uikit.community.compose.socialhome
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import androidx.paging.LoadState
 import androidx.paging.PagingData
+import androidx.paging.map
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.sdk.api.social.community.query.AmityCommunitySortOption
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.model.core.ad.AmityAdPlacement
+import com.amity.socialcloud.sdk.model.core.invitation.AmityInvitation
 import com.amity.socialcloud.sdk.model.core.notificationtray.AmityNotificationTraySeen
 import com.amity.socialcloud.sdk.model.core.pin.AmityPinnedPost
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
@@ -104,6 +107,15 @@ class AmitySocialHomePageViewModel : AmityBaseViewModel() {
             _isGlobalFeedRefreshing.value = false
             _isPullRefreshIndicatorVisible.value = false
         }
+    }
+
+    fun getMyInvitations(): Flow<PagingData<AmityInvitation>> {
+        return AmityCoreClient.newInvitationRepository()
+            .getMyCommunityInvitations()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .asFlow()
+            .catch {}
     }
 
     fun getMyCommunities(): Flow<PagingData<AmityCommunity>> {

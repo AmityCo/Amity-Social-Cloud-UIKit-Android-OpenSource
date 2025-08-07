@@ -51,6 +51,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/AmitySocialTheme" />
         <activity
+            android:name=".community.pending.AmityPendingRequestPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme" />
+        <activity
             android:name=".community.setup.AmityCommunitySetupPageActivity"
             android:configChanges="uiMode"
             android:screenOrientation="portrait"
@@ -89,6 +94,14 @@
             android:name=".community.setting.notifications.AmityCommunityNotificationSettingPageActivity"
             android:configChanges="uiMode"
             android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme" />
+        <activity
+            android:name=".community.membership.invite.AmityCommunityInviteMemberPageActivity"
+            android:configChanges="uiMode"
+            android:theme="@style/AmitySocialTheme" />
+        <activity
+            android:name=".community.pending.pending_invite.AmityCommunityPendingInviteMemberPageActivity"
+            android:configChanges="uiMode"
             android:theme="@style/AmitySocialTheme" />
         <activity
             android:name=".community.setting.notifications.comments.AmityCommunityCommentsNotificationSettingPageActivity"
