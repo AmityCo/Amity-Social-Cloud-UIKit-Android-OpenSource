@@ -1,6 +1,5 @@
 package com.amity.socialcloud.uikit.common.utils
 
-import android.annotation.SuppressLint
 import android.text.format.DateUtils
 import java.text.SimpleDateFormat
 import java.util.*
@@ -12,6 +11,12 @@ object AmityDateUtils {
     private const val YEAR = "yyyy"
     private const val MONTH_WITH_DATE = "MMMM d"
     private const val TIME_FORMAT = "h:mm a"
+    const val TIME_MINUTE_FORMAT = "m:ss"
+    private const val TIME_HOUR_FORMAT = "HH:mm:ss"
+    private const val HOUR_IN_MILLISECOND = 3600000
+    private const val EMPTY_FORMATTED_TIME = "0:00"
+    private const val TRANSFORMED_EMPTY_FORMATTED_TIME = "0:01"
+    private var formatter = SimpleDateFormat(TIME_MINUTE_FORMAT, Locale.getDefault())
 
     private fun getTimeStr(timestamp: Long): String =
         SimpleDateFormat(TIME_FORMAT, Locale.getDefault()).format(Date(timestamp))
@@ -46,10 +51,19 @@ object AmityDateUtils {
         return year == cal.get(Calendar.YEAR)
     }
 
-    @SuppressLint("DefaultLocale")
-    fun getFormattedElapsedTime(milliSeconds: Int): String {
-        val minutes = TimeUnit.MILLISECONDS.toMinutes(milliSeconds.toLong())
-        val seconds = TimeUnit.MILLISECONDS.toSeconds(milliSeconds.toLong()) % 60
-        return String.format("%d:%02d", minutes, seconds)
+    private fun getFormattedTime(milliSeconds: Int): String {
+        if (milliSeconds / HOUR_IN_MILLISECOND > 0) {
+            formatter = SimpleDateFormat(TIME_MINUTE_FORMAT, Locale.getDefault())
+        }
+        val date = Date(milliSeconds.toLong())
+        return formatter.format(date)
+    }
+
+    fun getFormattedTimeForChat(milliSeconds: Int): String {
+        var formattedTime = getFormattedTime(milliSeconds)
+        if (formattedTime == EMPTY_FORMATTED_TIME) {
+            formattedTime = TRANSFORMED_EMPTY_FORMATTED_TIME
+        }
+        return formattedTime
     }
 }

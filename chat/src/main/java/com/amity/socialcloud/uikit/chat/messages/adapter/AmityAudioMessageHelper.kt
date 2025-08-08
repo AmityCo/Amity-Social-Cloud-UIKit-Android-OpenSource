@@ -31,7 +31,7 @@ class AmityAudioMessageHelper(
 
     private val uAmpAudioAttributes: AudioAttributes =
         AudioAttributes.Builder()
-            .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
+            .setContentType(C.CONTENT_TYPE_MUSIC)
             .setUsage(C.USAGE_MEDIA)
             .build()
 
@@ -153,7 +153,7 @@ class AmityAudioMessageHelper(
         override fun run() {
             val timeElapsed = exoPlayer.currentPosition
             playingAmityAudioHolder?.audioMsgBaseViewModel?.duration?.set(
-                AmityDateUtils.getFormattedElapsedTime(timeElapsed.toInt())
+                AmityDateUtils.getFormattedTimeForChat(timeElapsed.toInt())
             )
             uiUpdateHandler.postDelayed(this, 400L)
         }
@@ -161,7 +161,7 @@ class AmityAudioMessageHelper(
 
     private fun updatePlayingState() {
         playingAmityAudioHolder?.audioMsgBaseViewModel?.duration?.set(
-            AmityDateUtils.getFormattedElapsedTime(exoPlayer.duration.toInt())
+            AmityDateUtils.getFormattedTimeForChat(exoPlayer.duration.toInt())
         )
         playingAmityAudioHolder?.audioMsgBaseViewModel?.buffering?.set(false)
         playingAmityAudioHolder?.audioMsgBaseViewModel?.isPlaying?.set(true)

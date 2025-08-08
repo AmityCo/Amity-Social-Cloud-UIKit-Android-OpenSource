@@ -1,14 +1,11 @@
 package com.amity.socialcloud.uikit.community.compose.comment
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
@@ -50,7 +47,6 @@ fun AmityCommentTrayComponent(
     community: AmityCommunity? = null,
     shouldAllowInteraction: Boolean,
     shouldAllowCreation: Boolean,
-    includeDeleted : Boolean = true
 ) {
     val context = LocalContext.current
 
@@ -61,13 +57,8 @@ fun AmityCommentTrayComponent(
         viewModel<AmityCommentTrayComponentViewModel>(viewModelStoreOwner = viewModelStoreOwner)
 
     val comments =
-        remember(referenceType, referenceId, community?.getCommunityId(), includeDeleted) {
-            viewModel.getComments(
-                referenceId = referenceId,
-                referenceType = referenceType,
-                communityId = community?.getCommunityId(),
-                includeDeleted = includeDeleted
-            )
+        remember(referenceType, referenceId, community?.getCommunityId()) {
+            viewModel.getComments(referenceId, referenceType, community?.getCommunityId())
         }.collectAsLazyPagingItems()
     val commentListState by viewModel.commentListState.collectAsState()
 
@@ -118,17 +109,14 @@ fun AmityCommentTrayComponent(
 
                     HorizontalDivider(
                         color = AmityTheme.colors.baseShade4,
-                        modifier = modifier.padding(top = 16.dp)
+                        modifier = modifier.padding(top = 16.dp, bottom = 8.dp)
                     )
                 }
 
                 LazyColumn(
                     modifier = modifier
-                        .fillMaxSize(),
-                    contentPadding = PaddingValues(
-                        top = 8.dp,
-                        bottom = 64.dp
-                    ),
+                        .fillMaxSize()
+                        .padding(bottom = 64.dp)
                 ) {
                     AmityCommentTrayComponentViewModel.CommentListState.from(
                         loadState = comments.loadState.refresh,
