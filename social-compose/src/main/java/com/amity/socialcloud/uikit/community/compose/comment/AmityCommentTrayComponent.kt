@@ -1,6 +1,5 @@
 package com.amity.socialcloud.uikit.community.compose.comment
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,7 +7,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
@@ -154,6 +152,7 @@ fun AmityCommentTrayComponent(
                                 referenceId = referenceId,
                                 referenceType = referenceType,
                                 editingCommentId = editingCommentId,
+                                includeDeleted = includeDeleted,
                                 shouldAllowInteraction = true,
                                 onReply = {
                                     replyCommentId = it

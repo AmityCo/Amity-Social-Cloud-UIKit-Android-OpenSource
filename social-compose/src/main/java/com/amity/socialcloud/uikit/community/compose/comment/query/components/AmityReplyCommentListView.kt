@@ -24,13 +24,19 @@ fun AmityReplyCommentListView(
     currentUserId: String,
     commentId: String,
     editingCommentId: String?,
+    includeDeleted: Boolean = true,
     replyCount: Int,
     replyTargetId: String? = null,
     replies: List<AmityComment>,
     onEdit: (String?) -> Unit,
 ) {
     val loader = remember {
-        AmityStoryCommentReplyLoader(referenceId, referenceType, commentId).apply { load() }
+        AmityStoryCommentReplyLoader(
+            referenceId = referenceId,
+            referenceType = referenceType,
+            parentCommentId = commentId,
+            includeDeleted = includeDeleted
+        ).apply { load() }
     }
 
     val shouldShowLoadMoreButton by remember {

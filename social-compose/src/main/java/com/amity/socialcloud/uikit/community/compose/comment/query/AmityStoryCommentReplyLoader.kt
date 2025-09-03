@@ -21,7 +21,8 @@ class AmityStoryCommentReplyLoader(
     referenceId: String,
     referenceType: AmityCommentReferenceType,
     parentCommentId: String,
-) {
+    includeDeleted: Boolean = true,
+    ) {
     private var loader: AmityCommentLoader
 
     init {
@@ -37,7 +38,7 @@ class AmityStoryCommentReplyLoader(
             }
             .parentId(parentCommentId)
             .sortBy(AmityCommentSortOption.LAST_CREATED)
-            .includeDeleted(true)
+            .includeDeleted(includeDeleted)
             .build()
             .loader()
     }

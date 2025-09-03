@@ -51,6 +51,7 @@ fun AmitySingleCommentView(
     isReplyComment: Boolean,
     currentUserId: String,
     editingCommentId: String?,
+    includeDeleted: Boolean = true,
     onReply: (String) -> Unit,
     onEdit: (String?) -> Unit,
     replyTargetId: String? = null,
@@ -158,6 +159,7 @@ fun AmitySingleCommentView(
                 currentUserId = currentUserId,
                 commentId = comment.getCommentId(),
                 editingCommentId = editingCommentId,
+                includeDeleted = includeDeleted,
                 // TODO: 31/1/24 child count is not real-time
                 replyCount = max(comment.getChildCount(), comment.getLatestReplies().size),
                 replies = comment.getLatestReplies(),
