@@ -12,8 +12,8 @@ buildscript {
         amityMockkVersion = "1.10.0"
         amitySDKJitpackDependency = 'com.github.AmityCo.Amity-Social-Cloud-SDK-Android'
         amitySDKMavenDependency = 'co.amity.android'
-        amityMessagingSdkVersion = '7.5.1'
-        amitySDKDependency = amitySDKMavenDependency
+        amityMessagingSdkVersion = '7.8.1'
+        amitySDKDependency = amitySDKJitpackDependency
         amityRxLifeCycleVersion = '1.1.2-beta01'
         amityJacocoVersion = '0.8.5'
         amityExoplayerVersion = '2.18.5'

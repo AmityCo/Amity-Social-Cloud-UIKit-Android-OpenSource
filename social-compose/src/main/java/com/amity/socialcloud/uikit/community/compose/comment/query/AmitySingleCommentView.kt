@@ -161,7 +161,7 @@ fun AmitySingleCommentView(
                 editingCommentId = editingCommentId,
                 includeDeleted = includeDeleted,
                 // TODO: 31/1/24 child count is not real-time
-                replyCount = max(comment.getChildCount(), comment.getLatestReplies().size),
+                replyCount = max(comment.getChildCount(), comment.getLatestReplies().let { if(includeDeleted) it else it.filter { it.isDeleted() == false } }.size),
                 replies = comment.getLatestReplies(),
                 onEdit = onEdit,
                 replyTargetId = replyTargetId,

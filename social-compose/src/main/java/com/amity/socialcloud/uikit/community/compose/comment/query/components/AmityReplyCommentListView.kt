@@ -45,7 +45,7 @@ fun AmityReplyCommentListView(
 
     val commentsRaw by remember {
         loader.getComments()
-    }.subscribeAsState(initial = replies)
+    }.subscribeAsState(initial = replies.let { if(includeDeleted) it else it.filter { it.isDeleted() == false } })
 
     val comments = remember(commentsRaw, replyTargetId) {
         if (replyTargetId != null) {
