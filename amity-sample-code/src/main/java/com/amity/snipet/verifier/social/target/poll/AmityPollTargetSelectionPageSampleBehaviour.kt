@@ -22,7 +22,8 @@ class AmityPollTargetSelectionPageSampleBehaviour {
             launcher: ActivityResultLauncher<Intent>,
             targetId: String,
             targetType: AmityPost.TargetType,
-            community: AmityCommunity?
+            community: AmityCommunity?,
+            pollType: String,
         ) {
             // custom implementation for navigating to Poll post Composer Page
         }
