@@ -2,6 +2,7 @@ package com.amity.socialcloud.uikit.community.compose.post.model
 
 import android.net.Uri
 import android.os.Parcelable
+import com.amity.socialcloud.sdk.model.core.file.AmityClip
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import kotlinx.parcelize.Parcelize
 
@@ -22,11 +23,13 @@ data class AmityPostMedia(
 
     enum class Type(val key: String) {
         IMAGE("image"),
+        ClIP("clip"),
         VIDEO("video");
     }
 
     @Parcelize
     sealed class Media : Parcelable {
         data class Image(val image: AmityImage) : Media()
+        data class Clip(val clip: AmityClip): Media()
     }
 }

@@ -22,7 +22,7 @@ import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 fun InteractionButton(
     @DrawableRes icon: Int,
     count: String? = null,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)? = null,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
@@ -33,9 +33,16 @@ fun InteractionButton(
             tint = Color.Unspecified,
             modifier = Modifier
                 .size(32.dp)
-                .clickableWithoutRipple {
-                    onClick()
+                .let {
+                    if (onClick != null) {
+                        it.clickableWithoutRipple {
+                            onClick.invoke()
+                        }
+                    } else {
+                        it
+                    }
                 }
+
         )
 
         Spacer(Modifier.height(4.dp))

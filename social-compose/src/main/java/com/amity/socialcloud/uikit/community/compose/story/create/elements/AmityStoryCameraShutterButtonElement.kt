@@ -13,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -30,6 +31,7 @@ fun AmityStoryCameraShutterButtonElement(
     modifier: Modifier = Modifier,
     isImageCaptureMode: Boolean = true,
     maxRecordDurationSeconds: Int = 0,
+    isEnable: Boolean = true,
     onImageCaptureClicked: () -> Unit = {},
     onVideoCaptureStarted: () -> Unit = {},
     onVideoCaptureStopped: () -> Unit = {},
@@ -67,21 +69,26 @@ fun AmityStoryCameraShutterButtonElement(
 
     Canvas(modifier = modifier
         .size(72.dp)
+        .alpha(if (isEnable) 1f else 0.3f)
         .pointerInput(isImageCaptureMode) {
             detectTapGestures(
                 onPress = {
-                    if (!isImageCaptureMode) {
-                        haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                        isRecording = true
-                        tryAwaitRelease()
-                        haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                        isRecording = false
+                    if (isEnable) {
+                        if (!isImageCaptureMode) {
+                            haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                            isRecording = true
+                            tryAwaitRelease()
+                            haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                            isRecording = false
+                        }
                     }
                 },
                 onTap = {
-                    if (isImageCaptureMode) {
-                        haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                        onImageCaptureClicked()
+                    if (isEnable) {
+                        if (isImageCaptureMode) {
+                            haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                            onImageCaptureClicked()
+                        }
                     }
                 }
             )

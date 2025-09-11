@@ -18,9 +18,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.sdk.model.social.comment.AmityCommentReferenceType
+import com.amity.socialcloud.uikit.common.common.isNotEmptyOrBlank
+import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
+import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.R
@@ -28,8 +34,10 @@ import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipFeedPage
 import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipModalSheetUIState
 import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipPageBehavior
 import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponent
+import com.amity.socialcloud.uikit.community.compose.utils.sharePost
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.text.replace
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
@@ -37,10 +45,11 @@ import kotlinx.coroutines.launch
 fun AmityClipModalBottomSheet(
     modifier: Modifier = Modifier,
     behavior: AmityClipPageBehavior,
-    viewModel : AmityClipFeedPageViewModel
+    viewModel: AmityClipFeedPageViewModel,
 ) {
     val context = LocalContext.current
 
+    val clipboardManager = LocalClipboardManager.current
 
     val scope = rememberCoroutineScope()
 
@@ -97,7 +106,35 @@ fun AmityClipModalBottomSheet(
                             modifier = modifier,
                         ) {
                             viewModel.updateSheetUIState(AmityClipModalSheetUIState.CloseSheet)
-                            behavior.goToPostDetailPage(context = context, postId = data.postId)
+                            behavior.goToPostDetailPage(
+                                context = context,
+                                postId = data.post.getPostId()
+                            )
+                        }
+
+                        val postLink = AmityUIKitConfigController.getPostLink(data.post)
+                        if (postLink.isNotEmptyOrBlank()) {
+                            AmityBottomSheetActionItem(
+                                icon = R.drawable.amity_v4_link_icon,
+                                text = "Copy post link",
+                                modifier = modifier.testTag("bottom_sheet_copy_link_button"),
+                            ) {
+                                viewModel.updateSheetUIState(AmityClipModalSheetUIState.CloseSheet)
+                                // Generate the post link URL (adjust the URL format according to your app's deep linking structure)
+                                // Copy to clipboard
+                                clipboardManager.setText(AnnotatedString(postLink))
+                                AmityUIKitSnackbar.publishSnackbarMessage("Link copied")
+                            }
+
+                            AmityBottomSheetActionItem(
+                                icon = R.drawable.amity_v4_share_icon,
+                                text = "Share to",
+                                modifier = modifier.testTag("bottom_sheet_share_to_button"),
+                            ) {
+                                viewModel.updateSheetUIState(AmityClipModalSheetUIState.CloseSheet)
+                                // Open native Android share sheet
+                                sharePost(context, postLink)
+                            }
                         }
                     }
                 }

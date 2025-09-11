@@ -13,7 +13,7 @@ open class AmityUserFeedComponentBehavior : AmityBaseBehavior() {
         val intent = AmityPostDetailPageActivity.newIntent(
             context = context,
             id = postId,
-            hideTarget = true,
+            hideTarget = false,
         )
         context.startActivity(intent)
     }

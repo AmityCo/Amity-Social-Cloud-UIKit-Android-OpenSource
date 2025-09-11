@@ -19,7 +19,6 @@ class AmityPostDetailPageActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
 
         val id = intent.getStringExtra(EXTRA_PARAM_POST_ID) ?: ""
         val category = intent.getStringExtra(EXTRA_PARAM_POST_CATEGORY) ?: "GENERAL"
@@ -29,6 +28,7 @@ class AmityPostDetailPageActivity : AppCompatActivity() {
 
         val commentId = intent.getStringExtra(EXTRA_PARAM_COMMENT_ID)
         val parentId = intent.getStringExtra(EXTRA_PARAM_PARENT_ID)
+        val replyToCommentId = intent.getStringExtra(EXTRA_PARAM_REPLY_TO)
 
         setContent {
             AmityPostDetailPage(
@@ -42,6 +42,7 @@ class AmityPostDetailPageActivity : AppCompatActivity() {
                 showLivestreamPostExceeded = showLivestreamPostExceeded,
                 commentId = commentId,
                 parentId = parentId,
+                replyToCommentId = replyToCommentId,
             )
         }
     }
@@ -83,6 +84,7 @@ class AmityPostDetailPageActivity : AppCompatActivity() {
         const val REQUEST_CODE_VIEW_LIVESTREAM = 11010
         private const val EXTRA_PARAM_COMMENT_ID = "comment_id"
         private const val EXTRA_PARAM_PARENT_ID = "parent_id"
+        private const val EXTRA_PARAM_REPLY_TO = "reply_to_comment_id"
 
         fun newIntent(
             context: Context,
@@ -92,6 +94,7 @@ class AmityPostDetailPageActivity : AppCompatActivity() {
             showLivestreamPostExceeded: Boolean = false,
             commentId: String? = null,
             parentId : String? = null,
+            replyTo: String? = null,
         ): Intent {
             return Intent(
                 context,
@@ -103,6 +106,7 @@ class AmityPostDetailPageActivity : AppCompatActivity() {
                 putExtra(EXTRA_PARAM_SHOW_LIVESTREAM_POST_EXCEEDED, showLivestreamPostExceeded)
                 putExtra(EXTRA_PARAM_COMMENT_ID, commentId)
                 putExtra(EXTRA_PARAM_PARENT_ID, parentId)
+                putExtra(EXTRA_PARAM_REPLY_TO, replyTo)
             }
         }
     }

@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -26,30 +27,30 @@ import com.amity.socialcloud.uikit.community.compose.search.components.AmityUser
 @Composable
 fun AmitySocialGlobalSearchPage(
     modifier: Modifier = Modifier,
+    prefilledText: String? = null,
 ) {
+    val context = LocalContext.current
+
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
     }
     val viewModel =
         viewModel<AmityGlobalSearchViewModel>(viewModelStoreOwner = viewModelStoreOwner)
 
-
     val tabs = remember {
         listOf(
-            //AmityTabRowItem(title = "Posts"),
-            AmityTabRowItem(title = "Communities"),
-            AmityTabRowItem(title = "Users"),
+            AmityTabRowItem(title = "Posts"),
+            AmityTabRowItem(title = "Groups"),
+            AmityTabRowItem(title = "Members"),
         )
     }
     var selectedTabIndex by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(selectedTabIndex) {
         when (selectedTabIndex) {
-            0 -> viewModel.setSearchType(AmityGlobalSearchType.COMMUNITY)
-            1 -> viewModel.setSearchType(AmityGlobalSearchType.USER)
-//            0 -> viewModel.setSearchType(AmityGlobalSearchType.POST)
-//            1 -> viewModel.setSearchType(AmityGlobalSearchType.COMMUNITY)
-//            2 -> viewModel.setSearchType(AmityGlobalSearchType.USER)
+            0 -> viewModel.setSearchType(AmityGlobalSearchType.POST)
+            1 -> viewModel.setSearchType(AmityGlobalSearchType.COMMUNITY)
+            2 -> viewModel.setSearchType(AmityGlobalSearchType.USER)
         }
     }
 
@@ -63,6 +64,7 @@ fun AmitySocialGlobalSearchPage(
                 modifier = modifier,
                 pageScope = getPageScope(),
                 viewModel = viewModel,
+                prefilledText = prefilledText ?: "",
                 shouldShowKeyboard = true
             )
 
@@ -76,13 +78,15 @@ fun AmitySocialGlobalSearchPage(
             Spacer(modifier.height(8.dp))
 
             when (selectedTabIndex) {
-//                0 -> AmityPostSearchResultComponent(
-//                    modifier = modifier,
-//                    pageScope = getPageScope(),
-//                    viewModel = viewModel
-//                )
-
                 0 -> {
+                    AmityPostSearchResultComponent(
+                        modifier = modifier,
+                        pageScope = getPageScope(),
+                        viewModel = viewModel
+                    )
+                }
+
+                1 -> {
                     AmityBaseComponent(
                         pageScope = getPageScope(),
                         componentId = "community_search_result"
@@ -96,7 +100,7 @@ fun AmitySocialGlobalSearchPage(
                     }
                 }
 
-                1 -> AmityUserSearchResultComponent(
+                2 -> AmityUserSearchResultComponent(
                     modifier = modifier,
                     pageScope = getPageScope(),
                     viewModel = viewModel

@@ -3,6 +3,7 @@ package com.amity.socialcloud.uikit.community.compose.target
 enum class AmityPostTargetSelectionPageType(val key: String) {
     POST("post_generic"),
     POLL("post_poll"),
+    CLIP("post_clip"),
     LIVESTREAM("post_live_stream");
 
     companion object {

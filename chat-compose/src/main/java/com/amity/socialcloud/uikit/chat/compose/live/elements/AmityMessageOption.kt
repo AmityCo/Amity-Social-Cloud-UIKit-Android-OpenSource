@@ -43,6 +43,7 @@ import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
 import com.amity.socialcloud.uikit.chat.compose.R
 import com.amity.socialcloud.uikit.chat.compose.live.AmityLiveChatPageViewModel
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
+import com.amity.socialcloud.uikit.common.ui.elements.BottomConfirmDeletePopup
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
@@ -135,7 +136,7 @@ fun AmityMessageOption(
 							)
 						}
 					}
-					
+
 				}
 			}
 		}
@@ -181,7 +182,7 @@ fun ConfirmDeletePopup(
 	componentScope: AmityComposeComponentScope? = null,
 	viewModel: AmityLiveChatPageViewModel,
 ) {
-	
+
 	AmityBaseElement(
 		pageScope = pageScope,
 		componentScope = componentScope,
@@ -199,7 +200,18 @@ fun ConfirmDeletePopup(
 				BottomConfirmDeletePopup(
 					pageScope = pageScope,
 					componentScope = componentScope,
-					viewModel = viewModel
+					onDelete = {
+						viewModel.deleteMessage(
+							onError = {
+								pageScope?.showSnackbar(
+									message = "Unable to delete message. Please try again."
+								)
+							}
+						)
+					},
+					onDismiss = {
+						viewModel.dismissDeleteConfirmation()
+					},
 				)
 			}
 		}
@@ -297,115 +309,4 @@ fun CenterConfirmDeletePopup(
 			}
 		}
 	}
-}
-
-
-@Composable
-fun BottomConfirmDeletePopup(
-	pageScope: AmityComposePageScope? = null,
-	componentScope: AmityComposeComponentScope? = null,
-	viewModel: AmityLiveChatPageViewModel,
-) {
-	Dialog(
-		onDismissRequest = {
-			viewModel.dismissDeleteConfirmation()
-		},
-		DialogProperties(
-			usePlatformDefaultWidth = false
-		)
-	) {
-		Box(
-			modifier = Modifier
-				.fillMaxSize(),
-			contentAlignment = Alignment.BottomCenter
-		) {
-			Column {
-				Column(
-					modifier = Modifier
-						.padding(horizontal = 8.dp)
-						.clip(RoundedCornerShape(14.dp))
-						.background(AmityTheme.colors.baseShade4)
-						.fillMaxWidth()
-				) {
-					Column(
-						modifier = Modifier.padding(vertical = 13.dp),
-						horizontalAlignment = Alignment.CenterHorizontally
-					) {
-						Text(
-							text = "Your message wasn’t sent",
-							fontSize = 13.sp,
-							lineHeight = 18.sp,
-							fontWeight = FontWeight(600),
-							textAlign = TextAlign.Center,
-							modifier = Modifier.fillMaxWidth(),
-							color = AmityTheme.colors.baseInverse,
-						)
-					}
-					HorizontalDivider(thickness = 1.dp, color = AmityTheme.colors.secondaryShade1)
-					Row(
-						modifier = Modifier
-							.fillMaxWidth()
-					) {
-						TextButton(
-							onClick = {
-								viewModel.deleteMessage(
-									onError = {
-										pageScope?.showSnackbar(
-											message = "Unable to delete message. Please try again."
-										)
-									}
-								)
-							},
-							modifier = Modifier.fillMaxWidth()
-						) {
-							Text(
-								text = "Delete",
-								fontSize = 17.sp,
-								lineHeight = 22.sp,
-								fontWeight = FontWeight(600),
-								color = AmityTheme.colors.alert,
-							)
-						}
-					}
-				}
-				Spacer(modifier = Modifier.height(8.dp))
-				Column(
-					modifier = Modifier
-						.padding(horizontal = 8.dp)
-						.clip(RoundedCornerShape(14.dp))
-						.background(AmityTheme.colors.baseShade4)
-						.fillMaxWidth()
-				) {
-					Row(
-						modifier = Modifier
-							.fillMaxWidth()
-					) {
-						TextButton(
-							onClick = {
-								viewModel.dismissDeleteConfirmation()
-							},
-							modifier = Modifier.fillMaxWidth()
-						) {
-							Text(
-								text = "Cancel",
-								fontSize = 17.sp,
-								lineHeight = 22.sp,
-								fontWeight = FontWeight(600),
-								color = AmityTheme.colors.primary,
-							)
-						}
-					}
-				}
-				Spacer(modifier = Modifier.height(30.dp))
-			}
-		}
-	}
-}
-
-@Preview(showBackground = true)
-@Composable
-fun BottomConfirmDeletePopupPreview() {
-	BottomConfirmDeletePopup(
-		viewModel = AmityLiveChatPageViewModel("")
-	)
 }

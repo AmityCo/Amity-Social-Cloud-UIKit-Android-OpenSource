@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.common.ui.elements
 
+import android.content.Context
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.material3.Text
@@ -10,7 +11,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
@@ -18,13 +21,18 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
+import com.amity.socialcloud.sdk.helper.core.hashtag.AmityHashtag
+import com.amity.socialcloud.sdk.helper.core.hashtag.AmityHashtagMetadataGetter
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionee
+import com.amity.socialcloud.uikit.common.common.views.text.AmityTextStyle
 import com.amity.socialcloud.uikit.common.extionsions.extractUrls
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.google.gson.Gson
 import com.google.gson.JsonObject
 
 @Composable
@@ -33,14 +41,18 @@ fun AmityExpandableText(
     text: String,
     mentionGetter: AmityMentionMetadataGetter = AmityMentionMetadataGetter(JsonObject()),
     mentionees: List<AmityMentionee> = emptyList(),
+    hashtagGetter: AmityHashtagMetadataGetter = AmityHashtagMetadataGetter(JsonObject()),
     boldWhenMatches: List<String> = emptyList(),
-    style: TextStyle = AmityTheme.typography.bodyLegacy,
-    previewLines: Int = 8,
+    style: TextStyle = AmityTheme.typography.body,
+    previewLines: Int = EXPANDABLE_TEXT_MAX_LINES,
     intialExpand: Boolean = false,
     onClick: () -> Unit = {},
     onMentionedUserClick: (String) -> Unit = {},
+    onHashtagClick: (String) -> Unit = {},
+    onUrlClick: ((Context, String) -> Unit)? = null,
 ) {
     val uriHandler = LocalUriHandler.current
+    val context = LocalContext.current
 
     BoxWithConstraints(
         modifier = modifier,
@@ -104,6 +116,22 @@ fun AmityExpandableText(
                     end = end
                 )
             }
+            // Highlight hashtags (not clickable)
+            hashtagGetter.getHashtags().forEach { hashtagItem ->
+                val start = hashtagItem.getIndex()
+                val end = hashtagItem.getIndex().plus(hashtagItem.getLength()).inc()
+                addStyle(
+                    style = SpanStyle(AmityTheme.colors.highlight),
+                    start = start,
+                    end = end,
+                )
+                addStringAnnotation(
+                    tag = "HASHTAG",
+                    annotation = '#' + hashtagItem.getText(),
+                    start = start,
+                    end = end
+                )
+            }
             text.extractUrls().forEach {
                 addStyle(
                     style = SpanStyle(
@@ -121,28 +149,40 @@ fun AmityExpandableText(
             }
 
             boldWhenMatches.forEach {
-                val matches = findMatchIndices(displayText, it)
-                matches.forEach { match ->
-                    addStyle(
-                        style = SpanStyle(
-                            fontWeight = FontWeight.SemiBold,
-                            color = AmityTheme.colors.base
-                        ),
-                        start = match.first,
-                        end = match.second,
-                    )
-                    addStringAnnotation(
-                        tag = "BOLDED",
-                        annotation = it,
-                        start = match.first,
-                        end = match.second
-                    )
-                }
+                val matches = findMatchIndices(
+                    input = displayText,
+                    pattern = it,
+                    ignoreCase = true,
+                    findFirstOnly = true,
+                    exactMatch = it.startsWith('#')
+                )
+                val match = matches.firstOrNull()
+                if (match == null) return@forEach
+
+                addStyle(
+                    style = SpanStyle(
+                        fontWeight = FontWeight.SemiBold,
+                        color = AmityTheme.colors.highlight,
+                        background = AmityTheme.colors.highlight.copy(
+                            alpha = 0.1f
+                        )
+                    ),
+                    start = match.first,
+                    end = match.second,
+                )
+                addStringAnnotation(
+                    tag = "BOLDED",
+                    annotation = it,
+                    start = match.first,
+                    end = match.second
+                )
             }
 
             if (!isReadMoreClicked) {
-                append("...")
-                withStyle(style = SpanStyle(AmityTheme.colors.primary)) {
+                withStyle(style = SpanStyle(
+                    color = AmityTheme.colors.primary,
+                    textDecoration = TextDecoration.Underline
+                )) {
                     pushStringAnnotation(tag = readMore, annotation = readMore)
                     append(readMore)
                 }
@@ -167,6 +207,17 @@ fun AmityExpandableText(
                             return@let
                         }
 
+                        val hashtag = annotatedString.getStringAnnotations(
+                            tag = "HASHTAG",
+                            start = position,
+                            end = position
+                        )
+
+                        if (hashtag.isNotEmpty()) {
+                            onHashtagClick(hashtag.first().item)
+                            return@let
+                        }
+
                         val annotations = annotatedString.getStringAnnotations(
                             tag = "URL",
                             start = position,
@@ -174,7 +225,9 @@ fun AmityExpandableText(
                         )
                         if (annotations.isNotEmpty()) {
                             val url = annotations.first().item
-                            uriHandler.openUri(url)
+                            onUrlClick
+                                ?.invoke(context, url)
+                                ?: uriHandler.openUri(url)
                             return@let
                         }
 
@@ -205,17 +258,42 @@ fun AmityExpandableText(
     }
 }
 
-private fun findMatchIndices(input: String, pattern: String): List<Pair<Int, Int>> {
-    val regex = Regex(pattern)
-    return regex.findAll(input).map { matchResult ->
-        matchResult.range.first to matchResult.range.last + 1 // +1 for exclusive end
-    }.toList()
+private fun findMatchIndices(
+    input: String,
+    pattern: String,
+    ignoreCase: Boolean = true,
+    findFirstOnly: Boolean = true,
+    exactMatch: Boolean = false,
+): List<Pair<Int, Int>> {
+    val adjustedPattern = if (exactMatch) {
+        "$pattern\\b" // Add word boundaries for exact match
+    } else {
+        pattern
+    }
+
+    val regex = if (ignoreCase) {
+        Regex(adjustedPattern, RegexOption.IGNORE_CASE)
+    } else {
+        Regex(adjustedPattern)
+    }
+
+    return if (findFirstOnly) {
+        // Find the first match only
+        regex.find(input)?.let { matchResult ->
+            listOf(matchResult.range.first to matchResult.range.last + 1) // +1 for exclusive end
+        } ?: emptyList()
+    } else {
+        // Find all matches
+        regex.findAll(input).map { matchResult ->
+            matchResult.range.first to matchResult.range.last + 1
+        }.toList()
+    }
 }
 
 private fun getTrimmedText(
     text: String,
     textLayoutResult: TextLayoutResult,
-    visiblePreviewLines: Int
+    visiblePreviewLines: Int,
 ): String {
     return if (textLayoutResult.lineCount >= visiblePreviewLines) {
         val startIndex = textLayoutResult.getLineStart(visiblePreviewLines - 1)
@@ -230,9 +308,9 @@ private fun getTrimmedText(
         }
 
         if (newText.endsWith("\n")) {
-            newText.replaceRange(endIndex - 1, endIndex, "")
-        } else {
             newText
+        } else {
+            newText + "\n"
         }
     } else {
         text
@@ -240,6 +318,7 @@ private fun getTrimmedText(
 }
 
 private const val readMore = "See more"
+const val EXPANDABLE_TEXT_MAX_LINES = 8
 
 @Preview(showBackground = true)
 @Composable
@@ -248,7 +327,29 @@ fun AmityExpandableTextPreview() {
         text = "www.google.com Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur neque urna, malesuada sit amet mattis sit amet, fringilla vitae eros. Phasellus tristique dolor ut nulla tincidunt sollicitudin. Sed eu bibendum nibh. Cras sed ligula nunc. Fusce mollis hendrerit erat, in tempus nisl rhoncus nec. Vivamus vel dictum lectus. Sed suscipit ante sit amet nulla hendrerit, at tincidunt odio suscipit. Nam cursus malesuada eros, et aliquet sem. Quisque ligula nunc, aliquet sit amet scelerisque eleifend, cursus ut nisl. Sed condimentum eleifend sollicitudin. Nam nec magna egestas, ullamcorper diam in, eleifend justo. Quisque aliquam elit sollicitudin, viverra ex non, ultrices erat. Morbi fermentum, turpis et accumsan ultrices, felis metus posuere sem, at feugiat mi velit quis risus.",
         mentionGetter = AmityMentionMetadataGetter(JsonObject()),
         mentionees = emptyList(),
-        style = AmityTheme.typography.bodyLegacy,
+        style = AmityTheme.typography.body,
         onClick = {}
     )
+}
+
+
+class HashtagMetadataGetter constructor(private val metadata: JsonObject) {
+
+    fun getHashtags(): List<AmityHashtag> {
+        return try {
+            metadata.getAsJsonArray("hashtags")
+        } catch (e: Exception) {
+            // Return null if no hashtags are found or if the metadata is malformed
+            null
+        }?.let { hashtags ->
+            try {
+                hashtags.map {
+                    Gson().fromJson(it, AmityHashtag::class.java)
+                }
+            } catch (e: Exception) {
+                // If parsing fails, return an empty list
+                emptyList()
+            }
+        } ?: emptyList()
+    }
 }

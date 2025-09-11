@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -90,6 +91,8 @@ fun AmitySocialHomePage(
                         AmitySocialHomePageTab.MY_COMMUNITIES ->
                             behavior.goToMyCommunitiesSearchPage(context)
 
+                        AmitySocialHomePageTab.CLIPS -> behavior.goToClipsFeedPage(context)
+
                     }
                 },
                 isSeen = if (notiTraySeen != null) notiTraySeen?.isSeen() == true else true,
@@ -139,6 +142,21 @@ fun AmitySocialHomePage(
                             scrollScope.launch {
                                 pagerState.scrollToPage(1)
                             }
+                        }
+                    }
+                }
+                item {
+                    AmityBaseElement(
+                        pageScope = getPageScope(),
+                        elementId = "clipsfeed_button"
+                    ) {
+                        AmitySocialHomeTabButton(
+                            title = getConfig().getText(),
+                            item = AmitySocialHomePageTab.CLIPS,
+                            isSelected = selectedTab == AmitySocialHomePageTab.CLIPS,
+                            modifier = modifier.testTag(getAccessibilityId()),
+                        ) {
+                            behavior.goToClipsFeedPage(context)
                         }
                     }
                 }

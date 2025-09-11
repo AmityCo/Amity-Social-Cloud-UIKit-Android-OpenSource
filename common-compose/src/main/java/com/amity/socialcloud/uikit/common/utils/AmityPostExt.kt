@@ -8,6 +8,7 @@ fun AmityPost.isSupportedDataTypes(): Boolean {
         return data is AmityPost.Data.TEXT
                 || data is AmityPost.Data.IMAGE
                 || data is AmityPost.Data.VIDEO
+                || data is AmityPost.Data.CLIP
                 || data is AmityPost.Data.LIVE_STREAM
                 || data is AmityPost.Data.POLL
     }

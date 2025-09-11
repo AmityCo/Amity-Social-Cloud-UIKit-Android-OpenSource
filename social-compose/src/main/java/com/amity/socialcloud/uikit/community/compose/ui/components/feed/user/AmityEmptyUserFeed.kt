@@ -33,6 +33,7 @@ fun AmityEmptyUserFeed(
             AmityUserFeedType.POST -> "empty_user_feed"
             AmityUserFeedType.IMAGE -> "empty_user_image_feed"
             AmityUserFeedType.VIDEO -> "empty_user_video_feed"
+            AmityUserFeedType.CLIP -> "empty_clip_feed"
         }
     }
 

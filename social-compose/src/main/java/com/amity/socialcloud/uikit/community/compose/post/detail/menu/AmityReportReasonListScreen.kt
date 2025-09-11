@@ -5,12 +5,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -52,7 +55,7 @@ fun AmityReportReasonListScreen(
 
     // Report post screen
     Column(
-        modifier = modifier
+        modifier = modifier.fillMaxHeight()
     ) {
         // Header
         Box(
@@ -88,53 +91,68 @@ fun AmityReportReasonListScreen(
             color = AmityTheme.colors.baseShade4,
         )
 
-        // Description
-        Text(
-            text = stringResource(string.amity_report_list_screen_description),
-            style = AmityTheme.typography.body,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .padding(vertical = 12.dp),
-            color = AmityTheme.colors.baseShade1
-        )
 
-        AmityReportReasonSelection(
-            selectedReason = selectedReason,
-            radioButtonEnable = isButtonEnabled,
-            onReasonSelected = onReasonSelected
-        )
 
-        Row(
+        // Scrollable content area
+        LazyColumn(
             modifier = Modifier
+                .weight(1f)
                 .fillMaxWidth()
-                .height(56.dp)
-                .padding(horizontal = 16.dp)
-                .clickableWithoutRipple {
-                    onOtherClick()
-                },
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
-                text = "Others",
-                style = AmityTheme.typography.bodyBold,
-                modifier = Modifier,
-                color = AmityTheme.colors.base
-            )
+            item {
+                // Description
+                Text(
+                    text = stringResource(string.amity_report_list_screen_description),
+                    style = AmityTheme.typography.body,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .padding(vertical = 12.dp),
+                    color = AmityTheme.colors.baseShade1
+                )
+            }
+            // Report reason selection items
+            item {
+                AmityReportReasonSelection(
+                    selectedReason = selectedReason,
+                    radioButtonEnable = isButtonEnabled,
+                    onReasonSelected = onReasonSelected
+                )
+            }
 
-            Icon(
-                painterResource(R.drawable.amity_ic_chevron_right),
-                tint = AmityTheme.colors.base,
-                contentDescription = null,
-                modifier = Modifier
-                    .width(24.dp)
-                    .height(18.dp)
-            )
+            // Others option
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                        .padding(horizontal = 16.dp)
+                        .clickableWithoutRipple {
+                            onOtherClick()
+                        },
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "Others",
+                        style = AmityTheme.typography.bodyBold,
+                        modifier = Modifier,
+                        color = AmityTheme.colors.base
+                    )
+
+                    Icon(
+                        painterResource(R.drawable.amity_ic_chevron_right),
+                        tint = AmityTheme.colors.base,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .width(24.dp)
+                            .height(18.dp)
+                    )
+                }
+            }
         }
 
-        Spacer(Modifier.weight(1f))
-
+        // Fixed bottom section
         HorizontalDivider(
             color = AmityTheme.colors.baseShade4,
         )

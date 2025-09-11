@@ -34,6 +34,7 @@ fun AmityBlockedUserFeed(
             AmityUserFeedType.POST -> "blocked_user_feed"
             AmityUserFeedType.IMAGE -> "blocked_user_image_feed"
             AmityUserFeedType.VIDEO -> "blocked_user_video_feed"
+            AmityUserFeedType.CLIP -> "blocked_user_video_feed" //TODO handle clip feed
         }
     }
 

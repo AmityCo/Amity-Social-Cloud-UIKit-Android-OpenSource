@@ -28,6 +28,8 @@ class AmityPollPostComposerPageActivity : AppCompatActivity() {
         val targetCommunity =
             intent.getParcelableExtra(EXTRA_PARAM_TARGET_COMMUNITY) as AmityCommunity?
 
+        val pollType = intent.getStringExtra(EXTRA_PARAM_POLL_TYPE) ?: "text"
+
         setContent {
             AmityPollPostComposerPage(
                 modifier = Modifier
@@ -35,8 +37,8 @@ class AmityPollPostComposerPageActivity : AppCompatActivity() {
                     .systemBarsPadding(),
                 targetId = targetId,
                 targetType = targetType,
-                targetCommunity = targetCommunity
-
+                targetCommunity = targetCommunity,
+                type = pollType,
             )
         }
     }
@@ -46,12 +48,14 @@ class AmityPollPostComposerPageActivity : AppCompatActivity() {
         private const val EXTRA_PARAM_TARGET_ID = "target_id"
         private const val EXTRA_PARAM_TARGET_TYPE = "target_type"
         private const val EXTRA_PARAM_TARGET_COMMUNITY = "target_community"
+        private const val EXTRA_PARAM_POLL_TYPE = "poll_type"
 
         fun newIntent(
             context: Context,
             targetId: String,
             targetType: AmityPost.TargetType,
             community: AmityCommunity? = null,
+            pollType: String
         ): Intent {
             return Intent(
                 context,
@@ -60,6 +64,7 @@ class AmityPollPostComposerPageActivity : AppCompatActivity() {
                 putExtra(EXTRA_PARAM_TARGET_ID, targetId)
                 putExtra(EXTRA_PARAM_TARGET_TYPE, targetType)
                 putExtra(EXTRA_PARAM_TARGET_COMMUNITY, community)
+                putExtra(EXTRA_PARAM_POLL_TYPE, pollType)
             }
         }
     }

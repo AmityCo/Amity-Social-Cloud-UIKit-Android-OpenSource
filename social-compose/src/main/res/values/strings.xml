@@ -15,21 +15,21 @@
     <string name="amity_delete_comment">Delete Comment</string>
     <string name="amity_comment_deleted_toast_message">Comment deleted</string>
     <string name="amity_edit_comment">Edit Comment</string>
-    <string name="amity_report_comment">Report comment</string>
-    <string name="amity_unreport_comment">Unreport comment</string>
-    <string name="amity_unreport_reply">Unreport reply</string>
-    <string name="amity_comment_reported_toast_message">Comment reported</string>
+    <string name="amity_report_comment">Report comment.</string>
+    <string name="amity_unreport_comment">Unreport comment.</string>
+    <string name="amity_unreport_reply">Unreport reply.</string>
+    <string name="amity_comment_reported_toast_message">Comment reported.</string>
     <string name="amity_comment_reported_failed_toast_message">Failed to report comment. Please try again.</string>
-    <string name="amity_comment_unreported_toast_message">Comment unreported</string>
+    <string name="amity_comment_unreported_toast_message">Comment unreported.</string>
     <string name="amity_comment_unreported_failed_toast_message">Failed to unreport comment. Please try again.</string>
     <string name="amity_undo_report">Undo Report</string>
     <string name="amity_edit_reply">Edit reply</string>
     <string name="amity_delete_reply">Delete reply</string>
     <string name="amity_report_reply_v4">Report reply</string>
     <string name="amity_reply_deleted_message">This reply has been deleted</string>
-    <string name="amity_reply_reported_toast_message">Reply reported</string>
+    <string name="amity_reply_reported_toast_message">Reply reported.</string>
     <string name="amity_reply_reported_failed_toast_message">Failed to report reply. Please try again.</string>
-    <string name="amity_reply_unreported_toast_message">Reply unreported</string>
+    <string name="amity_reply_unreported_toast_message">Reply unreported.</string>
     <string name="amity_reply_unreported_failed_toast_message">Failed to unreport reply. Please try again.</string>
     <string name="amity_comment_deleted_message">This comment has been deleted</string>
     <string name="amity_comment_delete_failed_toast_message">Failed to delete comment. Please try again.</string>
@@ -65,6 +65,20 @@
     <string name="amity_v4_delete_post_warning_message">This post will be permanently deleted.</string>
     <string name="amity_delete_post_warning_message">This post will be permanently deleted. You’ll no longer to see and find this post.</string>
 
+    <string name="amity_delete_story_title">Delete story?</string>
+    <string name="amity_delete_story_warning_message">The story will be permanently deleted. It cannot be undone.</string>
+
+    <string name="amity_delete_story_success">Story deleted</string>
+    <string name="amity_delete_story_fail">Failed to delete story</string>
+
+    <string name="amity_deleted_post_dialog_title">This post has been deleted.</string>
+    <string name="amity_deleted_user_dialog_title">This user has been deleted.</string>
+    <string name="amity_deleted_group_dialog_title">This group has been deleted.</string>
+    <string name="amity_invalid_user_dialog_title">This user is invalid.</string>
+    <string name="amity_invalid_post_dialog_title">This post is invalid.</string>
+    <string name="amity_invalid_group_dialog_title">This group is invalid.</string>
+
+
     <string name="amity_post_to">Post to</string>
     <string name="amity_story_to">Story to</string>
 
@@ -75,6 +89,7 @@
     <string name="amity_post_text_exceed_error_message">Your post wasn\'t posted because it exceeds the %1$d characters limit</string>
     <string name="amity_post_create_generic_error_message">Failed to create post. Please try again.</string>
     <string name="amity_post_edit_generic_error_message">Failed to edit post. Please try again.</string>
+
 
     <!-- Alt text-->
     <string name="amity_image_add_alt_text_generic_error_message">Failed to add alt text. Please try again.</string>
@@ -157,6 +172,10 @@
     <!--general community related pages dialog-->
     <string name="amity_v4_community_dialog_leave_title">Leave without finishing</string>
     <string name="amity_v4_community_dialog_leave_description">Your changes that you made may not be saved.</string>
+
+    <string name="amity_v4_user_profile_feed_option_all">Public community \&amp; profile posts</string>
+    <string name="amity_v4_user_profile_feed_option_community">Public community posts</string>
+    <string name="amity_v4_user_profile_feed_option_user">Profile posts</string>
 
     <!--create livestream pages-->
     <string name="amity_v4_create_livestream_target_title">Live on</string>

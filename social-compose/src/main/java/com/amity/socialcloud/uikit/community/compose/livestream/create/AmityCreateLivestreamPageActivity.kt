@@ -12,8 +12,6 @@ import com.amity.socialcloud.sdk.model.social.post.AmityPost
 class AmityCreateLivestreamPageActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        enableEdgeToEdge()
-//        WindowCompat.setDecorFitsSystemWindows(window, false)
 
         val targetId = intent.getStringExtra(EXTRA_PARAM_TARGET_ID) ?: ""
         val targetType =

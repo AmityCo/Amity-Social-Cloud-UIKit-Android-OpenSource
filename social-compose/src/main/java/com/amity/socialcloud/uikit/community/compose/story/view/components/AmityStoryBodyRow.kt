@@ -57,6 +57,7 @@ fun AmityStoryBodyRow(
     onSwipeUp: () -> Unit,
     onSwipeDown: () -> Unit,
     onHyperlinkClick: () -> Unit = {},
+    shouldShowVideoPlayer: Boolean = true,
 ) {
     Box(
         modifier = modifier
@@ -73,11 +74,15 @@ fun AmityStoryBodyRow(
             }
 
             AmityStory.DataType.VIDEO -> {
-                AmityStoryBodyVideoView(
-                    exoPlayer = exoPlayer,
-                    isVisible = isVisible,
-                    modifier = modifier.testTag("video_view"),
-                )
+                if (shouldShowVideoPlayer) {
+                    AmityStoryBodyVideoView(
+                        exoPlayer = exoPlayer,
+                        isVisible = isVisible,
+                        modifier = modifier.testTag("video_view"),
+                    )
+                } else {
+                    // hide when not need to show
+                }
             }
 
             AmityStory.DataType.UNKNOWN -> {}

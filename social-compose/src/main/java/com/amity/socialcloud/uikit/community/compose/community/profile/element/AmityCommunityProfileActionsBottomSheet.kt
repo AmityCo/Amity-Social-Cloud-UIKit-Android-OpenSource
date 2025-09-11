@@ -24,6 +24,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageBehavior
+import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostTargetType
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
@@ -35,6 +36,7 @@ fun AmityCommunityProfileActionsBottomSheet(
     shouldShow: Boolean,
     shouldShowPostCreationButton: Boolean,
     shouldShowStoryCreationButton: Boolean,
+    showPollTypeSelectionSheet: () -> Unit = {},
     onDismiss: () -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState()
@@ -47,16 +49,19 @@ fun AmityCommunityProfileActionsBottomSheet(
             },
             sheetState = sheetState,
             containerColor = AmityTheme.colors.background,
-            modifier = modifier.semantics {
+            modifier = Modifier.semantics {
                 testTagsAsResourceId = true
             }
         ) {
             AmityCommunityProfileActionsContainer(
-                modifier = modifier,
+                modifier = Modifier,
                 componentScope = componentScope,
                 community = community,
                 shouldShowPostCreationButton = shouldShowPostCreationButton,
                 shouldShowStoryCreationButton = shouldShowStoryCreationButton,
+                showPollTypeSelectionSheet = {
+                    showPollTypeSelectionSheet()
+                }
             ) {
                 scope.launch {
                     sheetState.hide()
@@ -77,6 +82,7 @@ fun AmityCommunityProfileActionsContainer(
     community: AmityCommunity,
     shouldShowPostCreationButton: Boolean,
     shouldShowStoryCreationButton: Boolean,
+    showPollTypeSelectionSheet: () -> Unit = {},
     onDismiss: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -86,7 +92,7 @@ fun AmityCommunityProfileActionsContainer(
         elementId = "community_profile_actions"
     ) {
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .background(AmityTheme.colors.background)
                 .padding(start = 16.dp, end = 16.dp, bottom = 20.dp)
         ) {
@@ -115,6 +121,34 @@ fun AmityCommunityProfileActionsContainer(
                 }
             }
 
+            if (shouldShowPostCreationButton) {
+                AmityBottomSheetActionItem(
+                    icon = R.drawable.ic_amity_ic_poll_create,
+                    text = "Poll",
+                    modifier = modifier,
+                ) {
+                    onDismiss()
+                    showPollTypeSelectionSheet()
+                }
+            }
+
+            if (shouldShowPostCreationButton) {
+                AmityBottomSheetActionItem(
+                    icon = R.drawable.ic_amity_ic_live_stream_create,
+                    text = "Live stream",
+                    modifier = modifier,
+                ) {
+                    onDismiss()
+                    behavior.goToCreateLivestreamPage(
+                        AmityCommunityProfilePageBehavior.Context(
+                            pageContext = context,
+                            activityLauncher = launcher,
+                            community = community,
+                        )
+                    )
+                }
+            }
+
             if (shouldShowStoryCreationButton) {
                 AmityBottomSheetActionItem(
                     icon = R.drawable.amity_ic_create_story_social,
@@ -134,34 +168,19 @@ fun AmityCommunityProfileActionsContainer(
 
             if (shouldShowPostCreationButton) {
                 AmityBottomSheetActionItem(
-                    icon = R.drawable.ic_amity_ic_poll_create,
-                    text = "Poll",
+                    icon = R.drawable.amity_ic_create_clip,
+                    text = "Clip",
                     modifier = modifier,
                 ) {
                     onDismiss()
-                    behavior.goToCreatePollPage(
-                        AmityCommunityProfilePageBehavior.Context(
+                    behavior.goToClipPostComposerPage(
+                        context = AmityCommunityProfilePageBehavior.Context(
                             pageContext = context,
                             activityLauncher = launcher,
                             community = community,
-                        )
-                    )
-                }
-            }
-
-            if (shouldShowPostCreationButton) {
-                AmityBottomSheetActionItem(
-                    icon = R.drawable.ic_amity_ic_live_stream_create,
-                    text = "Live stream",
-                    modifier = modifier,
-                ) {
-                    onDismiss()
-                    behavior.goToCreateLivestreamPage(
-                        AmityCommunityProfilePageBehavior.Context(
-                            pageContext = context,
-                            activityLauncher = launcher,
-                            community = community,
-                        )
+                        ),
+                        targetId = community.getCommunityId(),
+                        targetType = AmityPostTargetType.COMMUNITY,
                     )
                 }
             }

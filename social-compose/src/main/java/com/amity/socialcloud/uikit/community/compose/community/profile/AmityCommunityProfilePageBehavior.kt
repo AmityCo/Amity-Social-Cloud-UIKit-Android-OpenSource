@@ -2,11 +2,16 @@ package com.amity.socialcloud.uikit.community.compose.community.profile
 
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
+import androidx.paging.PagingData
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.uikit.common.behavior.AmityBaseBehavior
 import com.amity.socialcloud.uikit.common.behavior.AmityBaseBehaviorContext
+import com.amity.socialcloud.uikit.community.compose.clip.create.AmityCreateClipPageActivity
+import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipFeedPageActivity
+import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipFeedPageType
+import com.amity.socialcloud.uikit.community.compose.clip.view.util.SharedClipFeedStore
 import com.amity.socialcloud.uikit.community.compose.community.membership.list.AmityCommunityMembershipPageActivity
 import com.amity.socialcloud.uikit.community.compose.community.pending.AmityPendingPostsPageActivity
 import com.amity.socialcloud.uikit.community.compose.community.pending.AmityPendingRequestPageActivity
@@ -19,6 +24,7 @@ import com.amity.socialcloud.uikit.community.compose.post.composer.poll.AmityPol
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostCategory
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetailPageActivity
 import com.amity.socialcloud.uikit.community.compose.story.create.AmityCreateStoryPageActivity
+import kotlinx.coroutines.flow.Flow
 
 open class AmityCommunityProfilePageBehavior : AmityBaseBehavior() {
 
@@ -84,12 +90,14 @@ open class AmityCommunityProfilePageBehavior : AmityBaseBehavior() {
 
     open fun goToCreatePollPage(
         context: Context,
+        pollType: String,
     ) {
         val intent = AmityPollPostComposerPageActivity.newIntent(
             context = context.pageContext,
             targetId = context.community?.getCommunityId()!!,
             targetType = AmityPost.TargetType.COMMUNITY,
             community = context.community,
+            pollType = pollType
         )
         context.pageContext.startActivity(intent)
     }
@@ -102,6 +110,46 @@ open class AmityCommunityProfilePageBehavior : AmityBaseBehavior() {
             targetId = context.community?.getCommunityId()!!,
             targetType = AmityPost.TargetType.COMMUNITY,
             community = context.community,
+        )
+        context.pageContext.startActivity(intent)
+    }
+
+    open fun goToClipPostComposerPage(
+        context: Context,
+        targetId: String,
+        targetType: AmityPostTargetType,
+    ) {
+        val intent = AmityCreateClipPageActivity.newIntent(
+            context = context.pageContext,
+            targetId = targetId,
+            targetType = targetType,
+        )
+        context.activityLauncher?.launch(intent)
+    }
+
+    open fun goToClipFeedPage(
+        context: Context,
+        postId: String,
+        communityId: String,
+        clipPagingData: Flow<PagingData<AmityPost>>? = null,
+        selectedIndex: Int? = null,
+        type: AmityClipFeedPageType,
+    ) {
+        clipPagingData?.let { clipPage ->
+            selectedIndex?.let { index ->
+                // Store the shared data for community
+                SharedClipFeedStore.setClipPagingData(
+                    feedId = communityId,
+                    feedType = "community",
+                    pagingData = clipPage,
+                    selectedIndex = index
+                )
+            }
+        }
+
+        val intent = AmityClipFeedPageActivity.newIntent(
+            context = context.pageContext,
+            type = type
         )
         context.pageContext.startActivity(intent)
     }

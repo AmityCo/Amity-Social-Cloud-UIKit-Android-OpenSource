@@ -237,6 +237,7 @@ fun AmityNotificationTrayPage(
                                                 var commentId: String? = null
                                                 var parentId: String? = null
                                                 var communityId: String? = null
+                                                var userId: String? = null
 
                                                 if (listItem.item.getTargetType() == "community") {
                                                     communityId = listItem.item.getTargetId()
@@ -318,6 +319,21 @@ fun AmityNotificationTrayPage(
                                                             }
                                                         }
                                                     }
+
+                                                    "follow" -> {
+                                                        when (listItem.item.getTrayItemCategory()) {
+                                                            "follow" -> {
+                                                                listItem.item.getUsers()
+                                                                    ?.firstOrNull()?.let {
+                                                                    userId = it.getUserId()
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+
+                                                    else -> {
+                                                        // Handle other action types if needed
+                                                    }
                                                 }
 
                                                 if (postId == null && communityId != null) {
@@ -326,10 +342,15 @@ fun AmityNotificationTrayPage(
                                                         communityId = listItem.item.getTargetId()
                                                     )
                                                 } else {
-                                                    postId?.let {
+                                                    userId?.let { uId ->
+                                                        behavior.goToUserProfilePage(
+                                                            context = context,
+                                                            userId = uId
+                                                        )
+                                                    } ?: postId?.let { pId ->
                                                         behavior.goToPostDetailPage(
                                                             context = context,
-                                                            postId = postId,
+                                                            postId = pId,
                                                             commentId = commentId,
                                                             parentId = parentId,
                                                         )

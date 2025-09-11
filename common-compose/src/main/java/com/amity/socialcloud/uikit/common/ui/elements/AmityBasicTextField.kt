@@ -30,6 +30,7 @@ fun AmityBasicTextField(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     readOnly: Boolean = false,
+    maxChar: Int = Int.MAX_VALUE,
     textStyle: TextStyle = LocalTextStyle.current,
     label: @Composable (() -> Unit)? = null,
     placeholder: @Composable (() -> Unit)? = null,
@@ -68,7 +69,15 @@ fun AmityBasicTextField(
                 minWidth = minWidth,
                 minHeight = minHeight
             ),
-        onValueChange = onValueChange,
+        onValueChange = { newChar ->
+            if (newChar.text.length <= maxChar) {
+                onValueChange(newChar)
+            } else {
+                onValueChange(
+                    newChar.copy(text = newChar.text.substring(0, maxChar))
+                )
+            }
+        },
         enabled = enabled,
         readOnly = readOnly,
         textStyle = mergedTextStyle,

@@ -2,6 +2,7 @@ package com.amity.socialcloud.uikit.community.compose.paging.feed.user
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -9,22 +10,30 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
+import kotlinx.coroutines.delay
 import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityMediaPostShimmer
 import com.amity.socialcloud.uikit.community.compose.ui.components.feed.AmityProfileVideoFeedItem
+import com.amity.socialcloud.uikit.community.compose.ui.components.feed.AmityVideoFeedContainer
 import com.amity.socialcloud.uikit.community.compose.ui.components.feed.user.AmityBlockedUserFeed
 import com.amity.socialcloud.uikit.community.compose.ui.components.feed.user.AmityEmptyUserFeed
 import com.amity.socialcloud.uikit.community.compose.ui.components.feed.user.AmityPrivateUserFeed
 import com.amity.socialcloud.uikit.community.compose.ui.components.feed.user.AmityUnknownUserFeed
 import com.amity.socialcloud.uikit.community.compose.ui.components.feed.user.AmityUserFeedType
 import com.amity.socialcloud.uikit.community.compose.user.profile.AmityUserProfilePageViewModel.PostListState
+import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostCategory
 
 
 fun LazyListScope.amityUserVideoFeedLLS(
@@ -33,6 +42,7 @@ fun LazyListScope.amityUserVideoFeedLLS(
     videoPosts: LazyPagingItems<AmityPost>,
     postListState: PostListState,
     isBlockedByMe: Boolean,
+    onViewPost: ((String, AmityPostCategory) -> Unit)? = null,
 ) {
     if (isBlockedByMe) {
         item {
@@ -108,56 +118,88 @@ fun LazyListScope.amityUserVideoFeedLLS(
             }
 
             PostListState.SUCCESS -> {
-                item { Spacer(modifier.height(12.dp)) }
-                /*  count calculation logic
-                 *  showing 2 items in a row
-                 *  check if the item count is even or odd
-                 *  if even, show 2 items in a row
-                 *  if odd, show last item in a new row
-                 */
-                items(
-                    count = videoPosts.itemCount / 2 + videoPosts.itemCount % 2,
-                    key = { "video_${videoPosts[it]?.getPostId() ?: it}" }
-                ) { index ->
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 2.dp)
-                            .aspectRatio(2f)
-                    ) {
-                        val isFirstVideoIndexValid =
-                            index * 2 < videoPosts.itemCount && index >= 0
+                item {
+                    // Debounced availablePostIds to prevent excessive updates
+                    var debouncedAvailablePostIds by remember { mutableStateOf(emptySet<String>()) }
+                    
+                    // Calculate current post IDs
+                    val currentPostIds = (0 until videoPosts.itemCount).mapNotNull { index ->
+                        videoPosts[index]?.getPostId()
+                    }.toSet()
+                    
+                    // Debounce the updates with a 300ms delay
+                    LaunchedEffect(currentPostIds) {
+                        delay(300) // Wait 300ms before updating
+                        debouncedAvailablePostIds = currentPostIds
+                    }
+                    
+                    AmityVideoFeedContainer(
+                        availablePostIds = debouncedAvailablePostIds
+                    ) { openDialog ->
+                        Column {
+                            Spacer(modifier.height(12.dp))
+                            
+                            /*  count calculation logic
+                             *  showing 2 items in a row
+                             *  check if the item count is even or odd
+                             *  if even, show 2 items in a row
+                             *  if odd, show last item in a new row
+                             */
+                            (0 until (videoPosts.itemCount / 2 + videoPosts.itemCount % 2)).forEach { index ->
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    modifier = modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 16.dp, vertical = 2.dp)
+                                        .aspectRatio(2f)
+                                ) {
+                                    val isFirstVideoIndexValid =
+                                        index * 2 < videoPosts.itemCount && index >= 0
 
-                        if (isFirstVideoIndexValid) {
-                            val firstVideo = videoPosts[index * 2]
-                            if (firstVideo == null) {
-                                Box(modifier.weight(1f))
-                            } else {
-                                AmityProfileVideoFeedItem(
-                                    modifier = modifier.weight(1f),
-                                    data = firstVideo.getData() as AmityPost.Data.VIDEO
-                                )
+                                    if (isFirstVideoIndexValid) {
+                                        val firstVideo = videoPosts[index * 2]
+                                        if (firstVideo == null) {
+                                            Box(modifier.weight(1f))
+                                        } else {
+                                            AmityProfileVideoFeedItem(
+                                                modifier = modifier.weight(1f),
+                                                data = firstVideo.getData() as AmityPost.Data.VIDEO,
+                                                postId = firstVideo.getPostId(),
+                                                parentPostId = firstVideo.getParentPostId(),
+                                                onPostClick = { postId ->
+                                                    onViewPost?.invoke(postId, AmityPostCategory.GENERAL)
+                                                },
+                                                openDialog = openDialog
+                                            )
+                                        }
+                                    } else {
+                                        Box(modifier.weight(1f))
+                                    }
+
+                                    val isSecondVideoIndexValid =
+                                        index * 2 + 1 < videoPosts.itemCount && index >= 0
+
+                                    if (isSecondVideoIndexValid) {
+                                        val secondVideo = videoPosts.peek(index * 2 + 1)
+                                        if (secondVideo == null) {
+                                            Box(modifier = modifier.weight(1f))
+                                        } else {
+                                            AmityProfileVideoFeedItem(
+                                                modifier = modifier.weight(1f),
+                                                data = secondVideo.getData() as AmityPost.Data.VIDEO,
+                                                postId = secondVideo.getPostId(),
+                                                parentPostId = secondVideo.getParentPostId(),
+                                                onPostClick = { postId ->
+                                                    onViewPost?.invoke(postId, AmityPostCategory.GENERAL)
+                                                },
+                                                openDialog = openDialog
+                                            )
+                                        }
+                                    } else {
+                                        Box(modifier = modifier.weight(1f))
+                                    }
+                                }
                             }
-                        } else {
-                            Box(modifier.weight(1f))
-                        }
-
-                        val isSecondVideoIndexValid =
-                            index * 2 + 1 < videoPosts.itemCount && index >= 0
-
-                        if (isSecondVideoIndexValid) {
-                            val secondVideo = videoPosts.peek(index * 2 + 1)
-                            if (secondVideo == null) {
-                                Box(modifier = modifier.weight(1f))
-                            } else {
-                                AmityProfileVideoFeedItem(
-                                    modifier = modifier.weight(1f),
-                                    data = secondVideo.getData() as AmityPost.Data.VIDEO
-                                )
-                            }
-                        } else {
-                            Box(modifier = modifier.weight(1f))
                         }
                     }
                 }

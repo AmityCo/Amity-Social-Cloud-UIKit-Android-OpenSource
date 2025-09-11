@@ -24,7 +24,7 @@ fun AmityUserListShimmer(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
-        repeat(12) {
+        repeat(3) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier

@@ -20,8 +20,9 @@ class AmityNotificationTrayPageBehaviorSample {
             category: AmityPostCategory,
             commentId: String?,
             parentId: String?,
+            replyTo: String?,
         ) {
-            super.goToPostDetailPage(context, postId, category, commentId, parentId)
+            super.goToPostDetailPage(context, postId, category, commentId, parentId, replyTo)
         }
 
         override fun goToCommunityProfilePage(

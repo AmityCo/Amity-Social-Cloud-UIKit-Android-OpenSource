@@ -14,7 +14,9 @@ import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import com.amity.socialcloud.uikit.common.utils.AmityConstants
+import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetailPageViewModel.ReactionAction
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlinx.coroutines.Dispatchers
@@ -57,8 +59,12 @@ class AmityClipFeedPageViewModel : AmityBaseViewModel() {
     }
     val sheetUIState get() = _sheetUIState
 
-    private val changeReactionSubject: PublishSubject<Pair<String, Boolean>> =
+    private val changeReactionSubject: PublishSubject<ReactionAction> =
         PublishSubject.create()
+
+    init {
+        observeReactionChange()
+    }
 
     fun queryClipOnGlobalFeed() {
         addDisposable(
@@ -241,60 +247,88 @@ class AmityClipFeedPageViewModel : AmityBaseViewModel() {
         }
     }
 
-    fun changeReaction(postId: String, isReacted: Boolean) {
-        changeReactionSubject.onNext(postId to isReacted)
-        observeReactionChange()
+    fun changeReaction(
+        postId: String,
+        reactionName: String,
+        isReacted: Boolean,
+        onSuccess: () -> Unit = {},
+        onError: (Throwable) -> Unit = {},
+    ) {
+        ReactionAction(
+            postId = postId,
+            reactionName = reactionName,
+            isReacted = isReacted,
+            onSuccess = onSuccess,
+            onError = onError
+        ).let(changeReactionSubject::onNext)
     }
 
-    fun observeReactionChange() {
-        changeReactionSubject.debounce(1000, TimeUnit.MILLISECONDS)
-            .doOnNext { (postId, isReacted) ->
-                if (isReacted) {
-                    addReaction(postId)
+    private fun observeReactionChange() {
+        changeReactionSubject
+            .throttleLatest(1000, TimeUnit.MILLISECONDS)
+            .flatMapCompletable { action ->
+                if (action.isReacted) {
+                    addReaction(
+                        postId = action.postId,
+                        reaction = action.reactionName
+                    )
                 } else {
-                    removeReaction(postId)
+                    removeReaction(
+                        postId = action.postId,
+                        reaction = action.reactionName
+                    )
                 }
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnComplete {
+                        action.onSuccess()
+                    }
+                    .doOnError { error ->
+                        action.onError(error)
+                    }
+                    .onErrorComplete()
             }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
             .subscribe()
             .let(compositeDisposable::add)
     }
 
-    private fun addReaction(postId: String) {
-        addDisposable(
-            AmityCoreClient.newReactionRepository()
-                .addReaction(AmityReactionReferenceType.POST, referenceId = postId,AmityConstants.POST_REACTION)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnError { error ->
-                    if (error is AmityException && error.code ==  AmityError.ITEM_NOT_FOUND.code) {
-                        _isError.update {
-                            println("Popp Error adding reaction: ${error.code}")
-                            error.code.toString()
-                        }
-                    }
-                }
-                .subscribe()
-        )
+    private fun addReaction(postId: String, reaction: String): Completable {
+        return AmityCoreClient.newReactionRepository()
+            .addReaction(AmityReactionReferenceType.POST, postId, reaction)
     }
 
-    private fun removeReaction(postId: String) {
-        addDisposable(
-            AmityCoreClient.newReactionRepository()
-                .removeReaction(AmityReactionReferenceType.POST, referenceId = postId,AmityConstants.POST_REACTION)
+    fun switchReaction(
+        postId: String,
+        reaction: String,
+        previousReaction: String,
+        onSuccess: () -> Unit = {},
+        onError: (Throwable) -> Unit = {},
+    ) {
+        AmityCoreClient.newReactionRepository().let { repository ->
+            repository
+                .removeReaction(AmityReactionReferenceType.POST, postId, previousReaction)
+                .andThen(
+                    Completable.defer { repository.addReaction(AmityReactionReferenceType.POST, postId, reaction) }
+                        .delay(2000, TimeUnit.MILLISECONDS) // Adding a delay to prevent rapid reaction changes
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doOnComplete {
+                            onSuccess()
+                        }
+                        .doOnError { error ->
+                            onError(error)
+                        }
+                )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnError { error ->
-                    if (error is AmityException && error.code ==  AmityError.ITEM_NOT_FOUND.code) {
-                        _isError.update {
-                            println("Popp Error removing reaction: ${error.code}")
-                            error.code.toString()
-                        }
-                    }
-                }
                 .subscribe()
-        )
+                .let(compositeDisposable::add)
+        }
+    }
+
+    private fun removeReaction(postId: String, reaction: String): Completable {
+        return AmityCoreClient.newReactionRepository()
+            .removeReaction(AmityReactionReferenceType.POST, postId, reaction)
     }
 
     fun updateSheetUIState(sheetUiState: AmityClipModalSheetUIState) {
@@ -308,7 +342,7 @@ class AmityClipFeedPageViewModel : AmityBaseViewModel() {
 sealed class AmityClipModalSheetUIState {
 
     data class OpenClipMenuSheet(
-        val postId: String,
+        val post: AmityPost,
     ) : AmityClipModalSheetUIState()
 
     data class OpenCommentTraySheet(

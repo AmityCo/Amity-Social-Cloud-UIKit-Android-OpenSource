@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.SpanStyle
@@ -26,6 +27,7 @@ fun AmityAnnotatedText(
     mentionGetter: AmityMentionMetadataGetter,
     mentionees: List<AmityMentionee>,
     style: TextStyle = AmityTheme.typography.bodyLegacy,
+    highlightColor: Color = AmityTheme.colors.highlight,
     onLongPress: () -> Unit = {},
 ) {
     val uriHandler = LocalUriHandler.current
@@ -38,7 +40,7 @@ fun AmityAnnotatedText(
                 val start = mentionItem.getIndex()
                 val end = mentionItem.getIndex().plus(mentionItem.getLength()).inc()
                 addStyle(
-                    style = SpanStyle(AmityTheme.colors.highlight),
+                    style = SpanStyle(highlightColor),
                     start = start,
                     end = end,
                 )
@@ -54,7 +56,7 @@ fun AmityAnnotatedText(
             val start = mentionItem.getIndex()
             val end = mentionItem.getIndex().plus(mentionItem.getLength()).inc()
             addStyle(
-                style = SpanStyle(AmityTheme.colors.highlight),
+                style = SpanStyle(highlightColor),
                 start = start,
                 end = end,
             )
@@ -67,7 +69,7 @@ fun AmityAnnotatedText(
         }
         text.extractUrls().forEach {
             addStyle(
-                style = SpanStyle(color = AmityTheme.colors.highlight, textDecoration = TextDecoration.Underline),
+                style = SpanStyle(color = highlightColor, textDecoration = TextDecoration.Underline),
                 start = it.start,
                 end = it.end,
             )

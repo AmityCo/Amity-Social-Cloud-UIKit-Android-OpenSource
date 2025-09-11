@@ -3,12 +3,20 @@ package com.amity.socialcloud.uikit.community.compose.ui.components.feed
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.waterfall
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -28,6 +36,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.zIndex
+import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import coil3.compose.AsyncImagePainter
@@ -37,6 +47,8 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
+import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
+import com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem
 import com.amity.socialcloud.uikit.common.ui.elements.AmityMenuButton
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
@@ -45,10 +57,15 @@ import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostVideoPlayerHelper
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostMediaVideoPlayer
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AmityProfileVideoFeedItem(
     modifier: Modifier = Modifier,
     data: AmityPost.Data.VIDEO,
+    postId: String? = null,
+    parentPostId: String? = null,
+    onPostClick: ((String) -> Unit)? = null,
+    openDialog: ((AmityPost.Data.VIDEO, String?, onBottomSheetRequest: (() -> Unit)?) -> Unit)? = null,
 ) {
     val thumbnailUrl = remember(data) {
         data.getThumbnailImage()?.getUrl(AmityImage.Size.MEDIUM)
@@ -62,6 +79,12 @@ fun AmityProfileVideoFeedItem(
             .memoryCachePolicy(CachePolicy.ENABLED)
             .build()
     )
+
+    var showBottomSheet by remember {
+        mutableStateOf(false)
+    }
+
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     val painterState by painter.state.collectAsState()
 
@@ -79,10 +102,6 @@ fun AmityProfileVideoFeedItem(
         }
     }
 
-    var showPopupDialog by remember {
-        mutableStateOf(false)
-    }
-
     Box(
         modifier = modifier
             .aspectRatio(1f)
@@ -96,7 +115,9 @@ fun AmityProfileVideoFeedItem(
             modifier = Modifier
                 .fillMaxSize()
                 .clickableWithoutRipple {
-                    showPopupDialog = true
+                    openDialog?.invoke(data, postId) {
+                        showBottomSheet = true
+                    }
                 }
         )
 
@@ -110,7 +131,7 @@ fun AmityProfileVideoFeedItem(
 
         Text(
             text = videoDuration.formatVideoDuration(),
-            style = AmityTheme.typography.bodyLegacy.copy(
+            style = AmityTheme.typography.caption.copy(
                 color = Color.White,
             ),
             modifier = Modifier
@@ -124,18 +145,39 @@ fun AmityProfileVideoFeedItem(
         )
     }
 
-    if (showPopupDialog) {
-        AmityProfileVideoFeedItemPreviewDialog(data = data) {
-            showPopupDialog = false
+    if (showBottomSheet && parentPostId != null) {
+        ModalBottomSheet(
+            onDismissRequest = { showBottomSheet = false },
+            sheetState = sheetState,
+            containerColor = AmityTheme.colors.background,
+            contentWindowInsets = { WindowInsets.waterfall }
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 16.dp, bottom = 32.dp)
+            ) {
+                AmityBottomSheetActionItem(
+                    icon = R.drawable.amity_ic_view_post,
+                    text = "View original post",
+                    modifier = Modifier,
+                    onClick = {
+                        showBottomSheet = false
+                        parentPostId.let { onPostClick?.invoke(it) }
+                    }
+                )
+            }
         }
     }
 }
 
-@androidx.annotation.OptIn(UnstableApi::class)
+@UnstableApi
 @Composable
 fun AmityProfileVideoFeedItemPreviewDialog(
     modifier: Modifier = Modifier,
     data: AmityPost.Data.VIDEO,
+    postId: String? = null,
+    onPostClick: ((String) -> Unit)? = null,
     onDismiss: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -175,6 +217,14 @@ fun AmityProfileVideoFeedItemPreviewDialog(
         ),
     ) {
         Box(
+            Modifier
+                .height(32.dp)
+                .offset(y = (-32).dp)
+                .fillMaxWidth()
+                .background(Color.Black)
+        )
+
+        Box(
             modifier = modifier
                 .fillMaxSize()
                 .background(Color.Black)
@@ -184,19 +234,43 @@ fun AmityProfileVideoFeedItemPreviewDialog(
                 isVisible = true,
             )
 
-            AmityMenuButton(
-                icon = R.drawable.amity_ic_close2,
-                size = 32.dp,
-                iconPadding = 10.dp,
-                tint = Color.Black.copy(0.5f),
-                background = Color.White.copy(0.8f),
+            ConstraintLayout(
                 modifier = modifier
-                    .align(Alignment.TopStart)
-                    .offset(16.dp, 32.dp),
-                onClick = {
-                    onDismiss()
-                }
-            )
+                    .fillMaxWidth()
+                    .height(64.dp)
+                    .background(Color.Black.copy(alpha = 0.5f)),
+            ) {
+                val (closeBtn, menuBtn) = createRefs()
+
+                AmityMenuButton(
+                    icon = R.drawable.amity_ic_close2,
+                    size = 32.dp,
+                    iconPadding = 8.dp,
+                    modifier = Modifier
+                        .zIndex(Float.MAX_VALUE).constrainAs(closeBtn) {
+                            top.linkTo(parent.top, margin = 16.dp)
+                            start.linkTo(parent.start, margin = 16.dp)
+                        },
+                    onClick = {
+                        onDismiss()
+                    }
+                )
+
+                AmityMenuButton(
+                    icon = R.drawable.amity_ic_more_horiz,
+                    size = 32.dp,
+                    iconPadding = 2.dp,
+                    modifier = Modifier.constrainAs(menuBtn) {
+                        top.linkTo(parent.top, margin = 16.dp)
+                        end.linkTo(parent.end, margin = 16.dp)
+                    },
+                    onClick = {
+                        if (postId != null && onPostClick != null) {
+                            onPostClick(postId)
+                        }
+                    }
+                )
+            }
         }
     }
 }
