@@ -25,6 +25,7 @@ fun LazyListScope.amityCommunityFeedLLS(
     communityPosts: LazyPagingItems<AmityListItem>,
     pinPosts: LazyPagingItems<AmityPinnedPost>,
     announcementPosts: LazyPagingItems<AmityPinnedPost>,
+    onClipClick: (AmityPost) -> Unit = {},
     onClick: (AmityPost, AmityPostCategory) -> Unit,
 ) {
     items(
@@ -56,6 +57,9 @@ fun LazyListScope.amityCommunityFeedLLS(
                     category = category,
                     hideMenuButton = false,
                     hideTarget = true,
+                    onClipClick = { childPost ->
+                        onClipClick(childPost)
+                    },
                     onTapAction = {
                         onClick(post, category)
                     }

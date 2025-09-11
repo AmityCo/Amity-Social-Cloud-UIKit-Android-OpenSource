@@ -8,6 +8,7 @@
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application>
         <activity
@@ -156,6 +157,21 @@
             android:theme="@style/AmitySocialTheme" />
         <activity
             android:name=".livestream.create.AmityCreateLivestreamPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmityStoryDarkTheme" />
+        <activity
+            android:name=".clip.create.AmityCreateClipPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmityStoryDarkTheme" />
+        <activity
+            android:name=".clip.draft.AmityDraftClipPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmityStoryDarkTheme" />
+        <activity
+            android:name=".clip.view.AmityClipFeedPageActivity"
             android:configChanges="uiMode"
             android:screenOrientation="portrait"
             android:theme="@style/AmityStoryDarkTheme" />

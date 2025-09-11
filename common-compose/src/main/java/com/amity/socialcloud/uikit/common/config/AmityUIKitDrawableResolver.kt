@@ -57,6 +57,7 @@ object AmityUIKitDrawableResolver {
         "lockIcon" to R.drawable.amity_ic_lock1,
         "emptyPhotoIcon" to R.drawable.amity_ic_photo_empty,
         "emptyVideoIcon" to R.drawable.amity_ic_video_empty,
+        "emptyClipIcon" to R.drawable.amity_ic_clip_empty,
         "startLivestream" to R.drawable.amity_start_live_stream_button_enable,
         "addThumbNail" to R.drawable.amity_ic_add_thumnail,
         "switchCamera" to R.drawable.amity_v4_switch_camera_button,
@@ -64,6 +65,10 @@ object AmityUIKitDrawableResolver {
         "notificationTrayButtonIcon" to R.drawable.amity_ic_notification_tray_default,
         "notificationTrayEmptyStateIcon" to R.drawable.amity_ic_notification_tray_empty,
         "clockIcon" to R.drawable.amity_ic_clock,
+        "createClipIcon" to R.drawable.amity_ic_create_clip,
+        "muteButtonIcon" to R.drawable.amity_v4_ic_mute,
+        "unmuteButtonIcon" to R.drawable.amity_v4_ic_unmute,
+        "aspectRatioIcon" to R.drawable.amity_v4_ic_aspect_ratio,
     )
 
     @DrawableRes

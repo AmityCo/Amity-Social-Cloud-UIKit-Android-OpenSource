@@ -2,11 +2,16 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.waterfall
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,9 +19,12 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -25,6 +33,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -43,6 +52,7 @@ import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunityPostSettings
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
@@ -50,28 +60,42 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
-import com.amity.socialcloud.uikit.community.compose.community.membership.invite.AmityCommunityInviteMemberPageViewModel
+import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipFeedPageType
+import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityModalSheetUIState
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageBehavior
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfileViewModel
 import com.amity.socialcloud.uikit.community.compose.community.profile.component.AmityCommunityHeaderComponent
 import com.amity.socialcloud.uikit.community.compose.community.profile.component.AmityCommunityHeaderStyle
+import com.amity.socialcloud.uikit.community.compose.community.profile.element.AmityCommunityModalBottomSheet
 import com.amity.socialcloud.uikit.community.compose.community.profile.element.AmityCommunityProfileActionsBottomSheet
 import com.amity.socialcloud.uikit.community.compose.community.profile.element.AmityCommunityProfileShimmer
 import com.amity.socialcloud.uikit.community.compose.community.profile.element.AmityCommunityProfileTabRow
+import com.amity.socialcloud.uikit.community.compose.community.profile.element.AmityVideoAndClipChipSelector
 import com.amity.socialcloud.uikit.community.compose.livestream.errorhandling.AmityPostErrorPage
 import com.amity.socialcloud.uikit.community.compose.paging.feed.community.amityCommunityAnnouncementFeedLLS
+import com.amity.socialcloud.uikit.community.compose.paging.feed.community.amityCommunityClipFeedLLS
 import com.amity.socialcloud.uikit.community.compose.paging.feed.community.amityCommunityFeedLLS
 import com.amity.socialcloud.uikit.community.compose.paging.feed.community.amityCommunityImageFeedLLS
 import com.amity.socialcloud.uikit.community.compose.paging.feed.community.amityCommunityPinnedFeedLLS
 import com.amity.socialcloud.uikit.community.compose.paging.feed.community.amityCommunityVideoFeedLLS
+import com.amity.socialcloud.uikit.community.compose.post.composer.poll.AmityPollPostTypeSelectionBottomSheet
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostCategory
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostShimmer
 import com.amity.socialcloud.uikit.community.compose.ui.components.feed.community.AmityCommunityPrivateView
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
+import kotlin.compareTo
+import kotlin.div
+import kotlin.text.compareTo
+import kotlin.text.get
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
+@OptIn(
+    ExperimentalMaterialApi::class, ExperimentalFoundationApi::class,
+    ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class
+)
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun AmityCommunityProfilePage(
@@ -83,20 +107,24 @@ fun AmityCommunityProfilePage(
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
     }
     val viewModel =
-        viewModel<AmityCommunityProfileViewModel>(viewModelStoreOwner = viewModelStoreOwner, factory =
-            object : ViewModelProvider.Factory {
-                override fun <VM : androidx.lifecycle.ViewModel> create(
-                    modelClass: Class<VM>
-                ): VM {
-                    return AmityCommunityProfileViewModel(communityId) as VM
+        viewModel<AmityCommunityProfileViewModel>(
+            viewModelStoreOwner = viewModelStoreOwner, factory =
+                object : ViewModelProvider.Factory {
+                    override fun <VM : androidx.lifecycle.ViewModel> create(
+                        modelClass: Class<VM>,
+                    ): VM {
+                        return AmityCommunityProfileViewModel(communityId) as VM
+                    }
                 }
-            }
         )
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
     val lazyListState = rememberLazyListState()
     val state by remember { viewModel.communityProfileState }.collectAsState()
     val community by remember { derivedStateOf { state.community } }
     var expanded by remember { mutableStateOf(false) }
+
+    var showPollSelectionBottomSheet by remember { mutableStateOf(false) }
 
     var isHeaderSticky by remember { mutableStateOf(false) }
     val pullRefreshState = rememberPullRefreshState(
@@ -105,6 +133,8 @@ fun AmityCommunityProfilePage(
             viewModel.refresh()
         }
     )
+
+    val bottomSheetUiState by viewModel.sheetUIState.collectAsState()
 
     val behavior = remember {
         AmitySocialBehaviorHelper.communityProfilePageBehavior
@@ -119,6 +149,8 @@ fun AmityCommunityProfilePage(
         remember(communityId) { viewModel.getCommunityImagePosts() }.collectAsLazyPagingItems()
     val videoPosts =
         remember(communityId) { viewModel.getCommunityVideoPosts() }.collectAsLazyPagingItems()
+    val clipPosts =
+        remember(communityId) { viewModel.getCommunityClipPosts() }.collectAsLazyPagingItems()
 
     var selectedTabIndex by remember { mutableIntStateOf(0) }
 
@@ -195,6 +227,9 @@ fun AmityCommunityProfilePage(
         delay(200L)
         isShowCompleteCreatedCommunity = false
     }
+
+    var selectedVideoClipsTabIndex by remember { mutableIntStateOf(0) }
+    val videoClipTabsTitles = listOf("Videos", "Clips")
 
     AmityBasePage(pageId = "community_profile_page") {
         Scaffold { padding ->
@@ -276,7 +311,7 @@ fun AmityCommunityProfilePage(
                             } ?: false
                         val shouldShowAnnouncement = announcementPosts.itemCount > 0
                                 && (selectedTabIndex == 0 || (selectedTabIndex == 1 && hasAnnouncementPin))
-                        if (community?.isJoined() == false && community?.isPublic() == false){
+                        if (community?.isJoined() == false && community?.isPublic() == false) {
                             item {
                                 Box(
                                     modifier = Modifier
@@ -322,6 +357,19 @@ fun AmityCommunityProfilePage(
                                             communityPosts = communityPosts,
                                             pinPosts = pinPosts,
                                             announcementPosts = announcementPosts,
+                                            onClipClick = {
+                                                behavior.goToClipFeedPage(
+                                                    AmityCommunityProfilePageBehavior.Context(
+                                                        pageContext = context,
+                                                    ),
+                                                    postId = it.getPostId(),
+                                                    communityId = communityId,
+                                                    type = AmityClipFeedPageType.CommunityFeed(
+                                                        postId = it.getPostId(),
+                                                        communityId = communityId
+                                                    )
+                                                )
+                                            },
                                             onClick = { post, category ->
                                                 behavior.goToPostDetailPage(
                                                     AmityCommunityProfilePageBehavior.Context(
@@ -357,14 +405,98 @@ fun AmityCommunityProfilePage(
                                     amityCommunityImageFeedLLS(
                                         modifier = modifier,
                                         imagePosts = imagePosts,
+                                        onViewPost = { postId, category ->
+                                            behavior.goToPostDetailPage(
+                                                AmityCommunityProfilePageBehavior.Context(
+                                                    pageContext = context,
+                                                ),
+                                                postId = postId,
+                                                category = category,
+                                            )
+                                        }
                                     )
                                 }
 
                                 3 -> {
-                                    amityCommunityVideoFeedLLS(
-                                        modifier = modifier,
-                                        videoPosts = videoPosts,
-                                    )
+                                    item {
+                                        AmityVideoAndClipChipSelector(
+                                            tabTitles = videoClipTabsTitles,
+                                            selectedTabIndex = selectedVideoClipsTabIndex,
+                                            onTabSelected = { index ->
+                                                selectedVideoClipsTabIndex = index
+                                            },
+                                        )
+                                    }
+                                    when (selectedVideoClipsTabIndex) {
+                                        0 -> {
+                                            amityCommunityVideoFeedLLS(
+                                                modifier = modifier,
+                                                videoPosts = videoPosts,
+                                                onViewPost = { postId, category ->
+                                                    behavior.goToPostDetailPage(
+                                                        AmityCommunityProfilePageBehavior.Context(
+                                                            pageContext = context,
+                                                        ),
+                                                        postId = postId,
+                                                        category = category,
+                                                    )
+                                                }
+                                            )
+                                        }
+
+                                        1 -> {
+                                            amityCommunityClipFeedLLS(
+                                                modifier = Modifier,
+                                                clipPosts = clipPosts,
+                                                onClipClicked = { postId ->
+                                                    coroutineScope.launch {
+                                                        val selectedIndex =
+                                                            clipPosts.itemSnapshotList.items.indexOfFirst {
+                                                                it.getPostId() == postId
+                                                            }
+
+                                                        if (selectedIndex >= clipPosts.itemCount && selectedIndex >= 0) {
+                                                            // Wait for more data to load
+                                                            val targetPage = selectedIndex / 20
+                                                            val currentPage =
+                                                                clipPosts.itemCount / 20
+
+                                                            if (targetPage > currentPage) {
+                                                                // Access items to trigger loading
+                                                                repeat(targetPage - currentPage) {
+                                                                    val triggerIndex =
+                                                                        clipPosts.itemCount
+                                                                    if (triggerIndex < selectedIndex) {
+                                                                        clipPosts[triggerIndex] // Trigger next page load
+                                                                        delay(500) // Wait for load
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+
+                                                        behavior.goToClipFeedPage(
+                                                            context = AmityCommunityProfilePageBehavior.Context(
+                                                                pageContext = context,
+                                                            ),
+                                                            postId = postId,
+                                                            communityId = communityId,
+                                                            clipPagingData = viewModel.getCommunityClipPosts(),
+                                                            selectedIndex = maxOf(
+                                                                0,
+                                                                minOf(
+                                                                    selectedIndex,
+                                                                    clipPosts.itemCount - 1
+                                                                )
+                                                            ),
+                                                            type = AmityClipFeedPageType.CommunityClipFeed(
+                                                                communityId
+                                                            )
+                                                        )
+                                                    }
+                                                }
+                                            )
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -402,6 +534,9 @@ fun AmityCommunityProfilePage(
                             shouldShow = expanded,
                             shouldShowPostCreationButton = shouldShowPostCreationButton,
                             shouldShowStoryCreationButton = shouldShowStoryCreationButton,
+                            showPollTypeSelectionSheet = {
+                                showPollSelectionBottomSheet = true
+                            },
                             onDismiss = { expanded = false },
                         )
                     }
@@ -410,6 +545,44 @@ fun AmityCommunityProfilePage(
                         state = pullRefreshState,
                         modifier = Modifier.align(Alignment.TopCenter),
                     )
+                    if (bottomSheetUiState !is AmityCommunityModalSheetUIState.CloseSheet) {
+                        community?.let {
+                            AmityCommunityModalBottomSheet(
+                                community = it,
+                                behavior = behavior,
+                                viewModel = viewModel,
+                            )
+                        }
+                    }
+
+                    if (showPollSelectionBottomSheet) {
+                        ModalBottomSheet(
+                            onDismissRequest = {
+                                showPollSelectionBottomSheet = false
+                            },
+                            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+                            containerColor = AmityTheme.colors.background,
+                            contentWindowInsets = { WindowInsets.waterfall },
+                            modifier = Modifier
+                                .navigationBarsPadding()
+                                .statusBarsPadding()
+                        ) {
+                            AmityPollPostTypeSelectionBottomSheet(
+                                onCloseSheet = {
+                                    showPollSelectionBottomSheet = false
+                                },
+                                onNextClicked = { selectedType ->
+                                    behavior.goToCreatePollPage(
+                                        AmityCommunityProfilePageBehavior.Context(
+                                            pageContext = context,
+                                            community = community,
+                                        ),
+                                        pollType = selectedType
+                                    )
+                                }
+                            )
+                        }
+                    }
                 }
             }
         }

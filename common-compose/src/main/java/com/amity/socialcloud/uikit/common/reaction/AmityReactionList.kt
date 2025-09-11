@@ -39,6 +39,7 @@ fun AmityReactionList(
 
         AmityReactionRoot(
             state = reactionViewModel.state,
+            referenceType = referenceType,
             onAction = reactionViewModel::onAction,
             onUserClick = onUserClick,
         )

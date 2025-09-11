@@ -16,6 +16,7 @@ import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.core.content.AmityContentFeedType
 import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.core.error.AmityException
+import com.amity.socialcloud.sdk.model.core.file.AmityClip
 import com.amity.socialcloud.sdk.model.core.file.AmityFile
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.file.AmityVideo
@@ -115,6 +116,62 @@ class AmityFileService {
             }
         }.flatMapPublisher {
             AmityCoreClient.newFileRepository().uploadVideo(
+                uri = it,
+                contentFeedType = contentFeedType,
+                uploadId = uploadId
+            )
+
+        }
+    }
+
+    fun uploadClip(
+        uri: Uri,
+        contentFeedType: AmityContentFeedType,
+        uploadId: String = UUID.randomUUID().toString()
+    ): Flowable<AmityUploadResult<AmityClip>> {
+        return Single.create<Uri> { emitter ->
+            if (!isHevcVideo(uri)) {
+                // skip transcoding if the video is not HEVC
+                emitter.onSuccess(uri)
+            } else {
+                val context = AppContext.get()
+
+                val inputFile = copyUriToFile(context, uri)
+                val storageDir: File? = context.getExternalFilesDir(Environment.DIRECTORY_MOVIES)
+
+                val outputFile = File.createTempFile(
+                    uploadId, /* prefix */
+                    ".mp4", /* suffix */
+                    storageDir /* directory */
+                )
+                val outputFilePath = outputFile.absolutePath
+
+                MediaTranscoder.getInstance().transcodeVideo(
+                    inputFile.absolutePath,
+                    outputFilePath,
+                    MediaFormatStrategyPresets.createExportPreset960x540Strategy(),
+                    object : MediaTranscoder.Listener {
+                        override fun onTranscodeProgress(progress: Double) {
+                            // Update UI with progress if needed
+                        }
+
+                        override fun onTranscodeCompleted() {
+                            emitter.onSuccess(outputFile.toUri())
+                        }
+
+                        override fun onTranscodeCanceled() {
+                            emitter.onSuccess(uri)
+                        }
+
+                        override fun onTranscodeFailed(exception: Exception?) {
+                            emitter.onSuccess(uri)
+                        }
+
+                    }
+                )
+            }
+        }.flatMapPublisher {
+            AmityCoreClient.newFileRepository().uploadClip(
                 uri = it,
                 contentFeedType = contentFeedType,
                 uploadId = uploadId

@@ -13,6 +13,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.amity.socialcloud.uikit.community.compose.paging.feed.user.amityUserVideoFeedLLS
 import com.amity.socialcloud.uikit.community.compose.user.profile.AmityUserProfilePageViewModel
+import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostCategory
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
+import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun AmityUserVideoFeedComponent(
@@ -20,6 +23,11 @@ fun AmityUserVideoFeedComponent(
     userId: String,
     shouldRefresh: Boolean = false,
 ) {
+    val context = LocalContext.current
+    val behavior by lazy {
+        AmitySocialBehaviorHelper.userFeedComponentBehavior
+    }
+    
     val viewModel = viewModel<AmityUserProfilePageViewModel>(
         factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -49,6 +57,12 @@ fun AmityUserVideoFeedComponent(
             videoPosts = videoPosts,
             postListState = postListState,
             isBlockedByMe = false,
+            onViewPost = { postId, category ->
+                behavior.goToPostDetailPage(
+                    context = context,
+                    postId = postId,
+                )
+            }
         )
     }
 }

@@ -39,11 +39,11 @@ fun AmityCommunityProfileTabRow(
         Column(
             modifier = modifier
                 .background(color = AmityTheme.colors.background)
-                .padding(start = 16.dp, top = 16.dp, end = 16.dp)
+                .padding(top = 16.dp)
         ) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(20.dp),
-                modifier = modifier.fillMaxWidth()
+                modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp),
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,

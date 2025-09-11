@@ -1,5 +1,8 @@
 package com.amity.socialcloud.uikit.community.compose
 
+import com.amity.socialcloud.uikit.community.compose.clip.create.AmityCreateClipPageBehavior
+import com.amity.socialcloud.uikit.community.compose.clip.draft.AmityDraftClipPageBehavior
+import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipPageBehavior
 import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentBehavior
 import com.amity.socialcloud.uikit.community.compose.community.membership.list.AmityCommunityMembershipPageBehavior
 import com.amity.socialcloud.uikit.community.compose.community.pending.elements.AmityPendingPostContentComponentBehavior
@@ -68,6 +71,14 @@ object AmitySocialBehaviorHelper {
 
     var createLivestreamPageBehavior: AmityCreateLivestreamPageBehavior =
         AmityCreateLivestreamPageBehavior()
+
+    var createClipPageBehavior: AmityCreateClipPageBehavior =
+        AmityCreateClipPageBehavior()
+
+    var clipDraftPageBehavior: AmityDraftClipPageBehavior = AmityDraftClipPageBehavior()
+
+    var viewClipPageBehavior: AmityClipPageBehavior =
+        AmityClipPageBehavior()
 
     var notificationTrayPageBehavior: AmityNotificationTrayPageBehavior =
         AmityNotificationTrayPageBehavior()

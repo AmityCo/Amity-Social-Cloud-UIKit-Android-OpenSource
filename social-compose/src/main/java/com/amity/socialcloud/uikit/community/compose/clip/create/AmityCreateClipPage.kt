@@ -145,9 +145,10 @@ fun AmityCreateClipPage(
                     Intent.FLAG_GRANT_READ_URI_PERMISSION
                 )
                 // Get file size using ContentResolver instead of toFile()
-                val fileSize = context.contentResolver.openFileDescriptor(it, "r")?.use { descriptor ->
-                    descriptor.statSize
-                } ?: 0L
+                val fileSize =
+                    context.contentResolver.openFileDescriptor(it, "r")?.use { descriptor ->
+                        descriptor.statSize
+                    } ?: 0L
 
                 val isFileSizeExceed = fileSize > FILE_SIZE_LIMIT
 
@@ -223,6 +224,13 @@ fun AmityCreateClipPage(
                 delay(1.seconds)
                 videoRecordDuration += 1
             }
+        }
+    }
+
+    LaunchedEffect(videoRecordDuration) {
+        if (isCurrentlyRecording && videoRecordDuration >= 900) { // 15 minutes = 900 seconds
+            isCurrentlyRecording = false
+            AmityStoryCameraHelper.stopCaptureVideo()
         }
     }
 
@@ -367,14 +375,14 @@ fun AmityCreateClipPage(
             }
         }
         // Bottom bar (media, shutter, switch camera)
-        if (!isCurrentlyRecording) {
-            Row(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(start = 16.dp, end = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(start = 16.dp, end = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if (!isCurrentlyRecording) {
                 AmityMenuButton(
                     icon = R.drawable.amity_ic_story_media,
                     size = 24.dp,
@@ -406,20 +414,23 @@ fun AmityCreateClipPage(
                         }
                     }
                 }
+            } else {
+                Spacer(modifier = Modifier.weight(1f)) // Placeholder for media button
+            }
 
-                AmityMenuButton(
-                    icon = R.drawable.amity_ic_story_switch_camera,
-                    size = 20.dp,
-                    modifier = Modifier
-                        .size(40.dp)
-                        .alpha(if (isCameraPermissionGranted) 1f else 0.3f)
-                        .testTag("switch_camera_button"),
-                ) {
-                    haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                    isBackCameraSelected = !isBackCameraSelected
-                }
+            AmityMenuButton(
+                icon = R.drawable.amity_ic_story_switch_camera,
+                size = 20.dp,
+                modifier = Modifier
+                    .size(40.dp)
+                    .alpha(if (isCameraPermissionGranted) 1f else 0.3f)
+                    .testTag("switch_camera_button"),
+            ) {
+                haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                isBackCameraSelected = !isBackCameraSelected
             }
         }
+
 
         if (isShowClipTooShortDialog) {
             // Show dialog for clip too short

@@ -67,6 +67,7 @@ interface PostViewModel {
             )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
+            .doOnError {  }
     }
 
     fun removePostReaction(post: AmityPost): Completable {
@@ -78,6 +79,7 @@ interface PostViewModel {
             )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
+            .doOnError {  }
     }
 
     fun reportPost(

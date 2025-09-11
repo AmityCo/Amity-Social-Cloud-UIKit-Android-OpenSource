@@ -18,6 +18,7 @@ fun LazyListScope.amityGlobalPinnedFeedLLS(
     pageScope: AmityComposePageScope? = null,
     pinnedPosts: State<List<AmityPinnedPost>>,
     onClick: (AmityPost) -> Unit,
+    onClipClicked: (AmityPost) -> Unit = {},
 ) {
     items(
         count = pinnedPosts.value.size,
@@ -39,6 +40,9 @@ fun LazyListScope.amityGlobalPinnedFeedLLS(
                 hideTarget = false,
                 onTapAction = {
                     onClick(post)
+                },
+                onClipClick = { childPost ->
+                    onClipClicked(childPost)
                 }
             )
             AmityNewsFeedDivider()

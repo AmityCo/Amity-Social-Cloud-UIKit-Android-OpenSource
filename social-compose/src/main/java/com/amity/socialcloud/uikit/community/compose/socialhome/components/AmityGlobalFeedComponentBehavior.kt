@@ -1,6 +1,8 @@
 package com.amity.socialcloud.uikit.community.compose.socialhome.components
 
 import android.content.Context
+import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipFeedPageActivity
+import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipFeedPageType
 import com.amity.socialcloud.uikit.community.compose.community.setup.AmityCommunitySetupPageActivity
 import com.amity.socialcloud.uikit.community.compose.community.setup.AmityCommunitySetupPageMode
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostCategory
@@ -39,6 +41,17 @@ open class AmityGlobalFeedComponentBehavior {
         val intent = AmityUserProfilePageActivity.newIntent(
             context = context,
             userId = userId
+        )
+        context.startActivity(intent)
+    }
+
+    open fun goToClipFeedPage(
+        context: Context,
+        postId: String,
+    ) {
+        val intent = AmityClipFeedPageActivity.newIntent(
+            context = context,
+            type = AmityClipFeedPageType.NewsFeed(postId)
         )
         context.startActivity(intent)
     }

@@ -75,13 +75,25 @@ fun AmityViewCommunityStoryPage(
     lastSegmentReached: () -> Unit = {},
     navigateToCommunityProfilePage: (AmityCommunity) -> Unit = {},
 ) {
-    if (exoPlayer == null) return
 
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
     val behavior = remember {
         AmitySocialBehaviorHelper.viewStoryPageBehavior
+    }
+
+    val exoPlayer = remember(targetId) {
+        ExoPlayer.Builder(context).build().also { player ->
+            AmityStoryVideoPlayerHelper.setup(targetId, player)
+        }
+    }
+
+    // Clean up this target's ExoPlayer when disposed
+    DisposableEffect(targetId) {
+        onDispose {
+            AmityStoryVideoPlayerHelper.clear(targetId)
+        }
     }
 
     val createStoryLauncher = rememberLauncherForActivityResult(
@@ -178,10 +190,6 @@ fun AmityViewCommunityStoryPage(
     var isMovedToUnseenStory by remember { mutableStateOf(false) }
     val isVideoPlaybackReady by AmityStoryVideoPlayerHelper.isVideoPlaybackReady.collectAsState()
 
-    LaunchedEffect(exoPlayer) {
-        AmityStoryVideoPlayerHelper.setup(exoPlayer)
-    }
-
     LaunchedEffect(isTargetVisible, isMovedToUnseenStory, currentStory?.getStoryId()) {
         if (isTargetVisible && isMovedToUnseenStory) {
             currentStory?.analytics()?.markAsSeen()
@@ -206,28 +214,54 @@ fun AmityViewCommunityStoryPage(
         }
     }
 
-    LaunchedEffect(targetId, stories.itemSnapshotList.items.size) {
+    LaunchedEffect(targetId, stories.itemSnapshotList.items.size, isTargetVisible) {
         shouldShowLoading = stories.itemSnapshotList.items.isEmpty()
-        AmityStoryVideoPlayerHelper.add(stories.itemSnapshotList.items)
+        // Only add stories to video helper when this target is visible to avoid conflicts
+        if (isTargetVisible) {
+            AmityStoryVideoPlayerHelper.add(targetId, stories.itemSnapshotList.items)
+        }
     }
 
+    // Use a more stable approach to manage video playback
     LaunchedEffect(isTargetVisible, isShowingVideoStory, shouldPauseTimer) {
-        if (!isTargetVisible) return@LaunchedEffect
         val storyId = currentStory?.getStoryId()
-        if(storyId == null) {
-            exoPlayer.pause()
-            return@LaunchedEffect
+
+        // Only start/stop video for visible targets to prevent interference
+        if (isTargetVisible && isShowingVideoStory && storyId != null) {
+            if (!shouldPauseTimer) {
+                AmityStoryVideoPlayerHelper.playMediaItem(targetId, storyId = storyId, forcePlay = true)
+            } else {
+                // Ensure video is prepared but don't force play since timer is paused
+                if (!AmityStoryVideoPlayerHelper.isVideoActive(targetId, storyId)) {
+                    AmityStoryVideoPlayerHelper.playMediaItem(targetId, storyId = storyId, forcePlay = true)
+                }
+                // Timer pause effect will handle the actual pausing
+            }
+        } else if (isTargetVisible && !isShowingVideoStory) {
+            // Only stop video if this is the visible target and it's not a video story
+            android.util.Log.d("AmityStoryPage", "Visible target is not video story, stopping video")
+            currentStory?.getStoryId()?.let { storyId ->
+                AmityStoryVideoPlayerHelper.stopVideoIfActive(targetId, storyId)
+            }
         }
-        if (isShowingVideoStory) {
-            AmityStoryVideoPlayerHelper.playMediaItem(storyId = storyId)
-        } else {
-            exoPlayer.pause()
-            return@LaunchedEffect
-        }
-        if (shouldPauseTimer) {
-            exoPlayer.pause()
-        } else {
-            exoPlayer.play()
+        // Don't stop video for non-visible targets to prevent interference
+    }
+
+    // Separate effect to handle timer pausing - only pause video if timer should pause
+    // but don't stop it completely, just pause playback
+    LaunchedEffect(shouldPauseTimer, isTargetVisible, isShowingVideoStory) {
+        // Only handle timer pause/resume for the currently visible target with video
+        if (isTargetVisible && isShowingVideoStory) {
+            val storyId = currentStory?.getStoryId()
+            if (storyId != null && AmityStoryVideoPlayerHelper.isVideoActive(targetId, storyId)) {
+                if (shouldPauseTimer) {
+                    // Don't pause the ExoPlayer directly as it interferes with video management
+                    // Just let the video continue playing since the timer will pause the progression
+                } else {
+                    // When timer resumes, ensure video is still playing
+                    AmityStoryVideoPlayerHelper.playMediaItem(targetId, storyId, forcePlay = false)
+                }
+            }
         }
     }
 
@@ -278,8 +312,9 @@ fun AmityViewCommunityStoryPage(
 
     DisposableEffect(Unit) {
         onDispose {
+            // Release the individual ExoPlayer for this target
             exoPlayer.release()
-            AmityStoryVideoPlayerHelper.clear()
+            AmityStoryVideoPlayerHelper.clear(targetId)
         }
     }
 
@@ -291,17 +326,17 @@ fun AmityViewCommunityStoryPage(
             viewModel.handleSegmentTimer(true)
             val data = dialogState as AmityStoryModalDialogUIState.OpenConfirmDeleteDialog
             AmityAlertDialog(
-                dialogTitle = "Discard story?",
-                dialogText = "The story will be permanently discarded. It cannot be undone.",
-                confirmText = "Discard",
-                dismissText = "Cancel",
+                dialogTitle = context.getString(R.string.amity_delete_story_title),
+                dialogText = context.getString(R.string.amity_delete_story_warning_message),
+                confirmText = context.getString(R.string.amity_delete),
+                dismissText = context.getString(R.string.amity_cancel),
                 onConfirmation = {
                     shouldShowLoading = true
                     viewModel.deleteStory(
                         storyId = data.storyId,
                         onSuccess = {
                             shouldShowLoading = false
-                            AmityUIKitSnackbar.publishSnackbarMessage("Story deleted")
+                            AmityUIKitSnackbar.publishSnackbarMessage(context.getString(R.string.amity_delete_story_success))
                             viewModel.updateDialogUIState(AmityStoryModalDialogUIState.CloseDialog)
                             viewModel.handleSegmentTimer(false)
 
@@ -321,7 +356,7 @@ fun AmityViewCommunityStoryPage(
                         },
                         onError = {
                             shouldShowLoading = false
-                            AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to delete story. Please try again.")
+                            AmityUIKitSnackbar.publishSnackbarErrorMessage(context.getString(R.string.amity_delete_story_fail))
                             viewModel.updateDialogUIState(AmityStoryModalDialogUIState.CloseDialog)
                             viewModel.handleSegmentTimer(false)
                         }
@@ -370,8 +405,9 @@ fun AmityViewCommunityStoryPage(
                                 state = story.getState(),
                                 items = story.getStoryItems(),
                                 isVisible = storyPagerState.targetPage == index,
+                                shouldShowVideoPlayer = true, // Always show video player with individual ExoPlayer instances
                                 onTap = { isTapRight ->
-                                    AmityStoryVideoPlayerHelper.resetPlaybackIndex()
+                                    AmityStoryVideoPlayerHelper.resetPlaybackIndex(targetId)
 
                                     scope.launch {
                                         moveSegment(
@@ -433,7 +469,7 @@ fun AmityViewCommunityStoryPage(
                                 modifier = modifier.aspectRatio(9f / 16f),
                                 ad = ad,
                                 onTap = { isTapRight ->
-                                    AmityStoryVideoPlayerHelper.resetPlaybackIndex()
+                                    AmityStoryVideoPlayerHelper.resetPlaybackIndex(targetId)
 
                                     scope.launch {
                                         moveSegment(
@@ -469,7 +505,7 @@ fun AmityViewCommunityStoryPage(
                 shouldRestartTimer = shouldRestartTimer,
                 isSingleTarget = isSingleTarget,
                 moveToNextSegment = {
-                    AmityStoryVideoPlayerHelper.resetPlaybackIndex()
+                    AmityStoryVideoPlayerHelper.resetPlaybackIndex(targetId)
                     scope.launch {
                         moveSegment(
                             shouldMoveToNext = true,

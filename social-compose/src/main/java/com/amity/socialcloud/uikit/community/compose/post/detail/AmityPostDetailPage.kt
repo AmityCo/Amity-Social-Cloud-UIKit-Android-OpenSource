@@ -45,6 +45,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.model.core.error.AmityError
+import com.amity.socialcloud.sdk.model.core.error.AmityException
 import com.amity.socialcloud.sdk.core.session.model.NetworkConnectionEvent
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.sdk.model.social.comment.AmityCommentReferenceType
@@ -56,15 +59,19 @@ import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
 import com.amity.socialcloud.uikit.common.ui.elements.DisposableEffectWithLifeCycle
+import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.closePage
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getKeyboardHeight
 import com.amity.socialcloud.uikit.common.utils.isKeyboardVisible
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
+import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentViewModel
 import com.amity.socialcloud.uikit.community.compose.comment.create.AmityCommentComposerBar
 import com.amity.socialcloud.uikit.community.compose.livestream.errorhandling.AmityPostErrorPage
+import com.amity.socialcloud.uikit.community.compose.comment.query.elements.AmityCommentItemShimmer
 import com.amity.socialcloud.uikit.community.compose.paging.comment.amityCommentListLLS
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponent
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponentStyle
@@ -84,6 +91,7 @@ fun AmityPostDetailPage(
     showLivestreamPostExceeded: Boolean = false,
     commentId: String? = null,
     parentId: String? = null,
+    replyToCommentId: String? = null,
 ) {
     val context = LocalContext.current
 
@@ -108,6 +116,10 @@ fun AmityPostDetailPage(
     val post by remember(id) {
         viewModel.getPost(id)
     }.collectAsState(initial = null)
+
+    val error by remember(id) {
+        viewModel.getFetchErrorState()
+    }.collectAsState()
 
     val currentUser by remember(viewModel) {
         viewModel.getCurrentUser()
@@ -193,6 +205,10 @@ fun AmityPostDetailPage(
             // Wait a bit to ensure scroll completes
             delay(100L)
             scrollAnimationComplete = true
+            replyToCommentId?.let {
+                replyCommentId = it
+
+            }
             delay(500L)
             scrollAnimationComplete = false
         }
@@ -203,7 +219,7 @@ fun AmityPostDetailPage(
             pageScope = getPageScope(),
             componentId = "comment_tray_component"
         ) {
-            if (post?.isDeleted() == true || postErrorState == true) {
+            if (post != null && post?.isDeleted() == true || postErrorState == true) {
                 AmityPostErrorPage()
             } else {
                 Column(modifier = modifier.fillMaxSize()) {
@@ -237,7 +253,7 @@ fun AmityPostDetailPage(
                                         contentDescription = null,
                                         tint = AmityTheme.colors.base,
                                         modifier = modifier
-                                            .size(20.dp)
+                                            .size(24.dp)
                                             .align(Alignment.CenterStart)
                                             .clickableWithoutRipple {
                                                 context.closePage()
@@ -249,13 +265,15 @@ fun AmityPostDetailPage(
                                 Text(
                                     text = "Post",
                                     style = AmityTheme.typography.titleLegacy,
-                                    modifier = modifier.align(Alignment.Center)
+                                    modifier = modifier
+                                        .padding(horizontal = 48.dp)
+                                        .align(Alignment.CenterStart)
                                 )
 
                                 AmityBaseElement(
-                                    pageScope = getPageScope(),
-                                    elementId = "menu_button"
-                                ) {
+                                        pageScope = getPageScope(),
+                                        elementId = "menu_button"
+                                    ) {
                                     Icon(
                                         painter = painterResource(id = getConfig().getIcon()),
                                         contentDescription = null,
@@ -318,6 +336,7 @@ fun AmityPostDetailPage(
                             referenceType = AmityCommentReferenceType.POST,
                             editingCommentId = editingCommentId,
                             shouldAllowInteraction = !sheetViewModel.isNotMember(post),
+                            showEngagementRow = commentViewModel.community == null || commentViewModel.community?.isJoined() == true,
                             onReply = {
                                 replyCommentId = it
                             },
@@ -325,7 +344,8 @@ fun AmityPostDetailPage(
                                 editingCommentId = it
                             },
                             showBounceEffect = scrollAnimationComplete,
-                            replyTargetId = if (parentId != null) commentId else null
+                            replyTargetId = if (parentId != null) commentId else null,
+                            expandReplies = parentId != null
                         )
 
                         item {
@@ -339,6 +359,7 @@ fun AmityPostDetailPage(
                             componentScope = getComponentScope(),
                             referenceId = id,
                             referenceType = AmityCommentReferenceType.POST,
+                            shouldFocusKeyboard = replyToCommentId != null,
                             currentUser = currentUser,
                             replyComment = replyComment,
                         ) {

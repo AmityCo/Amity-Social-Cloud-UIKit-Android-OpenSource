@@ -203,6 +203,13 @@ fun AmityJoinCommunityView(
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                Text(
+                    text = label ?: "",
+                    style = AmityTheme.typography.bodyBold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+
                 if (!community.isPublic()) {
                     AmityBaseElement(
                         pageScope = pageScope,

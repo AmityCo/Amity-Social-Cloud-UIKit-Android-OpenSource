@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.uikit.common.ui.elements.AmityExpandableText
+import com.amity.socialcloud.uikit.common.ui.elements.EXPANDABLE_TEXT_MAX_LINES
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.isCreatorCommunityModerator
@@ -35,6 +36,8 @@ import com.google.gson.JsonObject
 fun AmityCommentContentContainer(
     modifier: Modifier = Modifier,
     comment: AmityComment,
+    previewLines: Int = EXPANDABLE_TEXT_MAX_LINES,
+    onClick: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val behavior by lazy {
@@ -101,10 +104,12 @@ fun AmityCommentContentContainer(
             mentionGetter = mentionGetter,
             mentionees = comment.getMentionees(),
             style = AmityTheme.typography.bodyLegacy,
+            previewLines = previewLines,
             modifier = modifier.testTag("comment_list/comment_bubble_comment_text_view"),
             onMentionedUserClick = {
                 behavior.goToUserProfilePage(context, it)
-            }
+            },
+            onClick = onClick,
         )
     }
 }

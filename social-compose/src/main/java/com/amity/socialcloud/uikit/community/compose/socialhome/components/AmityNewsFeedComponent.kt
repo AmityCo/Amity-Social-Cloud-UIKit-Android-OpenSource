@@ -181,6 +181,12 @@ fun AmityNewsFeedComponent(
                                     id = it.getPostId(),
                                     category = AmityPostCategory.GLOBAL
                                 )
+                            },
+                            onClipClicked = {
+                                behavior.goToClipFeedPage(
+                                    context = context,
+                                    postId = it.getPostId()
+                                )
                             }
                         )
                     }
@@ -196,6 +202,12 @@ fun AmityNewsFeedComponent(
                         behavior.goToPostDetailPage(
                             context = context,
                             id = it.getPostId()
+                        )
+                    },
+                    onClipClick = { childPost ->
+                        behavior.goToClipFeedPage(
+                            context = context,
+                            postId = childPost.getPostId()
                         )
                     },
                     onCreateCommunityClicked = {

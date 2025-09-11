@@ -7,16 +7,12 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material.Snackbar
-import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
-import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.livestream.errorhandling.AmityLivestreamDeletedPageActivity
 import com.amity.socialcloud.uikit.community.compose.livestream.errorhandling.AmityLivestreamTerminatedPageActivity
 import com.amity.socialcloud.uikit.community.compose.livestream.util.LivestreamErrorScreenType
 import com.amity.socialcloud.uikit.community.compose.livestream.util.LivestreamScreenType
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetailPageActivity.Companion.EXTRA_PARAM_LIVESTREAM_ERROR_TYPE
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetailPageActivity.Companion.REQUEST_CODE_VIEW_LIVESTREAM
-import com.google.android.material.snackbar.Snackbar
 
 class AmityCommunityProfilePageActivity : AppCompatActivity() {
 

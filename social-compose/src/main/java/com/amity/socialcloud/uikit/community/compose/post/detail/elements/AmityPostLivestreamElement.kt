@@ -149,6 +149,8 @@ fun AmityChildLivestreamPostElement(
                 ) {
                     AmityLivestreamUnavailableView(modifier = Modifier)
                 }
+            } else if (stream.isBanned()) {
+                AmityLivestreamBannedView()
             } else {
                 Box(
                     modifier = Modifier
@@ -303,9 +305,17 @@ fun AmityLivestreamUnavailableView(modifier: Modifier = Modifier) {
 fun AmityLivestreamTerminatedView(modifier: Modifier = Modifier) {
     AmityLivestreamNoticeView(
         modifier = modifier,
-        icon = R.drawable.amity_ic_warning,
         title = "This stream has been terminated.",
         description = "It looks like this livestream goes against our content moderation guidelines.",
+    )
+}
+
+@Composable
+fun AmityLivestreamBannedView(modifier: Modifier = Modifier) {
+    AmityLivestreamNoticeView(
+        modifier = modifier,
+        title = "You’ve been banned.",
+        description = "You can no longer access this live stream.",
     )
 }
 

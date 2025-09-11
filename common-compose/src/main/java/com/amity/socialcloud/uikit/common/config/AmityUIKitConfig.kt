@@ -13,6 +13,8 @@ data class AmityUIKitConfig(
     val excludes: JsonArray,
     @SerializedName("message_reactions")
     val messageReactions: JsonArray,
+    @SerializedName("social_reactions")
+    val socialReactions: JsonArray,
     @SerializedName("customizations")
     val customizations: JsonObject
 ) {

@@ -1,6 +1,7 @@
 package com.amity.socialcloud.uikit.community.compose.comment.create
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -16,11 +17,13 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
@@ -40,8 +43,11 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentViewModel
+import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.AmityMentionSuggestionView
 import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.AmityMentionTextField
 import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.AmityMentionSuggestionView
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun AmityCommentComposerBar(
@@ -51,7 +57,9 @@ fun AmityCommentComposerBar(
     referenceType: AmityCommentReferenceType,
     currentUser: AmityUser?,
     replyComment: AmityComment? = null,
-    onClose: () -> Unit
+    shouldFocusKeyboard: Boolean = false,
+    onError: () -> Unit = {},
+    onClose: () -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -139,10 +147,11 @@ fun AmityCommentComposerBar(
                 contentPadding = PaddingValues(horizontal = 12.dp, vertical = 12.dp),
                 backgroundColor = Color.Transparent,
                 shouldClearText = isCommentPosted,
-                maxLines = 6,
+                autoFocus = shouldFocusKeyboard,
                 onValueChange = {
                     commentText = it
                 },
+                maxLines = 6,
                 onMentionAdded = {
                     selectedUserToMention = null
                 },

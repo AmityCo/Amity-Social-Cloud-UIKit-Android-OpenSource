@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -21,6 +22,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,6 +44,8 @@ import coil3.compose.AsyncImage
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.helper.core.asAmityImage
 import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
@@ -83,6 +87,22 @@ fun AmityAltTextConfigComponent(
                     || (!isInEditMode && altText.value?.trim()?.isNotEmpty() == true)
         }
     }
+
+    // Get up-to-date alt text from cache if in edit mode
+    LaunchedEffect(mode) {
+        if (mode is AltTextConfigMode.Edit) {
+            (mode.media as? AltTextMedia.Image)?.image?.getFileId()?.let { fileId ->
+                AmityCoreClient.newFileRepository()
+                    .getFile(fileId)
+                    .doOnSuccess {
+                        altText.value = it.asAmityImage()?.getAltText()
+                    }
+                    .subscribe()
+            }
+
+        }
+    }
+
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
@@ -90,6 +110,7 @@ fun AmityAltTextConfigComponent(
         contentWindowInsets = { WindowInsets.navigationBars },
         modifier = modifier
             .padding(0.dp)
+            .statusBarsPadding()
             .semantics {
                 testTagsAsResourceId = true
             },

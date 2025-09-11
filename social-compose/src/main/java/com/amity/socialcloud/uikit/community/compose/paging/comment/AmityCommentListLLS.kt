@@ -27,13 +27,16 @@ fun LazyListScope.amityCommentListLLS(
     referenceId: String,
     referenceType: AmityCommentReferenceType,
     editingCommentId: String?,
+    includeDeleted: Boolean = true,
     shouldAllowInteraction: Boolean,
+    showEngagementRow: Boolean,
     onReply: (String) -> Unit,
     onEdit: (String?) -> Unit,
     showBounceEffect: Boolean = false,
+    expandReplies: Boolean = false,
 ) {
-    commentTarget?.let {
-        item(key = "highlighted_comment_${it.getCommentId()}") {
+    commentTarget?.let { target ->
+        item(key = "highlighted_comment_${target.getCommentId()}") {
             AmityCommentView(
                 modifier = modifier
                     .let { if (showBounceEffect && replyTargetId == null) it.bounceEffect() else it },
@@ -42,12 +45,15 @@ fun LazyListScope.amityCommentListLLS(
                 referenceType = referenceType,
                 currentUserId = AmityCoreClient.getUserId(),
                 editingCommentId = editingCommentId,
-                comment = it,
+                includeDeleted = includeDeleted,
+                comment = target,
                 allowInteraction = shouldAllowInteraction,
                 onReply = onReply,
                 onEdit = onEdit,
                 replyTargetId = replyTargetId,
-                showBounceEffect = showBounceEffect
+                showBounceEffect = showBounceEffect,
+                expandReplies = expandReplies,
+                showEngagementRow = showEngagementRow,
             )
         }
     }
@@ -69,10 +75,13 @@ fun LazyListScope.amityCommentListLLS(
                                 referenceType = referenceType,
                                 currentUserId = AmityCoreClient.getUserId(),
                                 editingCommentId = editingCommentId,
+                                includeDeleted = includeDeleted,
                                 comment = data.comment,
                                 allowInteraction = shouldAllowInteraction,
+                                showEngagementRow = showEngagementRow,
                                 onReply = onReply,
                                 onEdit = onEdit,
+                                expandReplies = expandReplies,
                             )
                         }
                     }

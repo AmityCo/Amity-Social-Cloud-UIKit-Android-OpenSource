@@ -2,6 +2,7 @@ package com.amity.socialcloud.uikit.community.compose.livestream.create.model
 
 import android.net.Uri
 import com.amity.socialcloud.sdk.core.session.model.NetworkConnectionEvent
+import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.sdk.model.video.stream.AmityStream
 import com.amity.socialcloud.sdk.model.video.stream.AmityStreamModeration
@@ -17,12 +18,15 @@ data class AmityCreateLivestreamPageUiState(
     val createPostId: String? = null,
     val thumbnailId: String? = null,
     val thumbnailUri: Uri? = null,
+    val thumbnailImage: AmityImage? = null,
     val streamObj: AmityStream? = null,
     val streamModeration: AmityStreamModeration? = null,
     val networkConnection: NetworkConnectionEvent = NetworkConnectionEvent.Connected,
     val broadcasterState: AmityStreamBroadcasterState = AmityStreamBroadcasterState.IDLE(),
     val thumbnailUploadUiState: LivestreamThumbnailUploadUiState = LivestreamThumbnailUploadUiState.Idle,
-    val amityPost: AmityPost? = null,
+    val post: AmityPost? = null,
+    val channelId: String? = null,
+    val isPendingApproval: Boolean? = null,
     val error: Throwable? = null,
 )
 

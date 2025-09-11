@@ -1,16 +1,21 @@
 package com.amity.socialcloud.uikit.community.compose.livestream.create
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.viewModelScope
+import com.amity.socialcloud.sdk.api.chat.AmityChatClient
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
+import com.amity.socialcloud.sdk.api.social.post.review.AmityReviewStatus
 import com.amity.socialcloud.sdk.api.video.AmityVideoClient
 import com.amity.socialcloud.sdk.core.session.model.NetworkConnectionEvent
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
-import com.amity.socialcloud.sdk.model.core.error.AmityException
+import com.amity.socialcloud.sdk.model.chat.channel.AmityChannel
 import com.amity.socialcloud.sdk.model.core.events.AmityPostEvents
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.file.upload.AmityUploadResult
+import com.amity.socialcloud.sdk.model.core.reaction.AmityLiveReactionReferenceType
+import com.amity.socialcloud.sdk.model.core.reaction.live.AmityLiveReaction
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.sdk.model.video.stream.AmityStream
 import com.amity.socialcloud.sdk.video.StreamBroadcaster
@@ -23,9 +28,9 @@ import com.amity.socialcloud.uikit.community.compose.livestream.create.model.Ami
 import com.amity.socialcloud.uikit.community.compose.livestream.create.model.LivestreamThumbnailUploadUiState
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -33,6 +38,8 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.joda.time.Duration
+import java.util.concurrent.TimeUnit
 
 class AmityCreateLivestreamPageViewModel : AmityBaseViewModel() {
     private val _uiState = MutableStateFlow(AmityCreateLivestreamPageUiState())
@@ -49,6 +56,8 @@ class AmityCreateLivestreamPageViewModel : AmityBaseViewModel() {
                     liveDesc = null,
                     createPostId = null,
                     thumbnailId = null,
+                    channelId = null,
+                    error = null,
                     broadcasterState = AmityStreamBroadcasterState.IDLE(),
                     thumbnailUploadUiState = LivestreamThumbnailUploadUiState.Idle
                 )
@@ -143,11 +152,17 @@ class AmityCreateLivestreamPageViewModel : AmityBaseViewModel() {
     fun createLiveStreamingPost(
         title: String,
         description: String,
+        isReadOnly: Boolean,
         onCreateCompleted: (streamId: String?) -> Unit,
         onCreateFailed: (String) -> Unit,
         //descriptionUserMentions: List<AmityMentionMetadata.USER>,
     ) {
         updateStreamBroadCasterState(AmityStreamBroadcasterState.CONNECTING())
+        _uiState.update { currentState ->
+            currentState.copy(
+                channelId = null
+            )
+        }
 
         var streamId: String? = null
         addDisposable(
@@ -162,6 +177,32 @@ class AmityCreateLivestreamPageViewModel : AmityBaseViewModel() {
                 .doOnSuccess { post ->
                     getPost(post.getPostId())
                     subscribePostRT(post)
+                }
+                .flatMap { post ->
+                    createLiveChannel(
+                        livestreamTitle = title,
+                        postId = post.getPostId(),
+                        liveStreamId = streamId ?: ""
+                    )
+                }
+                .doOnSuccess { channel ->
+                    _uiState.update { currentState ->
+                        currentState.copy(
+                             channelId = channel.getChannelId()
+                        )
+                    }
+                    subscribeChannelRT(channel)
+                }
+                .flatMapCompletable { channel ->
+                    if (isReadOnly) {
+                        AmityChatClient.newChannelRepository()
+                            .muteChannel(
+                                channelId = channel.getChannelId(),
+                                timeout = Duration.standardDays(7)
+                            )
+                    } else {
+                        Completable.complete()
+                    }
                 }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -186,7 +227,10 @@ class AmityCreateLivestreamPageViewModel : AmityBaseViewModel() {
                 }
                 .collectLatest { post ->
                     _uiState.update { currentState ->
-                        currentState.copy(amityPost = post)
+                        currentState.copy(
+                            post = post,
+                            isPendingApproval = post.getReviewStatus() != AmityReviewStatus.PUBLISHED
+                        )
                     }
                 }
         }
@@ -194,12 +238,59 @@ class AmityCreateLivestreamPageViewModel : AmityBaseViewModel() {
 
     fun subscribePostRT(post: AmityPost) {
         post.subscription(events = AmityPostEvents.POST).subscribeTopic()
-            .subscribeOn(Schedulers.io()).subscribe()
+            .andThen(
+                post.subscription(events = AmityPostEvents.LIVE_REACTION)
+                    .subscribeTopic()
+            )
+            .subscribeOn(Schedulers.io())
+            .subscribe()
     }
 
     fun unSubscribePostRT(post: AmityPost) {
         post.subscription(events = AmityPostEvents.POST).unsubscribeTopic()
             .subscribeOn(Schedulers.io()).subscribe()
+    }
+
+    fun subscribeChannelRT(channel: AmityChannel) {
+        // random delay from 1 to 10
+        val delay = (1..10).random().toLong()
+        Single.just(true)
+            .delay(delay,TimeUnit.SECONDS)
+            .flatMapCompletable {
+                channel.subscription()
+                    .subscribeTopic()
+            }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe()
+        val subChannelId = channel.getChannelId()
+        AmityChatClient
+            .newSubChannelRepository()
+            .getSubChannel(subChannelId)
+            .firstOrError()
+            .flatMapCompletable {
+                it.subscription().subscribeTopic()
+            }
+            .subscribeOn(Schedulers.io())
+            .doOnError {}
+            .subscribe()
+    }
+
+    fun setIsMutedChannel(channelId: String, isMuted: Boolean) {
+        AmityChatClient.newChannelRepository()
+            .let { repository ->
+                if (isMuted) {
+                    repository.muteChannel(
+                        channelId = channelId,
+                        timeout = Duration.standardDays(7)
+                    )
+                } else {
+                    repository.unmuteChannel(channelId = channelId)
+                }
+            }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe()
     }
 
     private fun createStream(title: String, description: String): Single<AmityStream> {
@@ -208,8 +299,19 @@ class AmityCreateLivestreamPageViewModel : AmityBaseViewModel() {
                 title = title,
                 description = description,
                 resolution = AmityBroadcastResolution.HD_720P,
-                thumbnailFileId = _uiState.value.thumbnailId
+                thumbnailImage = _uiState.value.thumbnailImage,
+                channelEnabled = true,
             )
+    }
+
+    private fun createLiveChannel(livestreamTitle: String, postId: String, liveStreamId: String): Single<AmityChannel> {
+        return AmityChatClient.newChannelRepository()
+            .createChannel(livestreamTitle)
+            .live()
+            .postId(postId)
+            .videoStreamId(liveStreamId)
+            .build()
+            .create()
     }
 
     private fun createPost(
@@ -343,7 +445,8 @@ class AmityCreateLivestreamPageViewModel : AmityBaseViewModel() {
                                         state = LivestreamThumbnailUploadUiState.Success(
                                             uploadResult.getFile().getFileId()
                                         ),
-                                        thumbnailUri = uri
+                                        thumbnailUri = uri,
+                                        thumbnailImage = uploadResult.getFile() as? AmityImage
                                     )
                                 }
 
@@ -367,11 +470,13 @@ class AmityCreateLivestreamPageViewModel : AmityBaseViewModel() {
     private fun updateThumbnailUploadState(
         state: LivestreamThumbnailUploadUiState,
         thumbnailUri: Uri? = null,
+        thumbnailImage: AmityImage? = null,
     ) {
         viewModelScope.launch {
             _uiState.update { currentState ->
                 currentState.copy(
                     thumbnailUri = thumbnailUri,
+                    thumbnailImage = thumbnailImage,
                     thumbnailId = if (state is LivestreamThumbnailUploadUiState.Success) state.thumbnailId else null,
                     thumbnailUploadUiState = state,
                 )
@@ -425,6 +530,19 @@ class AmityCreateLivestreamPageViewModel : AmityBaseViewModel() {
                 )
             }
         }
+    }
+
+    fun observeLiveReactions(
+        referenceId: String,
+    ): Flow<List<AmityLiveReaction>> {
+    return AmityCoreClient.newLiveReactionRepository()
+        .getReactions(
+            referenceId = referenceId,
+            referenceType = AmityLiveReactionReferenceType.POST
+        )
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .asFlow()
     }
 }
 

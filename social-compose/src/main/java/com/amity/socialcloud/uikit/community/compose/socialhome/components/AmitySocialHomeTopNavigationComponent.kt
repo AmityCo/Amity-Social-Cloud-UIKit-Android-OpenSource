@@ -114,6 +114,7 @@ fun AmitySocialHomeTopNavigationComponent(
 
                         }
                     }
+                    else -> {}
                 }
 
                 Spacer(modifier = modifier.width(10.dp))
@@ -139,6 +140,7 @@ fun AmitySocialHomeTopNavigationComponent(
                             )
                         }
                     }
+                    else -> {}
                 }
 
                 Spacer(modifier = modifier.width(10.dp))

@@ -9,6 +9,7 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -23,10 +24,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -34,28 +37,39 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -64,8 +78,11 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.api.social.post.review.AmityReviewStatus
 import com.amity.socialcloud.sdk.core.session.model.NetworkConnectionEvent
 import com.amity.socialcloud.sdk.model.core.error.AmityError
+import com.amity.socialcloud.sdk.model.core.reaction.AmityLiveReactionReferenceType
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.sdk.video.AmityCameraView
@@ -74,11 +91,15 @@ import com.amity.socialcloud.sdk.video.AmityStreamBroadcasterConfiguration
 import com.amity.socialcloud.sdk.video.StreamBroadcaster
 import com.amity.socialcloud.sdk.video.model.AmityBroadcastResolution
 import com.amity.socialcloud.sdk.video.model.AmityStreamBroadcasterState
+import com.amity.socialcloud.uikit.common.common.isNotEmptyOrBlank
+import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
+import com.amity.socialcloud.uikit.common.model.AmityMessageReactions
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
+import com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem
 import com.amity.socialcloud.uikit.common.ui.elements.DisposableEffectWithLifeCycle
 import com.amity.socialcloud.uikit.common.ui.elements.drawVerticalScrollbar
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
@@ -89,11 +110,17 @@ import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getText
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.livestream.chat.AmityLivestreamMessageComposeBar
+import com.amity.socialcloud.uikit.community.compose.livestream.chat.ChatOverlay
+import com.amity.socialcloud.uikit.community.compose.livestream.chat.FloatingReaction
+import com.amity.socialcloud.uikit.community.compose.livestream.chat.FloatingReactionsOverlay
+import com.amity.socialcloud.uikit.community.compose.livestream.chat.ReactionPicker
 import com.amity.socialcloud.uikit.community.compose.livestream.create.AmityCreateLivestreamPageActivity.Companion.EXTRA_PARAM_TARGET_ID
 import com.amity.socialcloud.uikit.community.compose.livestream.create.AmityCreateLivestreamPageActivity.Companion.EXTRA_PARAM_TARGET_TYPE
 import com.amity.socialcloud.uikit.community.compose.livestream.create.element.AmityCircularProgressWithCountDownTimer
 import com.amity.socialcloud.uikit.community.compose.livestream.create.element.AmityCreateLivestreamNoInternetView
-import com.amity.socialcloud.uikit.community.compose.livestream.create.element.AmityCreateLivestreamNoPermissionView
+import com.amity.socialcloud.uikit.community.compose.livestream.create.element.AmityCreateLivestreamPendingApprovalView
+import com.amity.socialcloud.uikit.community.compose.livestream.create.element.AmityMediaAndCameraNoPermissionView
 import com.amity.socialcloud.uikit.community.compose.livestream.create.element.AmityEditThumbnailSheet
 import com.amity.socialcloud.uikit.community.compose.livestream.create.element.AmityNoOutlineTextField
 import com.amity.socialcloud.uikit.community.compose.livestream.create.element.AmityThumbnailView
@@ -101,19 +128,27 @@ import com.amity.socialcloud.uikit.community.compose.livestream.create.model.Ami
 import com.amity.socialcloud.uikit.community.compose.livestream.create.model.LivestreamThumbnailUploadUiState
 import com.amity.socialcloud.uikit.community.compose.livestream.util.LivestreamErrorScreenType
 import com.amity.socialcloud.uikit.community.compose.livestream.util.LivestreamScreenType
+import com.amity.socialcloud.uikit.community.compose.livestream.view.AmityLivestreamDeclinedPage
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostCategory
+import com.amity.socialcloud.uikit.community.compose.utils.sharePost
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.internal.operators.flowable.FlowableInterval
 import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
+import kotlin.text.replace
 
 private const val LIVESTREAM_DURATION_SNACK_BAR = 14220
 private const val LIVESTREAM_COUNTDOWN_DURATION = 10
 private const val LIVESTREAM_DURATION_COUNTDOWN = 14390
 private const val LIVESTREAM_INTERNET_LOSS_MAXIMUM_DURATION = 180000L
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AmityCreateLivestreamPage(
     modifier: Modifier = Modifier,
@@ -147,6 +182,11 @@ fun AmityCreateLivestreamPage(
     }
 
     val uiState by viewModel.uiState.collectAsState()
+
+    val bottomSheetState = rememberModalBottomSheetState()
+
+    val clipboardManager = LocalClipboardManager.current
+
 
     var showEditThumbnailSheet by remember { mutableStateOf(false) }
     var showDiscardPostDialog by remember { mutableStateOf(false) }
@@ -182,6 +222,8 @@ fun AmityCreateLivestreamPage(
     var liveHour by remember { mutableIntStateOf(0) }
     var liveMin by remember { mutableIntStateOf(0) }
     var liveSecond by remember { mutableIntStateOf(0) }
+    var showBottomSheet by remember { mutableStateOf(false) }
+    var isReadOnly by remember { mutableStateOf(false) }
 
     val cameraAndAudioPermissions = arrayOf(
         Manifest.permission.CAMERA,
@@ -252,6 +294,32 @@ fun AmityCreateLivestreamPage(
 
     val startStreamButtonEnable =
         isCameraAndRecAudioPermissionGranted && !uiState.liveTitle.isNullOrBlank() && uiState.thumbnailUploadUiState !is LivestreamThumbnailUploadUiState.Uploading
+
+    var showReactionPicker by remember { mutableStateOf(false) }
+    val floatingReactions = remember { mutableStateListOf<FloatingReaction>() }
+    var messageText by remember { mutableStateOf("") }
+
+
+    val reactions by remember(uiState.createPostId) {  viewModel.observeLiveReactions(uiState.createPostId ?: "") }.collectAsState(emptyList())
+
+    LaunchedEffect(reactions) {
+        reactions.map {
+            AmityMessageReactions.toReaction(it.getReactionName())?.let { reaction ->
+                CoroutineScope(Dispatchers.IO).launch {
+                    // Add random delay between 0-4 s to create visual jitter effect
+                    delay((Math.random() * 4000).toLong())
+                    withContext(Dispatchers.Main) {
+                        floatingReactions.add(
+                            FloatingReaction(
+                                reaction = reaction,
+                                id = System.currentTimeMillis()
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
 
     LaunchedEffect(Unit) {
         if (targetType == AmityPost.TargetType.USER) {
@@ -327,8 +395,8 @@ fun AmityCreateLivestreamPage(
         }
     }
 
-    LaunchedEffect(uiState.amityPost?.isDeleted()) {
-        if (uiState.amityPost?.isDeleted() == true) {
+    LaunchedEffect(uiState.post?.isDeleted()) {
+        if (uiState.post?.isDeleted() == true) {
             if (durationDisposable?.isDisposed == false) {
                 streamBroadcaster?.stopPreview()
                 streamBroadcaster?.stopPublish()
@@ -355,7 +423,7 @@ fun AmityCreateLivestreamPage(
                 streamBroadcaster?.stopPublish()
                 durationDisposable?.dispose()
             }
-            uiState.amityPost?.let {
+            uiState.post?.let {
                 viewModel.unSubscribePostRT(it)
             }
         }
@@ -370,482 +438,802 @@ fun AmityCreateLivestreamPage(
         }
     }
 
+    if (uiState.post?.getReviewStatus() == AmityReviewStatus.DECLINED) {
+        AmityLivestreamDeclinedPage(
+            onOkClick = {
+                context.closePageWithResult(Activity.RESULT_OK)
+            }
+        )
+        return
+    }
+
     AmityBasePage(pageId = "create_livestream_page") {
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .background(Color.Black)
-                .pointerInput(Unit) {
-                    detectTapGestures(onTap = {
-                        focusManager.clearFocus()
-                    })
-                },
-        ) {
-            Box(
+        Box {
+            Column(
                 modifier = modifier
-                    .aspectRatio(9f / 16f)
-                    .clip(RoundedCornerShape(12.dp))
+                    .fillMaxSize()
                     .background(Color.Black)
+                    .pointerInput(Unit) {
+                        detectTapGestures(onTap = {
+                            focusManager.clearFocus()
+                        })
+                    },
             ) {
-                if (isCameraAndRecAudioPermissionGranted) {
-                    AndroidView(
-                        factory = { context ->
-                            val amityCamera = AmityCameraView(context)
-                            streamBroadcaster = AmityStreamBroadcaster.Builder(amityCamera)
-                                .setConfiguration(broadcasterConfig)
-                                .build()
-                            streamBroadcaster?.let {
-                                it.startPreview()
-                                viewModel.subscribeBroadcaster(it)
-                            }
-                            amityCamera
-                        },
+                Box(
+                    modifier = modifier
+                        .aspectRatio(9f / 16f)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(Color.Black)
+                ) {
+                    if (isCameraAndRecAudioPermissionGranted) {
+                        AndroidView(
+                            factory = { context ->
+                                val amityCamera = AmityCameraView(context)
+                                streamBroadcaster = AmityStreamBroadcaster.Builder(amityCamera)
+                                    .setConfiguration(broadcasterConfig)
+                                    .build()
+                                streamBroadcaster?.let {
+                                    it.startPreview()
+                                    viewModel.subscribeBroadcaster(it)
+                                }
+                                amityCamera
+                            },
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(Color.Black)
+                        )
+                    }
+                    Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(Color.Black)
-                    )
-                }
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            if (uiState.broadcasterState is AmityStreamBroadcasterState.CONNECTED) {
-                                Color.Transparent
-                            } else {
-                                Color.Black.copy(
-                                    alpha = 0.5f
-                                )
-                            }
-                        ),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    when (uiState.broadcasterState) {
-                        is AmityStreamBroadcasterState.IDLE -> {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(58.dp)
-                                    .padding(horizontal = 16.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                AmityBaseElement(
-                                    pageScope = getPageScope(),
-                                    elementId = "cancel_create_livestream_button"
-                                ) {
-                                    Image(
-                                        modifier = Modifier
-                                            .padding(end = 12.dp)
-                                            .size(32.dp)
-                                            .clickableWithoutRipple {
-                                                if (uiState.liveTitle.isNullOrBlank() && uiState.thumbnailId.isNullOrBlank()) {
-                                                    context.closePageWithResult(Activity.RESULT_CANCELED)
-                                                } else {
-                                                    showDiscardPostDialog = true
-
-                                                }
-                                            }
-                                            .testTag(getAccessibilityId()),
-                                        painter = painterResource(getConfig().getIcon()),
-                                        contentDescription = "cancel_create_livestream_button",
+                            .background(
+                                if (uiState.broadcasterState is AmityStreamBroadcasterState.CONNECTED) {
+                                    Color.Transparent
+                                } else {
+                                    Color.Black.copy(
+                                        alpha = 0.5f
                                     )
                                 }
-                                Row(
-                                    modifier = Modifier.weight(1f),
-                                    horizontalArrangement = Arrangement.End
-                                ) {
-                                    Text(
-                                        text = stringResource(R.string.amity_v4_create_livestream_target_title),
-                                        color = Color.White,
-                                        style = AmityTheme.typography.bodyLegacy
-                                    )
-                                    Spacer(modifier = Modifier.width(4.dp))
-                                    Text(
-                                        text = uiState.targetName ?: "",
-                                        color = Color.White,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
-                                        style = AmityTheme.typography.bodyLegacy.copy(
-                                            fontWeight = FontWeight.SemiBold,
-                                        ),
-                                    )
-                                }
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Image(
-                                    painter = painterResource(R.drawable.amity_arrow_down),
-                                    contentDescription = "Close Button",
-                                    modifier = modifier
-                                        .size(16.dp)
-                                        .clickableWithoutRipple(
-                                            onClick = {
-                                                behavior.goToSelectLivestreamTargetPage(
-                                                    context = context,
-                                                    isEditMode = true,
-                                                    launcher = launcher
-                                                )
-                                            }
-                                        ),
-                                )
-                            }
-
-                            Spacer(Modifier.height(20.dp))
-
-                            if (isCameraAndRecAudioPermissionGranted) {
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .imePadding()
-                                        .weight(1f)
-                                        .padding(vertical = 16.dp)
-                                        .drawVerticalScrollbar(scrollState)
-                                        .verticalScroll(scrollState)
-                                ) {
-                                    AmityNoOutlineTextField(
-                                        value = uiState.liveTitle ?: "",
-                                        onValueChange = {
-                                            viewModel.setTitleText(it)
-                                        },
-                                        modifier = Modifier.padding(horizontal = 16.dp),
-                                        placeHolder = {
-                                            Text(
-                                                text = stringResource(R.string.amity_v4_create_livestream_title_placeholder),
-                                                color = Color.White,
-                                                style = AmityTheme.typography.headLine.copy(
-                                                    color = Color.White,
-                                                    textAlign = TextAlign.Start,
-                                                )
-                                            )
-                                        },
-                                        singleLine = true,
-                                        maxCharLength = 30,
-                                        textStyle = AmityTheme.typography.headLine.copy(
-                                            color = Color.White,
-                                            textAlign = TextAlign.Start,
-                                        ),
-                                    )
-
-                                    Spacer(Modifier.height(8.dp))
-
-                                    AmityNoOutlineTextField(
-                                        value = uiState.liveDesc ?: "",
-                                        onValueChange = {
-                                            viewModel.setDescText(it)
-                                        },
-                                        modifier = Modifier
-                                            .padding(horizontal = 16.dp)
-                                            .imePadding(),
-                                        placeHolder = {
-                                            Text(
-                                                text = stringResource(R.string.amity_v4_create_livestream_desc_placeholder),
-                                                color = Color.White,
-                                                style = AmityTheme.typography.headLine.copy(
-                                                    color = Color.White,
-                                                    textAlign = TextAlign.Start,
-                                                )
-                                            )
-                                        },
-                                        singleLine = false,
-                                        textStyle = AmityTheme.typography.body.copy(
-                                            color = Color.White,
-                                            textAlign = TextAlign.Start,
-                                        ),
-                                    )
-                                }
-                            } else {
-                                AmityCreateLivestreamNoPermissionView(
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .background(Color.Black.copy(alpha = 0.5f)),
-                                    title = stringResource(R.string.amity_v4_create_livestream_no_camera_permission_title),
-                                    description = stringResource(R.string.amity_v4_create_livestream_no_camera_permission_desc),
-                                    onOpenSettingClick = {
-                                        val intent =
-                                            Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                                                data =
-                                                    Uri.fromParts(
-                                                        "package",
-                                                        context.packageName,
-                                                        null
-                                                    )
-                                            }
-                                        context.startActivity(intent)
-                                    }
-                                )
-                            }
-                            AmityBaseElement(
-                                pageScope = getPageScope(),
-                                elementId = "start_livestream_button"
-                            ) {
-                                Image(
-                                    painter = painterResource(getConfig().getIcon()),
-                                    contentDescription = "Start Livestream",
-                                    modifier = Modifier
-                                        .padding(bottom = 32.dp)
-                                        .size(72.dp)
-                                        .clickableWithoutRipple {
-                                            if (startStreamButtonEnable) {
-                                                uiState.liveTitle?.let {
-                                                    viewModel.createLiveStreamingPost(
-                                                        title = it,
-                                                        description = uiState.liveDesc ?: " ",
-                                                        onCreateCompleted = { streamId ->
-                                                            streamId?.let {
-                                                                streamBroadcaster?.startPublish(it)
-                                                            }
-                                                        },
-                                                        onCreateFailed = {
-                                                            showCannotStartLivestreamDialog = true
-                                                        },
-                                                    )
-                                                }
-                                            }
-                                        }
-                                        .testTag(getAccessibilityId()),
-                                    alpha = if (startStreamButtonEnable) 1f else 0.3f
-                                )
-                            }
-                        }
-
-                        is AmityStreamBroadcasterState.CONNECTING -> {
-                            Spacer(Modifier.weight(1f))
-                            CircularProgressIndicator(
-                                modifier = Modifier
-                                    .width(40.dp)
-                                    .height(40.dp),
-                                color = Color.White,
-                                trackColor = Color.Gray,
-                                strokeWidth = 2.dp,
-                                strokeCap = StrokeCap.Round
-                            )
-                            Spacer(Modifier.height(13.dp))
-                            Text(
-                                text = stringResource(R.string.amity_v4_create_livestream_connecting_text),
-                                color = Color.White,
-                                style = AmityTheme.typography.titleLegacy.copy(
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                            )
-                            Spacer(Modifier.weight(1f))
-                        }
-
-                        is AmityStreamBroadcasterState.CONNECTED,
-                        is AmityStreamBroadcasterState.DISCONNECTED,
-                            -> {
-                            Box(modifier = Modifier.fillMaxSize()) {
-                                if (showCountdownEndingLivestream) {
-                                    AmityCircularProgressWithCountDownTimer(
-                                        totalTime = LIVESTREAM_COUNTDOWN_DURATION,
-                                        onTimeUp = {
-                                            streamBroadcaster?.let {
-                                                endLivestream(
-                                                    context = context,
-                                                    streamBroadcaster = it,
-                                                    durationDisposable = durationDisposable,
-                                                    behavior = behavior,
-                                                    uiState = uiState,
-                                                    showLivestreamPostExceeded = true
-                                                )
-                                            }
-                                            showCountdownEndingLivestream = false
-                                        }
-                                    )
-                                }
-
-                                if (uiState.broadcasterState is AmityStreamBroadcasterState.DISCONNECTED) {
-                                    AmityCreateLivestreamNoInternetView()
-                                }
-
+                            ),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        when (uiState.broadcasterState) {
+                            is AmityStreamBroadcasterState.IDLE -> {
                                 Row(
                                     modifier = Modifier
-                                        .align(Alignment.TopCenter)
                                         .fillMaxWidth()
-                                        .padding(16.dp),
+                                        .height(58.dp)
+                                        .padding(horizontal = 16.dp),
                                     verticalAlignment = Alignment.CenterVertically,
                                 ) {
                                     AmityBaseElement(
                                         pageScope = getPageScope(),
-                                        elementId = "live_timer_status"
+                                        elementId = "cancel_create_livestream_button"
                                     ) {
-                                        Box(
-                                            contentAlignment = Alignment.Center,
+                                        Image(
                                             modifier = Modifier
-                                                .background(
-                                                    color = getConfig().getBackgroundColor(),
-                                                    shape = RoundedCornerShape(4.dp)
+                                                .padding(end = 12.dp)
+                                                .size(32.dp)
+                                                .clickableWithoutRipple {
+                                                    if (true) {
+                                                        showEndLivestreamDialog = true
+                                                    }
+                                                    if (uiState.liveTitle.isNullOrBlank() && uiState.thumbnailId.isNullOrBlank()) {
+                                                        context.closePageWithResult(Activity.RESULT_CANCELED)
+                                                    } else {
+                                                        showDiscardPostDialog = true
+                                                    }
+
+                                                }
+                                                .testTag(getAccessibilityId()),
+                                            painter = painterResource(getConfig().getIcon()),
+                                            contentDescription = "cancel_create_livestream_button",
+                                        )
+                                    }
+                                    Row(
+                                        modifier = Modifier.weight(1f),
+                                        horizontalArrangement = Arrangement.End
+                                    ) {
+                                        Text(
+                                            text = stringResource(R.string.amity_v4_create_livestream_target_title),
+                                            color = Color.White,
+                                            style = AmityTheme.typography.bodyLegacy
+                                        )
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text(
+                                            text = uiState.targetName ?: "",
+                                            color = Color.White,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis,
+                                            style = AmityTheme.typography.bodyLegacy.copy(
+                                                fontWeight = FontWeight.SemiBold,
+                                            ),
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Image(
+                                        painter = painterResource(R.drawable.amity_arrow_down),
+                                        contentDescription = "Close Button",
+                                        modifier = modifier
+                                            .size(16.dp)
+                                            .clickableWithoutRipple(
+                                                onClick = {
+                                                    behavior.goToSelectLivestreamTargetPage(
+                                                        context = context,
+                                                        isEditMode = true,
+                                                        launcher = launcher
+                                                    )
+                                                }
+                                            ),
+                                    )
+                                }
+
+                                Spacer(Modifier.height(20.dp))
+
+                                if (isCameraAndRecAudioPermissionGranted) {
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .imePadding()
+                                            .weight(1f)
+                                            .padding(vertical = 16.dp)
+                                            .drawVerticalScrollbar(scrollState)
+                                            .verticalScroll(scrollState)
+                                    ) {
+                                        AmityNoOutlineTextField(
+                                            value = uiState.liveTitle ?: "",
+                                            onValueChange = {
+                                                viewModel.setTitleText(it)
+                                            },
+                                            modifier = Modifier.padding(horizontal = 16.dp),
+                                            placeHolder = {
+                                                Text(
+                                                    text = stringResource(R.string.amity_v4_create_livestream_title_placeholder),
+                                                    color = Color.White,
+                                                    style = AmityTheme.typography.headLine.copy(
+                                                        color = Color.White,
+                                                        textAlign = TextAlign.Start,
+                                                    )
                                                 )
-                                                .padding(horizontal = 8.dp, vertical = 4.dp)
-                                        ) {
-                                            Text(
-                                                text = formatTime(liveHour, liveMin, liveSecond),
+                                            },
+                                            singleLine = true,
+                                            maxCharLength = 30,
+                                            textStyle = AmityTheme.typography.headLine.copy(
                                                 color = Color.White,
-                                                style = AmityTheme.typography.captionBold,
-                                                textAlign = TextAlign.Center
+                                                textAlign = TextAlign.Start,
+                                            ),
+                                        )
+
+                                        Spacer(Modifier.height(8.dp))
+
+                                        AmityNoOutlineTextField(
+                                            value = uiState.liveDesc ?: "",
+                                            onValueChange = {
+                                                viewModel.setDescText(it)
+                                            },
+                                            modifier = Modifier
+                                                .padding(horizontal = 16.dp)
+                                                .imePadding(),
+                                            placeHolder = {
+                                                Text(
+                                                    text = stringResource(R.string.amity_v4_create_livestream_desc_placeholder),
+                                                    color = Color.White,
+                                                    style = AmityTheme.typography.body.copy(
+                                                        color = Color.White,
+                                                        textAlign = TextAlign.Start,
+                                                    )
+                                                )
+                                            },
+                                            singleLine = false,
+                                            textStyle = AmityTheme.typography.body.copy(
+                                                color = Color.White,
+                                                textAlign = TextAlign.Start,
+                                            ),
+                                        )
+                                    }
+                                } else {
+                                    AmityMediaAndCameraNoPermissionView(
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .background(Color.Black.copy(alpha = 0.5f)),
+                                        title = stringResource(R.string.amity_v4_create_livestream_no_camera_permission_title),
+                                        description = stringResource(R.string.amity_v4_create_livestream_no_camera_permission_desc),
+                                        onOpenSettingClick = {
+                                            val intent =
+                                                Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                                    data =
+                                                        Uri.fromParts(
+                                                            "package",
+                                                            context.packageName,
+                                                            null
+                                                        )
+                                                }
+                                            context.startActivity(intent)
+                                        }
+                                    )
+                                }
+                                AmityBaseElement(
+                                    pageScope = getPageScope(),
+                                    elementId = "start_livestream_button"
+                                ) {
+                                    Image(
+                                        painter = painterResource(getConfig().getIcon()),
+                                        contentDescription = "Start Livestream",
+                                        modifier = Modifier
+                                            .padding(bottom = 32.dp)
+                                            .size(72.dp)
+                                            .clickableWithoutRipple {
+                                                if (startStreamButtonEnable) {
+                                                    uiState.liveTitle?.let {
+                                                        viewModel.createLiveStreamingPost(
+                                                            title = it,
+                                                            description = uiState.liveDesc ?: " ",
+                                                            isReadOnly = isReadOnly,
+                                                            onCreateCompleted = { streamId ->
+                                                                streamId?.let {
+                                                                    streamBroadcaster?.startPublish(
+                                                                        it
+                                                                    )
+                                                                }
+                                                            },
+                                                            onCreateFailed = {
+                                                                showCannotStartLivestreamDialog =
+                                                                    true
+                                                            },
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                            .testTag(getAccessibilityId()),
+                                        alpha = if (startStreamButtonEnable) 1f else 0.3f
+                                    )
+                                }
+                            }
+
+                            is AmityStreamBroadcasterState.CONNECTING -> {
+                                Spacer(Modifier.weight(1f))
+                                CircularProgressIndicator(
+                                    modifier = Modifier
+                                        .width(40.dp)
+                                        .height(40.dp),
+                                    color = Color.White,
+                                    trackColor = Color.Gray,
+                                    strokeWidth = 2.dp,
+                                    strokeCap = StrokeCap.Round
+                                )
+                                Spacer(Modifier.height(13.dp))
+                                Text(
+                                    text = stringResource(R.string.amity_v4_create_livestream_connecting_text),
+                                    color = Color.White,
+                                    style = AmityTheme.typography.titleLegacy.copy(
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                )
+                                Spacer(Modifier.weight(1f))
+                            }
+
+                            is AmityStreamBroadcasterState.CONNECTED,
+                            is AmityStreamBroadcasterState.DISCONNECTED,
+                                -> {
+                                Box(modifier = Modifier.fillMaxSize()) {
+                                    if (showCountdownEndingLivestream) {
+                                        AmityCircularProgressWithCountDownTimer(
+                                            totalTime = LIVESTREAM_COUNTDOWN_DURATION,
+                                            onTimeUp = {
+                                                streamBroadcaster?.let {
+                                                    endLivestream(
+                                                        context = context,
+                                                        streamBroadcaster = it,
+                                                        durationDisposable = durationDisposable,
+                                                        behavior = behavior,
+                                                        uiState = uiState,
+                                                        showLivestreamPostExceeded = true
+                                                    )
+                                                }
+                                                showCountdownEndingLivestream = false
+                                            }
+                                        )
+                                    }
+
+                                    if (uiState.broadcasterState is AmityStreamBroadcasterState.DISCONNECTED) {
+                                        AmityCreateLivestreamNoInternetView()
+                                    } else if (uiState.isPendingApproval == true) {
+                                        AmityCreateLivestreamPendingApprovalView()
+                                    }
+
+                                    Row(
+                                        modifier = Modifier
+                                            .align(Alignment.TopCenter)
+                                            .fillMaxWidth()
+                                            .padding(16.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
+                                        AmityBaseElement(
+                                            pageScope = getPageScope(),
+                                            elementId = "cancel_create_livestream_button"
+                                        ) {
+                                            Box(
+                                                contentAlignment = Alignment.TopStart,
+                                                modifier = Modifier
+                                                    .size(24.dp)
+                                            ) {
+                                                Image(
+                                                    modifier = Modifier
+                                                        .padding(end = 12.dp)
+                                                        .size(32.dp)
+                                                        .clickableWithoutRipple {
+                                                            showEndLivestreamDialog = true
+                                                        }
+                                                        .testTag(getAccessibilityId()),
+                                                    painter = painterResource(id = R.drawable.amity_ic_close),
+                                                    contentDescription = "end_livestream_button",
+                                                    contentScale = ContentScale.Fit
+                                                )
+                                            }
+                                        }
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                        ) {
+                                            AmityBaseElement(
+                                                pageScope = getPageScope(),
+                                                elementId = "live_timer_status"
+                                            ) {
+                                                Box(
+                                                    contentAlignment = Alignment.TopEnd,
+                                                    modifier = Modifier
+                                                        .background(
+                                                            color = getConfig().getBackgroundColor(),
+                                                            shape = RoundedCornerShape(4.dp)
+                                                        )
+                                                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                                                ) {
+                                                    Text(
+                                                        text = formatTime(
+                                                            liveHour,
+                                                            liveMin,
+                                                            liveSecond
+                                                        ),
+                                                        color = Color.White,
+                                                        style = AmityTheme.typography.captionBold,
+                                                        textAlign = TextAlign.Center
+                                                    )
+                                                }
+
+                                            }
+                                            Spacer(modifier = Modifier.width(4.dp))
+                                            if (uiState.post?.getTarget() is AmityPost.Target.COMMUNITY) {
+                                                AmityBaseElement(
+                                                    pageScope = getPageScope(),
+                                                    elementId = "create_livestream_option_button"
+                                                ) {
+                                                    Box(
+                                                        contentAlignment = Alignment.TopStart,
+                                                        modifier = Modifier
+                                                            .size(32.dp)
+                                                    ) {
+                                                        Icon(
+                                                            modifier = Modifier
+                                                                .size(32.dp)
+                                                                .clickableWithoutRipple {
+                                                                    showBottomSheet = true
+                                                                }
+                                                                .testTag(getAccessibilityId()),
+                                                            painter = painterResource(id = R.drawable.amity_ic_more_vertical),
+                                                            contentDescription = "create_livestream_option_button",
+                                                            tint = Color.White
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        // Reaction picker popup
+                                        if (showReactionPicker) {
+                                            ReactionPicker(
+                                                onReactionSelected = { reaction ->
+                                                    // Add floating reaction
+                                                    floatingReactions.add(
+                                                        FloatingReaction(
+                                                            reaction = reaction,
+                                                            id = System.currentTimeMillis()
+                                                        )
+                                                    )
+                                                    AmityCoreClient.newLiveReactionRepository()
+                                                        .createReaction(
+                                                            liveStreamId = uiState.streamObj?.getStreamId() ?: "",
+                                                            referenceId = uiState.createPostId ?: "",
+                                                            referenceType = AmityLiveReactionReferenceType.POST,
+                                                            reactionName = reaction.name,
+                                                        )
+                                                },
+                                                onDismiss = { showReactionPicker = false },
+                                                modifier = Modifier.padding(
+                                                    bottom = 56.dp,
+                                                    end = 16.dp
+                                                )
                                             )
                                         }
                                     }
+                                }
+                            }
+                        }
+                    }
+                }
+                if (uiState.broadcasterState !is AmityStreamBroadcasterState.CONNECTED && uiState.broadcasterState !is AmityStreamBroadcasterState.DISCONNECTED) {
+                    AmityBaseComponent(
+                        pageScope = getPageScope(),
+                        componentId = "create_livestream_bottom_bar"
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(Color.Black)
+                                .padding(horizontal = 16.dp),
+                        ) {
+                            when (uiState.broadcasterState) {
+                                is AmityStreamBroadcasterState.IDLE -> {
+                                    AmityBaseElement(
+                                        pageScope = getPageScope(),
+                                        componentScope = getComponentScope(),
+                                        elementId = "add_thumbnail_button"
+                                    ) {
+                                        when (uiState.thumbnailUploadUiState) {
+                                            is LivestreamThumbnailUploadUiState.Success -> {
+                                                AmityThumbnailView(
+                                                    modifier = Modifier.align(Alignment.CenterStart),
+                                                    thumbnailsUri = uiState.thumbnailUri,
+                                                    isShowProgressIndicator = false
+                                                ) {
+                                                    showEditThumbnailSheet = true
+                                                }
+                                            }
+
+                                            is LivestreamThumbnailUploadUiState.Uploading -> {
+                                                AmityThumbnailView(
+                                                    modifier = Modifier.align(Alignment.CenterStart),
+                                                    thumbnailsUri = uiState.thumbnailUri,
+                                                    isShowProgressIndicator = true
+                                                ) {
+                                                    showEditThumbnailSheet = true
+                                                }
+                                            }
+
+                                            is LivestreamThumbnailUploadUiState.Idle -> {
+                                                Row(
+                                                    modifier = Modifier
+                                                        .align(Alignment.CenterStart)
+                                                        .clickableWithoutRipple {
+                                                            if (isCameraAndRecAudioPermissionGranted) {
+                                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                                                    mediaPickerLauncher.launch(
+                                                                        PickVisualMediaRequest(
+                                                                            mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
+                                                                        )
+                                                                    )
+                                                                } else {
+                                                                    if (isMediaPickerPermissionGranted) {
+                                                                        mediaPickerLauncher.launch(
+                                                                            PickVisualMediaRequest(
+                                                                                mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
+                                                                            )
+                                                                        )
+                                                                    } else {
+                                                                        mediaPickerPermissionLauncher.launch(
+                                                                            mediaPickerPermissions
+                                                                        )
+                                                                    }
+                                                                }
+                                                                haptics.performHapticFeedback(
+                                                                    HapticFeedbackType.LongPress
+                                                                )
+                                                            }
+                                                        },
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                ) {
+                                                    Image(
+                                                        painter = painterResource(getConfig().getIcon()),
+                                                        contentDescription = "addThumbNail",
+                                                        modifier = Modifier
+                                                            .size(30.dp)
+                                                            .testTag("addThumbNail"),
+                                                        alpha = if (isCameraAndRecAudioPermissionGranted) 1f else 0.5f
+                                                    )
+                                                    Spacer(Modifier.width(4.dp))
+                                                    Text(
+                                                        text = getConfig().getText(),
+                                                        color = if (isCameraAndRecAudioPermissionGranted) Color.White else Color.White.copy(
+                                                            alpha = 0.5f
+                                                        ),
+                                                        style = AmityTheme.typography.bodyLegacy.copy(
+                                                            fontWeight = FontWeight.SemiBold
+                                                        )
+                                                    )
+                                                }
+                                            }
+
+                                            else -> {}
+                                        }
+                                    }
+                                }
+
+                                is AmityStreamBroadcasterState.CONNECTING -> {}
+
+                                is AmityStreamBroadcasterState.CONNECTED,
+                                is AmityStreamBroadcasterState.DISCONNECTED,
+                                    -> {
+                                    AmityBaseElement(
+                                        pageScope = getPageScope(),
+                                        componentScope = getComponentScope(),
+                                        elementId = "end_live_stream_button"
+                                    ) {
+                                        Box(
+                                            modifier = Modifier
+                                                .align(Alignment.CenterStart)
+                                                .clip(RoundedCornerShape(size = 8.dp))
+                                                .border(
+                                                    width = 1.dp,
+                                                    color = AmityTheme.colors.baseShade4,
+                                                    shape = RoundedCornerShape(size = 8.dp)
+                                                )
+                                                .padding(horizontal = 16.dp, vertical = 10.dp)
+                                                .clickableWithoutRipple {
+                                                    showEndLivestreamDialog = true
+                                                }
+                                        ) {
+                                            Text(
+                                                modifier = Modifier.align(
+                                                    Alignment.Center
+                                                ),
+                                                text = getConfig().getText(),
+                                                style = AmityTheme.typography.bodyLegacy.copy(
+                                                    fontWeight = FontWeight.SemiBold
+                                                ),
+                                                color = Color.White
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                            Row(
+                                modifier = Modifier
+                                    .align(Alignment.CenterEnd),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                if (targetType == AmityPost.TargetType.COMMUNITY) {
+                                    AmityBaseElement(
+                                        pageScope = getPageScope(),
+                                        componentScope = getComponentScope(),
+                                        elementId = "create_livestream_settings_button"
+                                    ) {
+                                        Image(
+                                            painter = painterResource(R.drawable.amity_ic_create_livestream_settings),
+                                            contentDescription = "create livestream settings button",
+                                            modifier = Modifier
+                                                .testTag("create_livestream_settings_button")
+                                                .clickableWithoutRipple {
+                                                    showBottomSheet = true
+                                                },
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.width(9.dp))
+                                }
+                                AmityBaseElement(
+                                    pageScope = getPageScope(),
+                                    componentScope = getComponentScope(),
+                                    elementId = "switch_camera_button"
+                                ) {
+                                    Image(
+                                        painter = painterResource(getConfig().getIcon()),
+                                        contentDescription = "switch camera button",
+                                        modifier = Modifier
+                                            .testTag("switch_camera_button")
+                                            .clickableWithoutRipple {
+                                                if (isCameraAndRecAudioPermissionGranted) {
+                                                    streamBroadcaster?.switchCamera()
+                                                    haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                }
+                                            },
+                                        alpha = if (isCameraAndRecAudioPermissionGranted) 1f else 0.5f
+                                    )
                                 }
                             }
                         }
                     }
                 }
             }
-
-            AmityBaseComponent(
-                pageScope = getPageScope(),
-                componentId = "create_livestream_bottom_bar"
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Black)
-                        .padding(horizontal = 16.dp),
-                ) {
-                    when (uiState.broadcasterState) {
-                        is AmityStreamBroadcasterState.IDLE -> {
-                            AmityBaseElement(
-                                pageScope = getPageScope(),
-                                componentScope = getComponentScope(),
-                                elementId = "add_thumbnail_button"
-                            ) {
-                                when (uiState.thumbnailUploadUiState) {
-                                    is LivestreamThumbnailUploadUiState.Success -> {
-                                        AmityThumbnailView(
-                                            modifier = Modifier.align(Alignment.CenterStart),
-                                            thumbnailsUri = uiState.thumbnailUri,
-                                            isShowProgressIndicator = false
-                                        ) {
-                                            showEditThumbnailSheet = true
-                                        }
-                                    }
-
-                                    is LivestreamThumbnailUploadUiState.Uploading -> {
-                                        AmityThumbnailView(
-                                            modifier = Modifier.align(Alignment.CenterStart),
-                                            thumbnailsUri = uiState.thumbnailUri,
-                                            isShowProgressIndicator = true
-                                        ) {
-                                            showEditThumbnailSheet = true
-                                        }
-                                    }
-
-                                    is LivestreamThumbnailUploadUiState.Idle -> {
-                                        Row(
-                                            modifier = Modifier
-                                                .align(Alignment.CenterStart)
-                                                .clickableWithoutRipple {
-                                                    if (isCameraAndRecAudioPermissionGranted) {
-                                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                                            mediaPickerLauncher.launch(
-                                                                PickVisualMediaRequest(
-                                                                    mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
-                                                                )
-                                                            )
-                                                        } else {
-                                                            if (isMediaPickerPermissionGranted) {
-                                                                mediaPickerLauncher.launch(
-                                                                    PickVisualMediaRequest(
-                                                                        mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
-                                                                    )
-                                                                )
-                                                            } else {
-                                                                mediaPickerPermissionLauncher.launch(
-                                                                    mediaPickerPermissions
-                                                                )
-                                                            }
-                                                        }
-                                                        haptics.performHapticFeedback(
-                                                            HapticFeedbackType.LongPress
-                                                        )
-                                                    }
-                                                },
-                                            verticalAlignment = Alignment.CenterVertically,
-                                        ) {
-                                            Image(
-                                                painter = painterResource(getConfig().getIcon()),
-                                                contentDescription = "addThumbNail",
-                                                modifier = Modifier
-                                                    .size(30.dp)
-                                                    .testTag("addThumbNail"),
-                                                alpha = if (isCameraAndRecAudioPermissionGranted) 1f else 0.5f
-                                            )
-                                            Spacer(Modifier.width(4.dp))
-                                            Text(
-                                                text = getConfig().getText(),
-                                                color = if (isCameraAndRecAudioPermissionGranted) Color.White else Color.White.copy(
-                                                    alpha = 0.5f
-                                                ),
-                                                style = AmityTheme.typography.bodyLegacy.copy(
-                                                    fontWeight = FontWeight.SemiBold
-                                                )
-                                            )
-                                        }
-                                    }
-
-                                    else -> {}
-                                }
-                            }
-                        }
-
-                        is AmityStreamBroadcasterState.CONNECTING -> {}
-
-                        is AmityStreamBroadcasterState.CONNECTED,
-                        is AmityStreamBroadcasterState.DISCONNECTED,
-                            -> {
-                            AmityBaseElement(
-                                pageScope = getPageScope(),
-                                componentScope = getComponentScope(),
-                                elementId = "end_live_stream_button"
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .align(Alignment.CenterStart)
-                                        .clip(RoundedCornerShape(size = 8.dp))
-                                        .border(
-                                            width = 1.dp,
-                                            color = AmityTheme.colors.baseShade4,
-                                            shape = RoundedCornerShape(size = 8.dp)
-                                        )
-                                        .padding(horizontal = 16.dp, vertical = 10.dp)
-                                        .clickableWithoutRipple {
-                                            showEndLivestreamDialog = true
-                                        }
-                                ) {
-                                    Text(
-                                        modifier = Modifier.align(
-                                            Alignment.Center
-                                        ),
-                                        text = getConfig().getText(),
-                                        style = AmityTheme.typography.bodyLegacy.copy(
-                                            fontWeight = FontWeight.SemiBold
-                                        ),
-                                        color = Color.White
-                                    )
-                                }
-                            }
-                        }
-                    }
-
-                    AmityBaseElement(
-                        pageScope = getPageScope(),
-                        componentScope = getComponentScope(),
-                        elementId = "switch_camera_button"
+            if (uiState.isPendingApproval != true && (uiState.broadcasterState is AmityStreamBroadcasterState.CONNECTED || uiState.broadcasterState is AmityStreamBroadcasterState.DISCONNECTED)) {
+                if ((uiState.post?.getTarget() is AmityPost.Target.COMMUNITY)) {
+                    Column(
+                        verticalArrangement = Arrangement.Bottom,
+                        horizontalAlignment = Alignment.End,
+                        modifier = Modifier
+                            .imePadding()
+                            .fillMaxSize()
                     ) {
-                        Image(
-                            painter = painterResource(getConfig().getIcon()),
-                            contentDescription = "switch camera button",
+                        // Floating reactions animation
+                        FloatingReactionsOverlay(
+                            reactions = floatingReactions,
                             modifier = Modifier
-                                .align(Alignment.CenterEnd)
-                                .testTag("switch_camera_button")
-                                .clickableWithoutRipple {
+                                .height(182.dp)
+                                .width(120.dp),
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        // Chat overlay
+                        ChatOverlay(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight(0.5f)
+                                .drawWithContent {
+                                    drawContent()
+                                    // Draw fade to transparent at top
+                                    drawRect(
+                                        brush = Brush.verticalGradient(
+                                            colors = listOf(
+                                                Color.White, // Use white for fade mask
+                                                Color.Transparent,
+                                                Color.Transparent,
+                                            ),
+                                            startY = 0f,
+                                            endY = 120.dp.toPx()
+                                        ),
+                                        blendMode = BlendMode.DstOut
+                                    )
+                                },
+                            pageScope = getPageScope(),
+                            channelId = uiState.channelId ?: "",
+                            onReactionClick = { showReactionPicker = true }
+                        )
+                        uiState.channelId?.let {
+                            AmityLivestreamMessageComposeBar(
+                                pageScope = getPageScope(),
+                                channelId = it,
+                                value = messageText,
+                                isPendingApproval = uiState.isPendingApproval ?: false,
+                                onValueChange = {
+                                    messageText = it
+                                },
+                                onSend = {},
+                                onReactionClick = {
+                                    AmityMessageReactions
+                                        .getList()
+                                        .getOrNull(1)
+                                        ?: AmityMessageReactions
+                                            .getList()
+                                            .firstOrNull()
+                                            ?.let { defaultReaction ->
+                                                floatingReactions.add(
+                                                    FloatingReaction(
+                                                        reaction = defaultReaction,
+                                                        id = System.currentTimeMillis()
+                                                    )
+                                                )
+                                                uiState.streamObj?.let { stream ->
+                                                    AmityCoreClient.newLiveReactionRepository()
+                                                        .createReaction(
+                                                            liveStreamId = stream.getStreamId(),
+                                                            referenceId = uiState.createPostId
+                                                                ?: "",
+                                                            referenceType = AmityLiveReactionReferenceType.POST,
+                                                            reactionName = defaultReaction.name,
+                                                        )
+                                                }
+                                            }
+                                },
+                                onReactionLongClick = { showReactionPicker = true },
+                                onSwitchCamera = {
                                     if (isCameraAndRecAudioPermissionGranted) {
                                         streamBroadcaster?.switchCamera()
                                         haptics.performHapticFeedback(HapticFeedbackType.LongPress)
                                     }
-                                },
-                            alpha = if (isCameraAndRecAudioPermissionGranted) 1f else 0.5f
-                        )
+                                }
+                            )
+                        }
+                    }
+                } else {
+                    Column(
+                        verticalArrangement = Arrangement.Bottom,
+                        horizontalAlignment = Alignment.End,
+                        modifier = Modifier
+                            .imePadding()
+                            .fillMaxSize()
+                    ) {
+                        Row(
+                            modifier = modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 12.dp, vertical = 8.dp),
+                            horizontalArrangement = Arrangement.End,
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(36.dp)
+                                    .align(Alignment.CenterVertically)
+                                    .clickableWithoutRipple {
+                                        if (isCameraAndRecAudioPermissionGranted) {
+                                            streamBroadcaster?.switchCamera()
+                                            haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                                        }
+                                        focusManager.clearFocus()
+                                    }
+                                    .testTag("switch_camera_button")
+                            ) {
+                                Image(
+                                    painter = painterResource(R.drawable.amity_v4_switch_camera_button),
+                                    contentDescription = "",
+                                    modifier = Modifier
+                                        .size(36.dp)
+                                )
+                            }
+                        }
                     }
                 }
+            }
+        }
+
+        if (showBottomSheet) {
+            ModalBottomSheet(
+                onDismissRequest = {
+                    showBottomSheet = false
+                },
+                sheetState = bottomSheetState,
+                containerColor = Color(0xFF191919),
+                contentColor = Color.White,
+                dragHandle = {
+                    Box(
+                        modifier = Modifier
+                            .padding(top = 12.dp, bottom = 20.dp)
+                            .width(36.dp)
+                            .height(4.dp)
+                            .background(
+                                Color.Gray,
+                                RoundedCornerShape(2.dp)
+                            )
+                    )
+                }
+            ) {
+                Column(
+                    modifier = Modifier.height(255.dp).navigationBarsPadding()
+                ) {
+                    AmityCreateLivestreamSettings(
+                        isReadOnly = isReadOnly,
+                        onReadOnlyToggle = {
+                            isReadOnly = it
+                            uiState.channelId?.let { channelId ->
+                                viewModel.setIsMutedChannel(channelId, it)
+                            }
+                        }
+                    )
+                    val post = uiState.post
+                    val postLink = if(post != null) AmityUIKitConfigController.getPostLink(post) else ""
+                    if(postLink.isNotEmptyOrBlank()) {
+                        AmityBottomSheetActionItem(
+                            icon = R.drawable.amity_v4_link_icon,
+                            text = "Copy live stream link",
+                            modifier = Modifier
+                                .padding(horizontal = 12.dp),
+                            color = Color(0xFFEBECEF)
+                        ) {
+                            showBottomSheet = false
+                            // Generate the post link URL (adjust the URL format according to your app's deep linking structure)
+                            clipboardManager.setText(AnnotatedString(postLink))
+                            AmityUIKitSnackbar.publishSnackbarMessage("Link copied")
+                        }
+
+                        AmityBottomSheetActionItem(
+                            icon = R.drawable.amity_v4_share_icon,
+                            text = "Share to",
+                            modifier = Modifier
+                                .padding(horizontal = 12.dp),
+                            color = Color(0xFFEBECEF)
+                        ) {
+                            showBottomSheet = false
+                            // Open native Android share sheet
+                            sharePost(context, postLink)
+                        }
+                    }
+                }
+
             }
         }
 

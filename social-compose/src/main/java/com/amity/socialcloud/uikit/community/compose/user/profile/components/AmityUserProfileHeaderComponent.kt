@@ -64,6 +64,7 @@ fun AmityUserProfileHeaderComponent(
     pageScope: AmityComposePageScope? = null,
     user: AmityUser,
     onAvatarClick: () -> Unit = {},
+    onMenuClick: () -> Unit = {},
 ) {
     val context = LocalContext.current
     var showUnfollowPopupDialog by remember { mutableStateOf(false) }
@@ -305,7 +306,6 @@ fun AmityUserProfileHeaderComponent(
                         }
                     }
                 )
-                Spacer(modifier.height(12.dp))
             }
 
             if (state.isMyUserProfile()) {
@@ -357,7 +357,7 @@ fun AmityUserProfileHeaderComponent(
 
     if (showUnblockUserDialog) {
         AmityAlertDialog(
-            dialogTitle = "Unblock user?",
+            dialogTitle = "Unblock member?",
             dialogText = buildAnnotatedString {
                 val displayName = user.getDisplayName() ?: ""
                 append(displayName)
@@ -383,7 +383,7 @@ fun AmityUserProfileHeaderComponent(
                         )
                     },
                     onError = {
-                        pageScope?.showSnackbar(
+                        pageScope?.showErrorSnackbar(
                             message = "Failed to unblock user. Please try again.",
                             drawableRes = R.drawable.amity_ic_snack_bar_warning
                         )
