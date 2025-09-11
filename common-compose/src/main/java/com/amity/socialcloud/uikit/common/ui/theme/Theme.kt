@@ -4,7 +4,12 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.staticCompositionLocalOf
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.core.session.model.SessionState
+import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
@@ -34,6 +39,7 @@ fun AmityComposeTheme(
     isSystemInDarkTheme: Boolean = isSystemInDarkTheme(),
     isUIKitInDarkTheme: Boolean = isUIKitInDarkTheme(),
     lastThemeUpdate: DateTime = DateTime.now(),
+    sessionState: SessionState = SessionState.Established,
     content: @Composable () -> Unit
 ) {
 

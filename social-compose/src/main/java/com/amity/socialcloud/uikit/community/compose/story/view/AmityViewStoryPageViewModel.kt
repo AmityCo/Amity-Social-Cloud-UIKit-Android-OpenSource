@@ -94,6 +94,7 @@ class AmityViewStoryPageViewModel : AmityBaseViewModel() {
             .addReaction(AmityReactionReference.STORY(storyId), AmityConstants.POST_REACTION)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
+            .doOnError {  }
             .subscribe()
     }
 
@@ -102,6 +103,7 @@ class AmityViewStoryPageViewModel : AmityBaseViewModel() {
             .removeReaction(AmityReactionReference.STORY(storyId), AmityConstants.POST_REACTION)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
+            .doOnError {  }
             .subscribe()
     }
 

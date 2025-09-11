@@ -35,6 +35,7 @@ fun AmityPrivateUserFeed(
             AmityUserFeedType.POST -> "private_user_feed"
             AmityUserFeedType.IMAGE -> "private_user_image_feed"
             AmityUserFeedType.VIDEO -> "private_user_video_feed"
+            AmityUserFeedType.CLIP -> "private_user_video_feed"// TODO : Might need to change this later
         }
     }
 

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.uikit.community.compose.clip.create.AmityCreateClipPageActivity
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerOptions
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerPageActivity
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostTargetType
@@ -25,6 +26,20 @@ open class AmityPostTargetSelectionPageBehavior {
                 targetType = targetType,
                 community = community
             )
+        )
+        launcher.launch(intent)
+    }
+
+    open fun goToClipPostComposerPage(
+        context: Context,
+        launcher: ActivityResultLauncher<Intent>,
+        targetId: String? = null,
+        targetType: AmityPostTargetType,
+    ) {
+        val intent = AmityCreateClipPageActivity.newIntent(
+            context = context,
+            targetId = targetId ?: "",
+            targetType = targetType,
         )
         launcher.launch(intent)
     }

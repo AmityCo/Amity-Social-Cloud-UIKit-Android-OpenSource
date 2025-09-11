@@ -243,14 +243,16 @@ fun AmityPostMediaPreviewDialog(
                                     modifier = modifier
                                         .padding(start = 16.dp, end = 16.dp, bottom = 64.dp)
                                 ) {
-                                    AmityBottomSheetActionItem(
-                                        icon = R.drawable.amity_ic_edit_profile,
-                                        text = "Edit alt text",
-                                        modifier = modifier.testTag("bottom_sheet_edit_alt_text_button"),
-                                    ) {
-                                        image?.getFileId()?.let { fileId ->
-                                            imageMap[fileId]?.let {
-                                                viewModel.showAltTextConfigSheet()
+                                    if (isPostCreator) {
+                                        AmityBottomSheetActionItem(
+                                            icon = R.drawable.amity_ic_edit_profile,
+                                            text = "Edit alt text",
+                                            modifier = modifier.testTag("bottom_sheet_edit_alt_text_button"),
+                                        ) {
+                                            image?.getFileId()?.let { fileId ->
+                                                imageMap[fileId]?.let {
+                                                    viewModel.showAltTextConfigSheet()
+                                                }
                                             }
                                         }
                                     }
@@ -343,7 +345,7 @@ fun AmityPostMediaPreviewDialog(
             }
             RenderAltTextConfigSheet(
                 forcedEditMode = true,
-                onSucess = { image ->
+                onSuccess = { image ->
                     imageMap[image.getFileId()] = image
                     AmityUIKitSnackbar.publishSnackbarMessage(
                         message = context.getString(R.string.amity_image_alt_text_updated_message),

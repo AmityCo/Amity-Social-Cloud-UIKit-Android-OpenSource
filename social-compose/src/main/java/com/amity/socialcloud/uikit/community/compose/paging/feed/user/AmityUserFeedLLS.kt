@@ -10,6 +10,7 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
+import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.elements.AmityNewsFeedDivider
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
@@ -31,6 +32,7 @@ fun LazyListScope.amityUserFeedLLS(
     pageScope: AmityComposePageScope? = null,
     userPosts: LazyPagingItems<AmityPost>,
     postListState: PostListState,
+    onClipClick: (childPost: AmityPost) -> Unit = {},
     isBlockedByMe: Boolean,
 ) {
     val behavior by lazy {
@@ -127,7 +129,10 @@ fun LazyListScope.amityUserFeedLLS(
                             pageScope = pageScope,
                             style = AmityPostContentComponentStyle.FEED,
                             hideMenuButton = false,
-                            hideTarget = true,
+                            hideTarget = false,
+                            onClipClick = { childPost ->
+                                onClipClick(childPost)
+                            },
                             onTapAction = {
                                 behavior.goToPostDetailPage(
                                     context = context,

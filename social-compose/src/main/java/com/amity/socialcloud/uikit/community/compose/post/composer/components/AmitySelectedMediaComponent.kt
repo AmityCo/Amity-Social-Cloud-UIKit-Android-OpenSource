@@ -1,12 +1,11 @@
 package com.amity.socialcloud.uikit.community.compose.post.composer.components
 
-import android.content.Context
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.content.MediaType.Companion.Text
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -26,21 +25,23 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.ImageLoader
@@ -48,7 +49,6 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.allowHardware
 import coil3.video.VideoFrameDecoder
-import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.R
@@ -77,11 +77,99 @@ fun AmitySelectedMediaComponent(
         )
     }
 
-    Box(
+    val shouldShowMediaError by remember {
+        derivedStateOf {
+            selectedMediaFiles.any { it.uploadState == AmityFileUploadState.FAILED }
+        }
+    }
+
+    val mediaErrorTitle by remember {
+        derivedStateOf {
+            if(shouldShowMediaError) {
+                if(selectedMediaFiles.firstOrNull()?.type == AmityPostMedia.Type.IMAGE) {
+                    "Upload failed. Photo must:"
+                } else {
+                    "Upload failed. Video must:"
+                }
+            } else {
+                ""
+            }
+        }
+    }
+    val mediaErrorMessage by remember {
+        derivedStateOf {
+            if (shouldShowMediaError) {
+                if (selectedMediaFiles.firstOrNull()?.type == AmityPostMedia.Type.IMAGE) {
+                    "• Be a JPG or PNG\n" +
+                            "• Be under 30MB\n" +
+                            "• Not contain offensive or explicit content"
+                } else {
+                    "• Be in a supported format (3GP, AVI, F4V, FLV, M4V, MOV, MP4, OGV, 3G2, WMV, VOB, WEBM, and MKV).\n" +
+                            "• Be under 1GB and 2-hour long.\n" +
+                            "• Not contain offensive or explicit content"
+                }
+            } else {
+                ""
+            }
+        }
+    }
+
+    Column(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
     ) {
+
+
+        Box(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+        ) {
+            if (shouldShowMediaError) {
+                val borderColor = AmityTheme.colors.alert
+                Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+                    .drawBehind {
+                        val strokeWidth = 4.dp.toPx() // Border thickness
+                        drawLine(
+                            color = borderColor,
+                            start = center.copy(x = 0f, y = 0f), // Left side start
+                            end = center.copy(x = 0f, y = size.height), // Left side end
+                            strokeWidth = strokeWidth
+                        )
+                    }
+                    .background(color = AmityTheme.colors.alert.copy(alpha = 0.1f))) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_error),
+                        contentDescription = "media_error",
+                        modifier = Modifier
+                            .padding(start = 24.dp, top = 16.dp)
+                            .size(16.dp),
+                        tint = AmityTheme.colors.alert
+                    )
+
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(
+                            text = mediaErrorTitle,
+                            style = AmityTheme.typography.body.copy(
+                                color = AmityTheme.colors.base,
+                            ),
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = mediaErrorMessage,
+                            style = AmityTheme.typography.body.copy(
+                                color = AmityTheme.colors.base,
+                            ),
+                        )
+                    }
+
+                }
+            }
+        }
+
         LazyVerticalGrid(
             columns = gridCells,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -164,24 +252,48 @@ fun AmitySelectedMediaElement(
                 )
             }
 
-            AmityPostMedia.Type.VIDEO -> {
-                val imageLoader = ImageLoader.Builder(LocalContext.current)
-                    .components {
-                        add(VideoFrameDecoder.Factory())
+            AmityPostMedia.Type.VIDEO, AmityPostMedia.Type.ClIP -> {
+                if (media.url != Uri.EMPTY) {
+                    // Display video thumbnail if available
+                    val imageLoader = ImageLoader.Builder(LocalContext.current)
+                        .components {
+                            add(VideoFrameDecoder.Factory())
+                        }
+                        .build()
+
+                    AsyncImage(
+                        model = media.url,
+                        imageLoader = imageLoader,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = modifier
+                            .fillMaxSize()
+                            .testTag("image_view")
+                            .clip(RoundedCornerShape(4.dp))
+                    )
+                } else {
+                    // Display placeholder for video without thumbnail
+                    Box(
+                        modifier = modifier
+                            .fillMaxSize()
+                            .background(
+                                color = AmityTheme.colors.baseShade4,
+                                shape = RoundedCornerShape(4.dp)
+                            )
+                            .clip(RoundedCornerShape(4.dp))
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.amity_ic_play_v4),
+                            contentDescription = "Video placeholder",
+                            tint = AmityTheme.colors.baseShade2,
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .size(32.dp)
+                        )
                     }
-                    .build()
+                }
 
-                AsyncImage(
-                    model = media.url,
-                    imageLoader = imageLoader,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = modifier
-                        .fillMaxSize()
-                        .testTag("image_view")
-                        .clip(RoundedCornerShape(4.dp))
-                )
-
+                // Add play button overlay
                 Box(
                     modifier = Modifier
                         .align(Alignment.Center)
@@ -197,7 +309,7 @@ fun AmitySelectedMediaElement(
                         tint = Color.White,
                         modifier = Modifier
                             .align(Alignment.Center)
-                            .padding(start = 6.dp, end = 4.dp)
+                            .size(24.dp)
                     )
                 }
             }

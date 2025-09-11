@@ -1,5 +1,8 @@
 package com.amity.socialcloud.uikit.community.compose.user.profile.elements
 
+import android.app.Activity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -19,15 +22,18 @@ import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageBehavior
+import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostTargetType
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun AmityUserActionsBottomSheet(
     modifier: Modifier = Modifier,
     user: AmityUser,
+    showPollTypeSelectionSheet: () -> Unit,
     onDismiss: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -36,6 +42,12 @@ fun AmityUserActionsBottomSheet(
     }
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) {
+        context.closePageWithResult(Activity.RESULT_OK)
+    }
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -70,10 +82,11 @@ fun AmityUserActionsBottomSheet(
                 modifier = modifier,
             ) {
                 onDismiss()
-                behavior.goToPollComposerPage(
-                    context = context,
-                    userId = user.getUserId(),
-                )
+                showPollTypeSelectionSheet()
+//                behavior.goToPollComposerPage(
+//                    context = context,
+//                    userId = user.getUserId(),
+//                )
             }
 
             AmityBottomSheetActionItem(
@@ -87,6 +100,20 @@ fun AmityUserActionsBottomSheet(
                     targetId = user.getUserId(),
                     targetType = AmityPost.TargetType.USER,
                     community = null
+                )
+            }
+
+            AmityBottomSheetActionItem(
+                icon = R.drawable.amity_ic_create_clip,
+                text = "Clip",
+                modifier = modifier,
+            ) {
+                onDismiss()
+                behavior.goToClipPostComposerPage(
+                    context = context,
+                    targetId = user.getUserId(),
+                    launcher = launcher,
+                    targetType = AmityPostTargetType.USER
                 )
             }
         }

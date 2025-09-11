@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
@@ -121,12 +122,25 @@ fun AmityPostTargetSelectionPage(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 8.dp)
                     .clickableWithoutRipple {
-                        behavior.goToPostComposerPage(
-                            context = context,
-                            launcher = launcher,
-                            targetType = AmityPostTargetType.USER,
-                            community = null
-                        )
+                        when(type) {
+                            AmityPostTargetSelectionPageType.CLIP -> {
+                                behavior.goToClipPostComposerPage(
+                                    context = context,
+                                    launcher = launcher,
+                                    targetId = AmityCoreClient.getUserId(),
+                                    targetType = AmityPostTargetType.USER,
+                                )
+                            }
+                            else -> {
+                                behavior.goToPostComposerPage(
+                                    context = context,
+                                    launcher = launcher,
+                                    targetId = AmityCoreClient.getUserId(),
+                                    targetType = AmityPostTargetType.USER,
+                                    community = null
+                                )
+                            }
+                        }
                     },
             ) {
                 AmityBaseElement(
@@ -163,13 +177,25 @@ fun AmityPostTargetSelectionPage(
                 modifier = modifier,
                 contentType = AmityTargetContentType.POST
             ) {
-                behavior.goToPostComposerPage(
-                    context = context,
-                    launcher = launcher,
-                    targetId = it.getCommunityId(),
-                    targetType = AmityPostTargetType.COMMUNITY,
-                    community = it
-                )
+                when(type) {
+                    AmityPostTargetSelectionPageType.CLIP -> {
+                        behavior.goToClipPostComposerPage(
+                            context = context,
+                            launcher = launcher,
+                            targetId = it.getCommunityId(),
+                            targetType = AmityPostTargetType.COMMUNITY,
+                        )
+                    }
+                    else -> {
+                        behavior.goToPostComposerPage(
+                            context = context,
+                            launcher = launcher,
+                            targetId = it.getCommunityId(),
+                            targetType = AmityPostTargetType.COMMUNITY,
+                            community = it
+                        )
+                    }
+                }
             }
         }
     }

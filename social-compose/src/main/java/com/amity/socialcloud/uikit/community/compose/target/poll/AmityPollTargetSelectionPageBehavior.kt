@@ -16,12 +16,14 @@ open class AmityPollTargetSelectionPageBehavior {
         targetId: String,
         targetType: AmityPost.TargetType,
         community: AmityCommunity? = null,
+        pollType: String,
     ) {
         val intent = AmityPollPostComposerPageActivity.newIntent(
             context = context,
             targetId = targetId,
             targetType = targetType,
             community = community,
+            pollType = pollType
         )
         launcher.launch(intent)
     }

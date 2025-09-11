@@ -26,7 +26,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.DisposableEffectWithLifeCy
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.community.compose.R
-import com.amity.socialcloud.uikit.community.compose.livestream.create.element.AmityCreateLivestreamNoPermissionView
+import com.amity.socialcloud.uikit.community.compose.livestream.create.element.AmityMediaAndCameraNoPermissionView
 
 @Composable
 fun AmityNoPermissionPage() {
@@ -67,7 +67,7 @@ fun AmityNoPermissionPage() {
             )
         }
 
-        AmityCreateLivestreamNoPermissionView(
+        AmityMediaAndCameraNoPermissionView(
             modifier = Modifier.weight(1f),
             title = "Allow access to your photos",
             description = "This lets you use photos from this device\nas live stream thumbnail image.",

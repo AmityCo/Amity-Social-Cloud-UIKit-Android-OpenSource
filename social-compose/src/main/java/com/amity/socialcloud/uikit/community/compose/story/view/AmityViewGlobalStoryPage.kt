@@ -6,6 +6,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
@@ -65,7 +66,12 @@ fun AmityViewGlobalStoryPage(
         targets.size
     }
 
-    val exoPlayer = remember { ExoPlayer.Builder(context).build() }
+    // Clean up all ExoPlayer instances when this composable is disposed
+    DisposableEffect(Unit) {
+        onDispose {
+            AmityStoryVideoPlayerHelper.clear() // Clear all targets
+        }
+    }
 
     LaunchedEffect(targetId, selectedTarget.first) {
         if (selectedTarget.first < 0) return@LaunchedEffect
@@ -117,7 +123,6 @@ fun AmityViewGlobalStoryPage(
                         modifier = modifier,
                         targetId = target.getTargetId(),
                         targetType = target.getTargetType(),
-                        exoPlayer = exoPlayer,
                         isSingleTarget = false,
                         isTargetVisible = targetPagerState.targetPage == index && !targetPagerState.isScrollInProgress,
                         shouldRestartTimer = shouldRestartTimer,
@@ -165,13 +170,6 @@ fun AmityViewGlobalStoryPage(
                 modifier = Modifier.align(Alignment.Center),
                 color = AmityTheme.colors.primary
             )
-        }
-
-        DisposableEffect(Unit) {
-            onDispose {
-                exoPlayer.release()
-                AmityStoryVideoPlayerHelper.clear()
-            }
         }
     }
 }

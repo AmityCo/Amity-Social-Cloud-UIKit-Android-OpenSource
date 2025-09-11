@@ -52,4 +52,5 @@ object AmityDateUtils {
         val seconds = TimeUnit.MILLISECONDS.toSeconds(milliSeconds.toLong()) % 60
         return String.format("%d:%02d", minutes, seconds)
     }
+
 }

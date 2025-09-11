@@ -77,6 +77,7 @@ fun AmityMessageReactionBottomSheetTemp(
                     Column {
                         AmityReactionRoot(
                             state = reactionViewModel.state,
+                            referenceType = AmityReactionReferenceType.MESSAGE,
                             onAction = {
                                 reactionViewModel.onAction(it)
                                 if(it is AmityReactionListPageAction.RemoveReaction) {

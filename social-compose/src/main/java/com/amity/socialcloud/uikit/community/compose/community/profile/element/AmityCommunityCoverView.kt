@@ -33,7 +33,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.graphics.drawable.toBitmap
 import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
 import coil3.request.CachePolicy
@@ -41,8 +40,13 @@ import coil3.request.ImageRequest
 import coil3.request.allowHardware
 import coil3.request.crossfade
 import coil3.toBitmap
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
+import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.uikit.common.common.isNotEmptyOrBlank
+import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.elements.AmityMenuButton
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
@@ -52,11 +56,12 @@ import com.amity.socialcloud.uikit.common.utils.closePage
 import com.amity.socialcloud.uikit.common.utils.getActivity
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
+import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityModalSheetUIState
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageBehavior
+import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfileViewModel
 import com.amity.socialcloud.uikit.community.compose.community.profile.component.AmityCommunityHeaderStyle
 import com.amity.socialcloud.uikit.community.compose.utils.BlurImage
 import com.amity.socialcloud.uikit.community.compose.utils.LegacyBlurImage
-import kotlinx.coroutines.Dispatchers
 
 @Composable
 fun AmityCommunityCoverView(
@@ -65,6 +70,7 @@ fun AmityCommunityCoverView(
     componentScope: AmityComposeComponentScope? = null,
     community: AmityCommunity,
     style: AmityCommunityHeaderStyle = AmityCommunityHeaderStyle.EXPANDED,
+    viewModel: AmityCommunityProfileViewModel,
 ) {
     AmityBaseElement(
         pageScope = pageScope,
@@ -93,6 +99,17 @@ fun AmityCommunityCoverView(
                 .build(),
         )
         val painterState by painter.state.collectAsState()
+
+        val isModerator by AmityCoreClient.hasPermission(AmityPermission.EDIT_COMMUNITY)
+            .atCommunity(community.getCommunityId())
+            .check()
+            .asFlow()
+            .collectAsState(initial = false)
+
+        val isPrivateAndHidden =
+            !community.isPublic() && !community.isDiscoverable()
+        val communityLink = AmityUIKitConfigController.getCommunityLink(community)
+        val isSharable = communityLink.isNotEmptyOrBlank() && (community.isPublic() || (!community.isPublic() && community.isDiscoverable()) || (isPrivateAndHidden && isModerator))
 
         var bitmap: Bitmap? by remember {
             mutableStateOf(null)
@@ -145,7 +162,8 @@ fun AmityCommunityCoverView(
                         )
                     }
                     Spacer(modifier = Modifier.weight(1f))
-                    if (community.isJoined()) {
+
+                    if(isModerator || isSharable) {
                         AmityBaseElement(
                             pageScope = pageScope,
                             elementId = "menu_button"
@@ -156,10 +174,9 @@ fun AmityCommunityCoverView(
                                 iconPadding = 4.dp,
                                 modifier = Modifier.testTag(getAccessibilityId()),
                                 onClick = {
-                                    behavior.goToCommunitySettingPage(
-                                        AmityCommunityProfilePageBehavior.Context(
-                                            pageContext = context,
-                                            community = community,
+                                    viewModel.updateSheetUIState(
+                                        AmityCommunityModalSheetUIState.OpenCommunityMenuSheet(
+                                            community = community
                                         )
                                     )
                                 }
@@ -169,14 +186,16 @@ fun AmityCommunityCoverView(
                 }
             }
         } else {
-            Box(modifier .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        AmityTheme.colors.baseShade3,
-                        AmityTheme.colors.baseShade2,
+            Box(
+                modifier.background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            AmityTheme.colors.baseShade3,
+                            AmityTheme.colors.baseShade2,
+                        )
                     )
                 )
-            )) {
+            ) {
                 if (coverUrl == null) {
                     Box(
                         modifier = modifier
@@ -257,7 +276,7 @@ fun AmityCommunityCoverView(
                                 .weight(1f)
                                 .padding(bottom = 4.dp)
                         )
-                        if (community.isJoined()) {
+                        if (community.isJoined() || isModerator || isSharable) {
                             AmityBaseElement(
                                 pageScope = pageScope,
                                 elementId = "menu_button"
@@ -268,10 +287,9 @@ fun AmityCommunityCoverView(
                                     iconPadding = 4.dp,
                                     modifier = Modifier.padding(start = 12.dp),
                                     onClick = {
-                                        behavior.goToCommunitySettingPage(
-                                            AmityCommunityProfilePageBehavior.Context(
-                                                pageContext = context,
-                                                community = community,
+                                        viewModel.updateSheetUIState(
+                                            AmityCommunityModalSheetUIState.OpenCommunityMenuSheet(
+                                                community = community
                                             )
                                         )
                                     }

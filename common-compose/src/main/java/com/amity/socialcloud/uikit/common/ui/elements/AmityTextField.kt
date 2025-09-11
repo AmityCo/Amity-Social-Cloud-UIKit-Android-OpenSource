@@ -2,7 +2,11 @@ package com.amity.socialcloud.uikit.common.ui.elements
 
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -10,8 +14,10 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 
 @Composable
@@ -26,41 +32,52 @@ fun AmityTextField(
         color = if (enabled) AmityTheme.colors.base else AmityTheme.colors.baseShade2,
     ),
     hintColor: Color = AmityTheme.colors.baseShade3,
+    shape: Shape = TextFieldDefaults.shape,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    innerPadding: PaddingValues? = null,
     onValueChange: (String) -> Unit,
 ) {
-    TextField(
-        enabled = enabled,
-        maxLines = maxLines,
+    BasicTextField(
         value = text,
         onValueChange = {
             if (maxCharacters == -1) {
                 onValueChange(it)
             } else if (it.length <= maxCharacters) {
                 onValueChange(it)
-            } else{
+            } else {
                 onValueChange(it.take(maxCharacters))
             }
         },
-        placeholder = {
-            Text(
-                text = hint,
-                color = hintColor,
-            )
-        },
-        colors = TextFieldDefaults.colors(
-            focusedContainerColor = Color.Transparent,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedContainerColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            disabledContainerColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent,
-        ),
-        textStyle = textStyle.copy(color = if (enabled) AmityTheme.colors.base else AmityTheme.colors.baseShade2),
+        enabled = enabled,
+        maxLines = maxLines,
+        textStyle = textStyle,
         keyboardOptions = keyboardOptions,
         modifier = modifier
             .fillMaxWidth()
-            .background(Color.Transparent)
+            .background(Color.Transparent),
+        cursorBrush = androidx.compose.ui.graphics.SolidColor(AmityTheme.colors.highlight),
+        decorationBox = { innerTextField ->
+           Box(
+                modifier = Modifier
+                    .background(Color.Transparent, shape)
+                    .let {
+                        if(innerPadding != null) {
+                            it.padding(innerPadding)
+                        } else {
+                            it
+                        }
+                    }
+            ) {
+                if (text.isEmpty()) {
+                    Text(
+                        text = hint,
+                        color = hintColor,
+                        style = textStyle
+                    )
+                }
+                innerTextField()
+            }
+        }
     )
 }
 

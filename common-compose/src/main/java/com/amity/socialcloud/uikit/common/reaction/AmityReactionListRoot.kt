@@ -41,9 +41,11 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.core.reaction.AmityReaction
+import com.amity.socialcloud.sdk.model.core.reaction.AmityReactionReferenceType
 import com.amity.socialcloud.uikit.common.common.readableNumber
 import com.amity.socialcloud.uikit.common.compose.R
 import com.amity.socialcloud.uikit.common.model.AmityMessageReactions
+import com.amity.socialcloud.uikit.common.model.AmitySocialReactions
 import com.amity.socialcloud.uikit.common.reaction.elements.AmityReactionListItem
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
@@ -55,6 +57,7 @@ import com.amity.socialcloud.uikit.common.utils.shimmerBackground
 fun AmityReactionRoot(
     modifier: Modifier = Modifier,
     state: AmityReactionListPageState,
+    referenceType: AmityReactionReferenceType,
     onAction: (AmityReactionListPageAction) -> Unit = {},
     onUserClick: (String) -> Unit = {},
 ) {
@@ -83,6 +86,7 @@ fun AmityReactionRoot(
     ) {
         AmityReactionTab(
             state = state,
+            referenceType = referenceType,
             onAction = { action ->
                 onAction(action)
             }
@@ -104,6 +108,7 @@ fun AmityReactionRoot(
 
             AmityReactionItems(
                 reactions = reactions,
+                referenceType = referenceType,
                 state = state,
                 action = { action ->
                     onAction(action)
@@ -118,6 +123,7 @@ fun AmityReactionRoot(
 @Composable
 fun AmityReactionTab(
     modifier: Modifier = Modifier,
+    referenceType: AmityReactionReferenceType,
     state: AmityReactionListPageState,
     onAction: (AmityReactionListPageAction) -> Unit,
 ) {
@@ -158,7 +164,10 @@ fun AmityReactionTab(
                         }
                 ) {
                     if (title.isEmpty()) {
-                        val iconId = AmityMessageReactions.getList()
+                        val iconId = when (referenceType) {
+                            AmityReactionReferenceType.MESSAGE -> AmityMessageReactions.getList()
+                            else -> AmitySocialReactions.getList()
+                        }
                             .find { reaction ->
                                 reaction.name == tab.title
                             }?.icon ?: R.drawable.amity_ic_message_reaction_missing
@@ -188,6 +197,7 @@ fun AmityReactionTab(
 fun AmityReactionItems(
     modifier: Modifier = Modifier,
     reactions: LazyPagingItems<AmityReaction>,
+    referenceType: AmityReactionReferenceType,
     state: AmityReactionListPageState,
     action: (AmityReactionListPageAction) -> Unit = {},
     onUserClick: (String) -> Unit = {},
@@ -237,6 +247,7 @@ fun AmityReactionItems(
             AmityReactionListItem(
                 modifier = modifier,
                 reaction = reaction,
+                referenceType = referenceType,
                 onRemoveReaction = {
                     action(AmityReactionListPageAction.RemoveReaction(reaction.getReactionName()))
                 },

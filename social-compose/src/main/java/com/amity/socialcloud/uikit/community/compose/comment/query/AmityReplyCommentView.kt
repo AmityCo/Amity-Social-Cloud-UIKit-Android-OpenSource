@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.sdk.model.social.comment.AmityCommentReferenceType
+import com.amity.socialcloud.uikit.common.ui.elements.EXPANDABLE_TEXT_MAX_LINES
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.community.compose.comment.query.elements.AmityCommentViewReplyBar
 
@@ -16,9 +17,12 @@ fun AmityReplyCommentView(
     referenceType: AmityCommentReferenceType,
     currentUserId: String,
     editingCommentId: String?,
+    showEngagementRow: Boolean,
     comment: AmityComment,
     onEdit: (String?) -> Unit,
     replyCount: Int? = null,
+    previewLines: Int = EXPANDABLE_TEXT_MAX_LINES,
+    allowAction: Boolean = true,
     shouldShowReplies: (Boolean) -> Unit = {},
 ) {
     if (comment.isDeleted()) {
@@ -46,10 +50,13 @@ fun AmityReplyCommentView(
             isReplyComment = true,
             currentUserId = currentUserId,
             editingCommentId = editingCommentId,
+            showEngagementRow = showEngagementRow,
             onReply = {},
             onEdit = onEdit,
             replyCount = replyCount,
             shouldShowReplies = shouldShowReplies,
+            previewLines = previewLines,
+            allowAction = allowAction,
         )
     }
 }

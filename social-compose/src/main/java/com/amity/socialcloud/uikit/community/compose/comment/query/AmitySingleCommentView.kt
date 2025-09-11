@@ -1,11 +1,11 @@
 package com.amity.socialcloud.uikit.community.compose.comment.query
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -18,15 +18,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
+import com.amity.socialcloud.sdk.model.core.reaction.AmityReactionReferenceType
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.sdk.model.social.comment.AmityCommentReferenceType
+import com.amity.socialcloud.uikit.common.reaction.AmityReactionList
+import com.amity.socialcloud.uikit.common.reaction.preview.AmityReactionPreview
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
 import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
+import com.amity.socialcloud.uikit.common.ui.elements.EXPANDABLE_TEXT_MAX_LINES
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
@@ -51,18 +57,27 @@ fun AmitySingleCommentView(
     isReplyComment: Boolean,
     currentUserId: String,
     editingCommentId: String?,
+    includeDeleted: Boolean = true,
+    showEngagementRow: Boolean,
     onReply: (String) -> Unit,
     onEdit: (String?) -> Unit,
     replyTargetId: String? = null,
     showBounceEffect: Boolean = false,
     replyCount: Int? = null,
     shouldShowReplies: (Boolean) -> Unit = {},
+    allowAction: Boolean = true,
+    previewLines: Int = EXPANDABLE_TEXT_MAX_LINES,
+    expandReplies: Boolean = false,
 ) {
     val context = LocalContext.current
     val behavior by lazy {
         AmitySocialBehaviorHelper.commentTrayComponentBehavior
     }
+    val commentBehavior = remember {
+        AmitySocialBehaviorHelper.notificationTrayPageBehavior
+    }
     var showDeleteBannedWordCommentDialog by remember { mutableStateOf(false) }
+    var showReactionListSheet by remember { mutableStateOf(false) }
 
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -109,6 +124,19 @@ fun AmitySingleCommentView(
                     AmityCommentContentContainer(
                         modifier = modifier,
                         comment = comment,
+                        previewLines = previewLines,
+                        onClick = {
+                            if (!allowAction) {
+                                if (referenceType == AmityCommentReferenceType.POST) {
+                                    commentBehavior.goToPostDetailPage(
+                                        context = context,
+                                        postId = referenceId,
+                                        commentId = comment.getCommentId(),
+                                        parentId = comment.getParentId(),
+                                    )
+                                }
+                            }
+                        }
                     )
 
                     if (comment.getState() == AmityComment.State.FAILED) {
@@ -126,6 +154,45 @@ fun AmitySingleCommentView(
                         )
                     }
                 }
+                if (comment.getReactionCount() > 0) {
+                    Layout(
+                        content = {
+                            AmityReactionPreview(
+                                modifier = Modifier
+                                    .offset(y = (-16).dp)
+                                    .clickableWithoutRipple {
+                                        showReactionListSheet = true
+                                    },
+                                componentScope = componentScope,
+                                myReaction = comment.getMyReactions().firstOrNull(),
+                                reactions = comment.getReactionMap(),
+                                reactionCount = comment.getReactionCount(),
+                                showContainer = true,
+                            )
+                        },
+                        measurePolicy = { measurables, constraints ->
+                            // Measure each child
+                            val placeables = measurables.map { measurable ->
+                                measurable.measure(constraints)
+                            }
+
+                            // Determine the height of the item
+                            val height =
+                                Math.max(placeables.sumOf { it.height } - (8.dp.roundToPx()), 0)
+
+                            // Set the size of the item
+                            layout(
+                                height = height,
+                                width = placeables.maxOfOrNull { it.width } ?: 0) {
+                                var xPosition = 0
+                                placeables.forEach { placeable ->
+                                    placeable.placeRelative(IntOffset(xPosition, 0))
+                                    xPosition += placeable.width
+                                }
+                            }
+                        }
+                    )
+                }
 
                 // TODO: 17/6/24 enable comment link preview once ready
                 /*
@@ -135,22 +202,39 @@ fun AmitySingleCommentView(
                 )
                  */
 
-                AmityCommentEngagementBar(
-                    modifier = modifier,
-                    componentScope = componentScope,
-                    allowInteraction = allowInteraction,
-                    isReplyComment = isReplyComment,
-                    comment = comment,
-                    isCreatedByMe = currentUserId == comment.getCreatorId(),
-                    onReply = onReply,
-                    onEdit = {
-                        onEdit(comment.getCommentId())
-                    }
-                )
+                if (showEngagementRow) {
+                    AmityCommentEngagementBar(
+                        modifier = modifier,
+                        componentScope = componentScope,
+                        allowInteraction = allowInteraction,
+                        allowAction = allowAction,
+                        isReplyComment = isReplyComment,
+                        comment = comment,
+                        isCreatedByMe = currentUserId == comment.getCreatorId(),
+                        onReply = onReply,
+                        onEdit = {
+                            onEdit(comment.getCommentId())
+                        }
+                    )
+                }
             }
 
             AmityReplyCommentContainer(
-                modifier = modifier,
+                modifier = if (allowAction) {
+                    modifier
+                } else {
+                    modifier.clickableWithoutRipple {
+                        if (referenceType == AmityCommentReferenceType.POST) {
+                            val latestReply = comment.getLatestReplies().firstOrNull()
+                            commentBehavior.goToPostDetailPage(
+                                context = context,
+                                postId = referenceId,
+                                commentId = latestReply?.getCommentId() ?: comment.getCommentId(),
+                                parentId = latestReply?.getParentId(),
+                            )
+                        }
+                    }
+                },
                 componentScope = componentScope,
                 allowInteraction = allowInteraction,
                 referenceId = referenceId,
@@ -158,12 +242,15 @@ fun AmitySingleCommentView(
                 currentUserId = currentUserId,
                 commentId = comment.getCommentId(),
                 editingCommentId = editingCommentId,
-                // TODO: 31/1/24 child count is not real-time
-                replyCount = max(comment.getChildCount(), comment.getLatestReplies().size),
+                includeDeleted = includeDeleted,
+                replyCount = max(comment.getChildCount(), comment.getLatestReplies().let { if(includeDeleted) it else it.filter { it.isDeleted() == false } }.size),
+                showEngagementRow = showEngagementRow,
                 replies = comment.getLatestReplies(),
                 onEdit = onEdit,
                 replyTargetId = replyTargetId,
-                showBounceEffect = showBounceEffect
+                showBounceEffect = false,
+                previewLines = previewLines,
+                isExpanded = expandReplies,
             )
 
             if (isReplyComment) {
@@ -198,6 +285,23 @@ fun AmitySingleCommentView(
                 showDeleteBannedWordCommentDialog = false
             },
             onDismissRequest = { showDeleteBannedWordCommentDialog = false }
+        )
+    }
+
+    if (showReactionListSheet) {
+        AmityReactionList(
+            modifier = modifier,
+            referenceType = AmityReactionReferenceType.COMMENT,
+            referenceId = comment.getCommentId(),
+            onClose = {
+                showReactionListSheet = false
+            },
+            onUserClick = {
+                behavior.goToUserProfilePage(
+                    context = context,
+                    userId = it,
+                )
+            }
         )
     }
 }

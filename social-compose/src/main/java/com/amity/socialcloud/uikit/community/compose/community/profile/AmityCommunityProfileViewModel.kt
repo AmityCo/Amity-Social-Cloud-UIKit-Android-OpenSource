@@ -16,6 +16,7 @@ import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.ad.AmityAdInjector
 import com.amity.socialcloud.uikit.common.ad.AmityListItem
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
+import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipModalSheetUIState
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -37,6 +38,11 @@ class AmityCommunityProfileViewModel(private val communityId: String) :
     }
 
     val communityProfileState get() = _communityProfileState
+
+    private val _sheetUIState by lazy {
+        MutableStateFlow<AmityCommunityModalSheetUIState>(AmityCommunityModalSheetUIState.CloseSheet)
+    }
+    val sheetUIState get() = _sheetUIState
 
     init {
         refresh()
@@ -153,6 +159,20 @@ class AmityCommunityProfileViewModel(private val communityId: String) :
             .catch {}
     }
 
+    fun getCommunityClipPosts(): Flow<PagingData<AmityPost>> {
+        return AmitySocialClient.newPostRepository()
+            .getPosts()
+            .targetCommunity(communityId)
+            .dataTypes(listOf(AmityPost.DataType.sealedOf(AmityPost.DataType.CLIP.getApiKey())))
+            .includeDeleted(false)
+            .build()
+            .query()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .asFlow()
+            .catch {}
+    }
+
     fun acceptCommunityInvitation(
         invitation: AmityInvitation,
         onSuccess: () -> Unit,
@@ -197,6 +217,21 @@ class AmityCommunityProfileViewModel(private val communityId: String) :
             return AmityCommunityProfileViewModel(communityId)
         }
     }
+
+    fun updateSheetUIState(sheetUiState: AmityCommunityModalSheetUIState) {
+        viewModelScope.launch {
+            _sheetUIState.value = sheetUiState
+        }
+    }
+}
+
+sealed class AmityCommunityModalSheetUIState {
+
+    data class OpenCommunityMenuSheet(
+        val community: AmityCommunity,
+    ) : AmityCommunityModalSheetUIState()
+
+    object CloseSheet : AmityCommunityModalSheetUIState()
 }
 
 data class CommunityProfileState(

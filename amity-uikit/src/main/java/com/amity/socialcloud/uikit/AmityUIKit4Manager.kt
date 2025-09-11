@@ -33,8 +33,8 @@ object AmityUIKit4Manager {
         AmityAdEngine.init()
         AmityNetworkConfigService.init(apiKey)
         AmityUIKitConfigController.setup(AmityAppContext.getContext())
+        AmityUIKitConfigController.initializeShareableLinkPattern()
         NetworkConnectionEventPublisher.initPublisher(context = AmityAppContext.getContext())
-
         overrideCustomBehavior()
     }
 

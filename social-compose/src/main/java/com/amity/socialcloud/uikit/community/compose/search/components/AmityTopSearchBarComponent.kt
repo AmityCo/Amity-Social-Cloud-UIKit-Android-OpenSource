@@ -49,10 +49,13 @@ fun AmityTopSearchBarComponent(
     modifier: Modifier = Modifier,
     pageScope: AmityComposePageScope? = null,
     viewModel: AmityGlobalSearchViewModel,
+    prefilledText: String = "",
     shouldShowKeyboard: Boolean? = false
 ) {
     val context = LocalContext.current
-    var keyword by remember { mutableStateOf(TextFieldValue("")) }
+    var keyword by remember {
+        mutableStateOf(TextFieldValue(prefilledText))
+    }
     val searchType by viewModel.searchType.collectAsState()
     val focusRequester = remember { FocusRequester() }
     val title by remember(searchType) {
@@ -83,8 +86,24 @@ fun AmityTopSearchBarComponent(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 9.dp)
+                .padding(horizontal = 16.dp, vertical = 10.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
+            AmityBaseElement(
+                pageScope = pageScope,
+                componentScope = getComponentScope(),
+                elementId = "back_button"
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.amity_ic_arrow_back),
+                    contentDescription = "Back",
+                    tint = AmityTheme.colors.base,
+                    modifier = modifier
+                        .size(24.dp)
+                        .clickableWithoutRipple { context.closePage() }
+                )
+            }
+
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -163,23 +182,6 @@ fun AmityTopSearchBarComponent(
                         }
                     }
                 }
-            }
-
-            AmityBaseElement(
-                pageScope = pageScope,
-                componentScope = getComponentScope(),
-                elementId = "cancel_button"
-            ) {
-                Text(
-                    text = getConfig().getText(),
-                    style = AmityTheme.typography.bodyLegacy.copy(
-                        color = AmityTheme.colors.primary
-                    ),
-                    modifier = modifier
-                        .align(Alignment.CenterVertically)
-                        .clickableWithoutRipple { context.closePage() }
-                        .testTag(getAccessibilityId()),
-                )
             }
         }
     }

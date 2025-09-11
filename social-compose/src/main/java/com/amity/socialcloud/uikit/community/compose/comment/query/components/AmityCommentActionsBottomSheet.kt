@@ -238,7 +238,7 @@ fun AmityCommentActionsContainer(
             ),
             dialogText = context.getString(
                 if (isReplyComment) R.string.amity_delete_reply_warning_message
-                else R.string.amity_delete_comment_warning_message
+                else R.string.amity_delete_reply_warning_message
             ),
             confirmText = context.getString(R.string.amity_delete),
             dismissText = context.getString(R.string.amity_cancel),

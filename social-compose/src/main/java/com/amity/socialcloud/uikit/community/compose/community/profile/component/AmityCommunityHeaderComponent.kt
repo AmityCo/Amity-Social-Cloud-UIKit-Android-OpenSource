@@ -13,7 +13,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.amity.socialcloud.sdk.model.core.invitation.AmityInvitation
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.common.isNotEmptyOrBlank
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
@@ -66,7 +65,8 @@ fun AmityCommunityHeaderComponent(
 					pageScope = pageScope,
 					componentScope = getComponentScope(),
 					community = community,
-					style = AmityCommunityHeaderStyle.EXPANDED
+					style = AmityCommunityHeaderStyle.EXPANDED,
+					viewModel = viewModel
 				)
 				Column(modifier = Modifier.padding(top = 16.dp)) {
 					AmityCommunityProfileTitleView(
@@ -133,7 +133,8 @@ fun AmityCommunityHeaderComponent(
 					pageScope = pageScope,
 					componentScope = getComponentScope(),
 					community = community,
-					style = AmityCommunityHeaderStyle.COLLAPSE
+					style = AmityCommunityHeaderStyle.COLLAPSE,
+					viewModel = viewModel
 				)
 				community.let {
 					if (!community.isJoined()) {

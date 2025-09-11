@@ -1,6 +1,8 @@
 package com.amity.socialcloud.uikit.community.compose.socialhome
 
 import android.content.Context
+import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipFeedPageActivity
+import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipFeedPageType
 import com.amity.socialcloud.uikit.community.compose.notificationtray.AmityNotificationTrayPageActivity
 import com.amity.socialcloud.uikit.community.compose.search.community.AmityMyCommunitiesSearchPageActivity
 import com.amity.socialcloud.uikit.community.compose.search.global.AmitySocialGlobalSearchPageActivity
@@ -30,6 +32,16 @@ open class AmitySocialHomePageBehavior {
     ) {
         val intent = AmityNotificationTrayPageActivity.newIntent(
             context = context,
+        )
+        context.startActivity(intent)
+    }
+
+    open fun goToClipsFeedPage(
+        context: Context,
+    ) {
+        val intent = AmityClipFeedPageActivity.newIntent(
+            context = context,
+            type = AmityClipFeedPageType.GlobalFeed
         )
         context.startActivity(intent)
     }

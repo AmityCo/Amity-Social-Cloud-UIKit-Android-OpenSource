@@ -7,18 +7,27 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.waterfall
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rxjava3.subscribeAsState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -28,6 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
@@ -39,10 +49,12 @@ import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getText
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
+import com.amity.socialcloud.uikit.community.compose.post.composer.poll.AmityPollPostTypeSelectionBottomSheet
 import com.amity.socialcloud.uikit.community.compose.target.AmityTargetSelectionPageViewModel
 import com.amity.socialcloud.uikit.community.compose.target.components.AmityTargetContentType
 import com.amity.socialcloud.uikit.community.compose.target.components.AmityTargetSelectionMyCommunitiesView
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AmityPollTargetSelectionPage(
     modifier: Modifier = Modifier,
@@ -57,6 +69,11 @@ fun AmityPollTargetSelectionPage(
     ) {
         context.closePageWithResult(Activity.RESULT_OK)
     }
+
+    var showPollOptionSheet by remember { mutableStateOf(false) }
+    var pollTargetType by remember { mutableStateOf(AmityPost.TargetType.USER) }
+    var community by remember { mutableStateOf<AmityCommunity?>(null) }
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
@@ -118,13 +135,9 @@ fun AmityPollTargetSelectionPage(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 8.dp)
                     .clickableWithoutRipple {
-                        behavior.goToPollPostComposerPage(
-                            context = context,
-                            launcher = launcher,
-                            targetId = currentUser?.getUserId() ?: "",
-                            targetType = AmityPost.TargetType.USER,
-                            community = null
-                        )
+                        //Open BottomSheet First instead of Poll Composer Page
+                        showPollOptionSheet = true
+                        pollTargetType = AmityPost.TargetType.USER
                     },
             ) {
                 AmityBaseElement(
@@ -161,13 +174,51 @@ fun AmityPollTargetSelectionPage(
                 modifier = modifier,
                 contentType = AmityTargetContentType.POST,
             ) {
-                behavior.goToPollPostComposerPage(
-                    context = context,
-                    launcher = launcher,
-                    targetId = it.getCommunityId(),
-                    targetType = AmityPost.TargetType.COMMUNITY,
-                    community = it
-                )
+                //Open BottomSheet First instead of Poll Composer Page
+                showPollOptionSheet = true
+                pollTargetType = AmityPost.TargetType.COMMUNITY
+                community = it
+            }
+
+            if (showPollOptionSheet) {
+                ModalBottomSheet(
+                    onDismissRequest = {
+                        showPollOptionSheet = false
+                    },
+                    sheetState = sheetState,
+                    containerColor = AmityTheme.colors.background,
+                    contentWindowInsets = { WindowInsets.waterfall },
+                    modifier = Modifier.navigationBarsPadding().statusBarsPadding()
+                ) {
+                    AmityPollPostTypeSelectionBottomSheet(
+                        onCloseSheet = {
+                            showPollOptionSheet = false
+                        },
+                        onNextClicked = { selectedType ->
+                            if (pollTargetType == AmityPost.TargetType.COMMUNITY) {
+                                community?.let {
+                                    behavior.goToPollPostComposerPage(
+                                        context = context,
+                                        launcher = launcher,
+                                        targetId = it.getCommunityId(),
+                                        targetType = AmityPost.TargetType.COMMUNITY,
+                                        community = it,
+                                        pollType = selectedType
+                                    )
+                                }
+                            } else if (pollTargetType == AmityPost.TargetType.USER) {
+                                behavior.goToPollPostComposerPage(
+                                    context = context,
+                                    launcher = launcher,
+                                    targetId = currentUser?.getUserId() ?: "",
+                                    targetType = AmityPost.TargetType.USER,
+                                    community = null,
+                                    pollType = selectedType
+                                )
+                            }
+                        }
+                    )
+                }
             }
         }
     }

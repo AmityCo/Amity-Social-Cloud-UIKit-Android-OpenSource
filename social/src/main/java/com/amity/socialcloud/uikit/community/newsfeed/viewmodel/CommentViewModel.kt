@@ -73,6 +73,7 @@ interface CommentViewModel {
             )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
+            .doOnError {  }
     }
 
     fun removeCommentReaction(comment: AmityComment): Completable {
@@ -84,6 +85,7 @@ interface CommentViewModel {
             )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
+            .doOnError {  }
     }
 
     fun reportComment(

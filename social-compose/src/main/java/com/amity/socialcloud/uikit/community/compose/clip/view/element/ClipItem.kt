@@ -1,8 +1,13 @@
 package com.amity.socialcloud.uikit.community.compose.clip.view.element
 
+import android.content.res.Resources
 import androidx.annotation.OptIn
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.awaitLongPressOrCancellation
+import androidx.compose.foundation.gestures.drag
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,13 +33,29 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.pointer.PointerId
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntRect
+import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupPositionProvider
+import androidx.compose.ui.window.PopupProperties
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
@@ -46,9 +67,13 @@ import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.common.readableNumber
 import com.amity.socialcloud.uikit.common.common.readableSocialTimeDiff
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
+import com.amity.socialcloud.uikit.common.model.AmitySocialReactions
+import com.amity.socialcloud.uikit.common.reaction.picker.AmityReactionPicker
+import com.amity.socialcloud.uikit.common.reaction.picker.getReactionIndexByX
 import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
 import com.amity.socialcloud.uikit.common.ui.elements.DisposableEffectWithLifeCycle
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.utils.AmityConstants.POST_REACTION
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipFeedPageType
@@ -58,6 +83,8 @@ import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipPageBeha
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.calculateWeight
 import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmityStoryVideoPlayer
 import com.google.gson.JsonObject
+import kotlinx.coroutines.TimeoutCancellationException
+import kotlin.math.roundToInt
 
 @OptIn(UnstableApi::class)
 @Composable
@@ -82,31 +109,42 @@ fun ClipItem(
     var isSeekBarDragging by remember { mutableStateOf(false) }
     val sheetUIState by viewModel.sheetUIState.collectAsState()
 
+    val myReactionState = remember {
+        val firstReaction = post.getMyReactions().firstOrNull()
+        mutableStateOf(firstReaction ?: "")
+    }
+    val myReaction by remember(post.getMyReactions()) { myReactionState }
+    val reactingState = remember {
+        mutableStateOf(Pair("",0))
+    }
+    val reacting by remember { reactingState }
+    var localReactionCount by remember(post.getReactionCount()) {
+        mutableIntStateOf(parentPost?.getReactionCount() ?: post.getReactionCount())
+    }
+
+    var isReacted = remember(myReaction, reacting) { myReaction.isNotEmpty() || reacting.first.isNotEmpty() }
+
+    var reactionExpanded by remember { mutableStateOf(false) }
+
+    var initialPointerId by remember { mutableStateOf<PointerId?>(null) }
+    var initialDownPos by remember { mutableStateOf<Offset?>(null) }
+    val density = LocalDensity.current
+    val screenWidthPx = with(density) { Resources.getSystem().displayMetrics.widthPixels }
+    var anchorInWindow by remember { mutableStateOf<Rect?>(null) }
+    var popupWidthPx by remember { mutableStateOf(0) }
+    var highlightedIndex by remember { mutableStateOf<Int?>(null) }
+    var lastHapticIndex by remember { mutableStateOf<Int?>(null) }
+    val haptics = LocalHapticFeedback.current
+    val reactions = remember { AmitySocialReactions.getList() }
+    val pickerPositionState = remember { mutableStateOf<Rect?>(null) }
+    val pickerPosition by remember { pickerPositionState }
+
     LaunchedEffect(sheetUIState) {
         if (sheetUIState !is AmityClipModalSheetUIState.CloseSheet) {
             exoPlayer.pause()
         } else {
             exoPlayer.play()
         }
-    }
-
-    var isReacted by remember(
-        post.getUpdatedAt(),
-        post.getMyReactions(),
-        parentPost?.getUpdatedAt(),
-        parentPost?.getMyReactions()
-    ) {
-        mutableStateOf(
-            parentPost?.getMyReactions()?.isNotEmpty() ?: post.getMyReactions().isNotEmpty()
-        )
-    }
-    var localReactionCount by remember(
-        post.getUpdatedAt(),
-        post.getReactionCount(),
-        parentPost?.getUpdatedAt(),
-        parentPost?.getMyReactions()
-    ) {
-        mutableIntStateOf(parentPost?.getReactionCount() ?: post.getReactionCount())
     }
 
     val commentCount by remember(
@@ -157,8 +195,6 @@ fun ClipItem(
             currentVideo?.let {
                 viewModel.getVideoUrl(currentVideo)
             }
-
-            viewModel.observeReactionChange()
 
             viewModel.isCommunityModerator(post)
         }
@@ -428,29 +464,154 @@ fun ClipItem(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(24.dp)
                     ) {
-                        // Like button
-                        InteractionButton(
-                            icon = if (isReacted) R.drawable.amity_v4_clip_liked_button else R.drawable.amity_v4_clip_like,
-                            count = localReactionCount.readableNumber(),
-                            onClick = {
-                                if (community != null && !isCommunityJoined) {
-                                    AmityUIKitSnackbar.publishSnackbarErrorMessage(message = "Join community to interact with this clip.")
-                                    return@InteractionButton
-                                } else {
-                                    isReacted = !isReacted
-                                    if (isReacted) {
-                                        localReactionCount += 1
-                                    } else {
-                                        localReactionCount -= 1
-                                    }
-
-                                    viewModel.changeReaction(
-                                        postId = parentPost?.getPostId() ?: post.getPostId(),
-                                        isReacted = isReacted
-                                    )
+                        // Like button with reaction picker
+                        Box(
+                            modifier = Modifier
+                                .onGloballyPositioned { coords ->
+                                    anchorInWindow = coords.boundsInWindow()
                                 }
-                            }
-                        )
+                                .pointerInput(Unit) {
+                                    awaitEachGesture {
+                                        // Record the initial pointer ID for future drag tracking
+                                        val down = awaitFirstDown()
+                                        down.consume()
+                                        initialPointerId = down.id
+
+                                        // Check if it's a long press (to show reactions) or a tap (to like/unlike)
+                                        var longPressDetected = false
+
+                                        // Try to detect long press
+                                        try {
+                                            withTimeout(viewConfiguration.longPressTimeoutMillis) {
+                                                // Wait a bit to see if this is a long press
+                                                awaitLongPressOrCancellation(down.id)?.let { longPress ->
+                                                    // Long press detected, show reaction picker
+                                                    longPressDetected = true
+                                                    val anchor = anchorInWindow ?: return@let
+                                                    initialDownPos = Offset(
+                                                        anchor.left.toFloat() + longPress.position.x,
+                                                        anchor.top.toFloat() + longPress.position.y
+                                                    )
+
+                                                    if (community != null && !isCommunityJoined) {
+                                                        AmityUIKitSnackbar.publishSnackbarErrorMessage(message = "Join community to interact with this clip.")
+                                                        return@let
+                                                    }
+
+                                                    reactionExpanded = true
+                                                    haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+
+                                                    // Start drag tracking for the reaction selection
+                                                    var lastIdx: Int? = null
+
+                                                    drag(longPress.id) { change ->
+                                                        change.consume()
+                                                        if (!reactionExpanded) return@drag
+
+                                                        // Convert position to be relative to the reaction picker popup
+                                                        val pickerRect = pickerPosition
+                                                        if (pickerRect != null) {
+                                                            // Calculate position relative to the picker
+                                                            val fromAnchorToEdgePx = screenWidthPx - anchor.left
+                                                            val approxPopupWidthPx = ((40*reactions.size)+8).dp.roundToPx()
+                                                            val relativeX = change.position.x + screenWidthPx - approxPopupWidthPx
+                                                            val idx = getReactionIndexByX(relativeX, approxPopupWidthPx, reactions.size)
+                                                            if (idx != highlightedIndex) {
+                                                                highlightedIndex = idx
+                                                                if (idx != null && lastHapticIndex != idx) {
+                                                                    haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                                    lastHapticIndex = idx
+                                                                }
+                                                            }
+                                                            lastIdx = idx
+                                                        }
+                                                    }
+
+                                                    // On drag end
+                                                    lastIdx?.let { chosen ->
+                                                        val chosenReaction = reactions[chosen]
+                                                        if (myReaction == chosenReaction.name) {
+                                                            localReactionCount -= 1
+                                                            myReactionState.value = ""
+                                                            viewModel.changeReaction(
+                                                                postId = parentPost?.getPostId() ?: post.getPostId(),
+                                                                isReacted = false,
+                                                                reactionName = chosenReaction.name
+                                                            )
+                                                        } else {
+                                                            // If user already reacted with different reaction
+                                                            if (myReaction.isNotEmpty() && myReaction != chosenReaction.name) {
+                                                                // Switch reaction
+                                                                val previousReaction = myReaction
+                                                                myReactionState.value = chosenReaction.name
+                                                                isReacted = true
+                                                                viewModel.switchReaction(
+                                                                    postId = parentPost?.getPostId() ?: post.getPostId(),
+                                                                    reaction = chosenReaction.name,
+                                                                    previousReaction = previousReaction
+                                                                )
+                                                            } else {
+                                                                localReactionCount += 1
+                                                                myReactionState.value = chosenReaction.name
+                                                                isReacted = true
+                                                                viewModel.changeReaction(
+                                                                    postId = parentPost?.getPostId() ?: post.getPostId(),
+                                                                    isReacted = true,
+                                                                    reactionName = chosenReaction.name
+                                                                )
+                                                            }
+                                                        }
+                                                    }
+
+                                                    // Reset states
+                                                    highlightedIndex = null
+                                                    lastHapticIndex = null
+                                                    reactionExpanded = false
+                                                    initialPointerId = null
+                                                    initialDownPos = null
+                                                }
+                                            }
+                                        } catch (e: TimeoutCancellationException) {
+                                            // Timeout for long press detection exceeded
+                                        }
+
+                                        // If no long press was detected, handle as a normal tap
+                                        if (!longPressDetected) {
+                                            if (reacting.first.isEmpty()) {
+                                                // This was a tap, handle the like/unlike action
+                                                val previousReaction = myReaction
+                                                myReactionState.value = if (myReaction.isEmpty()) {
+                                                    POST_REACTION
+                                                } else {
+                                                    ""
+                                                }
+                                                if (myReactionState.value.isEmpty()) {
+                                                    localReactionCount -= 1
+                                                } else {
+                                                    localReactionCount += 1
+                                                }
+                                                viewModel.changeReaction(
+                                                    postId = post.getPostId(),
+                                                    reactionName = if (myReactionState.value.isNotEmpty()) POST_REACTION else previousReaction,
+                                                    isReacted = myReactionState.value.isNotEmpty()
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                        ) {
+                            // The actual button UI
+                            InteractionButton(
+                                icon = if (isReacted) {
+                                    myReaction.ifEmpty { "like" }
+                                        .let(AmitySocialReactions::toReaction)
+                                        .icon
+                                } else {
+                                    R.drawable.amity_v4_clip_like
+                                },
+                                count = localReactionCount.readableNumber(),
+                            )
+                        }
 
                         // Comment button
                         InteractionButton(
@@ -480,7 +641,6 @@ fun ClipItem(
                                 } else {
                                     exoPlayer.volume = 1f
                                 }
-
                             }
                         )
 
@@ -491,7 +651,7 @@ fun ClipItem(
                             onClick = {
                                 viewModel.updateSheetUIState(
                                     AmityClipModalSheetUIState.OpenClipMenuSheet(
-                                        postId = parentPost?.getPostId() ?: post.getPostId(),
+                                        post = parentPost ?: post,
                                     )
                                 )
                             }
@@ -512,4 +672,95 @@ fun ClipItem(
         }
 
     }
+
+    // Add reaction picker popup
+    if (reactionExpanded && anchorInWindow != null) {
+        val anchor = anchorInWindow!!
+        Popup(
+            properties = PopupProperties(
+                focusable = true,
+                clippingEnabled = false
+            ),
+            popupPositionProvider = object : PopupPositionProvider {
+                override fun calculatePosition(
+                    anchorBounds: IntRect,
+                    windowSize: IntSize,
+                    layoutDirection: LayoutDirection,
+                    popupContentSize: IntSize
+                ): IntOffset {
+                    // Save popup width for picker
+                    popupWidthPx = popupContentSize.width
+                    // Position the picker centered with 8dp gap above the button
+                    val spacingPx = with(density) { 8.dp.roundToPx() }
+                    val x = (anchor.center.x - popupContentSize.width / 2f).roundToInt()
+                    val y = (anchor.top - popupContentSize.height - spacingPx).roundToInt()
+
+                    return IntOffset(
+                        x.coerceIn(0, windowSize.width - popupContentSize.width),
+                        y.coerceIn(0, windowSize.height - popupContentSize.height)
+                    )
+                }
+            },
+            onDismissRequest = {
+                reactionExpanded = false
+                highlightedIndex = null
+                lastHapticIndex = null
+            }
+        ) {
+            AmityReactionPicker(
+                modifier = Modifier
+                    .padding(top = 32.dp)
+                    .onGloballyPositioned { coords ->
+                        // Store the popup's position in window coordinates for accurate touch position calculations
+                        pickerPositionState.value = coords.boundsInWindow()
+                    },
+                pageScope = null,
+                componentScope = null,
+                selectedReaction = myReaction,
+                highlightedIndex = highlightedIndex,
+                onAddReaction = { reaction ->
+                    // If the user has already reacted with a different reaction, remove that reaction first
+                    if (myReaction.isNotEmpty() && myReaction != reaction) {
+                        // Switch reaction
+                        val previousReaction = myReaction
+                        myReactionState.value = reaction
+                        isReacted = true
+                        viewModel.switchReaction(
+                            postId = parentPost?.getPostId() ?: post.getPostId(),
+                            reaction = reaction,
+                            previousReaction = previousReaction
+                        )
+                    } else {
+                        // If the user is adding a reaction for the first time
+                        localReactionCount += 1
+                        myReactionState.value = reaction
+                        isReacted = true
+                        viewModel.changeReaction(
+                            postId = parentPost?.getPostId() ?: post.getPostId(),
+                            isReacted = true,
+                            reactionName = reaction
+                        )
+                    }
+                },
+                onRemoveReaction = { reaction ->
+                    localReactionCount -= 1
+                    myReactionState.value = ""
+                    isReacted = false
+                    viewModel.changeReaction(
+                        postId = parentPost?.getPostId() ?: post.getPostId(),
+                        isReacted = false,
+                        reactionName = reaction
+                    )
+                },
+                onDismiss = {
+                    reactionExpanded = false
+                    initialPointerId = null
+                    initialDownPos = null
+                    highlightedIndex = null
+                    lastHapticIndex = null
+                },
+            )
+        }
+    }
 }
+

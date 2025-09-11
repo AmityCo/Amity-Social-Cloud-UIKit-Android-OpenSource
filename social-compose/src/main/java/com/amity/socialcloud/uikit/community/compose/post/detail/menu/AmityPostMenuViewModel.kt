@@ -145,6 +145,8 @@ sealed class AmityPostMenuSheetUIState(val postId: String) {
 
     data class OpenSheet(val id: String) : AmityPostMenuSheetUIState(id)
 
+    data class OpenShareSheet(val id: String) : AmityPostMenuSheetUIState(id)
+
     data class OpenReportSheet(val id: String) : AmityPostMenuSheetUIState(id)
 
     data class OpenReportOtherReasonSheet(val id: String) : AmityPostMenuSheetUIState(id)

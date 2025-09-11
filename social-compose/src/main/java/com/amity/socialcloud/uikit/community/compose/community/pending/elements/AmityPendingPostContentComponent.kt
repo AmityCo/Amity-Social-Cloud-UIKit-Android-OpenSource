@@ -136,11 +136,33 @@ fun AmityPendingPostContentComponent(
 
                 AmityPostPollElement(
                     modifier = modifier,
+                    pageScope = pageScope,
                     componentScope = getComponentScope(),
                     post = post,
                     style = AmityPostContentComponentStyle.FEED,
                     onClick = {},
                     onMentionedUserClick = {},
+                )
+            } else if (post.getChildren().any { it.getData() is AmityPost.Data.CLIP }) {
+                AmityPostContentElement(
+                    modifier = modifier,
+                    post = post,
+                    style = AmityPostContentComponentStyle.FEED,
+                    onClick = {},
+                    onMentionedUserClick = {
+                        behavior.goToUserProfilePage(context = context, userId = it)
+                    }
+                )
+                AmityPostPreviewLinkView(
+                    modifier = modifier,
+                    post = post,
+                )
+                AmityPostMediaElement(
+                    modifier = Modifier,
+                    post = post,
+                    clipClick = {
+                        behavior.goToClipFeedPage(context, it.getPostId())
+                    }
                 )
             } else {
                 AmityPostContentElement(

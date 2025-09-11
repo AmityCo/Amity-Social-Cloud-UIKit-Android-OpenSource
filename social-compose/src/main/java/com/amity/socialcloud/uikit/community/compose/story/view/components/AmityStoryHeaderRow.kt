@@ -90,6 +90,7 @@ fun AmityStoryHeaderRow(
         mutableLongStateOf(AmityConstants.STORY_DURATION)
     }
     val videoDuration by AmityStoryVideoPlayerHelper.duration.collectAsState()
+    val isVideoEnded by AmityStoryVideoPlayerHelper.isVideoEnded.collectAsState()
 
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
@@ -128,6 +129,13 @@ fun AmityStoryHeaderRow(
             videoDuration
         } else {
             AmityConstants.STORY_DURATION
+        }
+    }
+
+    // Auto-advance when video ends
+    LaunchedEffect(isVideoEnded, story?.getDataType()) {
+        if (isVideoEnded && story?.getDataType() == AmityStory.DataType.VIDEO) {
+            moveToNextSegment()
         }
     }
 

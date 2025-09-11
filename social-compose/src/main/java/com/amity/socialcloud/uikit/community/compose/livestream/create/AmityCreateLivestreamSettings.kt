@@ -26,9 +26,7 @@ fun AmityCreateLivestreamSettings(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(255.dp)
             .padding(16.dp)
-            .padding(bottom = 32.dp)
     ) {
         Spacer(modifier = Modifier.height(16.dp))
 

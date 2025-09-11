@@ -2,28 +2,16 @@ package com.amity.socialcloud.uikit.sample
 
 import android.app.Application
 import android.content.Context
-import android.util.Log
-import android.widget.Toast
-import coil3.ImageLoader
-import coil3.PlatformContext
-import coil3.SingletonImageLoader
-import coil3.disk.DiskCache
-import coil3.disk.directory
-import coil3.memory.MemoryCache
-import coil3.util.DebugLogger
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.core.endpoint.AmityEndpoint
 import com.amity.socialcloud.sdk.model.core.file.AmityFileAccessType
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.AmityUIKit4Manager
 import com.amity.socialcloud.uikit.AmityUIKitClient
-import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentBehavior
 import com.amity.socialcloud.uikit.feed.settings.AmityPostShareClickListener
 import com.amity.socialcloud.uikit.feed.settings.AmityPostSharingSettings
 import com.amity.socialcloud.uikit.feed.settings.AmityPostSharingTarget
 import com.amity.socialcloud.uikit.sample.env.SamplePreferences
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.schedulers.Schedulers
 
 class AmitySampleApp : Application()  {
 
@@ -40,10 +28,6 @@ class AmitySampleApp : Application()  {
                 SamplePreferences.getUploadUrl().get(),
             )
         )
-
-        AmityUIKit4Manager.behavior.commentTrayComponentBehavior = object: AmityCommentTrayComponentBehavior() {
-            override fun goToUserProfilePage(context: Context, userId: String) { }
-        }
 
         // V3 Ex. override post sharing event
         val settings = AmityPostSharingSettings()
