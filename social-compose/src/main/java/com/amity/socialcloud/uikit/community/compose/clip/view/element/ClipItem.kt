@@ -175,12 +175,7 @@ fun ClipItem(
     // Only get clip URL when this item is currently playing
     LaunchedEffect(pageIndex, isCurrentlyPlaying) {
         if (isCurrentlyPlaying) {
-            val currentClip = if (type !is AmityClipFeedPageType.GlobalFeed) {
-                (post.getData() as? AmityPost.Data.CLIP)
-            } else {
-                (post.getChildren()
-                    .firstOrNull()?.getData() as? AmityPost.Data.CLIP)
-            }
+            val currentClip = (post.getData() as? AmityPost.Data.CLIP) ?: ((post.getChildren().firstOrNull() { it.getData() is AmityPost.Data.CLIP })?.getData() as? AmityPost.Data.CLIP)
             if (type !is AmityClipFeedPageType.GlobalFeed) {
                 viewModel.getParentPost(post.getParentPostId() ?: "")
             }
@@ -190,7 +185,7 @@ fun ClipItem(
                 viewModel.getClipUrl(currentClip)
             }
 
-            val currentVideo = (post.getData() as? AmityPost.Data.VIDEO)
+            val currentVideo = (post.getData() as? AmityPost.Data.VIDEO) ?: ((post.getChildren().firstOrNull() { it.getData() is AmityPost.Data.VIDEO })?.getData() as? AmityPost.Data.VIDEO)
 
             currentVideo?.let {
                 viewModel.getVideoUrl(currentVideo)
@@ -259,7 +254,7 @@ fun ClipItem(
                     exoPlayer = exoPlayer,
                     modifier = Modifier.fillMaxSize(),
                     isVisible = true, // Always show player when current
-                    scaleMode = if (isFilled) AspectRatioFrameLayout.RESIZE_MODE_ZOOM else AspectRatioFrameLayout.RESIZE_MODE_FIT
+                    scaleMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
                 )
             } else if (exoPlayer.playerError != null) {
                 AmityClipLoadStateError(
