@@ -347,8 +347,13 @@ fun AmityMentionTextField(
                     onHashtags(hashtags)
 
                     // --- Improved hashtag auto-detection on paste or any change ---
-                    val hashtagRegex = "#\\w+".toRegex()
-                    val detectedHashtags = hashtagRegex.findAll(limitedValue.text).map { it.value.removePrefix("#") to it.range.first }.toList()
+                    val hashtagRegex = "(?:^|\\s)#(\\w+)".toRegex()
+                    val detectedHashtags = hashtagRegex.findAll(limitedValue.text).map {
+                        val matchResult = it
+                        val hashtagText = matchResult.groupValues[1] // Get the captured group (hashtag without #)
+                        val hashtagIndex = matchResult.range.last - hashtagText.length // Position of # character
+                        hashtagText to hashtagIndex
+                    }.toList()
                     if (detectedHashtags.isNotEmpty()) {
                         detectedHashtags.forEach { (tag, index) ->
                             if (hashtags.size < maxHashtag) {
@@ -521,7 +526,10 @@ private fun detectActiveHashtagToken(value: TextFieldValue): String? {
 
     // Check if cursor is right after an # character
     if (text.getOrNull(cursorPosition - 1) == '#') {
-        return ""
+        // Check if the # is at the beginning or preceded by whitespace
+        val hashPosition = cursorPosition - 1
+        val isValidHashtag = hashPosition == 0 || text.getOrNull(hashPosition - 1)?.isWhitespace() == true
+        return if (isValidHashtag) "" else null
     }
 
     // Look backwards from cursor for # token
@@ -533,9 +541,12 @@ private fun detectActiveHashtagToken(value: TextFieldValue): String? {
     while (index >= 0) {
         val char = text[index]
         if (char == '#') {
-            // Found # character
-            foundAt = true
-            tokenStart = index + 1
+            // Found # character - check if it's valid (at beginning or after whitespace)
+            val isValidHashtag = index == 0 || text.getOrNull(index - 1)?.isWhitespace() == true
+            if (isValidHashtag) {
+                foundAt = true
+                tokenStart = index + 1
+            }
             break
         } else if (char == ' ' || char == '\n') {
             // Hit a whitespace before finding #, no active token
@@ -544,7 +555,7 @@ private fun detectActiveHashtagToken(value: TextFieldValue): String? {
         index--
     }
 
-    // If we found # and cursor is after it, return the token text
+    // If we found a valid # and cursor is after it, return the token text
     return if (foundAt && cursorPosition > tokenStart) {
         text.substring(tokenStart, cursorPosition)
     } else {
@@ -586,18 +597,18 @@ private fun detectCompletedHashtag(value: TextFieldValue): AmityHashtag? {
 
         // If we found a hashtag, create and return it
         if (hashIndex >= 0) {
-            if (hashIndex > 0) {
-                if (text.getOrNull(hashIndex - 1)?.isWhitespace() != true) {
-                    // If the previous character is also a #, this is not a valid hashtag
-                    return null
-                }
+            // Check if the # is at the beginning or preceded by whitespace
+            val isValidHashtag = hashIndex == 0 || text.getOrNull(hashIndex - 1)?.isWhitespace() == true
+            if (!isValidHashtag) {
+                // If the # is not at the beginning and not preceded by whitespace, it's not a valid hashtag
+                return null
             }
-            val text = text.substring(hashIndex + 1, cursorPosition - 1)
-            if (text.isNotEmpty()) {
+            val hashtagText = text.substring(hashIndex + 1, cursorPosition - 1)
+            if (hashtagText.isNotEmpty()) {
                 return AmityHashtag(
-                    text = text,
+                    text = hashtagText,
                     index = hashIndex,
-                    length = text.length
+                    length = hashtagText.length
                 )
             }
         }
