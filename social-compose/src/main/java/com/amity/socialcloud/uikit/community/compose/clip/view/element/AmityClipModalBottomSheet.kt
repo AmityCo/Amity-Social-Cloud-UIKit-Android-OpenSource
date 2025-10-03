@@ -85,11 +85,12 @@ fun AmityClipModalBottomSheet(
                     val data = sheetUIState as AmityClipModalSheetUIState.OpenCommentTraySheet
                     AmityCommentTrayComponent(
                         modifier = modifier,
-                        referenceId = data.postId,
+                        referenceId = data.post.getPostId(),
                         referenceType = AmityCommentReferenceType.POST,
                         community = data.community,
                         shouldAllowInteraction = data.shouldAllowInteraction,
                         shouldAllowCreation = data.shouldAllowComment,
+                        fromNonMemberCommunity = sheetUIState.isNotMember(data.post)
                     )
                 }
 

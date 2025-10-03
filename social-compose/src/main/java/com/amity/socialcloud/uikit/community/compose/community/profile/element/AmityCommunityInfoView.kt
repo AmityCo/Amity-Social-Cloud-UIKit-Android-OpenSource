@@ -18,12 +18,14 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.AmityNumberUtil.getNumberAbbreveation
+import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageBehavior
 
@@ -77,13 +79,17 @@ fun AmityCommunityInfoView(
 				verticalAlignment = Alignment.CenterVertically,
 				modifier = Modifier.clickable {
 				community?.let{
-					if (community.isPublic() || (!community.isPublic() && community.isJoined())) {
+					if (community.isJoined()) {
 						behavior.goToMemberListPage(
 							AmityCommunityProfilePageBehavior.Context(
 								pageContext = context,
 								community = it
 							)
 						)
+					} else if (AmityCoreClient.isVisitor()) {
+						behavior.handleVisitorUserAction()
+					} else {
+						behavior.handleNonMemberAction()
 					}
 				}
 			}) {

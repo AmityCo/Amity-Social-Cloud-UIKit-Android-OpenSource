@@ -7,6 +7,7 @@ import androidx.paging.PagingData
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.behavior.AmityBaseBehavior
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.clip.create.AmityCreateClipPageActivity
 import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipFeedPageActivity
 import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipFeedPageType
@@ -138,5 +139,13 @@ open class AmityUserProfilePageBehavior : AmityBaseBehavior() {
             hideTarget = true,
         )
         context.startActivity(intent)
+    }
+
+    open fun handleVisitorUserAction() {
+        AmitySocialBehaviorHelper.globalBehavior.handleVisitorUserAction()
+    }
+
+    open fun handleNonFollowerAction() {
+        AmitySocialBehaviorHelper.globalBehavior.handleNonFollowerAction()
     }
 }

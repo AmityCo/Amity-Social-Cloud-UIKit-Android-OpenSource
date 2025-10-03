@@ -88,7 +88,8 @@ fun AmityStoryModalBottomSheet(
                         community = data.community,
                         shouldAllowInteraction = data.shouldAllowInteraction,
                         shouldAllowCreation = data.shouldAllowComment,
-                        includeDeleted = true
+                        includeDeleted = true,
+                        fromNonMemberCommunity = data.isNotMember(data.community),
                     )
                 }
 

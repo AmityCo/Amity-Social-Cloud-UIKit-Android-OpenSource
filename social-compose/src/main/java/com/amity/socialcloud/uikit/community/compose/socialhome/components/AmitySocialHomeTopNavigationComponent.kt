@@ -26,6 +26,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.uikit.common.R
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
@@ -34,6 +35,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getText
+import com.amity.socialcloud.uikit.common.utils.isSignedIn
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.socialhome.AmitySocialHomePageTab
 import com.amity.socialcloud.uikit.community.compose.socialhome.elements.AmitySocialHomeNavigationButton
@@ -80,41 +82,44 @@ fun AmitySocialHomeTopNavigationComponent(
             Row(
                 modifier = modifier.align(Alignment.CenterEnd)
             ) {
-                when (selectedTab) {
-                    AmitySocialHomePageTab.NEWSFEED,
-                    AmitySocialHomePageTab.EXPLORE,
-                    AmitySocialHomePageTab.MY_COMMUNITIES,
-                        -> {
-                        AmityBaseElement(
-                            pageScope = pageScope,
-                            componentScope = getComponentScope(),
-                            elementId = "notification_tray_button"
-                        ) {
-                            Box() {
-                                Image(
-                                    painter = painterResource(getConfig().getIcon()),
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .size(32.dp)
-                                        .clickableWithoutRipple {
-                                            notificationButton()
-                                        }
-                                )
-                                if (isSeen == false) {
-                                    Box(
+                if (AmityCoreClient.isSignedIn()) {
+                    when (selectedTab) {
+                        AmitySocialHomePageTab.NEWSFEED,
+                        AmitySocialHomePageTab.EXPLORE,
+                        AmitySocialHomePageTab.MY_COMMUNITIES,
+                            -> {
+                            AmityBaseElement(
+                                pageScope = pageScope,
+                                componentScope = getComponentScope(),
+                                elementId = "notification_tray_button"
+                            ) {
+                                Box() {
+                                    Image(
+                                        painter = painterResource(getConfig().getIcon()),
+                                        contentDescription = null,
                                         modifier = Modifier
-                                            .align(Alignment.TopEnd)
-                                            .size(12.dp)
-                                            .background(Color.White, shape = CircleShape)
-                                            .padding(2.dp)
-                                            .background(color = AmityTheme.colors.alert, shape = CircleShape)
+                                            .size(32.dp)
+                                            .clickableWithoutRipple {
+                                                notificationButton()
+                                            }
                                     )
+                                    if (isSeen == false) {
+                                        Box(
+                                            modifier = Modifier
+                                                .align(Alignment.TopEnd)
+                                                .size(12.dp)
+                                                .background(Color.White, shape = CircleShape)
+                                                .padding(2.dp)
+                                                .background(color = AmityTheme.colors.alert, shape = CircleShape)
+                                        )
+                                    }
                                 }
-                            }
 
+                            }
                         }
+
+                        else -> {}
                     }
-                    else -> {}
                 }
 
                 Spacer(modifier = modifier.width(10.dp))

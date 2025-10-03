@@ -13,11 +13,21 @@ import com.amity.socialcloud.uikit.sample.env.EnvironmentActivity
 import com.amity.socialcloud.uikit.sample.env.SamplePreferences
 import com.ekoapp.rxlifecycle.extension.untilLifecycleEnd
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.JsonObject
 import com.trello.rxlifecycle4.components.support.RxAppCompatActivity
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
+import org.joda.time.DateTime
+import org.joda.time.DateTimeZone
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.GET
+import retrofit2.http.Query
+import retrofit2.http.Url
 import timber.log.Timber
-
 
 class MainActivity : RxAppCompatActivity() {
 
@@ -63,6 +73,49 @@ class MainActivity : RxAppCompatActivity() {
                     )
                 }
             }
+            val visitorDeviceId = AmityCoreClient.getVisitorDeviceId()
+            val expiresAt = DateTime.now().plusDays(30).toDateTime(DateTimeZone.UTC)
+            etSecureVisitorUrl.setText("https://472sfz2bt3cddangdvv5nlyjjq0pnshz.lambda-url.ap-southeast-1.on.aws")
+            btnVisitorLogin.setOnClickListener {
+                val secureVisitorUrl = etSecureVisitorUrl.text.toString().trim()
+                if (secureVisitorUrl.isNotEmpty()) {
+                    val retrofitInstance = SampleRetrofitProvider.getInstance(SamplePreferences.getHttpUrl().get())
+                    val api = retrofitInstance.create(SecureService::class.java)
+                    val visitorDeviceId = AmityCoreClient.getVisitorDeviceId()
+                    val expiresAt = DateTime.now().plusDays(30).toDateTime(DateTimeZone.UTC)
+                    api
+                        .getAuthSignature(
+                            url = secureVisitorUrl,
+                            deviceId = visitorDeviceId,
+                            authSignatureExpiresAt = expiresAt
+                        )
+                        .enqueue(object : Callback<JsonObject> {
+                        override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                            val json: JsonObject? = response.body()
+                            val authSignature =  try {
+                                json?.get("signature")?.asString ?: ""
+                            } catch (e: Exception) {
+                                ""
+                            }
+                            registerDevice(
+                                null,
+                                etUserName.text.toString().trim(),
+                                authSignature = authSignature,
+                                authSignatureExpiresAt = expiresAt
+                            )
+                        }
+
+                        override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                            Timber.e(t, "API call failed")
+                        }
+                    })
+                } else {
+                    registerDevice(
+                        null,
+                        etUserName.text.toString().trim()
+                    )
+                }
+            }
 
             btnEnv.setOnClickListener {
                 val env = Environment(
@@ -71,24 +124,49 @@ class MainActivity : RxAppCompatActivity() {
                     SamplePreferences.getSocketUrl().get(),
                     SamplePreferences.getMqttBroker().get()
                 )
+                SampleRetrofitProvider.reset() // Reset Retrofit when environment changes
                 changeEnvContract.launch(env)
             }
         }
     }
 
-    private fun registerDevice(userId: String, displayName: String? = "") {
-        AmityCoreClient.login(userId, object : SessionHandler {
-            override fun sessionWillRenewAccessToken(renewal: AccessTokenRenewal) {
-                renewal.renew()
-            }
-        })
-            .apply {
-                if (!displayName.isNullOrEmpty()) {
-                    displayName(displayName)
+    private fun registerDevice(
+        userId: String?,
+        displayName: String? = "",
+        authSignature: String? = null,
+        authSignatureExpiresAt: DateTime? = null,
+    ) {
+        if (userId.isNullOrEmpty()) {
+            AmityCoreClient.loginAsVisitor(object : SessionHandler {
+                override fun sessionWillRenewAccessToken(renewal: AccessTokenRenewal) {
+                    renewal.renew()
                 }
-            }
-            .build()
-            .submit()
+            })
+                .apply {
+                    if (!displayName.isNullOrEmpty()) {
+                        displayName(displayName)
+                    }
+                    if (!authSignature.isNullOrEmpty() && authSignatureExpiresAt != null) {
+                        authSignature(authSignature)
+                        authSignatureExpiresAt(authSignatureExpiresAt)
+                    }
+                }
+                .build()
+                .submit()
+        } else {
+            AmityCoreClient.login(userId, object : SessionHandler {
+                override fun sessionWillRenewAccessToken(renewal: AccessTokenRenewal) {
+                    renewal.renew()
+                }
+            })
+                .apply {
+                    if (!displayName.isNullOrEmpty()) {
+                        displayName(displayName)
+                    }
+                }
+                .build()
+                .submit()
+        }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnComplete {
@@ -112,4 +190,9 @@ class MainActivity : RxAppCompatActivity() {
             .subscribe()
     }
 
+    // Retrofit API interface
+    interface SecureService {
+        @GET
+        fun getAuthSignature(@Url url: String, @Query("deviceId") deviceId: String, @Query("authSignatureExpiresAt") authSignatureExpiresAt: DateTime): Call<JsonObject>
+    }
 }

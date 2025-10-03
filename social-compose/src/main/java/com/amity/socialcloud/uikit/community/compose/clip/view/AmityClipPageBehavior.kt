@@ -2,6 +2,7 @@ package com.amity.socialcloud.uikit.community.compose.clip.view
 
 import android.content.Context
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.clip.create.AmityCreateClipPageActivity
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageActivity
 import com.amity.socialcloud.uikit.community.compose.community.setup.AmityCommunitySetupPageActivity
@@ -78,5 +79,17 @@ open class AmityClipPageBehavior {
             mode = AmityCommunitySetupPageMode.Create
         )
         context.startActivity(intent)
+    }
+
+    open fun handleVisitorUserAction() {
+        AmitySocialBehaviorHelper.globalBehavior.handleVisitorUserAction()
+    }
+
+    open fun handleNonMemberAction() {
+        AmitySocialBehaviorHelper.globalBehavior.handleNonMemberAction()
+    }
+
+    open fun handleNonFollowerAction() {
+        AmitySocialBehaviorHelper.globalBehavior.handleNonFollowerAction()
     }
 }

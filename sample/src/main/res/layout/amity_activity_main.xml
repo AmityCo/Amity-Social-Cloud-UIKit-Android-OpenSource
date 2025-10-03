@@ -42,4 +42,21 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/amity_padding_m1"
         android:text="Change Environment" />
+
+    <Button
+        android:id="@+id/btnVisitorLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/amity_padding_m1"
+        android:text="Login as visitor" />
+
+    <EditText
+        android:id="@+id/etSecureVisitorUrl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/amity_padding_l"
+        android:hint="Enter secure visitor server url"
+        android:inputType="text"
+        android:maxLines="1" />
 </LinearLayout>

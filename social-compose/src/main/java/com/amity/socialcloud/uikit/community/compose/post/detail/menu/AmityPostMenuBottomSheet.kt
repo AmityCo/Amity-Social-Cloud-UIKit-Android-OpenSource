@@ -45,6 +45,7 @@ import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostCategory
@@ -204,22 +205,29 @@ fun AmityPostMenuBottomSheet(
                                 text = if (isFlaggedByMe) "Unreport post" else "Report post",
                                 modifier = modifier.testTag("bottom_sheet_report_button"),
                             ) {
+                                val target = post.getTarget()
                                 viewModel.updateSheetUIState(AmityPostMenuSheetUIState.CloseSheet)
-                                if (isFlaggedByMe) {
-                                    viewModel.unflagPost(
-                                        postId = post.getPostId(),
-                                        onSuccess = {
-                                            AmityUIKitSnackbar.publishSnackbarMessage("Post unreported")
-                                        },
-                                        onError = {
-                                            AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to unreport post. Please try again.")
-                                        }
-                                    )
+                                if (AmityCoreClient.isVisitor()) {
+                                    behavior.handleVisitorUserAction()
+                                } else if ((target as? AmityPost.Target.COMMUNITY)?.getCommunity()?.isJoined() == false) {
+                                    behavior.handleNonMemberAction()
                                 } else {
-                                    // Navigate to report screen instead of direct flagging
-                                    viewModel.updateSheetUIState(
-                                        AmityPostMenuSheetUIState.OpenReportSheet(post.getPostId())
-                                    )
+                                    if (isFlaggedByMe) {
+                                        viewModel.unflagPost(
+                                            postId = post.getPostId(),
+                                            onSuccess = {
+                                                AmityUIKitSnackbar.publishSnackbarMessage("Post unreported")
+                                            },
+                                            onError = {
+                                                AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to unreport post. Please try again.")
+                                            }
+                                        )
+                                    } else {
+                                        // Navigate to report screen instead of direct flagging
+                                        viewModel.updateSheetUIState(
+                                            AmityPostMenuSheetUIState.OpenReportSheet(post.getPostId())
+                                        )
+                                    }
                                 }
                             }
                         }

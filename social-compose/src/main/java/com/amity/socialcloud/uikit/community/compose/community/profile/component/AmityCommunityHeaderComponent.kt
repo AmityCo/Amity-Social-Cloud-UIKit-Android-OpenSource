@@ -6,6 +6,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rxjava3.subscribeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -13,12 +17,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.common.isNotEmptyOrBlank
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.elements.AmityExpandableText
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.utils.isSignedIn
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfileViewModel
 import com.amity.socialcloud.uikit.community.compose.community.profile.element.AmityCommunityCategoryListElement
 import com.amity.socialcloud.uikit.community.compose.community.profile.element.AmityCommunityCoverView
@@ -28,6 +35,7 @@ import com.amity.socialcloud.uikit.community.compose.community.profile.element.A
 import com.amity.socialcloud.uikit.community.compose.community.profile.element.AmityCommunityProfileTitleView
 import com.amity.socialcloud.uikit.community.compose.story.target.AmityStoryTabComponent
 import com.amity.socialcloud.uikit.community.compose.story.target.AmityStoryTabComponentType
+import kotlinx.coroutines.flow.catch
 
 @Composable
 fun AmityCommunityHeaderComponent(
@@ -49,7 +57,15 @@ fun AmityCommunityHeaderComponent(
 				}
 			}
 		)
-	val invitation = community.getInvitation().subscribeAsState(emptyList())
+	val invitation by if (!AmityCoreClient.isSignedIn()) {
+		remember { mutableStateOf(emptyList()) }
+	} else {
+		community.getInvitation().toFlowable().asFlow()
+			.catch {
+				emit(emptyList())
+			}
+			.collectAsState(initial = emptyList())
+	}
 
 	AmityBaseComponent(
 		pageScope = pageScope,
@@ -94,12 +110,12 @@ fun AmityCommunityHeaderComponent(
 						community = community
 					)
 
-					if (invitation.value.isNotEmpty()) {
+					if (invitation.isNotEmpty()) {
 						AmityCommunityInvitationBanner(
-							invitation = invitation.value.first()
+							invitation = invitation.first()
 						)
 					}
-					if(invitation.value.isEmpty()) {
+					if(invitation.isEmpty()) {
 						AmityCommunityJoinButton(
 							pageScope = pageScope,
 							componentScope = getComponentScope(),
@@ -128,7 +144,10 @@ fun AmityCommunityHeaderComponent(
 				}
 			}
 		} else {
-			Column {
+			Column(
+				modifier = modifier
+					.background(AmityTheme.colors.background)
+			) {
 				AmityCommunityCoverView(
 					pageScope = pageScope,
 					componentScope = getComponentScope(),

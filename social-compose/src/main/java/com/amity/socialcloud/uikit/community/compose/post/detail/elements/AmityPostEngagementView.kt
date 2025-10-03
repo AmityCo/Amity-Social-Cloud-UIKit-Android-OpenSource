@@ -21,7 +21,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -38,6 +37,7 @@ import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -54,6 +54,7 @@ import androidx.compose.ui.window.PopupPositionProvider
 import androidx.compose.ui.window.PopupProperties
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.core.reaction.AmityReactionReferenceType
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.common.readableNumber
@@ -70,6 +71,7 @@ import com.amity.socialcloud.uikit.common.utils.AmityConstants.POST_REACTION
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getText
+import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetailPageViewModel
@@ -143,6 +145,10 @@ fun AmityPostEngagementView(
     var lastHapticIndex by remember { mutableStateOf<Int?>(null) }
     val haptics = LocalHapticFeedback.current
     val reactions = remember { AmitySocialReactions.getList() }
+    val fromNonMemberCommunity = remember(post) {
+        (post.getTarget() as? AmityPost.Target.COMMUNITY)?.getCommunity()?.isJoined() == false
+    }
+    val localFocus = LocalFocusManager.current
 
     // Update the reaction state when the post's reactions change
     LaunchedEffect(post.getMyReactions()) {
@@ -174,7 +180,12 @@ fun AmityPostEngagementView(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .clickableWithoutRipple {
-                            showReactionListSheet = true
+                            localFocus.clearFocus()
+                            if (AmityCoreClient.isVisitor()) {
+                                behavior.handleVisitorUserAction()
+                            } else {
+                                showReactionListSheet = true
+                            }
                         }
                 ) {
                     AmityReactionPreview(
@@ -273,58 +284,79 @@ fun AmityPostEngagementView(
 
                                                 // On drag end
                                                 lastIdx?.let { chosen ->
-                                                    val chosenReaction = reactions[chosen]
-                                                    if (myReaction == chosenReaction.name) {
-                                                        localReactionCountState.value -= 1
-                                                        myReactionState.value = ""
-                                                        reactionMap[chosenReaction.name] =
-                                                            (reactionMap[chosenReaction.name]
-                                                                ?: 1) - 1
-                                                        localReactionsState.value = reactionMap
-                                                        viewModel.changeReaction(
-                                                            postId = post.getPostId(),
-                                                            reactionName = chosenReaction.name,
-                                                            isReacted = false,
-                                                            onError = {
-                                                                localReactionsState.value = post.getReactionMap()
-                                                            }
-                                                        )
+                                                    localFocus.clearFocus()
+                                                    if (AmityCoreClient.isVisitor()) {
+                                                        behavior.handleVisitorUserAction()
+                                                    } else if (fromNonMemberCommunity) {
+                                                        behavior.handleNonMemberAction()
                                                     } else {
-                                                        // If user already reacted with different reaction
-                                                        if (myReaction.isNotEmpty() && myReaction != chosenReaction.name) {
-                                                            reactingState.value = Pair(chosenReaction.name, localReactionCount)
-                                                            val previousReaction = myReaction
+                                                        val chosenReaction = reactions[chosen]
+                                                        if (myReaction == chosenReaction.name) {
+                                                            localReactionCountState.value -= 1
+                                                            myReactionState.value = ""
                                                             reactionMap[chosenReaction.name] =
                                                                 (reactionMap[chosenReaction.name]
-                                                                    ?: 0) + 1
-                                                            reactionMap[previousReaction] =
-                                                                (reactionMap[previousReaction]
                                                                     ?: 1) - 1
-                                                            localReactionsState.value = reactionMap
-                                                            viewModel.switchReaction(
-                                                                postId = post.getPostId(),
-                                                                reaction = chosenReaction.name,
-                                                                previousReaction = previousReaction,
-                                                                onSuccess = { reactingState.value = Pair("", 0) },
-                                                                onError = {
-                                                                    reactingState.value = Pair("", 0)
-                                                                    localReactionsState.value = post.getReactionMap()
-                                                                }
-                                                            )
-                                                        } else {
-                                                            localReactionCountState.value += 1
-                                                            myReactionState.value = chosenReaction.name
-                                                            reactionMap[chosenReaction.name] =
-                                                                (reactionMap[chosenReaction.name] ?: 0) + 1
                                                             localReactionsState.value = reactionMap
                                                             viewModel.changeReaction(
                                                                 postId = post.getPostId(),
                                                                 reactionName = chosenReaction.name,
-                                                                isReacted = true,
+                                                                isReacted = false,
                                                                 onError = {
-                                                                    localReactionsState.value = post.getReactionMap()
+                                                                    localReactionsState.value =
+                                                                        post.getReactionMap()
                                                                 }
                                                             )
+                                                        } else {
+                                                            // If user already reacted with different reaction
+                                                            if (myReaction.isNotEmpty() && myReaction != chosenReaction.name) {
+                                                                reactingState.value = Pair(
+                                                                    chosenReaction.name,
+                                                                    localReactionCount
+                                                                )
+                                                                val previousReaction = myReaction
+                                                                reactionMap[chosenReaction.name] =
+                                                                    (reactionMap[chosenReaction.name]
+                                                                        ?: 0) + 1
+                                                                reactionMap[previousReaction] =
+                                                                    (reactionMap[previousReaction]
+                                                                        ?: 1) - 1
+                                                                localReactionsState.value =
+                                                                    reactionMap
+                                                                viewModel.switchReaction(
+                                                                    postId = post.getPostId(),
+                                                                    reaction = chosenReaction.name,
+                                                                    previousReaction = previousReaction,
+                                                                    onSuccess = {
+                                                                        reactingState.value =
+                                                                            Pair("", 0)
+                                                                    },
+                                                                    onError = {
+                                                                        reactingState.value =
+                                                                            Pair("", 0)
+                                                                        localReactionsState.value =
+                                                                            post.getReactionMap()
+                                                                    }
+                                                                )
+                                                            } else {
+                                                                localReactionCountState.value += 1
+                                                                myReactionState.value =
+                                                                    chosenReaction.name
+                                                                reactionMap[chosenReaction.name] =
+                                                                    (reactionMap[chosenReaction.name]
+                                                                        ?: 0) + 1
+                                                                localReactionsState.value =
+                                                                    reactionMap
+                                                                viewModel.changeReaction(
+                                                                    postId = post.getPostId(),
+                                                                    reactionName = chosenReaction.name,
+                                                                    isReacted = true,
+                                                                    onError = {
+                                                                        localReactionsState.value =
+                                                                            post.getReactionMap()
+                                                                    }
+                                                                )
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -343,7 +375,12 @@ fun AmityPostEngagementView(
 
                                     // If no long press was detected, check if this was a tap
                                     if (!longPressDetected) {
-                                        if (reacting.first.isEmpty()) {
+                                        localFocus.clearFocus()
+                                        if (AmityCoreClient.isVisitor()) {
+                                            behavior.handleVisitorUserAction()
+                                        } else if (fromNonMemberCommunity) {
+                                            behavior.handleNonMemberAction()
+                                        } else if (reacting.first.isEmpty()) {
                                             // This was a tap, handle the like/unlike action
                                             val previousReaction = myReaction
                                             myReactionState.value = if (myReaction.isEmpty()) {
@@ -419,21 +456,46 @@ fun AmityPostEngagementView(
                     componentScope = componentScope,
                     elementId = "comment_button"
                 ) {
-                    Image(
-                        painter = painterResource(id = getConfig().getIcon()),
-                        contentDescription = null,
-                        modifier = modifier
-                            .size(20.dp)
-                            .testTag(getAccessibilityId())
-                    )
-                    Text(
-                        text = if (isPostDetailPage) getConfig().getText()
-                        else post.getCommentCount().readableNumber(),
-                        style = AmityTheme.typography.bodyLegacy.copy(
-                            fontWeight = FontWeight.SemiBold,
-                            color = AmityTheme.colors.baseShade2
-                        ),
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        modifier = Modifier
+                            .let {
+                                if (AmityCoreClient.isVisitor()) {
+                                    it.clickableWithoutRipple {
+                                        localFocus.clearFocus()
+                                        behavior.handleVisitorUserAction()
+                                    }
+                                } else if (fromNonMemberCommunity) {
+                                    it.clickableWithoutRipple {
+
+                                        localFocus.clearFocus()
+                                        behavior.handleNonMemberAction()
+                                    }
+                                } else {
+                                    it.clickableWithoutRipple {
+                                        localFocus.clearFocus()
+                                    }
+                                }
+                            }
+
+                    ) {
+                        Image(
+                            painter = painterResource(id = getConfig().getIcon()),
+                            contentDescription = null,
+                            modifier = modifier
+                                .size(20.dp)
+                                .testTag(getAccessibilityId())
+                        )
+                        Text(
+                            text = if (isPostDetailPage) getConfig().getText()
+                            else post.getCommentCount().readableNumber(),
+                            style = AmityTheme.typography.bodyLegacy.copy(
+                                fontWeight = FontWeight.SemiBold,
+                                color = AmityTheme.colors.baseShade2
+                            ),
+                        )
+                    }
                 }
 
                 Spacer(Modifier.weight(1f))

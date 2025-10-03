@@ -66,6 +66,8 @@ import com.amity.socialcloud.uikit.common.utils.closePage
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getKeyboardHeight
 import com.amity.socialcloud.uikit.common.utils.isKeyboardVisible
+import com.amity.socialcloud.uikit.common.utils.isSignedIn
+import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentViewModel
@@ -335,8 +337,8 @@ fun AmityPostDetailPage(
                             referenceId = id,
                             referenceType = AmityCommentReferenceType.POST,
                             editingCommentId = editingCommentId,
-                            shouldAllowInteraction = !sheetViewModel.isNotMember(post),
-                            showEngagementRow = commentViewModel.community == null || commentViewModel.community?.isJoined() == true,
+                            shouldAllowInteraction = true,
+                            showEngagementRow = true,
                             onReply = {
                                 replyCommentId = it
                             },
@@ -345,7 +347,8 @@ fun AmityPostDetailPage(
                             },
                             showBounceEffect = scrollAnimationComplete,
                             replyTargetId = if (parentId != null) commentId else null,
-                            expandReplies = parentId != null
+                            expandReplies = parentId != null,
+                            fromNonMemberCommunity = sheetViewModel.isNotMember(post)
                         )
 
                         item {
@@ -353,7 +356,7 @@ fun AmityPostDetailPage(
                         }
                     }
 
-                    if (!sheetViewModel.isNotMember(post) && editingCommentId == null) {
+                    if (!sheetViewModel.isNotMember(post) && editingCommentId == null && AmityCoreClient.isSignedIn()) {
                         AmityCommentComposerBar(
                             modifier = modifier.offset(y = commentComposeBarBottomOffset),
                             componentScope = getComponentScope(),

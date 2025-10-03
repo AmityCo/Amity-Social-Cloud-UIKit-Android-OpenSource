@@ -26,6 +26,7 @@ fun AmityCommentView(
     previewLines: Int = EXPANDABLE_TEXT_MAX_LINES,
     allowAction: Boolean = true,
     expandReplies: Boolean = false,
+    fromNonMemberCommunity: Boolean = false,
 ) {
     if (comment.isDeleted()) {
         AmityDeletedCommentView(modifier = modifier, isReplyComment = false)
@@ -49,6 +50,7 @@ fun AmityCommentView(
             previewLines = previewLines,
             allowAction = allowAction,
             expandReplies = expandReplies,
+            fromNonMemberCommunity = fromNonMemberCommunity,
         )
     }
 }

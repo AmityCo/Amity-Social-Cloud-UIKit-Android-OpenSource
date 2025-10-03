@@ -3,6 +3,7 @@ package com.amity.socialcloud.uikit.community.compose.livestream.create
 import android.content.Context
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.livestream.create.nopermission.AmityNoPermissionPageActivity
 import com.amity.socialcloud.uikit.community.compose.livestream.create.thumbnailpreview.AmityThumbnailPreviewPageActivity
 import com.amity.socialcloud.uikit.community.compose.livestream.errorhandling.AmityLivestreamTerminatedPageActivity
@@ -69,5 +70,13 @@ open class AmityCreateLivestreamPageBehavior {
             screenType = screenType
         )
         context.startActivity(intent)
+    }
+
+    open fun handleVisitorUserAction() {
+        AmitySocialBehaviorHelper.globalBehavior.handleVisitorUserAction()
+    }
+
+    open fun handleNonMemberAction() {
+        AmitySocialBehaviorHelper.globalBehavior.handleNonMemberAction()
     }
 }

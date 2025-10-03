@@ -60,6 +60,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
 import com.amity.socialcloud.sdk.model.core.file.AmityClip
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
@@ -75,6 +76,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.DisposableEffectWithLifeCy
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.AmityConstants.POST_REACTION
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipFeedPageType
 import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipFeedPageViewModel
@@ -524,36 +526,45 @@ fun ClipItem(
 
                                                     // On drag end
                                                     lastIdx?.let { chosen ->
-                                                        val chosenReaction = reactions[chosen]
-                                                        if (myReaction == chosenReaction.name) {
-                                                            localReactionCount -= 1
-                                                            myReactionState.value = ""
-                                                            viewModel.changeReaction(
-                                                                postId = parentPost?.getPostId() ?: post.getPostId(),
-                                                                isReacted = false,
-                                                                reactionName = chosenReaction.name
-                                                            )
+                                                        if (AmityCoreClient.isVisitor()) {
+                                                            behavior.handleVisitorUserAction()
                                                         } else {
-                                                            // If user already reacted with different reaction
-                                                            if (myReaction.isNotEmpty() && myReaction != chosenReaction.name) {
-                                                                // Switch reaction
-                                                                val previousReaction = myReaction
-                                                                myReactionState.value = chosenReaction.name
-                                                                isReacted = true
-                                                                viewModel.switchReaction(
-                                                                    postId = parentPost?.getPostId() ?: post.getPostId(),
-                                                                    reaction = chosenReaction.name,
-                                                                    previousReaction = previousReaction
-                                                                )
-                                                            } else {
-                                                                localReactionCount += 1
-                                                                myReactionState.value = chosenReaction.name
-                                                                isReacted = true
+                                                            val chosenReaction = reactions[chosen]
+                                                            if (myReaction == chosenReaction.name) {
+                                                                localReactionCount -= 1
+                                                                myReactionState.value = ""
                                                                 viewModel.changeReaction(
-                                                                    postId = parentPost?.getPostId() ?: post.getPostId(),
-                                                                    isReacted = true,
+                                                                    postId = parentPost?.getPostId()
+                                                                        ?: post.getPostId(),
+                                                                    isReacted = false,
                                                                     reactionName = chosenReaction.name
                                                                 )
+                                                            } else {
+                                                                // If user already reacted with different reaction
+                                                                if (myReaction.isNotEmpty() && myReaction != chosenReaction.name) {
+                                                                    // Switch reaction
+                                                                    val previousReaction = myReaction
+                                                                    myReactionState.value =
+                                                                        chosenReaction.name
+                                                                    isReacted = true
+                                                                    viewModel.switchReaction(
+                                                                        postId = parentPost?.getPostId()
+                                                                            ?: post.getPostId(),
+                                                                        reaction = chosenReaction.name,
+                                                                        previousReaction = previousReaction
+                                                                    )
+                                                                } else {
+                                                                    localReactionCount += 1
+                                                                    myReactionState.value =
+                                                                        chosenReaction.name
+                                                                    isReacted = true
+                                                                    viewModel.changeReaction(
+                                                                        postId = parentPost?.getPostId()
+                                                                            ?: post.getPostId(),
+                                                                        isReacted = true,
+                                                                        reactionName = chosenReaction.name
+                                                                    )
+                                                                }
                                                             }
                                                         }
                                                     }
@@ -572,7 +583,9 @@ fun ClipItem(
 
                                         // If no long press was detected, handle as a normal tap
                                         if (!longPressDetected) {
-                                            if (reacting.first.isEmpty()) {
+                                            if (AmityCoreClient.isVisitor()) {
+                                                behavior.handleVisitorUserAction()
+                                            } else if (reacting.first.isEmpty()) {
                                                 // This was a tap, handle the like/unlike action
                                                 val previousReaction = myReaction
                                                 myReactionState.value = if (myReaction.isEmpty()) {
@@ -615,7 +628,7 @@ fun ClipItem(
                             onClick = {
                                 viewModel.updateSheetUIState(
                                     AmityClipModalSheetUIState.OpenCommentTraySheet(
-                                        postId = parentPost?.getPostId() ?: post.getPostId(),
+                                        post = parentPost ?: post,
                                         community = community,
                                         shouldAllowInteraction = if (community != null) isCommunityJoined else true,
                                         shouldAllowComment = if (community != null) isCommentCreateAllowed else true

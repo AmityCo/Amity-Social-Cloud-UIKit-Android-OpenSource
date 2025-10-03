@@ -29,6 +29,7 @@ import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityModalSheetUIState
@@ -137,22 +138,26 @@ fun AmityUserMenuBottomSheet(
                         text = "Report user",
                         modifier = modifier.testTag("bottom_sheet_report_user"),
                     ) {
-                        AmityCoreClient.newUserRepository()
-                            .flagUser(user.getUserId())
-                            .subscribeOn(Schedulers.io())
-                            .doOnComplete {
-                                pageScope?.showSnackbar(
-                                    message = "User reported.",
-                                    drawableRes = R.drawable.amity_ic_snack_bar_success
-                                )
-                            }
-                            .doOnError {
-                                pageScope?.showSnackbar(
-                                    message = "Failed to report user. Please try again.",
-                                    drawableRes = R.drawable.amity_ic_snack_bar_warning
-                                )
-                            }
-                            .subscribe()
+                        if (AmityCoreClient.isVisitor()) {
+                            behavior.handleVisitorUserAction()
+                        } else {
+                            AmityCoreClient.newUserRepository()
+                                .flagUser(user.getUserId())
+                                .subscribeOn(Schedulers.io())
+                                .doOnComplete {
+                                    pageScope?.showSnackbar(
+                                        message = "User reported.",
+                                        drawableRes = R.drawable.amity_ic_snack_bar_success
+                                    )
+                                }
+                                .doOnError {
+                                    pageScope?.showSnackbar(
+                                        message = "Failed to report user. Please try again.",
+                                        drawableRes = R.drawable.amity_ic_snack_bar_warning
+                                    )
+                                }
+                                .subscribe()
+                        }
 
                         onCloseSheet()
                     }
@@ -174,7 +179,11 @@ fun AmityUserMenuBottomSheet(
                         modifier = modifier.testTag("bottom_sheet_block_user"),
                     ) {
                         onCloseSheet()
-                        onBlockUser()
+                        if (AmityCoreClient.isVisitor()) {
+                            behavior.handleVisitorUserAction()
+                        } else {
+                            onBlockUser()
+                        }
                     }
                 }
             }

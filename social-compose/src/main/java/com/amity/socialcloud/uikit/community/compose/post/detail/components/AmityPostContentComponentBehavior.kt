@@ -3,10 +3,10 @@ package com.amity.socialcloud.uikit.community.compose.post.detail.components
 import android.content.Context
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipFeedPageActivity
 import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipFeedPageType
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageActivity
-import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageBehavior
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerOptions
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerPageActivity
 import com.amity.socialcloud.uikit.community.compose.search.global.AmitySocialGlobalSearchPageActivity
@@ -71,5 +71,17 @@ open class AmityPostContentComponentBehavior {
             type = AmityClipFeedPageType.NewsFeed(postId = postId)
         )
         context.startActivity(intent)
+    }
+
+    open fun handleVisitorUserAction() {
+        AmitySocialBehaviorHelper.globalBehavior.handleVisitorUserAction()
+    }
+
+    open fun handleNonMemberAction() {
+        AmitySocialBehaviorHelper.globalBehavior.handleNonMemberAction()
+    }
+
+    open fun handleNonFollowerAction() {
+        AmitySocialBehaviorHelper.globalBehavior.handleNonFollowerAction()
     }
 }

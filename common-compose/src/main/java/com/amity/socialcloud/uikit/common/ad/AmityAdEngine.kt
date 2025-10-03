@@ -11,6 +11,8 @@ import com.amity.socialcloud.sdk.model.core.ad.AmityNetworkAds
 import com.amity.socialcloud.sdk.model.core.ad.analytics
 import com.amity.socialcloud.uikit.common.infra.db.entity.AmityAdAsset
 import com.amity.socialcloud.uikit.common.infra.download.AmityDownloader
+import com.amity.socialcloud.uikit.common.utils.isSignedIn
+import com.amity.socialcloud.uikit.common.utils.isVisitor
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -139,15 +141,19 @@ object AmityAdEngine {
     }
 
     fun markSeen(ad: AmityAd, placement: AmityAdPlacement) {
-        AmityAdRecencyRepository().updateLastSeen(ad.getAdId(), DateTime.now())
-        if (getAdFrequency(placement)?.getType() == "time-window") {
-            AmityAdTimeWindowTracker.markSeen(placement)
+        if (AmityCoreClient.isSignedIn()) {
+            AmityAdRecencyRepository().updateLastSeen(ad.getAdId(), DateTime.now())
+            if (getAdFrequency(placement)?.getType() == "time-window") {
+                AmityAdTimeWindowTracker.markSeen(placement)
+            }
+            ad.analytics().markAsSeen(placement)
         }
-        ad.analytics().markAsSeen(placement)
     }
 
     fun markClicked(ad: AmityAd, placement: AmityAdPlacement) {
-        ad.analytics().markLinkAsClicked(placement)
+        if (AmityCoreClient.isSignedIn()) {
+            ad.analytics().markLinkAsClicked(placement)
+        }
     }
 
     fun getRecommendedAds(

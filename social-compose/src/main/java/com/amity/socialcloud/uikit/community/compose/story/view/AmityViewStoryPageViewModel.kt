@@ -11,6 +11,7 @@ import com.amity.socialcloud.sdk.model.core.ad.AmityAdPlacement
 import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.member.AmityCommunityMember
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.sdk.model.social.story.AmityStoryImageDisplayMode
 import com.amity.socialcloud.sdk.model.social.story.AmityStoryItem
@@ -237,6 +238,12 @@ sealed class AmityStoryModalSheetUIState {
     ) : AmityStoryModalSheetUIState()
 
     object CloseSheet : AmityStoryModalSheetUIState()
+
+    fun isNotMember(community: AmityCommunity?): Boolean {
+        val isNotMember =
+            !(community?.isJoined() ?: true)
+        return isNotMember
+    }
 }
 
 sealed class AmityStoryModalDialogUIState {

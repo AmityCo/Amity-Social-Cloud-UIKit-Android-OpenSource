@@ -23,12 +23,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.sdk.model.social.story.AmityStoryTarget
 import com.amity.socialcloud.uikit.common.common.readableNumber
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.utils.isVisitor
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityStoryModalDialogUIState
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityStoryModalSheetUIState
@@ -124,6 +127,10 @@ fun AmityStoryEngagementRow(
     val viewModel =
         viewModel<AmityViewStoryPageViewModel>(viewModelStoreOwner = viewModelStoreOwner)
 
+    val behavior = remember {
+        AmitySocialBehaviorHelper.viewStoryPageBehavior
+    }
+
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -150,7 +157,7 @@ fun AmityStoryEngagementRow(
                     AmityStoryModalSheetUIState.OpenCommentTraySheet(
                         storyId = storyId,
                         community = viewModel.community,
-                        shouldAllowInteraction = isCommunityJoined,
+                        shouldAllowInteraction = true,
                         shouldAllowComment = isAllowedComment,
                     )
                 )

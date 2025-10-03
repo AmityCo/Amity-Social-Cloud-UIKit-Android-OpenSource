@@ -73,6 +73,7 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetailPageViewModel
@@ -126,6 +127,9 @@ fun AmityPostPollElement(
         factory = AmityPostPollElementViewModel.create(post.getPostId()),
         viewModelStoreOwner = viewModelStoreOwner
     )
+    val behavior by lazy {
+        AmitySocialBehaviorHelper.postContentComponentBehavior
+    }
 
     // Stabilize poll state with better keys
     val pollStateKey = remember(post.getPostId(), post.getUpdatedAt()) {
@@ -161,12 +165,14 @@ fun AmityPostPollElement(
     }
     val canVote by remember(isVoting, post.getPostId(), post.getUpdatedAt()) {
         derivedStateOf {
-            if (post.getTarget() is AmityPost.Target.COMMUNITY) {
-                (post.getTarget() as AmityPost.Target.COMMUNITY).getCommunity()?.isJoined() ?: false
-                        && !isVoting
-                        && post.getReviewStatus() != AmityReviewStatus.UNDER_REVIEW
+            val isCommunityPost = post.getTarget() is AmityPost.Target.COMMUNITY
+            val isCommunityJoined = (post.getTarget() as? AmityPost.Target.COMMUNITY)?.getCommunity()?.isJoined() ?: false
+            val isUnderReview = post.getReviewStatus() == AmityReviewStatus.UNDER_REVIEW
+
+            if (isCommunityPost) {
+                !isVoting && (AmityCoreClient.isVisitor() || (isCommunityJoined && !isUnderReview))
             } else {
-                !isVoting && post.getReviewStatus() != AmityReviewStatus.UNDER_REVIEW
+                !isVoting && !isUnderReview
             }
         }
     }
@@ -458,36 +464,40 @@ fun AmityPostPollElement(
                     .height(40.dp)
                     .fillMaxWidth(),
                 onClick = {
-                    scope.launch {
-                        isVoting = true
-                        try {
-                            AmitySocialClient.newPollRepository()
-                                .votePoll(
-                                    poll.getPollId(),
-                                    pollStateUiState.find { it.postId == post.getPostId() }?.selectedOption?.map { poll.getAnswers()[it].id }
-                                        ?: selectedIndices.map { poll.getAnswers()[it].id }
-                                )
-                                .await()
+                    if (AmityCoreClient.isVisitor()) {
+                     behavior.handleVisitorUserAction()
+                    } else {
+                        scope.launch {
+                            isVoting = true
+                            try {
+                                AmitySocialClient.newPollRepository()
+                                    .votePoll(
+                                        poll.getPollId(),
+                                        pollStateUiState.find { it.postId == post.getPostId() }?.selectedOption?.map { poll.getAnswers()[it].id }
+                                            ?: selectedIndices.map { poll.getAnswers()[it].id }
+                                    )
+                                    .await()
 
-                            isResultState = true
-                        } catch (e: Exception) {
-                            if (e is AmityException) {
-                                if (e.code == AmityError.BAD_REQUEST_ERROR.code) {
-                                    isEndedState.value = true
-                                    AmityUIKitSnackbar.publishSnackbarErrorMessage(
-                                        message = "Poll ended.",
-                                        offsetFromBottom = 52,
-                                    )
-                                    return@launch
-                                } else {
-                                    AmityUIKitSnackbar.publishSnackbarErrorMessage(
-                                        message = "Oops, something went wrong.",
-                                        offsetFromBottom = 52,
-                                    )
+                                isResultState = true
+                            } catch (e: Exception) {
+                                if (e is AmityException) {
+                                    if (e.code == AmityError.BAD_REQUEST_ERROR.code) {
+                                        isEndedState.value = true
+                                        AmityUIKitSnackbar.publishSnackbarErrorMessage(
+                                            message = "Poll ended.",
+                                            offsetFromBottom = 52,
+                                        )
+                                        return@launch
+                                    } else {
+                                        AmityUIKitSnackbar.publishSnackbarErrorMessage(
+                                            message = "Oops, something went wrong.",
+                                            offsetFromBottom = 52,
+                                        )
+                                    }
                                 }
+                            } finally {
+                                isVoting = false
                             }
-                        } finally {
-                            isVoting = false
                         }
                     }
                 }

@@ -41,7 +41,9 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.closePageWithResult
+import com.amity.socialcloud.uikit.common.utils.isSignedIn
 import com.amity.socialcloud.uikit.common.utils.isVisible
+import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.common.utils.shimmerBackground
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
@@ -204,7 +206,7 @@ fun AmityPostContentComponent(
     }
 
     LaunchedEffect(isVisible) {
-        if (!isPostDetailPage && isVisible) {
+        if (!isPostDetailPage && isVisible && AmityCoreClient.isSignedIn()) {
             post
                 .analytics()
                 .markAsViewed()
@@ -340,30 +342,16 @@ fun AmityPostContentComponent(
                     post = post
                 )
             }
-            if (viewModel.isNotMember(post)) {
-                AmityPostNonMemberSection(
-                    pageScope = pageScope,
-                    componentScope = getComponentScope(),
-                    post = post,
-                    onJoinButtonClick = { community ->
-                        behavior.goToCommunityProfilePage(context, community)
-                    },
-                    onShareButtonClick = { postId ->
-                        viewModel.updateSheetUIState(AmityPostMenuSheetUIState.OpenShareSheet(postId))
-                    },
-                )
-            } else {
-                AmityPostEngagementView(
-                    modifier = modifier,
-                    pageScope = pageScope,
-                    componentScope = getComponentScope(),
-                    post = post,
-                    isPostDetailPage = isPostDetailPage,
-                    shareButtonClick = { postId ->
-                        viewModel.updateSheetUIState(AmityPostMenuSheetUIState.OpenShareSheet(postId))
-                    }
-                )
-            }
+            AmityPostEngagementView(
+                modifier = modifier,
+                pageScope = pageScope,
+                componentScope = getComponentScope(),
+                post = post,
+                isPostDetailPage = isPostDetailPage,
+                shareButtonClick = { postId ->
+                    viewModel.updateSheetUIState(AmityPostMenuSheetUIState.OpenShareSheet(postId))
+                }
+            )
 
             if (!isPostDetailPage && post.getCommentCount() > 0) {
                 post.getLatestComments()
@@ -393,7 +381,7 @@ fun AmityPostContentComponent(
                             currentUserId = AmityCoreClient.getUserId(),
                             editingCommentId = null,
                             comment = latestComment,
-                            allowInteraction = !viewModel.isNotMember(post),
+                            allowInteraction = true,
                             onReply = {
                                 commentBehavior.goToPostDetailPage(
                                     context = context,
@@ -409,6 +397,7 @@ fun AmityPostContentComponent(
                             previewLines = previewCommentMaxLines,
                             allowAction = false,
                             showEngagementRow = true,
+                            fromNonMemberCommunity = (post.getTarget() as? AmityPost.Target.COMMUNITY)?.getCommunity()?.isJoined() == false,
                         )
                         Spacer(modifier = Modifier.height(12.dp))
                     }

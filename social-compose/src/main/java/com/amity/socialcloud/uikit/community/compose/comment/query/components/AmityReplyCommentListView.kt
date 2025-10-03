@@ -32,6 +32,7 @@ fun AmityReplyCommentListView(
     replies: List<AmityComment>,
     previewLines: Int = EXPANDABLE_TEXT_MAX_LINES,
     onEdit: (String?) -> Unit,
+    fromNonMemberCommunity: Boolean = false,
 ) {
     val loader = remember {
         AmityStoryCommentReplyLoader(
@@ -72,6 +73,7 @@ fun AmityReplyCommentListView(
                 comment = comment,
                 previewLines = previewLines,
                 onEdit = onEdit,
+                fromNonMemberCommunity = fromNonMemberCommunity,
             )
         }
     }

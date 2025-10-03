@@ -20,6 +20,7 @@ fun AmityStoryCommentBottomSheet(
     referenceType: AmityCommentReferenceType,
     shouldAllowInteraction: Boolean,
     shouldAllowComment: Boolean,
+    fromNonMemberCommunity: Boolean = false,
     onClose: () -> Unit = {},
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -36,6 +37,7 @@ fun AmityStoryCommentBottomSheet(
             referenceType = referenceType,
             shouldAllowInteraction = shouldAllowInteraction,
             shouldAllowCreation = shouldAllowComment,
+            fromNonMemberCommunity = fromNonMemberCommunity,
         )
     }
 }

@@ -27,11 +27,15 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.uikit.common.common.readableNumber
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.utils.isSignedIn
+import com.amity.socialcloud.uikit.common.utils.isVisitor
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 
 @Composable
 fun AmityStoryReactionCountElement(
@@ -42,6 +46,9 @@ fun AmityStoryReactionCountElement(
     isReactedByMe: Boolean = false,
     onReactChange: (Boolean) -> Unit
 ) {
+    val behavior = remember {
+        AmitySocialBehaviorHelper.viewStoryPageBehavior
+    }
     val context = LocalContext.current
     val haptics = LocalHapticFeedback.current
 
@@ -60,11 +67,10 @@ fun AmityStoryReactionCountElement(
                     isReacted = !isReacted
                     onReactChange(isReacted)
                     reactionCount = if (isReacted) reactionCount + 1 else reactionCount - 1
+                } else if (AmityCoreClient.isSignedIn()) {
+                    behavior.handleNonMemberAction()
                 } else {
-                    pageScope?.showSnackbar(
-                        message = context.getString(R.string.amity_join_community_to_interact),
-                        drawableRes = null,
-                    )
+                    behavior.handleVisitorUserAction()
                 }
             }
             .padding(horizontal = 10.dp, vertical = 8.dp)
