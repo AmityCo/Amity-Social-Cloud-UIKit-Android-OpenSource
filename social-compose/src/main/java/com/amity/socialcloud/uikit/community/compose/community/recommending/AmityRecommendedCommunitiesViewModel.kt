@@ -1,12 +1,14 @@
 package com.amity.socialcloud.uikit.community.compose.community.recommending
 
 import androidx.paging.LoadState
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.community.AmityJoinRequest
 import com.amity.socialcloud.sdk.model.social.community.AmityJoinRequestStatus
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
+import com.amity.socialcloud.uikit.common.utils.isSignedIn
 import io.reactivex.Flowable
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -78,18 +80,20 @@ class AmityRecommendedCommunitiesViewModel : AmityBaseViewModel() {
         }
 
     private fun getJoinRequestList(communityIds: List<String>) {
-        addDisposable(
-            AmitySocialClient.newCommunityRepository().getJoinRequestList(communityIds)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnError { it.printStackTrace() }
-                .doOnNext { requests ->
-                    _joinRequestList.update {
-                        requests
+        if (AmityCoreClient.isSignedIn()) {
+            addDisposable(
+                AmitySocialClient.newCommunityRepository().getJoinRequestList(communityIds)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnError { it.printStackTrace() }
+                    .doOnNext { requests ->
+                        _joinRequestList.update {
+                            requests
+                        }
                     }
-                }
-                .subscribe()
-        )
+                    .subscribe()
+            )
+        }
     }
 
     fun getRecommendedCommunities(): Flow<List<AmityCommunity>> {

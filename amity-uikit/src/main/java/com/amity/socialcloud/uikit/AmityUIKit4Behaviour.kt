@@ -1,5 +1,7 @@
 package com.amity.socialcloud.uikit
 
+import com.amity.socialcloud.uikit.chat.compose.AmityChatBehaviorHelper
+import com.amity.socialcloud.uikit.common.behavior.AmityGlobalBehavior
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.clip.draft.AmityDraftClipPageBehavior
 import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipPageBehavior
@@ -37,6 +39,12 @@ import com.amity.socialcloud.uikit.community.compose.user.profile.components.Ami
 import com.amity.socialcloud.uikit.community.compose.user.relationship.AmityUserRelationshipPageBehavior
 
 class AmityUIKit4Behavior {
+    var globalBehavior: AmityGlobalBehavior = AmitySocialBehaviorHelper.globalBehavior
+        set(value) {
+            field = value
+            AmitySocialBehaviorHelper.globalBehavior = value
+            AmityChatBehaviorHelper.globalBehavior = value
+        }
 
     var createStoryPageBehavior: AmityCreateStoryPageBehavior =
         AmitySocialBehaviorHelper.createStoryPageBehavior

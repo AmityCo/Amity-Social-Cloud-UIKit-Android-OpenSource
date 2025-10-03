@@ -73,13 +73,11 @@ fun AmityPostMediaElement(
 
         when (postChildren.first().getData()) {
             is AmityPost.Data.IMAGE -> AmityChildPostMediaElement(
-                modifier = modifier.height(328.dp),
                 post = post,
                 isVideoPost = false
             )
 
             is AmityPost.Data.VIDEO -> AmityChildPostMediaElement(
-                modifier = modifier.height(328.dp),
                 post = post,
                 isVideoPost = true
             )
@@ -374,27 +372,32 @@ fun AmityPostMediaImageChildrenFour(
         verticalArrangement = Arrangement.spacedBy(4.dp),
         modifier = modifier.fillMaxSize()
     ) {
-        Box(
+        Row(
             modifier = modifier
-                .fillMaxSize()
-                .weight(2f)
+                .fillMaxWidth()
         ) {
-            AmityPostImageView(
-                modifier = Modifier
-                    .semantics {
-                        role = Role.Image
-                        contentDescription =
-                            if (isVideoPost) "Video 1 of ${postChildren.size}" else "Photo 1 of ${postChildren.size}: ${
-                                getAltText(postChildren[0])
-                            }"
-                    },
-                post = postChildren[0],
-                onClick = { onClick(postChildren[0]) }
-            )
-            if (isVideoPost) {
-                AmityPostMediaPlayButton(
-                    modifier = modifier.align(Alignment.Center)
+            Box(
+                modifier = modifier
+                    .fillMaxSize()
+                    .weight(2f)
+            ) {
+                AmityPostImageView(
+                    modifier = Modifier
+                        .semantics {
+                            role = Role.Image
+                            contentDescription =
+                                if (isVideoPost) "Video 1 of ${postChildren.size}" else "Photo 1 of ${postChildren.size}: ${
+                                    getAltText(postChildren[0])
+                                }"
+                        },
+                    post = postChildren[0],
+                    onClick = { onClick(postChildren[0]) }
                 )
+                if (isVideoPost) {
+                    AmityPostMediaPlayButton(
+                        modifier = modifier.align(Alignment.Center)
+                    )
+                }
             }
         }
 

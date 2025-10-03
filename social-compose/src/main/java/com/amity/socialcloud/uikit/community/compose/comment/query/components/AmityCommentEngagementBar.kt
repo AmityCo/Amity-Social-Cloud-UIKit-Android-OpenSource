@@ -46,6 +46,7 @@ import androidx.compose.ui.window.PopupPositionProvider
 import androidx.compose.ui.window.PopupProperties
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.uikit.common.common.readableSocialTimeDiff
 import com.amity.socialcloud.uikit.common.model.AmitySocialReactions
@@ -54,6 +55,7 @@ import com.amity.socialcloud.uikit.common.reaction.picker.getReactionIndexByX
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.AmityConstants.POST_REACTION
+import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentViewModel
@@ -71,6 +73,7 @@ fun AmityCommentEngagementBar(
     isReplyComment: Boolean,
     comment: AmityComment,
     isCreatedByMe: Boolean,
+    fromNonMemberCommunity: Boolean = false,
     onReply: (String) -> Unit,
     onEdit: () -> Unit,
 ) {
@@ -200,33 +203,46 @@ fun AmityCommentEngagementBar(
 
                                             // On drag end
                                             lastIdx?.let { chosen ->
-                                                val chosenReaction = reactions[chosen]
-                                                if (myReaction == chosenReaction.name) {
-                                                    localReactionCount -= 1
-                                                    myReactionState.value = ""
-                                                    viewModel.removeReaction(
-                                                        commentId = comment.getCommentId(),
-                                                        reaction = chosenReaction.name
-                                                    )
+                                                if (AmityCoreClient.isVisitor()) {
+                                                    behavior.handleVisitorUserAction()
+                                                } else if (fromNonMemberCommunity) {
+                                                    behavior.handleNonMemberAction()
                                                 } else {
-                                                    // If user already reacted with different reaction
-                                                    if (myReaction.isNotEmpty() && myReaction != chosenReaction.name) {
-                                                        reactingState.value = Pair(chosenReaction.name, localReactionCount)
-                                                        val previousReaction = myReaction
-                                                        viewModel.switchReaction(
-                                                            commentId = comment.getCommentId(),
-                                                            reaction = chosenReaction.name,
-                                                            previousReaction = previousReaction,
-                                                            onSuccess = { reactingState.value = Pair("", 0) },
-                                                            onError = { reactingState.value = Pair("", 0) }
-                                                        )
-                                                    } else {
-                                                        localReactionCount += 1
-                                                        myReactionState.value = chosenReaction.name
-                                                        viewModel.addReaction(
+                                                    val chosenReaction = reactions[chosen]
+                                                    if (myReaction == chosenReaction.name) {
+                                                        localReactionCount -= 1
+                                                        myReactionState.value = ""
+                                                        viewModel.removeReaction(
                                                             commentId = comment.getCommentId(),
                                                             reaction = chosenReaction.name
                                                         )
+                                                    } else {
+                                                        // If user already reacted with different reaction
+                                                        if (myReaction.isNotEmpty() && myReaction != chosenReaction.name) {
+                                                            reactingState.value = Pair(
+                                                                chosenReaction.name,
+                                                                localReactionCount
+                                                            )
+                                                            val previousReaction = myReaction
+                                                            viewModel.switchReaction(
+                                                                commentId = comment.getCommentId(),
+                                                                reaction = chosenReaction.name,
+                                                                previousReaction = previousReaction,
+                                                                onSuccess = {
+                                                                    reactingState.value = Pair("", 0)
+                                                                },
+                                                                onError = {
+                                                                    reactingState.value = Pair("", 0)
+                                                                }
+                                                            )
+                                                        } else {
+                                                            localReactionCount += 1
+                                                            myReactionState.value = chosenReaction.name
+                                                            viewModel.addReaction(
+                                                                commentId = comment.getCommentId(),
+                                                                reaction = chosenReaction.name
+                                                            )
+                                                        }
                                                     }
                                                 }
                                             }
@@ -245,7 +261,11 @@ fun AmityCommentEngagementBar(
 
                                 // If no long press was detected, check if this was a tap
                                 if (!longPressDetected) {
-                                    if (reacting.first.isEmpty()) {
+                                    if (AmityCoreClient.isVisitor()) {
+                                        behavior.handleVisitorUserAction()
+                                    } else if (fromNonMemberCommunity) {
+                                        behavior.handleNonMemberAction()
+                                    } else if (reacting.first.isEmpty()) {
                                         // This was a tap, handle the like/unlike action
                                         val previousReaction = myReaction
                                         myReactionState.value = if (myReaction.isNotEmpty()) {
@@ -285,7 +305,13 @@ fun AmityCommentEngagementBar(
                         ),
                         modifier = modifier
                             .clickable {
-                                onReply(comment.getCommentId())
+                                if (AmityCoreClient.isVisitor()) {
+                                    behavior.handleVisitorUserAction()
+                                } else if (fromNonMemberCommunity) {
+                                    behavior.handleNonMemberAction()
+                                }  else {
+                                    onReply(comment.getCommentId())
+                                }
                             }
                             .testTag("comment_list/comment_bubble_reply_button")
                     )
@@ -407,6 +433,7 @@ fun AmityCommentEngagementBar(
             isCommentCreatedByMe = isCreatedByMe,
             isFlaggedByMe = comment.isFlaggedByMe(),
             isFailed = false,
+            fromNonMemberCommunity = fromNonMemberCommunity,
             onEdit = onEdit,
         )
     }

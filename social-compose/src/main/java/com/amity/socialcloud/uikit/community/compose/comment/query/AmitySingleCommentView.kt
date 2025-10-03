@@ -1,6 +1,5 @@
 package com.amity.socialcloud.uikit.community.compose.comment.query
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,6 +23,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.sdk.model.core.reaction.AmityReactionReferenceType
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
@@ -36,6 +36,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.EXPANDABLE_TEXT_MAX_LINES
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.comment.query.components.AmityCommentContentContainer
@@ -68,6 +69,7 @@ fun AmitySingleCommentView(
     allowAction: Boolean = true,
     previewLines: Int = EXPANDABLE_TEXT_MAX_LINES,
     expandReplies: Boolean = false,
+    fromNonMemberCommunity: Boolean,
 ) {
     val context = LocalContext.current
     val behavior by lazy {
@@ -161,7 +163,11 @@ fun AmitySingleCommentView(
                                 modifier = Modifier
                                     .offset(y = (-16).dp)
                                     .clickableWithoutRipple {
-                                        showReactionListSheet = true
+                                        if (AmityCoreClient.isVisitor()) {
+                                            behavior.handleVisitorUserAction()
+                                        } else {
+                                            showReactionListSheet = true
+                                        }
                                     },
                                 componentScope = componentScope,
                                 myReaction = comment.getMyReactions().firstOrNull(),
@@ -211,6 +217,7 @@ fun AmitySingleCommentView(
                         isReplyComment = isReplyComment,
                         comment = comment,
                         isCreatedByMe = currentUserId == comment.getCreatorId(),
+                        fromNonMemberCommunity = fromNonMemberCommunity,
                         onReply = onReply,
                         onEdit = {
                             onEdit(comment.getCommentId())
@@ -251,6 +258,7 @@ fun AmitySingleCommentView(
                 showBounceEffect = false,
                 previewLines = previewLines,
                 isExpanded = expandReplies,
+                fromNonMemberCommunity = fromNonMemberCommunity,
             )
 
             if (isReplyComment) {

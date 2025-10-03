@@ -34,6 +34,7 @@ fun LazyListScope.amityCommentListLLS(
     onEdit: (String?) -> Unit,
     showBounceEffect: Boolean = false,
     expandReplies: Boolean = false,
+    fromNonMemberCommunity: Boolean = false,
 ) {
     commentTarget?.let { target ->
         item(key = "highlighted_comment_${target.getCommentId()}") {
@@ -54,6 +55,7 @@ fun LazyListScope.amityCommentListLLS(
                 showBounceEffect = showBounceEffect,
                 expandReplies = expandReplies,
                 showEngagementRow = showEngagementRow,
+                fromNonMemberCommunity = fromNonMemberCommunity,
             )
         }
     }
@@ -82,6 +84,7 @@ fun LazyListScope.amityCommentListLLS(
                                 onReply = onReply,
                                 onEdit = onEdit,
                                 expandReplies = expandReplies,
+                                fromNonMemberCommunity = fromNonMemberCommunity,
                             )
                         }
                     }

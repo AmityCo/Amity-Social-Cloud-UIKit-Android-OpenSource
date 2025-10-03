@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.story.AmityStory
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageActivity
 import com.amity.socialcloud.uikit.community.compose.story.create.AmityCreateStoryPageActivity
 
@@ -33,6 +34,18 @@ open class AmityViewStoryPageBehavior {
             communityId = community.getCommunityId(),
         )
         context.startActivity(intent)
+    }
+
+    open fun handleVisitorUserAction() {
+        AmitySocialBehaviorHelper.globalBehavior.handleVisitorUserAction()
+    }
+
+    open fun handleNonMemberAction() {
+        AmitySocialBehaviorHelper.globalBehavior.handleNonMemberAction()
+    }
+
+    open fun handleNonFollowerAction() {
+        AmitySocialBehaviorHelper.globalBehavior.handleNonFollowerAction()
     }
 
 }

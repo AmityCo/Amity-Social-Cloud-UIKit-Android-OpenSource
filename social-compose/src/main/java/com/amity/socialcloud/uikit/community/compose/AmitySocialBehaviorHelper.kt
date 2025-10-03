@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose
 
+import com.amity.socialcloud.uikit.common.behavior.AmityGlobalBehavior
 import com.amity.socialcloud.uikit.community.compose.clip.create.AmityCreateClipPageBehavior
 import com.amity.socialcloud.uikit.community.compose.clip.draft.AmityDraftClipPageBehavior
 import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipPageBehavior
@@ -44,6 +45,9 @@ import com.amity.socialcloud.uikit.community.compose.user.relationship.AmityUser
 object AmitySocialBehaviorHelper {
 
     var showPollResultInDetailFirst = false
+
+    var globalBehavior: AmityGlobalBehavior =
+        AmityGlobalBehavior()
 
     var createStoryPageBehavior: AmityCreateStoryPageBehavior =
         AmityCreateStoryPageBehavior()

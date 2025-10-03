@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.core.follow.AmityFollowStatus
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
@@ -51,6 +52,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.AmityNumberUtil.getNumberAbbreveation
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.getText
+import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.user.profile.AmityUserProfilePageViewModel
 import com.amity.socialcloud.uikit.community.compose.user.profile.elements.AmityUserFollowRelationshipButton
@@ -91,6 +93,7 @@ fun AmityUserProfileHeaderComponent(
     val state by remember { viewModel.userProfileState }.collectAsState()
     val myFollowInfo by remember { derivedStateOf { state.myFollowInfo } }
     val userFollowInfo by remember { derivedStateOf { state.userFollowInfo } }
+    val userFollowStatus = userFollowInfo?.getStatus()
 
     val followingCount by remember(state) {
         derivedStateOf {
@@ -205,6 +208,10 @@ fun AmityUserProfileHeaderComponent(
                                         userId = user.getUserId(),
                                         selectedTab = AmityUserRelationshipPageTab.FOLLOWING,
                                     )
+                                } else if (AmityCoreClient.isVisitor()) {
+                                    behavior.handleVisitorUserAction()
+                                } else if (userFollowInfo?.getStatus() != AmityFollowStatus.ACCEPTED) {
+                                    behavior.handleNonFollowerAction()
                                 }
                             }
                         ) {
@@ -248,6 +255,10 @@ fun AmityUserProfileHeaderComponent(
                                     userId = user.getUserId(),
                                     selectedTab = AmityUserRelationshipPageTab.FOLLOWER,
                                 )
+                            }  else if (AmityCoreClient.isVisitor()) {
+                                behavior.handleVisitorUserAction()
+                            } else if (userFollowInfo?.getStatus() != AmityFollowStatus.ACCEPTED) {
+                                behavior.handleNonFollowerAction()
                             }
                         }
                     ) {
@@ -269,13 +280,12 @@ fun AmityUserProfileHeaderComponent(
                 }
             }
             Spacer(modifier.height(12.dp))
-
-            if (!state.isMyUserProfile() && userFollowInfo?.getStatus() != null) {
+            if (!state.isMyUserProfile() && (userFollowStatus != null)) {
                 AmityUserFollowRelationshipButton(
                     modifier = modifier,
                     pageScope = pageScope,
                     componentScope = getComponentScope(),
-                    followStatus = userFollowInfo?.getStatus()!!,
+                    followStatus = userFollowStatus,
                     onClick = { followStatus ->
                         when (followStatus) {
                             AmityFollowStatus.ACCEPTED -> showUnfollowSheet = true
@@ -304,6 +314,16 @@ fun AmityUserProfileHeaderComponent(
                                 )
                             }
                         }
+                    }
+                )
+            } else if (AmityCoreClient.isVisitor()) {
+                AmityUserFollowRelationshipButton(
+                    modifier = modifier,
+                    pageScope = pageScope,
+                    componentScope = getComponentScope(),
+                    followStatus = AmityFollowStatus.NONE,
+                    onClick = {
+                        behavior.handleVisitorUserAction()
                     }
                 )
             }

@@ -50,6 +50,7 @@ import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.closePage
+import com.amity.socialcloud.uikit.common.utils.isSignedIn
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.story.view.components.AmityStoryAdView
@@ -191,7 +192,7 @@ fun AmityViewCommunityStoryPage(
     val isVideoPlaybackReady by AmityStoryVideoPlayerHelper.isVideoPlaybackReady.collectAsState()
 
     LaunchedEffect(isTargetVisible, isMovedToUnseenStory, currentStory?.getStoryId()) {
-        if (isTargetVisible && isMovedToUnseenStory) {
+        if (isTargetVisible && isMovedToUnseenStory && AmityCoreClient.isSignedIn()) {
             currentStory?.analytics()?.markAsSeen()
         }
     }
@@ -437,7 +438,9 @@ fun AmityViewCommunityStoryPage(
                                 },
                                 onHyperlinkClick = {
                                     scope.launch(Dispatchers.IO) {
-                                        story.analytics().markLinkAsClicked()
+                                        if(AmityCoreClient.isSignedIn()) {
+                                            story.analytics().markLinkAsClicked()
+                                        }
                                     }
                                 }
                             )

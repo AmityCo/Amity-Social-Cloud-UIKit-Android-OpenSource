@@ -16,19 +16,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -50,7 +50,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -62,7 +61,6 @@ import com.amity.socialcloud.sdk.api.social.post.review.AmityReviewStatus
 import com.amity.socialcloud.sdk.core.session.model.NetworkConnectionEvent
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.reaction.AmityLiveReactionReferenceType
-import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.sdk.model.video.stream.AmityStream
 import com.amity.socialcloud.sdk.video.presentation.AmityVideoPlayer
@@ -77,6 +75,9 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem
 import com.amity.socialcloud.uikit.common.ui.elements.DisposableEffectWithLifeCycle
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.closePageWithResult
+import com.amity.socialcloud.uikit.common.utils.isSignedIn
+import com.amity.socialcloud.uikit.common.utils.isVisitor
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.livestream.chat.AmityLivestreamMessageComposeBar
 import com.amity.socialcloud.uikit.community.compose.livestream.chat.ChatOverlay
@@ -88,8 +89,8 @@ import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetail
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityLivestreamDisconnectedView
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityLivestreamEndedView
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityLivestreamLoadingView
-import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityLivestreamPostLiveLabel
 import com.amity.socialcloud.uikit.community.compose.utils.sharePost
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -113,6 +114,10 @@ fun AmityLivestreamPlayerPage(
         viewModelStoreOwner = viewModelStoreOwner
     )
     val state by remember { viewModel.liveStreamFullScreenState }.collectAsState()
+
+    val behavior = remember {
+        AmitySocialBehaviorHelper.createLivestreamPageBehavior
+    }
 
     var showReactionPicker by remember { mutableStateOf(false) }
     val floatingReactions = remember { mutableStateListOf<FloatingReaction>() }
@@ -145,6 +150,32 @@ fun AmityLivestreamPlayerPage(
                     }
                 }
             }
+        }
+    }
+
+    DisposableEffect(Unit) {
+        val disposables = CompositeDisposable()
+        if (AmityCoreClient.isVisitor() && isTargetCommunity) {
+            val reactionList = AmityMessageReactions.getList()
+            val random = java.util.Random()
+            val disposable = io.reactivex.rxjava3.core.Observable
+                .interval(1500, 1500, java.util.concurrent.TimeUnit.MILLISECONDS)
+                .observeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
+                .subscribe {
+                    val reaction = reactionList.getOrNull(random.nextInt(reactionList.size))
+                    if (reaction != null) {
+                        floatingReactions.add(
+                            FloatingReaction(
+                                reaction = reaction,
+                                id = System.currentTimeMillis()
+                            )
+                        )
+                    }
+                }
+            disposables.add(disposable)
+        }
+        onDispose {
+            disposables.clear()
         }
     }
 
@@ -193,6 +224,7 @@ fun AmityLivestreamPlayerPage(
             Box(
                 modifier = modifier
                     .fillMaxSize()
+                    .safeContentPadding()
             ) {
                 val streamStatus = state.stream?.getStatus()
 
@@ -286,16 +318,11 @@ fun AmityLivestreamPlayerPage(
                                     it.stop()
                                 }
                             )
-                            Box(
-                                modifier = Modifier
-                                    .padding(top = 60.dp)
-                            ) {
-                                CommunityLivestreamPlayerHeader(
-                                    stream = state.stream,
-                                    onOptionsClick = {
-                                        showBottomSheet = true
-                                    })
-                            }
+                            CommunityLivestreamPlayerHeader(
+                                stream = state.stream,
+                                onOptionsClick = {
+                                    showBottomSheet = true
+                                })
                             if (isDisconnected) {
                                 AmityLivestreamDisconnectedView()
                             }
@@ -304,6 +331,7 @@ fun AmityLivestreamPlayerPage(
                     }
                 }
                 if (streamStatus == AmityStream.Status.LIVE && isTargetCommunity) {
+                    val postTarget = post.getTarget()
                     Column(
                         verticalArrangement = Arrangement.Bottom,
                         horizontalAlignment = Alignment.End,
@@ -319,85 +347,132 @@ fun AmityLivestreamPlayerPage(
                                 .height(182.dp)
                                 .width(120.dp),
                         )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        // Chat overlay
-                        ChatOverlay(
+                        Column(
+                            verticalArrangement = Arrangement.Bottom,
+                            horizontalAlignment = Alignment.End,
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .fillMaxHeight(0.5f)
-                                .drawWithContent {
-                                    drawContent()
-                                    // Draw fade to transparent at top
-                                    drawRect(
-                                        brush = Brush.verticalGradient(
-                                            colors = listOf(
-                                                Color.White, // Use white for fade mask
-                                                Color.Transparent,
-                                                Color.Transparent,
-                                            ),
-                                            startY = 0f,
-                                            endY = 120.dp.toPx()
-                                        ),
-                                        blendMode = BlendMode.DstOut
-                                    )
-                                },
-                            pageScope = getPageScope(),
-                            channelId = state.stream?.getChannelId() ?: "",
-                            onReactionClick = { showReactionPicker = true }
-                        )
-                        AmityLivestreamMessageComposeBar(
-                            pageScope = getPageScope(),
-                            channelId = state.stream?.getChannelId() ?: "",
-                            value = messageText,
-                            isPendingApproval = state.reviewStatus == AmityReviewStatus.UNDER_REVIEW,
-                            onValueChange = {
-                                messageText = it
-                            },
-                            onSend = {},
-                            onReactionClick = {
-                                (AmityMessageReactions.getList().getOrNull(1)
-                                    ?: AmityMessageReactions.getList().firstOrNull())
-                                    ?.let { defaultReaction ->
-                                        floatingReactions.add(
-                                            FloatingReaction(
-                                                reaction = defaultReaction,
-                                                id = System.currentTimeMillis()
-                                            )
-                                        )
-                                        state.stream?.let { stream ->
-                                            AmityCoreClient.newLiveReactionRepository()
-                                                .createReaction(
-                                                    liveStreamId = stream.getStreamId(),
-                                                    referenceId = state.post.getPostId(),
-                                                    referenceType = AmityLiveReactionReferenceType.POST,
-                                                    reactionName = defaultReaction.name,
-                                                )
-                                        }
+                                .let {
+                                    // Hide the chat overlay to let mock reactions show in bottom for visitor user
+                                    if (AmityCoreClient.isSignedIn()) {
+                                        it.fillMaxSize()
+                                    } else {
+                                        it
                                     }
-                            },
-                            onReactionLongClick = { showReactionPicker = true },
-                        )
+                                }
+                                .background(
+                                    brush = Brush.verticalGradient(
+                                        colorStops = arrayOf(
+                                            0.0f to Color.Transparent,
+                                            0.3f to Color.Black.copy(alpha = 0.1f),
+                                            0.6f to Color.Black.copy(alpha = 0.4f),
+                                            0.8f to Color.Black.copy(alpha = 0.7f),
+                                            1.0f to Color.Black
+                                        )
+                                    )
+                                )
+                        ) {
+                            if (AmityCoreClient.isSignedIn()) {
+                                Spacer(modifier = Modifier.height(12.dp))
+                                val target = post.getTarget()
+                                // Chat overlay
+                                ChatOverlay(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .fillMaxHeight(0.5f)
+                                        .drawWithContent {
+                                            drawContent()
+                                            // TODO: Finding alternative approach. Temporarily disable the fade effect as it causes inconsistent with other ui parts
+
+                                            // Draw fade to transparent at top
+//                                            drawRect(
+//                                                brush = Brush.verticalGradient(
+//                                                    colors = listOf(
+//                                                        Color.White, // Use white for fade mask
+//                                                        Color.Transparent,
+//                                                        Color.Transparent,
+//                                                    ),
+//                                                    startY = 0f,
+//                                                    endY = 120.dp.toPx()
+//                                                ),
+//                                                blendMode = BlendMode.DstOut
+//                                            )
+                                        },
+                                    pageScope = getPageScope(),
+                                    channelId = state.stream?.getChannelId() ?: "",
+                                    fromNonMemberCommunity = (target as? AmityPost.Target.COMMUNITY)?.getCommunity()?.isJoined() == false,
+                                    onReactionClick = { showReactionPicker = true }
+                                )
+                            }
+                            AmityLivestreamMessageComposeBar(
+                                pageScope = getPageScope(),
+                                channelId = state.stream?.getChannelId() ?: "",
+                                value = messageText,
+                                isPendingApproval = state.reviewStatus == AmityReviewStatus.UNDER_REVIEW,
+                                onValueChange = {
+                                    messageText = it
+                                },
+                                isNonMember = (postTarget is AmityPost.Target.COMMUNITY) && postTarget.getCommunity()
+                                    ?.isJoined() != true,
+                                onSend = {},
+                                onReactionClick = {
+                                    if (AmityCoreClient.isVisitor()) {
+                                        behavior.handleVisitorUserAction()
+                                    } else if ((postTarget is AmityPost.Target.COMMUNITY) && postTarget.getCommunity()
+                                            ?.isJoined() != true
+                                    ) {
+                                        behavior.handleNonMemberAction()
+                                    } else {
+                                        (AmityMessageReactions.getList().getOrNull(1)
+                                            ?: AmityMessageReactions.getList().firstOrNull())
+                                            ?.let { defaultReaction ->
+                                                floatingReactions.add(
+                                                    FloatingReaction(
+                                                        reaction = defaultReaction,
+                                                        id = System.currentTimeMillis()
+                                                    )
+                                                )
+                                                state.stream?.let { stream ->
+                                                    AmityCoreClient.newLiveReactionRepository()
+                                                        .createReaction(
+                                                            liveStreamId = stream.getStreamId(),
+                                                            referenceId = state.post.getPostId(),
+                                                            referenceType = AmityLiveReactionReferenceType.POST,
+                                                            reactionName = defaultReaction.name,
+                                                        )
+                                                }
+                                            }
+                                    }
+                                },
+                                onReactionLongClick = { showReactionPicker = true },
+                            )
+                        }
                     }
 
                     // Reaction picker popup
                     if (showReactionPicker) {
                         ReactionPicker(
                             onReactionSelected = { reaction ->
-                                // Add floating reaction
-                                floatingReactions.add(
-                                    FloatingReaction(
-                                        reaction = reaction,
-                                        id = System.currentTimeMillis()
-                                    )
-                                )
-                                state.stream?.let {
-                                    AmityCoreClient.newLiveReactionRepository()
-                                        .createReaction(
-                                            liveStreamId = it.getStreamId(),
-                                            referenceId = state.post.getPostId(),
-                                            referenceType = AmityLiveReactionReferenceType.POST,
-                                            reactionName = reaction.name,
+                                if (AmityCoreClient.isVisitor()) {
+                                    behavior.handleVisitorUserAction()
+                                } else if ((postTarget is AmityPost.Target.COMMUNITY) && postTarget.getCommunity()?.isJoined() != true) {
+                                    behavior.handleNonMemberAction()
+                                } else {
+                                    // Add floating reaction
+                                    floatingReactions.add(
+                                        FloatingReaction(
+                                            reaction = reaction,
+                                            id = System.currentTimeMillis()
                                         )
+                                    )
+                                    state.stream?.let {
+                                        AmityCoreClient.newLiveReactionRepository()
+                                            .createReaction(
+                                                liveStreamId = it.getStreamId(),
+                                                referenceId = state.post.getPostId(),
+                                                referenceType = AmityLiveReactionReferenceType.POST,
+                                                reactionName = reaction.name,
+                                            )
+                                    }
                                 }
                             },
                             onDismiss = { showReactionPicker = false },
@@ -559,6 +634,7 @@ fun CommunityLivestreamPlayerHeader(
             }
         }
 
+        Spacer(modifier = Modifier.width(8.dp))
         if (stream?.getStatus() == AmityStream.Status.LIVE) {
             // Right side: LIVE badge
             Box(

@@ -56,6 +56,8 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.model.chat.member.AmityMembershipType
 import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.core.error.AmityException
 import com.amity.socialcloud.uikit.common.model.AmityMessageReactions
@@ -65,6 +67,9 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityTextField
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.utils.isSignedIn
+import com.amity.socialcloud.uikit.common.utils.isVisitor
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -78,6 +83,7 @@ fun AmityLivestreamMessageComposeBar(
     channelId: String,
     value: String,
     isPendingApproval: Boolean = false,
+    isNonMember: Boolean = false,
     onValueChange: (String) -> Unit,
     onSend: () -> Unit,
     onReactionClick: () -> Unit,
@@ -91,6 +97,10 @@ fun AmityLivestreamMessageComposeBar(
         factory = AmityLivestreamChatViewModel.create(channelId),
         viewModelStoreOwner = viewModelStoreOwner
     )
+
+    val behavior = remember {
+        AmitySocialBehaviorHelper.createLivestreamPageBehavior
+    }
 
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusRequester = remember { FocusRequester() }
@@ -188,12 +198,25 @@ fun AmityLivestreamMessageComposeBar(
                                 .onFocusChanged { focusState ->
                                     isFocused = focusState.isFocused
                                 }
+                                .let {
+                                    if (AmityCoreClient.isVisitor()) {
+                                        it.clickable {
+                                            behavior.handleVisitorUserAction()
+                                        }
+                                    } else if (isNonMember) {
+                                        it.clickable {
+                                            behavior.handleNonMemberAction()
+                                        }
+                                    } else {
+                                        it
+                                    }
+                                }
                                 .testTag("message_composer_text_field"),
                             text = messageText,
                             textStyle = AmityTheme.typography.body.copy(color = Color(0xFFEBECEF)),
                             maxLines = 1,
                             hint = "Chat...",
-                            enabled = isChannelModerator || ((membership?.isMuted() != true) && !isChannelMuted),
+                            enabled = (isChannelModerator || ((membership?.isMuted() != true) && !isChannelMuted)) && AmityCoreClient.isSignedIn() && !isNonMember,
                             shape = RoundedCornerShape(20.dp),
                             innerPadding = PaddingValues(horizontal = 12.dp, vertical = 10.dp),
                             onValueChange = {

@@ -346,11 +346,18 @@ sealed class AmityClipModalSheetUIState {
     ) : AmityClipModalSheetUIState()
 
     data class OpenCommentTraySheet(
-        val postId: String,
+        val post: AmityPost,
         val community: AmityCommunity? = null,
         val shouldAllowInteraction: Boolean,
         val shouldAllowComment: Boolean,
     ) : AmityClipModalSheetUIState()
 
     object CloseSheet : AmityClipModalSheetUIState()
+
+    fun isNotMember(post: AmityPost?): Boolean {
+        val isNotMember =
+            !((post?.getTarget() as? AmityPost.Target.COMMUNITY)?.getCommunity()?.isJoined()
+                ?: true)
+        return isNotMember
+    }
 }

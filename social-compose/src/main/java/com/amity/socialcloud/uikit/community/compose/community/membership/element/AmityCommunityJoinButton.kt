@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.helper.core.coroutines.await
@@ -43,6 +44,8 @@ import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.utils.isVisitor
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -58,6 +61,10 @@ fun AmityCommunityJoinButton(
     community: AmityCommunity,
     joinRequest: AmityJoinRequest? = null,
 ) {
+    val behavior by lazy {
+        AmitySocialBehaviorHelper.exploreComponentBehavior
+    }
+
     var isJoined by remember(community.getCommunityId()) {
         mutableStateOf(community.isJoined())
     }
@@ -100,45 +107,50 @@ fun AmityCommunityJoinButton(
                 .background(AmityTheme.colors.primary)
                 .height(30.dp)
                 .clickable(enabled = isInProgress.not()) {
-                    val disposable = community.join()
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeOn(Schedulers.io())
-                        .doOnSubscribe {
-                            isInProgress = true
-                        }
-                        .doOnSuccess { result ->
-                            isInProgress = false
-                            when (result) {
-                                is AmityJoinResult.Success -> {
-                                    // Successfully joined the community
-                                    isPending = false
-                                    isJoined = true
-                                    AmityUIKitSnackbar.publishSnackbarMessage(
-                                        message = "You joined ${community.getDisplayName()}.",
-                                    )
-                                }
+                    if(AmityCoreClient.isVisitor()){
+                        behavior.handleVisitorUserAction()
+                    } else {
+                        community.join()
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeOn(Schedulers.io())
+                            .doOnSubscribe {
+                                isInProgress = true
+                            }
+                            .doOnSuccess { result ->
+                                isInProgress = false
+                                when (result) {
+                                    is AmityJoinResult.Success -> {
+                                        // Successfully joined the community
+                                        isPending = false
+                                        isJoined = true
+                                        AmityUIKitSnackbar.publishSnackbarMessage(
+                                            message = "You joined ${community.getDisplayName()}.",
+                                        )
+                                    }
 
-                                is AmityJoinResult.Pending -> {
-                                    // Join request is pending
-                                    joinRequestState = result.request
-                                    isPending = true
-                                    isJoined = false
-                                    AmityUIKitSnackbar.publishSnackbarMessage(
-                                        message = "Requested to join. You will be notified once your request is accepted.",
-                                    )
+                                    is AmityJoinResult.Pending -> {
+                                        // Join request is pending
+                                        joinRequestState = result.request
+                                        isPending = true
+                                        isJoined = false
+                                        AmityUIKitSnackbar.publishSnackbarMessage(
+                                            message = "Requested to join. You will be notified once your request is accepted.",
+                                        )
+                                    }
                                 }
                             }
-                        }
-                        .doOnError {
-                            isInProgress = false
-                            isJoined = false
-                            AmityUIKitSnackbar.publishSnackbarErrorMessage(
-                                message = "Failed to join the community. Please try again.",
-                            )
-                        }
-                        .subscribe()
-
-                    compositeDisposable.add(disposable)
+                            .doOnError {
+                                isInProgress = false
+                                isJoined = false
+                                AmityUIKitSnackbar.publishSnackbarErrorMessage(
+                                    message = "Failed to join the community. Please try again.",
+                                )
+                            }
+                            .subscribe()
+                            .apply {
+                                compositeDisposable.add(this)
+                            }
+                    }
                 }
         ) {
             Icon(

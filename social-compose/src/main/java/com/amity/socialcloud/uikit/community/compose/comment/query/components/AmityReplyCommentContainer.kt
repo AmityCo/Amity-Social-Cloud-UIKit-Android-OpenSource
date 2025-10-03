@@ -34,6 +34,7 @@ fun AmityReplyCommentContainer(
     previewLines: Int = EXPANDABLE_TEXT_MAX_LINES,
     showBounceEffect: Boolean = false,
     isExpanded: Boolean = false,
+    fromNonMemberCommunity: Boolean = false,
 ) {
     var shouldShowReplies by rememberSaveable { mutableStateOf(isExpanded) }
 
@@ -54,6 +55,7 @@ fun AmityReplyCommentContainer(
             replies = replies,
             previewLines = previewLines,
             onEdit = onEdit,
+            fromNonMemberCommunity = fromNonMemberCommunity,
         )
     } else if (replyCount > 0) {
         if (replyTargetId != null) {
@@ -75,6 +77,7 @@ fun AmityReplyCommentContainer(
                     shouldShowReplies = {
                         shouldShowReplies = it
                     },
+                    fromNonMemberCommunity = fromNonMemberCommunity,
                 )
             }
         } else {

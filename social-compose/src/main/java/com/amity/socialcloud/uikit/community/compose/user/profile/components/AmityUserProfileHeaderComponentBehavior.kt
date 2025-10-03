@@ -2,6 +2,7 @@ package com.amity.socialcloud.uikit.community.compose.user.profile.components
 
 import android.content.Context
 import com.amity.socialcloud.uikit.common.behavior.AmityBaseBehavior
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.user.pending.AmityUserPendingFollowRequestsPageActivity
 import com.amity.socialcloud.uikit.community.compose.user.relationship.AmityUserRelationshipPageActivity
 import com.amity.socialcloud.uikit.community.compose.user.relationship.AmityUserRelationshipPageTab
@@ -28,5 +29,13 @@ open class AmityUserProfileHeaderComponentBehavior : AmityBaseBehavior() {
             context = context,
         )
         context.startActivity(intent)
+    }
+
+    open fun handleVisitorUserAction() {
+        AmitySocialBehaviorHelper.globalBehavior.handleVisitorUserAction()
+    }
+
+    open fun handleNonFollowerAction() {
+        AmitySocialBehaviorHelper.globalBehavior.handleNonFollowerAction()
     }
 }

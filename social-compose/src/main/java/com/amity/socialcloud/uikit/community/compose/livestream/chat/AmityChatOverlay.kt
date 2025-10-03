@@ -54,6 +54,8 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.utils.isVisitor
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.livestream.chat.AmityLivestreamChatViewModel.AmityLiveStreamSheetUIState
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityReportOtherReasonScreen
@@ -68,6 +70,7 @@ fun ChatOverlay(
     pageScope: AmityComposePageScope? = null,
     componentScope: AmityComposeComponentScope? = null,
     channelId: String,
+    fromNonMemberCommunity: Boolean = false,
     onReactionClick: () -> Unit
 ) {
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
@@ -77,6 +80,11 @@ fun ChatOverlay(
         factory = AmityLivestreamChatViewModel.create(channelId),
         viewModelStoreOwner = viewModelStoreOwner
     )
+
+    val behavior = remember {
+        AmitySocialBehaviorHelper.createLivestreamPageBehavior
+    }
+
     val messages = viewModel.getMessageList().collectAsLazyPagingItems()
 
     val isChannelModerator by remember {
@@ -100,17 +108,6 @@ fun ChatOverlay(
 
     Column(
         modifier = modifier
-            .background(
-                brush = Brush.verticalGradient(
-                    colorStops = arrayOf(
-                        0.0f to Color.Transparent,
-                        0.3f to Color.Black.copy(alpha = 0.1f),
-                        0.6f to Color.Black.copy(alpha = 0.4f),
-                        0.8f to Color.Black.copy(alpha = 0.7f),
-                        1.0f to Color.Black
-                    )
-                )
-            )
     ) {
         LazyColumn(
             modifier = Modifier
@@ -165,19 +162,43 @@ fun ChatOverlay(
                             message = message,
                             isChannelModerator = isChannelModerator,
                             onReport = { messageId ->
-                                viewModel.updateSheetUIState(AmityLiveStreamSheetUIState.OpenReportSheet(messageId))
+                                if (AmityCoreClient.isVisitor()) {
+                                    behavior.handleVisitorUserAction()
+                                    viewModel.updateSheetUIState(AmityLiveStreamSheetUIState.CloseSheet)
+                                } else if (fromNonMemberCommunity) {
+                                    behavior.handleNonMemberAction()
+                                    viewModel.updateSheetUIState(AmityLiveStreamSheetUIState.CloseSheet)
+                                } else {
+                                    viewModel.updateSheetUIState(
+                                        AmityLiveStreamSheetUIState.OpenReportSheet(
+                                            messageId
+                                        )
+                                    )
+                                }
                             },
                             onUnreport = { messageId ->
-                                viewModel.unflagMessage(
-                                    messageId = messageId,
-                                    onSuccess = {
-                                        pageScope?.showSnackbar("Message unreported")
-                                    }
-                                )
+                                if (AmityCoreClient.isVisitor()) {
+                                    behavior.handleVisitorUserAction()
+                                } else if (fromNonMemberCommunity) {
+                                    behavior.handleNonMemberAction()
+                                } else {
+                                    viewModel.unflagMessage(
+                                        messageId = messageId,
+                                        onSuccess = {
+                                            pageScope?.showSnackbar("Message unreported")
+                                        }
+                                    )
+                                }
                                 viewModel.updateSheetUIState(AmityLiveStreamSheetUIState.CloseSheet)
                             },
                             onDelete = {
-                                viewModel.deleteMessage()
+                                if (AmityCoreClient.isVisitor()) {
+                                    behavior.handleVisitorUserAction()
+                                } else if (fromNonMemberCommunity) {
+                                    behavior.handleNonMemberAction()
+                                } else {
+                                    viewModel.deleteMessage()
+                                }
                                 viewModel.updateSheetUIState(AmityLiveStreamSheetUIState.CloseSheet)
                             }
                         )

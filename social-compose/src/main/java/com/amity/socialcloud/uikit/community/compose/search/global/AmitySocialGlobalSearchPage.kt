@@ -40,8 +40,8 @@ fun AmitySocialGlobalSearchPage(
     val tabs = remember {
         listOf(
             AmityTabRowItem(title = "Posts"),
-            AmityTabRowItem(title = "Groups"),
-            AmityTabRowItem(title = "Members"),
+            AmityTabRowItem(title = "Communities"),
+            AmityTabRowItem(title = "Users"),
         )
     }
     var selectedTabIndex by remember { mutableIntStateOf(0) }

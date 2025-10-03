@@ -58,6 +58,8 @@ import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.getIcon
+import com.amity.socialcloud.uikit.common.utils.isSignedIn
+import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipFeedPageType
@@ -154,31 +156,43 @@ fun AmityCommunityProfilePage(
 
     var selectedTabIndex by remember { mutableIntStateOf(0) }
 
-    val hasCreatePrivilege by AmityCoreClient.hasPermission(AmityPermission.CREATE_PRIVILEGED_POST)
-        .atCommunity(communityId)
-        .check()
-        .asFlow()
-        .catch {
-            emit(false)
-        }
-        .collectAsState(initial = false)
+    val hasCreatePrivilege by if (!AmityCoreClient.isSignedIn()) {
+        remember { mutableStateOf(false) }
+    } else {
+        AmityCoreClient.hasPermission(AmityPermission.CREATE_PRIVILEGED_POST)
+            .atCommunity(communityId)
+            .check()
+            .asFlow()
+            .catch {
+                emit(false)
+            }
+            .collectAsState(initial = false)
+    }
 
-    val hasManageStoryPermission by AmityCoreClient.hasPermission(AmityPermission.MANAGE_COMMUNITY_STORY)
-        .atCommunity(communityId)
-        .check()
-        .asFlow()
-        .catch {
-            emit(false)
-        }
-        .collectAsState(initial = false)
+    val hasManageStoryPermission by if (!AmityCoreClient.isSignedIn()) {
+        remember { mutableStateOf(false) }
+    } else {
+        AmityCoreClient.hasPermission(AmityPermission.MANAGE_COMMUNITY_STORY)
+            .atCommunity(communityId)
+            .check()
+            .asFlow()
+            .catch {
+                emit(false)
+            }
+            .collectAsState(initial = false)
+    }
 
-    val allowAllUserStoryCreation by AmitySocialClient.getSettings()
-        .asFlow()
-        .map { it.getStorySettings().isAllowAllUserToCreateStory() }
-        .catch {
-            emit(false)
-        }
-        .collectAsState(initial = false)
+    val allowAllUserStoryCreation by if (!AmityCoreClient.isSignedIn()) {
+        remember { mutableStateOf(false) }
+    } else {
+        AmitySocialClient.getSettings()
+            .asFlow()
+            .map { it.getStorySettings().isAllowAllUserToCreateStory() }
+            .catch {
+                emit(false)
+            }
+            .collectAsState(initial = false)
+    }
 
     val isOnlyAdminCanPost by remember(community?.getPostSettings()) {
         derivedStateOf {

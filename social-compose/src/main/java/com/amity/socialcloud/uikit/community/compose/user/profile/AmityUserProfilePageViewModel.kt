@@ -13,6 +13,7 @@ import com.amity.socialcloud.sdk.model.core.follow.AmityUserFollowInfo
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
+import com.amity.socialcloud.uikit.common.utils.isSignedIn
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -319,19 +320,23 @@ class AmityUserProfilePageViewModel(val userId: String) : AmityBaseViewModel() {
     }
 
     private fun getMyFollowInfo(): Flowable<AmityMyFollowInfo> {
-        return AmityCoreClient.newUserRepository()
-            .relationship()
-            .getMyFollowInfo()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+        return if (AmityCoreClient.isSignedIn()) {
+            AmityCoreClient.newUserRepository()
+                .relationship()
+                .getMyFollowInfo()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+        } else {
+            Flowable.never()
+        }
     }
 
     private fun getUserFollowInfo(): Flowable<AmityUserFollowInfo> {
         return AmityCoreClient.newUserRepository()
-            .relationship()
-            .getFollowInfo(userId)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+                .relationship()
+                .getFollowInfo(userId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
     }
 
 

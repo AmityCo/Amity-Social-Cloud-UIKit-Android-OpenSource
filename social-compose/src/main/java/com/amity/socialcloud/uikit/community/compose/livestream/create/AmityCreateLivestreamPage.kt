@@ -108,6 +108,7 @@ import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.common.utils.getBackgroundColor
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getText
+import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.livestream.chat.AmityLivestreamMessageComposeBar
@@ -186,7 +187,6 @@ fun AmityCreateLivestreamPage(
     val bottomSheetState = rememberModalBottomSheetState()
 
     val clipboardManager = LocalClipboardManager.current
-
 
     var showEditThumbnailSheet by remember { mutableStateOf(false) }
     var showDiscardPostDialog by remember { mutableStateOf(false) }
@@ -833,20 +833,26 @@ fun AmityCreateLivestreamPage(
                                         if (showReactionPicker) {
                                             ReactionPicker(
                                                 onReactionSelected = { reaction ->
-                                                    // Add floating reaction
-                                                    floatingReactions.add(
-                                                        FloatingReaction(
-                                                            reaction = reaction,
-                                                            id = System.currentTimeMillis()
+                                                    if (AmityCoreClient.isVisitor()) {
+                                                        behavior.handleVisitorUserAction()
+                                                    } else {
+                                                        // Add floating reaction
+                                                        floatingReactions.add(
+                                                            FloatingReaction(
+                                                                reaction = reaction,
+                                                                id = System.currentTimeMillis()
+                                                            )
                                                         )
-                                                    )
-                                                    AmityCoreClient.newLiveReactionRepository()
-                                                        .createReaction(
-                                                            liveStreamId = uiState.streamObj?.getStreamId() ?: "",
-                                                            referenceId = uiState.createPostId ?: "",
-                                                            referenceType = AmityLiveReactionReferenceType.POST,
-                                                            reactionName = reaction.name,
-                                                        )
+                                                        AmityCoreClient.newLiveReactionRepository()
+                                                            .createReaction(
+                                                                liveStreamId = uiState.streamObj?.getStreamId()
+                                                                    ?: "",
+                                                                referenceId = uiState.createPostId
+                                                                    ?: "",
+                                                                referenceType = AmityLiveReactionReferenceType.POST,
+                                                                reactionName = reaction.name,
+                                                            )
+                                                    }
                                                 },
                                                 onDismiss = { showReactionPicker = false },
                                                 modifier = Modifier.padding(
@@ -1060,75 +1066,99 @@ fun AmityCreateLivestreamPage(
                                 .width(120.dp),
                         )
                         Spacer(modifier = Modifier.height(12.dp))
-                        // Chat overlay
-                        ChatOverlay(
+                        Column(
+                            verticalArrangement = Arrangement.Bottom,
+                            horizontalAlignment = Alignment.End,
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .fillMaxHeight(0.5f)
-                                .drawWithContent {
-                                    drawContent()
-                                    // Draw fade to transparent at top
-                                    drawRect(
-                                        brush = Brush.verticalGradient(
-                                            colors = listOf(
-                                                Color.White, // Use white for fade mask
-                                                Color.Transparent,
-                                                Color.Transparent,
-                                            ),
-                                            startY = 0f,
-                                            endY = 120.dp.toPx()
-                                        ),
-                                        blendMode = BlendMode.DstOut
+                                .fillMaxSize()
+                                .background(
+                                    brush = Brush.verticalGradient(
+                                        colorStops = arrayOf(
+                                            0.0f to Color.Transparent,
+                                            0.3f to Color.Black.copy(alpha = 0.1f),
+                                            0.6f to Color.Black.copy(alpha = 0.4f),
+                                            0.8f to Color.Black.copy(alpha = 0.7f),
+                                            1.0f to Color.Black
+                                        )
                                     )
-                                },
-                            pageScope = getPageScope(),
-                            channelId = uiState.channelId ?: "",
-                            onReactionClick = { showReactionPicker = true }
-                        )
-                        uiState.channelId?.let {
-                            AmityLivestreamMessageComposeBar(
+                                )
+                        ) {
+                            // Chat overlay
+                            ChatOverlay(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .fillMaxHeight(0.5f)
+                                    .drawWithContent {
+                                        drawContent()
+                                        // Draw fade to transparent at top
+                                        // TODO: Finding alternative approach. Temporarily disable the fade effect as it causes inconsistent with other ui parts
+//                                        drawRect(
+//                                            brush = Brush.verticalGradient(
+//                                                colors = listOf(
+//                                                    Color.White, // Use white for fade mask
+//                                                    Color.Transparent,
+//                                                    Color.Transparent,
+//                                                ),
+//                                                startY = 0f,
+//                                                endY = 120.dp.toPx()
+//                                            ),
+//                                            blendMode = BlendMode.DstOut
+//                                        )
+                                    },
                                 pageScope = getPageScope(),
-                                channelId = it,
-                                value = messageText,
-                                isPendingApproval = uiState.isPendingApproval ?: false,
-                                onValueChange = {
-                                    messageText = it
-                                },
-                                onSend = {},
-                                onReactionClick = {
-                                    AmityMessageReactions
-                                        .getList()
-                                        .getOrNull(1)
-                                        ?: AmityMessageReactions
-                                            .getList()
-                                            .firstOrNull()
-                                            ?.let { defaultReaction ->
-                                                floatingReactions.add(
-                                                    FloatingReaction(
-                                                        reaction = defaultReaction,
-                                                        id = System.currentTimeMillis()
-                                                    )
-                                                )
-                                                uiState.streamObj?.let { stream ->
-                                                    AmityCoreClient.newLiveReactionRepository()
-                                                        .createReaction(
-                                                            liveStreamId = stream.getStreamId(),
-                                                            referenceId = uiState.createPostId
-                                                                ?: "",
-                                                            referenceType = AmityLiveReactionReferenceType.POST,
-                                                            reactionName = defaultReaction.name,
-                                                        )
-                                                }
-                                            }
-                                },
-                                onReactionLongClick = { showReactionPicker = true },
-                                onSwitchCamera = {
-                                    if (isCameraAndRecAudioPermissionGranted) {
-                                        streamBroadcaster?.switchCamera()
-                                        haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                                    }
-                                }
+                                channelId = uiState.channelId ?: "",
+                                fromNonMemberCommunity = targetCommunity?.isJoined() == false,
+                                onReactionClick = { showReactionPicker = true }
                             )
+                            uiState.channelId?.let {
+                                AmityLivestreamMessageComposeBar(
+                                    pageScope = getPageScope(),
+                                    channelId = it,
+                                    value = messageText,
+                                    isPendingApproval = uiState.isPendingApproval ?: false,
+                                    onValueChange = {
+                                        messageText = it
+                                    },
+                                    onSend = {},
+                                    onReactionClick = {
+                                        if (AmityCoreClient.isVisitor()) {
+                                            behavior.handleVisitorUserAction()
+                                        } else {
+                                            AmityMessageReactions
+                                                .getList()
+                                                .getOrNull(1)
+                                                ?: AmityMessageReactions
+                                                    .getList()
+                                                    .firstOrNull()
+                                                    ?.let { defaultReaction ->
+                                                        floatingReactions.add(
+                                                            FloatingReaction(
+                                                                reaction = defaultReaction,
+                                                                id = System.currentTimeMillis()
+                                                            )
+                                                        )
+                                                        uiState.streamObj?.let { stream ->
+                                                            AmityCoreClient.newLiveReactionRepository()
+                                                                .createReaction(
+                                                                    liveStreamId = stream.getStreamId(),
+                                                                    referenceId = uiState.createPostId
+                                                                        ?: "",
+                                                                    referenceType = AmityLiveReactionReferenceType.POST,
+                                                                    reactionName = defaultReaction.name,
+                                                                )
+                                                        }
+                                                    }
+                                        }
+                                    },
+                                    onReactionLongClick = { showReactionPicker = true },
+                                    onSwitchCamera = {
+                                        if (isCameraAndRecAudioPermissionGranted) {
+                                            streamBroadcaster?.switchCamera()
+                                            haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                                        }
+                                    }
+                                )
+                            }
                         }
                     }
                 } else {

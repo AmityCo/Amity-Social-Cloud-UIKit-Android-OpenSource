@@ -27,6 +27,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.core.error.AmityException
 import com.amity.socialcloud.sdk.model.core.flag.AmityContentFlagReason
@@ -36,6 +37,8 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
 import com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.utils.isVisitor
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentViewModel
 import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentViewModel.CommentBottomSheetState
@@ -56,11 +59,15 @@ fun AmityCommentActionsBottomSheet(
     isCommentCreatedByMe: Boolean,
     isFlaggedByMe: Boolean,
     isFailed: Boolean,
+    fromNonMemberCommunity: Boolean,
     onEdit: () -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
+    val behavior by lazy {
+        AmitySocialBehaviorHelper.commentTrayComponentBehavior
+    }
 
     val sheetUiState by viewModel.sheetUiState.collectAsState()
 
@@ -118,7 +125,13 @@ fun AmityCommentActionsBottomSheet(
                             }
                         },
                         onReportClick = {
-                            if (isFlaggedByMe) {
+                            if (AmityCoreClient.isVisitor()) {
+                                behavior.handleVisitorUserAction()
+                                viewModel.updateSheetUIState(CommentBottomSheetState.CloseSheet)
+                            } else if (fromNonMemberCommunity) {
+                                behavior.handleNonMemberAction()
+                                viewModel.updateSheetUIState(CommentBottomSheetState.CloseSheet)
+                            } else if (isFlaggedByMe) {
                                 submitUnReport(
                                     viewModel = viewModel,
                                     commentId = commentId,

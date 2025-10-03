@@ -55,6 +55,8 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.AmityNumberUtil.getNumberAbbreveation
 import com.amity.socialcloud.uikit.common.utils.getIcon
+import com.amity.socialcloud.uikit.common.utils.isSignedIn
+import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageBehavior
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -266,6 +268,9 @@ fun AmityCommunityJoinButton(
     componentScope: AmityComposeComponentScope? = null,
     community: AmityCommunity,
 ) {
+    val behavior = remember {
+        AmitySocialBehaviorHelper.communityProfilePageBehavior
+    }
     var isPendingJoinRequest by remember { mutableStateOf<Boolean>(false) }
     var joinRequest by remember { mutableStateOf<AmityJoinRequest?>(null) }
     var isLoadingStatus by remember { mutableStateOf(true) }
@@ -273,22 +278,29 @@ fun AmityCommunityJoinButton(
     val compositeDisposable = remember { CompositeDisposable() }
 
     DisposableEffect(community) {
-        val disposable = community.getMyJoinRequest()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ request ->
-                isPendingJoinRequest =
-                    request != null && request.getStatus() == AmityJoinRequestStatus.PENDING
-                joinRequest =
-                    if (request.getStatus() == AmityJoinRequestStatus.PENDING) request else null
-                isLoadingStatus = false
-            }, { error ->
-                // Request failed or no join request exists
-                isPendingJoinRequest = false
-                isLoadingStatus = false
-            })
-
-        compositeDisposable.add(disposable)
+        if (AmityCoreClient.isSignedIn()) {
+            community.getMyJoinRequest()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ request ->
+                    isPendingJoinRequest =
+                        request != null && request.getStatus() == AmityJoinRequestStatus.PENDING
+                    joinRequest =
+                        if (request.getStatus() == AmityJoinRequestStatus.PENDING) request else null
+                    isLoadingStatus = false
+                }, { error ->
+                    // Request failed or no join request exists
+                    isPendingJoinRequest = false
+                    isLoadingStatus = false
+                })
+                .apply {
+                    compositeDisposable.add(this)
+                }
+        } else {
+            // User is not signed in then loading should be successful immediately
+            isLoadingStatus = false
+            isPendingJoinRequest = false
+        }
 
         onDispose {
             compositeDisposable.clear()
@@ -304,22 +316,26 @@ fun AmityCommunityJoinButton(
             if (isPendingJoinRequest) {
                 OutlinedButton(
                     onClick = {
-                        joinRequest?.let { request ->
-                            val disposable = request.cancel()
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .doOnComplete {
-                                    isPendingJoinRequest = false
-                                }
-                                .doOnError {
-                                    pageScope?.showSnackbar(
-                                        message = "Failed to cancel your request. Please try again.",
-                                        drawableRes = R.drawable.amity_ic_snack_bar_warning,
-                                    )
-                                }
-                                .subscribe()
+                        if (AmityCoreClient.isVisitor()) {
+                            behavior.handleVisitorUserAction()
+                        } else {
+                            joinRequest?.let { request ->
+                                val disposable = request.cancel()
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .doOnComplete {
+                                        isPendingJoinRequest = false
+                                    }
+                                    .doOnError {
+                                        pageScope?.showSnackbar(
+                                            message = "Failed to cancel your request. Please try again.",
+                                            drawableRes = R.drawable.amity_ic_snack_bar_warning,
+                                        )
+                                    }
+                                    .subscribe()
 
-                            compositeDisposable.add(disposable)
+                                compositeDisposable.add(disposable)
+                            }
                         }
                     },
                     modifier = Modifier
@@ -352,43 +368,48 @@ fun AmityCommunityJoinButton(
                     Box(
                         modifier = Modifier
                             .clickable {
-                                isLoadingStatus = true
-                                val disposable = community.join()
-                                    .subscribeOn(Schedulers.io())
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .doOnSuccess { result ->
-                                        isLoadingStatus = false
-                                        when (result) {
-                                            is AmityJoinResult.Success -> {
-                                                // Successfully joined the community
-                                                isPendingJoinRequest = false
-                                                pageScope?.showSnackbar(
-                                                    message = "You joined ${community.getDisplayName()}.",
-                                                    drawableRes = R.drawable.amity_ic_snack_bar_success,
-                                                )
-                                            }
+                                if (AmityCoreClient.isVisitor()) {
+                                    behavior.handleVisitorUserAction()
+                                } else {
+                                    isLoadingStatus = true
+                                    community.join()
+                                        .subscribeOn(Schedulers.io())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .doOnSuccess { result ->
+                                            isLoadingStatus = false
+                                            when (result) {
+                                                is AmityJoinResult.Success -> {
+                                                    // Successfully joined the community
+                                                    isPendingJoinRequest = false
+                                                    pageScope?.showSnackbar(
+                                                        message = "You joined ${community.getDisplayName()}.",
+                                                        drawableRes = R.drawable.amity_ic_snack_bar_success,
+                                                    )
+                                                }
 
-                                            is AmityJoinResult.Pending -> {
-                                                // Join request is pending
-                                                joinRequest = result.request
-                                                isPendingJoinRequest = true
-                                                pageScope?.showSnackbar(
-                                                    message = "Requested to join. You will be notified once your request is accepted.",
-                                                    drawableRes = R.drawable.amity_ic_snack_bar_success,
-                                                )
+                                                is AmityJoinResult.Pending -> {
+                                                    // Join request is pending
+                                                    joinRequest = result.request
+                                                    isPendingJoinRequest = true
+                                                    pageScope?.showSnackbar(
+                                                        message = "Requested to join. You will be notified once your request is accepted.",
+                                                        drawableRes = R.drawable.amity_ic_snack_bar_success,
+                                                    )
+                                                }
                                             }
                                         }
-                                    }
-                                    .doOnError {
-                                        isLoadingStatus = false
-                                        pageScope?.showSnackbar(
-                                            message = "Failed to join the community. Please try again.",
-                                            drawableRes = R.drawable.amity_ic_snack_bar_warning,
-                                        )
-                                    }
-                                    .subscribe()
-
-                                compositeDisposable.add(disposable)
+                                        .doOnError {
+                                            isLoadingStatus = false
+                                            pageScope?.showSnackbar(
+                                                message = "Failed to join the community. Please try again.",
+                                                drawableRes = R.drawable.amity_ic_snack_bar_warning,
+                                            )
+                                        }
+                                        .subscribe()
+                                        .apply {
+                                            compositeDisposable.add(this)
+                                        }
+                                }
                             }
                             .fillMaxWidth()
                             .height(40.dp)

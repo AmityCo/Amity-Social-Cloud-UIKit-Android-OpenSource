@@ -2,6 +2,8 @@ package com.amity.socialcloud.uikit.common.utils
 
 import androidx.annotation.DrawableRes
 import androidx.compose.ui.graphics.Color
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.model.core.user.AmityUserType
 import com.amity.socialcloud.uikit.common.config.AmityUIKitDrawableResolver
 import com.google.gson.JsonObject
 

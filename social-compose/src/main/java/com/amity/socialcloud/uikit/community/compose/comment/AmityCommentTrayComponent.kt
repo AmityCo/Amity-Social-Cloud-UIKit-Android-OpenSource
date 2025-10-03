@@ -42,6 +42,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityPagingEmptyItem
 import com.amity.socialcloud.uikit.common.ui.elements.AmityPagingErrorItem
 import com.amity.socialcloud.uikit.common.ui.elements.AmityPagingLoadingItem
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.utils.isSignedIn
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.comment.create.AmityCommentComposerBar
 import com.amity.socialcloud.uikit.community.compose.comment.elements.AmityDisabledCommentView
@@ -56,7 +57,8 @@ fun AmityCommentTrayComponent(
     community: AmityCommunity? = null,
     shouldAllowInteraction: Boolean,
     shouldAllowCreation: Boolean,
-    includeDeleted : Boolean = true
+    includeDeleted : Boolean = true,
+    fromNonMemberCommunity: Boolean = false,
 ) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
@@ -175,7 +177,8 @@ fun AmityCommentTrayComponent(
                                 },
                                 onEdit = {
                                     editingCommentId = it
-                                }
+                                },
+                                fromNonMemberCommunity = fromNonMemberCommunity,
                             )
                         }
 
@@ -196,7 +199,7 @@ fun AmityCommentTrayComponent(
 
             }
 
-            if (shouldAllowInteraction) {
+            if (shouldAllowInteraction && AmityCoreClient.isSignedIn()) {
                 if (shouldAllowCreation) {
                     AmityCommentComposerBar(
                         componentScope = getComponentScope(),

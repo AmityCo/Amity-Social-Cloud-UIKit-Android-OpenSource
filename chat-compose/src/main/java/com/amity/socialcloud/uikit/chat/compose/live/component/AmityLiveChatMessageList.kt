@@ -40,6 +40,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
+import com.amity.socialcloud.uikit.chat.compose.AmityChatBehaviorHelper
 import com.amity.socialcloud.uikit.chat.compose.R
 import com.amity.socialcloud.uikit.chat.compose.live.AmityLiveChatPageViewModel
 import com.amity.socialcloud.uikit.chat.compose.live.LoadingIndicator
@@ -58,6 +59,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import com.amity.socialcloud.uikit.common.compose.R as CommonR
 import com.amity.socialcloud.uikit.common.reaction.AmityMessageReactionListViewModel.AmityMessageReactionListSheetUIState
+import com.amity.socialcloud.uikit.common.utils.isVisitor
 
 @Composable
 fun AmityLiveChatMessageList(
@@ -65,13 +67,16 @@ fun AmityLiveChatMessageList(
     pageScope: AmityComposePageScope? = null,
     viewModel: AmityLiveChatPageViewModel,
 ) {
-    
+
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
     }
     val reactionListViewModel =
         viewModel<AmityMessageReactionListViewModel>(viewModelStoreOwner = viewModelStoreOwner)
-    
+
+    val behavior = remember {
+        AmityChatBehaviorHelper.globalBehavior
+    }
     val isModerator = remember { viewModel.isChannelModerator() }.collectAsState(initial = false)
     var isError by remember {
         mutableStateOf(false)
@@ -85,7 +90,7 @@ fun AmityLiveChatMessageList(
                         && old.isMuted() == new.isMuted()
             }
     }.collectAsState(initial = null)
-    
+
     val isGlobalBanned by remember {
         viewModel.observeGlobalBanEvent().distinctUntilChanged()
     }.collectAsState(initial = false)
@@ -129,7 +134,7 @@ fun AmityLiveChatMessageList(
                 }
             }
     }
-    
+
     AmityBaseComponent(
         componentId = "message_list",
         pageScope = pageScope,
@@ -142,7 +147,7 @@ fun AmityLiveChatMessageList(
                 itemCount = messages.itemCount,
             ).let(viewModel::setMessageListState)
         }
-        
+
         if (messageListState == AmityLiveChatPageViewModel.MessageListState.ERROR && !isGlobalBanned) {
             Row(
                 modifier = Modifier.fillMaxSize(),
@@ -258,20 +263,24 @@ fun AmityLiveChatMessageList(
                         val onFlagAction =
                             if (message.getCreatorId() != AmityCoreClient.getUserId() && !message.isFlaggedByMe()) {
                                 {
-                                    viewModel.flagMessage(
-                                        message = message,
-                                        onSuccess = {
-                                            getComponentScope().showSnackbar(
-                                                message = "Message reported",
-                                                drawableRes = CommonR.drawable.amity_ic_check_circle
-                                            )
-                                        },
-                                        onError = {
-                                            getComponentScope().showErrorSnackbar(
-                                                message = "This message failed to be reported. Please try again."
-                                            )
-                                        }
-                                    )
+                                    if (AmityCoreClient.isVisitor()) {
+                                        behavior.handleVisitorUserAction()
+                                    } else {
+                                        viewModel.flagMessage(
+                                            message = message,
+                                            onSuccess = {
+                                                getComponentScope().showSnackbar(
+                                                    message = "Message reported",
+                                                    drawableRes = CommonR.drawable.amity_ic_check_circle
+                                                )
+                                            },
+                                            onError = {
+                                                getComponentScope().showErrorSnackbar(
+                                                    message = "This message failed to be reported. Please try again."
+                                                )
+                                            }
+                                        )
+                                    }
                                 }
                             } else {
                                 null

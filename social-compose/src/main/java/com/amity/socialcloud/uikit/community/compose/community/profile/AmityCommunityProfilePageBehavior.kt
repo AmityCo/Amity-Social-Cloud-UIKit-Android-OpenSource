@@ -8,6 +8,7 @@ import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.uikit.common.behavior.AmityBaseBehavior
 import com.amity.socialcloud.uikit.common.behavior.AmityBaseBehaviorContext
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.clip.create.AmityCreateClipPageActivity
 import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipFeedPageActivity
 import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipFeedPageType
@@ -192,5 +193,13 @@ open class AmityCommunityProfilePageBehavior : AmityBaseBehavior() {
             community = context.community!!,
         )
         context.pageContext.startActivity(intent)
+    }
+
+    open fun handleVisitorUserAction() {
+        AmitySocialBehaviorHelper.globalBehavior.handleVisitorUserAction()
+    }
+
+    open fun handleNonMemberAction() {
+        AmitySocialBehaviorHelper.globalBehavior.handleNonMemberAction()
     }
 }

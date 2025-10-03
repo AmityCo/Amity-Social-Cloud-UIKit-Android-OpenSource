@@ -22,10 +22,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.R.drawable
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.utils.isSignedIn
+import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.common.utils.shimmerBackground
 import com.amity.socialcloud.uikit.community.compose.R
 
@@ -115,19 +118,21 @@ fun ClipToolbar(
                         )
                 )
             }
+            if (AmityCoreClient.isSignedIn()) {
+                Spacer(Modifier.width(8.dp))
 
-            Spacer(Modifier.width(8.dp))
-            // Create button
-            Icon(
-                painter = painterResource(R.drawable.amity_v4_ic_camera),
-                contentDescription = "Create Clip",
-                tint = Color.White,
-                modifier = Modifier
-                    .size(24.dp)
-                    .clickableWithoutRipple {
-                        onCreateClick()
-                    }
-            )
+                // Create button
+                Icon(
+                    painter = painterResource(R.drawable.amity_v4_ic_camera),
+                    contentDescription = "Create Clip",
+                    tint = Color.White,
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clickableWithoutRipple {
+                            onCreateClick()
+                        }
+                )
+            }
         }
     }
 }
