@@ -7,8 +7,6 @@ android {
     namespace 'com.amity.socialcloud.uikit.chat.compose'
 
     buildFeatures {
-        dataBinding true
-        viewBinding true
         compose true
     }
 
