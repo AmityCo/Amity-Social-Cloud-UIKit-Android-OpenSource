@@ -448,7 +448,7 @@ fun AmityCommunitySetupPage(
                 ) {
                     val avatar = when {
                         avatarUri != Uri.EMPTY && isCapturedImageReady -> avatarUri
-                        isInEditMode -> communityToEdit?.getAvatar()?.getUrl(AmityImage.Size.LARGE)
+                        isInEditMode -> communityToEdit?.getAvatar()?.getUrl(AmityImage.Size.MEDIUM)
                         else -> null
                     }
 
@@ -509,6 +509,7 @@ fun AmityCommunitySetupPage(
                     text = name,
                     hint = amityStringResource(id = R.string.amity_v4_community_setup_name_description),
                     onValueChange = { name = it },
+                    innerPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
                 )
 
                 HorizontalDivider(
@@ -564,6 +565,7 @@ fun AmityCommunitySetupPage(
                     text = description,
                     hint = amityStringResource(id = R.string.amity_v4_community_setup_about_description),
                     onValueChange = { description = it },
+                    innerPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
                 )
 
                 HorizontalDivider(

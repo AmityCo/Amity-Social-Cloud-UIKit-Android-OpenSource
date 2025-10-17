@@ -164,7 +164,7 @@ class AmityCommunityProfileFragment : RxFragment() {
     private fun renderCommunityData(community: AmityCommunity) {
 
         Glide.with(this)
-            .load(community.getAvatar()?.getUrl(AmityImage.Size.LARGE) ?: "")
+            .load(community.getAvatar()?.getUrl(AmityImage.Size.MEDIUM) ?: "")
             .centerCrop()
             .into(binding.ivAvatar)
 

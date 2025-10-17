@@ -4,6 +4,7 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.PagingData
 import androidx.paging.map
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.newsfeed.model.AmityBasePostItem
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
@@ -17,6 +18,7 @@ class AmityMyTimelineViewModel : AmityFeedViewModel() {
             .newPostRepository()
             .getPosts()
             .targetMe()
+            .dataTypes(AmitySocialBehaviorHelper.supportedPostTypes)
             .includeDeleted(false)
             .build()
             .query()

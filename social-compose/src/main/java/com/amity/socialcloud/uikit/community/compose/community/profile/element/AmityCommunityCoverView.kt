@@ -83,7 +83,7 @@ fun AmityCommunityCoverView(
         val context = LocalContext.current
         val coverUrl by remember(community.getUpdatedAt()) {
             derivedStateOf {
-                community.getAvatar()?.getUrl(AmityImage.Size.LARGE)
+                community.getAvatar()?.getUrl(AmityImage.Size.MEDIUM)
             }
         }
         val painter = rememberAsyncImagePainter(

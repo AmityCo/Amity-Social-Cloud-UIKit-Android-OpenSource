@@ -5,6 +5,7 @@ import androidx.paging.PagingData
 import androidx.paging.map
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.newsfeed.model.AmityBasePostHeaderItem
 import com.amity.socialcloud.uikit.community.newsfeed.model.AmityBasePostItem
 import com.amity.socialcloud.uikit.social.AmitySocialUISettings
@@ -18,6 +19,7 @@ class AmityGlobalFeedViewModel : AmityFeedViewModel() {
     override fun getFeed(onPageLoaded: (posts: PagingData<AmityBasePostItem>) -> Unit): Completable {
         val feedRepository = AmitySocialClient.newFeedRepository()
         return feedRepository.getGlobalFeed()
+            .dataTypes(AmitySocialBehaviorHelper.supportedPostTypes.filter { it != AmityPost.DataType.CLIP })
             .build()
             .query()
             .map { it.map { post -> createPostItem(post) } }

@@ -72,8 +72,8 @@ class AmityClipFeedPageViewModel : AmityBaseViewModel() {
                 .getGlobalFeed()
                 .dataTypes(
                     listOf(
-                        AmityPost.DataType.sealedOf(AmityPost.DataType.CLIP.getApiKey()),
-                        AmityPost.DataType.sealedOf(AmityPost.DataType.VIDEO.getApiKey())
+                        AmityPost.DataType.CLIP,
+                        AmityPost.DataType.VIDEO
                     )
                 )
                 .build()
@@ -131,7 +131,7 @@ class AmityClipFeedPageViewModel : AmityBaseViewModel() {
             AmitySocialClient.newPostRepository()
                 .getPosts()
                 .targetUser(singlePost.getCreator()?.getUserId() ?: "")
-                .dataTypes(listOf(AmityPost.DataType.sealedOf(AmityPost.DataType.CLIP.getApiKey())))
+                .dataTypes(listOf(AmityPost.DataType.CLIP))
                 .includeDeleted(false)
                 .build()
                 .query()
@@ -164,7 +164,7 @@ class AmityClipFeedPageViewModel : AmityBaseViewModel() {
             AmitySocialClient.newPostRepository()
                 .getPosts()
                 .targetCommunity(communityId)
-                .dataTypes(listOf(AmityPost.DataType.sealedOf(AmityPost.DataType.CLIP.getApiKey())))
+                .dataTypes(listOf(AmityPost.DataType.CLIP))
                 .includeDeleted(false)
                 .build()
                 .query()

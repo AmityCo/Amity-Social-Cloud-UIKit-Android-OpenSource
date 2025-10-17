@@ -8,6 +8,7 @@ import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
 import com.amity.socialcloud.sdk.model.social.feed.AmityFeedType
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.newsfeed.model.AmityBasePostFooterItem
 import com.amity.socialcloud.uikit.community.newsfeed.model.AmityBasePostItem
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -42,6 +43,7 @@ class AmityCommunityFeedViewModel(private val savedState: SavedStateHandle) : Am
         return AmitySocialClient.newPostRepository()
             .getPosts()
             .targetCommunity(communityId)
+            .dataTypes(AmitySocialBehaviorHelper.supportedPostTypes)
             .apply {
                 includeDeleted(false)
                 feedType(feedType)

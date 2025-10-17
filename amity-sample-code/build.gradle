@@ -6,10 +6,10 @@ plugins {
 
 android {
     namespace 'com.amity.snipet.verifier'
-    compileSdk 34
+    compileSdk amityCompileSdkVersion
 
     defaultConfig {
-        minSdk 24
+        minSdk amityMinSdkVersion
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"

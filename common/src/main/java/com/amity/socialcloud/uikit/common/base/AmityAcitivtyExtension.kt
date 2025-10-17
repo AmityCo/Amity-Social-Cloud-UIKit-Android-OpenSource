@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 
 fun AppCompatActivity.getFragmentViewModelStoreOwner(fragment: Fragment) : ViewModelStoreOwner {
-    val owners = ViewModelProvider(this).get(FragmentStoreOwnerMap::class.java).owners
+    val owners = ViewModelProvider(this)[FragmentStoreOwnerMap::class.java].owners
     var owner = owners.get(fragment.hashCode().toString())
     if(owner == null) {
         owner = FragmentStoreOwner()
@@ -18,7 +18,7 @@ fun AppCompatActivity.getFragmentViewModelStoreOwner(fragment: Fragment) : ViewM
 }
 
 fun FragmentActivity.getFragmentViewModelStoreOwner(fragment: Fragment) : ViewModelStoreOwner {
-    val owners = ViewModelProvider(this).get(FragmentStoreOwnerMap::class.java).owners
+    val owners = ViewModelProvider(this)[FragmentStoreOwnerMap::class.java].owners
     var owner = owners.get(fragment.hashCode().toString())
     if(owner == null) {
         owner = FragmentStoreOwner()

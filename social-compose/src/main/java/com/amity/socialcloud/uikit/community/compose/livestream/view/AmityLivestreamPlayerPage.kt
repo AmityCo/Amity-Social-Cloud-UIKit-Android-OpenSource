@@ -399,6 +399,7 @@ fun AmityLivestreamPlayerPage(
                                         },
                                     pageScope = getPageScope(),
                                     channelId = state.stream?.getChannelId() ?: "",
+                                    streamHostUserId = state.stream?.getCreatorId(),
                                     fromNonMemberCommunity = (target as? AmityPost.Target.COMMUNITY)?.getCommunity()?.isJoined() == false,
                                     onReactionClick = { showReactionPicker = true }
                                 )

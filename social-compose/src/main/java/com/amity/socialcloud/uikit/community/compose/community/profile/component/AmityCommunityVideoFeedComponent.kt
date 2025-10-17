@@ -24,7 +24,7 @@ fun AmityCommunityVideoFeedComponent(
         AmitySocialClient.newPostRepository()
             .getPosts()
             .targetCommunity(communityId)
-            .types(listOf(AmityPost.DataType.sealedOf(AmityPost.DataType.VIDEO.getApiKey())))
+            .dataTypes(listOf(AmityPost.DataType.VIDEO))
             .includeDeleted(false)
             .build()
             .query()

@@ -1,3 +1,11 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
 include ':amity-uikit'
 rootProject.name = 'SocialPlusUIKit'
 include ':chat'

@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose
 
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.behavior.AmityGlobalBehavior
 import com.amity.socialcloud.uikit.community.compose.clip.create.AmityCreateClipPageBehavior
 import com.amity.socialcloud.uikit.community.compose.clip.draft.AmityDraftClipPageBehavior
@@ -43,6 +44,24 @@ import com.amity.socialcloud.uikit.community.compose.user.profile.components.Ami
 import com.amity.socialcloud.uikit.community.compose.user.relationship.AmityUserRelationshipPageBehavior
 
 object AmitySocialBehaviorHelper {
+
+    val supportedPostTypes = listOf(
+        AmityPost.DataType.TEXT,
+        AmityPost.DataType.IMAGE,
+        AmityPost.DataType.VIDEO,
+        AmityPost.DataType.POLL,
+        AmityPost.DataType.LIVE_STREAM,
+        AmityPost.DataType.CLIP,
+    )
+
+    val supportedStructureTypes = listOf(
+        AmityPost.StructureType.TEXT,
+        AmityPost.StructureType.IMAGE,
+        AmityPost.StructureType.VIDEO,
+        AmityPost.StructureType.POLL,
+        AmityPost.StructureType.LIVESTREAM,
+        AmityPost.StructureType.CLIP,
+    )
 
     var showPollResultInDetailFirst = false
 

@@ -134,7 +134,7 @@ class AmityCreateCommunityViewModel(private val savedState: SavedStateHandle) :
         initialIsPublic = amityCommunity.isPublic()
         communityId.set(amityCommunity.getCommunityId())
         communityName.set(amityCommunity.getDisplayName())
-        avatarUrl.set(amityCommunity.getAvatar()?.getUrl(AmityImage.Size.LARGE) ?: "")
+        avatarUrl.set(amityCommunity.getAvatar()?.getUrl(AmityImage.Size.MEDIUM) ?: "")
         description.set(amityCommunity.getDescription())
         isPublic.set(amityCommunity.isPublic())
         category.set(

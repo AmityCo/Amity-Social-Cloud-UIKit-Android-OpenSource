@@ -16,6 +16,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.gson.JsonObject
 import com.trello.rxlifecycle4.components.support.RxAppCompatActivity
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
@@ -28,6 +29,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 import retrofit2.http.Url
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 
 class MainActivity : RxAppCompatActivity() {
 
@@ -48,6 +50,7 @@ class MainActivity : RxAppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(binding.root)
 
         val userId = AmityCoreClient.getUserId()
         if (userId.isNotEmpty()) {
@@ -56,8 +59,6 @@ class MainActivity : RxAppCompatActivity() {
 
             registerDevice(userId)
         }
-
-        setContentView(binding.root)
 
         binding.apply {
             btnLogin.setOnClickListener {
@@ -73,8 +74,6 @@ class MainActivity : RxAppCompatActivity() {
                     )
                 }
             }
-            val visitorDeviceId = AmityCoreClient.getVisitorDeviceId()
-            val expiresAt = DateTime.now().plusDays(30).toDateTime(DateTimeZone.UTC)
             etSecureVisitorUrl.setText("https://472sfz2bt3cddangdvv5nlyjjq0pnshz.lambda-url.ap-southeast-1.on.aws")
             btnVisitorLogin.setOnClickListener {
                 val secureVisitorUrl = etSecureVisitorUrl.text.toString().trim()
@@ -136,49 +135,54 @@ class MainActivity : RxAppCompatActivity() {
         authSignature: String? = null,
         authSignatureExpiresAt: DateTime? = null,
     ) {
-        if (userId.isNullOrEmpty()) {
-            AmityCoreClient.loginAsVisitor(object : SessionHandler {
-                override fun sessionWillRenewAccessToken(renewal: AccessTokenRenewal) {
-                    renewal.renew()
+        // Adding delay to avoid race condition when setup SDK and user is registered immediately
+        Single.just(true)
+            .delay(200, TimeUnit.MILLISECONDS)
+            .flatMapCompletable {
+                if (userId.isNullOrEmpty()) {
+                    AmityCoreClient.loginAsVisitor(object : SessionHandler {
+                        override fun sessionWillRenewAccessToken(renewal: AccessTokenRenewal) {
+                            renewal.renew()
+                        }
+                    })
+                        .apply {
+                            if (!displayName.isNullOrEmpty()) {
+                                displayName(displayName)
+                            }
+                            if (!authSignature.isNullOrEmpty() && authSignatureExpiresAt != null) {
+                                authSignature(authSignature)
+                                authSignatureExpiresAt(authSignatureExpiresAt)
+                            }
+                        }
+                        .build()
+                        .submit()
+                } else {
+                    AmityCoreClient.login(userId, object : SessionHandler {
+                        override fun sessionWillRenewAccessToken(renewal: AccessTokenRenewal) {
+                            renewal.renew()
+                        }
+                    })
+                        .apply {
+                            if (!displayName.isNullOrEmpty()) {
+                                displayName(displayName)
+                            }
+                        }
+                        .build()
+                        .submit()
                 }
-            })
-                .apply {
-                    if (!displayName.isNullOrEmpty()) {
-                        displayName(displayName)
-                    }
-                    if (!authSignature.isNullOrEmpty() && authSignatureExpiresAt != null) {
-                        authSignature(authSignature)
-                        authSignatureExpiresAt(authSignatureExpiresAt)
-                    }
-                }
-                .build()
-                .submit()
-        } else {
-            AmityCoreClient.login(userId, object : SessionHandler {
-                override fun sessionWillRenewAccessToken(renewal: AccessTokenRenewal) {
-                    renewal.renew()
-                }
-            })
-                .apply {
-                    if (!displayName.isNullOrEmpty()) {
-                        displayName(displayName)
-                    }
-                }
-                .build()
-                .submit()
-        }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnComplete {
-                registerForPushNotifications()
-                val intent = Intent(this, AmitySettingActivity::class.java)
-                startActivity(intent)
             }
-            .doOnError {
-                findViewById<View>(android.R.id.content).showSnackBar("Could not register user " + it.message)
-            }
-            .untilLifecycleEnd(this)
-            .subscribe()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnComplete {
+                    registerForPushNotifications()
+                    val intent = Intent(this, AmitySettingActivity::class.java)
+                    startActivity(intent)
+                }
+                .doOnError {
+                    findViewById<View>(android.R.id.content).showSnackBar("Could not register user " + it.message)
+                }
+                .untilLifecycleEnd(this)
+                .subscribe()
     }
 
     private fun registerForPushNotifications() {

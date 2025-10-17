@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.livestream.chat
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -18,13 +19,18 @@ import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
 import com.amity.socialcloud.sdk.model.core.flag.AmityContentFlagReason
 import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
 import com.amity.socialcloud.uikit.common.eventbus.NetworkConnectionEventBus
+import com.google.gson.JsonObject
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import org.joda.time.Duration
 
 class AmityLivestreamChatViewModel constructor(private val channelId: String) : ViewModel() {
 
@@ -79,6 +85,10 @@ class AmityLivestreamChatViewModel constructor(private val channelId: String) : 
         return AmityChatClient
             .newChannelRepository()
             .getChannel(channelId)
+            .distinctUntilChanged { old, new ->
+                // Only emit if metadata actually changed
+                old.getMetadata() == new.getMetadata()
+            }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .asFlow()
@@ -97,6 +107,67 @@ class AmityLivestreamChatViewModel constructor(private val channelId: String) : 
             .catch {
 
             }
+    }
+
+    fun getChannelOwnerId(): Flow<String?> {
+        // For testing: return current user ID to make everyone appear as owner
+        return flowOf(AmityCoreClient.getUserId())
+    }
+    
+    private fun updateChannelMetadata(
+        updateMetadata: (JsonObject) -> JsonObject,
+        onSuccess: () -> Unit,
+        onError: (Throwable) -> Unit
+    ) {
+        AmityChatClient.newChannelRepository()
+            .getChannel(channelId)
+            .firstOrError()
+            .flatMapCompletable { channel ->
+                val currentMetadata = channel.getMetadata() ?: JsonObject()
+                val updatedMetadata = updateMetadata(currentMetadata)
+                
+                AmityChatClient.newChannelRepository()
+                    .editChannel(channelId)
+                    .metadata(updatedMetadata)
+                    .build()
+                    .apply()
+                    .ignoreElement()
+            }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnComplete {
+                onSuccess()
+            }
+            .doOnError {
+                onError(it)
+            }
+            .subscribe()
+    }
+    
+    private fun addUserToMetadataList(key: String, userId: String): (JsonObject) -> JsonObject {
+        return { metadata ->
+            val newMetadata = metadata.deepCopy()
+            val list = metadata.getAsJsonArray(key)?.map { it.asString }?.toMutableList() ?: mutableListOf()
+            if (!list.contains(userId)) {
+                list.add(userId)
+            }
+            val jsonArray = com.google.gson.JsonArray()
+            list.forEach { jsonArray.add(it) }
+            newMetadata.add(key, jsonArray)
+            newMetadata
+        }
+    }
+    
+    private fun removeUserFromMetadataList(key: String, userId: String): (JsonObject) -> JsonObject {
+        return { metadata ->
+            val newMetadata = metadata.deepCopy()
+            val list = metadata.getAsJsonArray(key)?.map { it.asString }?.toMutableList() ?: mutableListOf()
+            list.remove(userId)
+            val jsonArray = com.google.gson.JsonArray()
+            list.forEach { jsonArray.add(it) }
+            newMetadata.add(key, jsonArray)
+            newMetadata
+        }
     }
 
     fun deleteMessage(
@@ -182,6 +253,120 @@ class AmityLivestreamChatViewModel constructor(private val channelId: String) : 
             }
     }
 
+    fun isUserModerator(userId: String): Flow<Boolean> {
+        return getChannelFlow()
+            .map { channel ->
+                Log.d("--F", "isUserModerator from channel flow ${channel.getMetadata()}")
+                val metadata = channel.getMetadata()
+                val moderators = metadata?.getAsJsonArray("moderators")
+                moderators?.any { it.asString == userId } ?: false
+            }
+            .distinctUntilChanged()
+            .catch {
+                emit(false)
+            }
+    }
+
+    fun isUserMuted(userId: String): Flow<Boolean> {
+        Log.d("--F", "isUserMuted")
+        return getChannelFlow()
+            .map { channel ->
+                Log.d("--F", "isUserMuted from channel flow ${channel.getMetadata()}")
+                val metadata = channel.getMetadata()
+                
+                // Check if user is a moderator first - moderators cannot be muted
+                val moderators = metadata?.getAsJsonArray("moderators")
+                val isModerator = moderators?.any { it.asString == userId } ?: false
+                
+                // If user is a moderator, they are not considered muted
+                if (isModerator) {
+                    return@map false
+                }
+                
+                // Otherwise, check if they are in the muted list
+                val mutedMembers = metadata?.getAsJsonArray("mutedMembers")
+                mutedMembers?.any { it.asString == userId } ?: false
+            }
+            .distinctUntilChanged()
+            .catch {
+                emit(false)
+            }
+    }
+
+    fun promoteToModerator(
+        userId: String,
+        onSuccess: () -> Unit = {},
+        onError: (Throwable) -> Unit = {}
+    ) {
+        AmityChatClient.newChannelRepository()
+            .moderation(channelId)
+            .addRole("channel-moderator", listOf(userId))
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnComplete {
+                // Update channel metadata to trigger RTE
+                updateChannelMetadata(
+                    updateMetadata = addUserToMetadataList("moderators", userId),
+                    onSuccess = onSuccess,
+                    onError = onError
+                )
+            }
+            .doOnError {
+                onError(it)
+            }
+            .subscribe()
+    }
+
+    fun demoteToMember(
+        userId: String,
+        onSuccess: () -> Unit = {},
+        onError: (Throwable) -> Unit = {}
+    ) {
+        AmityChatClient.newChannelRepository()
+            .moderation(channelId)
+            .removeRole("channel-moderator", listOf(userId))
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnComplete {
+                // Update channel metadata to trigger RTE
+                updateChannelMetadata(
+                    updateMetadata = removeUserFromMetadataList("moderators", userId),
+                    onSuccess = onSuccess,
+                    onError = onError
+                )
+            }
+            .doOnError {
+                onError(it)
+            }
+            .subscribe()
+    }
+
+    fun muteUser(
+        userId: String,
+        onSuccess: () -> Unit = {},
+        onError: (Throwable) -> Unit = {}
+    ) {
+        // Only update channel metadata, don't use SDK's built-in mute
+        updateChannelMetadata(
+            updateMetadata = addUserToMetadataList("mutedMembers", userId),
+            onSuccess = onSuccess,
+            onError = onError
+        )
+    }
+
+    fun unmuteUser(
+        userId: String,
+        onSuccess: () -> Unit = {},
+        onError: (Throwable) -> Unit = {}
+    ) {
+        // Only update channel metadata, don't use SDK's built-in unmute
+        updateChannelMetadata(
+            updateMetadata = removeUserFromMetadataList("mutedMembers", userId),
+            onSuccess = onSuccess,
+            onError = onError
+        )
+    }
+
     companion object {
         fun create(channelId: String): ViewModelProvider.Factory {
             return object : ViewModelProvider.Factory {
@@ -212,6 +397,8 @@ class AmityLivestreamChatViewModel constructor(private val channelId: String) : 
 
         data class OpenReportOtherReasonSheet(val id: String) : AmityLiveStreamSheetUIState(id)
 
+        data class OpenUserActionsSheet(val userId: String, val displayName: String, val isModerator: Boolean = false, val isMuted: Boolean = false) : AmityLiveStreamSheetUIState("")
+
         object CloseSheet : AmityLiveStreamSheetUIState("")
     }
 
@@ -228,12 +415,13 @@ class AmityLivestreamChatViewModel constructor(private val channelId: String) : 
                 member: AmityChannelMember?,
                 loadState: LoadState,
                 itemCount: Int,
+                isUserMutedInMetadata: Boolean = false,
             ): MessageListState {
                 return if (loadState is LoadState.Loading && itemCount == 0) {
                     LOADING
                 } else if (member?.isBanned() == true) {
                     BANNED
-                } else if (member?.isMuted() == true) {
+                } else if (member?.isMuted() == true || isUserMutedInMetadata) {
                     MUTED
                 } else if (loadState is LoadState.Error && itemCount == 0) {
                     ERROR

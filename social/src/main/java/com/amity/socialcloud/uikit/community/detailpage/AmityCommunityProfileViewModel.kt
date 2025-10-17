@@ -8,6 +8,7 @@ import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunityPostSettings
 import com.amity.socialcloud.sdk.model.social.feed.AmityFeedType
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.data.CommunityProfileData
 import com.amity.socialcloud.uikit.community.data.PostReviewBannerData
 import com.amity.socialcloud.uikit.community.newsfeed.adapter.AmityPostCountAdapter
@@ -60,7 +61,9 @@ class AmityCommunityProfileViewModel(private val savedState: SavedStateHandle) :
         return AmitySocialClient.newFeedRepository()
             .getCommunityFeed(communityId!!)
             .feedType(AmityFeedType.REVIEWING)
+            .dataTypes(AmitySocialBehaviorHelper.supportedPostTypes)
             .includeDeleted(false)
+            .matchingOnlyParentPosts(true)
             .build()
             .query()
             .map {
