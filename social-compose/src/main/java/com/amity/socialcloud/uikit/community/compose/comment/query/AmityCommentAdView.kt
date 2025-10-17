@@ -184,7 +184,7 @@ fun AmityCommentAdView(
                             }
                     ) {
                         ImageFromAsset(
-                            url = ad.getImage1_1()?.getUrl(AmityImage.Size.LARGE) ?: "",
+                            url = ad.getImage1_1()?.getUrl(AmityImage.Size.MEDIUM) ?: "",
                             scale = ContentScale.Crop,
                             modifier = Modifier
                                 .width(100.dp)

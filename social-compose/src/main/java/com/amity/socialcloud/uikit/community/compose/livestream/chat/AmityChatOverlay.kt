@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.livestream.chat
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -47,6 +49,7 @@ import com.amity.socialcloud.sdk.model.core.error.AmityException
 import com.amity.socialcloud.sdk.model.core.flag.AmityContentFlagReason
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
+import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAnnotatedText
 import com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem
 import com.amity.socialcloud.uikit.common.ui.elements.BottomConfirmDeletePopup
@@ -70,6 +73,7 @@ fun ChatOverlay(
     pageScope: AmityComposePageScope? = null,
     componentScope: AmityComposeComponentScope? = null,
     channelId: String,
+    streamHostUserId: String? = null,
     fromNonMemberCommunity: Boolean = false,
     onReactionClick: () -> Unit
 ) {
@@ -87,10 +91,12 @@ fun ChatOverlay(
 
     val messages = viewModel.getMessageList().collectAsLazyPagingItems()
 
-    val isChannelModerator by remember {
-        derivedStateOf { }
-        viewModel.isChannelModerator().distinctUntilChanged()
-    }.collectAsState(initial = false)
+    // Use metadata as the single source of truth for moderator status
+    // This ensures immediate response to promote/demote actions via metadata updates
+    val isCurrentUserModerator by viewModel.isUserModerator(AmityCoreClient.getUserId())
+        .collectAsState(initial = false)
+
+    val hostUserId = streamHostUserId
 
     var messageText by remember { mutableStateOf("") }
     var showMessageAction by remember { mutableStateOf(false) }
@@ -120,20 +126,40 @@ fun ChatOverlay(
             }
             items(
                 count = messages.itemCount,
-                key = messages.itemKey { it.getMessageId() }
+                key = { index ->
+                    messages[index]?.getMessageId() ?: "message_$index"
+                }
             ) { index ->
                 messages[index]?.let { message ->
+                    val userId = message.getCreatorId()
+                    
                     ChatMessageItem(
                         message = message,
-                        isChannelModerator = isChannelModerator,
+                        isChannelModerator = isCurrentUserModerator,
+                        hostUserId = hostUserId,
+                        isMessageCreatorModerator = viewModel.isUserModerator(userId),
+                        isMessageCreatorMuted = viewModel.isUserMuted(userId),
                         onOpenAction = {
                             viewModel.updateSheetUIState(
-                                AmityLiveStreamSheetUIState.OpenSheet(message, isChannelModerator)
+                                AmityLiveStreamSheetUIState.OpenSheet(message, isCurrentUserModerator)
                             )
                             viewModel.setTargetDeletedMessage(message)
                         },
                         onConfirmDelete = {
                             viewModel.showDeleteConfirmation(message)
+                        },
+                        onUserNameClick = {
+                            if (userId != AmityCoreClient.getUserId() 
+                                && isCurrentUserModerator
+                                && userId != hostUserId) {
+                                val displayName = message.getCreator()?.getDisplayName() ?: "Unknown user"
+                                viewModel.updateSheetUIState(
+                                    AmityLiveStreamSheetUIState.OpenUserActionsSheet(
+                                        userId = userId,
+                                        displayName = displayName
+                                    )
+                                )
+                            }
                         }
                     )
                     Spacer(modifier = Modifier.height(8.dp)) // Add space between messages
@@ -160,7 +186,7 @@ fun ChatOverlay(
                         val message = (sheetUIState as AmityLiveStreamSheetUIState.OpenSheet).message
                         AmityLivestreamMessageActionsContainer(
                             message = message,
-                            isChannelModerator = isChannelModerator,
+                            isChannelModerator = isCurrentUserModerator,
                             onReport = { messageId ->
                                 if (AmityCoreClient.isVisitor()) {
                                     behavior.handleVisitorUserAction()
@@ -261,6 +287,28 @@ fun ChatOverlay(
                         }
                     }
 
+                    is AmityLiveStreamSheetUIState.OpenUserActionsSheet -> {
+                        val userActionsState = sheetUIState as AmityLiveStreamSheetUIState.OpenUserActionsSheet
+                        
+                        val isModerator by viewModel.isUserModerator(userActionsState.userId)
+                            .collectAsState(initial = false)
+                        
+                        val isMuted by viewModel.isUserMuted(userActionsState.userId)
+                            .collectAsState(initial = false)
+                        
+                        AmityUserActionsSheet(
+                            displayName = userActionsState.displayName,
+                            userId = userActionsState.userId,
+                            isModerator = isModerator,
+                            isMuted = isMuted,
+                            viewModel = viewModel,
+                            pageScope = pageScope,
+                            onClose = {
+                                viewModel.updateSheetUIState(AmityLiveStreamSheetUIState.CloseSheet)
+                            }
+                        )
+                    }
+
                     else -> {}
                 }
 
@@ -292,9 +340,15 @@ fun ChatOverlay(
 fun ChatMessageItem(
     message: AmityMessage,
     isChannelModerator: Boolean,
+    hostUserId: String?,
+    isMessageCreatorModerator: kotlinx.coroutines.flow.Flow<Boolean>,
+    isMessageCreatorMuted: kotlinx.coroutines.flow.Flow<Boolean>,
     onOpenAction: () -> Unit,
-    onConfirmDelete: () -> Unit
+    onConfirmDelete: () -> Unit,
+    onUserNameClick: () -> Unit = {}
 ) {
+    val isCreatorModerator by isMessageCreatorModerator.collectAsState(initial = false)
+    val isCreatorMuted by isMessageCreatorMuted.collectAsState(initial = false)
     Card(
         modifier = Modifier
             .fillMaxWidth(),
@@ -318,11 +372,33 @@ fun ChatMessageItem(
                     verticalAlignment = Alignment.Top,
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
-                    Text(
-                        text = message.getCreator()?.getDisplayName() ?: "Unknown user",
-                        color = if (message.isDeleted()) Color(0xFF6E7487) else Color(0xFFA5A9B5),
-                        style = AmityTheme.typography.captionSmall,
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        modifier = Modifier.clickableWithoutRipple {
+                            onUserNameClick()
+                        }
+                    ) {
+                        Text(
+                            text = message.getCreator()?.getDisplayName() ?: "Unknown user",
+                            color = if (message.isDeleted()) Color(0xFF6E7487) else Color(0xFFA5A9B5),
+                            style = AmityTheme.typography.captionSmall,
+                        )
+                        
+                        // Show Host badge if user is stream host (takes precedence over moderator badge)
+                        if (message.getCreatorId() == hostUserId && !message.isDeleted()) {
+                            OwnerBadge()
+                        }
+                        // Show Moderator badge if user is moderator but NOT host
+                        else if (isCreatorModerator && !message.isDeleted()) {
+                            ModeratorBadge()
+                        }
+                        
+                        // Show Muted badge only if current user is a moderator and message creator is muted
+                        if (isChannelModerator && isCreatorMuted && !message.isDeleted()) {
+                            MutedBadge()
+                        }
+                    }
                     if (message.getState() == AmityMessage.State.SYNCED && !message.isDeleted()) {
                         Icon(
                             painter = painterResource(
@@ -385,6 +461,71 @@ fun ChatMessageItem(
     }
 }
 
+@Composable
+fun OwnerBadge() {
+    Row(
+        modifier = Modifier
+            .background(
+                color = AmityTheme.colors.alert,
+                shape = RoundedCornerShape(4.dp)
+            ),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.amity_ic_livestream_host),
+            contentDescription = "Host badge",
+            tint = Color.White,
+            modifier = Modifier
+                .size(12.dp)
+                .padding(start = 1.dp, top = 1.dp, bottom = 1.dp, end = 2.dp)
+        )
+        Text(
+            text = "Host",
+            color = Color.White,
+            style = AmityTheme.typography.captionSmall,
+            modifier = Modifier.padding(end = 3.dp)
+        )
+    }
+}
+
+@Composable
+fun ModeratorBadge() {
+    Row(
+        modifier = Modifier
+            .background(
+                color = Color(0xFF40434E),
+                shape = RoundedCornerShape(4.dp)
+            ),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.amity_ic_moderator_social),
+            contentDescription = "Moderator badge",
+            tint = Color.White,
+            modifier = Modifier
+                .size(width = 12.dp, height = 9.dp)
+                .padding(start = 2.dp, top = 1.dp, bottom = 1.dp, end = 1.dp)
+        )
+        Text(
+            text = "Moderator",
+            color = AmityTheme.colors.baseShade3,
+            style = AmityTheme.typography.captionSmall,
+            modifier = Modifier.padding(end = 3.dp)
+        )
+    }
+}
+
+@Composable
+fun MutedBadge() {
+    Icon(
+        painter = painterResource(id = R.drawable.amity_v4_ic_mute),
+        contentDescription = "Muted badge",
+        tint = AmityTheme.colors.baseShade2,
+        modifier = Modifier
+            .size(16.dp)
+    )
+}
+
 fun getContent(message: AmityMessage): String {
     return if (message.isDeleted()) {
         "This message was deleted"
@@ -441,6 +582,245 @@ fun AmityLivestreamMessageActionsContainer(
                 onDelete()
             }
         }
+    }
+}
+
+@Composable
+fun AmityUserActionsSheet(
+    displayName: String,
+    userId: String,
+    isModerator: Boolean,
+    isMuted: Boolean = false,
+    viewModel: AmityLivestreamChatViewModel,
+    pageScope: AmityComposePageScope?,
+    onClose: () -> Unit
+) {
+    var showPromoteDialog by remember { mutableStateOf(false) }
+    var showDemoteDialog by remember { mutableStateOf(false) }
+    var showMuteDialog by remember { mutableStateOf(false) }
+    var showUnmuteDialog by remember { mutableStateOf(false) }
+    
+    Column(
+        modifier = Modifier
+            .background(Color(0xFF191919))
+            .navigationBarsPadding()
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp, top = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // Display name with muted icon on the right if muted
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = displayName,
+                    color = Color(0xFFEBECEF),
+                    style = AmityTheme.typography.titleBold,
+                )
+                
+                // Muted icon if user is muted
+                if (isMuted) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.amity_v4_ic_mute),
+                        contentDescription = "Muted badge",
+                        tint = AmityTheme.colors.baseShade2,
+                        modifier = Modifier
+                            .size(16.dp)
+                    )
+                }
+            }
+            
+            // Moderator badge (icon + text) under display name if user is a moderator
+            if (isModerator) {
+                Row(
+                    modifier = Modifier
+                        .padding(top = 4.dp)
+                        .background(
+                            color = Color(0xFF40434E),
+                            shape = RoundedCornerShape(4.dp)
+                        ),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.amity_ic_moderator_social),
+                        contentDescription = "Moderator badge",
+                        tint = Color.White,
+                        modifier = Modifier
+                            .size(width = 12.dp, height = 9.dp)
+                            .padding(start = 2.dp, top = 1.dp, bottom = 1.dp, end = 1.dp)
+                    )
+                    Text(
+                        text = "Moderator",
+                        color = AmityTheme.colors.baseShade3,
+                        style = AmityTheme.typography.captionSmall,
+                        modifier = Modifier.padding(end = 3.dp)
+                    )
+                }
+            }
+        }
+        
+        // Divider line
+        Spacer(
+            modifier = Modifier
+                .padding(top = 12.dp)
+                .fillMaxWidth()
+                .height(1.dp)
+                .background(AmityTheme.colors.base)
+        )
+        
+        Column(
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 32.dp)
+        ) {
+        
+        // Promote/Demote moderator button - hide promote if user is muted
+        if (!isMuted) {
+            AmityBottomSheetActionItem(
+                icon = if (isModerator) R.drawable.amity_ic_demote_moderator else R.drawable.amity_ic_promote_moderator,
+                text = if (isModerator) "Demote to member" else "Promote to moderator",
+                color = Color(0xFFEBECEF),
+            ) {
+                if (isModerator) {
+                    showDemoteDialog = true
+                } else {
+                    showPromoteDialog = true
+                }
+            }
+        }
+        
+        // Mute/Unmute user - only show if user is not a moderator
+        if (!isModerator) {
+            AmityBottomSheetActionItem(
+                icon = if (isMuted) R.drawable.amity_v4_ic_unmute else R.drawable.amity_v4_ic_mute,
+                text = if (isMuted) "Unmute user" else "Mute user",
+                color = Color(0xFFEBECEF),
+            ) {
+                if (isMuted) {
+                    showUnmuteDialog = true
+                } else {
+                    showMuteDialog = true
+                }
+            }
+        }
+
+        }
+    }
+    
+    // Promote confirmation dialog
+    if (showPromoteDialog) {
+        AmityAlertDialog(
+            dialogTitle = "Moderator promotion",
+            dialogText = "Are you sure you want to promote this member to moderator? They will gain access to all moderator permissions in this live stream.",
+            confirmText = "Promote",
+            dismissText = "Cancel",
+            onConfirmation = {
+                showPromoteDialog = false
+                viewModel.promoteToModerator(
+                    userId = userId,
+                    onSuccess = {
+                        AmityUIKitSnackbar.publishSnackbarMessage("User promoted.")
+                        pageScope?.showSnackbar("User promoted to moderator")
+                        onClose()
+                    },
+                    onError = {
+                        AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to promote user. Please try again.")
+                        pageScope?.showSnackbar("Failed to promote user. Please try again.")
+                    }
+                )
+            },
+            onDismissRequest = {
+                showPromoteDialog = false
+            }
+        )
+    }
+    
+    // Demote confirmation dialog
+    if (showDemoteDialog) {
+        AmityAlertDialog(
+            dialogTitle = "Moderator demotion",
+            dialogText = "Are you sure you want to demote this moderator? They will lose access to all moderator permissions in this live stream.",
+            confirmText = "Demote",
+            dismissText = "Cancel",
+            confirmTextColor = AmityTheme.colors.alert,
+            onConfirmation = {
+                showDemoteDialog = false
+                viewModel.demoteToMember(
+                    userId = userId,
+                    onSuccess = {
+                        AmityUIKitSnackbar.publishSnackbarMessage("User demoted.")
+                        pageScope?.showSnackbar("User demoted to member")
+                        onClose()
+                    },
+                    onError = {
+                        AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to demote user. Please try again.")
+                        pageScope?.showSnackbar("Failed to demote user. Please try again.")
+                    }
+                )
+            },
+            onDismissRequest = {
+                showDemoteDialog = false
+            }
+        )
+    }
+    
+    // Mute confirmation dialog
+    if (showMuteDialog) {
+        AmityAlertDialog(
+            dialogTitle = "Confirm mute",
+            dialogText = "Are you sure you want to mute this user? They will no longer be able to send messages.",
+            confirmText = "Mute",
+            dismissText = "Cancel",
+            confirmTextColor = AmityTheme.colors.alert,
+            onConfirmation = {
+                showMuteDialog = false
+                viewModel.muteUser(
+                    userId = userId,
+                    onSuccess = {
+                        AmityUIKitSnackbar.publishSnackbarMessage("User muted.")
+                        pageScope?.showSnackbar("User muted")
+                        onClose()
+                    },
+                    onError = {
+                        AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to mute user. Please try again.")
+                        pageScope?.showSnackbar("Failed to mute user. Please try again.")
+                    }
+                )
+            },
+            onDismissRequest = {
+                showMuteDialog = false
+            }
+        )
+    }
+    
+    // Unmute confirmation dialog
+    if (showUnmuteDialog) {
+        AmityAlertDialog(
+            dialogTitle = "Confirm unmute",
+            dialogText = "Are you sure you want to unmute this user? They can now send messages.",
+            confirmText = "Unmute",
+            dismissText = "Cancel",
+            onConfirmation = {
+                showUnmuteDialog = false
+                viewModel.unmuteUser(
+                    userId = userId,
+                    onSuccess = {
+                        AmityUIKitSnackbar.publishSnackbarMessage("User unmuted.")
+                        pageScope?.showSnackbar("User unmuted")
+                        onClose()
+                    },
+                    onError = {
+                        AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to unmute user. Please try again.")
+                        pageScope?.showSnackbar("Failed to unmute user. Please try again.")
+                    }
+                )
+            },
+            onDismissRequest = {
+                showUnmuteDialog = false
+            }
+        )
     }
 }
 

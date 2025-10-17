@@ -277,7 +277,6 @@ fun AmityPollImageTypeItemView(
                     }
                     .height(40.dp)
                     .padding(horizontal = 12.dp)
-                    .padding(bottom = 12.dp)
                     .border(
                         BorderStroke(
                             width = 1.dp,

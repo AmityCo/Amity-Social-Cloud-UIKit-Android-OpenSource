@@ -24,7 +24,7 @@ fun AmityCommunityImageFeedComponent(
         AmitySocialClient.newPostRepository()
             .getPosts()
             .targetCommunity(communityId)
-            .types(listOf(AmityPost.DataType.sealedOf(AmityPost.DataType.IMAGE.getApiKey())))
+            .dataTypes(listOf(AmityPost.DataType.IMAGE))
             .includeDeleted(false)
             .build()
             .query()

@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.defaultMinSize
@@ -30,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -269,25 +271,24 @@ fun AmityAltTextConfigComponent(
                         }
                     }
                     if (isInEditMode) {
-                        if (altText.value != null) {
-                            AmityTextField(
-                                modifier = modifier
-                                    .fillMaxWidth()
-                                    .defaultMinSize(minHeight = 500.dp)
-                                    .padding(start = 16.dp, end = 16.dp, bottom = 20.dp),
-                                text = altText.value ?: "",
-                                hint = context.getString(R.string.amity_image_alt_text_hint_message),
-                                maxCharacters = 180,
-                                maxLines = 30,
-                                textStyle = AmityTheme.typography.body.copy(
-                                    color = AmityTheme.colors.base,
-                                    fontSize = 15.sp  // Match original post composer font size
-                                ),
-                                onValueChange = {
-                                    altText.value = it
-                                },
-                            )
-                        }
+                        AmityTextField(
+                            modifier = modifier
+                                .fillMaxWidth()
+                                .defaultMinSize(minHeight = 500.dp)
+                                .padding(start = 16.dp, end = 16.dp, bottom = 20.dp),
+                            text = altText.value ?: "",
+                            hint = context.getString(R.string.amity_image_alt_text_hint_message),
+                            maxCharacters = 180,
+                            maxLines = 30,
+                            textStyle = AmityTheme.typography.body.copy(
+                                color = AmityTheme.colors.base,
+                                fontSize = 15.sp  // Match original post composer font size
+                            ),
+                            innerPadding = PaddingValues(top = 16.dp),
+                            onValueChange = {
+                                altText.value = it
+                            },
+                        )
                     } else {
                         AmityTextField(
                             modifier = modifier
@@ -302,6 +303,7 @@ fun AmityAltTextConfigComponent(
                                 color = AmityTheme.colors.base,
                                 fontSize = 15.sp  // Match original post composer font size
                             ),
+                            innerPadding = PaddingValues(top = 16.dp),
                             onValueChange = {
                                 altText.value = it
                             },

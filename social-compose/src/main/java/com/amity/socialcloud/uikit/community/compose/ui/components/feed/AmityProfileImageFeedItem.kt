@@ -127,7 +127,7 @@ fun AmityProfileImageFeedItem(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 32.dp)
+                    .padding(start = 16.dp, end = 16.dp, bottom = 32.dp)
             ) {
 
                 AmityBottomSheetActionItem(

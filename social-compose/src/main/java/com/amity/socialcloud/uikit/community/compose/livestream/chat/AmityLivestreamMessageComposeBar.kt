@@ -132,6 +132,10 @@ fun AmityLivestreamMessageComposeBar(
             }
     }.collectAsState(initial = null)
 
+    val isCurrentUserMutedInMetadata by remember {
+        viewModel.isUserMuted(com.amity.socialcloud.sdk.api.core.AmityCoreClient.getUserId())
+    }.collectAsState(initial = false)
+
     var showComposeErrorDialog = remember { mutableStateOf(false) }
 
     AmityBaseComponent(
@@ -153,7 +157,9 @@ fun AmityLivestreamMessageComposeBar(
                 )
             }
 
-            if (!isChannelMuted && membership?.isMuted() != true && !isPendingApproval) {
+            val isUserMuted = membership?.isMuted() == true || isCurrentUserMutedInMetadata
+            
+            if (!isChannelMuted && !isUserMuted && !isPendingApproval) {
                 HorizontalDivider(
                     color = Color(0xFF292B32),
                 )
@@ -171,7 +177,7 @@ fun AmityLivestreamMessageComposeBar(
                     AmityLivestreamReadOnlyComposeBar(
                         modifier = Modifier.weight(1f),
                     )
-                } else if (membership?.isMuted() == true) {
+                } else if (isUserMuted) {
                     AmityLivestreamReadOnlyComposeBar(
                         modifier = Modifier.weight(1f),
                         isMemberMuted = true,
@@ -216,7 +222,7 @@ fun AmityLivestreamMessageComposeBar(
                             textStyle = AmityTheme.typography.body.copy(color = Color(0xFFEBECEF)),
                             maxLines = 1,
                             hint = "Chat...",
-                            enabled = (isChannelModerator || ((membership?.isMuted() != true) && !isChannelMuted)) && AmityCoreClient.isSignedIn() && !isNonMember,
+                            enabled = (isChannelModerator || (!isUserMuted && !isChannelMuted)) && AmityCoreClient.isSignedIn() && !isNonMember,
                             shape = RoundedCornerShape(20.dp),
                             innerPadding = PaddingValues(horizontal = 12.dp, vertical = 10.dp),
                             onValueChange = {

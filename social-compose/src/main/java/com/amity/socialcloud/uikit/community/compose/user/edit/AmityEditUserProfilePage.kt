@@ -193,7 +193,8 @@ fun AmityEditUserProfilePage(
                         onValueChange = {
                             displayName = it
                         },
-                        modifier = modifier
+                        innerPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
+                        modifier = modifier,
                     )
                 }
 
@@ -250,7 +251,8 @@ fun AmityEditUserProfilePage(
                         onValueChange = {
                             about = it
                         },
-                        modifier = modifier
+                        innerPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
+                        modifier = modifier,
                     )
                 }
                 HorizontalDivider(

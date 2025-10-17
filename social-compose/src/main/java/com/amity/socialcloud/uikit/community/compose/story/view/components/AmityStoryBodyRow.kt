@@ -131,7 +131,7 @@ fun AmityStoryBodyImageView(
     val imagePath = remember {
         when (syncState) {
             AmityStory.State.SYNCED -> {
-                data.getImage()?.getUrl(AmityImage.Size.LARGE)
+                data.getImage()?.getUrl(AmityImage.Size.MEDIUM)
             }
 
             AmityStory.State.SYNCING,

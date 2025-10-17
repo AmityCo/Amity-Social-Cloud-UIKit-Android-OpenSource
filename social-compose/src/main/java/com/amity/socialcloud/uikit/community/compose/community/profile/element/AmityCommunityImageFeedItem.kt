@@ -95,7 +95,7 @@ fun AmityCommunityImagePreviewDialog(
             AsyncImage(
                 model = ImageRequest
                     .Builder(LocalContext.current)
-                    .data(data?.getImage()?.getUrl(AmityImage.Size.LARGE))
+                    .data(data?.getImage()?.getUrl(AmityImage.Size.MEDIUM))
                     .crossfade(true)
                     .networkCachePolicy(CachePolicy.ENABLED)
                     .diskCachePolicy(CachePolicy.ENABLED)

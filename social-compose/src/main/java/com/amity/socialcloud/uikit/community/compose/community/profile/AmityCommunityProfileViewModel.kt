@@ -16,6 +16,7 @@ import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.ad.AmityAdInjector
 import com.amity.socialcloud.uikit.common.ad.AmityListItem
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipModalSheetUIState
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Flowable
@@ -119,7 +120,9 @@ class AmityCommunityProfileViewModel(private val communityId: String) :
 
         return AmitySocialClient.newFeedRepository()
             .getCommunityFeed(communityId)
+            .dataTypes(AmitySocialBehaviorHelper.supportedPostTypes)
             .includeDeleted(false)
+            .matchingOnlyParentPosts(true)
             .build()
             .query()
             .subscribeOn(Schedulers.io())
@@ -135,7 +138,7 @@ class AmityCommunityProfileViewModel(private val communityId: String) :
         return AmitySocialClient.newPostRepository()
             .getPosts()
             .targetCommunity(communityId)
-            .types(listOf(AmityPost.DataType.sealedOf(AmityPost.DataType.IMAGE.getApiKey())))
+            .dataTypes(listOf(AmityPost.DataType.IMAGE))
             .includeDeleted(false)
             .build()
             .query()
@@ -149,7 +152,7 @@ class AmityCommunityProfileViewModel(private val communityId: String) :
         return AmitySocialClient.newPostRepository()
             .getPosts()
             .targetCommunity(communityId)
-            .types(listOf(AmityPost.DataType.sealedOf(AmityPost.DataType.VIDEO.getApiKey())))
+            .dataTypes(listOf(AmityPost.DataType.VIDEO))
             .includeDeleted(false)
             .build()
             .query()
@@ -163,7 +166,7 @@ class AmityCommunityProfileViewModel(private val communityId: String) :
         return AmitySocialClient.newPostRepository()
             .getPosts()
             .targetCommunity(communityId)
-            .dataTypes(listOf(AmityPost.DataType.sealedOf(AmityPost.DataType.CLIP.getApiKey())))
+            .dataTypes(listOf(AmityPost.DataType.CLIP))
             .includeDeleted(false)
             .build()
             .query()

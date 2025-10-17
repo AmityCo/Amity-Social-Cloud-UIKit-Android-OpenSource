@@ -14,6 +14,7 @@ import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import com.amity.socialcloud.uikit.common.utils.isSignedIn
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -187,7 +188,7 @@ class AmityUserProfilePageViewModel(val userId: String) : AmityBaseViewModel() {
             .getUserFeed(userId)
             .includeDeleted(false)
             .feedSources(filter)
-            .dataTypes(listOf(AmityPost.DataType.TEXT, AmityPost.DataType.IMAGE, AmityPost.DataType.VIDEO, AmityPost.DataType.CLIP, AmityPost.DataType.POLL, AmityPost.DataType.LIVE_STREAM))
+            .dataTypes(AmitySocialBehaviorHelper.supportedPostTypes)
             .build()
             .query()
             .subscribeOn(Schedulers.io())

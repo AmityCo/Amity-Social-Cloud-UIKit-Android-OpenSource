@@ -79,7 +79,7 @@ class AmityCommunityNavigation {
         fun navigateToImagePreview(context: Context, images: List<AmityImage>, position: Int) {
             val previewImages = mutableListOf<AmityPreviewImage>()
             images.forEach {
-                previewImages.add(AmityPreviewImage(it.getUrl(AmityImage.Size.LARGE)))
+                previewImages.add(AmityPreviewImage(it.getUrl(AmityImage.Size.MEDIUM)))
             }
             val intent =
                 AmityImagePreviewActivity.newIntent(context, position, true, ArrayList(previewImages))

@@ -1,34 +1,13 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+// Top-level build file using plugins DSL.
 
-buildscript {
-    ext {
-        gradleBuildVersion = '8.2.0'
-        kotlinVersion = "1.8.21"
-        jacocoVersion = '0.8.5'
-    }
-    repositories {
-        maven { url 'https://jitpack.io' }
-        mavenCentral()
-        google()
-        maven {
-            url 'https://maven.google.com/'
-        }
-        maven {
-            url "https://repo.maven.apache.org/maven2/"
-        }
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
-    }
-    dependencies {
-        classpath "com.android.tools.build:gradle:$gradleBuildVersion"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-        classpath "org.jacoco:org.jacoco.core:$jacocoVersion"
-        classpath 'com.google.gms:google-services:4.4.1'
-        classpath "com.google.firebase:firebase-crashlytics-gradle:2.9.9"
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
-    }
+plugins {
+    id 'com.android.application' version '8.6.1' apply false
+    id 'com.android.library' version '8.6.1' apply false
+    id 'org.jetbrains.kotlin.android' version '2.2.0' apply false
+    id 'org.jetbrains.kotlin.plugin.compose' version '2.2.0' apply false
+    id 'org.jetbrains.kotlin.kapt' version '2.2.0' apply false
+    id 'com.google.gms.google-services' version '4.4.1' apply false
+    id 'com.google.firebase.crashlytics' version '2.9.9' apply false
 }
 
 allprojects {
@@ -36,9 +15,7 @@ allprojects {
         mavenCentral()
         google()
         maven { url 'https://jitpack.io' }
-        maven {
-            url "https://repo.maven.apache.org/maven2/"
-        }
+        maven { url "https://repo.maven.apache.org/maven2/" }
     }
 }
 

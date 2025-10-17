@@ -128,7 +128,7 @@ fun AmityPostAdView(
         }
 
         ImageFromAsset(
-            url = ad.getImage1_1()?.getUrl(AmityImage.Size.LARGE) ?: "",
+            url = ad.getImage1_1()?.getUrl(AmityImage.Size.MEDIUM) ?: "",
             scale = ContentScale.Crop,
             modifier = Modifier
                 .padding(horizontal = 16.dp, vertical = 8.dp)

@@ -12,6 +12,7 @@ import com.amity.socialcloud.sdk.model.social.community.AmityJoinRequest
 import com.amity.socialcloud.sdk.model.social.community.AmityJoinRequestStatus
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.flow.Flow
@@ -29,8 +30,10 @@ class AmityPendingRequestPageViewModel(val communityId: String) : AmityBaseViewM
     }
 
     fun getPendingPosts(): Flow<PagingData<AmityPost>> {
-        return AmitySocialClient.newPostRepository().getPosts()
+        return AmitySocialClient.newPostRepository()
+            .getPosts()
             .targetCommunity(communityId)
+            .dataTypes(AmitySocialBehaviorHelper.supportedPostTypes)
             .reviewStatus(AmityReviewStatus.UNDER_REVIEW)
             .sortBy(AmityCommunityFeedSortOption.LAST_CREATED)
             .includeDeleted(false)

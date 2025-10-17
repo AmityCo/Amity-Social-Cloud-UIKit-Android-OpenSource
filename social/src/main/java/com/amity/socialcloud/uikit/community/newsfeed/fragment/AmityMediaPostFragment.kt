@@ -208,7 +208,7 @@ class AmityMediaPostFragment : AmityBaseFragment() {
                     imagePosition = 0,
                     showImageCount = false,
                     imageAmities = arrayListOf(
-                        AmityPreviewImage(imageData.getImage()?.getUrl(AmityImage.Size.LARGE) ?: "")
+                        AmityPreviewImage(imageData.getImage()?.getUrl(AmityImage.Size.MEDIUM) ?: "")
                     )
                 )
             requireContext().startActivity(intent)

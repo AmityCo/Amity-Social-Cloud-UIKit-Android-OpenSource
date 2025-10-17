@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -145,7 +146,7 @@ fun AmityStoryHyperlinkComponent(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = modifier
+                modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp)
                     .padding(horizontal = 16.dp)
@@ -157,7 +158,7 @@ fun AmityStoryHyperlinkComponent(
                     Text(
                         text = "Cancel",
                         style = AmityTheme.typography.bodyLegacy,
-                        modifier = modifier
+                        modifier = Modifier
                             .clickableWithoutRipple {
                                 openUnsavedAlertDialog.value = true
                             }
@@ -168,7 +169,7 @@ fun AmityStoryHyperlinkComponent(
                 Text(
                     text = "Add Link",
                     style = AmityTheme.typography.titleLegacy,
-                    modifier = modifier.testTag(getAccessibilityId("title_text_view"))
+                    modifier = Modifier.testTag(getAccessibilityId("title_text_view"))
                 )
                 AmityBaseElement(
                     componentScope = getComponentScope(),
@@ -179,7 +180,7 @@ fun AmityStoryHyperlinkComponent(
                         style = AmityTheme.typography.bodyLegacy.copy(
                             color = if (isAllFieldsValid) AmityTheme.colors.primary else AmityTheme.colors.primaryShade2
                         ),
-                        modifier = modifier
+                        modifier = Modifier
                             .clickable(enabled = isAllFieldsValid) {
                                 viewModel.validateUrls(urlText)
                                 viewModel.validateTexts(customText)
@@ -193,7 +194,7 @@ fun AmityStoryHyperlinkComponent(
                 thickness = 0.5.dp,
                 color = AmityTheme.colors.divider,
             )
-            Spacer(modifier = modifier.padding(top = 24.dp))
+            Spacer(modifier = Modifier.padding(top = 24.dp))
 
             Text(
                 buildAnnotatedString {
@@ -207,7 +208,7 @@ fun AmityStoryHyperlinkComponent(
                 style = AmityTheme.typography.titleLegacy.copy(
                     textAlign = TextAlign.Start,
                 ),
-                modifier = modifier
+                modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
                     .testTag(getAccessibilityId("hyper_link_url_title_text_view"))
@@ -216,18 +217,19 @@ fun AmityStoryHyperlinkComponent(
             AmityTextField(
                 text = urlText,
                 hint = "https://example.com",
+                innerPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
                 onValueChange = {
                     urlText = it
                     val matcher = Patterns.WEB_URL.matcher(it)
                     isValidUrlFormat = matcher.matches()
                 },
-                modifier = modifier.testTag(getAccessibilityId("hyper_link_url_text_field"))
+                modifier = Modifier.testTag(getAccessibilityId("hyper_link_url_text_field"))
             )
 
             HorizontalDivider(
                 thickness = 1.dp,
                 color = if (urlValidationError.isEmpty()) AmityTheme.colors.divider else AmityTheme.colors.alert,
-                modifier = modifier.padding(horizontal = 16.dp)
+                modifier = Modifier.padding(horizontal = 16.dp)
             )
 
             if (urlValidationError.isNotEmpty()) {
@@ -237,17 +239,17 @@ fun AmityStoryHyperlinkComponent(
                         fontWeight = FontWeight.Normal,
                         color = AmityTheme.colors.alert
                     ),
-                    modifier = modifier
+                    modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 4.dp)
                         .testTag(getAccessibilityId("hyper_link_url_error_text_view"))
                 )
             }
 
-            Spacer(modifier = modifier.padding(top = 24.dp))
+            Spacer(modifier = Modifier.padding(top = 24.dp))
 
             Box(
-                modifier = modifier
+                modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
             ) {
@@ -274,17 +276,18 @@ fun AmityStoryHyperlinkComponent(
             AmityTextField(
                 text = customText,
                 hint = "Name your link",
+                innerPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
                 maxCharacters = CustomTextLimit,
                 onValueChange = {
                     customText = it
                 },
-                modifier = modifier.testTag(getAccessibilityId("customize_link_text_text_field"))
+                modifier = Modifier.testTag(getAccessibilityId("customize_link_text_text_field"))
             )
 
             HorizontalDivider(
                 thickness = 1.dp,
                 color = if (textValidationError.isEmpty()) AmityTheme.colors.divider else AmityTheme.colors.alert,
-                modifier = modifier.padding(horizontal = 16.dp)
+                modifier = Modifier.padding(horizontal = 16.dp)
             )
 
             Text(
@@ -294,18 +297,18 @@ fun AmityStoryHyperlinkComponent(
                     color = if (textValidationError.isEmpty()) AmityTheme.colors.baseShade2
                     else AmityTheme.colors.alert
                 ),
-                modifier = modifier
+                modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 8.dp)
                     .testTag(getAccessibilityId("customize_link_text_description_text_field"))
             )
 
             if (defaultUrlText.isNotEmpty()) {
-                Spacer(modifier = modifier.padding(top = 32.dp))
+                Spacer(modifier = Modifier.padding(top = 32.dp))
 
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = modifier
+                    modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
                             openRemoveLinkAlertDialog.value = true
@@ -317,7 +320,7 @@ fun AmityStoryHyperlinkComponent(
                         painter = painterResource(id = R.drawable.amity_ic_delete_story),
                         contentDescription = "Remove link",
                         tint = AmityTheme.colors.alert,
-                        modifier = modifier.align(Alignment.CenterVertically)
+                        modifier = Modifier.align(Alignment.CenterVertically)
                     )
 
                     Text(
@@ -325,16 +328,16 @@ fun AmityStoryHyperlinkComponent(
                         style = AmityTheme.typography.bodyLegacy.copy(
                             color = AmityTheme.colors.alert
                         ),
-                        modifier = modifier.testTag(getAccessibilityId("remove_link_button_text_view"))
+                        modifier = Modifier.testTag(getAccessibilityId("remove_link_button_text_view"))
                     )
                 }
 
-                Spacer(modifier = modifier.padding(top = 12.dp))
+                Spacer(modifier = Modifier.padding(top = 12.dp))
 
                 HorizontalDivider(
                     thickness = 0.5.dp,
                     color = AmityTheme.colors.divider,
-                    modifier = modifier.padding(horizontal = 16.dp)
+                    modifier = Modifier.padding(horizontal = 16.dp)
                 )
             }
         }

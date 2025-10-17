@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -228,9 +229,10 @@ fun AmityCreateStoryPage(
                             icon = getConfig().getValue("close_icon").asDrawableRes(),
                             size = 12.dp,
                             modifier = Modifier
+                                .statusBarsPadding()
                                 .size(32.dp)
                                 .constrainAs(closeBtn) {
-                                    top.linkTo(parent.top, 16.dp)
+                                    top.linkTo(parent.top)
                                     start.linkTo(parent.start, 16.dp)
                                 }
                                 .testTag(getAccessibilityId()),
@@ -247,9 +249,10 @@ fun AmityCreateStoryPage(
                             icon = if (isFlashLightOn) R.drawable.amity_ic_story_flash else R.drawable.amity_ic_story_flash_off,
                             size = if (isFlashLightOn) 19.dp else 24.dp,
                             modifier = Modifier
+                                .statusBarsPadding()
                                 .size(32.dp)
                                 .constrainAs(flashBtn) {
-                                    top.linkTo(parent.top, 16.dp)
+                                    top.linkTo(parent.top)
                                     end.linkTo(parent.end, 16.dp)
                                 }
                                 .testTag("flash_light_button"),
@@ -295,11 +298,12 @@ fun AmityCreateStoryPage(
                     }
                 } else {
                     Box(modifier = modifier
+                        .statusBarsPadding()
                         .size(60.dp, 26.dp)
                         .clip(RoundedCornerShape(4.dp))
                         .background(AmityTheme.colors.alert)
                         .constrainAs(durationTimer) {
-                            top.linkTo(parent.top, 16.dp)
+                            top.linkTo(parent.top)
                             start.linkTo(parent.start)
                             end.linkTo(parent.end)
                         }

@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.waterfall
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -246,9 +247,10 @@ fun AmityDraftStoryPage(
                     AmityMenuButton(
                         icon = getConfig().getValue("back_icon").asDrawableRes(),
                         modifier = Modifier
+                            .statusBarsPadding()
                             .size(32.dp)
                             .constrainAs(closeBtn) {
-                                top.linkTo(parent.top, 16.dp)
+                                top.linkTo(parent.top)
                                 start.linkTo(parent.start, 16.dp)
                             }
                             .testTag(getAccessibilityId()),
@@ -266,9 +268,10 @@ fun AmityDraftStoryPage(
                         AmityMenuButton(
                             icon = getConfig().getValue("aspect_ratio_icon").asDrawableRes(),
                             modifier = Modifier
+                                .statusBarsPadding()
                                 .size(32.dp)
                                 .constrainAs(aspectRatioBtn) {
-                                    top.linkTo(parent.top, 16.dp)
+                                    top.linkTo(parent.top)
                                     end.linkTo(hyperlinkBtn.start, 8.dp)
                                 }
                                 .testTag(getAccessibilityId()),
@@ -287,9 +290,10 @@ fun AmityDraftStoryPage(
                     AmityMenuButton(
                         icon = getConfig().getValue("hyperlink_button_icon").asDrawableRes(),
                         modifier = Modifier
+                            .statusBarsPadding()
                             .size(32.dp)
                             .constrainAs(hyperlinkBtn) {
-                                top.linkTo(parent.top, 16.dp)
+                                top.linkTo(parent.top)
                                 end.linkTo(parent.end, 16.dp)
                             }
                             .testTag(getAccessibilityId()),

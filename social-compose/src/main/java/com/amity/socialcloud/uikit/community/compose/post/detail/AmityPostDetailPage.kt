@@ -221,7 +221,11 @@ fun AmityPostDetailPage(
             pageScope = getPageScope(),
             componentId = "comment_tray_component"
         ) {
-            if (post != null && post?.isDeleted() == true || postErrorState == true) {
+            if (post != null &&
+                (post?.isDeleted() == true
+                        || AmitySocialBehaviorHelper.supportedStructureTypes.contains(post?.getStructureType())
+                        || postErrorState == true)
+                ) {
                 AmityPostErrorPage()
             } else {
                 Column(modifier = modifier.fillMaxSize()) {

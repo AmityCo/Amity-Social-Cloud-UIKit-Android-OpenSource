@@ -68,6 +68,8 @@ fun AmityCommunityFeedComponent(
         AmitySocialClient.newFeedRepository()
             .getCommunityFeed(communityId)
             .includeDeleted(false)
+            .dataTypes(AmitySocialBehaviorHelper.supportedPostTypes)
+            .matchingOnlyParentPosts(true)
             .build()
             .query()
             .subscribeOn(Schedulers.io())
