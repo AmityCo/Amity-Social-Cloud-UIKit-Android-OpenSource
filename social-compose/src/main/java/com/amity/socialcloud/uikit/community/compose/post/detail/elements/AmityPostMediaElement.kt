@@ -34,7 +34,6 @@ import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.common.isNotEmptyOrBlank
-import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.R
 
@@ -42,7 +41,7 @@ import com.amity.socialcloud.uikit.community.compose.R
 fun AmityPostMediaElement(
     modifier: Modifier = Modifier,
     post: AmityPost,
-    clipClick: (childPost:AmityPost) -> Unit = {},
+    clipClick: (childPost: AmityPost) -> Unit = {},
 ) {
     val postChildren = remember(
         post.getPostId(),
@@ -83,7 +82,7 @@ fun AmityPostMediaElement(
             )
 
             is AmityPost.Data.CLIP -> AmityChildPostMediaElement(
-                modifier = modifier.aspectRatio(9/16f),
+                modifier = modifier.aspectRatio(9 / 16f),
                 post = post,
                 clipClick = {
                     clipClick(it)
@@ -218,50 +217,52 @@ fun AmityPostMediaImageChildrenTwo(
 ) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
-        modifier = modifier.fillMaxSize()
+        modifier = modifier.fillMaxWidth()
     ) {
         Box(
-            modifier = modifier
-                .fillMaxSize()
+            modifier = Modifier
                 .weight(1f)
+                .aspectRatio(1f)
         ) {
             AmityPostImageView(
                 modifier = Modifier
                     .semantics {
                         role = Role.Image
-                        contentDescription = if (isVideoPost) "Video 1 of 2" else "Photo 1 of 2: ${
-                            getAltText(postChildren[0])
-                        }"
+                        contentDescription =
+                            if (isVideoPost) "Video 1 of 2" else "Photo 1 of 2: ${
+                                getAltText(postChildren[0])
+                            }"
                     },
                 post = postChildren[0],
                 onClick = { onClick(postChildren[0]) }
             )
             if (isVideoPost) {
                 AmityPostMediaPlayButton(
-                    modifier = modifier.align(Alignment.Center)
+                    modifier = Modifier.align(Alignment.Center)
                 )
             }
         }
 
         Box(
-            modifier = modifier
-                .fillMaxSize()
+            modifier = Modifier
                 .weight(1f)
+                .aspectRatio(1f)
         ) {
             AmityPostImageView(
                 modifier = Modifier
                     .semantics {
                         role = Role.Image
-                        contentDescription = if (isVideoPost) "Video 2 of 2" else "Photo 2 of 2: ${
-                            getAltText(postChildren[1])
-                        }"
+                        contentDescription =
+                            if (isVideoPost) "Video 2 of 2" else "Photo 2 of 2: ${
+                                getAltText(postChildren[1])
+                            }"
                     },
                 post = postChildren[1],
                 onClick = { onClick(postChildren[1]) }
             )
             if (isVideoPost) {
                 AmityPostMediaPlayButton(
-                    modifier = modifier.align(Alignment.Center)
+                    modifier = Modifier.align(Alignment.Center)
                 )
             }
         }
@@ -283,7 +284,6 @@ fun AmityPostMediaImageChildrenThree(
         Box(
             modifier = modifier
                 .fillMaxSize()
-                .weight(1f)
         ) {
             AmityPostImageView(
                 modifier = Modifier
@@ -305,9 +305,7 @@ fun AmityPostMediaImageChildrenThree(
 
         Row(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
-            modifier = modifier
-                .fillMaxWidth()
-                .weight(1f)
+            modifier = modifier.fillMaxSize()
         ) {
             Box(
                 modifier = modifier
