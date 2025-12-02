@@ -223,7 +223,7 @@ fun AmityPostDetailPage(
         ) {
             if (post != null &&
                 (post?.isDeleted() == true
-                        || AmitySocialBehaviorHelper.supportedStructureTypes.contains(post?.getStructureType())
+                        || !AmitySocialBehaviorHelper.supportedStructureTypes.contains(post?.getStructureType())
                         || postErrorState == true)
                 ) {
                 AmityPostErrorPage()
