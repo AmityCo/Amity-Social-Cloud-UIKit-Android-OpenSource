@@ -97,18 +97,18 @@ data class AmityColors(
         theme: AmityUIKitConfig.UIKitTheme,
         isUIKitInDarkTheme: Boolean,
     ): AmityColors {
-        val primary = theme.primaryColor.asColor()
-        val secondary = theme.secondaryColor.asColor()
-        val base = theme.baseColor.asColor()
-        val baseShade1 = theme.baseShade1Color.asColor()
-        val baseShade2 = theme.baseShade2Color.asColor()
-        val baseShade3 = theme.baseShade3Color.asColor()
-        val baseShade4 = theme.baseShade4Color.asColor()
-        val baseInverse = theme.baseInverseColor.asColor()
-        val alert = theme.alertColor.asColor()
-        val divider = theme.baseShade4Color.asColor()
-        val background = theme.backgroundColor.asColor()
-        val backgroundShade1 = theme.backgroundShade1Color.asColor()
+        val primary = theme.primaryColor?.asColor() ?: amityColorPrimary
+        val secondary = theme.secondaryColor?.asColor() ?: amityColorSecondary
+        val base = theme.baseColor?.asColor() ?: amityColorBase
+        val baseShade1 = theme.baseShade1Color?.asColor() ?: amityColorBaseShade1
+        val baseShade2 = theme.baseShade2Color?.asColor() ?: amityColorBaseShade2
+        val baseShade3 = theme.baseShade3Color?.asColor() ?: amityColorBaseShade3
+        val baseShade4 = theme.baseShade4Color?.asColor() ?: amityColorBaseShade4
+        val baseInverse = theme.baseInverseColor?.asColor() ?: amityColorBaseInverse
+        val alert = theme.alertColor?.asColor() ?: amityColorAlert
+        val divider = theme.baseShade4Color?.asColor() ?: amityColorBaseShade4
+        val background = theme.backgroundColor?.asColor() ?: amityColorBackground
+        val backgroundShade1 = theme.backgroundShade1Color?.asColor() ?: amityColorBackgroundShade1
 
         val newsfeedDivider = if (isUIKitInDarkTheme) {
             Color.Black
