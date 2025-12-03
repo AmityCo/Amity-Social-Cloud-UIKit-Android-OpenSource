@@ -311,6 +311,7 @@ fun AmityPostMediaImageChildrenThree(
                 modifier = modifier
                     .fillMaxSize()
                     .weight(1f)
+                    .aspectRatio(1f)
             ) {
                 AmityPostImageView(
                     modifier = Modifier
@@ -335,6 +336,7 @@ fun AmityPostMediaImageChildrenThree(
                 modifier = modifier
                     .fillMaxSize()
                     .weight(1f)
+                    .aspectRatio(1f)
             ) {
                 AmityPostImageView(
                     modifier = Modifier
