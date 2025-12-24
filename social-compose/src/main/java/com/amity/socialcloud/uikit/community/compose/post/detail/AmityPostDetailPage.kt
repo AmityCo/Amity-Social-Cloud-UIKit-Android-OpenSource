@@ -94,6 +94,7 @@ fun AmityPostDetailPage(
     commentId: String? = null,
     parentId: String? = null,
     replyToCommentId: String? = null,
+    eventHostId: String? = null,
 ) {
     val context = LocalContext.current
 
@@ -221,10 +222,8 @@ fun AmityPostDetailPage(
             pageScope = getPageScope(),
             componentId = "comment_tray_component"
         ) {
-            if (post != null &&
-                (post?.isDeleted() == true
-                        || !AmitySocialBehaviorHelper.supportedStructureTypes.contains(post?.getStructureType())
-                        || postErrorState == true)
+            if (post != null && ((post?.isDeleted() == true
+                        || !AmitySocialBehaviorHelper.supportedStructureTypes.contains(post?.getStructureType())) || postErrorState)
                 ) {
                 AmityPostErrorPage()
             } else {
@@ -307,6 +306,7 @@ fun AmityPostDetailPage(
 
                         item(key = "post_content") {
                             if (post != null && post?.isDeleted() == false) {
+                                val isEventHost = eventHostId != null && post?.getCreator()?.getUserId() == eventHostId
                                 AmityPostContentComponent(
                                     modifier = modifier,
                                     pageScope = getPageScope(),
@@ -315,6 +315,7 @@ fun AmityPostDetailPage(
                                     category = category,
                                     hideTarget = hideTarget,
                                     hideMenuButton = true,
+                                    isEventHost = isEventHost,
                                 )
                                 HorizontalDivider(
                                     color = AmityTheme.colors.baseShade4,
@@ -343,6 +344,7 @@ fun AmityPostDetailPage(
                             editingCommentId = editingCommentId,
                             shouldAllowInteraction = true,
                             showEngagementRow = true,
+                            eventHostId = eventHostId,
                             onReply = {
                                 replyCommentId = it
                             },

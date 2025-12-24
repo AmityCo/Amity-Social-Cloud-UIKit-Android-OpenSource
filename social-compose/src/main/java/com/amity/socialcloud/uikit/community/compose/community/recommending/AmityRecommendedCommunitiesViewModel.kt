@@ -11,6 +11,7 @@ import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import com.amity.socialcloud.uikit.common.utils.isSignedIn
 import io.reactivex.Flowable
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.processors.PublishProcessor
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,8 +19,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
-import kotlin.compareTo
-import kotlin.printStackTrace
 
 
 class AmityRecommendedCommunitiesViewModel : AmityBaseViewModel() {
@@ -40,6 +39,11 @@ class AmityRecommendedCommunitiesViewModel : AmityBaseViewModel() {
         MutableStateFlow(emptyList())
     val joinRequestList: StateFlow<List<AmityJoinRequest>> = _joinRequestList.asStateFlow()
 
+    private val getJoinRequestsRelay = PublishProcessor.create<List<String>>()
+
+    init {
+        observeJoinRequests()
+    }
 
     private val recommendedCommunitiesFlow = AmitySocialClient.newCommunityRepository()
         .getRecommendedCommunities(includeDiscoverablePrivateCommunity = true)
@@ -80,25 +84,33 @@ class AmityRecommendedCommunitiesViewModel : AmityBaseViewModel() {
         }
 
     private fun getJoinRequestList(communityIds: List<String>) {
-        if (AmityCoreClient.isSignedIn()) {
-            addDisposable(
-                AmitySocialClient.newCommunityRepository().getJoinRequestList(communityIds)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .doOnError { it.printStackTrace() }
-                    .doOnNext { requests ->
-                        _joinRequestList.update {
-                            requests
-                        }
-                    }
-                    .subscribe()
-            )
+        if (communityIds.isNotEmpty()) {
+            getJoinRequestsRelay.onNext(communityIds)
         }
     }
 
     fun getRecommendedCommunities(): Flow<List<AmityCommunity>> {
         _communityListState.value = CommunityListState.LOADING
         return recommendedCommunitiesFlow
+    }
+
+    private fun observeJoinRequests() {
+        if (AmityCoreClient.isSignedIn()) {
+            getJoinRequestsRelay
+                .distinctUntilChanged()
+                .flatMap { communityIds ->
+                    AmitySocialClient.newCommunityRepository().getJoinRequestList(communityIds)
+                }
+                .doOnNext { requests ->
+                    _joinRequestList.update {
+                        requests
+                    }
+                }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe()
+                .let(::addDisposable)
+        }
     }
 
     fun updateMembership(community: AmityCommunity) {

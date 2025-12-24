@@ -86,11 +86,11 @@ fun AmityStoryTargetElement(
                 .testTag("story_target_list/*")
         ) {
             Box(
-                modifier = Modifier.size(if (isCommunityTarget) 48.dp else 64.dp)
+                modifier = Modifier.size(if (isCommunityTarget) 48.dp else 72.dp)
             ) {
                 AmityCommunityAvatarView(
                     community = community,
-                    size = if (isCommunityTarget) 40.dp else 56.dp,
+                    size = if (isCommunityTarget) 40.dp else 64.dp,
                     modifier = Modifier
                         .testTag("story_target_list/target_avatar")
                         .align(Alignment.Center)
@@ -116,7 +116,7 @@ fun AmityStoryTargetElement(
                         painter = painterResource(id = badge),
                         contentDescription = "",
                         modifier = Modifier
-                            .size(if (isCommunityTarget) 16.dp else 20.dp)
+                            .size(if (isCommunityTarget) 16.dp else 24.dp)
                             .align(Alignment.BottomEnd)
                             .testTag("story_target_list/target_create_story_icon")
                     )

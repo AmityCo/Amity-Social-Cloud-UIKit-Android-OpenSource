@@ -50,4 +50,9 @@ dependencies {
     implementation "androidx.camera:camera-extensions:1.5.1"
     implementation("$amitySDKDependency:amity-video-publisher:$amityMessagingSdkVersion")
     implementation("$amitySDKDependency:amity-video-player:$amityMessagingSdkVersion")
+    implementation "androidx.media3:media3-exoplayer-hls:$media3Version"
+
+    // Depend on LiveKit SDK separately to keep up to date.
+    implementation "io.livekit:livekit-android:v1.4.0"
+    implementation "io.livekit:livekit-android-compose-components:1.4.0"
 }

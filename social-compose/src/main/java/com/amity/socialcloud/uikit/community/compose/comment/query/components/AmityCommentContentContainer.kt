@@ -37,6 +37,7 @@ fun AmityCommentContentContainer(
     modifier: Modifier = Modifier,
     comment: AmityComment,
     previewLines: Int = EXPANDABLE_TEXT_MAX_LINES,
+    isEventHost: Boolean = false,
     onClick: () -> Unit = {},
 ) {
     val context = LocalContext.current
@@ -95,7 +96,9 @@ fun AmityCommentContentContainer(
             }
         }
 
-        if (comment.isCreatorCommunityModerator()) {
+        if (isEventHost) {
+            AmityCommentEventHostBadge()
+        } else if (comment.isCreatorCommunityModerator()) {
             AmityCommentModeratorBadge()
         }
 

@@ -26,9 +26,15 @@ fun AmityTimePickerDialog(
     confirmButton: @Composable () -> Unit,
     dismissButton: @Composable (() -> Unit)? = null,
 ) {
+    val backgroundColor = AmityTheme.colors.background
+    val baseColor = AmityTheme.colors.base
+    val baseShade4Color = AmityTheme.colors.baseShade4
+    val primaryColor = AmityTheme.colors.primary
+    val primaryShade3Color = AmityTheme.colors.primaryShade3
+
     DatePickerDialog(
         colors = DatePickerDefaults.colors(
-            containerColor = AmityTheme.colors.background,
+            containerColor = backgroundColor,
         ),
         onDismissRequest = onDismissRequest,
         confirmButton = confirmButton,
@@ -44,19 +50,19 @@ fun AmityTimePickerDialog(
                     .fillMaxWidth()
                     .padding(24.dp),
                 text = "Select time",
-                color = AmityTheme.colors.base
+                color = baseColor
             )
             TimePicker(
                 state = timePickerState,
                 colors = TimePickerDefaults.colors(
-                    clockDialColor = AmityTheme.colors.baseShade4,
+                    clockDialColor = baseShade4Color,
                     clockDialSelectedContentColor = Color.White,
-                    selectorColor = AmityTheme.colors.primary,
-                    periodSelectorSelectedContainerColor = AmityTheme.colors.primaryShade3,
-                    periodSelectorSelectedContentColor = AmityTheme.colors.highlight,
-                    timeSelectorSelectedContainerColor = AmityTheme.colors.primaryShade3,
-                    timeSelectorUnselectedContainerColor = AmityTheme.colors.baseShade4,
-                    timeSelectorSelectedContentColor = AmityTheme.colors.primary,
+                    selectorColor = primaryColor,
+                    periodSelectorSelectedContainerColor = primaryShade3Color,
+                    periodSelectorSelectedContentColor = primaryColor,
+                    timeSelectorSelectedContainerColor = primaryShade3Color,
+                    timeSelectorUnselectedContainerColor = baseShade4Color,
+                    timeSelectorSelectedContentColor = primaryColor,
                 )
             )
         }

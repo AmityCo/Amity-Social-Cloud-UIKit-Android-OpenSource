@@ -43,7 +43,6 @@ class MainActivity : RxAppCompatActivity() {
         if (it != null) {
             SamplePreferences.getApiKey().set(it.apiKey)
             SamplePreferences.getHttpUrl().set(it.httpUrl)
-            SamplePreferences.getSocketUrl().set(it.socketUrl)
             SamplePreferences.getMqttBroker().set(it.mqttBroker)
         }
     }
@@ -120,7 +119,6 @@ class MainActivity : RxAppCompatActivity() {
                 val env = Environment(
                     SamplePreferences.getApiKey().get(),
                     SamplePreferences.getHttpUrl().get(),
-                    SamplePreferences.getSocketUrl().get(),
                     SamplePreferences.getMqttBroker().get()
                 )
                 SampleRetrofitProvider.reset() // Reset Retrofit when environment changes

@@ -74,6 +74,7 @@ import com.amity.socialcloud.uikit.common.utils.getText
 import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostCategory
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetailPageViewModel
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlin.math.roundToInt
@@ -86,6 +87,7 @@ fun AmityPostEngagementView(
     post: AmityPost,
     isPostDetailPage: Boolean,
     shareButtonClick: (postId:String) -> Unit = {},
+    onCommentAction: (() -> Unit)? = null,
 ) {
     val context = LocalContext.current
     val behavior by lazy {
@@ -475,6 +477,7 @@ fun AmityPostEngagementView(
                                 } else {
                                     it.clickableWithoutRipple {
                                         localFocus.clearFocus()
+                                        onCommentAction?.invoke()
                                     }
                                 }
                             }

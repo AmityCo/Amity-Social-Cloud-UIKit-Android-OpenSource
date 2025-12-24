@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.community.membership.element
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -137,13 +138,26 @@ fun AmityCommunityModeratorsMembershipComponent(
                                 }
                             }
 
-                            Text(
-                                text = member.getUser()?.getDisplayName() ?: "",
-                                style = AmityTheme.typography.bodyLegacy.copy(
-                                    fontWeight = FontWeight.SemiBold,
-                                ),
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(4.dp),
                                 modifier = modifier.weight(1f, fill = false)
-                            )
+                            ) {
+                                Text(
+                                    text = member.getUser()?.getDisplayName() ?: "",
+                                    style = AmityTheme.typography.bodyLegacy.copy(
+                                        fontWeight = FontWeight.SemiBold,
+                                    ),
+                                    modifier = modifier.weight(1f, fill = false)
+                                )
+                                if (member.getUser()?.isBrand() == true) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.amity_ic_brand_badge),
+                                        contentDescription = "Brand badge",
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                }
+                            }
 
                             if (member.getUserId() != AmityCoreClient.getUserId()) {
                                 Icon(

@@ -40,6 +40,7 @@ import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadata
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionee
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
+import com.amity.socialcloud.uikit.common.extionsions.extractUrls
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.R
 import kotlinx.coroutines.delay
@@ -85,6 +86,10 @@ fun AmityMentionTextField(
     mentionColor: Color = AmityTheme.colors.highlight,
     hashtagColor: Color = AmityTheme.colors.highlight,
     cursorColor: Color = AmityTheme.colors.primary,
+    enableUrlHighlighting: Boolean = false,
+    urlColor: Color = AmityTheme.colors.primary,
+    urlHighlights: List<UrlHighlight> = emptyList(),
+    onUrlsDetected: (List<UrlHighlight>) -> Unit = {},
 ) {
     val maxHashtag = 30
 
@@ -100,6 +105,9 @@ fun AmityMentionTextField(
 
     // Track hashtags internally
     var hashtags by remember { mutableStateOf<List<AmityHashtag>>(emptyList()) }
+    
+    // Track detected URLs for highlighting
+    var detectedUrls by remember(urlHighlights) { mutableStateOf<List<UrlHighlight>>(urlHighlights) }
 
     // Convert external mentions to our internal format
     val initialMentions by remember(mentionMetadata, mentionees) {
@@ -188,16 +196,19 @@ fun AmityMentionTextField(
     // Capture theme colors once at composition time to pass to non-composable functions
     val mentionColorValue = mentionColor
     val hashtagColorValue = hashtagColor
+    val urlColorValue = urlColor
 
-    // Format the text with mention and hashtag highlighting
-    val formattedText by remember(textFieldValue.text, mentions, hashtags, mentionColorValue, hashtagColorValue) {
+    // Format the text with mention, hashtag, and URL highlighting
+    val formattedText by remember(textFieldValue.text, mentions, hashtags, detectedUrls, mentionColorValue, hashtagColorValue, urlColorValue, enableUrlHighlighting) {
         derivedStateOf {
-            formatTextWithMentionsAndHashtags(
+            formatTextWithMentionsHashtagsAndUrls(
                 text = textFieldValue.text,
                 mentions = mentions,
                 hashtags = if (onHashtags == {}) emptyList() else hashtags,
+                urls = if (enableUrlHighlighting) detectedUrls else emptyList(),
                 mentionColor = mentionColorValue,
-                hashtagColor = hashtagColorValue
+                hashtagColor = hashtagColorValue,
+                urlColor = urlColorValue
             )
         }
     }
@@ -289,6 +300,11 @@ fun AmityMentionTextField(
                     )
                 }
 
+                // Update selection even if text hasn't changed (for cursor positioning)
+                if (limitedValue.selection != textFieldValue.selection) {
+                    textFieldValue = textFieldValue.copy(selection = limitedValue.selection)
+                }
+
                 // Only update text content, preserve the annotated string formatting
                 if (limitedValue.text != textFieldValue.text) {
                     // Text has changed, update mentions
@@ -307,8 +323,14 @@ fun AmityMentionTextField(
                         updateHashtagPositions(hashtags, diff.position, diff.change)
                     } else hashtags
 
+                    // Update URL positions immediately if text changed
+                    val updatedUrls = if (diff != null) {
+                        updateUrlPositions(detectedUrls, diff.position, diff.change)
+                    } else detectedUrls
+
                     mentions = updatedMentions
                     hashtags = updatedHashtags
+                    detectedUrls = updatedUrls
 
                     // Improved mention token detection logic
                     val hasActiveMention = detectActiveMentionToken(limitedValue)
@@ -370,6 +392,8 @@ fun AmityMentionTextField(
                             }
                         }
                     }
+                    
+
                 }
             },
             modifier = Modifier
@@ -395,6 +419,31 @@ fun AmityMentionTextField(
                 }
             }
         )
+    }
+
+    // Debounced URL detection (2 seconds after user stops typing)
+    // Only auto-detect if no urlHighlights are provided
+    LaunchedEffect(value, enableUrlHighlighting, urlHighlights) {
+        if (urlHighlights.isNotEmpty()) {
+            // Use provided URL highlights from link objects
+            detectedUrls = urlHighlights
+            onUrlsDetected(detectedUrls)
+        } else if (enableUrlHighlighting && value.isNotEmpty()) {
+            delay(2000) // Wait 2 seconds after text changes
+            val urlPositions = value.extractUrls()
+            detectedUrls = urlPositions.map { urlPos ->
+                UrlHighlight(
+                    start = urlPos.start,
+                    end = urlPos.end,
+                    url = urlPos.url
+                )
+            }
+            onUrlsDetected(detectedUrls)
+        } else if (value.isEmpty()) {
+            // Clear URLs when text is empty
+            detectedUrls = emptyList()
+            onUrlsDetected(emptyList())
+        }
     }
 
     if (showHashtagExceedDialog) {
@@ -516,6 +565,32 @@ private fun updateHashtagPositions(
             else -> hashtag
         }
     }.filter { it.getIndex() >= 0 } // Remove invalid hashtags
+}
+
+/**
+ * Update URL positions when text changes
+ */
+private fun updateUrlPositions(
+    urls: List<UrlHighlight>,
+    changePosition: Int,
+    change: Int
+): List<UrlHighlight> {
+    if (change == 0 || urls.isEmpty()) return urls
+
+    return urls.mapNotNull { url ->
+        when {
+            // If change happens before URL, adjust position
+            url.start > changePosition ->
+                url.copy(start = url.start + change, end = url.end + change)
+
+            // If change happens inside URL, remove that URL highlight
+            changePosition >= url.start && changePosition < url.end ->
+                null // Mark for removal
+
+            // Otherwise keep as is
+            else -> url
+        }
+    }
 }
 
 private fun detectActiveHashtagToken(value: TextFieldValue): String? {
@@ -762,6 +837,104 @@ data class MentionData(
     val length: Int // Derived from displayName.length
 )
 
+/**
+ * Data class to track URL information
+ */
+data class UrlHighlight(
+    val start: Int,
+    val end: Int,
+    val url: String
+)
+
+/**
+ * Format text with mentions, hashtags, and URLs highlighted
+ */
+private fun formatTextWithMentionsHashtagsAndUrls(
+    text: String,
+    mentions: List<MentionData>,
+    hashtags: List<AmityHashtag>,
+    urls: List<UrlHighlight>,
+    mentionColor: Color,
+    hashtagColor: Color,
+    urlColor: Color
+): AnnotatedString {
+    if (mentions.isEmpty() && hashtags.isEmpty() && urls.isEmpty()) return AnnotatedString(text)
+
+    return buildAnnotatedString {
+        var lastIndex = 0
+
+        // Combine mentions, hashtags, and URLs into highlights
+        val allHighlights = mutableListOf<TextHighlight>()
+        
+        mentions.forEach { mention ->
+            allHighlights.add(
+                TextHighlight(
+                    start = mention.startPosition,
+                    end = mention.startPosition + mention.length + 1, // +1 for @
+                    color = mentionColor
+                )
+            )
+        }
+        
+        hashtags.forEach { hashtag ->
+            allHighlights.add(
+                TextHighlight(
+                    start = hashtag.getIndex(),
+                    end = hashtag.getIndex() + hashtag.getLength() + 1, // +1 for #
+                    color = hashtagColor
+                )
+            )
+        }
+        
+        urls.forEach { url ->
+            allHighlights.add(
+                TextHighlight(
+                    start = url.start,
+                    end = url.end,
+                    color = urlColor
+                )
+            )
+        }
+
+        // Remove overlapping highlights before sorting
+        val nonOverlappingHighlights = allHighlights.sortedBy { it.start }.fold(mutableListOf<TextHighlight>()) { acc, highlight ->
+            if (acc.isEmpty() || highlight.start >= acc.last().end) {
+                acc.add(highlight)
+            }
+            acc
+        }
+
+        // Sort by start position
+        val sortedHighlights = nonOverlappingHighlights
+
+        for (highlight in sortedHighlights) {
+            // Validate indices
+            if (highlight.end > text.length || highlight.start < 0 || highlight.start >= text.length) {
+                continue
+            }
+
+            // Add text before this highlight
+            if (highlight.start > lastIndex) {
+                append(text.substring(lastIndex, highlight.start))
+            }
+
+            // Add highlighted text with styling
+            withStyle(SpanStyle(
+                color = highlight.color,
+                textDecoration = TextDecoration.Underline
+            )) {
+                append(text.substring(highlight.start, highlight.end))
+            }
+
+            lastIndex = highlight.end
+        }
+
+        // Add any remaining text
+        if (lastIndex < text.length) {
+            append(text.substring(lastIndex))
+        }
+    }
+}
 
 @Composable
 fun HashtagsExceedDialog(

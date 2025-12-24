@@ -17,7 +17,11 @@ import com.amity.socialcloud.uikit.community.compose.community.membership.list.A
 import com.amity.socialcloud.uikit.community.compose.community.pending.AmityPendingPostsPageActivity
 import com.amity.socialcloud.uikit.community.compose.community.pending.AmityPendingRequestPageActivity
 import com.amity.socialcloud.uikit.community.compose.community.setting.AmityCommunitySettingPageActivity
+import com.amity.socialcloud.uikit.community.compose.event.detail.AmityEventDetailPageActivity
+import com.amity.socialcloud.uikit.community.compose.event.setup.AmityEventSetupPageActivity
+import com.amity.socialcloud.uikit.community.compose.event.setup.AmityEventSetupPageMode
 import com.amity.socialcloud.uikit.community.compose.livestream.create.AmityCreateLivestreamPageActivity
+import com.amity.socialcloud.uikit.community.compose.livestream.room.create.AmityCreateRoomPageActivity
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerOptions
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerPageActivity
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostTargetType
@@ -54,12 +58,14 @@ open class AmityCommunityProfilePageBehavior : AmityBaseBehavior() {
         context: Context,
         postId: String,
         category: AmityPostCategory,
+        eventHostId: String? = null,
     ) {
         val intent = AmityPostDetailPageActivity.newIntent(
             context = context.pageContext,
             id = postId,
             category = category,
             hideTarget = true,
+            eventHostId = eventHostId,
         )
         context.pageContext.startActivity(intent)
     }
@@ -106,11 +112,45 @@ open class AmityCommunityProfilePageBehavior : AmityBaseBehavior() {
     open fun goToCreateLivestreamPage(
         context: Context,
     ) {
-        val intent = AmityCreateLivestreamPageActivity.newIntent(
+        val intent = AmityCreateRoomPageActivity.newIntent(
             context = context.pageContext,
             targetId = context.community?.getCommunityId()!!,
             targetType = AmityPost.TargetType.COMMUNITY,
             community = context.community,
+        )
+        context.pageContext.startActivity(intent)
+    }
+
+    open fun goToCreateEventPage(
+        context: Context,
+    ) {
+        val intent = AmityEventSetupPageActivity.newIntent(
+            context = context.pageContext,
+            mode = AmityEventSetupPageMode.Create(
+                communityId = context.community?.getCommunityId()
+            ),
+        )
+        context.pageContext.startActivity(intent)
+    }
+
+    open fun goToEventDetailPage(
+        context: Context,
+        eventId: String,
+    ) {
+        val intent = AmityEventDetailPageActivity.newIntent(
+            context = context.pageContext,
+            eventId = eventId,
+        )
+        context.pageContext.startActivity(intent)
+    }
+
+    open fun goToEditEventPage(
+        context: Context,
+        eventId: String,
+    ) {
+        val intent = AmityEventSetupPageActivity.newIntent(
+            context = context.pageContext,
+            mode = AmityEventSetupPageMode.Edit(eventId = eventId),
         )
         context.pageContext.startActivity(intent)
     }

@@ -314,6 +314,41 @@ fun AmityCreatePostMenuComponent(
                         }
                     }
                 )
+
+                DropdownMenuItem(
+                    text = {
+                        AmityBaseElement(
+                            pageScope = pageScope,
+                            componentScope = getComponentScope(),
+                            elementId = "create_event_button"
+                        ) {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = modifier
+                                    .padding(horizontal = 8.dp)
+                                    .testTag(getAccessibilityId()),
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = com.amity.socialcloud.uikit.common.R.drawable.amity_ic_create_event),
+                                    contentDescription = "Create Event",
+                                    tint = AmityTheme.colors.base,
+                                    modifier = modifier.size(20.dp)
+                                )
+                                Text(
+                                    text = "Event",
+                                    style = AmityTheme.typography.bodyLegacy.copy(
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                )
+                            }
+                        }
+                    },
+                    onClick = {
+                        onDismiss()
+                        behavior.goToSelectEventTargetPage(context = context)
+                    }
+                )
             }
         }
     }

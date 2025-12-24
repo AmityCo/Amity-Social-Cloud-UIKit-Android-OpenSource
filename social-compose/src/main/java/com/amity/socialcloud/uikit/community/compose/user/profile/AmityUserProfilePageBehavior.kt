@@ -13,6 +13,7 @@ import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipFeedPage
 import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipFeedPageType
 import com.amity.socialcloud.uikit.community.compose.clip.view.util.SharedClipFeedStore
 import com.amity.socialcloud.uikit.community.compose.livestream.create.AmityCreateLivestreamPageActivity
+import com.amity.socialcloud.uikit.community.compose.livestream.room.create.AmityCreateRoomPageActivity
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerOptions
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerPageActivity
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostTargetType
@@ -23,6 +24,17 @@ import com.amity.socialcloud.uikit.community.compose.user.edit.AmityEditUserProf
 import kotlinx.coroutines.flow.Flow
 
 open class AmityUserProfilePageBehavior : AmityBaseBehavior() {
+
+    open fun goToUserProfilePage(
+        context: Context,
+        userId: String
+    ) {
+        val intent = AmityUserProfilePageActivity.newIntent(
+            context = context,
+            userId = userId
+        )
+        context.startActivity(intent)
+    }
 
     open fun goToEditUserPage(
         context: Context,
@@ -76,7 +88,7 @@ open class AmityUserProfilePageBehavior : AmityBaseBehavior() {
         targetType: AmityPost.TargetType,
         community: AmityCommunity? = null,
     ) {
-        val intent = AmityCreateLivestreamPageActivity.newIntent(
+        val intent = AmityCreateRoomPageActivity.newIntent(
             context = context,
             targetId = targetId,
             targetType = targetType,

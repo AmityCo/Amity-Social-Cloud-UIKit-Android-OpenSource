@@ -25,6 +25,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -307,17 +308,24 @@ private fun PollItem(
     }
 
     // Optimize image loading with better caching
+    val imageUrl = remember(answer.id) {
+        answer.getImage()?.getUrl(AmityImage.Size.MEDIUM)
+    }
+    
+    val imageRequest = remember(answer.id) {
+        ImageRequest.Builder(context)
+            .data(imageUrl)
+            .crossfade(300)
+            .diskCachePolicy(CachePolicy.ENABLED)
+            .memoryCachePolicy(CachePolicy.ENABLED)
+            .build()
+    }
+    
     val painter = rememberAsyncImagePainter(
-        model = remember(answer.id) {
-            ImageRequest.Builder(context)
-                .data(answer.getImage()?.getUrl(AmityImage.Size.MEDIUM))
-                .crossfade(300) // Reduce crossfade duration
-                .diskCachePolicy(CachePolicy.ENABLED)
-                .memoryCachePolicy(CachePolicy.ENABLED)
-                .placeholderMemoryCacheKey("poll_placeholder")
-                .build()
-        }
+        model = imageRequest
     )
+    
+    val painterState by painter.state.collectAsState()
 
     Card(
         modifier = modifier,
@@ -345,7 +353,7 @@ private fun PollItem(
         ) {
 
             answer.getImage()?.let { image ->
-                when (painter.state.value) {
+                when (painterState) {
                     is AsyncImagePainter.State.Loading -> {
                         Box(
                             Modifier
@@ -379,7 +387,9 @@ private fun PollItem(
                         )
                     }
 
-                    else -> { /* Do nothing, image will be displayed below */ }
+                    else -> {
+                        /* Do nothing, image will be displayed below */
+                    }
                 }
             }
 

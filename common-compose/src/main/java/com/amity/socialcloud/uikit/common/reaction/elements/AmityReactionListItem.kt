@@ -65,16 +65,30 @@ fun AmityReactionListItem(
                 .padding(start = 12.dp)
                 .fillMaxHeight()
         ) {
-            Text(
-                text = displayName,
-                style = AmityTheme.typography.bodyLegacy.copy(
-                    fontWeight = FontWeight.SemiBold,
-                    color = AmityTheme.colors.base
-                ),
-                modifier = modifier.clickableWithoutRipple {
-                    onUserClick(reaction.getCreatorId())
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(
+                    text = displayName,
+                    style = AmityTheme.typography.bodyLegacy.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        color = AmityTheme.colors.base
+                    ),
+                    modifier = modifier
+                        .weight(1f, fill = false)
+                        .clickableWithoutRipple {
+                            onUserClick(reaction.getCreatorId())
+                        }
+                )
+                if (reaction.getCreator()?.isBrand() == true) {
+                    Image(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_brand_badge),
+                        contentDescription = "Brand badge",
+                        modifier = Modifier.size(16.dp)
+                    )
                 }
-            )
+            }
 
             if (isMyReaction) {
                 Text(

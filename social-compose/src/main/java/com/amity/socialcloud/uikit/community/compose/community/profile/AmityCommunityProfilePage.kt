@@ -66,6 +66,7 @@ import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipFeedPage
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityModalSheetUIState
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageBehavior
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfileViewModel
+import com.amity.socialcloud.uikit.community.compose.community.profile.component.amityCommunityEventFeed
 import com.amity.socialcloud.uikit.community.compose.community.profile.component.AmityCommunityHeaderComponent
 import com.amity.socialcloud.uikit.community.compose.community.profile.component.AmityCommunityHeaderStyle
 import com.amity.socialcloud.uikit.community.compose.community.profile.element.AmityCommunityModalBottomSheet
@@ -129,12 +130,6 @@ fun AmityCommunityProfilePage(
     var showPollSelectionBottomSheet by remember { mutableStateOf(false) }
 
     var isHeaderSticky by remember { mutableStateOf(false) }
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = state.isRefreshing,
-        onRefresh = {
-            viewModel.refresh()
-        }
-    )
 
     val bottomSheetUiState by viewModel.sheetUIState.collectAsState()
 
@@ -155,6 +150,36 @@ fun AmityCommunityProfilePage(
         remember(communityId) { viewModel.getCommunityClipPosts() }.collectAsLazyPagingItems()
 
     var selectedTabIndex by remember { mutableIntStateOf(0) }
+    var eventFilterSelection by remember { mutableStateOf("Upcoming") }
+
+    // Query events based on filter selection
+    val upcomingEvents =
+        remember(communityId) { viewModel.getCommunityUpcomingEvents() }.collectAsLazyPagingItems()
+    val pastEvents =
+        remember(communityId) { viewModel.getCommunityPastEvents() }.collectAsLazyPagingItems()
+    val liveEvents =
+        remember(communityId) { viewModel.getCommunityLiveEvents() }.collectAsLazyPagingItems()
+    val allEvents =
+        remember(communityId) { viewModel.getCommunityEvents() }.collectAsLazyPagingItems()
+
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = state.isRefreshing,
+        onRefresh = {
+            viewModel.refresh()
+            // Refresh event feeds
+            liveEvents.refresh()
+            upcomingEvents.refresh()
+            pastEvents.refresh()
+        }
+    )
+
+
+    // Use the appropriate event list based on filter
+    val events = when (eventFilterSelection) {
+        "Upcoming" -> upcomingEvents
+        "Past" -> pastEvents
+        else -> allEvents
+    }
 
     val hasCreatePrivilege by if (!AmityCoreClient.isSignedIn()) {
         remember { mutableStateOf(false) }
@@ -242,8 +267,8 @@ fun AmityCommunityProfilePage(
         isShowCompleteCreatedCommunity = false
     }
 
-    var selectedVideoClipsTabIndex by remember { mutableIntStateOf(0) }
-    val videoClipTabsTitles = listOf("Videos", "Clips")
+    var selectedMediaTabIndex by remember { mutableIntStateOf(0) }
+    val mediaTabTitles = listOf("Photos", "Videos", "Clips")
 
     AmityBasePage(pageId = "community_profile_page") {
         Scaffold { padding ->
@@ -416,16 +441,22 @@ fun AmityCommunityProfilePage(
                                 }
 
                                 2 -> {
-                                    amityCommunityImageFeedLLS(
+                                    amityCommunityEventFeed(
                                         modifier = modifier,
-                                        imagePosts = imagePosts,
-                                        onViewPost = { postId, category ->
-                                            behavior.goToPostDetailPage(
+                                        pageScope = getPageScope(),
+                                        communityId = communityId,
+                                        liveEvents = liveEvents,
+                                        events = events,
+                                        selectedFilter = eventFilterSelection,
+                                        onFilterChange = { filter ->
+                                            eventFilterSelection = filter
+                                        },
+                                        onEventClick = { event ->
+                                            behavior.goToEventDetailPage(
                                                 AmityCommunityProfilePageBehavior.Context(
                                                     pageContext = context,
                                                 ),
-                                                postId = postId,
-                                                category = category,
+                                                eventId = event.getEventId()
                                             )
                                         }
                                     )
@@ -434,15 +465,31 @@ fun AmityCommunityProfilePage(
                                 3 -> {
                                     item {
                                         AmityVideoAndClipChipSelector(
-                                            tabTitles = videoClipTabsTitles,
-                                            selectedTabIndex = selectedVideoClipsTabIndex,
+                                            tabTitles = mediaTabTitles,
+                                            selectedTabIndex = selectedMediaTabIndex,
                                             onTabSelected = { index ->
-                                                selectedVideoClipsTabIndex = index
+                                                selectedMediaTabIndex = index
                                             },
                                         )
                                     }
-                                    when (selectedVideoClipsTabIndex) {
+                                    when (selectedMediaTabIndex) {
                                         0 -> {
+                                            amityCommunityImageFeedLLS(
+                                                modifier = modifier,
+                                                imagePosts = imagePosts,
+                                                onViewPost = { postId, category ->
+                                                    behavior.goToPostDetailPage(
+                                                        AmityCommunityProfilePageBehavior.Context(
+                                                            pageContext = context,
+                                                        ),
+                                                        postId = postId,
+                                                        category = category,
+                                                    )
+                                                }
+                                            )
+                                        }
+
+                                        1 -> {
                                             amityCommunityVideoFeedLLS(
                                                 modifier = modifier,
                                                 videoPosts = videoPosts,
@@ -458,7 +505,7 @@ fun AmityCommunityProfilePage(
                                             )
                                         }
 
-                                        1 -> {
+                                        2 -> {
                                             amityCommunityClipFeedLLS(
                                                 modifier = Modifier,
                                                 clipPosts = clipPosts,

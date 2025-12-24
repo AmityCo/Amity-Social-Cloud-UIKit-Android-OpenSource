@@ -1,18 +1,18 @@
 package com.amity.socialcloud.uikit.common.extionsions
 
+import android.util.Log
 import java.util.regex.Pattern
 
 private val urlPattern: Pattern = Pattern.compile(
-    "(?:^|[\\W])((ht|f)tp(s?):\\/\\/|www\\.)"
-            + "(([\\w\\-]+\\.){1,}?([\\w\\-.~]+\\/?)*"
-            + "[\\p{Alnum}.,%_=?&#\\-+()\\[\\]\\*$~@!:/{};']*)",
-    Pattern.CASE_INSENSITIVE or Pattern.MULTILINE or Pattern.DOTALL
+    "(?<![\\w])(?:(?:https?|ftp):\\/\\/(?:[a-zA-Z0-9.-]+|[\\d.]+)(?::\\d{1,5})?(?:\\/(?:[^\\s<>|()]*(?:\\([^\\s<>|()]*\\)[^\\s<>|()]*)*)*)?|mailto:[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}|www\\.(?:[a-zA-Z0-9.-]+)(?:\\/(?:[^\\s<>|()]*(?:\\([^\\s<>|()]*\\)[^\\s<>|()]*)*)*)?)?(?=[.,;]?\\s|[.,;]?$|$)",
+    Pattern.CASE_INSENSITIVE or Pattern.MULTILINE
 )
 
 data class UrlPosition(
     val url: String,
     val start: Int,
-    val end: Int
+    val end: Int,
+    val originalText: String = url
 )
 
 fun String.extractUrls(): List<UrlPosition> {
@@ -22,14 +22,21 @@ fun String.extractUrls(): List<UrlPosition> {
     val links = arrayListOf<UrlPosition>()
 
     while (matcher.find()) {
-        matchStart = matcher.start(1)
+        matchStart = matcher.start()
         matchEnd = matcher.end()
 
-        var url = this.substring(matchStart, matchEnd)
-        if (!url.startsWith("http://") && !url.startsWith("https://"))
+        val matchedText = this.substring(matchStart, matchEnd)
+        
+        // Skip if the match is empty or just whitespace
+        if (matchedText.isBlank()) {
+            continue
+        }
+        
+        var url = matchedText
+        if (!url.startsWith("http://") && !url.startsWith("https://") && !url.startsWith("ftp://") && !url.startsWith("mailto:"))
             url = "https://$url"
 
-        links.add(UrlPosition(url, matchStart, matchEnd))
+        links.add(UrlPosition(url, matchStart, matchEnd, matchedText))
     }
     return links
 }

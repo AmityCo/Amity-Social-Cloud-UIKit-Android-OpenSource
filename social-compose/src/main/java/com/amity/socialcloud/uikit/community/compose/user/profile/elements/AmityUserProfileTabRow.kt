@@ -101,7 +101,7 @@ fun AmityUserProfileTabRow(
                     contentAlignment = Alignment.Center,
                 ) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_community_image_feed),
+                        imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_community_media_tab),
                         contentDescription = "",
                         tint = if (selectedIndex == 1) AmityTheme.colors.base else AmityTheme.colors.secondaryShade3,
                         modifier = Modifier
@@ -115,41 +115,6 @@ fun AmityUserProfileTabRow(
                         .height(2.dp)
                         .background(
                             color = if (selectedIndex == 1) AmityTheme.colors.highlight else Color.Transparent,
-                            shape = RoundedCornerShape(
-                                topStart = 1.dp,
-                                topEnd = 1.dp
-                            )
-                        )
-                )
-            }
-
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = modifier
-                    .weight(1f)
-                    .clickableWithoutRipple {
-                        onSelect(2)
-                    }
-            ) {
-                Box(
-                    modifier = Modifier.padding(bottom = 12.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_community_video_feed),
-                        contentDescription = "",
-                        tint = if (selectedIndex == 2) AmityTheme.colors.base else AmityTheme.colors.secondaryShade3,
-                        modifier = Modifier
-                            .size(24.dp)
-                            .padding(2.dp)
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(2.dp)
-                        .background(
-                            color = if (selectedIndex == 2) AmityTheme.colors.highlight else Color.Transparent,
                             shape = RoundedCornerShape(
                                 topStart = 1.dp,
                                 topEnd = 1.dp

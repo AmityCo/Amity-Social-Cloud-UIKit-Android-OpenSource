@@ -89,6 +89,14 @@ class AmityTargetSelectionPageViewModel : AmityBaseViewModel() {
                 }
             }
 
+            AmityTargetContentType.Event -> {
+                if (community.getPostSettings() != AmityCommunityPostSettings.ADMIN_CAN_POST_ONLY) {
+                    setAllowToCreate(communityId, true)
+                } else {
+                    checkPostPermission(communityId)
+                }
+            }
+
             null -> {}
         }
     }

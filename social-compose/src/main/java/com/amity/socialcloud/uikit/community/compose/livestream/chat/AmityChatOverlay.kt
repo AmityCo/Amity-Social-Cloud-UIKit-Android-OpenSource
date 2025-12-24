@@ -1,8 +1,10 @@
 package com.amity.socialcloud.uikit.community.compose.livestream.chat
 
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -35,9 +37,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -47,6 +53,7 @@ import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
 import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
 import com.amity.socialcloud.sdk.model.core.error.AmityException
 import com.amity.socialcloud.sdk.model.core.flag.AmityContentFlagReason
+import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
@@ -75,7 +82,11 @@ fun ChatOverlay(
     channelId: String,
     streamHostUserId: String? = null,
     fromNonMemberCommunity: Boolean = false,
-    onReactionClick: () -> Unit
+    onReactionClick: () -> Unit,
+    coHostUserId: String? = null,
+    canInviteCohost: Boolean = false,
+    onInviteCohost: (String, AmityUser?) -> Unit = {_,_ -> },
+    onCohostBadgeClick: () -> Unit = {},
 ) {
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
@@ -111,7 +122,6 @@ fun ChatOverlay(
             sheetUIState != AmityLiveStreamSheetUIState.CloseSheet
         }
     }
-
     Column(
         modifier = modifier
     ) {
@@ -132,16 +142,17 @@ fun ChatOverlay(
             ) { index ->
                 messages[index]?.let { message ->
                     val userId = message.getCreatorId()
-                    
+
                     ChatMessageItem(
                         message = message,
-                        isChannelModerator = isCurrentUserModerator,
+                        isChannelModerator = (isCurrentUserModerator && message.getCreatorId() != streamHostUserId),
                         hostUserId = hostUserId,
+                        coHostUserId = coHostUserId,
                         isMessageCreatorModerator = viewModel.isUserModerator(userId),
                         isMessageCreatorMuted = viewModel.isUserMuted(userId),
                         onOpenAction = {
                             viewModel.updateSheetUIState(
-                                AmityLiveStreamSheetUIState.OpenSheet(message, isCurrentUserModerator)
+                                AmityLiveStreamSheetUIState.OpenSheet(message, (isCurrentUserModerator && message.getCreatorId() != streamHostUserId))
                             )
                             viewModel.setTargetDeletedMessage(message)
                         },
@@ -149,18 +160,20 @@ fun ChatOverlay(
                             viewModel.showDeleteConfirmation(message)
                         },
                         onUserNameClick = {
-                            if (userId != AmityCoreClient.getUserId() 
+                            if (userId != AmityCoreClient.getUserId()
                                 && isCurrentUserModerator
                                 && userId != hostUserId) {
                                 val displayName = message.getCreator()?.getDisplayName() ?: "Unknown user"
                                 viewModel.updateSheetUIState(
                                     AmityLiveStreamSheetUIState.OpenUserActionsSheet(
                                         userId = userId,
-                                        displayName = displayName
+                                        displayName = displayName,
+                                        user = message.getCreator()
                                     )
                                 )
                             }
-                        }
+                        },
+                        onCohostBadgeClick = onCohostBadgeClick,
                     )
                     Spacer(modifier = Modifier.height(8.dp)) // Add space between messages
 
@@ -226,7 +239,12 @@ fun ChatOverlay(
                                     viewModel.deleteMessage()
                                 }
                                 viewModel.updateSheetUIState(AmityLiveStreamSheetUIState.CloseSheet)
-                            }
+                            },
+                            canInviteCohost = canInviteCohost,
+                            onInviteCohost = { userId, user ->
+                                onInviteCohost(userId, user)
+                                viewModel.updateSheetUIState(AmityLiveStreamSheetUIState.CloseSheet)
+                             },
                         )
                     }
                     is AmityLiveStreamSheetUIState.OpenReportSheet -> {
@@ -289,18 +307,23 @@ fun ChatOverlay(
 
                     is AmityLiveStreamSheetUIState.OpenUserActionsSheet -> {
                         val userActionsState = sheetUIState as AmityLiveStreamSheetUIState.OpenUserActionsSheet
-                        
+
                         val isModerator by viewModel.isUserModerator(userActionsState.userId)
                             .collectAsState(initial = false)
-                        
+
                         val isMuted by viewModel.isUserMuted(userActionsState.userId)
                             .collectAsState(initial = false)
-                        
+
                         AmityUserActionsSheet(
                             displayName = userActionsState.displayName,
                             userId = userActionsState.userId,
+                            user = userActionsState.user,
                             isModerator = isModerator,
                             isMuted = isMuted,
+                            canInviteCohost = canInviteCohost,
+                            onInviteCohost = { userId, user ->
+                                onInviteCohost(userId, user)
+                            },
                             viewModel = viewModel,
                             pageScope = pageScope,
                             onClose = {
@@ -341,11 +364,13 @@ fun ChatMessageItem(
     message: AmityMessage,
     isChannelModerator: Boolean,
     hostUserId: String?,
+    coHostUserId: String?,
     isMessageCreatorModerator: kotlinx.coroutines.flow.Flow<Boolean>,
     isMessageCreatorMuted: kotlinx.coroutines.flow.Flow<Boolean>,
     onOpenAction: () -> Unit,
     onConfirmDelete: () -> Unit,
-    onUserNameClick: () -> Unit = {}
+    onUserNameClick: () -> Unit = {},
+    onCohostBadgeClick: () -> Unit = {},
 ) {
     val isCreatorModerator by isMessageCreatorModerator.collectAsState(initial = false)
     val isCreatorMuted by isMessageCreatorMuted.collectAsState(initial = false)
@@ -375,25 +400,40 @@ fun ChatMessageItem(
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        modifier = Modifier.clickableWithoutRipple {
-                            onUserNameClick()
-                        }
                     ) {
                         Text(
                             text = message.getCreator()?.getDisplayName() ?: "Unknown user",
                             color = if (message.isDeleted()) Color(0xFF6E7487) else Color(0xFFA5A9B5),
                             style = AmityTheme.typography.captionSmall,
+                            modifier = Modifier.clickableWithoutRipple {
+                                onUserNameClick()
+                            }
                         )
-                        
+
+                        // Show brand badge if user is a brand
+                        val isBrandCreator = message.getCreator()?.isBrand() == true
+                        if (isBrandCreator && !message.isDeleted()) {
+                            Image(
+                                painter = painterResource(id = R.drawable.amity_ic_brand_badge),
+                                contentDescription = "Brand badge",
+                                modifier = Modifier.size(16.dp)
+                            )
+                        }
+
                         // Show Host badge if user is stream host (takes precedence over moderator badge)
                         if (message.getCreatorId() == hostUserId && !message.isDeleted()) {
-                            OwnerBadge()
+                            HostBadge(onCohostBadgeClick = onCohostBadgeClick)
+                        } else if (message.getCreatorId() == coHostUserId && !message.isDeleted()) {
+                            HostBadge(
+                                isCoHost = true,
+                                onCohostBadgeClick = onCohostBadgeClick,
+                            )
                         }
                         // Show Moderator badge if user is moderator but NOT host
                         else if (isCreatorModerator && !message.isDeleted()) {
                             ModeratorBadge()
                         }
-                        
+
                         // Show Muted badge only if current user is a moderator and message creator is muted
                         if (isChannelModerator && isCreatorMuted && !message.isDeleted()) {
                             MutedBadge()
@@ -462,25 +502,41 @@ fun ChatMessageItem(
 }
 
 @Composable
-fun OwnerBadge() {
+fun HostBadge(
+    isCoHost: Boolean = false,
+    onCohostBadgeClick: ()-> Unit,
+) {
     Row(
         modifier = Modifier
             .background(
-                color = AmityTheme.colors.alert,
+                color = Color(0xFFFF305A),
                 shape = RoundedCornerShape(4.dp)
             ),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.amity_ic_livestream_host),
-            contentDescription = "Host badge",
+            painter = painterResource(id = if (isCoHost) {
+                R.drawable.amity_ic_cohost_chat_badge
+            } else {
+                R.drawable.amity_ic_livestream_host
+            }),
+            contentDescription = if (isCoHost) { "Co-host badge" } else {  "Host badge" },
             tint = Color.White,
             modifier = Modifier
                 .size(12.dp)
-                .padding(start = 1.dp, top = 1.dp, bottom = 1.dp, end = 2.dp)
+                .padding(start = 2.dp, end = 2.dp)
+                .clickableWithoutRipple {
+                    if (isCoHost) {
+                        onCohostBadgeClick.invoke()
+                    }
+                }
         )
         Text(
-            text = "Host",
+            text = if (isCoHost) {
+                "Co-host"
+            } else {
+                "Host"
+            },
             color = Color.White,
             style = AmityTheme.typography.captionSmall,
             modifier = Modifier.padding(end = 3.dp)
@@ -518,7 +574,7 @@ fun ModeratorBadge() {
 @Composable
 fun MutedBadge() {
     Icon(
-        painter = painterResource(id = R.drawable.amity_v4_ic_mute),
+        painter = painterResource(id = R.drawable.amity_ic_mute_user),
         contentDescription = "Muted badge",
         tint = AmityTheme.colors.baseShade2,
         modifier = Modifier
@@ -544,6 +600,8 @@ fun AmityLivestreamMessageActionsContainer(
     onDelete: () -> Unit,
     onReport: (String) -> Unit = {},
     onUnreport: (String) -> Unit = {},
+    canInviteCohost: Boolean = false,
+    onInviteCohost: (String, AmityUser?) -> Unit = { _, _ -> },
 ) {
     Column(
         modifier = modifier
@@ -589,8 +647,11 @@ fun AmityLivestreamMessageActionsContainer(
 fun AmityUserActionsSheet(
     displayName: String,
     userId: String,
+    user: AmityUser?,
     isModerator: Boolean,
     isMuted: Boolean = false,
+    canInviteCohost: Boolean = false,
+    onInviteCohost: (String, AmityUser?) -> Unit = { _, _ -> },
     viewModel: AmityLivestreamChatViewModel,
     pageScope: AmityComposePageScope?,
     onClose: () -> Unit
@@ -599,7 +660,7 @@ fun AmityUserActionsSheet(
     var showDemoteDialog by remember { mutableStateOf(false) }
     var showMuteDialog by remember { mutableStateOf(false) }
     var showUnmuteDialog by remember { mutableStateOf(false) }
-    
+
     Column(
         modifier = Modifier
             .background(Color(0xFF191919))
@@ -611,7 +672,7 @@ fun AmityUserActionsSheet(
                 .padding(start = 16.dp, end = 16.dp, top = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Display name with muted icon on the right if muted
+            // Display name with brand badge and muted icon on the right if muted
             Row(
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -621,7 +682,17 @@ fun AmityUserActionsSheet(
                     color = Color(0xFFEBECEF),
                     style = AmityTheme.typography.titleBold,
                 )
-                
+
+                // Show brand badge if user is a brand
+                val isBrandUser = user?.isBrand() == true
+                if (isBrandUser) {
+                    Image(
+                        painter = painterResource(id = R.drawable.amity_ic_brand_badge),
+                        contentDescription = "Brand badge",
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+
                 // Muted icon if user is muted
                 if (isMuted) {
                     Icon(
@@ -633,7 +704,7 @@ fun AmityUserActionsSheet(
                     )
                 }
             }
-            
+
             // Moderator badge (icon + text) under display name if user is a moderator
             if (isModerator) {
                 Row(
@@ -662,7 +733,7 @@ fun AmityUserActionsSheet(
                 }
             }
         }
-        
+
         // Divider line
         Spacer(
             modifier = Modifier
@@ -671,11 +742,23 @@ fun AmityUserActionsSheet(
                 .height(1.dp)
                 .background(AmityTheme.colors.base)
         )
-        
+
         Column(
             modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 32.dp)
         ) {
-        
+
+        // Invite as co-host button - only show if canInviteCohost is true
+        if (canInviteCohost) {
+            AmityBottomSheetActionItem(
+                icon = R.drawable.amity_ic_invite_cohost_in_chat,
+                text = "Invite as co-host",
+                color = Color(0xFFEBECEF),
+            ) {
+                onInviteCohost(userId, null)
+                onClose()
+            }
+        }
+
         // Promote/Demote moderator button - hide promote if user is muted
         if (!isMuted) {
             AmityBottomSheetActionItem(
@@ -690,11 +773,11 @@ fun AmityUserActionsSheet(
                 }
             }
         }
-        
+
         // Mute/Unmute user - only show if user is not a moderator
         if (!isModerator) {
             AmityBottomSheetActionItem(
-                icon = if (isMuted) R.drawable.amity_v4_ic_unmute else R.drawable.amity_v4_ic_mute,
+                icon = if (isMuted) R.drawable.amity_ic_unmute_user else R.drawable.amity_ic_mute_user,
                 text = if (isMuted) "Unmute user" else "Mute user",
                 color = Color(0xFFEBECEF),
             ) {
@@ -708,7 +791,7 @@ fun AmityUserActionsSheet(
 
         }
     }
-    
+
     // Promote confirmation dialog
     if (showPromoteDialog) {
         AmityAlertDialog(
@@ -736,7 +819,7 @@ fun AmityUserActionsSheet(
             }
         )
     }
-    
+
     // Demote confirmation dialog
     if (showDemoteDialog) {
         AmityAlertDialog(
@@ -765,7 +848,7 @@ fun AmityUserActionsSheet(
             }
         )
     }
-    
+
     // Mute confirmation dialog
     if (showMuteDialog) {
         AmityAlertDialog(
@@ -794,7 +877,7 @@ fun AmityUserActionsSheet(
             }
         )
     }
-    
+
     // Unmute confirmation dialog
     if (showUnmuteDialog) {
         AmityAlertDialog(

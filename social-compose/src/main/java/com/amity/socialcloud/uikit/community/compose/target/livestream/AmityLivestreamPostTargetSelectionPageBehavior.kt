@@ -6,6 +6,7 @@ import androidx.activity.result.ActivityResultLauncher
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.community.compose.livestream.create.AmityCreateLivestreamPageActivity
+import com.amity.socialcloud.uikit.community.compose.livestream.room.create.AmityCreateRoomPageActivity
 
 
 open class AmityLivestreamPostTargetSelectionPageBehavior {
@@ -17,7 +18,7 @@ open class AmityLivestreamPostTargetSelectionPageBehavior {
         targetType: AmityPost.TargetType,
         community: AmityCommunity? = null,
     ) {
-        val intent = AmityCreateLivestreamPageActivity.newIntent(
+        val intent = AmityCreateRoomPageActivity.newIntent(
             context = context,
             targetId = targetId,
             targetType = targetType,

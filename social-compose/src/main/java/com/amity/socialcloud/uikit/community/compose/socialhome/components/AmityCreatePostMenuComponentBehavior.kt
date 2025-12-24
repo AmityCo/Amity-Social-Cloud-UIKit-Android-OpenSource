@@ -2,6 +2,7 @@ package com.amity.socialcloud.uikit.community.compose.socialhome.components
 
 import android.content.Context
 import com.amity.socialcloud.uikit.community.compose.target.AmityPostTargetSelectionPageType
+import com.amity.socialcloud.uikit.community.compose.target.event.AmityEventTargetSelectionPageActivity
 import com.amity.socialcloud.uikit.community.compose.target.livestream.AmityLivestreamPostTargetSelectionPageActivity
 import com.amity.socialcloud.uikit.community.compose.target.poll.AmityPollTargetSelectionPageActivity
 import com.amity.socialcloud.uikit.community.compose.target.post.AmityPostTargetSelectionPageActivity
@@ -42,6 +43,15 @@ open class AmityCreatePostMenuComponentBehavior {
         context: Context,
     ) {
         val intent = AmityLivestreamPostTargetSelectionPageActivity.newIntent(
+            context = context,
+        )
+        context.startActivity(intent)
+    }
+
+    open fun goToSelectEventTargetPage(
+        context: Context,
+    ) {
+        val intent = AmityEventTargetSelectionPageActivity.newIntent(
             context = context,
         )
         context.startActivity(intent)

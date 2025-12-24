@@ -244,6 +244,25 @@ fun AmityNotificationTrayPage(
                                                 }
 
                                                 when (listItem.item.getActionType()) {
+                                                    "invitation" -> {
+                                                        if (listItem.item.getTargetType() == "room") {
+                                                            val roomId = listItem.item.getTargetId()
+                                                            behavior.goToLiveRoomDetailPage(
+                                                                context = context,
+                                                                roomId = roomId
+                                                            )
+                                                        }
+                                                        return@clickableWithoutRipple
+                                                    }
+                                                    "event" -> {
+                                                        val eventId = listItem.item.getActionReferenceId()
+                                                        behavior.goToEventDetailPage(
+                                                            context = context,
+                                                            eventId = eventId
+                                                        )
+                                                        return@clickableWithoutRipple
+                                                    }
+
                                                     "post", "poll" -> {
                                                         postId =
                                                             if (listItem.item.getTargetType() != "community")

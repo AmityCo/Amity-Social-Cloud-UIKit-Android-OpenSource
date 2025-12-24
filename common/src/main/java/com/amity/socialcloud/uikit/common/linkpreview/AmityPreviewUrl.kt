@@ -1,6 +1,7 @@
 package com.amity.socialcloud.uikit.common.linkpreview
 
 import android.util.Patterns
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.uikit.common.linkpreview.models.AmityPreviewMetadataCacheItem
 import com.amity.socialcloud.uikit.common.linkpreview.models.AmityPreviewMetadataException
 import com.amity.socialcloud.uikit.common.linkpreview.models.AmityPreviewNoUrl
@@ -55,6 +56,7 @@ object AmityPreviewUrl {
 
     fun fetchMetadata(url: String): Single<AmityPreviewMetadataCacheItem> {
         val cache = getPreviewFromCache(url)
+
         return if (cache != null) {
             Single.just(cache)
         } else {

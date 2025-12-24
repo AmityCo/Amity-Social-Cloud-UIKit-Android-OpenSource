@@ -152,11 +152,10 @@ class EnvironmentActivity : AppCompatActivity() {
         environment.apply {
             this.apiKey = apiKey
             this.httpUrl = url
-            this.socketUrl = url
             this.mqttBroker = mqttBroker
         }
 
-        disposable = AmityCoreClient.setup(apiKey, AmityEndpoint.CUSTOM(url, url, url))
+        disposable = AmityCoreClient.setup(apiKey, AmityEndpoint.CUSTOM(url, mqttBroker, url))
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnComplete {

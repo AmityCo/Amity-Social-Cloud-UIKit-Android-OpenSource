@@ -73,6 +73,15 @@ open class AmityPostContentComponentBehavior {
         context.startActivity(intent)
     }
 
+    open fun goToEventSetupPage(
+        context: Context,
+    ) {
+        val intent = com.amity.socialcloud.uikit.community.compose.event.setup.AmityEventSetupPageActivity.newIntent(
+            context = context
+        )
+        context.startActivity(intent)
+    }
+
     open fun handleVisitorUserAction() {
         AmitySocialBehaviorHelper.globalBehavior.handleVisitorUserAction()
     }

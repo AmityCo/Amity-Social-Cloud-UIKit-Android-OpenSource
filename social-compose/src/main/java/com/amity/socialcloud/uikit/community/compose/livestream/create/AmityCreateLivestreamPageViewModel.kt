@@ -157,7 +157,8 @@ class AmityCreateLivestreamPageViewModel : AmityBaseViewModel() {
         onCreateFailed: (String) -> Unit,
         //descriptionUserMentions: List<AmityMentionMetadata.USER>,
     ) {
-        updateStreamBroadCasterState(AmityStreamBroadcasterState.CONNECTING())
+//        updateStreamBroadCasterState(AmityStreamBroadcasterState.CONNECTING())
+        updateStreamBroadCasterState(AmityStreamBroadcasterState.CONNECTED()) // Temporary enable for POC LiveKit
         _uiState.update { currentState ->
             currentState.copy(
                 channelId = null

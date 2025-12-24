@@ -7,6 +7,5 @@ import kotlinx.parcelize.Parcelize
 data class Environment(
     var apiKey: String,
     var httpUrl: String,
-    var socketUrl: String,
     var mqttBroker: String,
 ) : Parcelable

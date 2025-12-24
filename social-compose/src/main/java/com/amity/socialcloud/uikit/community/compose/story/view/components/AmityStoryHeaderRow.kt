@@ -32,6 +32,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
@@ -270,7 +271,9 @@ fun AmityStoryHeaderRow(
                         AmityAdBadge()
                     } else {
                         Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.weight(1f, fill = false)
                         ) {
                             Text(
                                 text = story?.getCreatedAt()?.readableTimeDiff() ?: "",
@@ -287,11 +290,24 @@ fun AmityStoryHeaderRow(
                                 text = story?.getCreator()?.getDisplayName() ?: "",
                                 color = Color.White,
                                 fontSize = 13.sp,
-                                modifier = modifier.testTag("creator_display_name")
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier
+                                    .weight(1f, fill = false)
+                                    .testTag("creator_display_name")
                             )
+                            val isBrandCreator = story?.getCreator()?.isBrand() == true
+                            if (isBrandCreator) {
+                                Image(
+                                    painter = painterResource(id = com.amity.socialcloud.uikit.common.compose.R.drawable.amity_ic_brand_badge),
+                                    contentDescription = "Brand badge",
+                                    modifier = Modifier.size(16.dp)
+                                )
+                            }
                         }
                     }
                 }
+
 
                 if (
                     (story?.getCreatorId() == AmityCoreClient.getUserId() || hasManageStoryPermission)

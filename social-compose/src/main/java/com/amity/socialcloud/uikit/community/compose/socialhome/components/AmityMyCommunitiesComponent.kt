@@ -21,6 +21,7 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.socialhome.AmitySocialHomePageViewModel
 import com.amity.socialcloud.uikit.community.compose.socialhome.elements.AmityCommunityView
+import com.amity.socialcloud.uikit.community.compose.socialhome.elements.AmityCreateCommunityCard
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityCommunityListShimmer
 
 @Composable
@@ -56,11 +57,23 @@ fun AmityMyCommunitiesComponent(
                     itemCount = communities.itemCount,
                 ).let(viewModel::setCommunityListState)
 
+                // Add "Create community" card as the first item
+                item(key = "create_community_card") {
+                    AmityCreateCommunityCard(
+                        modifier = modifier,
+                        pageScope = pageScope,
+                        componentScope = getComponentScope(),
+                        onClick = {
+                            behavior.goToCreateCommunityPage(context)
+                        }
+                    )
+                }
+
                 when (communityListState) {
                     AmitySocialHomePageViewModel.CommunityListState.SUCCESS -> {
                         items(
                             count = communities.itemCount,
-                            key = { index -> index }
+                            key = { index -> "community_$index" }
                         ) { index ->
                             val community = communities[index] ?: return@items
 

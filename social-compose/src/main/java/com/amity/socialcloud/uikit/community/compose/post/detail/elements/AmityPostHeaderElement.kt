@@ -56,6 +56,7 @@ fun AmityPostHeaderElement(
     category: AmityPostCategory = AmityPostCategory.GENERAL,
     hideMenuButton: Boolean,
     hideTarget: Boolean = false,
+    isEventHost: Boolean = false,
     onMenuClick: (AmityPost) -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -306,7 +307,20 @@ fun AmityPostHeaderElement(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(top = 2.dp)
                 ) {
-                    if (isCommunityModerator) {
+                    if (isEventHost) {
+                        AmityPostEventHostBadge(
+                            modifier = modifier,
+                            componentScope = componentScope,
+                        )
+
+                        Text(
+                            text = " • ",
+                            style = AmityTheme.typography.captionLegacy.copy(
+                                fontWeight = FontWeight.Normal,
+                                color = AmityTheme.colors.baseShade2
+                            )
+                        )
+                    } else if (isCommunityModerator) {
                         AmityPostModeratorBadge(
                             modifier = modifier,
                             componentScope = componentScope,

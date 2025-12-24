@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rxjava3.subscribeAsState
 import androidx.compose.ui.Alignment
@@ -33,6 +34,7 @@ import coil3.compose.AsyncImage
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.compose.R
@@ -53,25 +55,90 @@ fun AmityPostPreviewLinkView(
         }
     }
 
-    val previewUrlCache by remember(post.getPostId(), post.getUpdatedAt()) {
+    // Get links from post data instead of extracting from text
+    val links by remember(post.getPostId(), post.getUpdatedAt()) {
         derivedStateOf {
-            val postText = (post.getData() as? AmityPost.Data.TEXT)?.getText() ?: ""
-            val url = postText.extractUrls().firstOrNull()?.url
-            val postId = post.getPostId()
-            val editedAt = post.getEditedAt()
-            AmityPreviewUrl.getPostPreviewUrl(postId, url, editedAt)
+            post.getLinks()
         }
     }
 
-    if (!isAllowedPostDataType
-        || previewUrlCache == null
-        || previewUrlCache is AmityPreviewNoUrl
-    ) return
+    // Get the first link
+    val linkToDisplay = remember(links) {
+        val link = links?.firstOrNull()
+        
+        val postData = post.getData()
+        val postText = if (postData is AmityPost.Data.TEXT) postData.getText() else ""
 
-    AmityPreviewLinkView(
-        modifier = Modifier.padding(12.dp),
-        url = previewUrlCache!!.url,
-    )
+        link
+    }
+
+    // Extract URLs from post text if no link object exists, or if link object has renderPreview=true but all metadata missing
+    val detectedUrl by remember(post.getPostId(), post.getUpdatedAt(), linkToDisplay) {
+        derivedStateOf {
+            if (isAllowedPostDataType) {
+                if (linkToDisplay != null) {
+                    // If link has renderPreview=true but all metadata is missing, fetch from server
+                    if (linkToDisplay.getRenderPreview()) {
+                        val allMetadataMissing = linkToDisplay.getDomain().isNullOrEmpty() && 
+                                               linkToDisplay.getTitle().isNullOrEmpty() && 
+                                               linkToDisplay.getImageUrl().isNullOrEmpty()
+                        if (allMetadataMissing) {
+                            linkToDisplay.getUrl()
+                        } else {
+                            null
+                        }
+                    } else {
+                        null
+                    }
+                } else {
+                    // No link object, try to extract URL from text
+                    val postText = (post.getData() as? AmityPost.Data.TEXT)?.getText() ?: ""
+                    postText.extractUrls().firstOrNull()?.url
+                }
+            } else {
+                null
+            }
+        }
+    }
+
+    // Fetch metadata for detected URL using AmityCoreClient
+    val linkPreviewMetadata by (remember(detectedUrl) {
+        detectedUrl?.let { 
+            AmityCoreClient.getLinkPreviewMetadata(it) 
+        }
+    }?.subscribeAsState(null) ?: remember { mutableStateOf(null) })
+
+    if (!isAllowedPostDataType) return
+
+    // Check if link object has any metadata
+    val linkHasAnyMetadata = linkToDisplay != null && 
+        (!linkToDisplay.getDomain().isNullOrEmpty() || 
+         !linkToDisplay.getTitle().isNullOrEmpty() || 
+         !linkToDisplay.getImageUrl().isNullOrEmpty())
+
+    // Show preview if we have a link object with renderPreview=true and any metadata
+    if (linkToDisplay != null && linkToDisplay.getRenderPreview() && linkHasAnyMetadata) {
+        AmityPreviewLinkViewWithMetadata(
+            modifier = Modifier.padding(12.dp),
+            url = linkToDisplay.getUrl() ?: "",
+            domain = linkToDisplay.getDomain(),
+            title = linkToDisplay.getTitle(),
+            imageUrl = linkToDisplay.getImageUrl(),
+        )
+    } 
+    // Show preview if we fetched metadata from server and it has any metadata
+    else if (detectedUrl != null && linkPreviewMetadata != null && 
+             (!linkPreviewMetadata!!.getDomain().isNullOrEmpty() || 
+              !linkPreviewMetadata!!.getTitle().isNullOrEmpty() || 
+              !linkPreviewMetadata!!.getImageUrl().isNullOrEmpty())) {
+        AmityPreviewLinkViewWithMetadata(
+            modifier = Modifier.padding(12.dp),
+            url = detectedUrl!!,
+            domain = linkPreviewMetadata!!.getDomain(),
+            title = linkPreviewMetadata!!.getTitle(),
+            imageUrl = linkPreviewMetadata!!.getImageUrl(),
+        )
+    }
 }
 
 @Composable
@@ -188,6 +255,15 @@ fun AmityPreviewLinkView(
         ) {
             if (previewMetadata != null) {
                 Text(
+                    modifier = Modifier.padding(top = 6.dp, bottom = 2.dp),
+                    text = previewMetadata!!.title,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    style = AmityTheme.typography.bodyLegacy.copy(
+                        fontWeight = FontWeight.SemiBold,
+                    ),
+                )
+                Text(
                     text = previewMetadata!!.domain,
                     style = AmityTheme.typography.captionLegacy.copy(
                         fontWeight = FontWeight.Normal,
@@ -197,15 +273,115 @@ fun AmityPreviewLinkView(
                         .fillMaxWidth()
                         .padding(top = 6.dp),
                 )
+            } else {
                 Text(
-                    modifier = Modifier.padding(top = 6.dp, bottom = 2.dp),
-                    text = previewMetadata!!.title,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(top = 6.dp),
+                    text = context.getString(R.string.amity_preview_not_available_title),
+                    lineHeight = 10.sp,
                     style = AmityTheme.typography.bodyLegacy.copy(
                         fontWeight = FontWeight.SemiBold,
                     ),
                 )
+                Text(
+                    modifier = Modifier.padding(top = 6.dp),
+                    text = context.getString(R.string.amity_preview_not_available_message),
+                    maxLines = 2,
+                    lineHeight = 14.sp,
+                    overflow = TextOverflow.Ellipsis,
+                    style = AmityTheme.typography.bodyLegacy.copy(
+                        color = AmityTheme.colors.baseShade1,
+                    ),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun AmityPreviewLinkViewWithMetadata(
+    modifier: Modifier = Modifier,
+    url: String,
+    domain: String?,
+    title: String?,
+    imageUrl: String?,
+) {
+    val context = LocalContext.current
+    val uriHandler = LocalUriHandler.current
+    val hasMetadata = !domain.isNullOrEmpty() || !title.isNullOrEmpty()
+
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .border(
+                width = 1.dp,
+                color = AmityTheme.colors.baseShade4,
+                shape = RoundedCornerShape(8.dp)
+            )
+            .clickableWithoutRipple {
+                uriHandler.openUri(url)
+            }
+    ) {
+        // Only show image Box if imageUrl exists
+        if (!imageUrl.isNullOrEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp))
+                    .height(200.dp)
+                    .background(color = AmityTheme.colors.baseShade4)
+            ) {
+                AsyncImage(
+                    model = ImageRequest
+                        .Builder(LocalContext.current)
+                        .data(imageUrl)
+                        .crossfade(true)
+                        .networkCachePolicy(CachePolicy.ENABLED)
+                        .diskCachePolicy(CachePolicy.ENABLED)
+                        .memoryCachePolicy(CachePolicy.ENABLED)
+                        .build(),
+                    contentDescription = "Preview Image",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(AmityTheme.colors.baseShade4)
+                )
+            }
+
+            HorizontalDivider(
+                thickness = 1.dp,
+                color = AmityTheme.colors.baseShade4,
+            )
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp)
+        ) {
+            if (hasMetadata) {
+                if (!title.isNullOrEmpty()) {
+                    Text(
+                        modifier = Modifier.padding(top = 6.dp, bottom = 2.dp),
+                        text = title,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        style = AmityTheme.typography.bodyLegacy.copy(
+                            fontWeight = FontWeight.SemiBold,
+                        ),
+                    )
+                }
+                if (!domain.isNullOrEmpty()) {
+                    Text(
+                        text = domain,
+                        style = AmityTheme.typography.captionLegacy.copy(
+                            fontWeight = FontWeight.Normal,
+                            color = AmityTheme.colors.baseShade1,
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 6.dp),
+                    )
+                }
             } else {
                 Text(
                     modifier = Modifier.padding(top = 6.dp),

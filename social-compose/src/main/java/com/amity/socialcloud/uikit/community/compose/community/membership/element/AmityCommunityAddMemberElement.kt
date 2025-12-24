@@ -134,13 +134,28 @@ fun AmityCommunityAddMemberElement(
             }
         }
         Spacer(modifier.height(4.dp))
-        Text(
-            text = user.getDisplayName() ?: "",
-            style = AmityTheme.typography.bodyLegacy,
-            modifier = modifier.fillMaxWidth(),
-            overflow = TextOverflow.Ellipsis,
-            maxLines = 1,
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = user.getDisplayName() ?: "",
+                style = AmityTheme.typography.bodyLegacy,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1,
+                modifier = Modifier.weight(1f, fill = false)
+            )
+            val isBrandUser = user.isBrand()
+            if (isBrandUser) {
+                Spacer(modifier = Modifier.width(1.dp))
+                Image(
+                    painter = painterResource(id = R.drawable.amity_ic_brand_badge),
+                    contentDescription = "Brand badge",
+                    modifier = Modifier.size(16.dp)
+                )
+            }
+        }
     }
 }
 

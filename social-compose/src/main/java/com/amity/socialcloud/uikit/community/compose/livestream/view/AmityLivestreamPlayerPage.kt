@@ -3,6 +3,7 @@ package com.amity.socialcloud.uikit.community.compose.livestream.view
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -409,6 +410,7 @@ fun AmityLivestreamPlayerPage(
                                 channelId = state.stream?.getChannelId() ?: "",
                                 value = messageText,
                                 isPendingApproval = state.reviewStatus == AmityReviewStatus.UNDER_REVIEW,
+                                streamHostUserId = state.stream?.getCreatorId(),
                                 onValueChange = {
                                     messageText = it
                                 },
@@ -625,13 +627,28 @@ fun CommunityLivestreamPlayerHeader(
                     maxLines = 1,
                     overflow = TextOverflow1.Ellipsis
                 )
-                Text(
-                    text = "By ${post?.getCreator()?.getDisplayName() ?: "Unknown User"}",
-                    color = Color.White.copy(alpha = 0.8f),
-                    fontSize = 14.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow1.Ellipsis
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Text(
+                        text = "By ${post?.getCreator()?.getDisplayName() ?: "Unknown User"}",
+                        color = Color.White.copy(alpha = 0.8f),
+                        fontSize = 14.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow1.Ellipsis
+                    )
+                    
+                    // Show brand badge if user is a brand
+                    val isBrandCreator = post?.getCreator()?.isBrand() == true
+                    if (isBrandCreator) {
+                        Image(
+                            painter = painterResource(id = com.amity.socialcloud.uikit.common.compose.R.drawable.amity_ic_brand_badge),
+                            contentDescription = "Brand badge",
+                            modifier = Modifier.size(12.dp)
+                        )
+                    }
+                }
             }
         }
 

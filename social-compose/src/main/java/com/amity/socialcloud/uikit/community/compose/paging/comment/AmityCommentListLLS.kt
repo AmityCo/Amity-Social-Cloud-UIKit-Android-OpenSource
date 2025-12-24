@@ -30,6 +30,7 @@ fun LazyListScope.amityCommentListLLS(
     includeDeleted: Boolean = true,
     shouldAllowInteraction: Boolean,
     showEngagementRow: Boolean,
+    eventHostId: String? = null,
     onReply: (String) -> Unit,
     onEdit: (String?) -> Unit,
     showBounceEffect: Boolean = false,
@@ -38,6 +39,7 @@ fun LazyListScope.amityCommentListLLS(
 ) {
     commentTarget?.let { target ->
         item(key = "highlighted_comment_${target.getCommentId()}") {
+            val isEventHost = eventHostId != null && target.getCreator()?.getUserId() == eventHostId
             AmityCommentView(
                 modifier = modifier
                     .let { if (showBounceEffect && replyTargetId == null) it.bounceEffect() else it },
@@ -49,6 +51,7 @@ fun LazyListScope.amityCommentListLLS(
                 includeDeleted = includeDeleted,
                 comment = target,
                 allowInteraction = shouldAllowInteraction,
+                isEventHost = isEventHost,
                 onReply = onReply,
                 onEdit = onEdit,
                 replyTargetId = replyTargetId,
@@ -70,6 +73,7 @@ fun LazyListScope.amityCommentListLLS(
                     is AmityListItem.CommentItem -> {
                         // Skip this item if it matches our highlighted comment ID
                         if (commentTarget == null || data.comment.getCommentId() != commentTarget.getCommentId()) {
+                            val isEventHost = eventHostId != null && data.comment.getCreator()?.getUserId() == eventHostId
                             AmityCommentView(
                                 modifier = modifier,
                                 componentScope = componentScope,
@@ -81,6 +85,7 @@ fun LazyListScope.amityCommentListLLS(
                                 comment = data.comment,
                                 allowInteraction = shouldAllowInteraction,
                                 showEngagementRow = showEngagementRow,
+                                isEventHost = isEventHost,
                                 onReply = onReply,
                                 onEdit = onEdit,
                                 expandReplies = expandReplies,

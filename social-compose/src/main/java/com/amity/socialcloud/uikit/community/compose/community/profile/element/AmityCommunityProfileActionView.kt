@@ -204,7 +204,7 @@ fun AmityCommunityPendingPost(
         val description by remember { derivedStateOf { bannerContent.second } }
 
         if (description.isNotEmptyOrBlank()) {
-            Row(modifier = Modifier.padding(bottom = 12.dp, start = 16.dp, end = 16.dp)) {
+            Row(modifier = Modifier.padding(top = 12.dp, bottom = 12.dp, start = 16.dp, end = 16.dp)) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()

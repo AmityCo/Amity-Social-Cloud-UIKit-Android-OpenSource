@@ -9,6 +9,7 @@ import com.amity.socialcloud.sdk.model.social.community.AmityJoinRequest
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import com.amity.socialcloud.uikit.common.utils.isSignedIn
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.processors.PublishProcessor
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,6 +25,12 @@ class AmityTrendingCommunitiesViewModel : AmityBaseViewModel() {
     private val _joinRequestList: MutableStateFlow<List<AmityJoinRequest>> = MutableStateFlow(emptyList())
     val joinRequestList: StateFlow<List<AmityJoinRequest>> = _joinRequestList.asStateFlow()
 
+    private val getJoinRequestsRelay = PublishProcessor.create<List<String>>()
+
+
+    init {
+        observeJoinRequests()
+    }
 
     private val trendingCommunitiesFlow = AmitySocialClient.newCommunityRepository()
         .getTrendingCommunities(includeDiscoverablePrivateCommunity = true)
@@ -57,19 +64,27 @@ class AmityTrendingCommunitiesViewModel : AmityBaseViewModel() {
     }
 
     fun getJoinRequestList(communityIds: List<String>) {
+        if (communityIds.isNotEmpty()) {
+            getJoinRequestsRelay.onNext(communityIds)
+        }
+    }
+
+    private fun observeJoinRequests() {
         if (AmityCoreClient.isSignedIn()) {
-            addDisposable(
-                AmitySocialClient.newCommunityRepository().getJoinRequestList(communityIds)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .doOnError { it.printStackTrace() }
-                    .doOnNext { requests ->
-                        _joinRequestList.update {
-                            requests
-                        }
+            getJoinRequestsRelay
+                .distinctUntilChanged()
+                .flatMap { communityIds ->
+                    AmitySocialClient.newCommunityRepository().getJoinRequestList(communityIds)
+                }
+                .doOnNext { requests ->
+                    _joinRequestList.update {
+                        requests
                     }
-                    .subscribe()
-            )
+                }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe()
+                .let(::addDisposable)
         }
     }
 

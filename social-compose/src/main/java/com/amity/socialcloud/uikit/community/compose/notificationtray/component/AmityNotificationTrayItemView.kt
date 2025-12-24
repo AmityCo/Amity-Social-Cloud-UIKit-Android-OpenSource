@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.sdk.model.core.notificationtray.AmityNotificationTrayItem
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.common.readableSocialTimeDiff
+import com.amity.socialcloud.uikit.common.ui.elements.AmityEventAvatarView
 import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 
@@ -46,11 +47,19 @@ fun AmityNotificationTrayItemView(
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Avatar shimmer
-        data?.getUsers()?.firstOrNull()?.let {
-            AmityUserAvatarView(
-                user = it,
-            )
+        // Avatar - show event cover for event notifications, user avatar otherwise
+        if (data?.getActionType() == "event") {
+            data.getEvent()?.let { event ->
+                AmityEventAvatarView(
+                    eventCoverImage = event.getCoverImage()
+                )
+            }
+        } else {
+            data?.getUsers()?.firstOrNull()?.let {
+                AmityUserAvatarView(
+                    user = it,
+                )
+            }
         }
 
         Spacer(Modifier.width(12.dp))

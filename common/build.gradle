@@ -36,4 +36,5 @@ dependencies {
 
     implementation 'org.jsoup:jsoup:1.16.1'
     implementation 'com.squareup.okhttp3:okhttp:4.11.0'
+    api "com.google.accompanist:accompanist-permissions:0.34.0"
 }

@@ -149,14 +149,6 @@ class AmityFeatureListActivity : AppCompatActivity() {
 
                     .subscribe()
             }
-
-            playground.setOnClickListener {
-                val intent = Intent(
-                    this@AmityFeatureListActivity,
-                    AmityPlaygroundActivity::class.java
-                )
-                startActivity(intent)
-            }
         }
     }
 

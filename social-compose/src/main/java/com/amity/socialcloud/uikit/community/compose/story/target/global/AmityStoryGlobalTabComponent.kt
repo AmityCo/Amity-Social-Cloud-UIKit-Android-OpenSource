@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,9 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -33,6 +31,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityNewsFeedDivider
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.shimmerBackground
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
+import com.amity.socialcloud.uikit.community.compose.livestream.room.view.AmityRoomPlayerPageActivity
 import com.amity.socialcloud.uikit.community.compose.story.target.elements.AmityStoryTargetElement
 import com.amity.socialcloud.uikit.community.compose.story.target.utils.toRingUiState
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageType
@@ -57,9 +56,14 @@ fun AmityStoryGlobalTabComponent(
     val viewModel =
         viewModel<AmityStoryGlobalTabViewModel>(viewModelStoreOwner = viewModelStoreOwner)
 
+    LaunchedEffect(Unit) {
+        viewModel.getLives()
+    }
+
     val targets = remember {
         viewModel.getTargets()
     }.collectAsLazyPagingItems()
+    val livePosts by viewModel.livePosts.collectAsState()
 
     val targetListState by viewModel.targetListState.collectAsState()
 
@@ -72,8 +76,9 @@ fun AmityStoryGlobalTabComponent(
     }
 
     LaunchedEffect(isRefreshing) {
-        if(isRefreshing) {
+        if (isRefreshing) {
             targets.refresh()
+            viewModel.getLives()
         }
     }
 
@@ -81,6 +86,7 @@ fun AmityStoryGlobalTabComponent(
         AmityStoryGlobalTabViewModel.TargetListState.from(
             loadState = targets.loadState,
             itemCount = targets.itemCount,
+            livePostCount = livePosts.size
         ).let {
             onStateChanged(it)
             viewModel.setTargetListState(it)
@@ -97,7 +103,7 @@ fun AmityStoryGlobalTabComponent(
             }
             LazyRow(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
                 contentPadding = PaddingValues(start = 16.dp, end = 16.dp),
                 modifier = modifier
                     .fillMaxWidth()
@@ -115,6 +121,30 @@ fun AmityStoryGlobalTabComponent(
                     }
 
                     AmityStoryGlobalTabViewModel.TargetListState.SUCCESS -> {
+
+//                        items(count = 1){
+//                            // mock
+//                            AmityLiveRoomTarget(
+//                                post = null,
+//                                onClick = {}
+//                            )
+//                        }
+
+                        items(livePosts) { post ->
+
+                                AmityLiveRoomTarget(
+                                    post = post,
+                                ) {
+                                    val intent = AmityRoomPlayerPageActivity.newIntent(
+                                        context = context,
+                                        post = post
+                                    )
+                                    context.startActivity(intent)
+                                }
+
+                        }
+
+
                         items(
                             count = targets.itemCount,
                             key = { targets[it]?.getTargetId() ?: it }
@@ -162,11 +192,11 @@ fun AmityStoryShimmer(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
-        modifier = modifier.size(width = 64.dp, height = 118.dp)
+        modifier = modifier.size(width = 72.dp, height = 118.dp)
     ) {
         Box(
             modifier = modifier
-                .size(64.dp)
+                .size(72.dp)
                 .shimmerBackground(
                     color = AmityTheme.colors.baseShade4,
                     shape = RoundedCornerShape(64.dp)
@@ -175,7 +205,7 @@ fun AmityStoryShimmer(
         Box(
             Modifier
                 .padding(top = 8.dp)
-                .width(54.dp)
+                .width(64.dp)
                 .height(8.dp)
                 .shimmerBackground(
                     color = AmityTheme.colors.baseShade4,

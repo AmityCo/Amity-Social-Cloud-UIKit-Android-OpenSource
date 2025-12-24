@@ -4,19 +4,26 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
+import com.amity.socialcloud.sdk.api.social.event.query.AmityEventOrderOption
+import com.amity.socialcloud.sdk.api.social.event.query.AmityEventSortOption
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.model.core.ad.AmityAdPlacement
 import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.core.error.AmityException
+import com.amity.socialcloud.sdk.model.core.events.AmityCommunityEvents
 import com.amity.socialcloud.sdk.model.core.invitation.AmityInvitation
 import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
 import com.amity.socialcloud.sdk.model.core.pin.AmityPinnedPost
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.event.AmityEvent
+import com.amity.socialcloud.sdk.model.social.event.AmityEventOriginType
+import com.amity.socialcloud.sdk.model.social.event.AmityEventStatus
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.ad.AmityAdInjector
 import com.amity.socialcloud.uikit.common.ad.AmityListItem
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
+import com.amity.socialcloud.uikit.common.utils.isSignedIn
 import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipModalSheetUIState
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Flowable
@@ -65,6 +72,11 @@ class AmityCommunityProfileViewModel(private val communityId: String) :
             .doOnNext { (community, isModerator) ->
                 val isMember = community.isJoined()
                 viewModelScope.launch {
+                    community.subscription(AmityCommunityEvents.POSTS)
+                        .subscribeTopic()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe()
                     delay(1000)
                     _communityProfileState.value = _communityProfileState.value.copy(
                         communityId = communityId,
@@ -134,6 +146,25 @@ class AmityCommunityProfileViewModel(private val communityId: String) :
             .catch {}
     }
 
+    fun getInvitation(community: AmityCommunity) {
+        if (AmityCoreClient.isSignedIn()) {
+            community.getInvitation()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSuccess { invitations ->
+                    if (invitations.isNotEmpty()) {
+                        _communityProfileState.update { currentState ->
+                            currentState.copy(
+                                invitation = invitations.first()
+                            )
+                        }
+                    }
+                }
+                .subscribe()
+                .let(::addDisposable)
+        }
+    }
+
     fun getCommunityImagePosts(): Flow<PagingData<AmityPost>> {
         return AmitySocialClient.newPostRepository()
             .getPosts()
@@ -174,6 +205,45 @@ class AmityCommunityProfileViewModel(private val communityId: String) :
             .observeOn(AndroidSchedulers.mainThread())
             .asFlow()
             .catch {}
+    }
+
+    fun getCommunityEvents(status: AmityEventStatus? = null): Flow<PagingData<AmityEvent>> {
+        val query = AmitySocialClient.newEventRepository()
+            .getEvents()
+            .originId(communityId)
+            .originType(AmityEventOriginType.COMMUNITY)
+            .sortBy(AmityEventSortOption.START_TIME)
+        
+        // Apply status filter and sorting if provided
+        status?.let {
+            query.status(it)
+            // Past events in descending order, upcoming in ascending order
+            if (it == AmityEventStatus.ENDED) {
+                query.orderBy(AmityEventOrderOption.DESCENDING)
+            } else {
+                query.orderBy(AmityEventOrderOption.ASCENDING)
+            }
+        }
+
+        return query
+            .build()
+            .query()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .asFlow()
+            .catch {}
+    }
+
+    fun getCommunityUpcomingEvents(): Flow<PagingData<AmityEvent>> {
+        return getCommunityEvents(AmityEventStatus.SCHEDULED)
+    }
+
+    fun getCommunityPastEvents(): Flow<PagingData<AmityEvent>> {
+        return getCommunityEvents(AmityEventStatus.ENDED)
+    }
+
+    fun getCommunityLiveEvents(): Flow<PagingData<AmityEvent>> {
+        return getCommunityEvents(AmityEventStatus.LIVE)
     }
 
     fun acceptCommunityInvitation(
@@ -244,4 +314,5 @@ data class CommunityProfileState(
     val isMember: Boolean = false,
     val isModerator: Boolean = false,
     val error: AmityError? = null,
+    val invitation: AmityInvitation? = null,
 )

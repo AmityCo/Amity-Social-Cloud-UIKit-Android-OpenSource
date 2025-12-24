@@ -4,22 +4,29 @@ import android.app.Activity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.waterfall
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Text
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -46,6 +53,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -190,8 +198,8 @@ fun AmityUserProfilePage(
         }
     }
 
-    var selectedVideoClipsTabIndex by remember { mutableIntStateOf(0) }
-    val videoClipTabsTitles = listOf("Videos", "Clips")
+    var selectedMediaTabIndex by remember { mutableIntStateOf(0) }
+    val mediaTabTitles = listOf("Images", "Videos", "Clips")
 
     AmityBasePage("user_profile_page") {
         Box(
@@ -221,18 +229,55 @@ fun AmityUserProfilePage(
             ) {
                 stickyHeader {
                     if (isHeaderSticky) {
-                        AmityToolBar(
-                            title = user?.getDisplayName() ?: "",
-                            onBackClick = {
-                                context.closePageWithResult(Activity.RESULT_CANCELED)
-                            }
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(AmityTheme.colors.background)
+                                .padding(horizontal = 12.dp, vertical = 16.dp)
                         ) {
                             Icon(
-                                painter = painterResource(R.drawable.amity_ic_more_horiz),
-                                contentDescription = "Close",
+                                painter = painterResource(R.drawable.amity_ic_back),
+                                contentDescription = "Back",
                                 tint = AmityTheme.colors.base,
                                 modifier = modifier
                                     .size(24.dp)
+                                    .align(Alignment.CenterStart)
+                                    .clickableWithoutRipple {
+                                        context.closePageWithResult(Activity.RESULT_CANCELED)
+                                    }
+                            )
+
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center,
+                                modifier = Modifier
+                                    .align(Alignment.Center)
+                                    .padding(horizontal = 48.dp)
+                            ) {
+                                Text(
+                                    text = user?.getDisplayName() ?: "",
+                                    style = AmityTheme.typography.titleLegacy,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.weight(1f, fill = false)
+                                )
+                                if (user?.isBrand() == true) {
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Image(
+                                        painter = painterResource(id = R.drawable.amity_ic_brand_badge),
+                                        contentDescription = "Brand badge",
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                }
+                            }
+
+                            Icon(
+                                painter = painterResource(R.drawable.amity_ic_more_horiz),
+                                contentDescription = "Menu",
+                                tint = AmityTheme.colors.base,
+                                modifier = modifier
+                                    .size(24.dp)
+                                    .align(Alignment.CenterEnd)
                                     .clickableWithoutRipple {
                                         showMenuSheet = true
                                     }
@@ -326,39 +371,39 @@ fun AmityUserProfilePage(
                     }
 
                     1 -> {
-                        AmityUserProfilePageViewModel.PostListState.from(
-                            loadState = imagePosts.loadState.refresh,
-                            itemCount = imagePosts.itemCount
-                        ).let(viewModel::setImagePostListState)
-
-                        amityUserImageFeedLLS(
-                            modifier = modifier,
-                            pageScope = getPageScope(),
-                            imagePosts = imagePosts,
-                            postListState = imagePostListState,
-                            isBlockedByMe = isBlockedByMe,
-                            onPostClick = { postId ->
-                                behavior.goToPostDetailPage(
-                                    context = context,
-                                    postId = postId,
-                                )
-                            }
-                        )
-                    }
-
-                    2 -> {
                         item {
                             AmityVideoAndClipChipSelector(
-                                tabTitles = videoClipTabsTitles,
-                                selectedTabIndex = selectedVideoClipsTabIndex,
+                                tabTitles = mediaTabTitles,
+                                selectedTabIndex = selectedMediaTabIndex,
                                 onTabSelected = { index ->
-                                    selectedVideoClipsTabIndex = index
+                                    selectedMediaTabIndex = index
                                 },
                             )
                         }
 
-                        when (selectedVideoClipsTabIndex) {
+                        when (selectedMediaTabIndex) {
                             0 -> {
+                                AmityUserProfilePageViewModel.PostListState.from(
+                                    loadState = imagePosts.loadState.refresh,
+                                    itemCount = imagePosts.itemCount
+                                ).let(viewModel::setImagePostListState)
+
+                                amityUserImageFeedLLS(
+                                    modifier = modifier,
+                                    pageScope = getPageScope(),
+                                    imagePosts = imagePosts,
+                                    postListState = imagePostListState,
+                                    isBlockedByMe = isBlockedByMe,
+                                    onPostClick = { postId ->
+                                        behavior.goToPostDetailPage(
+                                            context = context,
+                                            postId = postId,
+                                        )
+                                    }
+                                )
+                            }
+
+                            1 -> {
                                 AmityUserProfilePageViewModel.PostListState.from(
                                     loadState = videoPosts.loadState.refresh,
                                     itemCount = videoPosts.itemCount
@@ -373,7 +418,7 @@ fun AmityUserProfilePage(
                                 )
                             }
 
-                            1 -> {
+                            2 -> {
                                 AmityUserProfilePageViewModel.PostListState.from(
                                     loadState = clipPosts.loadState.refresh,
                                     itemCount = clipPosts.itemCount

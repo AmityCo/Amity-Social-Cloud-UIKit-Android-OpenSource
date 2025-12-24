@@ -29,6 +29,7 @@ class AmityPostDetailPageActivity : AppCompatActivity() {
         val commentId = intent.getStringExtra(EXTRA_PARAM_COMMENT_ID)
         val parentId = intent.getStringExtra(EXTRA_PARAM_PARENT_ID)
         val replyToCommentId = intent.getStringExtra(EXTRA_PARAM_REPLY_TO)
+        val eventHostId = intent.getStringExtra(EXTRA_PARAM_EVENT_HOST_ID)
 
         setContent {
             AmityPostDetailPage(
@@ -43,6 +44,7 @@ class AmityPostDetailPageActivity : AppCompatActivity() {
                 commentId = commentId,
                 parentId = parentId,
                 replyToCommentId = replyToCommentId,
+                eventHostId = eventHostId,
             )
         }
     }
@@ -85,6 +87,7 @@ class AmityPostDetailPageActivity : AppCompatActivity() {
         private const val EXTRA_PARAM_COMMENT_ID = "comment_id"
         private const val EXTRA_PARAM_PARENT_ID = "parent_id"
         private const val EXTRA_PARAM_REPLY_TO = "reply_to_comment_id"
+        private const val EXTRA_PARAM_EVENT_HOST_ID = "event_host_id"
 
         fun newIntent(
             context: Context,
@@ -95,6 +98,7 @@ class AmityPostDetailPageActivity : AppCompatActivity() {
             commentId: String? = null,
             parentId : String? = null,
             replyTo: String? = null,
+            eventHostId: String? = null,
         ): Intent {
             return Intent(
                 context,
@@ -107,6 +111,7 @@ class AmityPostDetailPageActivity : AppCompatActivity() {
                 putExtra(EXTRA_PARAM_COMMENT_ID, commentId)
                 putExtra(EXTRA_PARAM_PARENT_ID, parentId)
                 putExtra(EXTRA_PARAM_REPLY_TO, replyTo)
+                putExtra(EXTRA_PARAM_EVENT_HOST_ID, eventHostId)
             }
         }
     }

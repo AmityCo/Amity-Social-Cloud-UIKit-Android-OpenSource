@@ -28,6 +28,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/communityHome" />
 
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/livekit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="36dp"
+            android:layout_marginTop="@dimen/amity_padding_m1"
+            android:text="LiveKit POC"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/communityHomeV4" />
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/socialV4Compatible"
             android:layout_width="wrap_content"
@@ -36,7 +47,7 @@
             android:layout_marginTop="@dimen/amity_padding_m1"
             android:text="Test Social V4 Compatible"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/communityHomeV4" />
+            app:layout_constraintTop_toBottomOf="@id/livekit" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/customRankingFeed"
@@ -111,18 +122,6 @@
             android:text="Sync network config"
             app:layout_constraintStart_toStartOf="@id/communityHome"
             app:layout_constraintTop_toBottomOf="@id/liveChat" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/playground"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/amity_padding_m1"
-            android:text="Playground"
-            android:visibility="visible"
-            app:layout_constraintStart_toStartOf="@id/communityHome"
-            app:layout_constraintTop_toBottomOf="@id/configSync" />
-
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

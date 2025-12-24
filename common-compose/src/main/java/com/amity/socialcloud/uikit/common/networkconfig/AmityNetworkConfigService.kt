@@ -8,6 +8,8 @@ import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import com.amity.socialcloud.uikit.common.infra.db.AmityUIKitDB
 import com.amity.socialcloud.uikit.common.infra.db.entity.AmityNetworkConfig
 import com.amity.socialcloud.uikit.common.infra.initializer.AmityAppContext
+import com.google.gson.JsonObject
+import com.google.gson.JsonParser
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.schedulers.Schedulers
 
@@ -17,21 +19,21 @@ object AmityNetworkConfigService {
         Completable.fromCallable {
             val networkConfigDao = AmityUIKitDB.get().networkConfigDao()
             val networkConfig = networkConfigDao.getNetworkConfig()
-            if(networkConfig == null) {
+            if (networkConfig == null) {
                 networkConfigDao.insert(
                     AmityNetworkConfig(
                         id = uniqueKey.hashCode().toString(),
                         config = null
                     )
                 )
-            } else if(networkConfig.id != uniqueKey.hashCode().toString()) {
-                    networkConfigDao.deleteAll()
-                    networkConfigDao.insert(
-                        AmityNetworkConfig(
-                            id = uniqueKey.hashCode().toString(),
-                            config = null
-                        )
+            } else if (networkConfig.id != uniqueKey.hashCode().toString()) {
+                networkConfigDao.deleteAll()
+                networkConfigDao.insert(
+                    AmityNetworkConfig(
+                        id = uniqueKey.hashCode().toString(),
+                        config = null
                     )
+                )
             } else {
                 // retain config
             }
@@ -50,11 +52,14 @@ object AmityNetworkConfigService {
             }.flatMapCompletable { responseJson ->
                 val networkConfigDao = AmityUIKitDB.get().networkConfigDao()
                 val networkConfig = networkConfigDao.getNetworkConfig()
-                if(networkConfig == null) {
-                    val exception = AmityException.create("Ensure setup() is called before syncNetworkConfig()", null, AmityError.BUSINESS_ERROR)
+                if (networkConfig == null) {
+                    val exception = AmityException.create(
+                        "Ensure setup() is called before syncNetworkConfig()",
+                        null,
+                        AmityError.BUSINESS_ERROR
+                    )
                     Completable.error(exception)
-                }
-                else {
+                } else {
                     val configJson = responseJson.getAsJsonObject("config")
                     val updatedConfig = AmityNetworkConfig(
                         id = networkConfig.id,

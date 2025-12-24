@@ -73,6 +73,7 @@ fun AmityPostContentComponent(
     boldedText: String? = null,
     hideMenuButton: Boolean,
     hideTarget: Boolean = false,
+    isEventHost: Boolean = false,
     onClipClick: (childPost: AmityPost) -> Unit = {},
     onTapAction: () -> Unit = {},
 ) {
@@ -234,11 +235,12 @@ fun AmityPostContentComponent(
                 style = style,
                 category = category,
                 hideTarget = hideTarget,
+                isEventHost = isEventHost,
                 onMenuClick = {
                     viewModel.updateSheetUIState(AmityPostMenuSheetUIState.OpenSheet(it.getPostId()))
                 }
             )
-            if (post.getChildren().any { it.getData() is AmityPost.Data.LIVE_STREAM }) {
+            if (post.getChildren().any { it.getData() is AmityPost.Data.LIVE_STREAM } || post.getChildren().any { it.getData() is AmityPost.Data.ROOM }) {
                 AmityPostLivestreamElement(
                     modifier = modifier,
                     post = post
@@ -350,6 +352,9 @@ fun AmityPostContentComponent(
                 isPostDetailPage = isPostDetailPage,
                 shareButtonClick = { postId ->
                     viewModel.updateSheetUIState(AmityPostMenuSheetUIState.OpenShareSheet(postId))
+                },
+                onCommentAction = {
+                    onTapAction()
                 }
             )
 
@@ -373,6 +378,7 @@ fun AmityPostContentComponent(
                                     postId = post.getPostId(),
                                     category = category,
                                     commentId = latestComment.getCommentId(),
+                                    eventHostId = if (isEventHost) post.getCreator()?.getUserId() else null,
                                 )
                             },
                             componentScope = getComponentScope(),
@@ -382,6 +388,7 @@ fun AmityPostContentComponent(
                             editingCommentId = null,
                             comment = latestComment,
                             allowInteraction = true,
+                            isEventHost = isEventHost,
                             onReply = {
                                 commentBehavior.goToPostDetailPage(
                                     context = context,
@@ -389,6 +396,7 @@ fun AmityPostContentComponent(
                                     category = category,
                                     commentId = latestComment.getCommentId(),
                                     replyTo = latestComment.getCommentId(),
+                                    eventHostId = if (isEventHost) post.getCreator()?.getUserId() else null,
                                 )
                             },
                             onEdit = {},

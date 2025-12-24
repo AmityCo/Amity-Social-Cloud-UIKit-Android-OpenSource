@@ -54,6 +54,7 @@ fun AmitySocialHomeTopNavigationComponent(
     val behavior by lazy {
         AmitySocialBehaviorHelper.socialHomeTopNavigationComponentBehavior
     }
+
     AmityBaseComponent(
         pageScope = pageScope,
         componentId = "top_navigation",
@@ -85,8 +86,10 @@ fun AmitySocialHomeTopNavigationComponent(
                 if (AmityCoreClient.isSignedIn()) {
                     when (selectedTab) {
                         AmitySocialHomePageTab.NEWSFEED,
-                        AmitySocialHomePageTab.EXPLORE,
-                        AmitySocialHomePageTab.MY_COMMUNITIES,
+//                        AmitySocialHomePageTab.EXPLORE,
+                        AmitySocialHomePageTab.COMMUNITIES,
+                        AmitySocialHomePageTab.EVENTS,
+                        AmitySocialHomePageTab.CLIPS
                             -> {
                             AmityBaseElement(
                                 pageScope = pageScope,
@@ -126,8 +129,10 @@ fun AmitySocialHomeTopNavigationComponent(
 
                 when (selectedTab) {
                     AmitySocialHomePageTab.NEWSFEED,
-                    AmitySocialHomePageTab.EXPLORE,
-                    AmitySocialHomePageTab.MY_COMMUNITIES,
+//                    AmitySocialHomePageTab.EXPLORE,
+                    AmitySocialHomePageTab.COMMUNITIES,
+                    AmitySocialHomePageTab.EVENTS,
+                    AmitySocialHomePageTab.CLIPS
                         -> {
                         AmityBaseElement(
                             pageScope = pageScope,
@@ -153,7 +158,9 @@ fun AmitySocialHomeTopNavigationComponent(
                 var expanded by remember { mutableStateOf(false) }
                 when (selectedTab) {
                     AmitySocialHomePageTab.NEWSFEED,
-                    AmitySocialHomePageTab.MY_COMMUNITIES,
+                    AmitySocialHomePageTab.COMMUNITIES,
+                    AmitySocialHomePageTab.EVENTS,
+                    AmitySocialHomePageTab.CLIPS
                         -> {
                         AmityBaseElement(
                             pageScope = pageScope,
@@ -168,27 +175,12 @@ fun AmitySocialHomeTopNavigationComponent(
                                     .size(32.dp)
                                     .testTag(getAccessibilityId()),
                                 onClick = {
-                                    when (selectedTab) {
-                                        AmitySocialHomePageTab.NEWSFEED -> {
-                                            expanded = true
-                                        }
-
-                                        AmitySocialHomePageTab.MY_COMMUNITIES -> {
-                                            behavior.goToCreateCommunityPage(
-                                                AmitySocialHomeTopNavigationComponentBehavior.Context(
-                                                    componentContext = context,
-                                                )
-                                            )
-                                        }
-
-                                        else -> {}
-                                    }
+                                    // Always show Create Post Menu for all tabs
+                                    expanded = true
                                 },
                             )
                         }
                     }
-
-                    else -> {}
                 }
 
                 AmityCreatePostMenuComponent(

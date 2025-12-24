@@ -261,6 +261,54 @@ fun AmityCategoryAvatarView(
 }
 
 @Composable
+fun AmityEventAvatarView(
+    modifier: Modifier = Modifier,
+    size: Dp = 40.dp,
+    eventCoverImage: AmityImage?,
+    roundedCornerShape: RoundedCornerShape = RoundedCornerShape(6.dp),
+) {
+    val url = eventCoverImage?.getUrl(AmityImage.Size.MEDIUM)?.ifEmpty { null }
+    
+    val painter = rememberAsyncImagePainter(
+        model = ImageRequest
+            .Builder(LocalContext.current)
+            .data(url)
+            .diskCachePolicy(CachePolicy.ENABLED)
+            .memoryCachePolicy(CachePolicy.ENABLED)
+            .build()
+    )
+    val painterState by painter.state.collectAsState()
+    
+    Box(modifier = modifier) {
+        Image(
+            painter = painter,
+            contentScale = ContentScale.Crop,
+            contentDescription = "Event cover",
+            modifier = Modifier
+                .size(size)
+                .clip(roundedCornerShape)
+        )
+        if (painterState !is AsyncImagePainter.State.Success) {
+            Box(
+                modifier = Modifier
+                    .size(size)
+                    .clip(roundedCornerShape)
+                    .background(Color(0xFFDBCABD))
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.amity_ic_event_list_placeholder),
+                    contentScale = ContentScale.Crop,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(size)
+                        .clip(roundedCornerShape)
+                )
+            }
+        }
+    }
+}
+
+@Composable
 fun AmityAvatarView(
     modifier: Modifier = Modifier,
     size: Dp = 32.dp,

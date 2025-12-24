@@ -12,11 +12,10 @@ ext {
     amityMockkVersion = "1.10.0"
     amitySDKJitpackDependency = 'com.github.AmityCo.Amity-Social-Cloud-SDK-Android'
     amitySDKMavenDependency = 'co.amity.android'
-    amityMessagingSdkVersion = '7.11.0'
+    amityMessagingSdkVersion = '7.13.1'
     amitySDKDependency = amitySDKMavenDependency
     amityRxLifeCycleVersion = '1.1.2-beta01'
     amityJacocoVersion = '0.8.5'
-    amityExoplayerVersion = '2.18.5'
     media3Version = '1.1.0'
     retrofitVersion = '2.9.0'
     composeKotlinCompilerVersion = '2.0.0'

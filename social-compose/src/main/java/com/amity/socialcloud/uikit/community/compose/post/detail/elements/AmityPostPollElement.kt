@@ -170,7 +170,7 @@ fun AmityPostPollElement(
             val isUnderReview = post.getReviewStatus() == AmityReviewStatus.UNDER_REVIEW
 
             if (isCommunityPost) {
-                !isVoting && (AmityCoreClient.isVisitor() || (isCommunityJoined && !isUnderReview))
+                !isVoting && (AmityCoreClient.isVisitor() || !isCommunityJoined || (isCommunityJoined && !isUnderReview))
             } else {
                 !isVoting && !isUnderReview
             }
@@ -465,21 +465,27 @@ fun AmityPostPollElement(
                     .fillMaxWidth(),
                 onClick = {
                     if (AmityCoreClient.isVisitor()) {
-                     behavior.handleVisitorUserAction()
+                        behavior.handleVisitorUserAction()
                     } else {
-                        scope.launch {
-                            isVoting = true
-                            try {
-                                AmitySocialClient.newPollRepository()
-                                    .votePoll(
-                                        poll.getPollId(),
-                                        pollStateUiState.find { it.postId == post.getPostId() }?.selectedOption?.map { poll.getAnswers()[it].id }
-                                            ?: selectedIndices.map { poll.getAnswers()[it].id }
-                                    )
-                                    .await()
+                        val isCommunityPost = post.getTarget() is AmityPost.Target.COMMUNITY
+                        val isCommunityJoined = (post.getTarget() as? AmityPost.Target.COMMUNITY)?.getCommunity()?.isJoined() ?: false
 
-                                isResultState = true
-                            } catch (e: Exception) {
+                        if (isCommunityPost && !isCommunityJoined) {
+                            behavior.handleNonMemberAction()
+                        } else {
+                            scope.launch {
+                                isVoting = true
+                                try {
+                                    AmitySocialClient.newPollRepository()
+                                        .votePoll(
+                                            poll.getPollId(),
+                                            pollStateUiState.find { it.postId == post.getPostId() }?.selectedOption?.map { poll.getAnswers()[it].id }
+                                                ?: selectedIndices.map { poll.getAnswers()[it].id }
+                                        )
+                                        .await()
+
+                                    isResultState = true
+                                } catch (e: Exception) {
                                 if (e is AmityException) {
                                     if (e.code == AmityError.BAD_REQUEST_ERROR.code) {
                                         isEndedState.value = true
@@ -500,6 +506,7 @@ fun AmityPostPollElement(
                             }
                         }
                     }
+                }
                 }
             ) {
                 Text(
@@ -608,7 +615,8 @@ fun AmityPostPollElement(
                                 else -> {
                                     // Determine if plus sign is needed
                                     val nextThreshold = getNextThreshold(voteCount)
-                                    val plusSign = if (voteCount > nextThreshold) "+" else ""
+                                    // new requirement, remove plus
+                                    val plusSign = if (voteCount > nextThreshold) "" else ""
 
                                     // Adjust display count if current user is among the voters
                                     val displayVoteCount = if (answer.isVotedByUser) {
@@ -804,7 +812,7 @@ fun AmityPostPollElement(
                             color = AmityTheme.colors.primary,
                             fontWeight = FontWeight.SemiBold
                         ),
-                        text = if (!isResultState) "See results" else "Back to vote",
+                        text = if (!isResultState) "See results" else "Back to poll",
                     )
                 } else if (poll.isVoted()) {
                     Text(

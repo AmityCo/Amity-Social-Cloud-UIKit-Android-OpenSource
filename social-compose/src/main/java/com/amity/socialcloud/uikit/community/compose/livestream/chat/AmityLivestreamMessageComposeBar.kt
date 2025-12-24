@@ -5,7 +5,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -60,6 +59,7 @@ import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.chat.member.AmityMembershipType
 import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.core.error.AmityException
+import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
 import com.amity.socialcloud.uikit.common.model.AmityMessageReactions
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
@@ -69,6 +69,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.isSignedIn
 import com.amity.socialcloud.uikit.common.utils.isVisitor
+import com.amity.socialcloud.uikit.common.utils.shade
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -84,11 +85,15 @@ fun AmityLivestreamMessageComposeBar(
     value: String,
     isPendingApproval: Boolean = false,
     isNonMember: Boolean = false,
+    streamHostUserId: String? = null,
     onValueChange: (String) -> Unit,
     onSend: () -> Unit,
     onReactionClick: () -> Unit,
     onReactionLongClick: () -> Unit,
+    isMicrophoneMute: Boolean = false,
+    onToggleMicrophone: (() -> Unit)? = null,
     onSwitchCamera: (() -> Unit)? = null,
+    onOpenInviteSheet: (() -> Unit)? = null,
 ) {
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
@@ -136,6 +141,12 @@ fun AmityLivestreamMessageComposeBar(
         viewModel.isUserMuted(com.amity.socialcloud.sdk.api.core.AmityCoreClient.getUserId())
     }.collectAsState(initial = false)
 
+    val isCurrentUserStreamHost by remember {
+        derivedStateOf {
+            streamHostUserId != null && AmityCoreClient.getUserId() == streamHostUserId
+        }
+    }
+
     var showComposeErrorDialog = remember { mutableStateOf(false) }
 
     AmityBaseComponent(
@@ -158,8 +169,13 @@ fun AmityLivestreamMessageComposeBar(
             }
 
             val isUserMuted = membership?.isMuted() == true || isCurrentUserMutedInMetadata
-            
-            if (!isChannelMuted && !isUserMuted && !isPendingApproval) {
+
+            // Show compose bar if user is not pending approval and either:
+            // 1. Channel is not muted and user is not muted, OR
+            // 2. User is the stream host (can always send messages)
+            val shouldShowComposeBar = !isPendingApproval && (!isChannelMuted && !isUserMuted || isCurrentUserStreamHost)
+
+            if (shouldShowComposeBar) {
                 HorizontalDivider(
                     color = Color(0xFF292B32),
                 )
@@ -173,11 +189,15 @@ fun AmityLivestreamMessageComposeBar(
             ) {
                 if (isPendingApproval) {
                     AmityLivestreamPendingApprovalComposeBar()
-                } else if (isChannelMuted) {
+                } else if (isNonMember) {
+                    AmityLivestreamNonMemberComposeBar(
+                        modifier = Modifier.weight(1f)
+                    )
+                } else if (isChannelMuted && !isCurrentUserStreamHost) {
                     AmityLivestreamReadOnlyComposeBar(
                         modifier = Modifier.weight(1f),
                     )
-                } else if (isUserMuted) {
+                } else if (isUserMuted && !isCurrentUserStreamHost) {
                     AmityLivestreamReadOnlyComposeBar(
                         modifier = Modifier.weight(1f),
                         isMemberMuted = true,
@@ -222,7 +242,7 @@ fun AmityLivestreamMessageComposeBar(
                             textStyle = AmityTheme.typography.body.copy(color = Color(0xFFEBECEF)),
                             maxLines = 1,
                             hint = "Chat...",
-                            enabled = (isChannelModerator || (!isUserMuted && !isChannelMuted)) && AmityCoreClient.isSignedIn() && !isNonMember,
+                            enabled = (isChannelModerator || isCurrentUserStreamHost || (!isUserMuted && !isChannelMuted)) && AmityCoreClient.isSignedIn() && !isNonMember,
                             shape = RoundedCornerShape(20.dp),
                             innerPadding = PaddingValues(horizontal = 12.dp, vertical = 10.dp),
                             onValueChange = {
@@ -236,7 +256,7 @@ fun AmityLivestreamMessageComposeBar(
                 val defaultReaction =
                     AmityMessageReactions.getList().getOrNull(1) ?: AmityMessageReactions.getList()
                         .firstOrNull()
-                if (isPendingApproval) {
+                if (isPendingApproval || isNonMember) {
                     Box {}
                 } else if (messageText.isNotEmpty() || defaultReaction == null) {
                     Button(
@@ -250,16 +270,17 @@ fun AmityLivestreamMessageComposeBar(
                                 return@Button
                             }
                             shouldClearText = true
+                            val sendingMessage = messageText.trim()
+                            messageText = ""
                             keyboardController?.hide()
                             focusManager.clearFocus()
                             viewModel.createMessage(
-                                text = messageText.trim(),
+                                text = sendingMessage,
                                 onSuccess = {
-                                    messageText = ""
+                                    onSend()
                                     shouldClearText = true
                                 },
                                 onError = { exception ->
-                                    messageText = ""
                                     shouldClearText = false
 
                                     val errorMessage: String = if (exception is AmityException) {
@@ -298,24 +319,68 @@ fun AmityLivestreamMessageComposeBar(
                             modifier = Modifier.size(16.dp)
                         )
                     }
-                } else if (onSwitchCamera != null) {
-                    Box(
-                        modifier = Modifier
-                            .size(36.dp)
-                            .align(Alignment.CenterVertically)
-                            .clickableWithoutRipple {
-                                onSwitchCamera()
-                                keyboardController?.hide()
-                                focusManager.clearFocus()
-                            }
-                            .testTag("switch_camera_button")
-                    ) {
-                        Image(
-                            painter = painterResource(R.drawable.amity_v4_switch_camera_button),
-                            contentDescription = "",
+                } else if (onSwitchCamera != null || onToggleMicrophone != null || onOpenInviteSheet != null) {
+                    if (onOpenInviteSheet != null) {
+                        Box(
                             modifier = Modifier
                                 .size(36.dp)
-                        )
+                                .align(Alignment.CenterVertically)
+                                .clickableWithoutRipple {
+                                    onOpenInviteSheet()
+                                    keyboardController?.hide()
+                                    focusManager.clearFocus()
+                                }
+                                .testTag("invite_sheet_button")
+                        ) {
+                            Image(
+                                painter = painterResource(R.drawable.amity_ic_room_invite_button),
+                                contentDescription = "",
+                                modifier = Modifier
+                                    .size(36.dp)
+                            )
+                        }
+                    }
+                    if (onToggleMicrophone != null) {
+                        Box(
+                            modifier = Modifier
+                                .size(36.dp)
+                                .align(Alignment.CenterVertically)
+                                .clickableWithoutRipple {
+                                    onToggleMicrophone()
+                                    keyboardController?.hide()
+                                    focusManager.clearFocus()
+                                }
+                                .testTag("toggle_microphone_button")
+                        ) {
+                            Image(
+                                painter = if (isMicrophoneMute) { painterResource(R.drawable.amity_ic_room_unmute_button) } else {
+                                    painterResource(R.drawable.amity_ic_room_mute_button)
+                                },
+                                contentDescription = "",
+                                modifier = Modifier
+                                    .size(36.dp)
+                            )
+                        }
+                    }
+                    if (onSwitchCamera != null) {
+                        Box(
+                            modifier = Modifier
+                                .size(36.dp)
+                                .align(Alignment.CenterVertically)
+                                .clickableWithoutRipple {
+                                    onSwitchCamera()
+                                    keyboardController?.hide()
+                                    focusManager.clearFocus()
+                                }
+                                .testTag("switch_camera_button")
+                        ) {
+                            Image(
+                                painter = painterResource(R.drawable.amity_ic_room_switch_camera),
+                                contentDescription = "",
+                                modifier = Modifier
+                                    .size(36.dp)
+                            )
+                        }
                     }
                 } else {
                     Box(
@@ -422,6 +487,25 @@ fun MessageComposeErrorPopup(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun AmityLivestreamNonMemberComposeBar(
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .height(40.dp)
+            .fillMaxWidth(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "Join community to interact with live stream",
+            style = AmityTheme.typography.body,
+            color = AmityTheme.colors.secondaryShade2,
+            textAlign = TextAlign.Center,
+        )
     }
 }
 

@@ -138,6 +138,28 @@ fun AmityPostImageView(
                 }
         )
     }
+    else if (data is AmityPost.Data.ROOM) {
+        val thumbnail = data.getRoom()?.getThumbnail()?.getUrl(AmityImage.Size.MEDIUM) ?: ""
+        AsyncImage(
+            model = ImageRequest
+                .Builder(LocalContext.current)
+                .data(thumbnail)
+                .crossfade(true)
+                .networkCachePolicy(CachePolicy.ENABLED)
+                .diskCachePolicy(CachePolicy.ENABLED)
+                .memoryCachePolicy(CachePolicy.ENABLED)
+                .build(),
+            contentDescription = "Stream Thumbnail",
+            contentScale = ContentScale.FillWidth,
+            modifier = modifier
+                .fillMaxSize()
+                .background(AmityTheme.colors.baseShade4)
+                .clickableWithoutRipple { onClick() }
+                .semantics {
+                    role = Role.Image
+                }
+        )
+    }
     else {
         Box(
             modifier = Modifier

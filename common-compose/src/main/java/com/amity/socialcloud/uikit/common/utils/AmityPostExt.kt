@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.common.utils
 
+import android.util.Log
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 
 fun AmityPost.isSupportedDataTypes(): Boolean {
@@ -11,6 +12,7 @@ fun AmityPost.isSupportedDataTypes(): Boolean {
                 || data is AmityPost.Data.CLIP
                 || data is AmityPost.Data.LIVE_STREAM
                 || data is AmityPost.Data.POLL
+                || data is AmityPost.Data.ROOM
     }
 }
 

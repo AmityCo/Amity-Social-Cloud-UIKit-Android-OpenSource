@@ -184,6 +184,23 @@ fun AmityCommunityProfileActionsContainer(
                     )
                 }
             }
+
+            if (shouldShowPostCreationButton) {
+                AmityBottomSheetActionItem(
+                    icon = com.amity.socialcloud.uikit.common.R.drawable.amity_ic_create_event,
+                    text = "Event",
+                    modifier = modifier,
+                ) {
+                    onDismiss()
+                    behavior.goToCreateEventPage(
+                        AmityCommunityProfilePageBehavior.Context(
+                            pageContext = context,
+                            activityLauncher = launcher,
+                            community = community,
+                        )
+                    )
+                }
+            }
         }
     }
 }

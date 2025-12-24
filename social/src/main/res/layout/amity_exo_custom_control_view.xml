@@ -18,6 +18,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:background="#CC000000"
+            android:contentDescription="play button"
             style="@style/ExoMediaButton.Play" />
 
         <ImageButton android:id="@id/exo_pause"
@@ -25,9 +26,10 @@
             android:layout_weight="1"
             android:layout_gravity="center"
             android:background="#CC000000"
+            android:contentDescription="pause button"
             style="@style/ExoMediaButton.Pause"/>
 
-        <com.google.android.exoplayer2.ui.DefaultTimeBar
+        <androidx.media3.ui.DefaultTimeBar
             android:id="@id/exo_progress"
             android:layout_width="0dp"
             android:layout_weight="3"

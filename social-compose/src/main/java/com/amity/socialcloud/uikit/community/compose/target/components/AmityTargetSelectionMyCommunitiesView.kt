@@ -2,8 +2,13 @@ package com.amity.socialcloud.uikit.community.compose.target.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,6 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
@@ -31,6 +38,7 @@ import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.community.compose.target.AmityTargetSelectionPageViewModel
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityCommunityTargetListShimmer
+import com.amity.socialcloud.uikit.community.compose.R
 
 
 @Composable
@@ -53,29 +61,60 @@ fun AmityTargetSelectionMyCommunitiesView(
         viewModel.allowToCreateMap
     }.collectAsState()
 
-    Text(
-        text = "My Communities",
-        style = AmityTheme.typography.bodyLegacy.copy(
-            color = AmityTheme.colors.base.copy(alpha = 0.4f),
-        ),
-        modifier = modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-    )
+    // Only show "My Communities" text if there are communities or still loading
+    if (communities.loadState.refresh is LoadState.Loading || communities.itemCount > 0) {
+        Text(
+            text = "My Communities",
+            style = AmityTheme.typography.bodyLegacy.copy(
+                color = AmityTheme.colors.base.copy(alpha = 0.4f),
+            ),
+            modifier = modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+        )
+    }
 
-    LazyColumn(
-        modifier = modifier.fillMaxWidth(),
-        state = rememberLazyListState()
-    ) {
-        when {
-            communities.loadState.refresh is LoadState.Loading -> {
-                item {
-                    AmityCommunityTargetListShimmer(
-                        modifier = modifier.padding(horizontal = 16.dp)
-                    )
+    when {
+        communities.loadState.refresh is LoadState.Loading -> {
+            AmityCommunityTargetListShimmer(
+                modifier = modifier.padding(horizontal = 16.dp)
+            )
+        }
+        communities.loadState.refresh is LoadState.Error -> {
+            // Error state
+        }
+        communities.itemCount == 0 -> {
+            if (contentType != AmityTargetContentType.POST) {
+                Box(
+                    modifier = modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                        modifier = modifier.padding(horizontal = 32.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(R.drawable.amity_ic_empty_target_community),
+                            contentDescription = "No communities",
+                            modifier = modifier.size(160.dp)
+                        )
+                        
+                        Spacer(modifier = modifier.height(4.dp))
+                        
+                        Text(
+                            text = "You haven't joined any communities yet.",
+                            style = AmityTheme.typography.titleBold,
+                            color = AmityTheme.colors.baseShade3,
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
             }
-            communities.loadState.refresh is LoadState.Error -> {
-            }
-            else -> {
+        }
+        else -> {
+            LazyColumn(
+                modifier = modifier.fillMaxWidth(),
+                state = rememberLazyListState()
+            ) {
                 items(
                     count = communities.itemCount,
                     key = { communities[it]?.getCommunityId() ?: it }
@@ -123,6 +162,8 @@ fun AmityTargetSelectionMyCommunitiesView(
                                     style = AmityTheme.typography.bodyLegacy.copy(
                                         fontWeight = FontWeight.SemiBold
                                     ),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
                                     modifier = modifier,
                                 )
 
@@ -147,5 +188,6 @@ fun AmityTargetSelectionMyCommunitiesView(
 }
 enum class AmityTargetContentType {
     POST,
-    STORY
+    STORY,
+    Event
 }

@@ -14,6 +14,7 @@ import com.amity.socialcloud.sdk.model.core.file.AmityFileInfo
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.file.AmityVideo
 import com.amity.socialcloud.sdk.model.core.file.upload.AmityUploadResult
+import com.amity.socialcloud.sdk.model.core.link.AmityLink
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.service.AmityFileService
@@ -37,6 +38,7 @@ import com.amity.socialcloud.sdk.helper.core.metadata.AmityPostMetadataCreator
 import com.amity.socialcloud.sdk.model.core.file.AmityClip
 import com.amity.socialcloud.sdk.model.core.file.AmityFileType
 import com.amity.socialcloud.sdk.model.core.file.AmityRawFile
+import com.amity.socialcloud.sdk.model.core.link.AmityLinkPreviewMetadata
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.AltTextMedia
 import kotlin.apply
 
@@ -96,6 +98,195 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
         MutableStateFlow(true)
     }
     val isAllMediaSuccessfullyUploaded get() = _isAllMediaSuccessfullyUploaded
+
+    // Link preview state
+    private val _detectedUrls by lazy {
+        MutableStateFlow<List<AmityLink>>(emptyList())
+    }
+    val detectedUrls get() = _detectedUrls
+
+    private val _linkPreviewMetadata by lazy {
+        MutableStateFlow<AmityLinkPreviewMetadata?>(null)
+    }
+    val linkPreviewMetadata get() = _linkPreviewMetadata
+
+    private val _isLinkPreviewDismissed by lazy {
+        MutableStateFlow(false)
+    }
+    val isLinkPreviewDismissed get() = _isLinkPreviewDismissed
+
+    private var previousUrl: String? = null
+    private var metadataDisposable: io.reactivex.rxjava3.disposables.Disposable? = null
+
+    fun updateDetectedUrls(urls: List<AmityLink>) {
+        val firstUrl = urls.firstOrNull()?.getUrl()
+
+        // If we have existing metadata and the first URL hasn't changed, preserve it
+        val currentMetadata = _linkPreviewMetadata.value
+        if (firstUrl == previousUrl && currentMetadata != null && urls.isNotEmpty()) {
+            // Keep first link with metadata, others without metadata
+            _detectedUrls.value = urls.mapIndexed { index, link ->
+                if (index == 0) {
+                    // First link keeps its metadata and renderPreview = true
+                    try {
+                        val domain = currentMetadata.getDomain()
+                        val title = currentMetadata.getTitle()
+                        val imageUrl = currentMetadata.getImageUrl()
+                        val hasValidMetadata = !domain.isNullOrEmpty() || !title.isNullOrEmpty() || !imageUrl.isNullOrEmpty()
+                        AmityLink(
+                            index = link.getIndex(),
+                            length = link.getLength(),
+                            url = link.getUrl(),
+                            renderPreview = hasValidMetadata,
+                            domain = domain,
+                            title = title,
+                            imageUrl = imageUrl
+                        )
+                    } catch (e: Exception) {
+                        link
+                    }
+                } else {
+                    // Other links have no metadata and renderPreview = false
+                    link
+                }
+            }
+            return
+        }
+
+        _detectedUrls.value = urls
+
+        // Fetch metadata only if URL changed
+        // The debouncing is already handled by AmityMentionTextField (2 seconds)
+        if (firstUrl != null && firstUrl != previousUrl) {
+            previousUrl = firstUrl
+            _isLinkPreviewDismissed.value = false
+            _linkPreviewMetadata.value = null // Clear cached metadata
+            fetchLinkPreviewMetadata(firstUrl)
+        } else if (firstUrl == null) {
+            // Clear metadata when no URLs detected
+            previousUrl = null
+            _linkPreviewMetadata.value = null
+        }
+    }
+
+    private fun fetchLinkPreviewMetadata(url: String) {
+        metadataDisposable?.dispose()
+        metadataDisposable = AmityCoreClient.getLinkPreviewMetadata(url)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { metadata ->
+                    _linkPreviewMetadata.value = metadata
+                    // Update detected URLs with metadata
+                    updateUrlsWithMetadata(metadata)
+                },
+                { error ->
+                    // Handle error silently
+                    _linkPreviewMetadata.value = null
+                }
+            )
+    }
+
+    private fun updateUrlsWithMetadata(metadata: AmityLinkPreviewMetadata) {
+        val metadataDomain = metadata.getDomain()
+        val metadataTitle = metadata.getTitle()
+        val imageUrl = metadata.getImageUrl()
+        
+        _detectedUrls.value = _detectedUrls.value.mapIndexed { index, link ->
+            try {
+                val linkUrl = link.getUrl() ?: ""
+                
+                // Extract original text by checking if https:// was auto-added
+                // If URL starts with https:// but originalText didn't, remove it for display
+                val originalText = if (linkUrl.startsWith("https://") && 
+                    !linkUrl.substring(8).startsWith("http")) {
+                    linkUrl.substring(8) // Remove "https://"
+                } else {
+                    linkUrl
+                }
+                
+                // Determine domain and title based on what metadata is available
+                val finalDomain: String
+                val finalTitle: String
+                
+                when {
+                    // Both null → use original text for both
+                    metadataDomain == null && metadataTitle == null -> {
+                        finalDomain = originalText
+                        finalTitle = originalText
+                    }
+                    // Domain exists but title null → use domain for both
+                    metadataDomain != null && metadataTitle == null -> {
+                        finalDomain = metadataDomain
+                        finalTitle = metadataDomain
+                    }
+                    // Title exists but domain null → use original text for domain
+                    metadataDomain == null && metadataTitle != null -> {
+                        finalDomain = originalText
+                        finalTitle = metadataTitle
+                    }
+                    // Both exist → use them as is
+                    else -> {
+                        finalDomain = metadataDomain!!
+                        finalTitle = metadataTitle!!
+                    }
+                }
+                
+                AmityLink(
+                    index = link.getIndex(),
+                    length = link.getLength(),
+                    url = linkUrl,
+                    renderPreview = index == 0, // Always render preview for first link
+                    domain = finalDomain,
+                    title = finalTitle,
+                    imageUrl = imageUrl
+                )
+            } catch (e: Exception) {
+                link
+            }
+        }
+    }
+
+    fun dismissLinkPreview() {
+        _isLinkPreviewDismissed.value = true
+        // Set renderPreview to false for all links
+        _detectedUrls.value = _detectedUrls.value.map { link ->
+            try {
+                AmityLink(
+                    index = link.getIndex(),
+                    length = link.getLength(),
+                    url = link.getUrl(),
+                    renderPreview = false,
+                    domain = link.getDomain(),
+                    title = link.getTitle(),
+                    imageUrl = link.getImageUrl()
+                )
+            } catch (e: Exception) {
+                link
+            }
+        }
+    }
+
+    fun preserveUrlWithMetadata() {
+        // Preserve existing link with metadata when text is removed
+        if (_detectedUrls.value.isNotEmpty() && _linkPreviewMetadata.value != null) {
+            _detectedUrls.value = _detectedUrls.value.map { link ->
+                try {
+                    AmityLink(
+                        index = 0,
+                        length = 0,
+                        url = link.getUrl(),
+                        renderPreview = link.getRenderPreview(),
+                        domain = link.getDomain(),
+                        title = link.getTitle(),
+                        imageUrl = link.getImageUrl()
+                    )
+                } catch (e: Exception) {
+                    link
+                }
+            }
+        }
+    }
 
     fun setComposerOptions(options: AmityPostComposerOptions) {
         this.options = options
@@ -298,7 +489,8 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
         postText: String,
         postTitle: String?,
         mentionedUsers: List<AmityMentionMetadata.USER>,
-        hashtags: List<AmityHashtag> = emptyList()
+        hashtags: List<AmityHashtag> = emptyList(),
+        links: List<AmityLink> = emptyList(),
     ) {
         if (postText.length > MAX_CHAR_LIMIT) {
             setPostCreationEvent(
@@ -333,6 +525,9 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
                 metadata?.let {
                     this.metadata(metadata)
                     this.mentionUsers(mentionUserIds.toList())
+                }
+                if (links.isNotEmpty()) {
+                    this.links(links)
                 }
             }
 
@@ -371,6 +566,7 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
                         newAttachments,
                         mentionedUsers,
                         hashtags,
+                        links,
                     )
                 })
                 .andThen(Single.defer {
@@ -435,7 +631,8 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
         attachments: List<AmityPost.Data>,
         newAttachments: List<AmityFileInfo>,
         mentionedUsers: List<AmityMentionMetadata.USER>,
-        hashtags: List<AmityHashtag> = emptyList()
+        hashtags: List<AmityHashtag> = emptyList(),
+        links: List<AmityLink> = emptyList()
     ): Completable {
         // Determine attachment type by examining all attachments, not just the first one
         val attachmentType: Type? = run {
@@ -517,6 +714,9 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
                     this.mentionUsers(mentionUserIds.toList())
                     this.hashtags(hashtags.map { it.getText() })
                 }
+                if (links.isNotEmpty()) {
+                    this.links(links)
+                }
             }
 
         return postEditor
@@ -529,6 +729,7 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
         postTitle: String?,
         mentionedUsers: List<AmityMentionMetadata.USER>,
         hashtags: List<AmityHashtag> = emptyList(),
+        links: List<AmityLink> = emptyList(),
     ) {
         if (postText.length > MAX_CHAR_LIMIT) {
             setPostCreationEvent(
@@ -617,6 +818,7 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
                     metadata = metadata,
                     mentionUserIds = mentionUserIds,
                     hashtags = hashtags.map { it.getText() },
+                    links = links,
                 )
             }
         }
@@ -644,6 +846,7 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
         metadata: JsonObject?,
         mentionUserIds: Set<String>,
         hashtags: List<String>,
+        links: List<AmityLink> = emptyList(),
     ): Single<AmityPost> {
         return AmitySocialClient.newPostRepository()
             .createTextPost(
@@ -654,6 +857,7 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
                 metadata = metadata,
                 mentionUserIds = mentionUserIds,
                 hashtags = hashtags,
+                links = links,
             )
     }
 
@@ -1038,6 +1242,11 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
             )
             updateList(pm)
         }
+    }
+    
+    override fun onCleared() {
+        super.onCleared()
+        metadataDisposable?.dispose()
     }
 }
 

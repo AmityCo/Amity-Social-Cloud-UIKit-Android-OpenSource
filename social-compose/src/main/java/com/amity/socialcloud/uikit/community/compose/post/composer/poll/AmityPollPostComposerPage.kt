@@ -480,7 +480,7 @@ fun AmityPollPostComposerPage(
                                 hintText = "Give your poll a headline",
                                 hintColor = AmityTheme.colors.baseShade3,
                                 textStyle = AmityTheme.typography.titleBold.copy(
-                                    color = AmityTheme.colors.baseShade3,
+                                    color = AmityTheme.colors.base,
                                     fontSize = 17.sp,
                                     textAlign = TextAlign.Start
                                 ),

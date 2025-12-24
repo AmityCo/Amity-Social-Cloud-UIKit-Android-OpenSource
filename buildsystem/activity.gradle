@@ -29,9 +29,6 @@ dependencies {
     implementation 'com.github.EkoCommunications:Matisse:0.5.3-5'
 
     //exo player
-    implementation "com.google.android.exoplayer:exoplayer-core:$amityExoplayerVersion"
-    implementation "com.google.android.exoplayer:extension-okhttp:$amityExoplayerVersion"
-    implementation "com.google.android.exoplayer:exoplayer-ui:$amityExoplayerVersion"
     implementation "androidx.media3:media3-exoplayer:$media3Version"
     implementation "androidx.media3:media3-ui:$media3Version"
     implementation "androidx.media3:media3-datasource-okhttp:$media3Version"

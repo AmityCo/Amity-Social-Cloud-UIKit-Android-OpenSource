@@ -367,18 +367,24 @@
     "social_home_page/*/newsfeed_button": {
       "text": "Newsfeed"
     },
-    "social_home_page/*/explore_button": {
+    "social_home_page/*/communities_button": {
+      "text": "Communities"
+    },
+    "social_home_page/*/explore_subtab_button": {
       "text": "Explore"
+    },
+    "social_home_page/*/my_communities_subtab_button": {
+      "text": "My communities"
+    },
+    "social_home_page/*/events_button": {
+      "text": "Events"
     },
     "social_home_page/create_post_menu/create_clip_button": {
       "text": "Clip",
       "image": "createClipIcon"
     },
-    "social_home_page/*/clipsfeed_button": {
+    "social_home_page/*/clips_button": {
       "text": "Clips"
-    },
-    "social_home_page/*/my_communities_button": {
-      "text": "My Communities"
     },
     "social_home_page/empty_newsfeed/illustration": {
       "icon": "emptyFeedIcon"
@@ -395,6 +401,13 @@
     },
     "social_home_page/empty_newsfeed/create_community_button": {
       "icon": "createCommunityIcon"
+    },
+    "social_home_page/my_communities/create_community_card": {},
+    "social_home_page/my_communities/create_community_icon": {
+      "icon": "addIcon"
+    },
+    "social_home_page/my_communities/create_community_text": {
+      "text": "Create community"
     },
     "social_home_page/my_communities/community_avatar": {},
     "social_home_page/my_communities/community_display_name": {},
@@ -574,6 +587,16 @@
       "text": "Post to"
     },
     "select_post_target_page/*/my_timeline_text": {
+      "text": "My Timeline"
+    },
+    "select_event_target_page/*/close_button": {
+      "image": "closeIcon"
+    },
+    "select_event_target_page/*/my_timeline_avatar": {},
+    "select_event_target_page/*/title": {
+      "text": "Create event in"
+    },
+    "select_event_target_page/*/my_timeline_text": {
       "text": "My Timeline"
     },
     "select_story_target_page/*/close_button": {
@@ -789,6 +812,14 @@
       "image": "postAttachmentPhoto"
     },
     "community_setup_page/*/camera_button": {
+      "text": "Camera",
+      "image": "postAttachmentCamera"
+    },
+    "event_setup_page/*/image_button": {
+      "text": "Photo",
+      "image": "postAttachmentPhoto"
+    },
+    "event_setup_page/*/camera_button": {
       "text": "Camera",
       "image": "postAttachmentCamera"
     },

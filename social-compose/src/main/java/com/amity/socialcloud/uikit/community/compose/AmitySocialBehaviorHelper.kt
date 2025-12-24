@@ -14,6 +14,7 @@ import com.amity.socialcloud.uikit.community.compose.community.setting.AmityComm
 import com.amity.socialcloud.uikit.community.compose.community.setting.notifications.AmityCommunityNotificationSettingPageBehavior
 import com.amity.socialcloud.uikit.community.compose.community.setup.AmityCommunitySetupPageBehavior
 import com.amity.socialcloud.uikit.community.compose.livestream.create.AmityCreateLivestreamPageBehavior
+import com.amity.socialcloud.uikit.community.compose.livestream.room.create.AmityCreateRoomPageBehavior
 import com.amity.socialcloud.uikit.community.compose.notificationtray.AmityNotificationTrayPageBehavior
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerPageBehavior
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetailPageBehavior
@@ -32,6 +33,8 @@ import com.amity.socialcloud.uikit.community.compose.socialhome.components.Amity
 import com.amity.socialcloud.uikit.community.compose.story.create.AmityCreateStoryPageBehavior
 import com.amity.socialcloud.uikit.community.compose.story.target.AmityStoryTabComponentBehavior
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageBehavior
+import com.amity.socialcloud.uikit.community.compose.event.detail.AmityEventDetailPageBehavior
+import com.amity.socialcloud.uikit.community.compose.target.event.AmityEventTargetSelectionPageBehavior
 import com.amity.socialcloud.uikit.community.compose.target.livestream.AmityLivestreamPostTargetSelectionPageBehavior
 import com.amity.socialcloud.uikit.community.compose.target.poll.AmityPollTargetSelectionPageBehavior
 import com.amity.socialcloud.uikit.community.compose.target.post.AmityPostTargetSelectionPageBehavior
@@ -52,6 +55,7 @@ object AmitySocialBehaviorHelper {
         AmityPost.DataType.POLL,
         AmityPost.DataType.LIVE_STREAM,
         AmityPost.DataType.CLIP,
+        AmityPost.DataType.ROOM,
     )
 
     val supportedStructureTypes = listOf(
@@ -61,6 +65,7 @@ object AmitySocialBehaviorHelper {
         AmityPost.StructureType.POLL,
         AmityPost.StructureType.LIVESTREAM,
         AmityPost.StructureType.CLIP,
+        AmityPost.StructureType.ROOM,
     )
 
     var showPollResultInDetailFirst = false
@@ -92,8 +97,17 @@ object AmitySocialBehaviorHelper {
     var pollTargetSelectionPageBehavior: AmityPollTargetSelectionPageBehavior =
         AmityPollTargetSelectionPageBehavior()
 
+    var eventTargetSelectionPageBehavior: AmityEventTargetSelectionPageBehavior =
+        AmityEventTargetSelectionPageBehavior()
+
+    var eventDetailPageBehavior: AmityEventDetailPageBehavior =
+        AmityEventDetailPageBehavior()
+
     var createLivestreamPageBehavior: AmityCreateLivestreamPageBehavior =
         AmityCreateLivestreamPageBehavior()
+
+    var createRoomPageBehavior: AmityCreateRoomPageBehavior =
+        AmityCreateRoomPageBehavior()
 
     var createClipPageBehavior: AmityCreateClipPageBehavior =
         AmityCreateClipPageBehavior()

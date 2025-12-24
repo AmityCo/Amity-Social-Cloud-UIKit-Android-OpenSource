@@ -9,14 +9,17 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -35,6 +38,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -48,9 +52,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import com.amity.socialcloud.uikit.common.ui.elements.AmityPreviewLinkView
+import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.UrlHighlight
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -63,6 +72,7 @@ import androidx.media3.ui.AspectRatioFrameLayout
 import coil3.compose.AsyncImage
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.helper.core.hashtag.AmityHashtag
 import com.amity.socialcloud.sdk.helper.core.hashtag.AmityHashtagMetadataGetter
@@ -70,6 +80,7 @@ import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadata
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
 import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.core.file.AmityClip
+import com.amity.socialcloud.sdk.model.core.link.AmityLink
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
@@ -77,6 +88,7 @@ import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
+import com.amity.socialcloud.uikit.common.ui.elements.AmityPreviewLinkViewWithMetadata
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.AmityCameraUtil
@@ -86,6 +98,7 @@ import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getKeyboardHeight
 import com.amity.socialcloud.uikit.common.utils.getText
 import com.amity.socialcloud.uikit.common.utils.isKeyboardVisible
+import com.amity.socialcloud.uikit.common.utils.shimmerBackground
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.AltTextConfigMode
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.AltTextMedia
@@ -99,6 +112,11 @@ import com.amity.socialcloud.uikit.community.compose.post.model.AmityPostMedia
 import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmityStoryVideoPlayer
 import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.AmityMentionSuggestionView
 import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.AmityMentionTextField
+import com.amity.socialcloud.uikit.common.extionsions.UrlPosition
+import com.amity.socialcloud.uikit.common.extionsions.extractUrls
+import com.amity.socialcloud.uikit.common.linkpreview.AmityPreviewUrl
+import com.amity.socialcloud.uikit.common.linkpreview.models.AmityPreviewMetadataCacheItem
+import androidx.compose.runtime.rxjava3.subscribeAsState
 import com.google.gson.JsonObject
 
 @Composable
@@ -126,6 +144,7 @@ fun AmityPostComposerPage(
     var maxUploadLimitMediaType by remember { mutableStateOf<AmityPostMedia.Type?>(null) }
     var showDiscardPostDialog by remember { mutableStateOf(false) }
     var showPendingPostDialog by remember { mutableStateOf(false) }
+    var showLinkLimitDialog by remember { mutableStateOf(false) }
     var isCameraPermissionGranted by remember { mutableStateOf(false) }
 
     var existingAttachmentType by remember { mutableStateOf<AmityPostMedia.Type?>(null) }
@@ -206,6 +225,31 @@ fun AmityPostComposerPage(
     val keyboardHeight by getKeyboardHeight()
 
     var localPostText by remember { mutableStateOf(postBodyText) }
+    
+    // Track initial link preview state in edit mode
+    val initialLinkPreviewWasShown = remember {
+        if (options is AmityPostComposerOptions.AmityPostComposerEditOptions) {
+            val initialLinks = options.post.getLinks()?.toList() ?: emptyList()
+            initialLinks.any { it.getRenderPreview() }
+        } else {
+            false
+        }
+    }
+    
+    // Initialize detectedUrls from post's existing links in edit mode
+    LaunchedEffect(post) {
+        if (post != null) {
+            val initialLinks = post?.getLinks()?.toList() ?: emptyList()
+            if (initialLinks.isNotEmpty()) {
+                viewModel.updateDetectedUrls(initialLinks)
+            }
+        }
+    }
+    
+    // Get link preview state from ViewModel
+    val detectedUrls by viewModel.detectedUrls.collectAsState()
+    val previewMetadata by viewModel.linkPreviewMetadata.collectAsState()
+    val isLinkPreviewDismissed by viewModel.isLinkPreviewDismissed.collectAsState()
 
     // Title field state
     var titleText by remember { mutableStateOf(postTitle) }
@@ -222,7 +266,11 @@ fun AmityPostComposerPage(
         localPostText,
         selectedMediaFiles,
         isAllMediaSuccessfullyUploaded,
-        postCreationEvent
+        postCreationEvent,
+        previewMetadata,
+        detectedUrls.size,
+        isLinkPreviewDismissed,
+        initialLinkPreviewWasShown
     ) {
         fun isContentReady(
             titleText: String,
@@ -248,9 +296,17 @@ fun AmityPostComposerPage(
         val isOperationInProgress = postCreationEvent == AmityPostCreationEvent.Creating ||
                 postCreationEvent == AmityPostCreationEvent.Updating
 
+        // Check if we're waiting for link preview metadata
+        val isWaitingForLinkMetadata = detectedUrls.isNotEmpty() && 
+                !isLinkPreviewDismissed && 
+                previewMetadata == null
+
         derivedStateOf {
             if (isOperationInProgress) {
                 // Disable button during operations
+                false
+            } else if (isWaitingForLinkMetadata) {
+                // Disable button while fetching link preview metadata
                 false
             } else if (isInEditMode) {
                 // Edit mode validation
@@ -258,9 +314,17 @@ fun AmityPostComposerPage(
                 val hasTextChanged = localPostText.trim() != postBodyText.trim()
                 val hasAttachmentsChanged =
                     hasAttachmentsChanged(originalAttachmentIds.value, selectedMediaFiles)
+                
+                // Check if link preview state changed:
+                // - Case 1: Preview was shown initially, then dismissed
+                // - Case 2: Preview was not shown initially, but now will be shown (not dismissed and has metadata or waiting for it)
+                val currentlyShowingPreview = detectedUrls.isNotEmpty() && !isLinkPreviewDismissed
+                val hasLinkPreviewChanged = (initialLinkPreviewWasShown && isLinkPreviewDismissed) || 
+                                           (!initialLinkPreviewWasShown && currentlyShowingPreview)
+                
                 val isContentValid = isContentReady(titleText, localPostText, selectedMediaFiles)
 
-                (hasTitleChanged || hasTextChanged || hasAttachmentsChanged) && isContentValid
+                (hasTitleChanged || hasTextChanged || hasAttachmentsChanged || hasLinkPreviewChanged) && isContentValid
             } else if (isEditClipMode) {
                 // Edit clip mode validation
                 val hasTextChanged = localPostText.trim() != postBodyText.trim()
@@ -459,6 +523,8 @@ fun AmityPostComposerPage(
         } else {
             // Update to the type of the first selected media
             existingAttachmentType = selectedMediaFiles.first().type
+            // Automatically dismiss link preview when media is added
+            viewModel.dismissLinkPreview()
         }
     }
 
@@ -660,6 +726,12 @@ fun AmityPostComposerPage(
                         modifier = modifier
                             .align(Alignment.CenterEnd)
                             .clickableWithoutRipple(enabled = shouldAllowToPost) {
+                                // Check if URL count exceeds limit before posting
+                                if (detectedUrls.size > 100) {
+                                    showLinkLimitDialog = true
+                                    return@clickableWithoutRipple
+                                }
+                                
                                 if (isInEditMode || isEditClipMode) {
                                     // For edit mode, pass title and text separately
                                     viewModel.updatePost(
@@ -667,6 +739,7 @@ fun AmityPostComposerPage(
                                         postTitle = titleText.trim(),
                                         mentionedUsers = mentionedUsers,
                                         hashtags = hashtags,
+                                        links = detectedUrls,
                                     )
                                 } else {
                                     viewModel.createPost(
@@ -674,6 +747,7 @@ fun AmityPostComposerPage(
                                         postTitle = titleText.trim(),
                                         mentionedUsers = mentionedUsers,
                                         hashtags = hashtags,
+                                        links = detectedUrls,
                                     )
                                 }
                             }
@@ -805,7 +879,7 @@ fun AmityPostComposerPage(
                             },
                         value = localPostText,
                         maxLines = 30,
-                        hintText = "Share something...",
+                        hintText = "What's on your mind?",
                         mentionedUser = selectedUserToMention,
                         mentionMetadata = mentionGetter.getMentionedUsers(),
                         mentionees = post?.getMentionees() ?: emptyList(),
@@ -818,8 +892,48 @@ fun AmityPostComposerPage(
                         verticalPadding = 0.dp,
                         horizontalPadding = 0.dp,
                         backgroundColor = Color.Transparent,
+                        enableUrlHighlighting = true,
+                        urlColor = AmityTheme.colors.primary,
+                        urlHighlights = detectedUrls.mapNotNull { link ->
+                            val index = link.getIndex()
+                            val length = link.getLength()
+                            val url = link.getUrl()
+                            if (index != null && length != null && url != null) {
+                                UrlHighlight(
+                                    start = index,
+                                    end = index + length,
+                                    url = url
+                                )
+                            } else {
+                                null
+                            }
+                        },
                         onValueChange = {
                             localPostText = it
+                            // Detect URLs and convert to AmityLink objects
+                            val urlPositions = it.extractUrls()
+                            if (urlPositions.isNotEmpty()) {
+                                // ViewModel handles debouncing for metadata fetching
+                                val urls = urlPositions.mapNotNull { urlPosition ->
+                                    try {
+                                        AmityLink(
+                                            index = urlPosition.start,
+                                            length = urlPosition.end - urlPosition.start,
+                                            url = urlPosition.url,
+                                            renderPreview = true,
+                                            domain = null,
+                                            title = null,
+                                            imageUrl = null
+                                        )
+                                    } catch (e: Exception) {
+                                        null
+                                    }
+                                }
+                                viewModel.updateDetectedUrls(urls)
+                            } else if (detectedUrls.isNotEmpty() && previewMetadata != null) {
+                                // Preserve existing link with metadata when text is removed
+                                viewModel.preserveUrlWithMetadata()
+                            }
                         },
                         onMentionAdded = {
                             selectedUserToMention = null
@@ -848,7 +962,7 @@ fun AmityPostComposerPage(
                         },
                     value = localPostText,
                     maxLines = 30,
-                    hintText = "Share something...",
+                    hintText = "What's on your mind?",
                     mentionedUser = selectedUserToMention,
                     textStyle = AmityTheme.typography.body.copy(
                         color = AmityTheme.colors.base,
@@ -858,8 +972,35 @@ fun AmityPostComposerPage(
                     verticalPadding = 0.dp,
                     horizontalPadding = 0.dp,
                     backgroundColor = Color.Transparent,
+                    enableUrlHighlighting = true,
+                    urlColor = AmityTheme.colors.primary,
                     onValueChange = {
                         localPostText = it
+                    },
+                    onUrlsDetected = { urls ->
+                        // Convert UrlHighlight to AmityLink
+                        if (urls.isNotEmpty()) {
+                            // ViewModel handles debouncing for metadata fetching
+                            val links = urls.mapNotNull { urlHighlight ->
+                                try {
+                                    AmityLink(
+                                        index = urlHighlight.start,
+                                        length = urlHighlight.end - urlHighlight.start,
+                                        url = urlHighlight.url,
+                                        renderPreview = false,
+                                        domain = null,
+                                        title = null,
+                                        imageUrl = null
+                                    )
+                                } catch (e: Exception) {
+                                    null
+                                }
+                            }
+                            viewModel.updateDetectedUrls(links)
+                        } else if (detectedUrls.isNotEmpty() && previewMetadata != null) {
+                            // Preserve existing link with metadata when text is removed
+                            viewModel.preserveUrlWithMetadata()
+                        }
                     },
                     onMentionAdded = {
                         selectedUserToMention = null
@@ -875,6 +1016,119 @@ fun AmityPostComposerPage(
                         hashtags = it
                     },
                 )
+            }
+
+            // Display link preview for the first detected URL or previously loaded preview
+            val linkPreviewRef = createRef()
+            
+            // Check if we have valid metadata to show (any of domain/title/imageUrl)
+            val firstLink = detectedUrls.firstOrNull()
+            val domain = firstLink?.getDomain() ?: previewMetadata?.getDomain()
+            val title = firstLink?.getTitle() ?: previewMetadata?.getTitle()
+            val imageUrl = firstLink?.getImageUrl() ?: previewMetadata?.getImageUrl()
+            val hasValidMetadata = !domain.isNullOrEmpty() || !title.isNullOrEmpty() || !imageUrl.isNullOrEmpty()
+            val isLoadingMetadata = detectedUrls.isNotEmpty() && previewMetadata == null && !isLinkPreviewDismissed
+            
+
+            
+            if ((detectedUrls.isNotEmpty() || previewMetadata != null) && !isLinkPreviewDismissed && (hasValidMetadata || isLoadingMetadata)) {
+                Column(
+                    modifier = Modifier
+                        .constrainAs(linkPreviewRef) {
+                            top.linkTo(content.bottom)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                        }
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                ) {
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        if (isLoadingMetadata) {
+                            // Loading state with shimmer
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .border(
+                                        width = 1.dp,
+                                        color = AmityTheme.colors.baseShade4,
+                                        shape = RoundedCornerShape(8.dp)
+                                    )
+                            ) {
+                                // Image shimmer
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(200.dp)
+                                        .shimmerBackground(
+                                            color = AmityTheme.colors.baseShade4,
+                                            shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
+                                        )
+                                )
+                                
+                                // Text content shimmer
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(12.dp)
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth(0.8f)
+                                            .height(16.dp)
+                                            .shimmerBackground(
+                                                color = AmityTheme.colors.baseShade4,
+                                                shape = RoundedCornerShape(4.dp)
+                                            )
+                                    )
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth(0.4f)
+                                            .height(14.dp)
+                                            .shimmerBackground(
+                                                color = AmityTheme.colors.baseShade4,
+                                                shape = RoundedCornerShape(4.dp)
+                                            )
+                                    )
+                                }
+                            }
+                        } else {
+                            // Display link preview using AmityPreviewLinkViewWithMetadata
+                            val url = firstLink?.getUrl() ?: ""
+                            
+                            AmityPreviewLinkViewWithMetadata(
+                                modifier = Modifier,
+                                url = url,
+                                domain = domain,
+                                title = title,
+                                imageUrl = imageUrl
+                            )
+                        }
+                            
+                        // Floating close button on top of the entire preview
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.TopEnd)
+                                .offset(x = 8.dp, y = -8.dp)
+                                .size(32.dp)
+                                .background(
+                                    color = Color.Black.copy(alpha = 0.5f),
+                                    shape = CircleShape
+                                )
+                                .clickableWithoutRipple {
+                                    viewModel.dismissLinkPreview()
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.amity_ic_dismiss_preview),
+                                contentDescription = "Remove link preview",
+                                tint = Color.White,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                    }
+                }
             }
 
             if (shouldShowSuggestion) {
@@ -1007,10 +1261,20 @@ fun AmityPostComposerPage(
             )
         }
 
+        if (showLinkLimitDialog) {
+            AmityAlertDialog(
+                dialogTitle = "Link limit reached",
+                dialogText = "You can only add link up to 100 links per post.",
+                dismissText = "OK",
+            ) {
+                showLinkLimitDialog = false
+            }
+        }
+
         if (showPendingPostDialog) {
             AmityAlertDialog(
-                dialogTitle = "",
-                dialogText = "Your post has been submitted to the pending list. It will be reviewed by group moderator.",
+                dialogTitle = "Posts sent for review",
+                dialogText = "Your post has been submitted to the pending list. It will be published once approved by the community moderator.",
                 dismissText = "OK",
             ) {
                 showPendingPostDialog = false

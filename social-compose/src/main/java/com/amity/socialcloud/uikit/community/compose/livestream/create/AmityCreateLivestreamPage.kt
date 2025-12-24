@@ -1121,6 +1121,7 @@ fun AmityCreateLivestreamPage(
                                     channelId = it,
                                     value = messageText,
                                     isPendingApproval = uiState.isPendingApproval ?: false,
+                                    streamHostUserId = uiState.streamObj?.getCreatorId(),
                                     onValueChange = {
                                         messageText = it
                                     },

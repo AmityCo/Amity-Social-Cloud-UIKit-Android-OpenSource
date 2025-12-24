@@ -60,6 +60,7 @@ fun AmitySingleCommentView(
     editingCommentId: String?,
     includeDeleted: Boolean = true,
     showEngagementRow: Boolean,
+    isEventHost: Boolean = false,
     onReply: (String) -> Unit,
     onEdit: (String?) -> Unit,
     replyTargetId: String? = null,
@@ -127,6 +128,7 @@ fun AmitySingleCommentView(
                         modifier = modifier,
                         comment = comment,
                         previewLines = previewLines,
+                        isEventHost = isEventHost,
                         onClick = {
                             if (!allowAction) {
                                 if (referenceType == AmityCommentReferenceType.POST) {

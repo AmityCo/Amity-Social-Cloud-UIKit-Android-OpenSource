@@ -275,7 +275,7 @@ fun AmityPollImageTypeItemView(
                     .onFocusChanged {
                         isFocused = it.isFocused
                     }
-                    .height(40.dp)
+                    .heightIn(min = 40.dp)
                     .padding(horizontal = 12.dp)
                     .border(
                         BorderStroke(
@@ -317,8 +317,8 @@ fun AmityPollImageTypeItemView(
                 contentPadding = PaddingValues(
                     start = 12.dp,
                     end = 12.dp,
-                    top = 12.dp,
-                    bottom = 12.dp
+                    top = 8.dp,
+                    bottom = 8.dp
                 ),
                 maxLines = 1,
             )

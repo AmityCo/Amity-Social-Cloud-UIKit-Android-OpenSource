@@ -33,6 +33,10 @@ import com.amity.socialcloud.uikit.common.utils.getText
 import com.amity.socialcloud.uikit.common.utils.isSignedIn
 import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
+import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipFeedPage
+import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipFeedPageType
+import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmityCommunitiesComponent
+import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmityEventsComponent
 import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmityExploreComponent
 import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmityMyCommunitiesComponent
 import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmityNewsFeedComponent
@@ -54,7 +58,7 @@ fun AmitySocialHomePage(
         if (AmityCoreClient.isSignedIn())
             mutableStateOf(AmitySocialHomePageTab.NEWSFEED)
         else
-            mutableStateOf(AmitySocialHomePageTab.EXPLORE)
+            mutableStateOf(AmitySocialHomePageTab.COMMUNITIES)
     }
 
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
@@ -78,7 +82,7 @@ fun AmitySocialHomePage(
 
     val pagerState = rememberPagerState(
         initialPage = if (isSignedInUser) 0 else 1 ,
-        pageCount = { 3 }
+        pageCount = { 4 }
     )
     val scrollScope = rememberCoroutineScope()
 
@@ -95,13 +99,11 @@ fun AmitySocialHomePage(
                 selectedTab = selectedTab,
                 searchButtonAction = {
                     when (selectedTab) {
-                        AmitySocialHomePageTab.EXPLORE,
                         AmitySocialHomePageTab.NEWSFEED,
+                        AmitySocialHomePageTab.COMMUNITIES,
+                        AmitySocialHomePageTab.EVENTS
                             ->
                             behavior.goToGlobalSearchPage(context)
-
-                        AmitySocialHomePageTab.MY_COMMUNITIES ->
-                            behavior.goToMyCommunitiesSearchPage(context)
 
                         AmitySocialHomePageTab.CLIPS -> behavior.goToClipsFeedPage(context)
 
@@ -144,12 +146,12 @@ fun AmitySocialHomePage(
                 item {
                     AmityBaseElement(
                         pageScope = getPageScope(),
-                        elementId = "explore_button"
+                        elementId = "communities_button"
                     ) {
                         AmitySocialHomeTabButton(
                             title = getConfig().getText(),
-                            item = AmitySocialHomePageTab.EXPLORE,
-                            isSelected = selectedTab == AmitySocialHomePageTab.EXPLORE,
+                            item = AmitySocialHomePageTab.COMMUNITIES,
+                            isSelected = selectedTab == AmitySocialHomePageTab.COMMUNITIES,
                             modifier = modifier.testTag(getAccessibilityId()),
                         ) {
                             selectedTab = it
@@ -162,7 +164,25 @@ fun AmitySocialHomePage(
                 item {
                     AmityBaseElement(
                         pageScope = getPageScope(),
-                        elementId = "clipsfeed_button"
+                        elementId = "events_button"
+                    ) {
+                        AmitySocialHomeTabButton(
+                            title = getConfig().getText(),
+                            item = AmitySocialHomePageTab.EVENTS,
+                            isSelected = selectedTab == AmitySocialHomePageTab.EVENTS,
+                            modifier = modifier.testTag(getAccessibilityId()),
+                        ) {
+                            selectedTab = it
+                            scrollScope.launch {
+                                pagerState.scrollToPage(2)
+                            }
+                        }
+                    }
+                }
+                item {
+                    AmityBaseElement(
+                        pageScope = getPageScope(),
+                        elementId = "clips_button"
                     ) {
                         AmitySocialHomeTabButton(
                             title = getConfig().getText(),
@@ -171,26 +191,6 @@ fun AmitySocialHomePage(
                             modifier = modifier.testTag(getAccessibilityId()),
                         ) {
                             behavior.goToClipsFeedPage(context)
-                        }
-                    }
-                }
-                if (isSignedInUser) {
-                    item {
-                        AmityBaseElement(
-                            pageScope = getPageScope(),
-                            elementId = "my_communities_button"
-                        ) {
-                            AmitySocialHomeTabButton(
-                                title = getConfig().getText(),
-                                item = AmitySocialHomePageTab.MY_COMMUNITIES,
-                                isSelected = selectedTab == AmitySocialHomePageTab.MY_COMMUNITIES,
-                                modifier = modifier.testTag(getAccessibilityId()),
-                            ) {
-                                selectedTab = it
-                                scrollScope.launch {
-                                    pagerState.scrollToPage(2)
-                                }
-                            }
                         }
                     }
                 }
@@ -208,22 +208,25 @@ fun AmitySocialHomePage(
                 ) { page ->
                     when (page) {
                         0 -> {
+                            // NewsFeed
                             AmityNewsFeedComponent(
                                 pageScope = getPageScope(),
                                 onExploreRequested = {
-                                    selectedTab = AmitySocialHomePageTab.EXPLORE
+                                    selectedTab = AmitySocialHomePageTab.COMMUNITIES
                                 }
                             )
                         }
 
                         1 -> {
-                            AmityExploreComponent(
+                            // Communities (with Explore and My Communities sub-tabs)
+                            AmityCommunitiesComponent(
                                 pageScope = getPageScope(),
                             )
                         }
 
                         2 -> {
-                            AmityMyCommunitiesComponent(
+                            // Events
+                            AmityEventsComponent(
                                 pageScope = getPageScope(),
                             )
                         }

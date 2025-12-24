@@ -7,22 +7,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.media3.common.MediaItem
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.common.util.Util
+import androidx.media3.datasource.DataSource
+import androidx.media3.datasource.DefaultDataSourceFactory
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.MediaSource
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
+import androidx.media3.extractor.DefaultExtractorsFactory
 import com.amity.socialcloud.sdk.model.core.file.AmityVideo
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.base.AmityBaseFragment
 import com.amity.socialcloud.uikit.common.utils.safeLet
 import com.amity.socialcloud.uikit.community.R
 import com.amity.socialcloud.uikit.community.databinding.AmityFragmentSocialVideoPlayerBinding
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
-import com.google.android.exoplayer2.source.MediaSource
-import com.google.android.exoplayer2.source.ProgressiveMediaSource
-import com.google.android.exoplayer2.upstream.DataSource
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.google.android.exoplayer2.util.Util
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
+import androidx.core.net.toUri
 
 internal class AmityVideoPostPlayerFragment : AmityBaseFragment() {
 
@@ -39,6 +41,7 @@ internal class AmityVideoPostPlayerFragment : AmityBaseFragment() {
         return binding.root
     }
 
+    @UnstableApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupListener()
@@ -59,6 +62,7 @@ internal class AmityVideoPostPlayerFragment : AmityBaseFragment() {
         binding.videoViewer.player = exoplayer
     }
 
+    @UnstableApi
     private fun prepareVideo(url: String?) {
         safeLet(url, context) { nonNullUrl, nonNullContext ->
             binding.videoViewer.requestFocus()
@@ -69,7 +73,7 @@ internal class AmityVideoPostPlayerFragment : AmityBaseFragment() {
             val extractorsFactory = DefaultExtractorsFactory()
             val videoSource: MediaSource =
                 ProgressiveMediaSource.Factory(dataSourceFactory, extractorsFactory)
-                    .createMediaSource(MediaItem.fromUri(Uri.parse(nonNullUrl)))
+                    .createMediaSource(MediaItem.fromUri(nonNullUrl.toUri()))
             exoplayer?.setMediaSource(videoSource)
             exoplayer?.prepare()
         }

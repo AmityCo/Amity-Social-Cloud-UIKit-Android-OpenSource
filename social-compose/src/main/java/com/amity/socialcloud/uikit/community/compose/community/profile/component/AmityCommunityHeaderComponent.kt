@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -57,15 +58,13 @@ fun AmityCommunityHeaderComponent(
 				}
 			}
 		)
-	val invitation by if (!AmityCoreClient.isSignedIn()) {
-		remember { mutableStateOf(emptyList()) }
-	} else {
-		community.getInvitation().toFlowable().asFlow()
-			.catch {
-				emit(emptyList())
-			}
-			.collectAsState(initial = emptyList())
-	}
+
+
+    val state by remember { viewModel.communityProfileState }.collectAsState()
+
+    LaunchedEffect(community.getCommunityId()) {
+        viewModel.getInvitation(community = community)
+    }
 
 	AmityBaseComponent(
 		pageScope = pageScope,
@@ -110,21 +109,17 @@ fun AmityCommunityHeaderComponent(
 						community = community
 					)
 
-					if (invitation.isNotEmpty()) {
-						AmityCommunityInvitationBanner(
-							invitation = invitation.first()
-						)
-					}
-					if(invitation.isEmpty()) {
-						AmityCommunityJoinButton(
-							pageScope = pageScope,
-							componentScope = getComponentScope(),
-							community = community
-						)
-					}
+                    state.invitation?.let { invitation ->
+                        AmityCommunityInvitationBanner(
+                            invitation = invitation
+                        )
+                    } ?: AmityCommunityJoinButton(
+                        pageScope = pageScope,
+                        componentScope = getComponentScope(),
+                        community = community
+                    )
 					Row(
 						modifier = Modifier
-                            .padding(bottom = 12.dp, start = 16.dp, end = 16.dp)
                             .fillMaxWidth()
                             .align(Alignment.Start)
 					) {

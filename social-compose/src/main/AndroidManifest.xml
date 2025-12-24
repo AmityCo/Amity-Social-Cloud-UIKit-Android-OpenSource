@@ -47,6 +47,16 @@
             android:screenOrientation="portrait"
             android:theme="@style/AmitySocialTheme" />
         <activity
+            android:name=".community.profile.AmityUpcomingEventsPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme" />
+        <activity
+            android:name=".community.profile.AmityPastEventsPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme" />
+        <activity
             android:name=".community.pending.AmityPendingPostsPageActivity"
             android:configChanges="uiMode"
             android:screenOrientation="portrait"
@@ -58,6 +68,26 @@
             android:theme="@style/AmitySocialTheme" />
         <activity
             android:name=".community.setup.AmityCommunitySetupPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme" />
+        <activity
+            android:name=".event.setup.AmityEventSetupPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme" />
+        <activity
+            android:name=".event.detail.AmityEventDetailPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme" />
+        <activity
+            android:name=".event.attendees.AmityEventAttendeesPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme" />
+        <activity
+            android:name=".target.event.AmityEventTargetSelectionPageActivity"
             android:configChanges="uiMode"
             android:screenOrientation="portrait"
             android:theme="@style/AmitySocialTheme" />
@@ -161,6 +191,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/AmityStoryDarkTheme" />
         <activity
+            android:name=".livestream.room.create.AmityCreateRoomPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmityStoryDarkTheme" />
+
+        <activity
             android:name=".clip.create.AmityCreateClipPageActivity"
             android:configChanges="uiMode"
             android:screenOrientation="portrait"
@@ -229,6 +265,12 @@
             android:theme="@style/AmitySocialTheme" />
         <activity
             android:name=".livestream.view.AmityLivestreamPlayerPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".livestream.room.view.AmityRoomPlayerPageActivity"
             android:configChanges="uiMode"
             android:screenOrientation="portrait"
             android:theme="@style/AmitySocialTheme"

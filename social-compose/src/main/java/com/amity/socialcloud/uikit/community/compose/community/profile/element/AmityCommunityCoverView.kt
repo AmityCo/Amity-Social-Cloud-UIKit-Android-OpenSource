@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -28,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -248,6 +251,7 @@ fun AmityCommunityCoverView(
                             .height(102.dp)
                             .padding(16.dp)
                     ) {
+                        // Back button - always anchored at start
                         AmityBaseElement(
                             pageScope = pageScope,
                             elementId = "back_button"
@@ -262,20 +266,71 @@ fun AmityCommunityCoverView(
                                 }
                             )
                         }
-                        Text(
-                            community.getDisplayName(),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            style = TextStyle(
-                                fontSize = 17.sp,
-                                lineHeight = 24.sp,
-                                fontWeight = FontWeight(600),
-                                color = Color.White,
-                            ),
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(bottom = 4.dp)
-                        )
+                        
+                        // Community title with badges - fills available space between buttons
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            // Private badge - before community name
+                            if (!community.isPublic()) {
+                                Box(modifier = Modifier
+                                    .size(24.dp)
+                                    .padding(top = 4.dp, end = 8.dp)
+                                ) {
+                                    AmityBaseElement(
+                                        elementId = "community_private_badge"
+                                    ) {
+                                        Image(
+                                            painter = painterResource(id = getConfig().getIcon()),
+                                            contentDescription = "Private community icon",
+                                            modifier = Modifier
+                                                .width(20.dp)
+                                                .height(16.dp)
+                                        )
+                                    }
+                                }
+                            }
+                            
+                            // Community name - flexible, will truncate to fit
+                            Text(
+                                community.getDisplayName(),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                style = TextStyle(
+                                    fontSize = 17.sp,
+                                    lineHeight = 24.sp,
+                                    fontWeight = FontWeight(600),
+                                    color = Color.White,
+                                ),
+                                modifier = Modifier
+                                    .weight(1f, fill = false)
+                                    .padding(bottom = 4.dp)
+                            )
+
+                            // Official badge - after community name
+                            if (community.isOfficial()) {
+                                Box(modifier = Modifier
+                                    .size(24.dp)
+                                    .padding(top = 2.dp, start = 6.dp)
+                                ) {
+                                    AmityBaseElement(
+                                        pageScope = pageScope,
+                                        componentScope = componentScope,
+                                        elementId = "community_verify_badge"
+                                    ) {
+                                        Image(
+                                            painter = painterResource(id = getConfig().getIcon()),
+                                            contentDescription = "Verified community icon",
+                                            modifier = Modifier
+                                                .size(20.dp)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                        
+                        // Menu button - always anchored at far end
                         if (community.isJoined() || isModerator || isSharable) {
                             AmityBaseElement(
                                 pageScope = pageScope,

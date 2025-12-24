@@ -144,7 +144,7 @@ fun AmityNewsFeedComponent(
                 item(key = "story_tab") {
                     LocalPinnableContainer.current?.pin()
                     if (!isRefreshing) {
-                        val storyTabHeight = if (isStoryTabVisible) 126.dp else 0.dp
+                        val storyTabHeight = if (isStoryTabVisible) 130.dp else 0.dp
                         Box(
                             modifier = Modifier.height(storyTabHeight)
                         ) {

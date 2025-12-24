@@ -17,9 +17,12 @@ fun AmityDatePickerDialog(
     confirmButton: @Composable () -> Unit,
     dismissButton: @Composable (() -> Unit)? = null,
 ) {
+    val backgroundColor = AmityTheme.colors.background
+    val primaryColor = AmityTheme.colors.primary
+
     DatePickerDialog(
         colors = DatePickerDefaults.colors(
-            containerColor = AmityTheme.colors.background,
+            containerColor = backgroundColor,
         ),
         onDismissRequest = onDismissRequest,
         confirmButton = confirmButton,
@@ -29,10 +32,11 @@ fun AmityDatePickerDialog(
         DatePicker(
             state = datePickerState,
             colors = DatePickerDefaults.colors(
-                selectedDayContainerColor = AmityTheme.colors.primary,
-                selectedYearContainerColor = AmityTheme.colors.primary,
-                todayContentColor = AmityTheme.colors.primary,
-                todayDateBorderColor = AmityTheme.colors.primary
+                selectedDayContainerColor = primaryColor,
+                selectedYearContainerColor = primaryColor,
+                todayContentColor = primaryColor,
+                todayDateBorderColor = primaryColor,
+                containerColor = backgroundColor,
             )
         )
     }
