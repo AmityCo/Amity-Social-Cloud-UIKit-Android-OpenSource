@@ -9,11 +9,13 @@ open class AmityUserFeedComponentBehavior : AmityBaseBehavior() {
     open fun goToPostDetailPage(
         context: Context,
         postId: String,
+        autoFocusCommentInput: Boolean = false,
     ) {
         val intent = AmityPostDetailPageActivity.newIntent(
             context = context,
             id = postId,
             hideTarget = false,
+            autoFocusCommentInput = autoFocusCommentInput,
         )
         context.startActivity(intent)
     }

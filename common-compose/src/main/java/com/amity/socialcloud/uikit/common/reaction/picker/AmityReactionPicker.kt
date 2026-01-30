@@ -106,6 +106,7 @@ fun AmityReactionPicker(
                     // Box wrapper to handle positioning of both elements
                     Box(
                         contentAlignment = Alignment.Center,
+                        modifier = Modifier.size(40.dp) // Fixed size for each reaction slot
                     ) {
                         // Reaction name box - positioned above
                         if (isHighlighted) {

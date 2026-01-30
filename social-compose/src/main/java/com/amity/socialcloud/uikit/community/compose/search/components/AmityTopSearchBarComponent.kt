@@ -63,7 +63,7 @@ fun AmityTopSearchBarComponent(
             if (searchType == AmityGlobalSearchType.MY_COMMUNITY) {
                 "Search my communities"
             } else {
-                "Search community and user"
+                "Search"
             }
         }
     }

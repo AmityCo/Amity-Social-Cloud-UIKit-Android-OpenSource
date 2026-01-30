@@ -416,6 +416,7 @@ fun AmityCommunityProfilePage(
                                                     ),
                                                     postId = post.getPostId(),
                                                     category = category,
+                                                    autoFocusCommentInput = true,
                                                 )
                                             }
                                         )

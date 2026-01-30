@@ -73,7 +73,8 @@ fun AmityCommunityPinnedPostComponent(
                         pageContext = context,
                     ),
                     postId = it.getPostId(),
-                    category = AmityPostCategory.PIN
+                    category = AmityPostCategory.PIN,
+                    autoFocusCommentInput = true,
                 )
             }
         )

@@ -265,11 +265,12 @@ fun AmitySingleCommentView(
 
             if (isReplyComment) {
                 replyCount?.let {
-                    if (replyCount - 1 > 0) {
+                    val nonDeletedCount = replyCount - 1 - (comment.getLatestReplies().count { it.isDeleted() })
+                    if (nonDeletedCount > 0) {
                         AmityCommentViewReplyBar(
                             modifier = modifier,
                             isViewAllReplies = true,
-                            replyCount = replyCount - 1,
+                            replyCount = nonDeletedCount,
                         ) {
                             shouldShowReplies(true)
                         }

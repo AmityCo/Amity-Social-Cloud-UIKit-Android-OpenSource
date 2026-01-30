@@ -16,3 +16,24 @@ include ':social-compose'
 include ':amity-sample-code'
 include ':chat-compose'
 include ':common-compose'
+
+// Include Amity Social Cloud SDK modules
+//includeBuild('../Amity-Social-Cloud-SDK-Android') {
+//    dependencySubstitution {
+//        substitute module('co.amity.android:amity-stream-api') using project(':amity-stream-api')
+//        substitute module('co.amity.android:amity-video-player') using project(':amity-video-player')
+//        substitute module('co.amity.android:sdk-versioning') using project(':sdk-versioning')
+//        substitute module('co.amity.android:core-android') using project(':core-android')
+//        substitute module('co.amity.android:core-push') using project(':core-push')
+//        substitute module('co.amity.android:amity-push-fcm') using project(':amity-push-fcm')
+////        substitute module('co.amity.android:amity-push-baidu') using project(':amity-push-baidu')
+//        substitute module('co.amity.android:amity-sdk') using project(':amity-sdk')
+//        substitute module('co.amity.android:amity-video-publisher') using project(':amity-video-publisher')
+//        substitute module('co.amity.android:amity-log') using project(':amity-log')
+//        substitute module('co.amity.android:amity-rxbridge') using project(':amity-rxbridge')
+//        substitute module('co.amity.android:amity-rxlifecycle') using project(':amity-rxlifecycle')
+//        substitute module('co.amity.android:amity-rxremotemediator') using project(':amity-rxremotemediator')
+//        substitute module('co.amity.android:amity-rxupload') using project(':amity-rxupload')
+//    }
+//}
+

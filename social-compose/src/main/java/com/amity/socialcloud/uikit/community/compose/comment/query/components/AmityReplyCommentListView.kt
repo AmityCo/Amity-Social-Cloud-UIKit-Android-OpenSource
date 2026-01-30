@@ -58,23 +58,29 @@ fun AmityReplyCommentListView(
             commentsRaw
         }
     }
+    
+    val allRepliesDeleted = remember(comments) {
+        comments.isNotEmpty() && comments.all { it.isDeleted() }
+    }
 
     Column {
-        comments.forEach { comment ->
-            AmityReplyCommentView(
-                modifier = modifier,
-                componentScope = componentScope,
-                allowInteraction = allowInteraction,
-                referenceId = referenceId,
-                referenceType = referenceType,
-                currentUserId = currentUserId,
-                editingCommentId = editingCommentId,
-                showEngagementRow = showEngagementRow,
-                comment = comment,
-                previewLines = previewLines,
-                onEdit = onEdit,
-                fromNonMemberCommunity = fromNonMemberCommunity,
-            )
+        if (!allRepliesDeleted) {
+            comments.forEach { comment ->
+                AmityReplyCommentView(
+                    modifier = modifier,
+                    componentScope = componentScope,
+                    allowInteraction = allowInteraction,
+                    referenceId = referenceId,
+                    referenceType = referenceType,
+                    currentUserId = currentUserId,
+                    editingCommentId = editingCommentId,
+                    showEngagementRow = showEngagementRow,
+                    comment = comment,
+                    previewLines = previewLines,
+                    onEdit = onEdit,
+                    fromNonMemberCommunity = fromNonMemberCommunity,
+                )
+            }
         }
     }
 

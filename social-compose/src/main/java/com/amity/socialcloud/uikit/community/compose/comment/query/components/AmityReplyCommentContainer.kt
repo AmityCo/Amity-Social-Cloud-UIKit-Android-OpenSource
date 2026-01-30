@@ -37,6 +37,8 @@ fun AmityReplyCommentContainer(
     fromNonMemberCommunity: Boolean = false,
 ) {
     var shouldShowReplies by rememberSaveable { mutableStateOf(isExpanded) }
+    
+    val nonDeletedReplyCount = replies.count { !it.isDeleted() }
 
     if (shouldShowReplies) {
         AmityReplyCommentListView(
@@ -57,7 +59,7 @@ fun AmityReplyCommentContainer(
             onEdit = onEdit,
             fromNonMemberCommunity = fromNonMemberCommunity,
         )
-    } else if (replyCount > 0) {
+    } else if (nonDeletedReplyCount > 0) {
         if (replyTargetId != null) {
             val reply = replies.firstOrNull { it.getCommentId() == replyTargetId }
             reply?.let {
@@ -71,7 +73,7 @@ fun AmityReplyCommentContainer(
                     editingCommentId = editingCommentId,
                     comment = it,
                     onEdit = onEdit,
-                    replyCount = replyCount,
+                    replyCount = nonDeletedReplyCount,
                     previewLines = previewLines,
                     showEngagementRow = showEngagementRow,
                     shouldShowReplies = {
@@ -84,7 +86,7 @@ fun AmityReplyCommentContainer(
             AmityCommentViewReplyBar(
                 modifier = modifier,
                 isViewAllReplies = false,
-                replyCount = replyCount,
+                replyCount = nonDeletedReplyCount,
             ) {
                 shouldShowReplies = true
             }

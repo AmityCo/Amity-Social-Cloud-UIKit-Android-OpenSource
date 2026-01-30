@@ -1,6 +1,7 @@
 package com.amity.socialcloud.uikit.community.compose.community.pending.elements
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,6 +24,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,7 +40,7 @@ import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.getText
 import com.amity.socialcloud.uikit.common.utils.shimmerBackground
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.compose.R
 
 @Composable
 fun AmityPendingJoinRequestComponent(
@@ -98,6 +101,18 @@ fun AmityPendingJoinRequestComponent(
                                         )
                                     }
                                 }
+                        )
+                    }
+
+
+                    if (request.getUser()?.isBrand() == true) {
+                        Spacer(modifier = Modifier.width(2.dp))
+                        Image(
+                            painter = painterResource(id = R.drawable.amity_ic_brand_badge),
+                            contentDescription = "",
+                            modifier = Modifier
+                                .size(20.dp)
+                                .testTag("user_view/brand_user_icon")
                         )
                     }
                 }

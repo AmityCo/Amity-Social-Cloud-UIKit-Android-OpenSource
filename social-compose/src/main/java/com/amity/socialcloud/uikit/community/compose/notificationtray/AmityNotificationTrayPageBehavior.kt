@@ -40,6 +40,7 @@ open class AmityNotificationTrayPageBehavior {
         parentId: String? = null,
         replyTo: String? = null,
         eventHostId: String? = null,
+        autoFocusCommentInput: Boolean = false,
     ) {
         val intent = AmityPostDetailPageActivity.newIntent(
             context = context,
@@ -49,6 +50,7 @@ open class AmityNotificationTrayPageBehavior {
             parentId = parentId,
             replyTo = replyTo,
             eventHostId = eventHostId,
+            autoFocusCommentInput = autoFocusCommentInput,
         )
         context.startActivity(intent)
     }

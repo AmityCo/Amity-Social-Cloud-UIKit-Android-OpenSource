@@ -95,6 +95,7 @@ fun AmityPostDetailPage(
     parentId: String? = null,
     replyToCommentId: String? = null,
     eventHostId: String? = null,
+    autoFocusCommentInput: Boolean = false,
 ) {
     val context = LocalContext.current
 
@@ -368,7 +369,7 @@ fun AmityPostDetailPage(
                             componentScope = getComponentScope(),
                             referenceId = id,
                             referenceType = AmityCommentReferenceType.POST,
-                            shouldFocusKeyboard = replyToCommentId != null,
+                            shouldFocusKeyboard = replyToCommentId != null || autoFocusCommentInput,
                             currentUser = currentUser,
                             replyComment = replyComment,
                         ) {

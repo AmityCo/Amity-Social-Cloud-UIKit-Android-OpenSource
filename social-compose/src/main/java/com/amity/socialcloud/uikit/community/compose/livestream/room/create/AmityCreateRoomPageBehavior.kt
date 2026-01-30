@@ -51,12 +51,14 @@ open class AmityCreateRoomPageBehavior {
         id: String,
         category: AmityPostCategory = AmityPostCategory.GENERAL,
         showLivestreamPostExceeded: Boolean = false,
+        autoFocusCommentInput: Boolean = false,
     ) {
         val intent = AmityPostDetailPageActivity.newIntent(
             context = context,
             id = id,
             category = category,
-            showLivestreamPostExceeded = showLivestreamPostExceeded
+            showLivestreamPostExceeded = showLivestreamPostExceeded,
+            autoFocusCommentInput = autoFocusCommentInput,
         )
         context.startActivity(intent)
     }

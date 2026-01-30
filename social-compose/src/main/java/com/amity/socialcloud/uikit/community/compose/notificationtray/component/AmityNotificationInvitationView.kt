@@ -70,11 +70,13 @@ fun AmityNotificationInvitationView(
             onError = { error ->
                 if (AmityError.from(error) == AmityError.ITEM_NOT_FOUND) {
                     AmityUIKitSnackbar.publishSnackbarErrorMessage(
-                        message = errorUnavailableMessage
+                        message = errorUnavailableMessage,
+                        offsetFromBottom = 50
                     )
                 } else {
                     AmityUIKitSnackbar.publishSnackbarErrorMessage(
-                        message = errorRejectMessage
+                        message = errorRejectMessage,
+                        offsetFromBottom = 50
                     )
                 }
                 onError(error)

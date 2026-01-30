@@ -562,7 +562,7 @@ fun AmityPostEngagementView(
                  */
         }
 
-        if (reactionExpanded && anchorInWindow != null) {
+        if (reactionExpanded && anchorInWindow != null && !fromNonMemberCommunity && !AmityCoreClient.isVisitor()) {
             val anchor = anchorInWindow!!
             Popup(
                 properties = PopupProperties(

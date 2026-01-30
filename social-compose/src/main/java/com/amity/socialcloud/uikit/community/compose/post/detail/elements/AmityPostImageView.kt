@@ -57,25 +57,38 @@ fun AmityPostImageView(
         )
     } else if(data is AmityPost.Data.VIDEO) {
         val thumbnail = data.getThumbnailImage()?.getUrl(AmityImage.Size.MEDIUM)
-        AsyncImage(
-            model = ImageRequest
-                .Builder(LocalContext.current)
-                .data(thumbnail)
-                .crossfade(true)
-                .networkCachePolicy(CachePolicy.ENABLED)
-                .diskCachePolicy(CachePolicy.ENABLED)
-                .memoryCachePolicy(CachePolicy.ENABLED)
-                .build(),
-            contentDescription = "Video Thumbnail",
-            contentScale = ContentScale.Crop,
-            modifier = modifier
-                .fillMaxSize()
-                .background(AmityTheme.colors.baseShade4)
-                .clickableWithoutRipple { onClick() }
-                .semantics {
-                    role = Role.Image
-                }
-        )
+        if (thumbnail != null) {
+            AsyncImage(
+                model = ImageRequest
+                    .Builder(LocalContext.current)
+                    .data(thumbnail)
+                    .crossfade(true)
+                    .networkCachePolicy(CachePolicy.ENABLED)
+                    .diskCachePolicy(CachePolicy.ENABLED)
+                    .memoryCachePolicy(CachePolicy.ENABLED)
+                    .build(),
+                contentDescription = "Video Thumbnail",
+                contentScale = ContentScale.Crop,
+                modifier = modifier
+                    .fillMaxSize()
+                    .background(AmityTheme.colors.baseShade4)
+                    .clickableWithoutRipple { onClick() }
+                    .semantics {
+                        role = Role.Image
+                    }
+            )
+        } else {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .background(AmityTheme.colors.baseShade4)
+                    .clickableWithoutRipple { onClick() }
+                    .semantics {
+                        role = Role.Image
+                    },
+            )
+        }
 //            val imageLoader = ImageLoader.Builder(LocalContext.current)
 //                .components {
 //                    add(VideoFrameDecoder.Factory())

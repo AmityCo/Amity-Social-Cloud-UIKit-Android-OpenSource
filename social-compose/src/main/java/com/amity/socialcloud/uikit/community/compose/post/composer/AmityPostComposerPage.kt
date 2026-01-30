@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -48,6 +49,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -225,7 +227,7 @@ fun AmityPostComposerPage(
     val keyboardHeight by getKeyboardHeight()
 
     var localPostText by remember { mutableStateOf(postBodyText) }
-    
+
     // Track initial link preview state in edit mode
     val initialLinkPreviewWasShown = remember {
         if (options is AmityPostComposerOptions.AmityPostComposerEditOptions) {
@@ -235,7 +237,7 @@ fun AmityPostComposerPage(
             false
         }
     }
-    
+
     // Initialize detectedUrls from post's existing links in edit mode
     LaunchedEffect(post) {
         if (post != null) {
@@ -245,7 +247,7 @@ fun AmityPostComposerPage(
             }
         }
     }
-    
+
     // Get link preview state from ViewModel
     val detectedUrls by viewModel.detectedUrls.collectAsState()
     val previewMetadata by viewModel.linkPreviewMetadata.collectAsState()
@@ -297,8 +299,8 @@ fun AmityPostComposerPage(
                 postCreationEvent == AmityPostCreationEvent.Updating
 
         // Check if we're waiting for link preview metadata
-        val isWaitingForLinkMetadata = detectedUrls.isNotEmpty() && 
-                !isLinkPreviewDismissed && 
+        val isWaitingForLinkMetadata = detectedUrls.isNotEmpty() &&
+                !isLinkPreviewDismissed &&
                 previewMetadata == null
 
         derivedStateOf {
@@ -314,14 +316,14 @@ fun AmityPostComposerPage(
                 val hasTextChanged = localPostText.trim() != postBodyText.trim()
                 val hasAttachmentsChanged =
                     hasAttachmentsChanged(originalAttachmentIds.value, selectedMediaFiles)
-                
+
                 // Check if link preview state changed:
                 // - Case 1: Preview was shown initially, then dismissed
                 // - Case 2: Preview was not shown initially, but now will be shown (not dismissed and has metadata or waiting for it)
                 val currentlyShowingPreview = detectedUrls.isNotEmpty() && !isLinkPreviewDismissed
-                val hasLinkPreviewChanged = (initialLinkPreviewWasShown && isLinkPreviewDismissed) || 
+                val hasLinkPreviewChanged = (initialLinkPreviewWasShown && isLinkPreviewDismissed) ||
                                            (!initialLinkPreviewWasShown && currentlyShowingPreview)
-                
+
                 val isContentValid = isContentReady(titleText, localPostText, selectedMediaFiles)
 
                 (hasTitleChanged || hasTextChanged || hasAttachmentsChanged || hasLinkPreviewChanged) && isContentValid
@@ -383,6 +385,15 @@ fun AmityPostComposerPage(
             }
         ) {
             isCameraPermissionGranted = true
+        }
+    }
+
+    LaunchedEffect(selectedMediaFiles) {
+        if (selectedMediaFiles.isEmpty()) {
+            existingAttachmentType = null
+        } else {
+            // Update to the type of the first selected media
+            existingAttachmentType = selectedMediaFiles.first().type
         }
     }
 
@@ -706,7 +717,7 @@ fun AmityPostComposerPage(
                 ) {
                     Text(
                         text = if (isInEditMode || isEditClipMode) getConfig().getText() else title,
-                        style = AmityTheme.typography.title,
+                        style = AmityTheme.typography.titleBold,
                         modifier = modifier
                             .align(Alignment.Center)
                             .padding(vertical = 16.dp, horizontal = 40.dp)
@@ -731,14 +742,14 @@ fun AmityPostComposerPage(
                                     showLinkLimitDialog = true
                                     return@clickableWithoutRipple
                                 }
-                                
+
                                 if (isInEditMode || isEditClipMode) {
                                     // For edit mode, pass title and text separately
                                     viewModel.updatePost(
                                         postText = localPostText.trim(),
                                         postTitle = titleText.trim(),
                                         mentionedUsers = mentionedUsers,
-                                        hashtags = hashtags,
+                                        hashtags = hashtags.parseHashtagIndices(localPostText),
                                         links = detectedUrls,
                                     )
                                 } else {
@@ -746,7 +757,7 @@ fun AmityPostComposerPage(
                                         postText = localPostText.trim(),
                                         postTitle = titleText.trim(),
                                         mentionedUsers = mentionedUsers,
-                                        hashtags = hashtags,
+                                        hashtags = hashtags.parseHashtagIndices(localPostText),
                                         links = detectedUrls,
                                     )
                                 }
@@ -1020,7 +1031,7 @@ fun AmityPostComposerPage(
 
             // Display link preview for the first detected URL or previously loaded preview
             val linkPreviewRef = createRef()
-            
+
             // Check if we have valid metadata to show (any of domain/title/imageUrl)
             val firstLink = detectedUrls.firstOrNull()
             val domain = firstLink?.getDomain() ?: previewMetadata?.getDomain()
@@ -1028,9 +1039,9 @@ fun AmityPostComposerPage(
             val imageUrl = firstLink?.getImageUrl() ?: previewMetadata?.getImageUrl()
             val hasValidMetadata = !domain.isNullOrEmpty() || !title.isNullOrEmpty() || !imageUrl.isNullOrEmpty()
             val isLoadingMetadata = detectedUrls.isNotEmpty() && previewMetadata == null && !isLinkPreviewDismissed
-            
 
-            
+
+
             if ((detectedUrls.isNotEmpty() || previewMetadata != null) && !isLinkPreviewDismissed && (hasValidMetadata || isLoadingMetadata)) {
                 Column(
                     modifier = Modifier
@@ -1064,7 +1075,7 @@ fun AmityPostComposerPage(
                                             shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
                                         )
                                 )
-                                
+
                                 // Text content shimmer
                                 Column(
                                     modifier = Modifier
@@ -1095,7 +1106,7 @@ fun AmityPostComposerPage(
                         } else {
                             // Display link preview using AmityPreviewLinkViewWithMetadata
                             val url = firstLink?.getUrl() ?: ""
-                            
+
                             AmityPreviewLinkViewWithMetadata(
                                 modifier = Modifier,
                                 url = url,
@@ -1104,7 +1115,7 @@ fun AmityPostComposerPage(
                                 imageUrl = imageUrl
                             )
                         }
-                            
+
                         // Floating close button on top of the entire preview
                         Box(
                             modifier = Modifier
@@ -1165,35 +1176,14 @@ fun AmityPostComposerPage(
             if (options is AmityPostComposerOptions.AmityPostComposerCreateOptions ||
                 options is AmityPostComposerOptions.AmityPostComposerEditOptions
             ) {
-                // Show existing videos from post children in edit mode
-                if (isInEditMode && post != null) {
-                    val videoChildren = post!!.getChildren().filter { child ->
-                        child.getData() is AmityPost.Data.VIDEO
-                    }
-
-                    if (videoChildren.isNotEmpty()) {
-                        AmityExistingVideoDisplay(
-                            videoChildren = videoChildren,
-                            modifier = Modifier
-                                .constrainAs(media) {
-                                    top.linkTo(content.bottom)
-                                    start.linkTo(parent.start)
-                                    end.linkTo(parent.end)
-                                }
-                        )
-                    }
-                } else {
-                    // Show regular selected media component for create mode or non-video posts
-                    AmitySelectedMediaComponent(
-                        modifier = Modifier
-                            .constrainAs(media) {
-                                top.linkTo(content.bottom)
-                                start.linkTo(parent.start)
-                                end.linkTo(parent.end)
-                            }
-                    )
-                }
-
+                AmitySelectedMediaComponent(
+                    modifier = Modifier
+                        .constrainAs(media) {
+                            top.linkTo(content.bottom)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                        }
+                )
                 AmityMediaAttachmentElement(
                     modifier = Modifier
                         .constrainAs(attachment) {
@@ -1412,5 +1402,20 @@ fun AmityExistingVideoItem(
             )
         }
 
+    }
+}
+
+// shift left hashtags index if localText have leading spaces, because in post composer we trim leading spaces
+fun List<AmityHashtag>.parseHashtagIndices(
+    localText: String
+): List<AmityHashtag> {
+    val leadingSpaces = localText.indexOfFirst { !it.isWhitespace() }.let {
+        if (it == -1) localText.length else it
+    }
+    if (leadingSpaces == 0) return this
+    return this.map { hashtag ->
+        hashtag.copy(
+            index = hashtag.getIndex() - leadingSpaces
+        )
     }
 }

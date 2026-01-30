@@ -29,17 +29,6 @@ fun AmityReplyCommentView(
     if (comment.isDeleted()) {
         AmityDeletedCommentView(modifier = modifier, isReplyComment = true, replyCount = replyCount)
 
-        replyCount?.let {
-            if (replyCount - 1 > 0) {
-                AmityCommentViewReplyBar(
-                    modifier = modifier,
-                    isViewAllReplies = true,
-                    replyCount = replyCount - 1,
-                ) {
-                    shouldShowReplies(true)
-                }
-            }
-        }
     } else {
         AmitySingleCommentView(
             modifier = modifier,

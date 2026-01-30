@@ -89,6 +89,7 @@ import androidx.media3.exoplayer.hls.HlsMediaSource
 import androidx.media3.exoplayer.source.ConcatenatingMediaSource
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.ui.PlayerView
+import androidx.media3.common.Player
 import coil3.compose.AsyncImage
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.social.post.review.AmityReviewStatus
@@ -312,12 +313,37 @@ fun AmityRoomPlayerPage(
         }
     }
 
+    // Watch minute tracking - start/stop based on viewer status
+    // Use roomId instead of room object to avoid re-triggering when room object reference changes
+    LaunchedEffect(uiState.room?.getRoomId(), uiState.isStreamerMode, uiState.cohostUserId) {
+        val room = uiState.room
+        val isViewer = !uiState.isStreamerMode
+        val roomStatus = room?.getStatus()
+        val currentUserId = AmityCoreClient.getUserId()
+        val cohostUserId = uiState.cohostUserId
+        
+        // User is viewer only if not in streamer mode and not the co-host
+        val isActualViewer = isViewer && currentUserId != cohostUserId
+        
+        if (room != null && isActualViewer && 
+            (roomStatus == AmityRoomStatus.LIVE || roomStatus == AmityRoomStatus.RECORDED)) {
+            // Start tracking for viewer
+            viewModel.startWatchTracking()
+        } else {
+            // Stop tracking when not viewer or room not watchable
+            viewModel.stopWatchTracking(shouldSync = false)
+        }
+    }
+
     DisposableEffectWithLifeCycle(
         onDestroy = {
             uiState
                 .room
                 ?.getRoomId()
                 ?.let(viewModel::stopRoomHeartbeat)
+            
+            // Stop watch tracking and sync when leaving page
+            viewModel.stopWatchTracking(shouldSync = true)
         }
     )
 
@@ -482,6 +508,17 @@ fun AmityRoomPlayerPage(
                                             setMediaSource(mediaSource)
                                             prepare()
                                             playWhenReady = true
+                                            
+                                            // Add listener to track play/pause state for watch minutes
+                                            addListener(object : Player.Listener {
+                                                override fun onIsPlayingChanged(isPlaying: Boolean) {
+                                                    if (isPlaying) {
+                                                        viewModel.resumeWatchTracking()
+                                                    } else {
+                                                        viewModel.pauseWatchTracking()
+                                                    }
+                                                }
+                                            })
                                         }
                                     PlayerView(context).apply {
                                         player = exoPlayer
@@ -1167,6 +1204,8 @@ fun AmityRoomPlayerPage(
             invitation = invitation,
             onAccept = {
                 showInvitationSheet = false
+                // Stop watch tracking and sync when becoming co-host
+                viewModel.stopWatchTracking(shouldSync = true)
                 viewModel.setIsStreamerMode(true)
                 viewModel.acceptInvitation(invitation)
                 if (!isCameraAndRecAudioPermissionGranted) {
@@ -1242,6 +1281,7 @@ fun AmityRoomPlayerPage(
                     uiState = uiState,
                     viewModel = viewModel,
                     onSuccess = {
+                        // Set viewer mode - LaunchedEffect will start watch tracking
                         viewModel.setIsStreamerMode(false)
                         showLeaveBackstageDialog = false
                     },
@@ -1272,12 +1312,13 @@ fun AmityRoomPlayerPage(
                     viewModel = viewModel,
                     onSuccess = {
                         AmityUIKitSnackbar.publishSnackbarMessage("You left as co-host and are now watching as a viewer.")
+                        // Set viewer mode - LaunchedEffect will start watch tracking
+                        viewModel.setIsStreamerMode(false)
                     },
                     onError = {
                         AmityUIKitSnackbar.publishSnackbarErrorMessage("Something went wrong. Please try again.")
                     }
                 )
-                viewModel.setIsStreamerMode(false)
                 showLeaveAsCoHostDialog = false
             },
             onDismissRequest = {

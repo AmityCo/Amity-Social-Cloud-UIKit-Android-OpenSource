@@ -726,7 +726,8 @@ class AmityCreateRoomPageViewModel constructor(val postId: String? = null) : Ami
                 when (event) {
                     is AmityCoHostEvent.CoHostInviteRejected -> {
                         AmityUIKitSnackbar.publishSnackbarMessage(
-                            message = "Co-host declined the invitation."
+                            message = "Co-host declined the invitation.",
+                            offsetFromBottom = 50
                         )
                     }
                     is AmityCoHostEvent.CoHostLeft -> {
@@ -734,13 +735,21 @@ class AmityCreateRoomPageViewModel constructor(val postId: String? = null) : Ami
                         val actorInternalId = event.actorInternalId
                         if (hostInternalId != actorInternalId) {
                             AmityUIKitSnackbar.publishSnackbarMessage(
-                                message = "Co-host left the stage."
+                                message = "Co-host left the stage.",
+                                offsetFromBottom = 50
                             )
                         }
                     }
                     is AmityCoHostEvent.CoHostInviteAccepted -> {
                         AmityUIKitSnackbar.publishSnackbarMessage(
-                            message = "Co-host accepted the invitation."
+                            message = "Co-host accepted the invitation.",
+                            offsetFromBottom = 50
+                        )
+                    }
+                    is AmityCoHostEvent.CoHostRemoved -> {
+                        AmityUIKitSnackbar.publishSnackbarMessage(
+                            message = "Co-host removed from live.",
+                            offsetFromBottom = 50
                         )
                     }
                     else -> {

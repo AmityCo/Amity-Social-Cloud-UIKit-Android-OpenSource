@@ -479,7 +479,8 @@ fun AmityEventDetailPage(
                                                     pageContext = context,
                                                 ),
                                                 postId = post.getPostId(),
-                                                category = AmityPostCategory.GENERAL
+                                                category = AmityPostCategory.GENERAL,
+                                                autoFocusCommentInput = true,
                                             )
                                         }
                                     )

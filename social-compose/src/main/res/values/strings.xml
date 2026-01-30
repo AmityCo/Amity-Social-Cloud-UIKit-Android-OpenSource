@@ -158,11 +158,11 @@
     <string name="amity_v4_community_setup_toast_create_success">Successfully created community!</string>
     <string name="amity_v4_community_setup_toast_create_failed">Failed to create community. Please try again.</string>
     <string name="amity_v4_community_setup_toast_updating">Updating…</string>
-    <string name="amity_v4_community_setup_toast_update_success">Successfully updated community profile!</string>
+    <string name="amity_v4_community_setup_toast_update_success">Successfully updated community profile.</string>
     <string name="amity_v4_community_setup_toast_update_failed">Failed to save your community profile. Please try again.</string>
 
     <!--community setup page dialog-->
-    <string name="amity_v4_community_setup_dialog_change_privacy_title">Change community privacy settings</string>
+    <string name="amity_v4_community_setup_dialog_change_privacy_title">Change community privacy settings?</string>
     <string name="amity_v4_community_setup_dialog_change_privacy_message">This community has globally featured posts. Changing the community from public to private will remove these posts from being featured globally</string>
     <string name="amity_v4_community_setup_dialog_leave_title">Leave without finishing</string>
     <string name="amity_v4_community_setup_dialog_leave_description">Your progress won\'t be saved and your community won\'t be created.</string>

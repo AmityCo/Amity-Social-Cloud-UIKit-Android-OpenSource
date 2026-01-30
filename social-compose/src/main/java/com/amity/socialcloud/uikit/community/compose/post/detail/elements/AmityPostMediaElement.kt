@@ -486,6 +486,10 @@ fun AmityPostMediaImageChildrenFour(
                             modifier = Modifier.align(Alignment.Center)
                         )
                     }
+                } else if (isVideoPost) {
+                    AmityPostMediaPlayButton(
+                        modifier = modifier.align(Alignment.Center)
+                    )
                 }
             }
         }

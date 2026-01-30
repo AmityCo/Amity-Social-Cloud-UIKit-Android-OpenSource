@@ -51,11 +51,13 @@ open class AmityClipPageBehavior {
     open fun goToPostDetailPage(
         context: Context,
         postId: String,
+        autoFocusCommentInput: Boolean = false,
     ) {
         val intent = AmityPostDetailPageActivity.newIntent(
             context = context,
             id = postId,
             hideTarget = true,
+            autoFocusCommentInput = autoFocusCommentInput,
         )
         context.startActivity(intent)
     }

@@ -30,6 +30,7 @@ class AmityPostDetailPageActivity : AppCompatActivity() {
         val parentId = intent.getStringExtra(EXTRA_PARAM_PARENT_ID)
         val replyToCommentId = intent.getStringExtra(EXTRA_PARAM_REPLY_TO)
         val eventHostId = intent.getStringExtra(EXTRA_PARAM_EVENT_HOST_ID)
+        val autoFocusCommentInput = intent.getBooleanExtra(EXTRA_PARAM_AUTO_FOCUS_COMMENT_INPUT, false)
 
         setContent {
             AmityPostDetailPage(
@@ -45,6 +46,7 @@ class AmityPostDetailPageActivity : AppCompatActivity() {
                 parentId = parentId,
                 replyToCommentId = replyToCommentId,
                 eventHostId = eventHostId,
+                autoFocusCommentInput = autoFocusCommentInput,
             )
         }
     }
@@ -88,6 +90,7 @@ class AmityPostDetailPageActivity : AppCompatActivity() {
         private const val EXTRA_PARAM_PARENT_ID = "parent_id"
         private const val EXTRA_PARAM_REPLY_TO = "reply_to_comment_id"
         private const val EXTRA_PARAM_EVENT_HOST_ID = "event_host_id"
+        private const val EXTRA_PARAM_AUTO_FOCUS_COMMENT_INPUT = "auto_focus_comment_input"
 
         fun newIntent(
             context: Context,
@@ -99,6 +102,7 @@ class AmityPostDetailPageActivity : AppCompatActivity() {
             parentId : String? = null,
             replyTo: String? = null,
             eventHostId: String? = null,
+            autoFocusCommentInput: Boolean = false,
         ): Intent {
             return Intent(
                 context,
@@ -112,6 +116,7 @@ class AmityPostDetailPageActivity : AppCompatActivity() {
                 putExtra(EXTRA_PARAM_PARENT_ID, parentId)
                 putExtra(EXTRA_PARAM_REPLY_TO, replyTo)
                 putExtra(EXTRA_PARAM_EVENT_HOST_ID, eventHostId)
+                putExtra(EXTRA_PARAM_AUTO_FOCUS_COMMENT_INPUT, autoFocusCommentInput)
             }
         }
     }
