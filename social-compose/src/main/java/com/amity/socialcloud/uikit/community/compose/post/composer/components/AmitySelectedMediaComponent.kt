@@ -6,6 +6,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -16,8 +18,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
@@ -27,8 +27,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,11 +39,15 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -56,6 +63,7 @@ import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComp
 import com.amity.socialcloud.uikit.community.compose.post.model.AmityFileUploadState
 import com.amity.socialcloud.uikit.community.compose.post.model.AmityPostMedia
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AmitySelectedMediaComponent(
     modifier: Modifier = Modifier,
@@ -67,14 +75,12 @@ fun AmitySelectedMediaComponent(
         viewModel<AmityPostComposerPageViewModel>(viewModelStoreOwner = viewModelStoreOwner)
     val selectedMediaFiles by viewModel.selectedMediaFiles.collectAsState()
 
-    val gridCells by remember(selectedMediaFiles.size) {
-        mutableStateOf(
-            when (selectedMediaFiles.size) {
-                1 -> GridCells.Fixed(1)
-                2 -> GridCells.Fixed(2)
-                else -> GridCells.Fixed(3)
-            }
-        )
+    val columns = remember(selectedMediaFiles.size) {
+        when (selectedMediaFiles.size) {
+            1 -> 1
+            2 -> 2
+            else -> 3
+        }
     }
 
     val shouldShowMediaError by remember {
@@ -170,48 +176,62 @@ fun AmitySelectedMediaComponent(
             }
         }
 
-        LazyVerticalGrid(
-            columns = gridCells,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = modifier
-        ) {
+        // FlowRow doesn't auto-distribute equal column widths like LazyVerticalGrid,
+        // so we measure the available width and compute exact item width accounting for spacing.
+        val spacing = 8.dp
+        val itemAspectRatio = remember(selectedMediaFiles.size) {
             when (selectedMediaFiles.size) {
-                1 -> {
-                    items(selectedMediaFiles.size) {
-                        AmitySelectedMediaElement(
-                            modifier = modifier.aspectRatio(1f),
-                            media = selectedMediaFiles[it],
-                            onRemove = { postMedia ->
-                                viewModel.removeMedia(postMedia)
-                            },
-                        )
-                    }
-                }
+                2 -> 0.5f
+                else -> 1f
+            }
+        }
 
-                2 -> {
-                    items(selectedMediaFiles.size) {
-                        AmitySelectedMediaElement(
-                            modifier = modifier.aspectRatio(0.5f),
-                            media = selectedMediaFiles[it],
-                            onRemove = { postMedia ->
-                                viewModel.removeMedia(postMedia)
-                            },
-                        )
-                    }
-                }
+        val density = LocalDensity.current
+        var containerWidthPx by remember { mutableIntStateOf(0) }
 
-                else -> {
-                    items(selectedMediaFiles.size) {
-                        AmitySelectedMediaElement(
-                            modifier = modifier.aspectRatio(1f),
-                            media = selectedMediaFiles[it],
-                            onRemove = { postMedia ->
-                                viewModel.removeMedia(postMedia)
-                            },
-                        )
+        // Compute item width in dp once we know container width.
+        val itemWidth: Dp = remember(containerWidthPx, columns, spacing) {
+            if (containerWidthPx <= 0) {
+                0.dp
+            } else {
+                with(density) {
+                    val totalWidthDp = containerWidthPx.toDp()
+                    if (columns <= 1) {
+                        totalWidthDp
+                    } else {
+                        val gutters = spacing * (columns - 1)
+                        ((totalWidthDp - gutters) / columns).coerceAtLeast(0.dp)
                     }
                 }
+            }
+        }
+
+        FlowRow(
+            maxItemsInEachRow = columns,
+            horizontalArrangement = Arrangement.spacedBy(spacing),
+            verticalArrangement = Arrangement.spacedBy(spacing),
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(horizontal = 0.dp)
+                .then(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(0.dp)
+                        .onSizeChanged { size: IntSize ->
+                            containerWidthPx = size.width
+                        }
+                ),
+        ) {
+            selectedMediaFiles.forEach { media ->
+                AmitySelectedMediaElement(
+                    modifier = Modifier
+                        .width(itemWidth)
+                        .aspectRatio(itemAspectRatio),
+                    media = media,
+                    onRemove = { postMedia ->
+                        viewModel.removeMedia(postMedia)
+                    },
+                )
             }
         }
     }

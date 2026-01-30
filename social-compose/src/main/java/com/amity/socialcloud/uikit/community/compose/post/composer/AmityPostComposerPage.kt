@@ -20,9 +20,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -44,16 +45,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -322,6 +322,15 @@ fun AmityPostComposerPage(
         }
     }
 
+    LaunchedEffect(selectedMediaFiles) {
+        if (selectedMediaFiles.isEmpty()) {
+            existingAttachmentType = null
+        } else {
+            // Update to the type of the first selected media
+            existingAttachmentType = selectedMediaFiles.first().type
+        }
+    }
+
     LaunchedEffect(postAttachmentPickerEvent) {
         when (postAttachmentPickerEvent) {
             AmityPostAttachmentPickerEvent.OpenImageOrVideoSelectionSheet -> {
@@ -539,416 +548,398 @@ fun AmityPostComposerPage(
             }
         }
 
-        ConstraintLayout(modifier = modifier.fillMaxSize()) {
-            val (header, titleField, content, media, suggestions, attachment, clipThumbnail) = createRefs()
-
-            Box(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .background(AmityTheme.colors.background)
-                    .padding(start = 12.dp, end = 16.dp)
-                    .constrainAs(header) {
-                        top.linkTo(parent.top)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    }
-            ) {
-                AmityBaseElement(
-                    pageScope = getPageScope(),
-                    elementId = "close_button"
-                ) {
-                    Icon(
-                        painter = if (isCreateClipMode) painterResource(R.drawable.amity_ic_back) else painterResource(
-                            getConfig().getIcon()
-                        ),
-                        contentDescription = null,
-                        tint = AmityTheme.colors.base,
-                        modifier = modifier
-                            .align(Alignment.CenterStart)
-                            .size(18.dp)
-                            .padding(2.dp)
-                            .clickableWithoutRipple {
-                                if (isInEditMode) {
-                                    val hasTitleChanged = titleText.trim() != postTitle.trim()
-                                    val hasTextChanged = localPostText.trim() != postBodyText.trim()
-                                    val hasAttachmentsChanged =
-                                        post?.getChildren()?.size != selectedMediaFiles.size
-                                    val hasEdited =
-                                        hasTitleChanged || hasTextChanged || hasAttachmentsChanged
-                                    if (hasEdited) {
-                                        showDiscardPostDialog = true
-                                    } else {
-                                        context.closePageWithResult(Activity.RESULT_CANCELED)
-                                    }
-                                } else if (isEditClipMode) {
-                                    val hasEdited = localPostText != postBodyText
-                                    if (hasEdited) {
-                                        showDiscardPostDialog = true
-                                    } else {
-                                        context.closePageWithResult(Activity.RESULT_CANCELED)
-                                    }
-                                } else {
-                                    val hasInput =
-                                        titleText.trim().isNotEmpty() || localPostText.trim()
-                                            .isNotEmpty() || selectedMediaFiles.isNotEmpty()
-                                    if (hasInput) {
-                                        showDiscardPostDialog = true
-                                    } else {
-                                        context.closePageWithResult(Activity.RESULT_CANCELED)
-                                    }
-                                }
-                            }
-                            .testTag(getAccessibilityId()),
-                    )
-                }
-
-                val title = when (options) {
-                    is AmityPostComposerOptions.AmityPostComposerCreateOptions -> {
-                        if (options.targetType == AmityPostTargetType.USER) {
-                            if (options.targetId == AmityCoreClient.getUserId()) {
-                                "My timeline"
-                            } else {
-                                options.targetId ?: ""
-                            }
-                        } else {
-                            options.community?.getDisplayName() ?: "Group"
-                        }
-                    }
-
-                    is AmityPostComposerOptions.AmityPostComposerCreateClipOptions -> {
-                        if (options.targetType == AmityPostTargetType.USER) {
-                            if (options.targetId == AmityCoreClient.getUserId()) {
-                                "My timeline"
-                            } else {
-                                options.targetId ?: ""
-                            }
-                        } else {
-                            options.community?.getDisplayName() ?: "Group"
-                        }
-                    }
-
-                    is AmityPostComposerOptions.AmityPostComposerEditOptions,
-                    is AmityPostComposerOptions.AmityPostComposerEditClipOptions,
-                        -> {
-                        "Edit Post"
-                    }
-                }
-
-                AmityBaseElement(
-                    pageScope = getPageScope(),
-                    elementId = if (isInEditMode || isEditClipMode) "edit_post_title" else "community_display_name"
-                ) {
-                    Text(
-                        text = if (isInEditMode || isEditClipMode) getConfig().getText() else title,
-                        style = AmityTheme.typography.title,
-                        modifier = modifier
-                            .align(Alignment.Center)
-                            .padding(vertical = 16.dp, horizontal = 40.dp)
-                            .testTag(getAccessibilityId()),
-                    )
-                }
-
-                AmityBaseElement(
-                    pageScope = getPageScope(),
-                    elementId = if (isInEditMode || isEditClipMode) "edit_post_button" else "create_new_post_button"
-                ) {
-                    Text(
-                        text = if (isInEditMode || isEditClipMode) "Save" else getConfig().getText(),
-                        style = AmityTheme.typography.body.copy(
-                            color = if (shouldAllowToPost) AmityTheme.colors.primary else AmityTheme.colors.primaryShade2
-                        ),
-                        modifier = modifier
-                            .align(Alignment.CenterEnd)
-                            .clickableWithoutRipple(enabled = shouldAllowToPost) {
-                                if (isInEditMode || isEditClipMode) {
-                                    // For edit mode, pass title and text separately
-                                    viewModel.updatePost(
-                                        postText = localPostText.trim(),
-                                        postTitle = titleText.trim(),
-                                        mentionedUsers = mentionedUsers,
-                                        hashtags = hashtags,
-                                    )
-                                } else {
-                                    viewModel.createPost(
-                                        postText = localPostText.trim(),
-                                        postTitle = titleText.trim(),
-                                        mentionedUsers = mentionedUsers,
-                                        hashtags = hashtags,
-                                    )
-                                }
-                            }
-                            .testTag(getAccessibilityId()),
-                    )
-                }
+        // Replaces the old ConstraintLayout structure with Box/Column primitives.
+        Box(modifier = modifier.fillMaxSize()) {
+            var attachmentHeightPx by remember { mutableStateOf(0) }
+            val attachmentHeightDp = with(androidx.compose.ui.platform.LocalDensity.current) {
+                attachmentHeightPx.toDp()
             }
 
-            if (!(isEditClipMode || isCreateClipMode)) {
-                // Title field
-                BasicTextField(
-                    value = titleText,
-                    onValueChange = {
-                        // Remove line breaks and convert them to spaces
-                        val cleanedText = it.replace(Regex("[\r\n]+"), " ")
-                        if (cleanedText.length <= maxTitleChar) {
-                            titleText = cleanedText
-                        } else {
-                            // [Optional] provide feedback to the user that the limit is reached
-                        }
-                    },
-                    textStyle = AmityTheme.typography.titleBold.copy(
-                        color = AmityTheme.colors.base,
-                        fontSize = 17.sp,
-                        textAlign = TextAlign.Start
-                    ),
-                    keyboardOptions = KeyboardOptions(
-                        capitalization = KeyboardCapitalization.Sentences,
-                        imeAction = ImeAction.Next
-                    ),
-                    cursorBrush = SolidColor(AmityTheme.colors.primary),
-                    decorationBox = { innerTextField ->
-                        if (titleText.isEmpty()) {
-                            Text(
-                                text = "Title (Optional)",
-                                style = AmityTheme.typography.titleBold.copy(
-                                    color = AmityTheme.colors.baseShade3,
-                                    fontSize = 17.sp,
-                                    textAlign = TextAlign.Start
-                                )
-                            )
-                        }
-                        innerTextField()
-                    },
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(AmityTheme.colors.background)
+            ) {
+                // Header (pinned to top)
+                Box(
                     modifier = modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                        .padding(top = 12.dp)
-                        .constrainAs(titleField) {
-                            top.linkTo(header.bottom)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
+                        .background(AmityTheme.colors.background)
+                        .padding(start = 12.dp, end = 16.dp)
+                ) {
+                    AmityBaseElement(
+                        pageScope = getPageScope(),
+                        elementId = "close_button"
+                    ) {
+                        Icon(
+                            painter = if (isCreateClipMode) painterResource(R.drawable.amity_ic_back) else painterResource(
+                                getConfig().getIcon()
+                            ),
+                            contentDescription = null,
+                            tint = AmityTheme.colors.base,
+                            modifier = modifier
+                                .align(Alignment.CenterStart)
+                                .size(18.dp)
+                                .padding(2.dp)
+                                .clickableWithoutRipple {
+                                    if (isInEditMode) {
+                                        val hasTitleChanged = titleText.trim() != postTitle.trim()
+                                        val hasTextChanged = localPostText.trim() != postBodyText.trim()
+                                        val hasAttachmentsChanged =
+                                            post?.getChildren()?.size != selectedMediaFiles.size
+                                        val hasEdited =
+                                            hasTitleChanged || hasTextChanged || hasAttachmentsChanged
+                                        if (hasEdited) {
+                                            showDiscardPostDialog = true
+                                        } else {
+                                            context.closePageWithResult(Activity.RESULT_CANCELED)
+                                        }
+                                    } else if (isEditClipMode) {
+                                        val hasEdited = localPostText != postBodyText
+                                        if (hasEdited) {
+                                            showDiscardPostDialog = true
+                                        } else {
+                                            context.closePageWithResult(Activity.RESULT_CANCELED)
+                                        }
+                                    } else {
+                                        val hasInput =
+                                            titleText.trim().isNotEmpty() || localPostText.trim()
+                                                .isNotEmpty() || selectedMediaFiles.isNotEmpty()
+                                        if (hasInput) {
+                                            showDiscardPostDialog = true
+                                        } else {
+                                            context.closePageWithResult(Activity.RESULT_CANCELED)
+                                        }
+                                    }
+                                }
+                                .testTag(getAccessibilityId()),
+                        )
+                    }
+
+                    val title = when (options) {
+                        is AmityPostComposerOptions.AmityPostComposerCreateOptions -> {
+                            if (options.targetType == AmityPostTargetType.USER) {
+                                if (options.targetId == AmityCoreClient.getUserId()) {
+                                    "My timeline"
+                                } else {
+                                    options.targetId ?: ""
+                                }
+                            } else {
+                                options.community?.getDisplayName() ?: "Group"
+                            }
                         }
-                )
+
+                        is AmityPostComposerOptions.AmityPostComposerCreateClipOptions -> {
+                            if (options.targetType == AmityPostTargetType.USER) {
+                                if (options.targetId == AmityCoreClient.getUserId()) {
+                                    "My timeline"
+                                } else {
+                                    options.targetId ?: ""
+                                }
+                            } else {
+                                options.community?.getDisplayName() ?: "Group"
+                            }
+                        }
+
+                        is AmityPostComposerOptions.AmityPostComposerEditOptions,
+                        is AmityPostComposerOptions.AmityPostComposerEditClipOptions,
+                            -> {
+                            "Edit Post"
+                        }
+                    }
+
+                    AmityBaseElement(
+                        pageScope = getPageScope(),
+                        elementId = if (isInEditMode || isEditClipMode) "edit_post_title" else "community_display_name"
+                    ) {
+                        Text(
+                            text = if (isInEditMode || isEditClipMode) getConfig().getText() else title,
+                            style = AmityTheme.typography.titleBold,
+                            modifier = modifier
+                                .align(Alignment.Center)
+                                .padding(vertical = 16.dp, horizontal = 40.dp)
+                                .testTag(getAccessibilityId()),
+                        )
+                    }
+
+                    AmityBaseElement(
+                        pageScope = getPageScope(),
+                        elementId = if (isInEditMode || isEditClipMode) "edit_post_button" else "create_new_post_button"
+                    ) {
+                        Text(
+                            text = if (isInEditMode || isEditClipMode) "Save" else getConfig().getText(),
+                            style = AmityTheme.typography.body.copy(
+                                color = if (shouldAllowToPost) AmityTheme.colors.primary else AmityTheme.colors.primaryShade2
+                            ),
+                            modifier = modifier
+                                .align(Alignment.CenterEnd)
+                                .clickableWithoutRipple(enabled = shouldAllowToPost) {
+                                    if (isInEditMode || isEditClipMode) {
+                                        // For edit mode, pass title and text separately
+                                        viewModel.updatePost(
+                                            postText = localPostText.trim(),
+                                            postTitle = titleText.trim(),
+                                            mentionedUsers = mentionedUsers,
+                                            hashtags = hashtags,
+                                        )
+                                    } else {
+                                        viewModel.createPost(
+                                            postText = localPostText.trim(),
+                                            postTitle = titleText.trim(),
+                                            mentionedUsers = mentionedUsers,
+                                            hashtags = hashtags,
+                                        )
+                                    }
+                                }
+                                .testTag(getAccessibilityId()),
+                        )
+                    }
+                }
+
+                Box (
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .padding(bottom = attachmentHeightDp)
+                ) {
+                    val listState = rememberLazyListState()
+                    // Body (fills remaining space, padded so bottom attachment never covers content)
+                    LazyColumn(
+                        state = listState,
+                        modifier = Modifier
+                            .fillMaxSize()
+                    ) {
+                        if (!(isEditClipMode || isCreateClipMode)) {
+                            item {
+                                // Title field
+                                BasicTextField(
+                                    value = titleText,
+                                    onValueChange = {
+                                        // Remove line breaks and convert them to spaces
+                                        val cleanedText = it.replace(Regex("[\r\n]+"), " ")
+                                        if (cleanedText.length <= maxTitleChar) {
+                                            titleText = cleanedText
+                                        } else {
+                                            // [Optional] provide feedback to the user that the limit is reached
+                                        }
+                                    },
+                                    textStyle = AmityTheme.typography.titleBold.copy(
+                                        color = AmityTheme.colors.base,
+                                        fontSize = 17.sp,
+                                        textAlign = TextAlign.Start
+                                    ),
+                                    keyboardOptions = KeyboardOptions(
+                                        capitalization = KeyboardCapitalization.Sentences,
+                                        imeAction = ImeAction.Next
+                                    ),
+                                    cursorBrush = SolidColor(AmityTheme.colors.primary),
+                                    decorationBox = { innerTextField ->
+                                        if (titleText.isEmpty()) {
+                                            Text(
+                                                text = "Title (Optional)",
+                                                style = AmityTheme.typography.titleBold.copy(
+                                                    color = AmityTheme.colors.baseShade3,
+                                                    fontSize = 17.sp,
+                                                    textAlign = TextAlign.Start
+                                                )
+                                            )
+                                        }
+                                        innerTextField()
+                                    },
+                                    modifier = modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 16.dp)
+                                        .padding(top = 12.dp)
+                                )
+                            }
+                        }
+
+                        item {
+                            // Clip thumbnail
+                            if (isCreateClipMode) {
+                                val aspect =
+                                    (options as AmityPostComposerOptions.AmityPostComposerCreateClipOptions).aspectRatio
+                                Box(
+                                    modifier = Modifier
+                                        .padding(top = 16.dp)
+                                        .height(142.dp)
+                                        .width(80.dp)
+                                        .clip(RoundedCornerShape(4.dp))
+                                        .background(
+                                            color = Color.Black,
+                                            shape = RoundedCornerShape(4.dp)
+                                        )
+                                ) {
+                                    AmityStoryVideoPlayer(
+                                        exoPlayer = exoPlayer,
+                                        isVisible = true,
+                                        modifier = Modifier
+                                            .aspectRatio(9f / 16f)
+                                            .fillMaxSize()
+                                            .clip(RoundedCornerShape(4.dp)),
+                                        scaleMode = if (aspect == AmityClip.DisplayMode.FIT) AspectRatioFrameLayout.RESIZE_MODE_FIT else AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+                                    )
+
+                                    Box(
+                                        modifier = Modifier
+                                            .align(Alignment.Center)
+                                            .size(24.dp)
+                                            .background(
+                                                color = Color(0x88000000),
+                                                shape = CircleShape
+                                            )
+                                    ) {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.amity_ic_play_v4),
+                                            contentDescription = null,
+                                            modifier = Modifier
+                                                .align(Alignment.Center)
+                                        )
+                                    }
+                                }
+                            } else if (isEditClipMode) {
+                                AmityClipAttachmentElement(
+                                    post = post,
+                                    modifier = Modifier
+                                        .padding(top = 16.dp)
+//                                        .align(Alignment.CenterHorizontally)
+                                )
+                            }
+                        }
+
+                        item {
+                            // Composer / content
+                            if (isInEditMode || isEditClipMode) {
+                                if (post != null) {
+                                    AmityMentionTextField(
+                                        modifier = modifier
+                                            .fillMaxSize()
+                                            .padding(horizontal = 16.dp, vertical = 20.dp),
+                                        value = localPostText,
+                                        maxLines = 30,
+                                        hintText = "What’s on your mind?",
+                                        mentionedUser = selectedUserToMention,
+                                        mentionMetadata = mentionGetter.getMentionedUsers(),
+                                        mentionees = post?.getMentionees() ?: emptyList(),
+                                        hashtagMetadata = hashtagGetter.getHashtags(),
+                                        textStyle = AmityTheme.typography.body.copy(
+                                            color = AmityTheme.colors.base,
+                                            fontSize = 16.sp
+                                        ),
+                                        contentPadding = PaddingValues(0.dp),
+                                        verticalPadding = 0.dp,
+                                        horizontalPadding = 0.dp,
+                                        backgroundColor = Color.Transparent,
+                                        onValueChange = {
+                                            localPostText = it
+                                        },
+                                        onMentionAdded = {
+                                            selectedUserToMention = null
+                                        },
+                                        onQueryToken = {
+                                            queryToken = it ?: ""
+                                            shouldShowSuggestion = (it != null)
+                                        },
+                                        onUserMentions = {
+                                            mentionedUsers = it
+                                        },
+                                        onHashtags = {
+                                            hashtags = it
+                                        },
+                                    )
+                                }
+                            } else {
+                                AmityMentionTextField(
+                                    modifier = modifier
+                                        .fillMaxSize()
+                                        .padding(horizontal = 16.dp, vertical = 20.dp),
+                                    value = localPostText,
+                                    maxLines = 30,
+                                    hintText = "What’s on your mind?",
+                                    mentionedUser = selectedUserToMention,
+                                    textStyle = AmityTheme.typography.body.copy(
+                                        color = AmityTheme.colors.base,
+                                        fontSize = 16.sp
+                                    ),
+                                    contentPadding = PaddingValues(0.dp),
+                                    verticalPadding = 0.dp,
+                                    horizontalPadding = 0.dp,
+                                    backgroundColor = Color.Transparent,
+                                    onValueChange = {
+                                        localPostText = it
+                                    },
+                                    onMentionAdded = {
+                                        selectedUserToMention = null
+                                    },
+                                    onQueryToken = {
+                                        queryToken = it ?: ""
+                                        shouldShowSuggestion = (it != null)
+                                    },
+                                    onUserMentions = {
+                                        mentionedUsers = it
+                                    },
+                                    onHashtags = {
+                                        hashtags = it
+                                    },
+                                )
+                            }
+                        }
+
+                        // Selected media preview area (kept above the bottom attachment bar)
+                        if (options is AmityPostComposerOptions.AmityPostComposerCreateOptions ||
+                            options is AmityPostComposerOptions.AmityPostComposerEditOptions
+                        ) {
+                            item {
+                                AmitySelectedMediaComponent(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                )
+                            }
+                        }
+                    }
+                }
             }
 
-            //Show clip thumbnail only in create clip mode
-            if (isCreateClipMode) {
-                val aspect =
-                    (options as AmityPostComposerOptions.AmityPostComposerCreateClipOptions).aspectRatio
+            // Bottom attachment bar (pinned to bottom, stays above IME)
+            if (options is AmityPostComposerOptions.AmityPostComposerCreateOptions ||
+                options is AmityPostComposerOptions.AmityPostComposerEditOptions
+            ) {
                 Box(
                     modifier = Modifier
-                        .constrainAs(clipThumbnail) {
-                            top.linkTo(header.bottom)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                            centerHorizontallyTo(header)
-                        }
-                        .padding(top = 16.dp)
-                        .height(142.dp)
-                        .width(80.dp)
-                        .clip(RoundedCornerShape(4.dp))
-                        .background(
-                            color = Color.Black,
-                            shape = RoundedCornerShape(4.dp)
-                        )
-                ) {
-                    AmityStoryVideoPlayer(
-                        exoPlayer = exoPlayer,
-                        isVisible = true,
-                        modifier = Modifier
-                            .aspectRatio(9f / 16f)
-                            .fillMaxSize()
-                            .clip(RoundedCornerShape(4.dp)),
-                        scaleMode = if (aspect == AmityClip.DisplayMode.FIT) AspectRatioFrameLayout.RESIZE_MODE_FIT else AspectRatioFrameLayout.RESIZE_MODE_ZOOM
-                    )
-
-                    Box(
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .size(24.dp)
-                            .background(
-                                color = Color(0x88000000),
-                                shape = CircleShape
-                            )
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.amity_ic_play_v4),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                        )
-                    }
-                }
-            } else if (isEditClipMode) {
-                AmityClipAttachmentElement(
-                    post = post,
-                    modifier = Modifier
-                        .constrainAs(clipThumbnail) {
-                            top.linkTo(header.bottom)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                            centerHorizontallyTo(header)
-                        }
-                        .padding(top = 16.dp)
-                )
-            }
-
-            if (isInEditMode || isEditClipMode) {
-                if (post != null) {
-                    AmityMentionTextField(
-                        modifier = modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 20.dp)
-                            .constrainAs(content) {
-                                top.linkTo(if (isEditClipMode) clipThumbnail.bottom else titleField.bottom)
-                                start.linkTo(parent.start)
-                                end.linkTo(parent.end)
-                            },
-                        value = localPostText,
-                        maxLines = 30,
-                        hintText = "Share something...",
-                        mentionedUser = selectedUserToMention,
-                        mentionMetadata = mentionGetter.getMentionedUsers(),
-                        mentionees = post?.getMentionees() ?: emptyList(),
-                        hashtagMetadata = hashtagGetter.getHashtags(),
-                        textStyle = AmityTheme.typography.body.copy(
-                            color = AmityTheme.colors.base,
-                            fontSize = 16.sp  // Match original post composer font size
-                        ),
-                        contentPadding = PaddingValues(0.dp), // Post composer has minimal padding
-                        verticalPadding = 0.dp,
-                        horizontalPadding = 0.dp,
-                        backgroundColor = Color.Transparent,
-                        onValueChange = {
-                            localPostText = it
-                        },
-                        onMentionAdded = {
-                            selectedUserToMention = null
-                        },
-                        onQueryToken = {
-                            queryToken = it ?: ""
-                            shouldShowSuggestion = (it != null)
-                        },
-                        onUserMentions = {
-                            mentionedUsers = it
-                        },
-                        onHashtags = {
-                            hashtags = it
-                        },
-                    )
-                }
-            } else {
-                AmityMentionTextField(
-                    modifier = modifier
+                        .align(Alignment.BottomCenter)
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 20.dp)
-                        .constrainAs(content) {
-                            top.linkTo(if (isCreateClipMode) clipThumbnail.bottom else titleField.bottom)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                        },
-                    value = localPostText,
-                    maxLines = 30,
-                    hintText = "Share something...",
-                    mentionedUser = selectedUserToMention,
-                    textStyle = AmityTheme.typography.body.copy(
-                        color = AmityTheme.colors.base,
-                        fontSize = 16.sp  // Match original post composer font size
-                    ),
-                    contentPadding = PaddingValues(0.dp), // Post composer has minimal padding
-                    verticalPadding = 0.dp,
-                    horizontalPadding = 0.dp,
-                    backgroundColor = Color.Transparent,
-                    onValueChange = {
-                        localPostText = it
-                    },
-                    onMentionAdded = {
-                        selectedUserToMention = null
-                    },
-                    onQueryToken = {
-                        queryToken = it ?: ""
-                        shouldShowSuggestion = (it != null)
-                    },
-                    onUserMentions = {
-                        mentionedUsers = it
-                    },
-                    onHashtags = {
-                        hashtags = it
-                    },
-                )
+                        .onSizeChanged { attachmentHeightPx = it.height }
+                ) {
+                    AmityMediaAttachmentElement(
+                        modifier = Modifier.fillMaxWidth(),
+                        pageScope = getPageScope(),
+                    )
+                }
             }
 
+            // Mention suggestions overlay (above attachment/IME)
             if (shouldShowSuggestion) {
                 AmityMentionSuggestionView(
-                    heightIn = 220.dp, // Match the height we used for comments
-                    shape = RoundedCornerShape(8.dp), // Apply rounded corners
+                    heightIn = 220.dp,
+                    shape = RoundedCornerShape(8.dp),
                     community = viewModel.community,
                     keyword = queryToken,
                     modifier = Modifier
-                        .constrainAs(suggestions) {
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                            bottom.linkTo(
-                                if (isCreateClipMode || isEditClipMode) {
-                                    parent.bottom
-                                } else {
-                                    attachment.top
-                                }
-                            )
-                        }
-                        .let { baseModifier ->
-                            if ((isCreateClipMode || isEditClipMode) && isKeyboardOpen) {
-                                baseModifier.padding(bottom = keyboardHeight)
-                            } else {
-                                baseModifier
+                        .align(Alignment.BottomCenter)
+                        .padding(
+                            bottom = when {
+                                // In normal create/edit post mode, keep suggestions above the attachment bar.
+                                options is AmityPostComposerOptions.AmityPostComposerCreateOptions ||
+                                        options is AmityPostComposerOptions.AmityPostComposerEditOptions -> attachmentHeightDp
+                                // In clip modes, suggestions were bottom-linked to parent and then padded by keyboard.
+                                (isCreateClipMode || isEditClipMode) && isKeyboardOpen -> keyboardHeight
+                                else -> 0.dp
                             }
-                        },
+                        )
                 ) {
                     selectedUserToMention = it
                     shouldShowSuggestion = false
                 }
-            }
-
-            if (options is AmityPostComposerOptions.AmityPostComposerCreateOptions ||
-                options is AmityPostComposerOptions.AmityPostComposerEditOptions
-            ) {
-                // Show existing videos from post children in edit mode
-                if (isInEditMode && post != null) {
-                    val videoChildren = post!!.getChildren().filter { child ->
-                        child.getData() is AmityPost.Data.VIDEO
-                    }
-
-                    if (videoChildren.isNotEmpty()) {
-                        AmityExistingVideoDisplay(
-                            videoChildren = videoChildren,
-                            modifier = Modifier
-                                .constrainAs(media) {
-                                    top.linkTo(content.bottom)
-                                    start.linkTo(parent.start)
-                                    end.linkTo(parent.end)
-                                }
-                        )
-                    }
-                } else {
-                    // Show regular selected media component for create mode or non-video posts
-                    AmitySelectedMediaComponent(
-                        modifier = Modifier
-                            .constrainAs(media) {
-                                top.linkTo(content.bottom)
-                                start.linkTo(parent.start)
-                                end.linkTo(parent.end)
-                            }
-                    )
-                }
-
-                AmityMediaAttachmentElement(
-                    modifier = Modifier
-                        .constrainAs(attachment) {
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                            bottom.linkTo(parent.bottom)
-                        },
-                    pageScope = getPageScope(),
-                )
             }
         }
 

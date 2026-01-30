@@ -105,7 +105,7 @@ data class AmityTypography(
 ) {
 
     fun applyConfiguration(theme: AmityUIKitConfig.UIKitTheme): AmityTypography {
-        val base = theme.baseColor.asColor()
+        val base = theme.baseColor?.asColor() ?: amityColorBase
 
         return AmityUIKitTypography.copy(
             bodyLegacy = bodyLegacy.copy(color = base),

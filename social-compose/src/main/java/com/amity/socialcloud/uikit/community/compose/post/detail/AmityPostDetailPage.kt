@@ -221,10 +221,8 @@ fun AmityPostDetailPage(
             pageScope = getPageScope(),
             componentId = "comment_tray_component"
         ) {
-            if (post != null &&
-                (post?.isDeleted() == true
-                        || AmitySocialBehaviorHelper.supportedStructureTypes.contains(post?.getStructureType())
-                        || postErrorState == true)
+            if (post != null && ((post?.isDeleted() == true
+                        || !AmitySocialBehaviorHelper.supportedStructureTypes.contains(post?.getStructureType())) || postErrorState)
                 ) {
                 AmityPostErrorPage()
             } else {
