@@ -4,10 +4,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -24,7 +23,6 @@ import com.amity.socialcloud.uikit.community.compose.paging.feed.global.amityGlo
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerHelper
 import com.amity.socialcloud.uikit.community.compose.socialhome.AmitySocialHomePageViewModel
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun AmityGlobalFeedComponent(
     modifier: Modifier = Modifier,
@@ -44,25 +42,30 @@ fun AmityGlobalFeedComponent(
     val lazyListState = rememberLazyListState()
     val postListState by viewModel.postListState.collectAsState()
 
+    val pullRefreshState = rememberPullToRefreshState()
     val isRefreshing by viewModel.isGlobalFeedRefreshing.collectAsState()
 
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = isRefreshing,
-        onRefresh = {
-            viewModel.setGlobalFeedRefreshing()
-            posts.refresh()
-            AmityPostComposerHelper.clear()
-        }
-    )
+    val onRefresh = {
+        viewModel.setGlobalFeedRefreshing()
+        posts.refresh()
+        AmityPostComposerHelper.clear()
+    }
 
     AmityBaseComponent(
         pageScope = pageScope,
         componentId = "global_feed"
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .pullRefresh(pullRefreshState)
+        PullToRefreshBox(
+            isRefreshing = isRefreshing,
+            onRefresh = onRefresh,
+            indicator = {
+                PullToRefreshDefaults.Indicator(
+                    isRefreshing = isRefreshing,
+                    state = pullRefreshState,
+                    modifier = Modifier.align(Alignment.TopCenter),
+                )
+            },
+            modifier = Modifier.fillMaxSize(),
         ) {
             LazyColumn(
                 state = lazyListState,
@@ -93,12 +96,6 @@ fun AmityGlobalFeedComponent(
                     }
                 )
             }
-
-            PullRefreshIndicator(
-                refreshing = isRefreshing,
-                state = pullRefreshState,
-                modifier = Modifier.align(Alignment.TopCenter),
-            )
         }
     }
 }

@@ -10,10 +10,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -41,10 +40,8 @@ import com.amity.socialcloud.uikit.community.compose.story.target.AmityStoryTabC
 import com.amity.socialcloud.uikit.community.compose.story.target.AmityStoryTabComponentType
 import com.amity.socialcloud.uikit.community.compose.story.target.global.AmityStoryShimmer
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun AmityNewsFeedComponent(
     modifier: Modifier = Modifier,
@@ -52,6 +49,7 @@ fun AmityNewsFeedComponent(
     onExploreRequested: () -> Unit = {},
 ) {
     val context = LocalContext.current
+    val pullRefreshState = rememberPullToRefreshState()
 
     val behavior = remember {
         AmitySocialBehaviorHelper.globalFeedComponentBehavior
@@ -72,17 +70,14 @@ fun AmityNewsFeedComponent(
 
     val scope = rememberCoroutineScope()
 
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = isPullRefreshIndicatorVisible,
-        onRefresh = {
-            viewModel.setGlobalFeedRefreshing(showIndicator = true)
-            posts.refresh()
-            scope.launch {
-                viewModel.refreshGlobalPinnedPosts()
-            }
-            AmityPostComposerHelper.clear()
+    val onRefresh = {
+        viewModel.setGlobalFeedRefreshing(showIndicator = true)
+        posts.refresh()
+        scope.launch {
+            viewModel.refreshGlobalPinnedPosts()
         }
-    )
+        AmityPostComposerHelper.clear()
+    }
 
 
     LaunchedEffect(Unit) {
@@ -104,12 +99,18 @@ fun AmityNewsFeedComponent(
         pageScope = pageScope,
         componentId = "newsfeed"
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .pullRefresh(pullRefreshState)
+        PullToRefreshBox(
+            isRefreshing = isPullRefreshIndicatorVisible,
+            onRefresh = onRefresh,
+            indicator = {
+                PullToRefreshDefaults.Indicator(
+                    isRefreshing = isPullRefreshIndicatorVisible,
+                    state = pullRefreshState,
+                    modifier = Modifier.align(Alignment.TopCenter),
+                )
+            },
+            modifier = Modifier.fillMaxSize(),
         ) {
-
             LazyColumn(
                 state = lazyListState,
                 modifier = modifier.fillMaxSize()
@@ -218,12 +219,6 @@ fun AmityNewsFeedComponent(
                     }
                 )
             }
-
-            PullRefreshIndicator(
-                refreshing = isPullRefreshIndicatorVisible,
-                state = pullRefreshState,
-                modifier = Modifier.align(Alignment.TopCenter),
-            )
         }
     }
 }

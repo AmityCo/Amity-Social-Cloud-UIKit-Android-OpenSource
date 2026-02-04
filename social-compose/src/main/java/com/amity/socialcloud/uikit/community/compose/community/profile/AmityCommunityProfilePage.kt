@@ -15,15 +15,12 @@ import androidx.compose.foundation.layout.waterfall
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -95,8 +92,9 @@ import kotlin.text.compareTo
 import kotlin.text.get
 
 @OptIn(
-    ExperimentalMaterialApi::class, ExperimentalFoundationApi::class,
-    ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class
+    ExperimentalFoundationApi::class,
+    ExperimentalLayoutApi::class,
+    ExperimentalMaterial3Api::class
 )
 @SuppressLint("UnrememberedMutableState")
 @Composable
@@ -129,12 +127,9 @@ fun AmityCommunityProfilePage(
     var showPollSelectionBottomSheet by remember { mutableStateOf(false) }
 
     var isHeaderSticky by remember { mutableStateOf(false) }
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = state.isRefreshing,
-        onRefresh = {
-            viewModel.refresh()
-        }
-    )
+    val onRefresh = {
+        viewModel.refresh()
+    }
 
     val bottomSheetUiState by viewModel.sheetUIState.collectAsState()
 
@@ -250,11 +245,12 @@ fun AmityCommunityProfilePage(
             if (state.community?.isDeleted() == true || state.error != null) {
                 AmityPostErrorPage()
             } else {
-                Box(
+                PullToRefreshBox(
+                    isRefreshing = state.isRefreshing,
+                    onRefresh = onRefresh,
                     modifier = Modifier
                         .padding(PaddingValues(bottom = padding.calculateBottomPadding()))
                         .fillMaxSize()
-                        .pullRefresh(pullRefreshState)
                         .background(AmityTheme.colors.newsfeedDivider),
                 ) {
                     LaunchedEffect(lazyListState) {
@@ -554,11 +550,6 @@ fun AmityCommunityProfilePage(
                             onDismiss = { expanded = false },
                         )
                     }
-                    PullRefreshIndicator(
-                        refreshing = state.isRefreshing,
-                        state = pullRefreshState,
-                        modifier = Modifier.align(Alignment.TopCenter),
-                    )
                     if (bottomSheetUiState !is AmityCommunityModalSheetUIState.CloseSheet) {
                         community?.let {
                             AmityCommunityModalBottomSheet(
