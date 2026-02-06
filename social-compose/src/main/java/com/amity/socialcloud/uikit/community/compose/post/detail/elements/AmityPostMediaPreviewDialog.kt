@@ -312,24 +312,26 @@ fun AmityPostMediaPreviewDialog(
                     )
                 }
 
-                Text(
-                    text = "${pagerState.currentPage + 1} / ${childPosts.size}",
-                    style = AmityTheme.typography.titleLegacy.copy(
-                        fontWeight = FontWeight.Normal,
-                        color = Color.White
-                    ),
-                    modifier = modifier
-                        .semantics {
-                            contentDescription = "Photo ${pagerState.currentPage + 1} of ${childPosts.size}"
-                        }
-                        .constrainAs(counter) {
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                        bottom.linkTo(closeBtn.bottom)
-                    }
-                )
+                if (!isVideoPost) {
+                    Text(
+                        text = "${pagerState.currentPage + 1} / ${childPosts.size}",
+                        style = AmityTheme.typography.titleLegacy.copy(
+                            fontWeight = FontWeight.Normal,
+                            color = Color.White
+                        ),
+                        modifier = modifier
+                            .semantics {
+                                contentDescription = "Photo ${pagerState.currentPage + 1} of ${childPosts.size}"
+                            }
+                            .constrainAs(counter) {
+                                start.linkTo(parent.start)
+                                end.linkTo(parent.end)
+                                bottom.linkTo(closeBtn.bottom)
+                            }
+                    )
+                }
 
-                if (isPostCreator) {
+                if (isPostCreator && !isVideoPost) {
                     AmityMenuButton(
                         icon = R.drawable.amity_ic_more_horiz,
                         size = 32.dp,

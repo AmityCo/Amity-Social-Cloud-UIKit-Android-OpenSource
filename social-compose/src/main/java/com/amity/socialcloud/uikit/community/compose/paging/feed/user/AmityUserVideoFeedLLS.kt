@@ -134,7 +134,8 @@ fun LazyListScope.amityUserVideoFeedLLS(
                     }
                     
                     AmityVideoFeedContainer(
-                        availablePostIds = debouncedAvailablePostIds
+                        availablePostIds = debouncedAvailablePostIds,
+                        showMenuButton = false
                     ) { openDialog ->
                         Column {
                             Spacer(modifier.height(12.dp))

@@ -176,6 +176,7 @@ fun AmityProfileVideoFeedItem(
 fun AmityProfileVideoFeedItemPreviewDialog(
     modifier: Modifier = Modifier,
     data: AmityPost.Data.VIDEO,
+    showMenuButton: Boolean = true,
     postId: String? = null,
     onPostClick: ((String) -> Unit)? = null,
     onDismiss: () -> Unit,
@@ -256,20 +257,22 @@ fun AmityProfileVideoFeedItemPreviewDialog(
                     }
                 )
 
-                AmityMenuButton(
-                    icon = R.drawable.amity_ic_more_horiz,
-                    size = 32.dp,
-                    iconPadding = 2.dp,
-                    modifier = Modifier.constrainAs(menuBtn) {
-                        top.linkTo(parent.top, margin = 16.dp)
-                        end.linkTo(parent.end, margin = 16.dp)
-                    },
-                    onClick = {
-                        if (postId != null && onPostClick != null) {
-                            onPostClick(postId)
+                if (showMenuButton) {
+                    AmityMenuButton(
+                        icon = R.drawable.amity_ic_more_horiz,
+                        size = 32.dp,
+                        iconPadding = 2.dp,
+                        modifier = Modifier.constrainAs(menuBtn) {
+                            top.linkTo(parent.top, margin = 16.dp)
+                            end.linkTo(parent.end, margin = 16.dp)
+                        },
+                        onClick = {
+                            if (postId != null && onPostClick != null) {
+                                onPostClick(postId)
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
         }
     }
