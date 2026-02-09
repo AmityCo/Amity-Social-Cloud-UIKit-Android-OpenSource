@@ -341,6 +341,7 @@ fun AmityCommunityProfilePage(
                                         behavior.goToPostDetailPage(
                                             AmityCommunityProfilePageBehavior.Context(
                                                 pageContext = context,
+                                                community = community,
                                             ),
                                             postId = it.getPostId(),
                                             category = if (hasAnnouncementPin) {
@@ -384,6 +385,7 @@ fun AmityCommunityProfilePage(
                                                 behavior.goToPostDetailPage(
                                                     AmityCommunityProfilePageBehavior.Context(
                                                         pageContext = context,
+                                                        community = community,
                                                     ),
                                                     postId = post.getPostId(),
                                                     category = category,
@@ -403,6 +405,7 @@ fun AmityCommunityProfilePage(
                                             behavior.goToPostDetailPage(
                                                 AmityCommunityProfilePageBehavior.Context(
                                                     pageContext = context,
+                                                    community = community,
                                                 ),
                                                 postId = it.getPostId(),
                                                 category = AmityPostCategory.PIN
@@ -419,6 +422,7 @@ fun AmityCommunityProfilePage(
                                             behavior.goToPostDetailPage(
                                                 AmityCommunityProfilePageBehavior.Context(
                                                     pageContext = context,
+                                                    community = community,
                                                 ),
                                                 postId = postId,
                                                 category = category,
@@ -446,6 +450,7 @@ fun AmityCommunityProfilePage(
                                                     behavior.goToPostDetailPage(
                                                         AmityCommunityProfilePageBehavior.Context(
                                                             pageContext = context,
+                                                            community = community,
                                                         ),
                                                         postId = postId,
                                                         category = category,

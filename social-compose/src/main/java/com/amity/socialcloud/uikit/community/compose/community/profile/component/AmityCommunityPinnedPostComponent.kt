@@ -10,6 +10,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.model.core.pin.AmityPinnedPost
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageBehavior
@@ -67,12 +68,14 @@ fun AmityCommunityPinnedPostComponent(
             pageScope = pageScope,
             pinPosts = pinPosts,
             announcementPosts = announcementPosts,
-            onClick = {
+            onClick = { post ->
+                val community = (post.getTarget() as? AmityPost.Target.COMMUNITY)?.getCommunity()
                 behavior.goToPostDetailPage(
                     AmityCommunityProfilePageBehavior.Context(
                         pageContext = context,
+                        community = community,
                     ),
-                    postId = it.getPostId(),
+                    postId = post.getPostId(),
                     category = AmityPostCategory.PIN
                 )
             }

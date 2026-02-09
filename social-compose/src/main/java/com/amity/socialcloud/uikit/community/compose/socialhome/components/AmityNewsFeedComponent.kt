@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.socialhome.components
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -176,10 +177,13 @@ fun AmityNewsFeedComponent(
                             modifier = modifier,
                             pageScope = pageScope,
                             pinnedPosts = pinnedPosts,
-                            onClick = {
+                            onClick = { post ->
                                 behavior.goToPostDetailPage(
-                                    context = context,
-                                    id = it.getPostId(),
+                                    context = AmityGlobalFeedComponentBehavior.Context(
+                                        pageContext = context,
+                                        target = post.getTarget()
+                                    ),
+                                    id = post.getPostId(),
                                     category = AmityPostCategory.GLOBAL
                                 )
                             },
@@ -199,10 +203,13 @@ fun AmityNewsFeedComponent(
                     globalPosts = posts,
                     pinnedPosts = pinnedPosts,
                     postListState = postListState,
-                    onClick = {
+                    onClick = { post ->
                         behavior.goToPostDetailPage(
-                            context = context,
-                            id = it.getPostId()
+                            context = AmityGlobalFeedComponentBehavior.Context(
+                                pageContext = context,
+                                target = post.getTarget()
+                            ),
+                            id = post.getPostId()
                         )
                     },
                     onClipClick = { childPost ->

@@ -82,10 +82,13 @@ fun AmityGlobalFeedComponent(
                     globalPosts = posts,
                     pinnedPosts = pinnedPosts,
                     postListState = postListState,
-                    onClick = {
+                    onClick = { post ->
                         behavior.goToPostDetailPage(
-                            context = context,
-                            id = it.getPostId()
+                            context = AmityGlobalFeedComponentBehavior.Context(
+                                pageContext = context,
+                                target = post.getTarget()
+                            ),
+                            id = post.getPostId()
                         )
                     },
                     onCreateCommunityClicked = {
