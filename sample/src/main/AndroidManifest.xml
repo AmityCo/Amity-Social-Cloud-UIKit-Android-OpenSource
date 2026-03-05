@@ -5,6 +5,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
 
     <!-- Devices running Android 12L (API level 32) or lower  -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
@@ -38,6 +40,10 @@
         android:label="@string/amity_app_name"
         android:supportsRtl="true"
         android:theme="@style/MyTheme">
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3940256099942544~3347511713"/>
         <activity android:name=".TestActivity" />
         <activity android:name=".AmityRecentMessageListActivity" />
         <activity android:name=".AmityMessageListWithCustomUi" />

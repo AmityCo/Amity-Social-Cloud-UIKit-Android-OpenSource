@@ -12,12 +12,15 @@ import com.amity.socialcloud.uikit.feed.settings.AmityPostShareClickListener
 import com.amity.socialcloud.uikit.feed.settings.AmityPostSharingSettings
 import com.amity.socialcloud.uikit.feed.settings.AmityPostSharingTarget
 import com.amity.socialcloud.uikit.sample.env.SamplePreferences
+import com.google.android.gms.ads.MobileAds
 
 class AmitySampleApp : Application()  {
 
     override fun onCreate() {
         super.onCreate()
         APP = this
+
+        MobileAds.initialize(this)
 
         // V4 setup
         AmityUIKit4Manager.setup(

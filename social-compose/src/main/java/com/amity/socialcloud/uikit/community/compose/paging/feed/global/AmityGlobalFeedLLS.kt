@@ -17,6 +17,7 @@ import com.amity.socialcloud.uikit.community.compose.post.detail.components.Amit
 import com.amity.socialcloud.uikit.community.compose.socialhome.AmitySocialHomePageViewModel.PostListState
 import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmityEmptyNewsFeedComponent
 import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmityPostAdView
+import com.amity.socialcloud.uikit.community.compose.ads.AmityNativeAdItem
 
 fun LazyListScope.amityGlobalFeedLLS(
     modifier: Modifier = Modifier,
@@ -63,14 +64,24 @@ fun LazyListScope.amityGlobalFeedLLS(
                 key = { "global_${(globalPosts[it] as? AmityListItem.PostItem)?.post?.getPostId() ?: it}" }
             ) { index ->
                 when (val data = globalPosts[index]) {
+
                     is AmityListItem.PostItem -> {
+
+                        // 🔥 INSERTAMOS GOOGLE NATIVE AD CADA 8 POSTS
+                        if (index != 0 && index % 8 == 0) {
+                            AmityNativeAdItem()
+                            AmityNewsFeedDivider()
+                        }
+
                         val post = data.post
                         val isFeatured = pinnedPosts.value
                             .map { pinned -> pinned.postId }
                             .contains(post.getPostId())
+
                         val isIncludedInCreatedList = createdPosts
                             .map { pinned -> pinned.getPostId() }
                             .contains(post.getPostId())
+
                         if (!post.isSupportedDataTypes() || isFeatured || isIncludedInCreatedList) {
                             return@items
                         }
@@ -87,6 +98,7 @@ fun LazyListScope.amityGlobalFeedLLS(
                                 onClipClick(childPost)
                             }
                         )
+
                         AmityNewsFeedDivider()
                     }
 
@@ -107,7 +119,6 @@ fun LazyListScope.amityGlobalFeedLLS(
                 }
             }
         }
-
         PostListState.LOADING -> {
             items(4) {
                 AmityPostShimmer()
