@@ -189,152 +189,158 @@ fun AmityUserProfileHeaderComponent(
             } else {
                 Spacer(modifier.height(12.dp))
             }
-
-            Row(
-                modifier = Modifier.padding(vertical = 4.dp)
+            AmityBaseElement(
+                pageScope = pageScope,
+                componentScope = getComponentScope(),
+                elementId = "user_profile_action",
             ) {
-                if (!user.isBrand()) {
-                    AmityBaseElement(
-                        pageScope = pageScope,
-                        componentScope = getComponentScope(),
-                        elementId = "user_following"
+                Row {
+                    Row(
+                        modifier = Modifier.padding(vertical = 4.dp)
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = modifier.clickableWithoutRipple {
-                                if (userFollowInfo?.getStatus() == AmityFollowStatus.ACCEPTED || state.isMyUserProfile()) {
-                                    behavior.goToUserRelationshipPage(
-                                        context = context,
-                                        userId = user.getUserId(),
-                                        selectedTab = AmityUserRelationshipPageTab.FOLLOWING,
+                        if (!user.isBrand()) {
+                            AmityBaseElement(
+                                pageScope = pageScope,
+                                componentScope = getComponentScope(),
+                                elementId = "user_following"
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = modifier.clickableWithoutRipple {
+                                        if (userFollowInfo?.getStatus() == AmityFollowStatus.ACCEPTED || state.isMyUserProfile()) {
+                                            behavior.goToUserRelationshipPage(
+                                                context = context,
+                                                userId = user.getUserId(),
+                                                selectedTab = AmityUserRelationshipPageTab.FOLLOWING,
+                                            )
+                                        } else if (AmityCoreClient.isVisitor()) {
+                                            behavior.handleVisitorUserAction()
+                                        } else if (userFollowInfo?.getStatus() != AmityFollowStatus.ACCEPTED) {
+                                            behavior.handleNonFollowerAction()
+                                        }
+                                    }
+                                ) {
+                                    Text(
+                                        text = getNumberAbbreveation(followingCount),
+                                        style = AmityTheme.typography.bodyLegacy.copy(
+                                            fontWeight = FontWeight.SemiBold,
+                                        ),
                                     )
-                                } else if (AmityCoreClient.isVisitor()) {
-                                    behavior.handleVisitorUserAction()
-                                } else if (userFollowInfo?.getStatus() != AmityFollowStatus.ACCEPTED) {
-                                    behavior.handleNonFollowerAction()
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(
+                                        text = getConfig().getText(),
+                                        style = AmityTheme.typography.captionLegacy.copy(
+                                            fontWeight = FontWeight.Normal,
+                                            color = AmityTheme.colors.baseShade2,
+                                        ),
+                                    )
                                 }
                             }
+
+                            Box(
+                                modifier = Modifier
+                                    .padding(horizontal = 12.dp)
+                                    .width(1.dp)
+                                    .height(20.dp)
+                                    .background(color = AmityTheme.colors.baseShade4)
+                            )
+                        }
+
+                        AmityBaseElement(
+                            pageScope = pageScope,
+                            componentScope = getComponentScope(),
+                            elementId = "user_follower"
                         ) {
-                            Text(
-                                text = getNumberAbbreveation(followingCount),
-                                style = AmityTheme.typography.bodyLegacy.copy(
-                                    fontWeight = FontWeight.SemiBold,
-                                ),
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = getConfig().getText(),
-                                style = AmityTheme.typography.captionLegacy.copy(
-                                    fontWeight = FontWeight.Normal,
-                                    color = AmityTheme.colors.baseShade2,
-                                ),
-                            )
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = modifier.clickableWithoutRipple {
+                                    if (userFollowInfo?.getStatus() == AmityFollowStatus.ACCEPTED || state.isMyUserProfile()) {
+                                        behavior.goToUserRelationshipPage(
+                                            context = context,
+                                            userId = user.getUserId(),
+                                            selectedTab = AmityUserRelationshipPageTab.FOLLOWER,
+                                        )
+                                    } else if (AmityCoreClient.isVisitor()) {
+                                        behavior.handleVisitorUserAction()
+                                    } else if (userFollowInfo?.getStatus() != AmityFollowStatus.ACCEPTED) {
+                                        behavior.handleNonFollowerAction()
+                                    }
+                                }
+                            ) {
+                                Text(
+                                    text = getNumberAbbreveation(followerCount),
+                                    style = AmityTheme.typography.bodyLegacy.copy(
+                                        fontWeight = FontWeight.SemiBold,
+                                    ),
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = getConfig().getText(),
+                                    style = AmityTheme.typography.captionLegacy.copy(
+                                        fontWeight = FontWeight.Normal,
+                                        color = AmityTheme.colors.baseShade2,
+                                    ),
+                                )
+                            }
                         }
                     }
+                    Spacer(modifier.height(12.dp))
+                    if (!state.isMyUserProfile() && (userFollowStatus != null)) {
+                        AmityUserFollowRelationshipButton(
+                            modifier = modifier,
+                            pageScope = pageScope,
+                            componentScope = getComponentScope(),
+                            followStatus = userFollowStatus,
+                            onClick = { followStatus ->
+                                when (followStatus) {
+                                    AmityFollowStatus.ACCEPTED -> showUnfollowSheet = true
+                                    AmityFollowStatus.BLOCKED -> showUnblockUserDialog = true
 
-                    Box(
-                        modifier = Modifier
-                            .padding(horizontal = 12.dp)
-                            .width(1.dp)
-                            .height(20.dp)
-                            .background(color = AmityTheme.colors.baseShade4)
-                    )
-                }
+                                    AmityFollowStatus.PENDING -> {
+                                        viewModel.unfollowUser(
+                                            targetUserId = user.getUserId(),
+                                            onError = {
+                                                showCancelErrorDialog = true
+                                            }
+                                        )
+                                    }
 
-                AmityBaseElement(
-                    pageScope = pageScope,
-                    componentScope = getComponentScope(),
-                    elementId = "user_follower"
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = modifier.clickableWithoutRipple {
-                            if (userFollowInfo?.getStatus() == AmityFollowStatus.ACCEPTED || state.isMyUserProfile()) {
-                                behavior.goToUserRelationshipPage(
-                                    context = context,
-                                    userId = user.getUserId(),
-                                    selectedTab = AmityUserRelationshipPageTab.FOLLOWER,
-                                )
-                            }  else if (AmityCoreClient.isVisitor()) {
+                                    AmityFollowStatus.NONE -> {
+                                        viewModel.followUser(
+                                            targetUserId = user.getUserId(),
+                                            onError = {
+                                                if (it == AmityError.PERMISSION_DENIED) {
+                                                    showUserIsBlockedDialog = true
+                                                } else {
+                                                    showFollowErrorDialog = true
+                                                }
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+                        )
+                    } else if (AmityCoreClient.isVisitor()) {
+                        AmityUserFollowRelationshipButton(
+                            modifier = modifier,
+                            pageScope = pageScope,
+                            componentScope = getComponentScope(),
+                            followStatus = AmityFollowStatus.NONE,
+                            onClick = {
                                 behavior.handleVisitorUserAction()
-                            } else if (userFollowInfo?.getStatus() != AmityFollowStatus.ACCEPTED) {
-                                behavior.handleNonFollowerAction()
                             }
-                        }
-                    ) {
-                        Text(
-                            text = getNumberAbbreveation(followerCount),
-                            style = AmityTheme.typography.bodyLegacy.copy(
-                                fontWeight = FontWeight.SemiBold,
-                            ),
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = getConfig().getText(),
-                            style = AmityTheme.typography.captionLegacy.copy(
-                                fontWeight = FontWeight.Normal,
-                                color = AmityTheme.colors.baseShade2,
-                            ),
                         )
                     }
-                }
-            }
-            Spacer(modifier.height(12.dp))
-            if (!state.isMyUserProfile() && (userFollowStatus != null)) {
-                AmityUserFollowRelationshipButton(
-                    modifier = modifier,
-                    pageScope = pageScope,
-                    componentScope = getComponentScope(),
-                    followStatus = userFollowStatus,
-                    onClick = { followStatus ->
-                        when (followStatus) {
-                            AmityFollowStatus.ACCEPTED -> showUnfollowSheet = true
-                            AmityFollowStatus.BLOCKED -> showUnblockUserDialog = true
 
-                            AmityFollowStatus.PENDING -> {
-                                viewModel.unfollowUser(
-                                    targetUserId = user.getUserId(),
-                                    onError = {
-                                        showCancelErrorDialog = true
-                                    }
-                                )
-                            }
-
-                            AmityFollowStatus.NONE -> {
-                                viewModel.followUser(
-                                    targetUserId = user.getUserId(),
-                                    onError = {
-                                        if (it == AmityError.PERMISSION_DENIED) {
-                                            showUserIsBlockedDialog = true
-                                        }
-                                        else {
-                                            showFollowErrorDialog = true
-                                        }
-                                    }
-                                )
+                    if (state.isMyUserProfile()) {
+                        myFollowInfo?.getPendingRequestCount()?.takeIf { it > 0 }?.let {
+                            AmityUserPendingRequestButton(
+                                modifier = modifier,
+                                pendingCount = myFollowInfo?.getPendingRequestCount() ?: 0
+                            ) {
+                                behavior.goToPendingFollowRequestPage(context)
                             }
                         }
-                    }
-                )
-            } else if (AmityCoreClient.isVisitor()) {
-                AmityUserFollowRelationshipButton(
-                    modifier = modifier,
-                    pageScope = pageScope,
-                    componentScope = getComponentScope(),
-                    followStatus = AmityFollowStatus.NONE,
-                    onClick = {
-                        behavior.handleVisitorUserAction()
-                    }
-                )
-            }
-
-            if (state.isMyUserProfile()) {
-                myFollowInfo?.getPendingRequestCount()?.takeIf { it > 0 }?.let {
-                    AmityUserPendingRequestButton(
-                        modifier = modifier,
-                        pendingCount = myFollowInfo?.getPendingRequestCount() ?: 0
-                    ) {
-                        behavior.goToPendingFollowRequestPage(context)
                     }
                 }
             }

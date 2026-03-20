@@ -31,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
+import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityToolBar
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
@@ -171,77 +172,92 @@ fun AmityCommunityNotificationSettingPage(
                 )
 
                 if (communityNotificationSettings?.isPostNotificationEnabled() == true) {
-                    AmityCommunitySettingItem(
-                        title = "Posts",
-                        titleStyle = AmityTheme.typography.bodyLegacy.copy(
-                            fontWeight = FontWeight.SemiBold
-                        ),
-                        modifier = modifier.padding(start = 16.dp, end = 8.dp),
-                        icon = {
-                            Icon(
-                                painter = painterResource(id = R.drawable.amity_ic_community_notification_post),
-                                contentDescription = "",
-                                tint = AmityTheme.colors.base,
-                                modifier = modifier.size(24.dp)
+                    AmityBaseElement(
+                        pageScope = getPageScope(),
+                        elementId = "post_notification_setting"
+                    ) {
+                        AmityCommunitySettingItem(
+                            title = "Posts",
+                            titleStyle = AmityTheme.typography.bodyLegacy.copy(
+                                fontWeight = FontWeight.SemiBold
+                            ),
+                            modifier = modifier.padding(start = 16.dp, end = 8.dp),
+                            icon = {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.amity_ic_community_notification_post),
+                                    contentDescription = "",
+                                    tint = AmityTheme.colors.base,
+                                    modifier = modifier.size(24.dp)
+                                )
+                            }
+                        ) {
+                            behavior.goToPostsNotificationSettingPage(
+                                AmityCommunityNotificationSettingPageBehavior.Context(
+                                    pageContext = context,
+                                    community = community,
+                                )
                             )
                         }
-                    ) {
-                        behavior.goToPostsNotificationSettingPage(
-                            AmityCommunityNotificationSettingPageBehavior.Context(
-                                pageContext = context,
-                                community = community,
-                            )
-                        )
                     }
                 }
 
                 if (communityNotificationSettings?.isCommentNotificationEnabled() == true) {
-                    AmityCommunitySettingItem(
-                        title = "Comments",
-                        titleStyle = AmityTheme.typography.bodyLegacy.copy(
-                            fontWeight = FontWeight.SemiBold
-                        ),
-                        modifier = modifier.padding(start = 16.dp, end = 8.dp),
-                        icon = {
-                            Icon(
-                                painter = painterResource(id = R.drawable.amity_ic_community_notification_comment),
-                                contentDescription = "",
-                                tint = AmityTheme.colors.base,
-                                modifier = modifier.size(24.dp)
+                    AmityBaseElement(
+                        pageScope = getPageScope(),
+                        elementId = "comment_notification_setting"
+                    ) {
+                        AmityCommunitySettingItem(
+                            title = "Comments",
+                            titleStyle = AmityTheme.typography.bodyLegacy.copy(
+                                fontWeight = FontWeight.SemiBold
+                            ),
+                            modifier = modifier.padding(start = 16.dp, end = 8.dp),
+                            icon = {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.amity_ic_community_notification_comment),
+                                    contentDescription = "",
+                                    tint = AmityTheme.colors.base,
+                                    modifier = modifier.size(24.dp)
+                                )
+                            }
+                        ) {
+                            behavior.goToCommentsNotificationSettingPage(
+                                AmityCommunityNotificationSettingPageBehavior.Context(
+                                    pageContext = context,
+                                    community = community,
+                                )
                             )
                         }
-                    ) {
-                        behavior.goToCommentsNotificationSettingPage(
-                            AmityCommunityNotificationSettingPageBehavior.Context(
-                                pageContext = context,
-                                community = community,
-                            )
-                        )
                     }
                 }
 
                 if (communityNotificationSettings?.isStoryNotificationEnabled() == true) {
-                    AmityCommunitySettingItem(
-                        title = "Stories",
-                        titleStyle = AmityTheme.typography.bodyLegacy.copy(
-                            fontWeight = FontWeight.SemiBold
-                        ),
-                        modifier = modifier.padding(start = 16.dp, end = 8.dp),
-                        icon = {
-                            Icon(
-                                painter = painterResource(id = R.drawable.amity_ic_community_story_setting),
-                                contentDescription = "",
-                                tint = AmityTheme.colors.base,
-                                modifier = modifier.size(24.dp)
+                    AmityBaseElement(
+                        pageScope = getPageScope(),
+                        elementId = "story_notification_setting"
+                    ) {
+                        AmityCommunitySettingItem(
+                            title = "Stories",
+                            titleStyle = AmityTheme.typography.bodyLegacy.copy(
+                                fontWeight = FontWeight.SemiBold
+                            ),
+                            modifier = modifier.padding(start = 16.dp, end = 8.dp),
+                            icon = {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.amity_ic_community_story_setting),
+                                    contentDescription = "",
+                                    tint = AmityTheme.colors.base,
+                                    modifier = modifier.size(24.dp)
+                                )
+                            }
+                        ) {
+                            behavior.goToStoriesNotificationSettingPage(
+                                AmityCommunityNotificationSettingPageBehavior.Context(
+                                    pageContext = context,
+                                    community = community,
+                                )
                             )
                         }
-                    ) {
-                        behavior.goToStoriesNotificationSettingPage(
-                            AmityCommunityNotificationSettingPageBehavior.Context(
-                                pageContext = context,
-                                community = community,
-                            )
-                        )
                     }
                 }
             }

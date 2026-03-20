@@ -3,6 +3,7 @@ package com.amity.socialcloud.uikit.community.compose.user.profile
 import android.app.Activity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -52,6 +53,7 @@ import com.amity.socialcloud.sdk.api.social.post.query.AmityFeedSource
 import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.core.follow.AmityFollowStatus
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
+import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
 import com.amity.socialcloud.uikit.common.ui.elements.AmityToolBar
@@ -186,6 +188,12 @@ fun AmityUserProfilePage(
     val videoClipTabsTitles = listOf("Videos", "Clips")
 
     AmityBasePage("user_profile_page") {
+        val isUserProfileContentVisible = remember {
+            !AmityUIKitConfigController.isExcluded(
+                "${getPageScope().getId()}/*/user_profile_content"
+            )
+        }
+
         PullToRefreshBox(
             isRefreshing = state.isRefreshing,
             onRefresh = onRefresh,
@@ -282,19 +290,25 @@ fun AmityUserProfilePage(
                     }
                 }
                 item {
-                    AmityUserProfileTabRow(
-                        selectedIndex = selectedTabIndex,
-                        onSelect = { it ->
-                            selectedTabIndex = it
-                        },
-                        currentFilter = feedFilter[selectedFilterIndex],
-                        onFilterLaunch = {
-                            showFeedFilterSheet = true
-                        }
-                    )
-                }
+                    AmityBaseElement(
+                        pageScope = getPageScope(),
+                        elementId = "user_profile_content",
+                    ) {
+                        AmityUserProfileTabRow(
+                            selectedIndex = selectedTabIndex,
+                            onSelect = { it ->
+                                selectedTabIndex = it
+                            },
+                            currentFilter = feedFilter[selectedFilterIndex],
+                            onFilterLaunch = {
+                                showFeedFilterSheet = true
+                            }
+                        )
 
-                when (selectedTabIndex) {
+                    }
+                }
+                if (isUserProfileContentVisible) {
+                    when (selectedTabIndex) {
                     0 -> {
                         AmityUserProfilePageViewModel.PostListState.from(
                             loadState = userPosts.loadState.refresh,
@@ -422,29 +436,35 @@ fun AmityUserProfilePage(
                         }
 
                     }
+                    }
                 }
             }
 
             if (state.isMyUserProfile()) {
-                FloatingActionButton(
-                    onClick = {
-                        showUserActionSheet = true
-                    },
-                    shape = RoundedCornerShape(size = 32.dp),
-                    containerColor = AmityTheme.colors.primary,
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .size(64.dp)
-                        .align(Alignment.BottomEnd)
+                AmityBaseElement(
+                    pageScope = getPageScope(),
+                    elementId = "create_post_button",
                 ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.amity_ic_plus),
-                        contentDescription = "create post",
-                        tint = Color.White,
+                    FloatingActionButton(
+                        onClick = {
+                            showUserActionSheet = true
+                        },
+                        shape = RoundedCornerShape(size = 32.dp),
+                        containerColor = AmityTheme.colors.primary,
                         modifier = Modifier
-                            .size(32.dp)
-                            .padding(4.dp)
-                    )
+                            .padding(16.dp)
+                            .size(64.dp)
+                            .align(Alignment.BottomEnd)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.amity_ic_plus),
+                            contentDescription = "create post",
+                            tint = Color.White,
+                            modifier = Modifier
+                                .size(32.dp)
+                                .padding(4.dp)
+                        )
+                    }
                 }
             }
 

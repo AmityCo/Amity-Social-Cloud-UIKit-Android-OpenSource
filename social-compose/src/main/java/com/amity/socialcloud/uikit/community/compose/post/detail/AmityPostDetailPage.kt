@@ -97,6 +97,10 @@ fun AmityPostDetailPage(
 ) {
     val context = LocalContext.current
 
+    val behavior = remember {
+        AmitySocialBehaviorHelper.postDetailPageBehavior
+    }
+
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
     }
@@ -260,7 +264,11 @@ fun AmityPostDetailPage(
                                             .size(24.dp)
                                             .align(Alignment.CenterStart)
                                             .clickableWithoutRipple {
-                                                context.closePage()
+                                                behavior.closePage(
+                                                    context = AmityPostDetailPageBehavior.Context(
+                                                        pageContext = context,
+                                                    ),
+                                                )
                                             }
                                             .testTag(getAccessibilityId()),
                                     )
