@@ -102,6 +102,5 @@ captures/
 
 sample/src/main/java/com/amity/socialcloud/uikit/sample/env/SampleAPIKey.kt
 sample/src/main/java/com/amity/socialcloud/uikit/sample/env/SampleBroker.kt
-sample/src/main/java/com/amity/socialcloud/uikit/sample/env/SampleEnv.kt
 sample/src/main/java/com/amity/socialcloud/uikit/sample/env/SampleUploadUrl.kt
 sample/src/main/java/com/amity/socialcloud/uikit/sample/env/SampleUrl.kt
