@@ -42,6 +42,8 @@ interface AmityComposeComponentScope : AmityComposeScope, SnackbarScope {
     fun getComponentTheme(): AmityUIKitConfig.UIKitTheme?
 
     fun getAccessibilityId(viewId: String = ""): String
+
+    fun getPageScope() : AmityComposePageScope?
 }
 
 interface AmityComposeElementScope : AmityComposeScope {

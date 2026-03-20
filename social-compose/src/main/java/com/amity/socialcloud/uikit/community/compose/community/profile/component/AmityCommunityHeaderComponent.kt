@@ -109,15 +109,17 @@ fun AmityCommunityHeaderComponent(
 						community = community
 					)
 
-                    state.invitation?.let { invitation ->
+                    if (state.invitation != null && !community.isJoined()) {
                         AmityCommunityInvitationBanner(
-                            invitation = invitation
+                            invitation = state.invitation!!
                         )
-                    } ?: AmityCommunityJoinButton(
-                        pageScope = pageScope,
-                        componentScope = getComponentScope(),
-                        community = community
-                    )
+                    } else if (!community.isJoined()) {
+                        AmityCommunityJoinButton(
+                            pageScope = pageScope,
+                            componentScope = getComponentScope(),
+                            community = community
+                        )
+                    }
 					Row(
 						modifier = Modifier
                             .fillMaxWidth()

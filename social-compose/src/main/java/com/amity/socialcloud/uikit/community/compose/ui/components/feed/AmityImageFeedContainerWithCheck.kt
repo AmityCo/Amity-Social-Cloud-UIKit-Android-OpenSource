@@ -46,22 +46,23 @@ fun AmityImageFeedContainerWithCheck(
         // Default implementation checks if postId is in the available set
         postId == null || availablePostIds.contains(postId)
     }, // Callback to check if item exists
+    onProductTagClick: ((String) -> Unit)? = null,
     content: @Composable (
-        openDialog: (AmityImage?, String?, onBottomSheetRequest: (() -> Unit)?) -> Unit
+        openDialog: (AmityImage?, String?, Int, onBottomSheetRequest: (() -> Unit)?) -> Unit
     ) -> Unit
 ) {
-    var dialogData by remember { mutableStateOf<Triple<AmityImage?, String?, (() -> Unit)?>?>(null) }
+    var dialogData by remember { mutableStateOf<Array<Any?>?>(null) }
     var isItemDeleted by remember { mutableStateOf(false) }
 
-    content { image, postId, onBottomSheetRequest ->
-        dialogData = Triple(image, postId, onBottomSheetRequest)
+    content { image, postId, productTagCount, onBottomSheetRequest ->
+        dialogData = arrayOf(image, postId, productTagCount, onBottomSheetRequest)
         isItemDeleted = false
     }
 
     // Periodically check if the item still exists
     LaunchedEffect(dialogData, availablePostIds) {
         while (dialogData != null) {
-            val currentPostId = dialogData?.second
+            val currentPostId = dialogData?.get(1) as? String
             if (currentPostId != null && !isItemStillAvailable(currentPostId)) {
                 isItemDeleted = true
                 break
@@ -70,7 +71,11 @@ fun AmityImageFeedContainerWithCheck(
         }
     }
 
-    dialogData?.let { (image, postId, onBottomSheetRequest) ->
+    dialogData?.let { data ->
+        val image = data[0] as? AmityImage
+        val postId = data[1] as? String
+        val productTagCount = data[2] as? Int ?: 0
+        val onBottomSheetRequest = data[3] as? (() -> Unit)
 
         if (isItemDeleted) {
             ImageNotAvailableDialog(
@@ -83,9 +88,13 @@ fun AmityImageFeedContainerWithCheck(
             AmityProfileImageFeedItemPreviewDialog(
                 data = image,
                 postId = postId,
+                productTagCount = productTagCount,
                 onPostClick = { clickedPostId ->
                     onBottomSheetRequest?.invoke()
-                }
+                },
+                onProductTagClick = if (postId != null && onProductTagClick != null) {
+                    { onProductTagClick(postId) }
+                } else null
             ) {
                 dialogData = null
                 isItemDeleted = false

@@ -4,6 +4,7 @@ import android.net.Uri
 import android.os.Parcelable
 import com.amity.socialcloud.sdk.model.core.file.AmityClip
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
+import com.amity.socialcloud.sdk.model.core.file.AmityVideo
 import kotlinx.parcelize.Parcelize
 
 
@@ -30,6 +31,7 @@ data class AmityPostMedia(
     @Parcelize
     sealed class Media : Parcelable {
         data class Image(val image: AmityImage) : Media()
+        data class Video(val video: AmityVideo) : Media()
         data class Clip(val clip: AmityClip): Media()
     }
 }

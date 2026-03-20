@@ -105,6 +105,10 @@ internal class AmityComposeComponentScopeImpl(
     override fun getSnackbarHostState(): SnackbarHostState {
         return snackbarHostState
     }
+
+    override fun getPageScope(): AmityComposePageScope? {
+        return pageScope
+    }
 }
 
 internal class AmityComposeElementScopeImpl(

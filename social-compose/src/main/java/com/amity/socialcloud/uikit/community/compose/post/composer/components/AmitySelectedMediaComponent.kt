@@ -6,6 +6,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -16,8 +18,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
@@ -29,6 +29,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,7 +37,9 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
@@ -53,12 +56,16 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerPageViewModel
+import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityProductTagBadge
 import com.amity.socialcloud.uikit.community.compose.post.model.AmityFileUploadState
 import com.amity.socialcloud.uikit.community.compose.post.model.AmityPostMedia
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AmitySelectedMediaComponent(
     modifier: Modifier = Modifier,
+    isProductCatalogueEnabled: Boolean = false,
+    onTagProductClick: (AmityPostMedia) -> Unit = {},
 ) {
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
@@ -66,15 +73,30 @@ fun AmitySelectedMediaComponent(
     val viewModel =
         viewModel<AmityPostComposerPageViewModel>(viewModelStoreOwner = viewModelStoreOwner)
     val selectedMediaFiles by viewModel.selectedMediaFiles.collectAsState()
+    val mediaProductTags by viewModel.mediaProductTags.collectAsState()
+    val textProductTags by viewModel.textProductTags.collectAsState()
 
-    val gridCells by remember(selectedMediaFiles.size) {
-        mutableStateOf(
-            when (selectedMediaFiles.size) {
-                1 -> GridCells.Fixed(1)
-                2 -> GridCells.Fixed(2)
-                else -> GridCells.Fixed(3)
-            }
-        )
+    val isPostProductTagLimitReached by remember(mediaProductTags, textProductTags) {
+        derivedStateOf { viewModel.isProductTagLimitReached() }
+    }
+
+    var containerWidth by remember { mutableStateOf(0) }
+    val density = LocalDensity.current
+
+    val columnCount = when (selectedMediaFiles.size) {
+        1 -> 1
+        2 -> 2
+        else -> 3
+    }
+
+    val spacing = 8.dp
+    val spacingPx = with(density) { spacing.toPx() }
+    val itemWidth = with(density) {
+        if (containerWidth > 0) {
+            ((containerWidth - spacingPx * (columnCount - 1)) / columnCount).toInt().toDp()
+        } else {
+            0.dp
+        }
     }
 
     val shouldShowMediaError by remember {
@@ -170,45 +192,67 @@ fun AmitySelectedMediaComponent(
             }
         }
 
-        LazyVerticalGrid(
-            columns = gridCells,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+        FlowRow(
             modifier = modifier
+                .fillMaxWidth()
+                .onSizeChanged { containerWidth = it.width },
+            horizontalArrangement = Arrangement.spacedBy(spacing),
+            verticalArrangement = Arrangement.spacedBy(spacing),
         ) {
             when (selectedMediaFiles.size) {
                 1 -> {
-                    items(selectedMediaFiles.size) {
+                    selectedMediaFiles.forEach { media ->
+                        val productTagCount = mediaProductTags[media.id]?.size ?: 0
                         AmitySelectedMediaElement(
-                            modifier = modifier.aspectRatio(1f),
-                            media = selectedMediaFiles[it],
+                            modifier = Modifier
+                                .width(itemWidth)
+                                .aspectRatio(1f),
+                            media = media,
+                            productTagCount = productTagCount,
+                            isProductCatalogueEnabled = isProductCatalogueEnabled,
+                            isPostProductTagLimitReached = isPostProductTagLimitReached,
                             onRemove = { postMedia ->
                                 viewModel.removeMedia(postMedia)
                             },
+                            onTagProductClick = onTagProductClick,
                         )
                     }
                 }
 
                 2 -> {
-                    items(selectedMediaFiles.size) {
+                    selectedMediaFiles.forEach { media ->
+                        val productTagCount = mediaProductTags[media.id]?.size ?: 0
                         AmitySelectedMediaElement(
-                            modifier = modifier.aspectRatio(0.5f),
-                            media = selectedMediaFiles[it],
+                            modifier = Modifier
+                                .width(itemWidth)
+                                .aspectRatio(0.5f),
+                            media = media,
+                            productTagCount = productTagCount,
+                            isProductCatalogueEnabled = isProductCatalogueEnabled,
+                            isPostProductTagLimitReached = isPostProductTagLimitReached,
                             onRemove = { postMedia ->
                                 viewModel.removeMedia(postMedia)
                             },
+                            onTagProductClick = onTagProductClick,
                         )
                     }
                 }
 
                 else -> {
-                    items(selectedMediaFiles.size) {
+                    selectedMediaFiles.forEach { media ->
+                        val productTagCount = mediaProductTags[media.id]?.size ?: 0
                         AmitySelectedMediaElement(
-                            modifier = modifier.aspectRatio(1f),
-                            media = selectedMediaFiles[it],
+                            modifier = Modifier
+                                .width(itemWidth)
+                                .aspectRatio(1f),
+                            media = media,
+                            productTagCount = productTagCount,
+                            isProductCatalogueEnabled = isProductCatalogueEnabled,
+                            isPostProductTagLimitReached = isPostProductTagLimitReached,
                             onRemove = { postMedia ->
                                 viewModel.removeMedia(postMedia)
                             },
+                            onTagProductClick = onTagProductClick,
                         )
                     }
                 }
@@ -222,12 +266,22 @@ fun AmitySelectedMediaElement(
     modifier: Modifier = Modifier,
     media: AmityPostMedia,
     onRemove: (AmityPostMedia) -> Unit,
+    productTagCount: Int,
+    isProductCatalogueEnabled: Boolean = false,
+    isPostProductTagLimitReached: Boolean = false,
+    onTagProductClick: (AmityPostMedia) -> Unit = {},
 ) {
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
     }
     val viewModel =
         viewModel<AmityPostComposerPageViewModel>(viewModelStoreOwner = viewModelStoreOwner)
+    val totalDistinctProductTagCount by viewModel.totalDistinctProductTagCount
+        .collectAsState(initial = 0)
+    val isGlobalTagLimitReached = totalDistinctProductTagCount >= AmityPostComposerPageViewModel.MAX_TOTAL_PRODUCT_TAGS
+    val isEditMode by remember {
+        derivedStateOf { viewModel.post.value != null }
+    }
     Box(
         modifier = modifier
             .background(
@@ -382,7 +436,8 @@ fun AmitySelectedMediaElement(
                     .align(Alignment.Center),
             )
         }
-        if (media.uploadState == AmityFileUploadState.COMPLETE && media.uploadId != null) {
+        val isExistingMedia = isEditMode && media.id != null && media.id == media.uploadId
+        if (!isExistingMedia && media.uploadState == AmityFileUploadState.COMPLETE && media.uploadId != null) {
             Row(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
@@ -427,6 +482,47 @@ fun AmitySelectedMediaElement(
                     }
             }
         }
+
+        if (media.uploadState == AmityFileUploadState.COMPLETE && media.uploadId != null) {
+            // Product tag button at bottom right - showWhenEmpty=true so users can add
+            // the first product tag in create mode (count = 0 hides the button otherwise)
+            // Hide the badge when global limit is reached and this media has no tags
+            val shouldShowTagBadge = productTagCount > 0 || !isPostProductTagLimitReached
+
+            if (isProductCatalogueEnabled && shouldShowTagBadge) {
+                AmityProductTagBadge(
+                    count = productTagCount,
+                    showWhenEmpty = !isGlobalTagLimitReached,
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(end = 12.dp, bottom = 12.dp),
+                    onClick = { onTagProductClick(media) }
+                )
+            }
+//            Box(
+//                modifier = Modifier
+//                    .align(Alignment.BottomEnd)
+//                    .padding(8.dp)
+//                    .size(24.dp)
+//                    .background(
+//                        color = Color(0x88000000),
+//                        shape = CircleShape
+//                    )
+//                    .clickableWithoutRipple {
+//                        onTagProductClick(media)
+//                    },
+//                contentAlignment = Alignment.Center,
+//            ) {
+//                Icon(
+//                    painter = painterResource(id = R.drawable.amity_ic_product_tag),
+//                    contentDescription = "Tag products",
+//                    tint = Color.White,
+//                    modifier = Modifier
+//                        .size(14.dp)
+//                        .align(Alignment.Center),
+//                )
+//            }
+        }
     }
 }
 
@@ -439,6 +535,7 @@ fun AmitySelectedMediaElementPreview() {
             uploadId = "",
             type = AmityPostMedia.Type.VIDEO,
         ),
+        productTagCount = 2,
         onRemove = {}
     )
 }

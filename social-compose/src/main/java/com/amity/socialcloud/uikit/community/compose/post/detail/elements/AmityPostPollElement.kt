@@ -776,6 +776,7 @@ fun AmityPostPollElement(
                 poll.getClosedAt().readableTimeLeft(DateTime.now())
             }
             val totalVotes = NumberFormat.getNumberInstance(Locale.getDefault()).format(totalVote)
+            val voteText = if (totalVote == 1) "vote" else "votes"
 
             Text(
                 modifier = Modifier.weight(1f),
@@ -783,7 +784,7 @@ fun AmityPostPollElement(
                     color = AmityTheme.colors.baseShade2,
                     fontWeight = FontWeight.SemiBold
                 ),
-                text = "$totalVotes votes" + " • " + endText,
+                text = "$totalVotes $voteText" + " • " + endText,
             )
 
             if (poll.getStatus() != AmityPoll.Status.CLOSED

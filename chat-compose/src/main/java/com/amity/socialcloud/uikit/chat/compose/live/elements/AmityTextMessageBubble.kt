@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -110,6 +111,7 @@ fun AmityLiveChatMessageReceiverView(
                 message = message,
                 pageScope = pageScope,
                 componentScope = componentScope,
+                viewModel = viewModel,
                 onMessageAction = onMessageAction
             )
         } else {
@@ -131,13 +133,22 @@ fun MessageReceiverView(
     pageScope: AmityComposePageScope? = null,
     componentScope: AmityComposeComponentScope? = null,
     message: AmityMessage,
+    viewModel: AmityLiveChatPageViewModel,
     onMessageAction: AmityMessageAction = AmityMessageAction(),
 ) {
+    // Get member info for the message sender
+    val memberInfo by remember(message.getCreatorId()) {
+        viewModel.getMemberInfo(message.getCreatorId())
+    }.collectAsState(initial = null)
+
+    val isMuted = memberInfo?.firstOrNull()?.isMuted() == false
+
     BaseMessageBubble(
         modifier = modifier,
         pageScope = pageScope,
         componentScope = componentScope,
         message = message,
+        isMuted = isMuted,
         onMessageAction = onMessageAction,
     )
 }
@@ -165,6 +176,7 @@ fun BaseMessageBubble(
     pageScope: AmityComposePageScope? = null,
     componentScope: AmityComposeComponentScope? = null,
     message: AmityMessage,
+    isMuted: Boolean = false,
     onMessageAction: AmityMessageAction,
 ) {
     var reactionExpanded by remember { mutableStateOf(false) }
@@ -191,14 +203,27 @@ fun BaseMessageBubble(
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.Start
             ) {
-                Text(
-                    text = message.getCreator()?.getDisplayName() ?: "Unknown",
-                    fontSize = 13.sp,
-                    lineHeight = 18.sp,
-                    fontWeight = FontWeight(600),
-                    color = AmityTheme.colors.secondaryShade3,
-                    modifier = Modifier.align(Alignment.Start),
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.align(Alignment.Start)
+                ) {
+                    Text(
+                        text = message.getCreator()?.getDisplayName() ?: "Unknown",
+                        fontSize = 13.sp,
+                        lineHeight = 18.sp,
+                        fontWeight = FontWeight(600),
+                        color = AmityTheme.colors.secondaryShade3,
+                    )
+                    if (isMuted) {
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Icon(
+                            painter = painterResource(id = R.drawable.amity_ic_chat_muted),
+                            contentDescription = "muted user",
+                            tint = AmityTheme.colors.secondaryShade3,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
                 Spacer(modifier = Modifier.height(4.dp))
                 if (!message.isDeleted()) {
                     Box(modifier = Modifier.padding(bottom = 8.dp)) {

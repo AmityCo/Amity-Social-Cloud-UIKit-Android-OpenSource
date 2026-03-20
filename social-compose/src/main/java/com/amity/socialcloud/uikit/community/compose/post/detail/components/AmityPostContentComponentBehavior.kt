@@ -1,6 +1,9 @@
 package com.amity.socialcloud.uikit.community.compose.post.detail.components
 
 import android.content.Context
+import android.content.Intent
+import androidx.core.net.toUri
+import com.amity.socialcloud.sdk.model.core.product.AmityProduct
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
@@ -92,5 +95,16 @@ open class AmityPostContentComponentBehavior {
 
     open fun handleNonFollowerAction() {
         AmitySocialBehaviorHelper.globalBehavior.handleNonFollowerAction()
+    }
+
+    open fun goToProductPage(
+        context: Context,
+        product: AmityProduct,
+    ) {
+        val productUrl = product.getProductUrl()
+        if (productUrl.isNotEmpty()) {
+            val intent = Intent(Intent.ACTION_VIEW, productUrl.toUri())
+            context.startActivity(intent)
+        }
     }
 }

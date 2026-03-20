@@ -3,14 +3,18 @@ package com.amity.socialcloud.uikit.community.compose.post.detail.menu
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.waterfall
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -19,11 +23,13 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rxjava3.subscribeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.text.AnnotatedString
@@ -151,7 +157,7 @@ fun AmityPostMenuBottomSheet(
                         val isPollPost =
                             post.getChildren().any { it.getData() is AmityPost.Data.POLL }
                         val isLiveStreamPost =
-                            post.getChildren().any { it.getData() is AmityPost.Data.LIVE_STREAM }
+                            post.getChildren().any { it.getData() is AmityPost.Data.LIVE_STREAM || it.getData() is AmityPost.Data.ROOM }
 
                         if (post.getCreatorId() == AmityCoreClient.getUserId() && !isPollPost && !isLiveStreamPost) {
                             AmityBottomSheetActionItem(

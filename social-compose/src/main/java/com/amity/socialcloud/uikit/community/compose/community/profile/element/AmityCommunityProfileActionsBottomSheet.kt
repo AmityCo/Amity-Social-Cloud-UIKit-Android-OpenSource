@@ -36,6 +36,7 @@ fun AmityCommunityProfileActionsBottomSheet(
     shouldShow: Boolean,
     shouldShowPostCreationButton: Boolean,
     shouldShowStoryCreationButton: Boolean,
+    shouldShowEventCreationButton: Boolean,
     showPollTypeSelectionSheet: () -> Unit = {},
     onDismiss: () -> Unit,
 ) {
@@ -59,6 +60,7 @@ fun AmityCommunityProfileActionsBottomSheet(
                 community = community,
                 shouldShowPostCreationButton = shouldShowPostCreationButton,
                 shouldShowStoryCreationButton = shouldShowStoryCreationButton,
+                shouldShowEventCreationButton = shouldShowEventCreationButton,
                 showPollTypeSelectionSheet = {
                     showPollTypeSelectionSheet()
                 }
@@ -82,6 +84,7 @@ fun AmityCommunityProfileActionsContainer(
     community: AmityCommunity,
     shouldShowPostCreationButton: Boolean,
     shouldShowStoryCreationButton: Boolean,
+    shouldShowEventCreationButton: Boolean,
     showPollTypeSelectionSheet: () -> Unit = {},
     onDismiss: () -> Unit,
 ) {
@@ -185,7 +188,7 @@ fun AmityCommunityProfileActionsContainer(
                 }
             }
 
-            if (shouldShowPostCreationButton) {
+            if (shouldShowEventCreationButton) {
                 AmityBottomSheetActionItem(
                     icon = com.amity.socialcloud.uikit.common.R.drawable.amity_ic_create_event,
                     text = "Event",

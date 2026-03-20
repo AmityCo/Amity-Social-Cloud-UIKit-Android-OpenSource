@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
@@ -73,6 +74,7 @@ fun AmityWaitingForCoHost(
     isHost: Boolean,
     user: AmityUser?,
     onMenuClick: (() -> Unit)?,
+    isPendingInvitation: Boolean = false,
 ) {
     Box(
         modifier = modifier
@@ -106,7 +108,11 @@ fun AmityWaitingForCoHost(
             // Waiting message
             Text(
                 text = if (isHost) {
-                    "Co-host is getting ready\nin the backstage."
+                    if (isPendingInvitation) {
+                        "Waiting for co-host\nto accept invitation..."
+                    } else {
+                        "Co-host is getting ready\nin the backstage."
+                    }
                 } else {
                     "Waiting for host\nto get resume..."
                 },
@@ -138,39 +144,48 @@ fun AmityCoHostOverlay(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // User display name with icons
+                // User display name with icons - nested Row to constrain width
                 Row(
-                    modifier = Modifier
-                        .background(
-                            color = Color(0x33000000),
-                            shape = RoundedCornerShape(20.dp)
-                        )
-                        .padding(horizontal = 12.dp, vertical = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    modifier = Modifier.weight(1f),
+                    horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = user?.getDisplayName() ?: "Unknown User",
-                        color = Color.White,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Light
-                    )
+                    Row(
+                        modifier = Modifier
+                            .background(
+                                color = Color(0x33000000),
+                                shape = RoundedCornerShape(20.dp)
+                            )
+                            .padding(horizontal = 12.dp, vertical = 8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = user?.getDisplayName() ?: "Unknown User",
+                            color = Color.White,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Light,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1f, fill = false)
+                        )
 
-                    // Show brand badge if user is a brand
-                    val isBrandUser = user?.isBrand() == true
-                    if (isBrandUser) {
-                        Image(
-                            painter = painterResource(id = com.amity.socialcloud.uikit.common.compose.R.drawable.amity_ic_brand_badge),
-                            contentDescription = "Brand badge",
-                            modifier = Modifier.size(16.dp)
-                        )
-                    }
-                    if (isMute && !isHost) {
-                        Image(
-                            painter = painterResource(id = R.drawable.amity_ic_room_mute_state),
-                            contentDescription = "Mute state",
-                            modifier = Modifier.size(24.dp)
-                        )
+                        // Show brand badge if user is a brand
+                        val isBrandUser = user?.isBrand() == true
+                        if (isBrandUser) {
+                            Image(
+                                painter = painterResource(id = com.amity.socialcloud.uikit.common.compose.R.drawable.amity_ic_brand_badge),
+                                contentDescription = "Brand badge",
+                                modifier = Modifier.size(16.dp)
+                            )
+                        }
+                        if (isMute && !isHost) {
+                            Image(
+                                painter = painterResource(id = R.drawable.amity_ic_room_mute_state),
+                                contentDescription = "Mute state",
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
                     }
                 }
                 Box(

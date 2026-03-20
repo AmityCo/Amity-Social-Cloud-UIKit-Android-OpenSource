@@ -89,6 +89,7 @@
     <string name="amity_post_text_exceed_error_message">Your post wasn\'t posted because it exceeds the %1$d characters limit</string>
     <string name="amity_post_create_generic_error_message">Failed to create post. Please try again.</string>
     <string name="amity_post_edit_generic_error_message">Failed to edit post. Please try again.</string>
+    <string name="amity_v4_product_already_tagged">Already tagged</string>
 
 
     <!-- Alt text-->
@@ -235,4 +236,15 @@
 
     <!--- Generic error -->
     <string name="amity_no_internet_error_message">No internet connection.</string>
+    <string name="amity_v4_tagged_products_empty_desc">You can add or remove products anytime and pin them to control what viewers see while you\'re live.</string>
+    <string name="amity_v4_tagged_products_empty_title">No products tagged yet</string>
+    <string name="amity_v4_tagged_products_empty_action">Add products</string>
+    <string name="amity_v4_tagged_products_deleted_info">Unavailable</string>
+    <string name="amity_v4_tagged_products_archived_info">Unlisted</string>
+    <string name="amity_v4_pinned_product_label">Pinned product</string>
+    <string name="amity_v4_other_products_label">Other products</string>
+    <string name="amity_v4_pinned_product_badge_label">Pinned</string>
+    <string name="amity_v4_pin_label">Pin</string>
+    <string name="amity_v4_unpin_label">Unpin</string>
+    <string name="amity_v4_post_products_unavailable_toast">Some products that you\'ve tagged are no longer available.</string>
 </resources>

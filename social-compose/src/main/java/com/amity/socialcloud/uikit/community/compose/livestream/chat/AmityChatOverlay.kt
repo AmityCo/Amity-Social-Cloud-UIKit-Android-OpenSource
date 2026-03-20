@@ -35,6 +35,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -390,9 +392,11 @@ fun ChatMessageItem(
                             text = message.getCreator()?.getDisplayName() ?: "Unknown user",
                             color = if (message.isDeleted()) Color(0xFF6E7487) else Color(0xFFA5A9B5),
                             style = AmityTheme.typography.captionSmall,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
                             modifier = Modifier.clickableWithoutRipple {
                                 onUserNameClick()
-                            }
+                            }.weight(1f, false)
                         )
 
                         // Show brand badge if user is a brand
@@ -488,11 +492,12 @@ fun ChatMessageItem(
 
 @Composable
 fun HostBadge(
+    modifier: Modifier = Modifier,
     isCoHost: Boolean = false,
     onCohostBadgeClick: ()-> Unit,
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .background(
                 color = Color(0xFFFF305A),
                 shape = RoundedCornerShape(4.dp)
@@ -569,7 +574,7 @@ fun MutedBadge() {
 
 fun getContent(message: AmityMessage): String {
     return if (message.isDeleted()) {
-        "This message was deleted"
+        "This message was deleted."
     } else {
         (message.getData() as? AmityMessage.Data.TEXT)?.getText() ?: "Unsupport message type"
     }
@@ -664,6 +669,9 @@ fun AmityUserActionsSheet(
                     text = displayName,
                     color = Color(0xFFEBECEF),
                     style = AmityTheme.typography.titleBold,
+                    maxLines = 1,
+                    modifier = Modifier.weight(1f, false),
+                    overflow = TextOverflow.Ellipsis,
                 )
 
                 // Show brand badge if user is a brand
@@ -679,7 +687,7 @@ fun AmityUserActionsSheet(
                 // Muted icon if user is muted
                 if (isMuted) {
                     Icon(
-                        painter = painterResource(id = R.drawable.amity_v4_ic_mute),
+                        painter = painterResource(id = R.drawable.amity_ic_mute_user),
                         contentDescription = "Muted badge",
                         tint = AmityTheme.colors.baseShade2,
                         modifier = Modifier

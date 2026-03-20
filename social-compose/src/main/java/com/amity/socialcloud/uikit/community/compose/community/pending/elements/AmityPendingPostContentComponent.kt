@@ -26,6 +26,7 @@ import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityP
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostLivestreamElement
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostMediaElement
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostPollElement
+import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityProductCarousel
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuDialogUIState
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuSheetUIState
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuViewModel
@@ -127,7 +128,7 @@ fun AmityPendingPostContentComponent(
                 }
             )
 
-            if (post.getChildren().any { it.getData() is AmityPost.Data.LIVE_STREAM }) {
+            if (post.getChildren().any { it.getData() is AmityPost.Data.LIVE_STREAM || it.getData() is AmityPost.Data.ROOM }) {
                 AmityPostLivestreamElement(
                     modifier = modifier,
                     post = post
@@ -183,6 +184,14 @@ fun AmityPendingPostContentComponent(
                     post = post
                 )
             }
+
+            // Product Carousel - show tagged products from parent and child posts
+            AmityProductCarousel(
+                modifier = modifier.padding(bottom = 8.dp),
+                pageScope = pageScope,
+                componentScope = getComponentScope(),
+                post = post,
+            )
 
             AmityPendingPostMenuBottomSheet(
                 post = post

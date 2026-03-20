@@ -18,6 +18,8 @@ import com.amity.socialcloud.sdk.model.core.events.AmityPostEvents
 import com.amity.socialcloud.sdk.model.core.events.AmityRoomEvents
 import com.amity.socialcloud.sdk.model.core.invitation.AmityInvitation
 import com.amity.socialcloud.sdk.model.core.invitation.AmityInvitationStatus
+import com.amity.socialcloud.sdk.model.core.product.AmityProduct
+import com.amity.socialcloud.sdk.model.core.producttag.AmityProductTag
 import com.amity.socialcloud.sdk.model.core.reaction.AmityLiveReactionReferenceType
 import com.amity.socialcloud.sdk.model.core.reaction.live.AmityLiveReaction
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
@@ -51,6 +53,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import org.joda.time.DateTime
 import java.util.concurrent.TimeUnit
+import kotlin.collections.map
+import kotlin.collections.orEmpty
+import kotlin.collections.plus
 import java.util.Date
 
 class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel() {
@@ -75,6 +80,7 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
     private val watchTrackingLock = Any() // Lock to prevent concurrent access
     private var isUpdatingSession: Boolean = false // Flag to prevent duplicate updates
     private var watchingRoomId: String? = null // Track which room we're currently tracking to avoid duplicate sessions
+    private var heartbeatDisposable = CompositeDisposable() // Separate disposable for heartbeat to manage it independently
 
     init {
         refresh()
@@ -86,6 +92,7 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
         getPost(post.getPostId())
         observeRoom()
         observeRecordedUrls()
+        fetchProductCatalogueSettings()
     }
 
     private fun observeRoom() {
@@ -158,7 +165,6 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
                             }
                         }
                     }
-
                     is AmityCoHostEvent.CoHostInviteAccepted -> {
                         if (event.invitation.getInvitedUserId() == AmityCoreClient.getUserId()) {
                             _uiState.update { currentState ->
@@ -169,7 +175,6 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
                             }
                         }
                     }
-
                     is AmityCoHostEvent.CoHostJoined -> {
                         event.room
                             .getParticipants()
@@ -185,12 +190,10 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
                                 }
                             }
                     }
-
                     is AmityCoHostEvent.CoHostRemoved,
                     is AmityCoHostEvent.CoHostLeft,
                     is AmityCoHostEvent.CoHostInviteCancelled,
-                    is AmityCoHostEvent.CoHostInviteRejected,
-                        -> {
+                    is AmityCoHostEvent.CoHostInviteRejected -> {
                         _uiState.update { currentState ->
                             currentState.copy(
                                 invitation = null,
@@ -204,7 +207,13 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
                             )
                         }
                     }
-
+                    is AmityCoHostEvent.CoHostPermissionUpdated -> {
+                        if (event.cohostCanManageProduct) {
+                            AmityUIKitSnackbar.publishSnackbarMessage(
+                                message = "You can now manage tagged products in this live stream."
+                            )
+                        }
+                    }
                     else -> {}
                 }
             }
@@ -214,7 +223,7 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
             .let(::addDisposable)
     }
 
-    private fun getPost(postId: String) {
+    fun getPost(postId: String) {
         viewModelScope.launch {
             AmitySocialClient.newPostRepository()
                 .getPost(postId)
@@ -686,17 +695,19 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
     }
 
     fun startRoomHeartbeat(roomId: String) {
+        heartbeatDisposable.clear()
         AmityCoreClient.newRoomPresenceRepository()
             .roomId(roomId = roomId)
             .startHeartbeat()
             .subscribeOn(Schedulers.io())
             .subscribe()
-            .let(::addDisposable)
+            .let(heartbeatDisposable::add)
 
         observeOnlineUsersCount(roomId = roomId)
     }
 
     fun stopRoomHeartbeat(roomId: String) {
+        heartbeatDisposable.clear()
         AmityCoreClient.newRoomPresenceRepository()
             .roomId(roomId = roomId)
             .stopHeartbeat()
@@ -767,7 +778,7 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
                 isWatchingPaused = false
                 accumulatedWatchTimeSeconds = 0
                 lastResumeTime = DateTime.now()
-                
+
                 room.analytics().createWatchSession(watchSessionStartTime!!)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -801,6 +812,135 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
                 watchingRoomId = null
             }
         }
+    }
+
+    fun addTaggedProducts(
+        taggedProducts: List<AmityProduct>
+    ) {
+        val currentTaggedProduct = _uiState.value.getRoomPost()?.getProducts().orEmpty().map {
+            AmityProductTag.Media(it.getProductId())
+        }
+        AmitySocialClient.newPostRepository()
+            .editPost(
+                postId = _uiState.value.getRoomPost()?.getPostId() ?: "",
+            )
+            .taggedProducts(
+                productTags = (currentTaggedProduct + taggedProducts.map { AmityProductTag.Media(it.getProductId()) }).distinct(),
+            )
+            .build()
+            .apply()
+            .doOnError {
+                AmityUIKitSnackbar.publishSnackbarMessage(
+                    offsetFromBottom = 50,
+                    message = "Failed to add product tags. Please try again."
+                )
+            }
+            .doOnComplete {
+                AmityUIKitSnackbar.publishSnackbarMessage(
+                    offsetFromBottom = 50,
+                    message = "Product tags added."
+                )
+            }
+            .subscribe()
+    }
+
+    fun removeTaggedProduct(productId: String) {
+        // straight hit api
+        AmitySocialClient.newPostRepository()
+            .editPost(
+                postId = _uiState.value.getRoomPost()?.getPostId() ?: "",
+            )
+            .taggedProducts(
+                productTags = _uiState.value.getRoomPost()?.getProducts()
+                    ?.filter { it.getProductId() != productId }
+                    ?.map { AmityProductTag.Media(it.getProductId()) }
+                    .orEmpty(),
+            )
+            .build()
+            .apply()
+            .doOnError {
+                AmityUIKitSnackbar.publishSnackbarMessage(
+                    offsetFromBottom = 50,
+                    message = "Failed to remove product tag. Please try again."
+                )
+            }
+            .doOnComplete {
+                AmityUIKitSnackbar.publishSnackbarMessage(
+                    offsetFromBottom = 50,
+                    message = "Product tag removed."
+                )
+            }
+            .subscribe()
+    }
+
+    fun togglePinProduct(
+        productId: String?
+    ) {
+        AmitySocialClient.newPostRepository()
+            .let {
+                if (productId == null) {
+                    it.unpinProduct(
+                        postId = _uiState.value.getRoomPost()?.getPostId() ?: ""
+                    )
+                } else {
+                    it.pinProduct(
+                        productId = productId,
+                        postId = _uiState.value.getRoomPost()?.getPostId() ?: ""
+                    )
+                }
+            }
+            .doOnComplete {
+                if (productId == null) {
+                    AmityUIKitSnackbar.publishSnackbarMessage(
+                        offsetFromBottom = 50,
+                        message = "Product tag unpinned."
+                    )
+                } else {
+                    AmityUIKitSnackbar.publishSnackbarMessage(
+                        offsetFromBottom = 50,
+                        message = "Product tag pinned."
+                    )
+                }
+            }
+            .doOnError {
+                if (productId == null) {
+                    AmityUIKitSnackbar.publishSnackbarErrorMessage(
+                        offsetFromBottom = 50,
+                        message = "Failed to unpin product tag. Please try again."
+                    )
+                } else {
+                    AmityUIKitSnackbar.publishSnackbarErrorMessage(
+                        offsetFromBottom = 50,
+                        message = "Failed to pin product tag. Please try again."
+                    )
+                }
+            }
+            .subscribe()
+            .let(::addDisposable)
+
+    }
+
+    fun fetchProductCatalogueSettings(
+        onEnabledAction: (() -> Unit)? = null,
+        onDisabledAction: (() -> Unit)? = null
+    ) {
+        AmityCoreClient.getProductCatalogueSetting()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSuccess { settings ->
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        isProductCatalogueEnabled = settings.enabled
+                    )
+                }
+                if (settings.enabled) {
+                    onEnabledAction?.invoke()
+                } else {
+                    onDisabledAction?.invoke()
+                }
+            }
+            .subscribe()
+            .let(::addDisposable)
     }
 
     /**
@@ -844,15 +984,15 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
         synchronized(watchTrackingLock) {
             // Prevent concurrent updates
             if (isUpdatingSession) return
-            
+
             val sessionId = watchSessionId ?: return
             val room = _uiState.value.room ?: return
-            
+
             // Skip update if paused - only accumulate and send when playing
             if (isWatchingPaused) return
 
             isUpdatingSession = true
-            
+
             try {
                 // Accumulate time since last resume
                 val lastResume = lastResumeTime ?: return
@@ -886,14 +1026,14 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
     fun pauseWatchTracking() {
         synchronized(watchTrackingLock) {
             if (watchSessionId == null || isWatchingPaused) return
-            
+
             // Accumulate time up to this point (no sync, just save locally)
             lastResumeTime?.let {
                 val nowMillis = DateTime.now().millis
                 val elapsedSinceResumeSeconds = ((nowMillis - it.millis) / 1000).toInt()
                 accumulatedWatchTimeSeconds += elapsedSinceResumeSeconds
             }
-            
+
             isWatchingPaused = true
             lastResumeTime = null
         }
@@ -906,7 +1046,7 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
     fun resumeWatchTracking() {
         synchronized(watchTrackingLock) {
             if (watchSessionId == null || !isWatchingPaused) return
-            
+
             isWatchingPaused = false
             lastResumeTime = DateTime.now()
         }
@@ -954,7 +1094,16 @@ data class RoomPlayerState(
     val cohostUser: AmityUser? = null,
     val viewerCount: Int? = null,
     val cameraPosition: CameraPosition = CameraPosition.FRONT,
+    val isProductCatalogueEnabled: Boolean = false
 ) {
+
+    fun getRoomPost() : AmityPost? {
+        return post.getChildren().firstOrNull{ it.getData() is AmityPost.Data.ROOM }
+    }
+
+    fun isCoHostCanManageProducts() : Boolean {
+        return room?.getParticipants()?.find { it.userId == cohostUserId }?.canManageProductTags == true
+    }
 
     companion object {
         fun initial(post: AmityPost) = RoomPlayerState(

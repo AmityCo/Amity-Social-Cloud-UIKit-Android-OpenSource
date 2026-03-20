@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -84,36 +85,42 @@ fun AmityPendingJoinRequestComponent(
 
                     Spacer(modifier = Modifier.width(12.dp))
 
-                    //User Name
-                    request.getUser()?.getDisplayName()?.let {
-                        Text(
-                            text = it,
-                            style = AmityTheme.typography.bodyBold,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier
-                                .weight(1f, fill = false)
-                                .clickableWithoutRipple {
-                                    request.getUser()?.let {
-                                        behavior.goToUserProfilePage(
-                                            context = context,
-                                            userId = it.getUserId(),
-                                        )
-                                    }
-                                }
-                        )
-                    }
+                    //User Name and Brand Badge
+                    Row(modifier = Modifier.weight(1f)) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(2.dp),
+                            modifier = Modifier.width(IntrinsicSize.Max)
+                        ) {
+                            request.getUser()?.getDisplayName()?.let {
+                                Text(
+                                    text = it,
+                                    style = AmityTheme.typography.bodyBold,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .clickableWithoutRipple {
+                                            request.getUser()?.let {
+                                                behavior.goToUserProfilePage(
+                                                    context = context,
+                                                    userId = it.getUserId(),
+                                                )
+                                            }
+                                        }
+                                )
+                            }
 
-
-                    if (request.getUser()?.isBrand() == true) {
-                        Spacer(modifier = Modifier.width(2.dp))
-                        Image(
-                            painter = painterResource(id = R.drawable.amity_ic_brand_badge),
-                            contentDescription = "",
-                            modifier = Modifier
-                                .size(20.dp)
-                                .testTag("user_view/brand_user_icon")
-                        )
+                            if (request.getUser()?.isBrand() == true) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.amity_ic_brand_badge),
+                                    contentDescription = "",
+                                    modifier = Modifier
+                                        .size(20.dp)
+                                        .testTag("user_view/brand_user_icon")
+                                )
+                            }
+                        }
                     }
                 }
 

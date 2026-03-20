@@ -110,7 +110,7 @@ class AmityLiveChatPageViewModel constructor(private val channelId: String) : Vi
             .observeOn(AndroidSchedulers.mainThread())
             .asFlow()
             .catch {
-            
+
             }
     }
 
@@ -136,7 +136,7 @@ class AmityLiveChatPageViewModel constructor(private val channelId: String) : Vi
             .observeOn(AndroidSchedulers.mainThread())
             .asFlow()
             .catch {
-            
+
             }
     }
 
@@ -176,7 +176,7 @@ class AmityLiveChatPageViewModel constructor(private val channelId: String) : Vi
             .observeOn(AndroidSchedulers.mainThread())
             .asFlow()
             .catch {
-            
+
             }
     }
 
@@ -188,7 +188,7 @@ class AmityLiveChatPageViewModel constructor(private val channelId: String) : Vi
             .subscribeOn(Schedulers.io())
             .asFlow()
             .catch {
-            
+
             }
     }
 
@@ -199,7 +199,7 @@ class AmityLiveChatPageViewModel constructor(private val channelId: String) : Vi
             .observeOn(AndroidSchedulers.mainThread())
             .asFlow()
             .catch {
-            
+
             }
     }
 
@@ -212,7 +212,7 @@ class AmityLiveChatPageViewModel constructor(private val channelId: String) : Vi
             .observeOn(AndroidSchedulers.mainThread())
             .asFlow()
             .catch {
-            
+
             }
     }
 
@@ -262,7 +262,7 @@ class AmityLiveChatPageViewModel constructor(private val channelId: String) : Vi
             .observeOn(AndroidSchedulers.mainThread())
             .asFlow()
             .catch {
-            
+
             }
     }
 
@@ -313,7 +313,7 @@ class AmityLiveChatPageViewModel constructor(private val channelId: String) : Vi
             .doOnError { }
             .subscribe()
     }
-    
+
     fun flagMessage(
         message: AmityMessage,
         onSuccess: () -> Unit = {},
@@ -359,7 +359,22 @@ class AmityLiveChatPageViewModel constructor(private val channelId: String) : Vi
 
             }
     }
-    
+
+    fun getMemberInfo(userId: String): Flow<List<AmityChannelMember>> {
+        return AmityChatClient.newChannelRepository()
+            .membership(channelId)
+            .getMembersFromCache()
+            .map { members ->
+                members.filter {
+                    it.getUserId() == userId
+                }
+            }
+            .asFlow()
+            .catch {
+                emit(emptyList())
+            }
+    }
+
     fun addMessageReaction(message: AmityMessage, reactionName: String) {
         val reactionRepository = AmityCoreClient.newReactionRepository()
         val ref = AmityReactionReference.MESSAGE(message.getMessageId())
@@ -380,7 +395,7 @@ class AmityLiveChatPageViewModel constructor(private val channelId: String) : Vi
             }
             .subscribe()
     }
-    
+
     fun removeMessageReaction(message: AmityMessage, reactionName: String) {
         val ref = AmityReactionReference.MESSAGE(message.getMessageId())
         AmityCoreClient.newReactionRepository()

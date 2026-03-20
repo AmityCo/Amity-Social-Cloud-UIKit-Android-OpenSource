@@ -30,6 +30,15 @@ object AmityPostVideoPlayerHelper {
         }
     }
 
+    fun addUrls(urls: List<String>) {
+        urls.forEach { url ->
+            exoPlayer?.apply {
+                addMediaItem(MediaItem.fromUri(url))
+                prepare()
+            }
+        }
+    }
+
     fun playMediaItem(index: Int) {
         exoPlayer?.apply {
             seekTo(index, 0)

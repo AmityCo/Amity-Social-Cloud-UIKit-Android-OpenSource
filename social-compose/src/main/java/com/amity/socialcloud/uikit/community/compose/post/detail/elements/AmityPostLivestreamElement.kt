@@ -1,7 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.post.detail.elements
 
 import android.app.Activity
-import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -30,7 +29,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,23 +39,23 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
+import com.amity.socialcloud.sdk.model.core.product.AmityProduct
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.sdk.model.video.room.AmityRoom
 import com.amity.socialcloud.sdk.model.video.room.AmityRoomStatus
 import com.amity.socialcloud.sdk.model.video.stream.AmityStream
 import com.amity.socialcloud.uikit.common.ui.elements.AmityExpandableText
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityProductWebViewBottomSheet
 import com.amity.socialcloud.uikit.community.compose.livestream.room.view.AmityRoomPlayerPageActivity
 import com.amity.socialcloud.uikit.community.compose.livestream.view.AmityLivestreamPlayerPageActivity
+import com.amity.socialcloud.uikit.community.compose.post.composer.components.AmityProductTagListComponent
+import com.amity.socialcloud.uikit.community.compose.post.composer.components.RenderModeEnum
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetailPageActivity.Companion.REQUEST_CODE_VIEW_LIVESTREAM
 import kotlinx.coroutines.flow.Flow
 
@@ -478,6 +479,54 @@ fun AmityChildRoomPostElement(
         getRoomPostData(post)
     }
 
+    var showVideoPlayerDialog by remember { mutableStateOf(false) }
+    var showProductTagSheet by remember { mutableStateOf(false) }
+    var selectedProduct by remember { mutableStateOf<AmityProduct?>(null) }
+
+    // Get recorded URLs from room
+    val recordedUrls = remember(room) {
+        room?.getRecordedPlaybackInfos()
+            ?.mapNotNull { it.url }
+            ?: emptyList()
+    }
+
+    var roomPostProducts by remember(post.getPostId(), post.getUpdatedAt()) {
+        mutableStateOf(
+            post.getChildren().find { it.getData() is AmityPost.Data.ROOM }?.getProducts() ?: emptyList()
+        )
+    }
+
+    // Show video player dialog for recorded livestream
+    if (showVideoPlayerDialog) {
+        AmityVideoPlayerPage(
+            childPosts = post.getChildren(),
+            selectedFileId = post.getChildren().firstOrNull()?.getPostId() ?: "",
+            recordedUrls = recordedUrls,
+            onDismiss = { showVideoPlayerDialog = false },
+            showMenuButton = true,
+            onProductsUpdated = { roomPostProducts = it }
+        )
+    }
+
+    // Show product tag list sheet
+    if (showProductTagSheet && roomPostProducts.isNotEmpty()) {
+        AmityProductTagListComponent(
+            productTags = roomPostProducts,
+            renderMode = RenderModeEnum.LIVESTREAM,
+            onDismiss = { showProductTagSheet = false },
+            onProductClick = {
+                selectedProduct = it
+            }
+        )
+    }
+
+    selectedProduct?.let { product ->
+        AmityProductWebViewBottomSheet(
+            product = product,
+            onDismiss = { selectedProduct = null }
+        )
+    }
+
     val image by remember {
         derivedStateOf {
             room?.getThumbnail()
@@ -550,14 +599,18 @@ fun AmityChildRoomPostElement(
                 modifier = Modifier
                     .clickable {
                         if (room != null && room.getStatus() != AmityRoomStatus.IDLE) {
-                            AmityRoomPlayerPageActivity
-                                .newIntent(context = context, post = post)
-                                .let {
-                                    activity.startActivityForResult(
-                                        it,
-                                        REQUEST_CODE_VIEW_LIVESTREAM
-                                    )
-                                }
+                            if (room.getStatus() == AmityRoomStatus.RECORDED) {
+                                showVideoPlayerDialog = true
+                            } else {
+                                AmityRoomPlayerPageActivity
+                                    .newIntent(context = context, post = post)
+                                    .let {
+                                        activity.startActivityForResult(
+                                            it,
+                                            REQUEST_CODE_VIEW_LIVESTREAM
+                                        )
+                                    }
+                            }
                         }
                     }
             ) {
@@ -571,14 +624,18 @@ fun AmityChildRoomPostElement(
                             post = post.getChildren().first(),
                             onClick = {
                                 if (room != null && room.getStatus() != AmityRoomStatus.IDLE) {
-                                    AmityRoomPlayerPageActivity
-                                        .newIntent(context = context, post = post)
-                                        .let {
-                                            activity.startActivityForResult(
-                                                it,
-                                                REQUEST_CODE_VIEW_LIVESTREAM
-                                            )
-                                        }
+                                    if (room.getStatus() == AmityRoomStatus.RECORDED) {
+                                        showVideoPlayerDialog = true
+                                    } else {
+                                        AmityRoomPlayerPageActivity
+                                            .newIntent(context = context, post = post)
+                                            .let {
+                                                activity.startActivityForResult(
+                                                    it,
+                                                    REQUEST_CODE_VIEW_LIVESTREAM
+                                                )
+                                            }
+                                    }
                                 }
                             }
                         )
@@ -603,7 +660,9 @@ fun AmityChildRoomPostElement(
                 when (room?.getStatus()) {
                     AmityRoomStatus.RECORDED -> {
                         AmityLivestreamPostIdleOrRecordedLabel(
-                            modifier = Modifier.padding(start = 12.dp, top = 12.dp),
+                            modifier = Modifier
+                                .align(Alignment.TopEnd)
+                                .padding(end = 12.dp, top = 12.dp),
                             text = "RECORDED"
                         )
                     }
@@ -623,6 +682,13 @@ fun AmityChildRoomPostElement(
 
                     else -> {}
                 }
+                AmityProductTagBadge(
+                    count = roomPostProducts.size,
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(end = 12.dp, bottom = 12.dp),
+                    onClick = { showProductTagSheet = true }
+                )
             }
         }
     }

@@ -15,7 +15,7 @@ fun AmityBaseElement(
     content: @Composable AmityComposeElementScope.() -> Unit
 ) {
     val comp = rememberAmityComposeScopeProvider(
-        pageScope = pageScope,
+        pageScope = pageScope ?: componentScope?.getPageScope(),
         componentScope = componentScope,
         elementId = elementId
     )

@@ -93,9 +93,11 @@ import androidx.media3.common.Player
 import coil3.compose.AsyncImage
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.social.post.review.AmityReviewStatus
+import com.amity.socialcloud.sdk.core.engine.analytics.AnalyticsEventSourceType
 import com.amity.socialcloud.sdk.core.session.model.NetworkConnectionEvent
 import com.amity.socialcloud.sdk.model.core.invitation.AmityInvitation
 import com.amity.socialcloud.sdk.model.core.invitation.AmityInvitationStatus
+import com.amity.socialcloud.sdk.model.core.product.AmityProduct
 import com.amity.socialcloud.sdk.model.core.reaction.AmityLiveReactionReferenceType
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.sdk.model.video.room.AmityRoom
@@ -120,7 +122,6 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.common.utils.getIcon
-import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.livestream.chat.AmityLivestreamMessageComposeBar
@@ -132,6 +133,13 @@ import com.amity.socialcloud.uikit.community.compose.livestream.create.element.A
 import com.amity.socialcloud.uikit.community.compose.livestream.create.element.AmityCreateLivestreamPendingApprovalView
 import com.amity.socialcloud.uikit.community.compose.livestream.create.element.AmityMediaAndCameraNoPermissionView
 import com.amity.socialcloud.uikit.community.compose.livestream.room.create.AmityCreateRoomPageBehavior
+import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityAddProductBottomSheet
+import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityProductTaggingBottomSheet
+import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityProductTaggingButton
+import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityProductWebViewBottomSheet
+import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityRoomViewerCountBadge
+import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityStreamerView
+import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.LivestreamPinnedProductElement
 import com.amity.socialcloud.uikit.community.compose.livestream.util.LivestreamErrorScreenType
 import com.amity.socialcloud.uikit.community.compose.livestream.view.AmityLivestreamBannedPage
 import com.amity.socialcloud.uikit.community.compose.livestream.view.AmityLivestreamDeclinedPage
@@ -143,6 +151,7 @@ import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityL
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityLivestreamLoadingView
 import com.amity.socialcloud.uikit.community.compose.utils.sharePost
 import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityRoomViewerCountBadge
+import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.LivestreamPinnedProductElement
 import io.livekit.android.compose.ui.flipped
 import io.livekit.android.room.Room
 import io.livekit.android.room.track.LocalVideoTrack
@@ -204,6 +213,11 @@ fun AmityRoomPlayerPage(
     var showLeaveAsCoHostDialog by remember { mutableStateOf(false) }
     var showLeaveLivestreamDialog by remember { mutableStateOf(false) }
     var showCannotStartLivestreamDialog by remember { mutableStateOf(false) }
+    var showManageProductTagBottomSheet by remember { mutableStateOf(false) }
+    var showProductWebViewBottomSheet by remember { mutableStateOf<AmityProduct?>(null) }
+    var showPinnedProductOverlay by remember { mutableStateOf(false) }
+    var showAddProductBottomSheet by remember { mutableStateOf(false) }
+    var showProductTaggingDisabledDialog by remember { mutableStateOf(false) } // during live
     val liveKitRoomState by remember(uiState.liveKitRoom) {
         uiState.liveKitRoom?.let {
             it::state.flow
@@ -240,11 +254,15 @@ fun AmityRoomPlayerPage(
         },
     )
 
-    LaunchedEffect(uiState.room?.getRoomId()) {
+    LaunchedEffect(uiState.room?.getRoomId(), uiState.isStreamerMode) {
         uiState.room
             ?.let { room ->
                 if (room.getStatus() == AmityRoomStatus.LIVE) {
-                    viewModel.startRoomHeartbeat(roomId = room.getRoomId())
+                    if (uiState.isStreamerMode) {
+                        viewModel.stopRoomHeartbeat(roomId = room.getRoomId())
+                    } else {
+                        viewModel.startRoomHeartbeat(roomId = room.getRoomId())
+                    }
                 }
             }
     }
@@ -256,6 +274,10 @@ fun AmityRoomPlayerPage(
                 wasInvited = fromInvitation,
             )
         }
+    }
+
+    LaunchedEffect(uiState.getRoomPost()?.getPinnedProduct()) {
+        showPinnedProductOverlay = uiState.getRoomPost()?.getPinnedProduct() != null
     }
 
     val reactions by viewModel.observeLiveReactions(post.getPostId()).collectAsState(emptyList())
@@ -321,11 +343,11 @@ fun AmityRoomPlayerPage(
         val roomStatus = room?.getStatus()
         val currentUserId = AmityCoreClient.getUserId()
         val cohostUserId = uiState.cohostUserId
-        
+
         // User is viewer only if not in streamer mode and not the co-host
         val isActualViewer = isViewer && currentUserId != cohostUserId
-        
-        if (room != null && isActualViewer && 
+
+        if (room != null && isActualViewer &&
             (roomStatus == AmityRoomStatus.LIVE || roomStatus == AmityRoomStatus.RECORDED)) {
             // Start tracking for viewer
             viewModel.startWatchTracking()
@@ -341,7 +363,7 @@ fun AmityRoomPlayerPage(
                 .room
                 ?.getRoomId()
                 ?.let(viewModel::stopRoomHeartbeat)
-            
+
             // Stop watch tracking and sync when leaving page
             viewModel.stopWatchTracking(shouldSync = true)
         }
@@ -508,7 +530,7 @@ fun AmityRoomPlayerPage(
                                             setMediaSource(mediaSource)
                                             prepare()
                                             playWhenReady = true
-                                            
+
                                             // Add listener to track play/pause state for watch minutes
                                             addListener(object : Player.Listener {
                                                 override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -581,6 +603,7 @@ fun AmityRoomPlayerPage(
                                     hostUser = uiState.hostUser,
                                     cohostUserId = AmityCoreClient.getUserId(),
                                     cohostUser = uiState.cohostUser,
+                                    invitation = uiState.invitation,
                                     onRoomChanged = { room ->
                                         viewModel.onLiveKitRoomChange(room)
                                         if (isStarting && room.state == Room.State.CONNECTED) {
@@ -739,7 +762,7 @@ fun AmityRoomPlayerPage(
                                                 horizontalAlignment = Alignment.Start,
                                             ) {
                                                 Text(
-                                                    text = "Adjust your camera, mic and lighting before joining the live stream.",
+                                                    text = "Set up your camera, mic, and lighting before the livestream begins.",
 // Typography/Body
                                                     style = TextStyle(
                                                         fontSize = 15.sp,
@@ -782,7 +805,7 @@ fun AmityRoomPlayerPage(
                                                             .fillMaxWidth()
                                                             .height(40.dp),
                                                         colors = ButtonDefaults.buttonColors(
-                                                            containerColor = Color(0xFFF26B1C)
+                                                            containerColor = Color(0xFFFF305A)
                                                         ),
                                                         shape = RoundedCornerShape(12.dp)
                                                     ) {
@@ -1002,6 +1025,48 @@ fun AmityRoomPlayerPage(
                             coHostUserId = uiState.cohostUserId,
                             onReactionClick = { showReactionPicker = true }
                         )
+
+                        val pinnedProduct = uiState.getRoomPost()?.getPinnedProduct()
+                        val canManageProducts = remember(uiState.cohostUserId, uiState.room) {
+                            AmityCoreClient.getUserId() == uiState.cohostUserId && uiState.isCoHostCanManageProducts()
+                        }
+                        if (pinnedProduct != null && showPinnedProductOverlay && uiState.isProductCatalogueEnabled) {
+                            Spacer(modifier = Modifier.height(4.dp))
+                            LivestreamPinnedProductElement(
+                                modifier = Modifier.padding(horizontal = 12.dp),
+                                product = pinnedProduct,
+                                pageScope = getPageScope(),
+                                onUnpinClick = {
+                                    viewModel.togglePinProduct(null)
+                                },
+                                onProductClick = { location ->
+                                    pinnedProduct
+                                        .analytics()
+                                        .markAsClicked(
+                                            sourceType = AnalyticsEventSourceType.ROOM,
+                                            sourceId = uiState.room?.getRoomId() ?: "",
+                                            location = location
+                                        )
+                                    showProductWebViewBottomSheet = pinnedProduct
+                                },
+                                onCloseClick = {
+                                    showPinnedProductOverlay = false
+                                },
+                                onRemoveClick = {
+                                    viewModel.removeTaggedProduct(pinnedProduct.getProductId())
+                                },
+                                canManageProducts = canManageProducts,
+                                onView = { location ->
+                                    pinnedProduct.analytics()
+                                        .markAsViewed(
+                                            sourceType = AnalyticsEventSourceType.ROOM,
+                                            sourceId = uiState.room?.getRoomId() ?: "",
+                                            location = location
+                                        )
+                                }
+                            )
+                        }
+
                         AmityLivestreamMessageComposeBar(
                             pageScope = getPageScope(),
                             channelId = uiState.room?.getChannelId() ?: "",
@@ -1059,6 +1124,20 @@ fun AmityRoomPlayerPage(
                             } else {
                                 null
                             },
+                            taggedProductsCount = uiState.getRoomPost()?.getProductTags()?.size ?: 0,
+                            canManageProducts = AmityCoreClient.getUserId() == uiState.cohostUserId && uiState.isCoHostCanManageProducts(),
+                            onTaggedProductClick = {
+                                viewModel.fetchProductCatalogueSettings(
+                                    onEnabledAction = {
+                                        viewModel.getPost(post.getPostId())
+                                        showManageProductTagBottomSheet = true
+                                    },
+                                    onDisabledAction = {
+                                        showProductTaggingDisabledDialog = true
+                                    }
+                                )
+                            },
+                            isProductSettingsEnabled = uiState.isProductCatalogueEnabled
                         )
                     }
 
@@ -1135,8 +1214,89 @@ fun AmityRoomPlayerPage(
                             )
                         }
                     }
+                } else if (roomStatus == AmityRoomStatus.RECORDED && isTargetCommunity) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = modifier
+                            .align(Alignment.BottomStart)
+                            .fillMaxWidth()
+                            .padding(horizontal = 12.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        val taggedProducts = uiState.getRoomPost()?.getProducts()
+                        // Host can always see product tagging button
+                        if (uiState.isProductCatalogueEnabled && taggedProducts?.isNotEmpty() == true) {
+                            AmityProductTaggingButton(
+                                taggedProductsCount = taggedProducts.size,
+                                onClick = {
+                                    showManageProductTagBottomSheet = true
+                                }
+                            )
+                        }
+                    }
                 }
             }
+        }
+
+        if (showManageProductTagBottomSheet) {
+            val isHost = AmityCoreClient.getUserId() == uiState.hostUserId
+            val isCoHost = AmityCoreClient.getUserId() == uiState.cohostUserId
+            val canManageProducts = when (uiState.room?.getStatus()) {
+                AmityRoomStatus.LIVE -> isCoHost && uiState.isCoHostCanManageProducts()
+                else -> isHost // Only host can manage post-live
+            }
+            AmityProductTaggingBottomSheet(
+                pageScope = getPageScope(),
+                onDismiss = {
+                    showManageProductTagBottomSheet = false
+                },
+                onPinProduct = {
+                    viewModel.togglePinProduct(it)
+                },
+                onRemoveProduct = {
+                    viewModel.removeTaggedProduct(it)
+                },
+                onAddProducts = {
+                    showAddProductBottomSheet = true
+                },
+                onProductClick = { product, location ->
+                    showProductWebViewBottomSheet = product
+                    product.analytics()
+                        .markAsClicked(
+                            sourceType = AnalyticsEventSourceType.ROOM,
+                            sourceId = uiState.room?.getRoomId() ?: "",
+                            location = location
+                        )
+                },
+                onProductViewed = { product, location ->
+                    product.analytics()
+                        .markAsViewed(
+                            sourceType = AnalyticsEventSourceType.ROOM,
+                            sourceId = uiState.room?.getRoomId() ?: "",
+                            location = location
+                        )
+                },
+                canManageProducts = canManageProducts,
+                taggedProducts = uiState.getRoomPost()?.getProducts().orEmpty(),
+                pinnedProductId = uiState.getRoomPost()?.getPinnedProductId(),
+                isPostLive = uiState.room?.getStatus() == AmityRoomStatus.RECORDED || uiState.room?.getStatus() == AmityRoomStatus.ENDED,
+            )
+        }
+
+        if (showAddProductBottomSheet) {
+            val taggedProduct = uiState.getRoomPost()?.getProducts()
+            AmityAddProductBottomSheet(
+                pageScope = getPageScope(),
+                onDismiss = {
+                    showAddProductBottomSheet = false
+                },
+                onDone = {
+                    showAddProductBottomSheet = false
+                    viewModel.addTaggedProducts(it)
+                },
+                taggedProduct = taggedProduct.orEmpty(),
+                requestFocus = true
+            )
         }
     }
 
@@ -1215,7 +1375,7 @@ fun AmityRoomPlayerPage(
             onDecline = {
                 showInvitationSheet = false
                 viewModel.rejectInvitation(invitation, {
-                    AmityUIKitSnackbar.publishSnackbarMessage("You've declined the invitation.")
+                    AmityUIKitSnackbar.publishSnackbarMessage("Invitation declined.")
                 })
             },
             onDismiss = {
@@ -1358,6 +1518,30 @@ fun AmityRoomPlayerPage(
             dismissText = "OK",
             onDismissRequest = {
                 showCannotStartLivestreamDialog = false
+            },
+        )
+    }
+
+    showProductWebViewBottomSheet?.let { product ->
+        AmityProductWebViewBottomSheet(
+            product = product,
+            onDismiss = {
+                showProductWebViewBottomSheet = null
+            },
+        )
+    }
+
+    if (showProductTaggingDisabledDialog) {
+        AmityAlertDialog(
+            dialogTitle = "Product tagging isn't available",
+            dialogText = "Any products you’ve tagged will be removed and won’t be shown to viewers.",
+            confirmText = "OK",
+            dismissText = "",
+            onDismissRequest = {
+                showProductTaggingDisabledDialog = false
+            },
+            onConfirmation = {
+                showProductTaggingDisabledDialog = false
             },
         )
     }

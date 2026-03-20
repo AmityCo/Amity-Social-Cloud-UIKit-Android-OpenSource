@@ -280,7 +280,17 @@ fun AmityUserProfileHeaderComponent(
                 }
             }
             Spacer(modifier.height(12.dp))
-            if (!state.isMyUserProfile() && (userFollowStatus != null)) {
+            if (AmityCoreClient.isVisitor()) {
+                AmityUserFollowRelationshipButton(
+                    modifier = modifier,
+                    pageScope = pageScope,
+                    componentScope = getComponentScope(),
+                    followStatus = AmityFollowStatus.NONE,
+                    onClick = {
+                        behavior.handleVisitorUserAction()
+                    }
+                )
+            } else if (!state.isMyUserProfile() && (userFollowStatus != null)) {
                 AmityUserFollowRelationshipButton(
                     modifier = modifier,
                     pageScope = pageScope,
@@ -314,16 +324,6 @@ fun AmityUserProfileHeaderComponent(
                                 )
                             }
                         }
-                    }
-                )
-            } else if (AmityCoreClient.isVisitor()) {
-                AmityUserFollowRelationshipButton(
-                    modifier = modifier,
-                    pageScope = pageScope,
-                    componentScope = getComponentScope(),
-                    followStatus = AmityFollowStatus.NONE,
-                    onClick = {
-                        behavior.handleVisitorUserAction()
                     }
                 )
             }

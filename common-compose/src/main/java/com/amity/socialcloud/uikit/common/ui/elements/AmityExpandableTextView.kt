@@ -1,6 +1,7 @@
 package com.amity.socialcloud.uikit.common.ui.elements
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.material3.Text
@@ -29,6 +30,8 @@ import com.amity.socialcloud.sdk.helper.core.hashtag.AmityHashtag
 import com.amity.socialcloud.sdk.helper.core.hashtag.AmityHashtagMetadataGetter
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionee
+import com.amity.socialcloud.sdk.model.core.product.AmityProductStatus
+import com.amity.socialcloud.sdk.model.core.producttag.AmityProductTag
 import com.amity.socialcloud.uikit.common.common.views.text.AmityTextStyle
 import com.amity.socialcloud.uikit.common.extionsions.extractUrls
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
@@ -42,6 +45,7 @@ fun AmityExpandableText(
     mentionGetter: AmityMentionMetadataGetter = AmityMentionMetadataGetter(JsonObject()),
     mentionees: List<AmityMentionee> = emptyList(),
     hashtagGetter: AmityHashtagMetadataGetter = AmityHashtagMetadataGetter(JsonObject()),
+    productTags: List<AmityProductTag.Text> = emptyList(),
     boldWhenMatches: List<String> = emptyList(),
     style: TextStyle = AmityTheme.typography.body,
     previewLines: Int = EXPANDABLE_TEXT_MAX_LINES,
@@ -49,6 +53,7 @@ fun AmityExpandableText(
     onClick: () -> Unit = {},
     onMentionedUserClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
+    onMentionedProductClick: (AmityProductTag.Text) -> Unit = {},
     onUrlClick: ((Context, String) -> Unit)? = null,
 ) {
     val uriHandler = LocalUriHandler.current
@@ -132,6 +137,30 @@ fun AmityExpandableText(
                     end = end
                 )
             }
+            // Highlight product tags (clickable only if not archived)
+            productTags.forEach { productTag ->
+                val start = productTag.index
+                val end = productTag.index + productTag.length
+                if (start < displayText.length) {
+                    val safeEnd = minOf(end, displayText.length)
+                    // Only add highlight and annotation if product is not archived
+                    val isArchived = productTag.product?.getStatus() == AmityProductStatus.ARCHIVED
+                    if (!isArchived) {
+                        addStyle(
+                            style = SpanStyle(AmityTheme.colors.highlight),
+                            start = start,
+                            end = safeEnd,
+                        )
+                        addStringAnnotation(
+                            tag = "PRODUCT_MENTION",
+                            annotation = productTag.productId,
+                            start = start,
+                            end = safeEnd
+                        )
+                    }
+                    // If archived, it will render as plain text (no style, no annotation)
+                }
+            }
             text.extractUrls().forEach {
                 addStyle(
                     style = SpanStyle(
@@ -190,7 +219,7 @@ fun AmityExpandableText(
         }
 
         val layoutResult = remember { mutableStateOf<TextLayoutResult?>(null) }
-        val pressIndicator = Modifier.pointerInput(annotatedString) {
+        val pressIndicator = Modifier.pointerInput(annotatedString, productTags) {
             detectTapGestures(
                 onTap = { offset ->
                     layoutResult.value?.let {
@@ -239,6 +268,21 @@ fun AmityExpandableText(
                         if (seeMoreAnnotation.isNotEmpty()) {
                             isReadMoreClicked = true
                             return@let
+                        }
+
+                        // Check for product mention clicks
+                        val productMention = annotatedString.getStringAnnotations(
+                            tag = "PRODUCT_MENTION",
+                            start = position,
+                            end = position
+                        )
+                        if (productMention.isNotEmpty()) {
+                            val productId = productMention.first().item
+                            val productTag = productTags.find { it.productId == productId }
+                            if (productTag != null) {
+                                onMentionedProductClick(productTag)
+                                return@let
+                            }
                         }
 
                         onClick()
