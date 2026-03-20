@@ -102,10 +102,7 @@ captures/
 
 sample/src/main/java/com/amity/socialcloud/uikit/sample/env/SampleAPIKey.kt
 sample/src/main/java/com/amity/socialcloud/uikit/sample/env/SampleBroker.kt
+sample/src/main/java/com/amity/socialcloud/uikit/sample/env/SampleEnv.kt
+sample/src/main/java/com/amity/socialcloud/uikit/sample/env/SamplePreferences.kt
+sample/src/main/java/com/amity/socialcloud/uikit/sample/env/SampleUploadUrl.kt
 sample/src/main/java/com/amity/socialcloud/uikit/sample/env/SampleUrl.kt
-
-sdk-versioning/src/main/java/com/amity/sdk_versioning/SampleAPIKey.kt
-sdk-versioning/src/main/java/com/amity/sdk_versioning/SampleBroker.kt
-sdk-versioning/src/main/java/com/amity/sdk_versioning/SampleEnv.kt
-sdk-versioning/src/main/java/com/amity/sdk_versioning/SampleUploadUrl.kt
-sdk-versioning/src/main/java/com/amity/sdk_versioning/SampleUrl.kt
