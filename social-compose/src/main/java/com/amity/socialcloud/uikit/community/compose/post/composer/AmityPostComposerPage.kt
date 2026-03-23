@@ -860,8 +860,8 @@ fun AmityPostComposerPage(
                                         mentionedUsers = mentionedUsers,
                                         hashtags = hashtags.parseHashtagIndices(localPostText),
                                         links = detectedUrls,
-                                        productTags = productTags,
-                                        attachmentProductTags = attachmentProductTags,
+                                        productTags = if (isProductCatalogueEnabled) productTags else null,
+                                        attachmentProductTags = if (isProductCatalogueEnabled) attachmentProductTags else null,
                                     )
                                 } else {
                                     // Check if post has product tags (text or attachment)
@@ -923,23 +923,12 @@ fun AmityPostComposerPage(
                                             .subscribe()
                                     } else {
                                         // No product tags, create post normally
-                                        val productTags = productMentions.map {
-                                            AmityProductTag.Text(
-                                                productId = it.productId,
-                                                text = it.displayName,
-                                                index = it.startPosition - trimOffset,
-                                                length = it.length,
-                                            )
-                                        }
-                                        val attachmentProductTags = viewModel.buildAttachmentProductTags()
                                         viewModel.createPost(
                                             postText = localPostText.trim(),
                                             postTitle = titleText.trim(),
                                             mentionedUsers = mentionedUsers,
                                             hashtags = hashtags,
                                             links = detectedUrls,
-                                            productTags = productTags,
-                                            attachmentProductTags = attachmentProductTags,
                                         )
                                     }
                                 }

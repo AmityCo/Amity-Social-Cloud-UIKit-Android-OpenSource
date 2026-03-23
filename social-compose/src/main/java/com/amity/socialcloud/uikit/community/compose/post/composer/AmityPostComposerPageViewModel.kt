@@ -797,7 +797,7 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
         mentionedUsers: List<AmityMentionMetadata.USER>,
         hashtags: List<AmityHashtag> = emptyList(),
         links: List<AmityLink> = emptyList(),
-        productTags: List<AmityProductTag.Text> = emptyList(),
+        productTags: List<AmityProductTag.Text>? = null,
         attachmentProductTags: AmityAttachmentProductTags? = null,
     ) {
         if (postText.length > MAX_CHAR_LIMIT) {
@@ -944,7 +944,7 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
         mentionedUsers: List<AmityMentionMetadata.USER>,
         hashtags: List<AmityHashtag> = emptyList(),
         links: List<AmityLink> = emptyList(),
-        productTags: List<AmityProductTag.Text> = emptyList(),
+        productTags: List<AmityProductTag.Text>? = null,
         attachmentProductTags: AmityAttachmentProductTags? = null,
     ): Completable {
         // Determine attachment type by examining all attachments, not just the first one
@@ -1031,11 +1031,11 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
                 if (links.isNotEmpty()) {
                     this.links(links)
                 }
+                productTags?.let(this::productTags)
+                attachmentProductTags?.let(this::taggedProducts)
             }
 
         return postEditor
-            .productTags(productTags)
-            .taggedProducts(attachmentProductTags)
             .build()
             .apply()
     }
