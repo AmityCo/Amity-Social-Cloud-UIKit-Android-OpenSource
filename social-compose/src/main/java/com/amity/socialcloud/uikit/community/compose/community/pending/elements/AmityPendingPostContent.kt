@@ -102,6 +102,7 @@ fun AmityPendingPostContent(
             )
             AmityPostMediaElement(
                 modifier = modifier,
+                pageScope = pageScope,
                 post = post
             )
 

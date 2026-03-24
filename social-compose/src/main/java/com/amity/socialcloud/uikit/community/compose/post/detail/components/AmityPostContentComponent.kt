@@ -244,6 +244,7 @@ fun AmityPostContentComponent(
             if (post.getChildren().any { it.getData() is AmityPost.Data.LIVE_STREAM } || post.getChildren().any { it.getData() is AmityPost.Data.ROOM }) {
                 AmityPostLivestreamElement(
                     modifier = modifier,
+                    pageScope = pageScope,
                     post = post
                 )
             } else if (post.getChildren().any { it.getData() is AmityPost.Data.POLL }) {
@@ -342,6 +343,7 @@ fun AmityPostContentComponent(
                 )
                 AmityPostMediaElement(
                     modifier = modifier,
+                    pageScope = pageScope,
                     post = post
                 )
             }

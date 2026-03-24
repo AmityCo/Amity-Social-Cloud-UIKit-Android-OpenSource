@@ -33,8 +33,10 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -61,10 +63,12 @@ import com.amity.socialcloud.sdk.model.core.product.AmityProductStatus
 import com.amity.socialcloud.uikit.common.config.AmityUIKitConfig
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
+import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.asColor
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.formatCurrencyForLocale
+import com.amity.socialcloud.uikit.common.utils.isVisible
 import com.amity.socialcloud.uikit.community.compose.R
 import org.joda.time.DateTime
 import kotlin.math.max
@@ -75,6 +79,7 @@ fun ManageProductTagListComponent(
     taggedProducts: List<AmityProduct>,
     maxCount: Int = 20,
     pinnedProductId: String? = null,
+    pageScope: AmityComposePageScope? = null,
     componentScope: AmityComposeComponentScope? = null,
     onDismiss: () -> Unit,
     onRemoveProduct: (String) -> Unit,
@@ -159,7 +164,8 @@ fun ManageProductTagListComponent(
                     canManageProducts = canManageProducts,
                     isPostLive = isPostLive,
                     onProductViewed = onProductViewed,
-                    componentScope = componentScope
+                    componentScope = componentScope,
+                    pageScope = pageScope
                 )
             }
         }
@@ -223,6 +229,7 @@ fun TaggedProductsFilled(
     onProductViewed: (AmityProduct, String) -> Unit = { _, _ -> },
     canManageProducts: Boolean,
     isPostLive: Boolean,
+    pageScope: AmityComposePageScope? = null,
     componentScope: AmityComposeComponentScope?
 ) {
     val pinnedProduct = if (isPostLive) null
@@ -232,20 +239,6 @@ fun TaggedProductsFilled(
     val unpinnedProducts = taggedProducts.filter { isPostLive || it.getProductId() != pinnedProductId }
     val productsListState = rememberLazyListState()
 
-    LaunchedEffect(productsListState) {
-        snapshotFlow { productsListState.layoutInfo.visibleItemsInfo }
-            .collect { visibleItems ->
-                // Triggered whenever the set of visible items changes
-                for (itemInfo in visibleItems) {
-                    // mark product as viewed
-                    taggedProducts.getOrNull(itemInfo.index)?.let { product ->
-                        componentScope?.let {
-                            onProductViewed.invoke(product, componentScope.getConfigId().replaceFirst("*", "manage_product_tag"))
-                        }
-                    }
-                }
-            }
-    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -280,7 +273,9 @@ fun TaggedProductsFilled(
                         onPinClick = { togglePinProduct(product.getProductId(), pinnedProductId, onPinProduct) },
                         componentTheme = componentTheme,
                         onProductClick = onProductClick,
+                        onProductViewed = onProductViewed,
                         canManageProducts = canManageProducts,
+                        pageScope = pageScope,
                         componentScope = componentScope,
                         isProductArchived = product.getStatus() == AmityProductStatus.ARCHIVED,
                     )
@@ -313,8 +308,10 @@ fun TaggedProductsFilled(
                             onProductClick.invoke(product, location)
                         }
                     },
+                    onProductViewed = onProductViewed,
                     canManageProducts = canManageProducts,
                     isPostLive = isPostLive,
+                    pageScope = pageScope,
                     componentScope = componentScope,
                     isProductArchived = product.getStatus() == AmityProductStatus.ARCHIVED,
                 )
@@ -343,16 +340,29 @@ private fun ProductTagCard(
     onRemoveClick: () -> Unit,
     onPinClick: () -> Unit,
     onProductClick: (AmityProduct, String) -> Unit = { _, _ -> },
+    onProductViewed: (AmityProduct, String) -> Unit = { _, _ -> },
     canManageProducts: Boolean,
+    pageScope: AmityComposePageScope? = null,
     componentScope: AmityComposeComponentScope?,
     isPostLive: Boolean = false,
     isProductArchived: Boolean = false,
 ) {
-    AmityBaseElement(componentScope = componentScope, elementId = "manage_product_tag") {
+    AmityBaseElement(pageScope = pageScope, componentScope = componentScope, elementId = "product_tag") {
+        var isVisible by remember { mutableStateOf(false) }
+        var hasViewed by remember { mutableStateOf(false) }
+
+        LaunchedEffect(isVisible) {
+            if (isVisible && !hasViewed) {
+                hasViewed = true
+                onProductViewed(product, getElementScope().getConfigId())
+            }
+        }
+
         Row(
             modifier = modifier
                 .fillMaxWidth()
                 .height(100.dp)
+                .isVisible { isVisible = it }
                 .clickable(!canManageProducts) {
                     onProductClick.invoke(product, getElementScope().getConfigId())
                 },

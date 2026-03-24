@@ -49,6 +49,7 @@ import com.amity.socialcloud.sdk.model.video.room.AmityRoom
 import com.amity.socialcloud.sdk.model.video.room.AmityRoomStatus
 import com.amity.socialcloud.sdk.model.video.stream.AmityStream
 import com.amity.socialcloud.uikit.common.ui.elements.AmityExpandableText
+import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityProductWebViewBottomSheet
@@ -62,6 +63,7 @@ import kotlinx.coroutines.flow.Flow
 @Composable
 fun AmityPostLivestreamElement(
     modifier: Modifier = Modifier,
+    pageScope: AmityComposePageScope? = null,
     post: AmityPost,
 ) {
     val postChildren = remember(post.getPostId(), post.getUpdatedAt()) {
@@ -88,6 +90,7 @@ fun AmityPostLivestreamElement(
             is AmityPost.Data.ROOM -> AmityChildRoomPostElement(
                 modifier = modifier
                     .fillMaxWidth(),
+                pageScope = pageScope,
                 post = post,
             )
 
@@ -471,6 +474,7 @@ fun LivestreamLoadingIndicator() {
 @Composable
 fun AmityChildRoomPostElement(
     modifier: Modifier = Modifier,
+    pageScope: AmityComposePageScope? = null,
     post: AmityPost,
 ) {
     val context = LocalContext.current
@@ -511,7 +515,9 @@ fun AmityChildRoomPostElement(
     // Show product tag list sheet
     if (showProductTagSheet && roomPostProducts.isNotEmpty()) {
         AmityProductTagListComponent(
+            pageScope = pageScope,
             productTags = roomPostProducts,
+            postId = post.getPostId(),
             renderMode = RenderModeEnum.LIVESTREAM,
             onDismiss = { showProductTagSheet = false },
             onProductClick = {

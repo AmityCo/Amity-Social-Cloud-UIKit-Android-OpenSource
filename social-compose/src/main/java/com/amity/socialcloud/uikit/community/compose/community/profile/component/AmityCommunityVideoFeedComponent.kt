@@ -10,6 +10,7 @@ import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.community.compose.paging.feed.community.amityCommunityVideoFeedLLS
+import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.flow.catch
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.catch
 @Composable
 fun AmityCommunityVideoFeedComponent(
     modifier: Modifier = Modifier,
+    pageScope: AmityComposePageScope? = null,
     communityId: String,
     shouldRefresh: Boolean = false,
 ) {
@@ -43,6 +45,7 @@ fun AmityCommunityVideoFeedComponent(
     LazyColumn {
         amityCommunityVideoFeedLLS(
             modifier = modifier,
+            pageScope = pageScope,
             videoPosts = videoPosts,
         )
     }

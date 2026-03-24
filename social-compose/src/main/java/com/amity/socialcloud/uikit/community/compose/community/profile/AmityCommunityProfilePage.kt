@@ -503,6 +503,7 @@ fun AmityCommunityProfilePage(
                                         0 -> {
                                             amityCommunityImageFeedLLS(
                                                 modifier = modifier,
+                                                pageScope = getPageScope(),
                                                 imagePosts = imagePosts,
                                                 onViewPost = { postId, category ->
                                                     behavior.goToPostDetailPage(
@@ -519,6 +520,7 @@ fun AmityCommunityProfilePage(
                                         1 -> {
                                             amityCommunityVideoFeedLLS(
                                                 modifier = modifier,
+                                                pageScope = getPageScope(),
                                                 videoPosts = videoPosts,
                                                 onViewPost = { postId, category ->
                                                     behavior.goToPostDetailPage(
@@ -677,3 +679,4 @@ fun AmityCommunityProfilePage(
         }
     }
 }
+

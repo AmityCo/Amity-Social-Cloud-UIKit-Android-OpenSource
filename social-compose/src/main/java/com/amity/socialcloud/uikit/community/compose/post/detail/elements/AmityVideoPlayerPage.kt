@@ -72,6 +72,7 @@ import com.amity.socialcloud.sdk.model.core.product.AmityProduct
 import com.amity.socialcloud.sdk.model.core.producttag.AmityProductTag
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
+import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityMenuButton
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
@@ -154,6 +155,13 @@ fun AmityVideoPlayerPage(
 
     // Check if this is a recorded room post (recordedUrls is provided)
     val isRecordedRoomPost = remember(recordedUrls) { recordedUrls.isNotEmpty() }
+
+    val pageId = remember(childPosts, isRecordedRoomPost) {
+        when {
+            isRecordedRoomPost || childPosts.any { it.getData() is AmityPost.Data.ROOM } -> "livestream_player_page"
+            else -> "video_player_page"
+        }
+    }
 
     val videoPosts = remember(childPosts) {
         childPosts.filter { it.getData() is AmityPost.Data.VIDEO }
@@ -272,14 +280,9 @@ fun AmityVideoPlayerPage(
 
     Dialog(
         onDismissRequest = {},
-        properties = DialogProperties(
-            usePlatformDefaultWidth = false
-        ),
+        properties = DialogProperties(usePlatformDefaultWidth = false),
     ) {
-        AmityBaseComponent(
-            componentId = "video_player_page",
-            needScaffold = true,
-        ) {
+        AmityBasePage(pageId = pageId) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -499,7 +502,9 @@ fun AmityVideoPlayerPage(
                     )
                 } else if (selectedProducts.isNotEmpty()) {
                     AmityProductTagListComponent(
+                        pageScope = getPageScope(),
                         productTags = selectedProducts,
+                        postId = videoPosts.getOrNull(pagerState.currentPage)?.getPostId(),
                         renderMode = RenderModeEnum.VIDEO,
                         onDismiss = { showProductTagSheet = false },
                         onProductClick = { product -> selectedProduct = product }

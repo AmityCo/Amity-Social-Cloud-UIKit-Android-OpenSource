@@ -131,6 +131,7 @@ fun AmityPendingPostContentComponent(
             if (post.getChildren().any { it.getData() is AmityPost.Data.LIVE_STREAM || it.getData() is AmityPost.Data.ROOM }) {
                 AmityPostLivestreamElement(
                     modifier = modifier,
+                    pageScope = pageScope,
                     post = post
                 )
             } else if (post.getChildren().any { it.getData() is AmityPost.Data.POLL }) {
@@ -159,7 +160,8 @@ fun AmityPendingPostContentComponent(
                     post = post,
                 )
                 AmityPostMediaElement(
-                    modifier = Modifier,
+                    modifier = modifier,
+                    pageScope = pageScope,
                     post = post,
                     clipClick = {
                         behavior.goToClipFeedPage(context, it.getPostId())
@@ -181,6 +183,7 @@ fun AmityPendingPostContentComponent(
                 )
                 AmityPostMediaElement(
                     modifier = modifier,
+                    pageScope = pageScope,
                     post = post
                 )
             }

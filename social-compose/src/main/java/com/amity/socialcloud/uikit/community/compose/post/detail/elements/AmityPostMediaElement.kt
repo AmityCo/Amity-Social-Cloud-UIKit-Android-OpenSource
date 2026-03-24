@@ -39,6 +39,7 @@ import com.amity.socialcloud.sdk.model.core.product.AmityProduct
 import com.amity.socialcloud.sdk.model.core.producttag.AmityProductTag
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.common.isNotEmptyOrBlank
+import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.AmityProductTagListComponent
@@ -48,6 +49,7 @@ import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.Amit
 @Composable
 fun AmityPostMediaElement(
     modifier: Modifier = Modifier,
+    pageScope: AmityComposePageScope? = null,
     post: AmityPost,
     clipClick: (childPost: AmityPost) -> Unit = {},
 ) {
@@ -81,17 +83,20 @@ fun AmityPostMediaElement(
         when (postChildren.first().getData()) {
             is AmityPost.Data.IMAGE -> AmityChildPostMediaElement(
                 post = post,
+                pageScope = pageScope,
                 isVideoPost = false
             )
 
             is AmityPost.Data.VIDEO -> AmityChildPostMediaElement(
                 post = post,
+                pageScope = pageScope,
                 isVideoPost = true
             )
 
             is AmityPost.Data.CLIP -> AmityChildPostMediaElement(
                 modifier = modifier.aspectRatio(9 / 16f),
                 post = post,
+                pageScope = pageScope,
                 clipClick = {
                     clipClick(it)
                 },
@@ -106,6 +111,7 @@ fun AmityPostMediaElement(
 @Composable
 fun AmityChildPostMediaElement(
     modifier: Modifier = Modifier,
+    pageScope: AmityComposePageScope? = null,
     post: AmityPost,
     clipClick: (AmityPost) -> Unit = {},
     isVideoPost: Boolean,
@@ -164,7 +170,9 @@ fun AmityChildPostMediaElement(
     // Product tag bottom sheet
     if (showProductTagSheet && selectedProducts.isNotEmpty()) {
         AmityProductTagListComponent(
+            pageScope = pageScope,
             productTags = selectedProducts,
+            postId = post.getPostId(),
             renderMode = if (isVideoPost) RenderModeEnum.VIDEO else RenderModeEnum.IMAGE,
             onDismiss = { showProductTagSheet = false },
             onProductClick = { product -> selectedProduct = product }

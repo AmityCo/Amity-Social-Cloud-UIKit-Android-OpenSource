@@ -54,7 +54,7 @@ fun AmityProductTaggingBottomSheet(
             AmityBaseComponent(
                 modifier = Modifier,
                 pageScope = pageScope,
-                componentId = "manage_product_tag_list",
+                componentId = "product_tag_list",
                 needScaffold = true
             ) {
                 ManageProductTagListComponent(
@@ -63,6 +63,7 @@ fun AmityProductTaggingBottomSheet(
                     onDismiss = onDismiss,
                     onRemoveProduct = onRemoveProduct,
                     onPinProduct = onPinProduct,
+                    pageScope = pageScope,
                     componentScope = getComponentScope(),
                     onAddProducts = onAddProducts,
                     modifier = Modifier.fillMaxWidth(),

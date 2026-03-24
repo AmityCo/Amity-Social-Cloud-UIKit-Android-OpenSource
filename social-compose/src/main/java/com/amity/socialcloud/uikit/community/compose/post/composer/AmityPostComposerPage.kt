@@ -1688,6 +1688,7 @@ fun AmityPostComposerPage(
 
         AmityProductTagListComponent(
             productTags = allDistinctTags,
+            postId = (options as? AmityPostComposerOptions.AmityPostComposerEditOptions)?.post?.getPostId(),
             onDismiss = {
                 showAllProductTagsDialog = false
             },
@@ -1879,3 +1880,4 @@ fun List<AmityHashtag>.parseHashtagIndices(
         adjustedHashtag
     }
 }
+
