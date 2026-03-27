@@ -26,6 +26,8 @@ import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.sdk.model.core.notificationtray.AmityNotificationTrayItem
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.common.readableSocialTimeDiff
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
+import com.amity.socialcloud.uikit.common.ui.elements.AmityAvatarView
 import com.amity.socialcloud.uikit.common.ui.elements.AmityEventAvatarView
 import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
@@ -47,8 +49,16 @@ fun AmityNotificationTrayItemView(
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Avatar - show event cover for event notifications, user avatar otherwise
-        if (data?.getActionType() == "event") {
+        // Avatar - show system icon for user_profile_reset, event cover for events, user avatar otherwise
+        if (data?.getTrayItemCategory() == "user_profile_reset") {
+            AmityAvatarView(
+                image = null,
+                size = 32.dp,
+                placeholder = CommonComposeR.drawable.amity_ic_default_profile1,
+                placeholderTint = Color.White,
+                placeholderBackground = AmityTheme.colors.primaryShade2,
+            )
+        } else if (data?.getActionType() == "event") {
             data.getEvent()?.let { event ->
                 AmityEventAvatarView(
                     eventCoverImage = event.getCoverImage()
@@ -68,7 +78,8 @@ fun AmityNotificationTrayItemView(
         HighlightText(
             modifier = Modifier.weight(1f),
             text = data?.getText() ?: "",
-            templatedText = data?.getTemplatedText() ?: ""
+            templatedText = data?.getTemplatedText() ?: "",
+            category = data?.getTrayItemCategory() ?: ""
         )
 
         Spacer(Modifier.width(12.dp))
@@ -93,6 +104,7 @@ fun HighlightText(
     modifier: Modifier = Modifier,
     text: String,
     templatedText: String,
+    category: String = "",
 ) {
     // Improved regex to match {{key:value}} patterns without escaped backslashes
     val regex = "\\{\\{[^}]*\\}\\}".toRegex()
@@ -133,7 +145,7 @@ fun HighlightText(
                 append(literalParts[i])
 
                 if (i < placeholderValues.size) {
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.SemiBold)) {
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                         append(placeholderValues[i])
                     }
                 }
@@ -145,14 +157,14 @@ fun HighlightText(
             text = annotatedString,
             style = AmityTheme.typography.body.copy(fontSize = 15.sp),
             overflow = TextOverflow.Ellipsis,
-            maxLines = 3
+            maxLines = if (category == "user_profile_reset") 5 else 3,
         )
     } else {
         Text(
             text = text,
             style = AmityTheme.typography.body.copy(fontSize = 15.sp),
             overflow = TextOverflow.Ellipsis,
-            maxLines = 3,
+            maxLines = if (category == "user_profile_reset") 5 else 3,
             modifier = modifier
         )
     }

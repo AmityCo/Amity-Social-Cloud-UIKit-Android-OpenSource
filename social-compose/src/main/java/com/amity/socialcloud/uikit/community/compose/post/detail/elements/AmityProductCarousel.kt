@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -25,9 +24,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -97,14 +94,6 @@ fun AmityProductCarousel(
     val visibleProducts = products.take(MAX_VISIBLE_PRODUCTS)
     val hasMoreProducts = products.size > MAX_VISIBLE_PRODUCTS
 
-    val lazyRowState = rememberLazyListState()
-    // rememberUpdatedState ensures the LaunchedEffect closure always sees the latest
-    // visibleProducts without needing to restart the coroutine on recomposition.
-    val currentVisibleProducts = rememberUpdatedState(visibleProducts)
-    // Deduplicate view events — remember {} survives recomposition so this won't reset
-    // on state changes like reaction counts, but will reset when the composable leaves and re-enters.
-    val viewedProductIds = remember { mutableSetOf<String>() }
-
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -120,57 +109,29 @@ fun AmityProductCarousel(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // AmityBaseElement provides the element scope needed to call getConfigId()
-        AmityBaseElement(
-            pageScope = pageScope,
-            componentScope = componentScope,
-            elementId = "product_tag"
+        // Product carousel
+        LazyRow(
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            // Track view events based on actual on-screen visibility, not composition
-            LaunchedEffect(lazyRowState) {
-                snapshotFlow { lazyRowState.layoutInfo.visibleItemsInfo }
-                    .collect { visibleItems ->
-                        for (itemInfo in visibleItems) {
-                            // index maps to visibleProducts; the "see more" button sits beyond that range
-                            currentVisibleProducts.value.getOrNull(itemInfo.index)?.let { product ->
-                                if (viewedProductIds.add(product.getProductId())) {
-                                    product.analytics()
-                                        .markAsViewed(
-                                            sourceType = AnalyticsEventSourceType.POST,
-                                            sourceId = postId,
-                                            location = getConfigId()
-                                        )
-                                }
-                            }
-                        }
+            items(visibleProducts, key = { it.getProductId() }) { product ->
+                ProductCarouselCard(
+                    product = product,
+                    postId = postId,
+                    pageScope = pageScope,
+                    componentScope = componentScope,
+                    onClick = {
+                        selectedProduct = product
                     }
+                )
             }
 
-            // Product carousel
-            LazyRow(
-                state = lazyRowState,
-                contentPadding = PaddingValues(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                items(visibleProducts, key = { it.getProductId() }) { product ->
-                    ProductCarouselCard(
-                        product = product,
-                        postId = postId,
-                        pageScope = pageScope,
-                        componentScope = componentScope,
-                        onClick = {
-                            selectedProduct = product
-                        }
+            // Show "see more" button if there are more products
+            if (hasMoreProducts) {
+                item {
+                    SeeMoreButton(
+                        onClick = { showAllProductsSheet = true }
                     )
-                }
-
-                // Show "see more" button if there are more products
-                if (hasMoreProducts) {
-                    item {
-                        SeeMoreButton(
-                            onClick = { showAllProductsSheet = true }
-                        )
-                    }
                 }
             }
         }
@@ -179,9 +140,7 @@ fun AmityProductCarousel(
     // Bottom sheet for all products
     if (showAllProductsSheet) {
         AmityProductTagListComponent(
-            pageScope = pageScope,
             productTags = products,
-            postId = postId,
             onDismiss = { showAllProductsSheet = false },
             onProductClick = { product -> selectedProduct = product }
         )
@@ -217,8 +176,17 @@ private fun ProductCarouselCard(
     AmityBaseElement(
         pageScope = pageScope,
         componentScope = componentScope,
-        elementId = "product_tag"
+        elementId = "product_tag_element"
     ) {
+        // Track view event when product card is displayed
+        LaunchedEffect(product.getProductId()) {
+            product.analytics()
+                .markAsViewed(
+                    sourceType = AnalyticsEventSourceType.POST,
+                    sourceId = postId,
+                    location = getConfigId()
+                )
+        }
 
         Column(
             modifier = modifier
@@ -351,3 +319,4 @@ private fun SeeMoreButton(
         }
     }
 }
+

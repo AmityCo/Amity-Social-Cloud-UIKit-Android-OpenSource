@@ -39,6 +39,7 @@ import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.compose.R
 import com.amity.socialcloud.uikit.common.extionsions.extractUrls
+import com.amity.socialcloud.uikit.common.extionsions.parseUrls
 import com.amity.socialcloud.uikit.common.linkpreview.AmityPreviewUrl
 import com.amity.socialcloud.uikit.common.linkpreview.models.AmityPreviewNoUrl
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
@@ -318,7 +319,7 @@ fun AmityPreviewLinkViewWithMetadata(
                 shape = RoundedCornerShape(8.dp)
             )
             .clickableWithoutRipple {
-                uriHandler.openUri(url)
+                uriHandler.openUri(url.parseUrls())
             }
     ) {
         // Only show image Box if imageUrl exists

@@ -108,17 +108,13 @@ fun AmityWaitingForCoHost(
             // Waiting message
             Text(
                 text = if (isHost) {
-                    if (isPendingInvitation) {
-                        "Waiting for co-host\nto accept invitation..."
-                    } else {
-                        "Co-host is getting ready\nin the backstage."
-                    }
+                    "Waiting for co-host\nto get ready..."
                 } else {
                     "Waiting for host\nto get resume..."
                 },
                 color = Color.White,
                 fontSize = 17.sp,
-                fontWeight = FontWeight.Light,
+                fontWeight = FontWeight.Medium,
                 textAlign = TextAlign.Center,
                 lineHeight = 24.sp
             )

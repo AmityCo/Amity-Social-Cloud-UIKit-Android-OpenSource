@@ -1879,7 +1879,8 @@ fun AmityCreateRoomPage(
                 pinnedProductId = pinnedProductId,
                 taggedProducts = taggedProducts,
                 canManageProducts = true,
-                isNetworkConnected = uiState.networkConnection is NetworkConnectionEvent.Connected
+                isNetworkConnected = uiState.networkConnection is NetworkConnectionEvent.Connected,
+                isHost = true
             )
         }
 

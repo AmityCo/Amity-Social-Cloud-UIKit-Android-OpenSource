@@ -1,6 +1,8 @@
 package com.amity.socialcloud.uikit.community.compose.story.view.elements
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -9,9 +11,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
@@ -38,11 +42,16 @@ fun AmityStorySingleSegmentTimerElement(
     }
 
     LinearProgressIndicator(
-        progress = currentProgress,
+        progress = { currentProgress },
         color = elementScope.getConfig().getValue("progress_color").asColor(),
         trackColor = elementScope.getConfig().getBackgroundColor(),
-        strokeCap = StrokeCap.Round,
-        modifier = modifier.fillMaxWidth()
+        strokeCap = StrokeCap.Butt,
+        modifier = modifier
+            .fillMaxWidth()
+            .height(4.dp)
+            .clip(RoundedCornerShape(50)),
+        gapSize = 0.dp,
+        drawStopIndicator = {}
     )
 
     LaunchedEffect(shouldStart, shouldRestart, shouldPauseTimer, isAlreadyFinished, duration) {

@@ -140,6 +140,21 @@ fun AmityEventDetailPage(
     val event by viewModel.getEvent()
         .collectAsState(initial = null)
 
+    // Fetch the room post linked to this event (used by AmityEventInfoComponent)
+    val eventPost by remember(event?.getPostId()) {
+        val postId = event?.getPostId()
+        if (!postId.isNullOrEmpty()) {
+            AmitySocialClient.newPostRepository()
+                .getPost(postId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .asFlow()
+                .catch { }
+        } else {
+            kotlinx.coroutines.flow.flowOf(null)
+        }
+    }.collectAsState(initial = null)
+
     // Get RSVP status from event: null = no RSVP, true = going, false = not going
     var isGoing by remember { mutableStateOf<Boolean?>(null) }
     var isRsvpLoading by remember { mutableStateOf(false) }
@@ -447,6 +462,7 @@ fun AmityEventDetailPage(
                                     if (event != null) {
                                         AmityEventInfoComponent(
                                             event = event!!,
+                                            post = eventPost,
                                             onAddressCopied = {
                                                 AmityUIKitSnackbar.publishSnackbarMessage("Address copied")
                                             },

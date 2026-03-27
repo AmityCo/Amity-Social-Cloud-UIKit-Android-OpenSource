@@ -59,37 +59,8 @@ fun AmityEventMenuBottomSheet(
                     .fillMaxWidth()
                     .padding(bottom = 16.dp)
             ) {
-                // Add to calendar option
-                if (showAddToCalendar) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                onAddToCalendarClick()
-                                onDismiss()
-                            }
-                            .padding(horizontal = 16.dp, vertical = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.amity_ic_event_add_to_calendar_button),
-                            contentDescription = "Add to calendar",
-                            tint = AmityTheme.colors.base,
-                            modifier = Modifier.size(24.dp)
-                        )
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Text(
-                            text = "Add to calendar",
-                            style = AmityTheme.typography.body.copy(
-                                fontWeight = FontWeight.Medium,
-                                fontSize = 15.sp
-                            ),
-                            color = AmityTheme.colors.base
-                        )
-                    }
-                }
-                
                 // Edit option - only show for host (event creator), regardless of event status
+                // This appears first in the menu per design requirements
                 if (isEventCreator) {
                     Row(
                         modifier = Modifier
@@ -122,6 +93,37 @@ fun AmityEventMenuBottomSheet(
                         Spacer(modifier = Modifier.width(16.dp))
                         Text(
                             text = "Edit event",
+                            style = AmityTheme.typography.body.copy(
+                                fontWeight = FontWeight.Medium,
+                                fontSize = 15.sp
+                            ),
+                            color = AmityTheme.colors.base
+                        )
+                    }
+                }
+                
+                // Add to calendar option
+                // This appears after Edit event for event creators
+                if (showAddToCalendar) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                onAddToCalendarClick()
+                                onDismiss()
+                            }
+                            .padding(horizontal = 16.dp, vertical = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.amity_ic_event_add_to_calendar_button),
+                            contentDescription = "Add to calendar",
+                            tint = AmityTheme.colors.base,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Text(
+                            text = "Add to calendar",
                             style = AmityTheme.typography.body.copy(
                                 fontWeight = FontWeight.Medium,
                                 fontSize = 15.sp

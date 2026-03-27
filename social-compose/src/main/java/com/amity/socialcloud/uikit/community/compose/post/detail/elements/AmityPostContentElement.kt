@@ -23,6 +23,7 @@ import com.amity.socialcloud.sdk.model.core.product.AmityProduct
 import com.amity.socialcloud.sdk.model.core.product.AmityProductStatus
 import com.amity.socialcloud.sdk.model.core.producttag.AmityProductTag
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
+import com.amity.socialcloud.uikit.common.extionsions.UrlPosition
 import com.amity.socialcloud.uikit.common.ui.elements.AmityExpandableText
 import com.amity.socialcloud.uikit.common.ui.elements.HashtagMetadataGetter
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
@@ -86,6 +87,24 @@ fun AmityPostContentElement(
 
         // Display body text if available
         if (text.isNotEmpty()) {
+            val links = remember(post.getPostId(), post.getEditedAt()) {
+                post.getLinks()?.mapNotNull { link ->
+                    val index = link.getIndex()
+                    val length = link.getLength()
+                    val url = link.getUrl()
+                    if (index != null && length != null) {
+                        UrlPosition(
+                            url = url,
+                            start = index,
+                            end = index + length,
+                            originalText = text.substring(
+                                index.coerceAtMost(text.length),
+                                (index + length).coerceAtMost(text.length)
+                            )
+                        )
+                    } else null
+                }?.takeIf { it.isNotEmpty() }
+            }
             AmityExpandableText(
                 modifier = modifier,
                 text = text,
@@ -116,6 +135,7 @@ fun AmityPostContentElement(
                         }
                     }
                 },
+                linkPositions = links
             )
         }
     }

@@ -325,7 +325,7 @@ class AmityCreateRoomPageViewModel constructor(val postId: String? = null) : Ami
                         ?.await()
 
                     AmityUIKitSnackbar.publishSnackbarMessage(
-                        message = "Co-host invitation successfully sent."
+                        message = "Invitation sent."
                     )
 //                    if (user == null) {
 //                        fetchCohostUser(userId)
@@ -526,6 +526,7 @@ class AmityCreateRoomPageViewModel constructor(val postId: String? = null) : Ami
             .createRoom(
                 title = title,
                 description = description,
+                thumbnailFileId = _uiState.value.thumbnailId,
                 liveChatEnabled = true,
             )
     }
@@ -805,10 +806,6 @@ class AmityCreateRoomPageViewModel constructor(val postId: String? = null) : Ami
         AmityVideoClient.newRoomRepository()
             .removeRoomParticipant(roomId = roomId, userId = userId)
             .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnComplete {
-                AmityUIKitSnackbar.publishSnackbarMessage("Your co-host was removed from your live stream.")
-            }
             .subscribe()
             .let(::addDisposable)
     }

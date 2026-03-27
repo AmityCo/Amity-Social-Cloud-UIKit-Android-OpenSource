@@ -90,6 +90,7 @@ fun AmityMentionTextField(
     onProductMentions: (List<ProductMentionData>) -> Unit = {},
     onHashtags: (List<AmityHashtag>) -> Unit = {},
     autoFocus: Boolean = false,
+    focusTrigger: Any? = null,
     shouldClearText: Boolean = false,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default.copy(
         capitalization = KeyboardCapitalization.Sentences
@@ -125,9 +126,6 @@ fun AmityMentionTextField(
     // Setup focus
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
-
-    // Remember if focus was requested to ensure we only do it once
-    var hasFocusBeenRequested by remember { mutableStateOf(false) }
 
     // Track mentions internally
     var mentions by remember { mutableStateOf<List<MentionData>>(emptyList()) }
@@ -229,8 +227,8 @@ fun AmityMentionTextField(
     }
 
     // Auto focus logic with cursor position at end of text
-    LaunchedEffect(autoFocus) {
-        if (autoFocus && !hasFocusBeenRequested) {
+    LaunchedEffect(autoFocus, focusTrigger) {
+        if (autoFocus) {
             // Small delay to ensure the view is ready to receive focus
             delay(100)
             focusRequester.requestFocus()
@@ -239,7 +237,6 @@ fun AmityMentionTextField(
                 text = textFieldValue.text,
                 selection = TextRange(textFieldValue.text.length)
             )
-            hasFocusBeenRequested = true
         }
     }
 
@@ -547,7 +544,8 @@ fun AmityMentionTextField(
                     }
 
                     // Improved mention token detection logic
-                    val hasActiveMention = detectActiveMentionToken(limitedValue)
+                    val existingMentionPositions = mentions.map { it.startPosition }.toSet()
+                    val hasActiveMention = detectActiveMentionToken(limitedValue, existingMentionPositions)
                     val hasActiveHashtag = detectActiveHashtagToken(limitedValue)
 
                     if (hasActiveMention != null) {
@@ -661,7 +659,8 @@ fun AmityMentionTextField(
         }
 
         // Only show anchor when we're actively typing a mention token
-        val isActiveToken = detectActiveMentionToken(textFieldValue) != null
+        val existingMentionPositions = mentions.map { it.startPosition }.toSet()
+        val isActiveToken = detectActiveMentionToken(textFieldValue, existingMentionPositions) != null
         if (!isActiveToken) {
             mentionAnchorRectInWindow = null
             onMentionAnchorChanged(null)
@@ -694,8 +693,9 @@ fun AmityMentionTextField(
 
     // Render suggestions popup (optional) anchored to caret.
     val anchorRect = mentionAnchorRectInWindow
-    val hasActiveMentionToken = remember(textFieldValue.text, textFieldValue.selection, mentionDismissed) {
-        detectActiveMentionToken(textFieldValue) != null && !mentionDismissed
+    val existingMentionPositionsForPopup = remember(mentions) { mentions.map { it.startPosition }.toSet() }
+    val hasActiveMentionToken = remember(textFieldValue.text, textFieldValue.selection, mentionDismissed, existingMentionPositionsForPopup) {
+        detectActiveMentionToken(textFieldValue, existingMentionPositionsForPopup) != null && !mentionDismissed
     }
     if (mentionSuggestions != null && anchorRect != null && hasActiveMentionToken) {
         AmityMentionSuggestionPopupFullWidth(
@@ -1064,8 +1064,15 @@ private fun calculateTextDiff(oldText: String, newValue: TextFieldValue): TextDi
 /**
  * Improved detection logic that handles all cases for @ token detection
  * Returns the query string if an active mention is being typed, null otherwise
+ *
+ * @param existingMentionPositions start positions (where '@' sits in the text) of
+ *   already-completed user mentions. Any '@' found at one of these positions is
+ *   treated as consumed and will NOT be reported as an active token.
  */
-internal fun detectActiveMentionToken(value: TextFieldValue): String? {
+internal fun detectActiveMentionToken(
+    value: TextFieldValue,
+    existingMentionPositions: Set<Int> = emptySet(),
+): String? {
     val text = value.text
     val cursorPosition = value.selection.start
 
@@ -1073,6 +1080,8 @@ internal fun detectActiveMentionToken(value: TextFieldValue): String? {
 
     // Check if cursor is right after an @ character
     if (text.getOrNull(cursorPosition - 1) == '@') {
+        // If this '@' belongs to a completed mention, do not treat it as a new token.
+        if ((cursorPosition - 1) in existingMentionPositions) return null
         return ""
     }
 
@@ -1083,9 +1092,13 @@ internal fun detectActiveMentionToken(value: TextFieldValue): String? {
 
     // Search backwards from cursor until we find '@'.
     // Allow spaces inside the token so multi-word product names remain an active mention query.
+    // Stop at newlines — a mention token should not span across lines.
     while (index >= 0) {
         val char = text[index]
+        if (char == '\n') break
         if (char == '@') {
+            // Skip '@' that belongs to an already-completed mention.
+            if (index in existingMentionPositions) break
             foundAt = true
             tokenStart = index + 1
             break
@@ -1118,9 +1131,9 @@ private fun updateMentionPositions(
             mention.startPosition > changePosition ->
                 mention.copy(startPosition = mention.startPosition + change)
 
-            // If change happens inside mention, remove that mention
+            // If change happens strictly inside the mention name, remove that mention
             changePosition > mention.startPosition &&
-                    changePosition <= mention.startPosition + mention.length + 1 ->
+                    changePosition <= mention.startPosition + mention.length ->
                 mention.copy(startPosition = -1) // Mark for removal
 
             // Otherwise keep as is
@@ -1141,10 +1154,10 @@ private fun updateProductMentionPositions(
             // If change happens before the product span, adjust position
             mention.startPosition > changePosition -> mention.copy(startPosition = mention.startPosition + change)
 
-            // If change happens inside the product span, remove it (no longer reliable)
-            // Use < instead of <= to allow typing/pasting right after the product name without removing it
+            // If change happens strictly inside the product name, remove it (no longer reliable)
+            // Allow deleting/pasting after the product name (trailing space) without removing the mention
             changePosition > mention.startPosition &&
-                changePosition < mention.startPosition + mention.length -> null
+                changePosition <= mention.startPosition + mention.length -> null
 
             else -> mention
         }

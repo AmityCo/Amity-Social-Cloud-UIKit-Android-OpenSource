@@ -20,6 +20,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rxjava3.subscribeAsState
 import androidx.compose.runtime.setValue
@@ -56,6 +57,7 @@ import com.amity.socialcloud.uikit.common.utils.asDrawableRes
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.closePage
 import com.amity.socialcloud.uikit.common.utils.getValue
+import com.amity.socialcloud.uikit.common.utils.isSignedIn
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityStoryModalSheetUIState
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageViewModel
@@ -106,13 +108,17 @@ fun AmityStoryHeaderRow(
     }.subscribeAsState(initial = false)
 
 
-    val allowAllUserStoryCreation by AmitySocialClient.getSettings()
-        .asFlow()
-        .map { it.getStorySettings().isAllowAllUserToCreateStory() }
-        .catch {
-            emit(false)
-        }
-        .collectAsState(initial = false)
+    val allowAllUserStoryCreation by if (!AmityCoreClient.isSignedIn()) {
+        remember { mutableStateOf(false) }
+    } else {
+        AmitySocialClient.getSettings()
+            .asFlow()
+            .map { it.getStorySettings().isAllowAllUserToCreateStory() }
+            .catch {
+                emit(false)
+            }
+            .collectAsState(initial = false)
+    }
 
     val shouldShowStoryCreationButton by remember(
         allowAllUserStoryCreation,

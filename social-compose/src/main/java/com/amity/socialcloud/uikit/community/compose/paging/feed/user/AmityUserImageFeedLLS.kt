@@ -203,7 +203,6 @@ fun LazyListScope.amityUserImageFeedLLS(
                     // State for product tag bottom sheet
                     var showProductTagSheet by remember { mutableStateOf(false) }
                     var selectedProducts by remember { mutableStateOf<List<AmityProduct>>(emptyList()) }
-                    var selectedPostId by remember { mutableStateOf<String?>(null) }
                     var selectedProduct by remember { mutableStateOf<AmityProduct?>(null) }
                     val disposables = remember { CompositeDisposable() }
 
@@ -217,7 +216,6 @@ fun LazyListScope.amityUserImageFeedLLS(
                     val onProductTagClick: (AmityPost) -> Unit = { post ->
                         val productIds = getProductIdsFromPost(post)
                         if (productIds.isNotEmpty()) {
-                            selectedPostId = post.getPostId()
                             val disposable = Observable.fromIterable(productIds)
                                 .flatMapSingle { productId ->
                                     AmityCoreClient.newProductRepository()
@@ -244,7 +242,6 @@ fun LazyListScope.amityUserImageFeedLLS(
                     if (showProductTagSheet && selectedProducts.isNotEmpty()) {
                         AmityProductTagListComponent(
                             productTags = selectedProducts,
-                            postId = selectedPostId,
                             renderMode = RenderModeEnum.IMAGE,
                             onDismiss = { showProductTagSheet = false },
                             onProductClick = { product -> selectedProduct = product }

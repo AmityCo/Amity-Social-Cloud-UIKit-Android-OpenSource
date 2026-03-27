@@ -33,7 +33,9 @@ import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionee
 import com.amity.socialcloud.sdk.model.core.product.AmityProductStatus
 import com.amity.socialcloud.sdk.model.core.producttag.AmityProductTag
 import com.amity.socialcloud.uikit.common.common.views.text.AmityTextStyle
+import com.amity.socialcloud.uikit.common.extionsions.UrlPosition
 import com.amity.socialcloud.uikit.common.extionsions.extractUrls
+import com.amity.socialcloud.uikit.common.extionsions.parseUrls
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -47,6 +49,7 @@ fun AmityExpandableText(
     hashtagGetter: AmityHashtagMetadataGetter = AmityHashtagMetadataGetter(JsonObject()),
     productTags: List<AmityProductTag.Text> = emptyList(),
     boldWhenMatches: List<String> = emptyList(),
+    linkPositions: List<UrlPosition>? = null,
     style: TextStyle = AmityTheme.typography.body,
     previewLines: Int = EXPANDABLE_TEXT_MAX_LINES,
     intialExpand: Boolean = false,
@@ -161,7 +164,8 @@ fun AmityExpandableText(
                     // If archived, it will render as plain text (no style, no annotation)
                 }
             }
-            text.extractUrls().forEach {
+            val resolvedLinks = if (!linkPositions.isNullOrEmpty()) linkPositions else text.extractUrls()
+            resolvedLinks.forEach {
                 addStyle(
                     style = SpanStyle(
                         color = AmityTheme.colors.highlight
@@ -191,7 +195,6 @@ fun AmityExpandableText(
                 addStyle(
                     style = SpanStyle(
                         fontWeight = FontWeight.SemiBold,
-                        color = AmityTheme.colors.highlight,
                         background = AmityTheme.colors.highlight.copy(
                             alpha = 0.1f
                         )
@@ -253,7 +256,7 @@ fun AmityExpandableText(
                             end = position
                         )
                         if (annotations.isNotEmpty()) {
-                            val url = annotations.first().item
+                            val url = annotations.first().item.parseUrls()
                             onUrlClick
                                 ?.invoke(context, url)
                                 ?: uriHandler.openUri(url)

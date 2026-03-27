@@ -30,6 +30,7 @@ import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadata
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
+import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
@@ -45,7 +46,9 @@ import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentViewModel
 import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.AmityMentionTextField
 import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.AmityMentionSuggestionView
+import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.UrlHighlight
 import com.google.gson.JsonObject
+import kotlin.collections.emptyList
 
 @Composable
 fun AmityEditCommentContainer(
@@ -60,6 +63,31 @@ fun AmityEditCommentContainer(
     }
     val commentText = remember {
         (comment.getData() as? AmityComment.Data.TEXT)?.getText() ?: ""
+    }
+
+    // Convert existing SDK links to UrlHighlight for initial display in editor.
+    // Filter out hyperlinks (where display text != URL) since Android cannot author those.
+    val initialUrlHighlights = remember {
+        /* Remove until support hyperlink edit
+        comment.getLinks()?.mapNotNull { link ->
+            val index = link.getIndex()
+            val length = link.getLength()
+            val url = link.getUrl()
+            if (index != null && length != null && url != null && index + length <= commentText.length) {
+                val displayText = commentText.substring(index, index + length)
+                // Keep only auto-detected links where displayed text matches the URL
+                // (or the URL with https:// prepended). Hyperlinks are dropped.
+                val normalizedDisplay = displayText.lowercase()
+                val normalizedUrl = url.lowercase()
+                val isAutoDetectedLink = normalizedUrl == normalizedDisplay
+                        || normalizedUrl == "https://$normalizedDisplay"
+                        || normalizedUrl == "http://$normalizedDisplay"
+                if (isAutoDetectedLink) {
+                    UrlHighlight(start = index, end = index + length, url = url)
+                } else null
+            } else null
+        } ?: emptyList() */
+        emptyList<UrlHighlight>()
     }
 
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
@@ -119,6 +147,9 @@ fun AmityEditCommentContainer(
                     mentionedUser = selectedUserToMention,
                     mentionMetadata = mentionGetter.getMentionedUsers(),
                     mentionees = comment.getMentionees(),
+                    enableUrlHighlighting = true,
+                    urlColor = AmityTheme.colors.highlight,
+                    urlHighlights = initialUrlHighlights,
                     onValueChange = {
                         localCommentText = it
                     },
@@ -208,9 +239,14 @@ fun AmityEditCommentContainer(
                                 onSuccess = {
                                 },
                                 onError = {
-                                    it.message?.let { message ->
-                                        componentScope?.showSnackbar(message = message)
+                                    val errorMessage = if (AmityError.from(it) == AmityError.BAN_WORD_FOUND) {
+                                        context.getString(R.string.amity_add_blocked_words_comment_error_message)
+                                    } else if(AmityError.from(it) == AmityError.LINK_NOT_ALLOWED) {
+                                        context.getString(R.string.amity_add_blocked_links_comment_error_message)
+                                    } else {
+                                        it.message
                                     }
+                                    AmityUIKitSnackbar.publishSnackbarErrorMessage(errorMessage)
                                 }
                             )
                         }

@@ -314,10 +314,12 @@ fun AmityPostComposerPage(
     // Initialize detectedUrls from post's existing links in edit mode
     LaunchedEffect(post) {
         if (post != null) {
+            viewModel.updateDetectedUrls(listOf())
+            /* Remove until support hyperlink edit
             val initialLinks = post?.getLinks()?.toList() ?: emptyList()
             if (initialLinks.isNotEmpty()) {
                 viewModel.updateDetectedUrls(initialLinks)
-            }
+            }*/
         }
     }
 
@@ -1085,32 +1087,20 @@ fun AmityPostComposerPage(
                         backgroundColor = Color.Transparent,
                         enableUrlHighlighting = true,
                         urlColor = AmityTheme.colors.primary,
-                        urlHighlights = detectedUrls.mapNotNull { link ->
-                            val index = link.getIndex()
-                            val length = link.getLength()
-                            val url = link.getUrl()
-                            if (index != null && length != null && url != null) {
-                                UrlHighlight(
-                                    start = index,
-                                    end = index + length,
-                                    url = url
-                                )
-                            } else {
-                                null
-                            }
-                        },
                         onValueChange = {
                             localPostText = it
-                            // Detect URLs and convert to AmityLink objects
-                            val urlPositions = it.extractUrls()
-                            if (urlPositions.isNotEmpty()) {
-                                // ViewModel handles debouncing for metadata fetching
-                                val urls = urlPositions.mapNotNull { urlPosition ->
+                            if (selectedProductToMention != null) selectedProductToMention = null
+                        },
+                        onUrlsDetected = { urls ->
+                            // Convert UrlHighlight to AmityLink
+                            // This callback is already debounced by AmityMentionTextField (2 seconds)
+                            if (urls.isNotEmpty()) {
+                                val links = urls.mapNotNull { urlHighlight ->
                                     try {
                                         AmityLink(
-                                            index = urlPosition.start,
-                                            length = urlPosition.end - urlPosition.start,
-                                            url = urlPosition.url,
+                                            index = urlHighlight.start,
+                                            length = urlHighlight.end - urlHighlight.start,
+                                            url = urlHighlight.url,
                                             renderPreview = true,
                                             domain = null,
                                             title = null,
@@ -1120,7 +1110,7 @@ fun AmityPostComposerPage(
                                         null
                                     }
                                 }
-                                viewModel.updateDetectedUrls(urls)
+                                viewModel.updateDetectedUrls(links)
                             } else if (detectedUrls.isNotEmpty() && previewMetadata != null) {
                                 // Preserve existing link with metadata when text is removed
                                 viewModel.preserveUrlWithMetadata()
@@ -1307,7 +1297,7 @@ fun AmityPostComposerPage(
 
 
 
-        if ((detectedUrls.isNotEmpty() || previewMetadata != null) && !isLinkPreviewDismissed && (hasValidMetadata || isLoadingMetadata)) {
+        if ((detectedUrls.isNotEmpty() || previewMetadata != null) && !isLinkPreviewDismissed && (hasValidMetadata || isLoadingMetadata) && !isInEditMode) {
             item {
                 Column(
                     modifier = Modifier
@@ -1688,7 +1678,6 @@ fun AmityPostComposerPage(
 
         AmityProductTagListComponent(
             productTags = allDistinctTags,
-            postId = (options as? AmityPostComposerOptions.AmityPostComposerEditOptions)?.post?.getPostId(),
             onDismiss = {
                 showAllProductTagsDialog = false
             },
@@ -1880,4 +1869,3 @@ fun List<AmityHashtag>.parseHashtagIndices(
         adjustedHashtag
     }
 }
-

@@ -1280,6 +1280,7 @@ fun AmityRoomPlayerPage(
                 taggedProducts = uiState.getRoomPost()?.getProducts().orEmpty(),
                 pinnedProductId = uiState.getRoomPost()?.getPinnedProductId(),
                 isPostLive = uiState.room?.getStatus() == AmityRoomStatus.RECORDED || uiState.room?.getStatus() == AmityRoomStatus.ENDED,
+                isHost = post.getCreatorId() == AmityCoreClient.getUserId()
             )
         }
 

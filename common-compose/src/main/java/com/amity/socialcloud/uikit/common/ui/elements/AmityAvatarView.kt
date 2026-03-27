@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -272,7 +273,7 @@ fun AmityEventAvatarView(
     roundedCornerShape: RoundedCornerShape = RoundedCornerShape(6.dp),
 ) {
     val url = eventCoverImage?.getUrl(AmityImage.Size.MEDIUM)?.ifEmpty { null }
-    
+
     val painter = rememberAsyncImagePainter(
         model = ImageRequest
             .Builder(LocalContext.current)
@@ -282,7 +283,7 @@ fun AmityEventAvatarView(
             .build()
     )
     val painterState by painter.state.collectAsState()
-    
+
     Box(modifier = modifier) {
         Image(
             painter = painter,
@@ -345,16 +346,25 @@ fun AmityAvatarView(
                 .clip(roundedCornerShape)
         )
         if (painterState !is AsyncImagePainter.State.Success) {
-            Icon(
-                painter = painterResource(id = placeholder),
-                contentDescription = null,
-                tint = placeholderTint,
+            Box(
                 modifier = Modifier
                     .size(size)
-                    .clip(roundedCornerShape)
-                    .background(placeholderBackground)
-                    .padding(iconPadding)
-            )
+                    .clip(CircleShape)
+                    .background(AmityTheme.colors.primaryShade2)
+            ) {
+                Image(
+                    painter = painterResource(id = placeholder),
+                    contentDescription = null,
+                    contentScale = ContentScale.Fit,
+                    colorFilter = ColorFilter.tint(placeholderTint),
+                    modifier = Modifier
+                        .size(18.dp)
+                        .clip(roundedCornerShape)
+                        .background(placeholderBackground)
+                        .padding(iconPadding)
+                        .align(Alignment.Center)
+                )
+            }
         }
     }
 }

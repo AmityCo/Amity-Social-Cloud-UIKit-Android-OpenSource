@@ -32,7 +32,6 @@ import com.amity.socialcloud.uikit.community.compose.ui.components.feed.AmityPro
 import com.amity.socialcloud.uikit.community.compose.ui.components.feed.AmityProfileVideoFeedItem
 import com.amity.socialcloud.uikit.community.compose.ui.components.feed.AmityVideoFeedContainer
 import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityProductWebViewBottomSheet
-import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -42,7 +41,6 @@ import kotlinx.coroutines.delay
 
 fun LazyListScope.amityCommunityVideoFeedLLS(
     modifier: Modifier = Modifier,
-    pageScope: AmityComposePageScope? = null,
     videoPosts: LazyPagingItems<AmityPost>,
     onViewPost: ((String, AmityPostCategory) -> Unit)? = null,
 ) {
@@ -61,7 +59,6 @@ fun LazyListScope.amityCommunityVideoFeedLLS(
         // State for product tag bottom sheet
         var showProductTagSheet by remember { mutableStateOf(false) }
         var selectedProducts by remember { mutableStateOf<List<AmityProduct>>(emptyList()) }
-        var selectedPostId by remember { mutableStateOf<String?>(null) }
         var selectedProduct by remember { mutableStateOf<AmityProduct?>(null) }
         val disposables = remember { CompositeDisposable() }
 
@@ -75,7 +72,6 @@ fun LazyListScope.amityCommunityVideoFeedLLS(
         val onProductTagClick: (AmityPost) -> Unit = { post ->
             val productIds = getProductIdsFromPost(post)
             if (productIds.isNotEmpty()) {
-                selectedPostId = post.getPostId()
                 val disposable = Observable.fromIterable(productIds)
                     .flatMapSingle { productId ->
                         AmityCoreClient.newProductRepository()
@@ -101,9 +97,7 @@ fun LazyListScope.amityCommunityVideoFeedLLS(
         // Product tag bottom sheet
         if (showProductTagSheet && selectedProducts.isNotEmpty()) {
             AmityProductTagListComponent(
-                pageScope = pageScope,
                 productTags = selectedProducts,
-                postId = selectedPostId,
                 renderMode = RenderModeEnum.VIDEO,
                 onDismiss = { showProductTagSheet = false },
                 onProductClick = { product -> selectedProduct = product }

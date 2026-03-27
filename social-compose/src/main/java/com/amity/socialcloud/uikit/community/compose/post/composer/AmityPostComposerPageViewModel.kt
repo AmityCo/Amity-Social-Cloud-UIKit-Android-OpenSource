@@ -1028,9 +1028,7 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
                     this.mentionUsers(mentionUserIds.toList())
                     this.hashtags(hashtags.map { it.getText() })
                 }
-                if (links.isNotEmpty()) {
-                    this.links(links)
-                }
+                this.links(links)
                 productTags?.let(this::productTags)
                 attachmentProductTags?.let(this::taggedProducts)
             }

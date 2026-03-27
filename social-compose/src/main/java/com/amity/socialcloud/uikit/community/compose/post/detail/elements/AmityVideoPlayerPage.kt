@@ -72,7 +72,6 @@ import com.amity.socialcloud.sdk.model.core.product.AmityProduct
 import com.amity.socialcloud.sdk.model.core.producttag.AmityProductTag
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
-import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityMenuButton
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
@@ -141,6 +140,7 @@ fun AmityVideoPlayerPage(
 
     // Sync selectedProducts from ViewModel after add/remove operations
     val taggedProductsFromVM by viewModel.taggedProducts.collectAsState()
+    val isProductCatalogueEnabled by viewModel.isProductCatalogueEnabled.collectAsState()
 
     // Update selectedProducts when ViewModel emits new value (after add/remove)
     LaunchedEffect(taggedProductsFromVM) {
@@ -150,18 +150,15 @@ fun AmityVideoPlayerPage(
         }
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.fetchProductCatalogueSettings()
+    }
+
     // Menu bottom sheet state
     var showMenuSheet by remember { mutableStateOf(false) }
 
     // Check if this is a recorded room post (recordedUrls is provided)
     val isRecordedRoomPost = remember(recordedUrls) { recordedUrls.isNotEmpty() }
-
-    val pageId = remember(childPosts, isRecordedRoomPost) {
-        when {
-            isRecordedRoomPost || childPosts.any { it.getData() is AmityPost.Data.ROOM } -> "livestream_player_page"
-            else -> "video_player_page"
-        }
-    }
 
     val videoPosts = remember(childPosts) {
         childPosts.filter { it.getData() is AmityPost.Data.VIDEO }
@@ -171,6 +168,8 @@ fun AmityVideoPlayerPage(
     val roomChildPost = remember(childPosts, isRecordedRoomPost) {
         if (isRecordedRoomPost) childPosts.find { it.getData() is AmityPost.Data.ROOM } else null
     }
+
+    val isHost = AmityCoreClient.getUserId() == roomChildPost?.getCreatorId()
 
     val pagerState = rememberPagerState {
         if (isRecordedRoomPost) 1 else videoPosts.size
@@ -280,9 +279,14 @@ fun AmityVideoPlayerPage(
 
     Dialog(
         onDismissRequest = {},
-        properties = DialogProperties(usePlatformDefaultWidth = false),
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false
+        ),
     ) {
-        AmityBasePage(pageId = pageId) {
+        AmityBaseComponent(
+            componentId = "video_player_page",
+            needScaffold = true,
+        ) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -378,7 +382,7 @@ fun AmityVideoPlayerPage(
                             .size(32.dp)
                             .constrainAs(muteBtn) {
                                 top.linkTo(parent.top)
-                                end.linkTo(if (showMenuButton) menuBtn.start else parent.end, margin = 8.dp)
+                                end.linkTo(if (showMenuButton && (isProductCatalogueEnabled || isHost)) menuBtn.start else parent.end, margin = 8.dp)
                             }
                             .clickableWithoutRipple {
                                 isAudioMuted = !isAudioMuted
@@ -387,7 +391,7 @@ fun AmityVideoPlayerPage(
                     )
 
                     // Menu button (3 dots)
-                    if (showMenuButton) {
+                    if (showMenuButton && (isProductCatalogueEnabled || isHost)) {
                         AmityMenuButton(
                             icon = if (isRecordedRoomPost) R.drawable.amity_ic_more_vertical else R.drawable.amity_ic_more_horiz,
                             size = 32.dp,
@@ -494,17 +498,16 @@ fun AmityVideoPlayerPage(
                                     )
                             }
                         },
-                        canManageProducts = AmityCoreClient.getUserId() == roomChildPost?.getCreatorId(),
+                        canManageProducts = isHost && isProductCatalogueEnabled,
                         taggedProducts = selectedProducts,
                         pinnedProductId = null,
                         isPostLive = true,
-                        skipPartiallyExpanded = AmityCoreClient.getUserId() == roomChildPost?.getCreatorId()
+                        skipPartiallyExpanded = isHost,
+                        isHost = isHost
                     )
                 } else if (selectedProducts.isNotEmpty()) {
                     AmityProductTagListComponent(
-                        pageScope = getPageScope(),
                         productTags = selectedProducts,
-                        postId = videoPosts.getOrNull(pagerState.currentPage)?.getPostId(),
                         renderMode = RenderModeEnum.VIDEO,
                         onDismiss = { showProductTagSheet = false },
                         onProductClick = { product -> selectedProduct = product }

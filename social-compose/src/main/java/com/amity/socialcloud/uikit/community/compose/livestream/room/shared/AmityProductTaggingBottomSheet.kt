@@ -35,6 +35,7 @@ fun AmityProductTaggingBottomSheet(
     pageScope: AmityComposePageScope?,
     isNetworkConnected: Boolean = true,
     skipPartiallyExpanded: Boolean = true,
+    isHost: Boolean = false
 ) {
     val productTaggingSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = skipPartiallyExpanded
@@ -54,7 +55,7 @@ fun AmityProductTaggingBottomSheet(
             AmityBaseComponent(
                 modifier = Modifier,
                 pageScope = pageScope,
-                componentId = "product_tag_list",
+                componentId = "manage_product_tag_list",
                 needScaffold = true
             ) {
                 ManageProductTagListComponent(
@@ -63,14 +64,14 @@ fun AmityProductTaggingBottomSheet(
                     onDismiss = onDismiss,
                     onRemoveProduct = onRemoveProduct,
                     onPinProduct = onPinProduct,
-                    pageScope = pageScope,
                     componentScope = getComponentScope(),
                     onAddProducts = onAddProducts,
                     modifier = Modifier.fillMaxWidth(),
                     onProductClick = onProductClick,
                     canManageProducts = canManageProducts,
                     isPostLive = isPostLive,
-                    onProductViewed = onProductViewed
+                    onProductViewed = onProductViewed,
+                    isHost = isHost
                 )
 
                 LaunchedEffect(isNetworkConnected) {

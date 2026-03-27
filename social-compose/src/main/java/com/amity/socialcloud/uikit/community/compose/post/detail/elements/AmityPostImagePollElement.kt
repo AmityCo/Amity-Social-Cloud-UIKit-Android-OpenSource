@@ -23,6 +23,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -427,14 +429,28 @@ private fun PollItem(
             )
 
             if (isSelected && !viewResultMode) {
-                Image(
-                    painter = painterResource(if (isSingleSelected) R.drawable.amity_v4_radio_button else R.drawable.amity_v4_poll_multiple_select),
-                    contentDescription = "Selected Icon",
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .size(24.dp)
-                        .align(Alignment.TopStart)
-                )
+                if (isSingleSelected) {
+                    RadioButton(
+                        selected = true,
+                        onClick = null,
+                        colors = RadioButtonDefaults.colors(
+                            selectedColor = AmityTheme.colors.primary,
+                        ),
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .size(24.dp)
+                            .align(Alignment.TopStart)
+                    )
+                } else {
+                    Image(
+                        painter = painterResource(R.drawable.amity_v4_poll_multiple_select),
+                        contentDescription = "Selected Icon",
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .size(24.dp)
+                            .align(Alignment.TopStart)
+                    )
+                }
             }
         }
 

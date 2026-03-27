@@ -40,3 +40,11 @@ fun String.extractUrls(): List<UrlPosition> {
     }
     return links
 }
+
+fun String.parseUrls() : String {
+    return if (!this.startsWith("http://") && !this.startsWith("https://") && !this.startsWith("ftp://") && !this.startsWith("mailto:"))
+        "https://$this"
+    else
+        this
+
+}

@@ -555,3 +555,4 @@ When adding architecture sections to this file (AGENTS.md), keep them concise an
 |------------|-------|
 | `.agent/skills/uikit/social/post/post-composer-architecture.md` | Post composer internals — create/edit paths, product tags, media uploads, event flow |
 | `.agent/skills/sdk/social/sdk-social-models.md` | SDK model reference — `AmityPost`, `AmityProductTag`, `AmityProduct`, and related types |
+| `.agent/skills/uikit/social/notification-tray/notification-tray-architecture.md` | Notification tray internals — item rendering, avatar pattern, click routing, HighlightText, SDK model |

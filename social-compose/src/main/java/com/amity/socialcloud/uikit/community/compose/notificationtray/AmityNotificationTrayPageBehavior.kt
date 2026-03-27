@@ -7,6 +7,7 @@ import com.amity.socialcloud.uikit.community.compose.event.detail.AmityEventDeta
 import com.amity.socialcloud.uikit.community.compose.livestream.room.view.AmityRoomPlayerPageActivity
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostCategory
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetailPageActivity
+import com.amity.socialcloud.uikit.community.compose.user.edit.AmityEditUserProfilePageActivity
 import com.amity.socialcloud.uikit.community.compose.user.profile.AmityUserProfilePageActivity
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -31,6 +32,14 @@ open class AmityNotificationTrayPageBehavior {
         )
         context.startActivity(intent)
     }
+    open fun goToEditUserPage(
+        context: Context,
+    ) {
+        val intent = AmityEditUserProfilePageActivity.newIntent(
+            context = context,
+        )
+        context.startActivity(intent)
+    }
 
     open fun goToPostDetailPage(
         context: Context,
@@ -38,6 +47,7 @@ open class AmityNotificationTrayPageBehavior {
         category: AmityPostCategory = AmityPostCategory.GENERAL,
         commentId: String? = null,
         parentId: String? = null,
+        rootId: String? = null,
         replyTo: String? = null,
         eventHostId: String? = null,
         autoFocusCommentInput: Boolean = false,
@@ -48,6 +58,7 @@ open class AmityNotificationTrayPageBehavior {
             category = category,
             commentId = commentId,
             parentId = parentId,
+            rootId = rootId,
             replyTo = replyTo,
             eventHostId = eventHostId,
             autoFocusCommentInput = autoFocusCommentInput,

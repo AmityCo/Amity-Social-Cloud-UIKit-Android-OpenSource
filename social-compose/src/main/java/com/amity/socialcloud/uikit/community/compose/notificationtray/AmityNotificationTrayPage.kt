@@ -36,6 +36,7 @@ import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
@@ -236,8 +237,16 @@ fun AmityNotificationTrayPage(
                                                 var postId: String? = null
                                                 var commentId: String? = null
                                                 var parentId: String? = null
+                                                var rootId: String? = null
                                                 var communityId: String? = null
                                                 var userId: String? = null
+
+                                                if (listItem.item.getTrayItemCategory() == "user_profile_reset") {
+                                                    behavior.goToEditUserPage(
+                                                        context = context,
+                                                    )
+                                                    return@clickableWithoutRipple
+                                                }
 
                                                 if (listItem.item.getTargetType() == "community") {
                                                     communityId = listItem.item.getTargetId()
@@ -287,6 +296,7 @@ fun AmityNotificationTrayPage(
                                                         commentId =
                                                             listItem.item.getActionReferenceId()
                                                         parentId = listItem.item.getParentId()
+                                                        rootId = listItem.item.getRootId()
                                                     }
 
                                                     "reaction" -> {
@@ -305,6 +315,8 @@ fun AmityNotificationTrayPage(
                                                                     listItem.item.getActionReferenceId()
                                                                 parentId =
                                                                     listItem.item.getParentId()
+                                                                rootId =
+                                                                    listItem.item.getRootId()
                                                             }
 
                                                             "reaction_on_post" -> {
@@ -332,9 +344,11 @@ fun AmityNotificationTrayPage(
                                                                 postId =
                                                                     listItem.item.getReferenceId()
                                                                 commentId =
-                                                                    listItem.item.getActionReferenceId()
+                                                                    listItem.item.getLatestCommentId()
                                                                 parentId =
                                                                     listItem.item.getParentId()
+                                                                rootId =
+                                                                    listItem.item.getRootId()
                                                             }
                                                         }
                                                     }
@@ -372,6 +386,7 @@ fun AmityNotificationTrayPage(
                                                             postId = pId,
                                                             commentId = commentId,
                                                             parentId = parentId,
+                                                            rootId = rootId,
                                                         )
                                                     }
                                                 }

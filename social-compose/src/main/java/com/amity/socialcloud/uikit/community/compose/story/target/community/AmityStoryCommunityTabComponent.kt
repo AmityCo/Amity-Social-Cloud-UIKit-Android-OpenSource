@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rxjava3.subscribeAsState
 import androidx.compose.ui.Alignment
@@ -19,11 +20,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.sdk.model.social.story.AmityStoryTarget
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
+import com.amity.socialcloud.uikit.common.utils.isSignedIn
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.livestream.room.view.AmityRoomPlayerPageActivity
 import com.amity.socialcloud.uikit.community.compose.story.target.elements.AmityStoryTargetElement
@@ -83,13 +86,17 @@ fun AmityStoryCommunityTabComponent(
         }
     }
 
-    val allowAllUserStoryCreation by AmitySocialClient.getSettings()
-        .asFlow()
-        .map { it.getStorySettings().isAllowAllUserToCreateStory() }
-        .catch {
-            emit(false)
-        }
-        .collectAsState(initial = false)
+    val allowAllUserStoryCreation by if (!AmityCoreClient.isSignedIn()) {
+        remember { mutableStateOf(false) }
+    } else {
+        AmitySocialClient.getSettings()
+            .asFlow()
+            .map { it.getStorySettings().isAllowAllUserToCreateStory() }
+            .catch {
+                emit(false)
+            }
+            .collectAsState(initial = false)
+    }
 
     val shouldShowStoryCreationButton by remember(
         allowAllUserStoryCreation,

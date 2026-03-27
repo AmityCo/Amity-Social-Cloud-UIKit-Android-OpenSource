@@ -658,7 +658,7 @@
       "image": "closeCircleButton",
       "background_color": "#80000000"
     },
-    "live_stream_page/product_tag_list/*": {
+    "live_stream_page/manage_product_tag_list/*": {
       "theme": {
         "light": {
           "primary_color": "#1054DE",
@@ -728,7 +728,7 @@
       "base_shade2_color": "#6e7487",
       "base_shade4_color": "#292b32"
     },
-    "create_livestream_page/product_tag_list/*": {
+    "create_livestream_page/manage_product_tag_list/*": {
       "theme": {
         "light": {
           "primary_color": "#1054DE",
@@ -784,7 +784,7 @@
         }
       }
     },
-    "livestream_player_page/product_tag_list/*": {
+    "*/manage_product_tag_list/*": {
       "theme": {
         "light": {
           "primary_color": "#1054DE",

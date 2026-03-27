@@ -6,11 +6,13 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -379,6 +381,7 @@ fun AmityViewCommunityStoryPage(
         Box(
             modifier = modifier
                 .fillMaxSize()
+                .statusBarsPadding()
                 .background(Color.Black)
         ) {
             HorizontalPager(
@@ -395,7 +398,8 @@ fun AmityViewCommunityStoryPage(
 
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = modifier.fillMaxSize()
+                            modifier = modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center
                         ) {
                             AmityStoryBodyRow(
                                 modifier = modifier
@@ -466,7 +470,8 @@ fun AmityViewCommunityStoryPage(
                         val ad = data.ad
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = modifier.fillMaxSize()
+                            modifier = modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center
                         ) {
                             AmityStoryAdView(
                                 modifier = modifier.aspectRatio(9f / 16f),

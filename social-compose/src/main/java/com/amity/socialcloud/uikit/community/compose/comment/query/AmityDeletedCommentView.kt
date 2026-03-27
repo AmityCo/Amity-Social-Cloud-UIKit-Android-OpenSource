@@ -78,15 +78,12 @@ fun AmityDeletedCommentView(
             modifier = modifier
                 .fillMaxWidth()
                 .background(Color.Transparent)
-                .padding(vertical = 8.dp)
+                .padding(vertical = if (replyCount == 0) 8.dp else 0.dp)
                 .testTag("comment_list/comment_bubble_deleted_view")
         ) {
-            HorizontalDivider(
-                color = AmityTheme.colors.baseShade4,
-            )
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = modifier.padding(horizontal = 16.dp, vertical = 10.dp)
             ) {
                 Icon(
@@ -103,9 +100,6 @@ fun AmityDeletedCommentView(
                     )
                 )
             }
-            HorizontalDivider(
-                color = AmityTheme.colors.baseShade4,
-            )
         }
     }
 }

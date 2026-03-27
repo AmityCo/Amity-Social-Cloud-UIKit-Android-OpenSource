@@ -21,6 +21,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.coroutines.delay
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.product.AmityProduct
@@ -34,12 +39,6 @@ import com.amity.socialcloud.uikit.community.compose.post.detail.elements.getPro
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.AmityProductTagListComponent
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.RenderModeEnum
 import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityProductWebViewBottomSheet
-import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.schedulers.Schedulers
-import kotlinx.coroutines.delay
 
 // Helper function to get image data and product tag count from a post
 // Handles both cases:
@@ -85,7 +84,6 @@ private fun getProductIdsFromPost(post: AmityPost?): List<String> {
 
 fun LazyListScope.amityCommunityImageFeedLLS(
     modifier: Modifier = Modifier,
-    pageScope: AmityComposePageScope? = null,
     imagePosts: LazyPagingItems<AmityPost>,
     onViewPost: ((String, AmityPostCategory) -> Unit)? = null,
 ) {
@@ -105,7 +103,6 @@ fun LazyListScope.amityCommunityImageFeedLLS(
         // State for product tag bottom sheet
         var showProductTagSheet by remember { mutableStateOf(false) }
         var selectedProducts by remember { mutableStateOf<List<AmityProduct>>(emptyList()) }
-        var selectedPostId by remember { mutableStateOf<String?>(null) }
         var selectedProduct by remember { mutableStateOf<AmityProduct?>(null) }
         val disposables = remember { CompositeDisposable() }
 
@@ -119,7 +116,6 @@ fun LazyListScope.amityCommunityImageFeedLLS(
         val onProductTagClick: (AmityPost) -> Unit = { post ->
             val productIds = getProductIdsFromPost(post)
             if (productIds.isNotEmpty()) {
-                selectedPostId = post.getPostId()
                 val disposable = Observable.fromIterable(productIds)
                     .flatMapSingle { productId ->
                         AmityCoreClient.newProductRepository()
@@ -145,9 +141,7 @@ fun LazyListScope.amityCommunityImageFeedLLS(
         // Product tag bottom sheet
         if (showProductTagSheet && selectedProducts.isNotEmpty()) {
             AmityProductTagListComponent(
-                pageScope = pageScope,
                 productTags = selectedProducts,
-                postId = selectedPostId,
                 renderMode = RenderModeEnum.IMAGE,
                 onDismiss = { showProductTagSheet = false },
                 onProductClick = { product -> selectedProduct = product }

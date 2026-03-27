@@ -1,6 +1,7 @@
 package com.amity.socialcloud.uikit.community.compose.comment.query
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
@@ -44,6 +46,9 @@ import com.amity.socialcloud.uikit.community.compose.comment.query.components.Am
 import com.amity.socialcloud.uikit.community.compose.comment.query.components.AmityEditCommentContainer
 import com.amity.socialcloud.uikit.community.compose.comment.query.components.AmityReplyCommentContainer
 import com.amity.socialcloud.uikit.community.compose.comment.query.elements.AmityCommentViewReplyBar
+import com.amity.socialcloud.uikit.community.compose.comment.query.elements.ThreadLineState
+import com.amity.socialcloud.uikit.community.compose.comment.query.elements.threadLineConnector
+import com.amity.socialcloud.uikit.community.compose.comment.query.elements.trackAvatarBottom
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlin.math.max
 
@@ -56,6 +61,7 @@ fun AmitySingleCommentView(
     referenceType: AmityCommentReferenceType,
     comment: AmityComment,
     isReplyComment: Boolean,
+    isL2Comment: Boolean = false,
     currentUserId: String,
     editingCommentId: String?,
     includeDeleted: Boolean = true,
@@ -64,12 +70,14 @@ fun AmitySingleCommentView(
     onReply: (String) -> Unit,
     onEdit: (String?) -> Unit,
     replyTargetId: String? = null,
+    l2TargetId: String? = null,
     showBounceEffect: Boolean = false,
     replyCount: Int? = null,
     shouldShowReplies: (Boolean) -> Unit = {},
     allowAction: Boolean = true,
     previewLines: Int = EXPANDABLE_TEXT_MAX_LINES,
     expandReplies: Boolean = false,
+    shouldHighlight: Boolean = false,
     fromNonMemberCommunity: Boolean,
 ) {
     val context = LocalContext.current
@@ -82,6 +90,12 @@ fun AmitySingleCommentView(
     var showDeleteBannedWordCommentDialog by remember { mutableStateOf(false) }
     var showReactionListSheet by remember { mutableStateOf(false) }
 
+    // Thread connector line state (only for L1 comments with L2 replies)
+    val showThreadLine = isReplyComment && !isL2Comment
+    val threadLineState = remember { ThreadLineState() }
+    val density = LocalDensity.current
+    val lineColor = AmityTheme.colors.baseShade4
+
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier
@@ -91,7 +105,7 @@ fun AmitySingleCommentView(
                 top = 4.dp,
                 bottom = 8.dp,
                 start = 12.dp,
-                end = if (isReplyComment) 0.dp else 12.dp
+                end = if (isReplyComment) 0.dp else 16.dp
             )
             .testTag("comment_list/*")
     ) {
@@ -103,6 +117,10 @@ fun AmitySingleCommentView(
                     behavior.goToUserProfilePage(context, comment.getCreatorId())
                 }
                 .testTag("comment_list/comment_bubble_avatar")
+                .let {
+                    if (showThreadLine) it.trackAvatarBottom(threadLineState)
+                    else it
+                }
         )
 
         //Comment content
@@ -129,6 +147,7 @@ fun AmitySingleCommentView(
                         comment = comment,
                         previewLines = previewLines,
                         isEventHost = isEventHost,
+                        shouldHighlight = shouldHighlight,
                         onClick = {
                             if (!allowAction) {
                                 if (referenceType == AmityCommentReferenceType.POST) {
@@ -217,6 +236,7 @@ fun AmitySingleCommentView(
                         allowInteraction = allowInteraction,
                         allowAction = allowAction,
                         isReplyComment = isReplyComment,
+                        isL2Comment = isL2Comment,
                         comment = comment,
                         isCreatedByMe = currentUserId == comment.getCreatorId(),
                         fromNonMemberCommunity = fromNonMemberCommunity,
@@ -228,49 +248,64 @@ fun AmitySingleCommentView(
                 }
             }
 
-            AmityReplyCommentContainer(
-                modifier = if (allowAction) {
-                    modifier
-                } else {
-                    modifier.clickableWithoutRipple {
-                        if (referenceType == AmityCommentReferenceType.POST) {
-                            val latestReply = comment.getLatestReplies().firstOrNull()
-                            commentBehavior.goToPostDetailPage(
-                                context = context,
-                                postId = referenceId,
-                                commentId = latestReply?.getCommentId() ?: comment.getCommentId(),
-                                parentId = latestReply?.getParentId(),
-                            )
+            Box(
+                modifier = if (showThreadLine) {
+                    Modifier.threadLineConnector(
+                        state = threadLineState,
+                        lineColor = lineColor,
+                        density = density,
+                    )
+                } else Modifier
+            ) {
+                AmityReplyCommentContainer(
+                    modifier = if (allowAction) {
+                        modifier
+                    } else {
+                        modifier.clickableWithoutRipple {
+                            if (referenceType == AmityCommentReferenceType.POST) {
+                                val latestReply = comment.getLatestReplies().firstOrNull()
+                                commentBehavior.goToPostDetailPage(
+                                    context = context,
+                                    postId = referenceId,
+                                    commentId = latestReply?.getCommentId() ?: comment.getCommentId(),
+                                    parentId = latestReply?.getParentId(),
+                                )
+                            }
                         }
-                    }
-                },
-                componentScope = componentScope,
-                allowInteraction = allowInteraction,
-                referenceId = referenceId,
-                referenceType = referenceType,
-                currentUserId = currentUserId,
-                commentId = comment.getCommentId(),
-                editingCommentId = editingCommentId,
-                includeDeleted = includeDeleted,
-                replyCount = max(comment.getChildCount(), comment.getLatestReplies().let { if(includeDeleted) it else it.filter { it.isDeleted() == false } }.size),
-                showEngagementRow = showEngagementRow,
-                replies = comment.getLatestReplies(),
-                onEdit = onEdit,
-                replyTargetId = replyTargetId,
-                showBounceEffect = false,
-                previewLines = previewLines,
-                isExpanded = expandReplies,
-                fromNonMemberCommunity = fromNonMemberCommunity,
-            )
+                    },
+                    componentScope = componentScope,
+                    allowInteraction = allowInteraction,
+                    referenceId = referenceId,
+                    referenceType = referenceType,
+                    currentUserId = currentUserId,
+                    commentId = comment.getCommentId(),
+                    editingCommentId = editingCommentId,
+                    includeDeleted = false,
+                    replyCount = comment.getChildCount(),
+                    showEngagementRow = showEngagementRow,
+                    replies = comment.getLatestReplies(),
+                    onEdit = onEdit,
+                    replyTargetId = replyTargetId,
+                    l2TargetId = l2TargetId,
+                    showBounceEffect = showBounceEffect,
+                    previewLines = previewLines,
+                    isExpanded = expandReplies,
+                    isL2Thread = isReplyComment,
+                    threadLineState = if (showThreadLine) threadLineState else null,
+                    fromNonMemberCommunity = fromNonMemberCommunity,
+                    onReply = onReply
+                )
+            }
 
             if (isReplyComment) {
                 replyCount?.let {
                     val nonDeletedCount = replyCount - 1 - (comment.getLatestReplies().count { it.isDeleted() })
                     if (nonDeletedCount > 0) {
                         AmityCommentViewReplyBar(
-                            modifier = modifier,
+                            modifier = modifier.padding(top = 5.dp),
                             isViewAllReplies = true,
                             replyCount = nonDeletedCount,
+                            isReplyComment = true,
                         ) {
                             shouldShowReplies(true)
                         }

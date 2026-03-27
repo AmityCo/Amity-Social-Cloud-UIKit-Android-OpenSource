@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.post.detail.elements
 
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.sdk.model.core.product.AmityProduct
 import com.amity.socialcloud.sdk.model.core.producttag.AmityProductTag
@@ -9,12 +10,29 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlin.collections.orEmpty
 
 class AmityVideoPlayerViewModel : AmityBaseViewModel() {
 
     private val _taggedProducts = MutableStateFlow<List<AmityProduct>?>(null)
     val taggedProducts = _taggedProducts.asStateFlow()
+
+    private val _isProductCatalogueEnabled = MutableStateFlow(false)
+    val isProductCatalogueEnabled = _isProductCatalogueEnabled.asStateFlow()
+
+    fun fetchProductCatalogueSettings() {
+        AmityCoreClient.getProductCatalogueSetting()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSuccess { settings ->
+                _isProductCatalogueEnabled.update {
+                    settings.enabled
+                }
+            }
+            .subscribe()
+            .let(::addDisposable)
+    }
 
     fun addTaggedProducts(
         postId: String,
