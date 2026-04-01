@@ -116,7 +116,6 @@ fun AmityCommentComposerBar(
             }
         } else {
             lastReplyCommentId = null
-            mentionedUsers = emptyList()
         }
     }
 
@@ -258,7 +257,10 @@ fun AmityCommentComposerBar(
                                             context.getString(R.string.amity_add_comment_error_message)
                                         }
                                     }
-                                AmityUIKitSnackbar.publishSnackbarErrorMessage(errorMessage)
+                                AmityUIKitSnackbar.publishSnackbarErrorMessage(
+                                    errorMessage,
+                                    offsetFromBottom = 70
+                                )
 
                                 commentText = ""
                                 selectedUserToMention = null

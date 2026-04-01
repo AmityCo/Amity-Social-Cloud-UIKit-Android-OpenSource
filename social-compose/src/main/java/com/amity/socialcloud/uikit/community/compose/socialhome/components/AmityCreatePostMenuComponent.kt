@@ -6,12 +6,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.waterfall
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
@@ -19,15 +15,10 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -52,9 +43,7 @@ import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getText
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
-import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageBehavior
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostTargetType
-import com.amity.socialcloud.uikit.community.compose.post.composer.poll.AmityPollPostTypeSelectionBottomSheet
 import com.amity.socialcloud.uikit.community.compose.target.AmityPostTargetSelectionPageType
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
@@ -95,7 +84,7 @@ fun AmityCreatePostMenuComponent(
     }
 
     val viewModel = viewModel<AmityCreatePostMenuComponentViewModel>()
-    val showStoryAction by viewModel.showStoryAction.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
     AmityBaseComponent(
         pageScope = pageScope,
@@ -230,7 +219,7 @@ fun AmityCreatePostMenuComponent(
                     }
                 )
 
-                if (showStoryAction) {
+                if (uiState.canCreateStory) {
                     DropdownMenuItem(
                         text = {
                             AmityBaseElement(
@@ -315,40 +304,43 @@ fun AmityCreatePostMenuComponent(
                     }
                 )
 
-                DropdownMenuItem(
-                    text = {
-                        AmityBaseElement(
-                            pageScope = pageScope,
-                            componentScope = getComponentScope(),
-                            elementId = "create_event_button"
-                        ) {
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = modifier
-                                    .padding(horizontal = 8.dp)
-                                    .testTag(getAccessibilityId()),
+
+                if (uiState.canCreateEvent) {
+                    DropdownMenuItem(
+                        text = {
+                            AmityBaseElement(
+                                pageScope = pageScope,
+                                componentScope = getComponentScope(),
+                                elementId = "create_event_button"
                             ) {
-                                Icon(
-                                    painter = painterResource(id = com.amity.socialcloud.uikit.common.R.drawable.amity_ic_create_event),
-                                    contentDescription = "Create Event",
-                                    tint = AmityTheme.colors.base,
-                                    modifier = modifier.size(20.dp)
-                                )
-                                Text(
-                                    text = "Event",
-                                    style = AmityTheme.typography.bodyLegacy.copy(
-                                        fontWeight = FontWeight.SemiBold
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = modifier
+                                        .padding(horizontal = 8.dp)
+                                        .testTag(getAccessibilityId()),
+                                ) {
+                                    Icon(
+                                        painter = painterResource(id = com.amity.socialcloud.uikit.common.R.drawable.amity_ic_create_event),
+                                        contentDescription = "Create Event",
+                                        tint = AmityTheme.colors.base,
+                                        modifier = modifier.size(20.dp)
                                     )
-                                )
+                                    Text(
+                                        text = "Event",
+                                        style = AmityTheme.typography.bodyLegacy.copy(
+                                            fontWeight = FontWeight.SemiBold
+                                        )
+                                    )
+                                }
                             }
+                        },
+                        onClick = {
+                            onDismiss()
+                            behavior.goToSelectEventTargetPage(context = context)
                         }
-                    },
-                    onClick = {
-                        onDismiss()
-                        behavior.goToSelectEventTargetPage(context = context)
-                    }
-                )
+                    )
+                }
             }
         }
     }

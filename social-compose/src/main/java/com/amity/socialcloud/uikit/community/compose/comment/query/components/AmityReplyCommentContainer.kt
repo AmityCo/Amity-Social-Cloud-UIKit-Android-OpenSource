@@ -69,7 +69,8 @@ fun AmityReplyCommentContainer(
     LaunchedEffect(replyLoadErrorSet.contains(commentId)) {
         if (replyLoadErrorSet.contains(commentId)) {
             AmityUIKitSnackbar.publishSnackbarErrorMessage(
-                context.getString(R.string.amity_no_internet_error_message)
+                context.getString(R.string.amity_no_internet_error_message),
+                offsetFromBottom = 70
             )
             commentViewModel.clearReplyLoadError(commentId)
             shouldShowReplies = false

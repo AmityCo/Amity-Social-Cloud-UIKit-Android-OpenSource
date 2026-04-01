@@ -294,7 +294,7 @@ fun AmityNotificationTrayPage(
                                                     "reply" -> {
                                                         postId = listItem.item.getReferenceId()
                                                         commentId =
-                                                            listItem.item.getActionReferenceId()
+                                                            listItem.item.getLatestCommentId()
                                                         parentId = listItem.item.getParentId()
                                                         rootId = listItem.item.getRootId()
                                                     }

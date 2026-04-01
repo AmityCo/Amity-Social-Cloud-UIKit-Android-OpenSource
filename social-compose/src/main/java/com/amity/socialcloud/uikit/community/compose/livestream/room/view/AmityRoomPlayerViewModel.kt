@@ -194,6 +194,9 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
                     is AmityCoHostEvent.CoHostLeft,
                     is AmityCoHostEvent.CoHostInviteCancelled,
                     is AmityCoHostEvent.CoHostInviteRejected -> {
+                        if (event is AmityCoHostEvent.CoHostLeft) {
+                            AmityUIKitSnackbar.publishSnackbarMessage(message = "Co-host left the live stream.")
+                        }
                         _uiState.update { currentState ->
                             currentState.copy(
                                 invitation = null,

@@ -51,13 +51,16 @@
                 android:id="@+id/tvName"
                 style="@style/AmityTextStyleTitleBold"
                 safeText="@{title}"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/amity_padding_xs"
                 android:textColor="@color/amityColorBase"
+                android:maxLines="1"
+                android:ellipsize="end"
                 app:layout_constraintBottom_toBottomOf="@id/ivAvatar"
                 app:layout_constraintStart_toEndOf="@id/ivAvatar"
-                app:layout_constraintTop_toTopOf="@id/ivAvatar" />
+                app:layout_constraintTop_toTopOf="@id/ivAvatar"
+                app:layout_constraintEnd_toEndOf="parent" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

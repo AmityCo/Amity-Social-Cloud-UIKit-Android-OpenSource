@@ -258,7 +258,12 @@ class AmityCommentTrayComponentViewModel : AmityBaseViewModel() {
                 }
                 .collectLatest { data ->
                     if (data.isDeleted()) {
-                        _commentTargetUnavailable.update { it + commentId }
+                        if (data.getParentId() == null) {
+                            // still display L0 comment
+                            _commentTarget.value = data
+                        } else {
+                            _commentTargetUnavailable.update { it + commentId }
+                        }
                     } else {
                         _commentTarget.value = data
                     }
