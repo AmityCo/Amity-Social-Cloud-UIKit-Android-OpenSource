@@ -1,7 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.post.detail.elements
 
 import android.app.Activity
-import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -16,6 +15,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,13 +24,20 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.error
+import coil3.request.fallback
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.res.stringResource
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,23 +45,25 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
+import com.amity.socialcloud.sdk.model.core.product.AmityProduct
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.sdk.model.video.room.AmityRoom
 import com.amity.socialcloud.sdk.model.video.room.AmityRoomStatus
 import com.amity.socialcloud.sdk.model.video.stream.AmityStream
+import com.amity.socialcloud.uikit.common.behavior.AmityGlobalBehavior
 import com.amity.socialcloud.uikit.common.ui.elements.AmityExpandableText
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityProductWebViewBottomSheet
 import com.amity.socialcloud.uikit.community.compose.livestream.room.view.AmityRoomPlayerPageActivity
 import com.amity.socialcloud.uikit.community.compose.livestream.view.AmityLivestreamPlayerPageActivity
+import com.amity.socialcloud.uikit.community.compose.post.composer.components.AmityProductTagListComponent
+import com.amity.socialcloud.uikit.community.compose.post.composer.components.RenderModeEnum
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetailPageActivity.Companion.REQUEST_CODE_VIEW_LIVESTREAM
 import kotlinx.coroutines.flow.Flow
 
@@ -143,6 +152,7 @@ fun AmityChildLivestreamPostElement(
                             )
                         }
                     }
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
             }
 
@@ -300,8 +310,8 @@ fun AmityLivestreamPostLiveLabel(
 fun AmityLivestreamEndedView(modifier: Modifier = Modifier) {
     AmityLivestreamNoticeView(
         modifier = modifier,
-        title = "This livestream has ended.",
-        description = "Playback will be available for you\nto watch shortly.",
+        title = stringResource(R.string.amity_v4_livestream_post_thumbnail_processing_title),
+        description = stringResource(R.string.amity_v4_livestream_post_thumbnail_processing_desc),
     )
 }
 
@@ -310,7 +320,7 @@ fun AmityLivestreamUnavailableView(modifier: Modifier = Modifier) {
     AmityLivestreamNoticeView(
         modifier = modifier,
         icon = R.drawable.amity_ic_warning,
-        title = "This stream is currently unavailable.",
+        title = stringResource(R.string.amity_v4_livestream_post_thumbnail_unavailable_title),
     )
 }
 
@@ -319,8 +329,8 @@ fun AmityLivestreamReplayUnavailableView(modifier: Modifier = Modifier) {
     AmityLivestreamNoticeView(
         modifier = modifier,
         icon = R.drawable.amity_ic_warning,
-        title = "Replay unavailable.",
-        description = "This live stream was too short to have a playback.",
+        title = stringResource(R.string.amity_v4_livestream_post_thumbnail_ended_too_short_title),
+        description = stringResource(R.string.amity_v4_livestream_post_thumbnail_ended_too_short_desc),
     )
 }
 
@@ -329,8 +339,8 @@ fun AmityLivestreamReplayUnavailableView(modifier: Modifier = Modifier) {
 fun AmityLivestreamTerminatedView(modifier: Modifier = Modifier) {
     AmityLivestreamNoticeView(
         modifier = modifier,
-        title = "This stream has been terminated.",
-        description = "It looks like this livestream goes against our content moderation guidelines.",
+        title = stringResource(R.string.amity_v4_livestream_post_thumbnail_terminated_title),
+        description = stringResource(R.string.amity_v4_livestream_post_thumbnail_terminated_desc),
     )
 }
 
@@ -471,6 +481,8 @@ fun LivestreamLoadingIndicator() {
 fun AmityChildRoomPostElement(
     modifier: Modifier = Modifier,
     post: AmityPost,
+    showTitleDescription: Boolean = true,
+    showProductTagBadge: Boolean = true,
 ) {
     val context = LocalContext.current
     val activity = context as Activity
@@ -478,11 +490,119 @@ fun AmityChildRoomPostElement(
         getRoomPostData(post)
     }
 
-    val image by remember {
+    val textPostData = remember (post.getPostId(), post.getUpdatedAt() ) {
+        post.getData() as? AmityPost.Data.TEXT
+    }
+
+    var showVideoPlayerDialog by remember { mutableStateOf(false) }
+    var showProductTagSheet by remember { mutableStateOf(false) }
+    var selectedProduct by remember { mutableStateOf<AmityProduct?>(null) }
+    val behavior = AmitySocialBehaviorHelper.globalBehavior
+
+    // Get recorded URLs from room
+    val recordedUrls = remember(room) {
+        room?.getRecordedPlaybackInfos()
+            ?.mapNotNull { it.url }
+            ?: emptyList()
+    }
+
+    var roomPostProducts by remember(post.getPostId(), post.getUpdatedAt()) {
+        mutableStateOf(
+            post.getChildren().find { it.getData() is AmityPost.Data.ROOM }?.getProducts() ?: emptyList()
+        )
+    }
+
+    // Show video player dialog for recorded livestream
+    if (showVideoPlayerDialog) {
+        AmityVideoPlayerPage(
+            childPosts = post.getChildren(),
+            selectedFileId = post.getChildren().firstOrNull()?.getPostId() ?: "",
+            recordedUrls = recordedUrls,
+            onDismiss = { showVideoPlayerDialog = false },
+            showMenuButton = true,
+            onProductsUpdated = { roomPostProducts = it }
+        )
+    }
+
+    // Show product tag list sheet
+    if (showProductTagSheet && roomPostProducts.isNotEmpty()) {
+        AmityProductTagListComponent(
+            productTags = roomPostProducts,
+            renderMode = RenderModeEnum.LIVESTREAM,
+            onDismiss = { showProductTagSheet = false },
+            onProductClick = { product ->
+                val handled = behavior.onLivestreamProductTagClick(
+                    AmityGlobalBehavior.Context(
+                        pageContext = context,
+                        product = product,
+                    )
+                )
+                if (!handled) {
+                    selectedProduct = product
+                }
+            },
+        )
+    }
+
+    selectedProduct?.let { p ->
+        AmityProductWebViewBottomSheet(
+            product = p,
+            onDismiss = {
+                selectedProduct = null
+            }
+        )
+    }
+
+    // Determine room state (priority order matters)
+    val isDeleted = room?.isDeleted() == true
+    val isTerminated = room?.getModeration()?.terminateLabels?.isNotEmpty() == true
+    val roomStatus = room?.getStatus()
+
+    // Compute thumbnail fallback chain
+    // Use URL string (not AmityImage) so we can guard against null/invalid URLs produced by
+    // AmityImage.getUrl(size) when the underlying raw file URL is null (yields "null?size=medium").
+    val creatorThumbnailUrl by remember {
         derivedStateOf {
             room?.getThumbnail()
+                ?.getUrl(com.amity.socialcloud.sdk.model.core.file.AmityImage.Size.MEDIUM)
+                ?.takeIf { it.isNotBlank() && !it.startsWith("null") }
         }
     }
+    val liveThumbnailUrl = remember(room) {
+        room?.getLiveThumbnailUrl()?.takeIf { it.isNotEmpty() }
+    }
+    val recordedThumbnailUrl = remember(room) {
+        room?.getRecordedPlaybackInfos()
+            ?.firstOrNull()
+            ?.thumbnailUrl
+            ?.takeIf { it.isNotEmpty() }
+            ?.let { "$it?time=1" }
+    }
+
+    // Compute aspect ratio modifier from resolution data
+    // portrait/square (height >= width) → 4:5, landscape (height < width) → 16:9
+    // useResolution=false forces platform default (4:5 on mobile) — used for creator-uploaded thumbnail
+    fun thumbnailModifier(baseModifier: Modifier, resolution: AmityRoom.AmityRoomResolution? = null): Modifier {
+        val width = resolution?.width
+        val height = resolution?.height
+        return if (width != null && width > 0 && height != null && height > 0 && height >= width) {
+            // portrait or square → 4:5
+            baseModifier
+                .fillMaxWidth()
+                .aspectRatio(4f / 5f)
+        } else if (width != null && width > 0 && height != null && height > 0) {
+            // landscape → 16:9
+            baseModifier
+                .fillMaxWidth()
+                .aspectRatio(16f / 9f)
+        } else {
+            // no resolution data → default to landscape → 16:9
+            baseModifier
+                .fillMaxWidth()
+                .aspectRatio(16f / 9f)
+        }
+    }
+
     Column(
         horizontalAlignment = Alignment.Start,
         modifier = Modifier
@@ -491,86 +611,93 @@ fun AmityChildRoomPostElement(
     ) {
         Box(
             modifier = Modifier
+                .padding(start = 16.dp, end = 16.dp)
                 .fillMaxWidth()
                 .wrapContentSize()
-                .padding(16.dp)
         ) {
-            Column {
-                room?.getTitle()?.let { title ->
-                    AmityExpandableText(
-                        modifier = modifier.fillMaxWidth(),
-                        text = title,
-                        style = AmityTheme.typography.bodyBold,
-                        onClick = {},
-                    )
-                }
-                room?.getDescription()?.let { description ->
-                    if (description.isNotBlank()) {
+            if (showTitleDescription) {
+                Column {
+                    val title = textPostData?.getTitle()
+                    val description = textPostData?.getText()
+                    title?.let { title ->
                         AmityExpandableText(
-                            modifier = modifier,
-                            text = "\n$description",
-                            style = AmityTheme.typography.bodyLegacy,
+                            modifier = modifier.fillMaxWidth(),
+                            text = title,
+                            style = AmityTheme.typography.bodyBold,
                             onClick = {},
                         )
+                    }
+                    description?.let { description ->
+                        if (description.isNotBlank()) {
+                            AmityExpandableText(
+                                modifier = modifier,
+                                text = "\n$description",
+                                style = AmityTheme.typography.bodyLegacy,
+                                onClick = {},
+                            )
+                        }
+                    }
+                    if (title != null || description != null) {
+                        Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
             }
         }
 
-        if (room != null && room.getStatus() == AmityRoomStatus.ENDED) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(203.dp)
-            ) {
-                AmityLivestreamEndedView(modifier = Modifier)
+        when {
+            // 1. Deleted stream
+            isDeleted -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(203.dp)
+                ) {
+                    AmityLivestreamUnavailableView(modifier = Modifier)
+                }
             }
-        } else if (room != null && room.getStatus() == AmityRoomStatus.ERROR) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(203.dp)
-            ) {
-                AmityLivestreamReplayUnavailableView(modifier = Modifier)
+
+            // 2. Terminated (moderation) — check before status switch
+            isTerminated -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(203.dp)
+                ) {
+                    AmityLivestreamTerminatedView(modifier = Modifier)
+                }
             }
-        }
-        else if (room != null && room.isDeleted()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(203.dp)
-            ) {
-                AmityLivestreamUnavailableView(modifier = Modifier)
+
+            // 3. ENDED — processing, no thumbnail
+            roomStatus == AmityRoomStatus.ENDED -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(203.dp)
+                ) {
+                    AmityLivestreamEndedView(modifier = Modifier)
+                }
             }
-        } else if (room?.isDeleted() == true) {
-            //TODO:Handleis banned
-            AmityLivestreamBannedView()
-        } else {
-            Box(
-                modifier = Modifier
-                    .clickable {
-                        if (room != null && room.getStatus() != AmityRoomStatus.IDLE) {
-                            AmityRoomPlayerPageActivity
-                                .newIntent(context = context, post = post)
-                                .let {
-                                    activity.startActivityForResult(
-                                        it,
-                                        REQUEST_CODE_VIEW_LIVESTREAM
-                                    )
-                                }
-                        }
-                    }
-            ) {
-                if (image != null) {
-                    Box(
-                        modifier = modifier
-                            .height(219.dp)
-                            .fillMaxWidth(),
-                    ) {
-                        AmityPostImageView(
-                            post = post.getChildren().first(),
-                            onClick = {
-                                if (room != null && room.getStatus() != AmityRoomStatus.IDLE) {
+
+            // 4. ERROR — replay unavailable, no thumbnail
+            roomStatus == AmityRoomStatus.ERROR -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(203.dp)
+                ) {
+                    AmityLivestreamReplayUnavailableView(modifier = Modifier)
+                }
+            }
+
+            // 5. All other states: IDLE, LIVE, WAITING_RECONNECT, RECORDED
+            else -> {
+                Box(
+                    modifier = Modifier
+                        .clickable {
+                            if (room != null && roomStatus != AmityRoomStatus.IDLE) {
+                                if (roomStatus == AmityRoomStatus.RECORDED) {
+                                    showVideoPlayerDialog = true
+                                } else {
                                     AmityRoomPlayerPageActivity
                                         .newIntent(context = context, post = post)
                                         .let {
@@ -581,47 +708,113 @@ fun AmityChildRoomPostElement(
                                         }
                                 }
                             }
-                        )
+                        }
+                ) {
+                    // Thumbnail rendering with fallback chain
+                    when {
+                        // Fallback 1: creator-uploaded thumbnail — platform default ratio (REQ-083)
+                        // Use AsyncImage directly to avoid AmityPostImageView's ROOM branch which
+                        // renders white when the raw file URL is null ("null?size=medium").
+                        creatorThumbnailUrl != null -> {
+                            AsyncImage(
+                                model = ImageRequest.Builder(context)
+                                    .data(creatorThumbnailUrl)
+                                    .error(R.drawable.amity_v4_ic_default_stream_thumbnail)
+                                    .fallback(R.drawable.amity_v4_ic_default_stream_thumbnail)
+                                    .build(),
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop,
+                                modifier = thumbnailModifier(Modifier),
+                            )
+                        }
+
+                        // Fallback 2: Mux live thumbnail URL — use liveResolution (REQ-081, REQ-085)
+                        liveThumbnailUrl != null &&
+                            (roomStatus == AmityRoomStatus.LIVE || roomStatus == AmityRoomStatus.WAITING_RECONNECT) -> {
+                            AsyncImage(
+                                model = ImageRequest.Builder(context)
+                                    .data(liveThumbnailUrl)
+                                    .error(R.drawable.amity_v4_ic_default_stream_thumbnail)
+                                    .fallback(R.drawable.amity_v4_ic_default_stream_thumbnail)
+                                    .build(),
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop,
+                                modifier = thumbnailModifier(Modifier, room?.getLiveResolution()),
+                            )
+                        }
+
+                        // Fallback 3: Mux recorded thumbnail URL — use recordedResolution (REQ-082, REQ-086)
+                        recordedThumbnailUrl != null && roomStatus == AmityRoomStatus.RECORDED -> {
+                            AsyncImage(
+                                model = ImageRequest.Builder(context)
+                                    .data(recordedThumbnailUrl)
+                                    .error(R.drawable.amity_v4_ic_default_stream_thumbnail)
+                                    .fallback(R.drawable.amity_v4_ic_default_stream_thumbnail)
+                                    .build(),
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop,
+                                modifier = thumbnailModifier(Modifier, room?.getRecordedResolution()),
+                            )
+                        }
+
+                        // Fallback 4: default placeholder icon — platform default ratio
+                        else -> {
+                            Image(
+                                painter = painterResource(id = R.drawable.amity_v4_ic_default_stream_thumbnail),
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop,
+                                modifier = thumbnailModifier(Modifier),
+                            )
+                        }
                     }
-                } else {
-                    Image(
-                        modifier = modifier
-                            .height(219.dp)
-                            .fillMaxWidth(),
-                        painter = painterResource(id = R.drawable.amity_v4_ic_default_stream_thumbnail),
-                        contentDescription = null,
-                        contentScale = ContentScale.FillWidth,
-                    )
-                }
-                if (room?.getStatus() != AmityRoomStatus.IDLE) {
-                    Image(
-                        painter = painterResource(id = R.drawable.amity_ic_play_v4),
-                        contentDescription = null,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-                when (room?.getStatus()) {
-                    AmityRoomStatus.RECORDED -> {
-                        AmityLivestreamPostIdleOrRecordedLabel(
-                            modifier = Modifier.padding(start = 12.dp, top = 12.dp),
-                            text = "RECORDED"
+
+                    // Play button overlay (all states except IDLE)
+                    if (roomStatus != AmityRoomStatus.IDLE) {
+                        Image(
+                            painter = painterResource(id = R.drawable.amity_ic_play_v4),
+                            contentDescription = null,
+                            modifier = Modifier.align(Alignment.Center)
                         )
                     }
 
-                    AmityRoomStatus.LIVE -> {
-                        AmityLivestreamPostLiveLabel(
-                            modifier = Modifier.padding(start = 12.dp, top = 12.dp)
-                        )
+                    // State label badge
+                    when (roomStatus) {
+                        AmityRoomStatus.RECORDED -> {
+                            AmityLivestreamPostIdleOrRecordedLabel(
+                                modifier = Modifier
+                                    .align(Alignment.TopEnd)
+                                    .padding(end = 12.dp, top = 12.dp),
+                                text = "RECORDED"
+                            )
+                        }
+                        AmityRoomStatus.LIVE, AmityRoomStatus.WAITING_RECONNECT -> {
+                            AmityLivestreamPostLiveLabel(
+                                modifier = Modifier
+                                    .align(Alignment.TopEnd)
+                                    .padding(end = 12.dp, top = 12.dp)
+                            )
+                        }
+                        AmityRoomStatus.IDLE -> {
+                            AmityLivestreamPostIdleOrRecordedLabel(
+                                modifier = Modifier
+                                    .align(Alignment.TopEnd)
+                                    .padding(end = 12.dp, top = 12.dp),
+                                text = "UPCOMING LIVE"
+                            )
+                        }
+                        else -> {}
                     }
 
-                    AmityRoomStatus.IDLE -> {
-                        AmityLivestreamPostIdleOrRecordedLabel(
-                            modifier = Modifier.padding(start = 12.dp, top = 12.dp),
-                            text = "UPCOMING LIVE"
+                    // Product tag badge
+                    if (showProductTagBadge) {
+                        AmityProductTagBadge(
+                            count = roomPostProducts.size,
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .padding(end = 12.dp, bottom = 12.dp),
+                            onClick = { showProductTagSheet = true }
                         )
                     }
-
-                    else -> {}
                 }
             }
         }

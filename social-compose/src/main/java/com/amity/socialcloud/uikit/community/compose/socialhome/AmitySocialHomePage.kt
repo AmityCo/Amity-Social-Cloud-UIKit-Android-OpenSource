@@ -109,9 +109,11 @@ fun AmitySocialHomePage(
 
                     }
                 },
-                isSeen = if (notiTraySeen != null) notiTraySeen?.isSeen() == true else true,
+                isSeen = notiTraySeen?.isSeen() == true,
                 notificationButton = {
-                    viewModel.markTraySeen()
+                    if (notiTraySeen?.isSeen() == false) {
+                        viewModel.markTraySeen()
+                    }
                     behavior.goToNotificationTrayPage(context)
                 }
             )

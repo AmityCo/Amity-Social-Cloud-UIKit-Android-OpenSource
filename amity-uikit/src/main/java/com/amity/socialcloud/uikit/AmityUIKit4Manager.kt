@@ -35,14 +35,9 @@ object AmityUIKit4Manager {
         AmityUIKitConfigController.setup(AmityAppContext.getContext())
         AmityUIKitConfigController.initializeShareableLinkPattern()
         NetworkConnectionEventPublisher.initPublisher(context = AmityAppContext.getContext())
-        overrideCustomBehavior()
     }
 
     fun syncNetworkConfig(): Completable {
         return AmityNetworkConfigService.syncNetworkConfig()
-    }
-
-    private fun overrideCustomBehavior() {
-//        behavior.viewStoryPageBehavior = AmityCustomViewStoryPageBehavior()
     }
 }

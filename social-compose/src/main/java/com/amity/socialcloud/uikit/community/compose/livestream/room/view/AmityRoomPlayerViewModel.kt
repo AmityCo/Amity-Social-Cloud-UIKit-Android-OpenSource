@@ -268,7 +268,7 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
             }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe()
+            .subscribe({}, {})
             .let(::addDisposable)
     }
 
@@ -303,7 +303,7 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
             }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe()
+            .subscribe({}, {})
             .let { disposable.add(it) }
     }
 
@@ -383,7 +383,7 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
                 it.subscription().subscribeTopic()
             }
             .subscribeOn(Schedulers.io())
-            .doOnError {}
+            .onErrorComplete()
             .subscribe()
 
         AmityChatClient
@@ -394,7 +394,7 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
                 it.subscription().subscribeTopic()
             }
             .subscribeOn(Schedulers.io())
-            .doOnError {}
+            .onErrorComplete()
             .subscribe()
     }
 

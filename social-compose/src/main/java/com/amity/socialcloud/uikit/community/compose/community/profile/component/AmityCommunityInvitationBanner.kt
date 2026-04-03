@@ -78,7 +78,6 @@ fun AmityCommunityInvitationBanner(
         viewModel.rejectCommunityInvitation(
             invitation = invitation,
             onSuccess = {
-                viewModel.refresh()
                 AmityUIKitSnackbar.publishSnackbarMessage(rejectSuccessMessage)
             },
             onError = { error ->
@@ -165,7 +164,6 @@ fun AmityCommunityInvitationBanner(
                                 viewModel.acceptCommunityInvitation(
                                     invitation = invitation,
                                     onSuccess = {
-                                        viewModel.refresh()
                                         AmityUIKitSnackbar.publishSnackbarMessage(acceptSuccessMessage)
                                     },
                                     onError = { error ->

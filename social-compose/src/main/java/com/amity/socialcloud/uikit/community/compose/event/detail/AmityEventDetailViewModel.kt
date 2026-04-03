@@ -49,7 +49,7 @@ class AmityEventDetailViewModel(
     fun updateEventData(event: AmityEvent?, isGoing: Boolean?) {
         event?.let {
             val targetCommunityId = it.getTargetCommunity()?.getCommunityId() ?: ""
-            _communityId.value = targetCommunityId
+            _communityId.value = it.getDiscussionCommunityId()
             _excludedPostIds.value = it.getPostId()?.let { postId -> listOf(postId) } ?: emptyList()
             _isEventCreator.value = it.getCreator()?.getUserId() == _currentUserId.value
             

@@ -55,6 +55,8 @@ class AmitySocialHomePageViewModel : AmityBaseViewModel() {
     private val _notificationTraySeen = MutableStateFlow<AmityNotificationTraySeen?>(null)
     val notificationTraySeen: StateFlow<AmityNotificationTraySeen?> get() = _notificationTraySeen.asStateFlow()
 
+    private var notificationTraySeenJob: kotlinx.coroutines.Job? = null
+
     private val _isPullRefreshIndicatorVisible by lazy {
         MutableStateFlow(false)
     }
@@ -173,7 +175,8 @@ class AmitySocialHomePageViewModel : AmityBaseViewModel() {
     }
 
     private fun getNotificationTraySeen() {
-        viewModelScope.launch {
+        notificationTraySeenJob?.cancel()
+        notificationTraySeenJob = viewModelScope.launch {
             AmityCoreClient.notificationTray()
                 .getNotificationTraySeen()
                 .subscribeOn(Schedulers.io())

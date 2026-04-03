@@ -72,6 +72,10 @@ class AmityLivestreamChatViewModel constructor(private val channelId: String) : 
     ): Flow<PagingData<AmityMessage>> {
         return AmityChatClient.newChannelRepository()
             .joinChannel(channelId = channelId)
+            .onErrorResumeNext { error ->
+                onError(error)
+                AmityChatClient.newChannelRepository().getChannel(channelId).firstOrError()
+            }
             .flatMapPublisher {
                 AmityChatClient.newMessageRepository()
                     .getMessages(channelId)

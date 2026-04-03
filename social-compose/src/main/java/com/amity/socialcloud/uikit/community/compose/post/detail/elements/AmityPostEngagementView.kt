@@ -117,14 +117,7 @@ fun AmityPostEngagementView(
     val isReacted = remember(myReaction, reacting) { myReaction.isNotEmpty() || reacting.first.isNotEmpty() }
 
     var reactionExpanded by remember { mutableStateOf(false) }
-
-    val reactionCount = (if (reacting.first.isNotEmpty()) reacting.second else localReactionCount).let { count ->
-        pluralStringResource(
-            id = R.plurals.amity_feed_reaction_count,
-            count = count,
-            count.readableNumber()
-        )
-    }
+    val reactionCount = (if (reacting.first.isNotEmpty()) reacting.second else localReactions.values.sum())
 
     val commentCount by remember(post.getUpdatedAt(), post.getCommentCount()) {
         mutableStateOf(post.getCommentCount())
@@ -195,7 +188,7 @@ fun AmityPostEngagementView(
                         componentScope = componentScope,
                         myReaction = myReaction,
                         reactions = localReactions,
-                        reactionCount = localReactionCount,
+                        reactionCount = reactionCount,
                     )
                 }
             }

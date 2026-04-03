@@ -263,6 +263,14 @@ fun AmityNotificationTrayPage(
                                                         return@clickableWithoutRipple
                                                     }
 
+                                                    "user_profile_reset" -> {
+                                                        behavior.goToUserProfilePage(
+                                                            context = context,
+                                                            userId = AmityCoreClient.getUserId()
+                                                        )
+                                                        return@clickableWithoutRipple
+                                                    }
+
                                                     "post", "poll" -> {
                                                         postId =
                                                             if (listItem.item.getTargetType() != "community")
