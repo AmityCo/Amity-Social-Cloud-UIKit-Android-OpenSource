@@ -228,7 +228,6 @@ fun LoadingToast() {
                                     )
                                 )
                             }
-
                         }
                     }
                 }
