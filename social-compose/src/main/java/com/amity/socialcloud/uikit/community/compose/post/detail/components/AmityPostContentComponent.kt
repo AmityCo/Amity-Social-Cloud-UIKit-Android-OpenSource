@@ -57,6 +57,7 @@ import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityP
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostMediaElement
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostNonMemberSection
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostPollElement
+import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityProductCarousel
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuBottomSheet
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuDialogUIState
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuSheetUIState
@@ -78,9 +79,10 @@ fun AmityPostContentComponent(
     onTapAction: () -> Unit = {},
 ) {
     val context = LocalContext.current
-    val behavior by lazy {
+    val behavior = remember {
         AmitySocialBehaviorHelper.postContentComponentBehavior
     }
+
     val isPostDetailPage = remember(style) {
         style == AmityPostContentComponentStyle.DETAIL
     }
@@ -344,6 +346,15 @@ fun AmityPostContentComponent(
                     post = post
                 )
             }
+
+            // Product Carousel - show tagged products from parent and child posts
+            AmityProductCarousel(
+                modifier = modifier,
+                pageScope = pageScope,
+                componentScope = getComponentScope(),
+                post = post,
+            )
+
             AmityPostEngagementView(
                 modifier = modifier,
                 pageScope = pageScope,

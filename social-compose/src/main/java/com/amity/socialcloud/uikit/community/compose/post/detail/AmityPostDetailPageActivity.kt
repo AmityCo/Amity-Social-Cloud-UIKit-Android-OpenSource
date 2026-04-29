@@ -28,8 +28,10 @@ class AmityPostDetailPageActivity : AppCompatActivity() {
 
         val commentId = intent.getStringExtra(EXTRA_PARAM_COMMENT_ID)
         val parentId = intent.getStringExtra(EXTRA_PARAM_PARENT_ID)
+        val rootId = intent.getStringExtra(EXTRA_PARAM_ROOT_ID)
         val replyToCommentId = intent.getStringExtra(EXTRA_PARAM_REPLY_TO)
         val eventHostId = intent.getStringExtra(EXTRA_PARAM_EVENT_HOST_ID)
+        val autoFocusCommentInput = intent.getBooleanExtra(EXTRA_PARAM_AUTO_FOCUS_COMMENT_INPUT, false)
 
         setContent {
             AmityPostDetailPage(
@@ -43,8 +45,10 @@ class AmityPostDetailPageActivity : AppCompatActivity() {
                 showLivestreamPostExceeded = showLivestreamPostExceeded,
                 commentId = commentId,
                 parentId = parentId,
+                rootId = rootId,
                 replyToCommentId = replyToCommentId,
                 eventHostId = eventHostId,
+                autoFocusCommentInput = autoFocusCommentInput,
             )
         }
     }
@@ -86,8 +90,10 @@ class AmityPostDetailPageActivity : AppCompatActivity() {
         const val REQUEST_CODE_VIEW_LIVESTREAM = 11010
         private const val EXTRA_PARAM_COMMENT_ID = "comment_id"
         private const val EXTRA_PARAM_PARENT_ID = "parent_id"
+        private const val EXTRA_PARAM_ROOT_ID = "root_id"
         private const val EXTRA_PARAM_REPLY_TO = "reply_to_comment_id"
         private const val EXTRA_PARAM_EVENT_HOST_ID = "event_host_id"
+        private const val EXTRA_PARAM_AUTO_FOCUS_COMMENT_INPUT = "auto_focus_comment_input"
 
         fun newIntent(
             context: Context,
@@ -97,8 +103,10 @@ class AmityPostDetailPageActivity : AppCompatActivity() {
             showLivestreamPostExceeded: Boolean = false,
             commentId: String? = null,
             parentId : String? = null,
+            rootId: String? = null,
             replyTo: String? = null,
             eventHostId: String? = null,
+            autoFocusCommentInput: Boolean = false,
         ): Intent {
             return Intent(
                 context,
@@ -110,8 +118,10 @@ class AmityPostDetailPageActivity : AppCompatActivity() {
                 putExtra(EXTRA_PARAM_SHOW_LIVESTREAM_POST_EXCEEDED, showLivestreamPostExceeded)
                 putExtra(EXTRA_PARAM_COMMENT_ID, commentId)
                 putExtra(EXTRA_PARAM_PARENT_ID, parentId)
+                putExtra(EXTRA_PARAM_ROOT_ID, rootId)
                 putExtra(EXTRA_PARAM_REPLY_TO, replyTo)
                 putExtra(EXTRA_PARAM_EVENT_HOST_ID, eventHostId)
+                putExtra(EXTRA_PARAM_AUTO_FOCUS_COMMENT_INPUT, autoFocusCommentInput)
             }
         }
     }

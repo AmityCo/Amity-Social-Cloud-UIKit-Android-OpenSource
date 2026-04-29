@@ -28,11 +28,11 @@ fun JsonObject.getText(): String {
     return get("text")?.asString ?: ""
 }
 
-fun String.asColor(): Color {
+fun String.asColor(default: Color? = null): Color {
     return try {
         Color(android.graphics.Color.parseColor(this))
     } catch (e: Exception) {
-        Color.Transparent
+        default ?: Color.Transparent
     }
 }
 

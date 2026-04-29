@@ -6,6 +6,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.model.core.invitation.AmityInvitation
+import com.amity.socialcloud.sdk.model.core.invitation.AmityInvitationStatus
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.video.room.AmityRoomBroadcastData
 import io.livekit.android.RoomOptions
@@ -33,6 +35,7 @@ fun AmityStreamerView(
     hostUser: AmityUser? = null,
     cohostUserId: String? = null,
     cohostUser: AmityUser? = null,
+    invitation: AmityInvitation? = null,
     onRoomChanged: (Room) -> Unit = {},
     onCoHostLeave: () -> Unit = {},
     onCancelInvite: () -> Unit = {},
@@ -145,7 +148,8 @@ fun AmityStreamerView(
                                     onRemoveCoHost
                                 } else {
                                     onCoHostLeave
-                                }
+                                },
+                                isPendingInvitation = invitation?.getStatus() == AmityInvitationStatus.PENDING
                             )
                         }
                     }
@@ -175,6 +179,7 @@ fun StreamerItem(
     mirror: Boolean = false,
     isMute: Boolean,
     onMenuClick: (() -> Unit)?,
+    isPendingInvitation: Boolean = false,
 ) {
     Box(
         modifier = modifier
@@ -197,6 +202,7 @@ fun StreamerItem(
                 isHost = isHost,
                 user = user,
                 onMenuClick = onMenuClick,
+                isPendingInvitation = isPendingInvitation,
             )
         }
     }

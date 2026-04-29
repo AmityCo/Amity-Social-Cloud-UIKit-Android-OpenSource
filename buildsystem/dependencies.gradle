@@ -4,15 +4,18 @@
 
 ext {
     amityMinSdkVersion = 24
-    amityTargetSdkVersion = 35
-    amityCompileSdkVersion = 35
+    amityTargetSdkVersion = 36
+    amityCompileSdkVersion = 36
     amityKotlinJDKVersion = "8"
     amityKotlinVersion = "2.2.0"
     amityLifecycleExtensionVersion = "2.0.0"
-    amityMockkVersion = "1.10.0"
+    amityMockkVersion = "1.13.9"
+    amityRoborazziVersion = "1.40.0"
+    amityRobolectricVersion = "4.14.1"
+    amityCoroutinesTestVersion = "1.7.0"
     amitySDKJitpackDependency = 'com.github.AmityCo.Amity-Social-Cloud-SDK-Android'
     amitySDKMavenDependency = 'co.amity.android'
-    amityMessagingSdkVersion = '7.19.0'
+    amityMessagingSdkVersion = '7.19.3'
     amitySDKDependency = amitySDKMavenDependency
     amityRxLifeCycleVersion = '1.1.2-beta01'
     amityJacocoVersion = '0.8.5'

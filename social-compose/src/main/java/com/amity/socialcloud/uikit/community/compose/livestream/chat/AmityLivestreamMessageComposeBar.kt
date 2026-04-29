@@ -56,10 +56,8 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
-import com.amity.socialcloud.sdk.model.chat.member.AmityMembershipType
 import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.core.error.AmityException
-import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
 import com.amity.socialcloud.uikit.common.model.AmityMessageReactions
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
@@ -69,9 +67,9 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.isSignedIn
 import com.amity.socialcloud.uikit.common.utils.isVisitor
-import com.amity.socialcloud.uikit.common.utils.shade
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityProductTaggingButton
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
@@ -94,6 +92,10 @@ fun AmityLivestreamMessageComposeBar(
     onToggleMicrophone: (() -> Unit)? = null,
     onSwitchCamera: (() -> Unit)? = null,
     onOpenInviteSheet: (() -> Unit)? = null,
+    isProductSettingsEnabled: Boolean = false,
+    taggedProductsCount: Int = 0,
+    canManageProducts: Boolean = false,
+    onTaggedProductClick: (() -> Unit)? = null,
 ) {
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
@@ -185,8 +187,16 @@ fun AmityLivestreamMessageComposeBar(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 8.dp)
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
+                // Host can always see product tagging button
+                if (isProductSettingsEnabled && (canManageProducts || taggedProductsCount > 0) && (isCurrentUserStreamHost || !isPendingApproval)) {
+                    AmityProductTaggingButton(
+                        taggedProductsCount = taggedProductsCount,
+                        onClick = { onTaggedProductClick?.invoke() }
+                    )
+                }
                 if (isPendingApproval) {
                     AmityLivestreamPendingApprovalComposeBar()
                 } else if (isNonMember) {

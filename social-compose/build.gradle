@@ -4,6 +4,7 @@ plugins {
     id 'org.jetbrains.kotlin.kapt'
     id 'kotlin-parcelize'
     id 'org.jetbrains.kotlin.plugin.compose'
+    id "io.github.takahirom.roborazzi"
 }
 
 apply from: "../buildsystem/activity.gradle"
@@ -22,6 +23,16 @@ android {
         exclude 'META-INF/INDEX.LIST'
         exclude 'META-INF/io.netty.versions.properties'
     }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+            all {
+                jvmArgs "-Droborazzi.record.mode=false"
+                jvmArgs "-Droborazzi_test_compare_change_threshold=0.001"
+            }
+        }
+    }
 }
 
 composeCompiler {
@@ -38,8 +49,30 @@ dependencies {
 //    implementation 'androidx.appcompat:appcompat:1.6.1'
 //    implementation 'com.google.android.material:material:1.10.0'
     testImplementation 'junit:junit:4.13.2'
+    testImplementation "io.github.takahirom.roborazzi:roborazzi:$amityRoborazziVersion"
+    testImplementation "io.github.takahirom.roborazzi:roborazzi-compose:$amityRoborazziVersion"
+    testImplementation "io.github.takahirom.roborazzi:roborazzi-junit-rule:$amityRoborazziVersion"
+    testImplementation "org.robolectric:robolectric:$amityRobolectricVersion"
+    debugImplementation "androidx.compose.ui:ui-test-manifest"
+    testImplementation "androidx.compose.ui:ui-test-junit4"
+    testImplementation "io.mockk:mockk:$amityMockkVersion"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$amityCoroutinesTestVersion"
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+    // Roborazzi screenshot testing
+    testImplementation "io.github.takahirom.roborazzi:roborazzi:$amityRoborazziVersion"
+    testImplementation "io.github.takahirom.roborazzi:roborazzi-compose:$amityRoborazziVersion"
+    testImplementation "io.github.takahirom.roborazzi:roborazzi-junit-rule:$amityRoborazziVersion"
+    // Robolectric
+    testImplementation "org.robolectric:robolectric:$amityRobolectricVersion"
+    // Compose UI Test
+    debugImplementation "androidx.compose.ui:ui-test-manifest"
+    testImplementation "androidx.compose.ui:ui-test-junit4"
+    // MockK
+    testImplementation "io.mockk:mockk:$amityMockkVersion"
+    // Coroutines test
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$amityCoroutinesTestVersion"
 
     implementation "androidx.camera:camera-core:1.5.1"
     implementation "androidx.camera:camera-camera2:1.5.1"
@@ -55,4 +88,22 @@ dependencies {
     // Depend on LiveKit SDK separately to keep up to date.
     implementation "io.livekit:livekit-android:v1.4.0"
     implementation "io.livekit:livekit-android-compose-components:1.4.0"
+
+    // Roborazzi screenshot testing
+    testImplementation "io.github.takahirom.roborazzi:roborazzi:$amityRoborazziVersion"
+    testImplementation "io.github.takahirom.roborazzi:roborazzi-compose:$amityRoborazziVersion"
+    testImplementation "io.github.takahirom.roborazzi:roborazzi-junit-rule:$amityRoborazziVersion"
+
+    // Robolectric (JVM Android runtime for Compose rendering)
+    testImplementation "org.robolectric:robolectric:$amityRobolectricVersion"
+
+    // Compose UI Test (ComposeTestRule used by Roborazzi)
+    debugImplementation "androidx.compose.ui:ui-test-manifest"
+    testImplementation "androidx.compose.ui:ui-test-junit4"
+
+    // MockK
+    testImplementation "io.mockk:mockk:$amityMockkVersion"
+
+    // Coroutines test utilities
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$amityCoroutinesTestVersion"
 }

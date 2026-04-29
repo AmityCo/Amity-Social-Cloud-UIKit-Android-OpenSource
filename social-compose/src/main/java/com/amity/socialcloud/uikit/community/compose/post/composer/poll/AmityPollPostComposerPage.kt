@@ -99,6 +99,7 @@ import com.amity.socialcloud.sdk.api.social.post.review.AmityReviewStatus
 import com.amity.socialcloud.sdk.helper.core.coroutines.await
 import com.amity.socialcloud.sdk.helper.core.hashtag.AmityHashtag
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadata
+import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.file.upload.AmityUploadResult
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
@@ -111,6 +112,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityDatePickerDialog
 import com.amity.socialcloud.uikit.common.ui.elements.AmityTextField
 import com.amity.socialcloud.uikit.common.ui.elements.AmityTimePickerDialog
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
+import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.closePageWithResult
@@ -118,8 +120,11 @@ import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerHelper
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerPageViewModel
 import com.amity.socialcloud.uikit.community.compose.post.composer.RenderAltTextConfigSheet
+import com.amity.socialcloud.uikit.community.compose.post.composer.components.AltTextConfigMode
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.AltTextMedia
+import com.amity.socialcloud.uikit.community.compose.post.composer.components.AmityAltTextConfigComponent
 import com.amity.socialcloud.uikit.community.compose.post.model.AmityFileUploadState
+import com.amity.socialcloud.uikit.community.compose.post.model.AmityPostMedia
 import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.AmityMentionSuggestionView
 import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.AmityMentionTextField
 import kotlinx.coroutines.launch

@@ -3,6 +3,7 @@ package com.amity.socialcloud.uikit.community.compose.user.edit
 import android.net.Uri
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
+import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.file.upload.AmityUploadResult
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
@@ -28,6 +29,7 @@ class AmityEditUserProfilePageViewModel : AmityBaseViewModel() {
         onSuccess: (AmityUser) -> Unit,
         onError: (String) -> Unit,
         onInappropriateImageError: () -> Unit,
+        onBlockedWordError: () -> Unit,
     ) {
         if (avatarUri == null) {
             editUser(
@@ -36,6 +38,7 @@ class AmityEditUserProfilePageViewModel : AmityBaseViewModel() {
                 avatar = null,
                 onSuccess = onSuccess,
                 onError = onError,
+                onBlockedWordError = onBlockedWordError,
             )
         } else {
             uploadAvatar(
@@ -46,7 +49,8 @@ class AmityEditUserProfilePageViewModel : AmityBaseViewModel() {
                         displayName = displayName,
                         description = description,
                         onSuccess = onSuccess,
-                        onError = onError
+                        onError = onError,
+                        onBlockedWordError = onBlockedWordError,
                     )
                 },
                 onError = onError,
@@ -90,6 +94,7 @@ class AmityEditUserProfilePageViewModel : AmityBaseViewModel() {
         avatar: AmityImage?,
         onSuccess: (AmityUser) -> Unit,
         onError: (String) -> Unit,
+        onBlockedWordError: () -> Unit,
     ) {
         AmityCoreClient.editUser()
             .displayName(displayName)
@@ -102,7 +107,13 @@ class AmityEditUserProfilePageViewModel : AmityBaseViewModel() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSuccess(onSuccess)
-            .doOnError { onError(it.message ?: "Failed to update user.") }
+            .doOnError { exception ->
+                if (AmityError.from(exception) == AmityError.BAN_WORD_FOUND) {
+                    onBlockedWordError()
+                } else {
+                    onError(exception.message ?: "Failed to update user.")
+                }
+            }
             .subscribe()
     }
 }

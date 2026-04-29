@@ -25,8 +25,8 @@ open class AmityBaseFragment : RxFragment() {
                 if (consumeBackPress) {
                     handleBackPress()
                 } else {
-                    isEnabled = false
-                    activity?.onBackPressed()
+                isEnabled = false
+                activity?.onBackPressedDispatcher?.onBackPressed()
                 }
             }
         })
@@ -38,7 +38,7 @@ open class AmityBaseFragment : RxFragment() {
 
     fun backPressFragment() {
         consumeBackPress = false
-        activity?.onBackPressed()
+        activity?.onBackPressedDispatcher?.onBackPressed()
     }
 
     override fun onDestroy() {

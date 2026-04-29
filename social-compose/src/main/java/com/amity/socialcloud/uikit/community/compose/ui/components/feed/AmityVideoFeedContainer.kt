@@ -26,46 +26,48 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.media3.common.util.UnstableApi
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.ui.elements.AmityMenuButton
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityVideoPlayerPage
 
 @Composable
 fun AmityVideoFeedContainer(
     availablePostIds: Set<String> = emptySet(), // Pass current available post IDs
     content: @Composable (
-        openDialog: (AmityPost.Data.VIDEO, String?, onBottomSheetRequest: (() -> Unit)?) -> Unit
+        openDialog: (AmityPost, onViewOriginalPost: (() -> Unit)?) -> Unit
     ) -> Unit
 ) {
-    var dialogData by remember { mutableStateOf<Triple<AmityPost.Data.VIDEO?, String?, (() -> Unit)?>?>(null) }
+    // Store post and callback
+    var dialogData by remember { mutableStateOf<Pair<AmityPost, (() -> Unit)?>?>(null) }
 
-    content { videoData, postId, onBottomSheetRequest ->
-        dialogData = Triple(videoData, postId, onBottomSheetRequest)
+    content { post, onViewOriginalPost ->
+        dialogData = Pair(post, onViewOriginalPost)
     }
 
-    dialogData?.let { (videoData, postId, onBottomSheetRequest) ->
+    dialogData?.let { (post, onViewOriginalPost) ->
+        val postId = post.getPostId()
 
         // Check if the current dialog's post still exists in the available post IDs
-        val isItemDeleted = postId != null && 
-                           availablePostIds.isNotEmpty() && 
-                           !availablePostIds.contains(postId)
+        val isItemDeleted = availablePostIds.isNotEmpty() && !availablePostIds.contains(postId)
 
         if (isItemDeleted) {
             VideoNotAvailableDialog(
-                onDismiss = { 
-                    dialogData = null 
+                onDismiss = {
+                    dialogData = null
                 }
             )
-        } else if (videoData != null) {
-            AmityProfileVideoFeedItemPreviewDialog(
-                data = videoData,
-                postId = postId,
-                onPostClick = { clickedPostId ->
-                    onBottomSheetRequest?.invoke()
-                }
-            ) {
-                dialogData = null
-            }
+        } else {
+            AmityVideoPlayerPage(
+                childPosts = listOf(post),
+                selectedFileId = postId,
+                showMenuButton = true,
+                onDismiss = {
+                    dialogData = null
+                },
+                onViewOriginalPost = onViewOriginalPost
+            )
         }
     }
 }

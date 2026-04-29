@@ -1,10 +1,8 @@
 package com.amity.socialcloud.uikit.community.compose.livestream.chat
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -29,29 +27,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.itemKey
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
 import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
-import com.amity.socialcloud.sdk.model.core.error.AmityException
 import com.amity.socialcloud.sdk.model.core.flag.AmityContentFlagReason
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
@@ -71,7 +63,6 @@ import com.amity.socialcloud.uikit.community.compose.livestream.chat.AmityLivest
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityReportOtherReasonScreen
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityReportReasonListScreen
 import com.google.gson.JsonObject
-import kotlinx.coroutines.flow.distinctUntilChanged
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -240,11 +231,7 @@ fun ChatOverlay(
                                 }
                                 viewModel.updateSheetUIState(AmityLiveStreamSheetUIState.CloseSheet)
                             },
-                            canInviteCohost = canInviteCohost,
-                            onInviteCohost = { userId, user ->
-                                onInviteCohost(userId, user)
-                                viewModel.updateSheetUIState(AmityLiveStreamSheetUIState.CloseSheet)
-                             },
+                            isHostMessage = message.getCreatorId() == hostUserId
                         )
                     }
                     is AmityLiveStreamSheetUIState.OpenReportSheet -> {
@@ -405,9 +392,11 @@ fun ChatMessageItem(
                             text = message.getCreator()?.getDisplayName() ?: "Unknown user",
                             color = if (message.isDeleted()) Color(0xFF6E7487) else Color(0xFFA5A9B5),
                             style = AmityTheme.typography.captionSmall,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
                             modifier = Modifier.clickableWithoutRipple {
                                 onUserNameClick()
-                            }
+                            }.weight(1f, false)
                         )
 
                         // Show brand badge if user is a brand
@@ -503,11 +492,12 @@ fun ChatMessageItem(
 
 @Composable
 fun HostBadge(
+    modifier: Modifier = Modifier,
     isCoHost: Boolean = false,
     onCohostBadgeClick: ()-> Unit,
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .background(
                 color = Color(0xFFFF305A),
                 shape = RoundedCornerShape(4.dp)
@@ -584,7 +574,7 @@ fun MutedBadge() {
 
 fun getContent(message: AmityMessage): String {
     return if (message.isDeleted()) {
-        "This message was deleted"
+        "This message was deleted."
     } else {
         (message.getData() as? AmityMessage.Data.TEXT)?.getText() ?: "Unsupport message type"
     }
@@ -594,14 +584,12 @@ fun getContent(message: AmityMessage): String {
 @Composable
 fun AmityLivestreamMessageActionsContainer(
     modifier: Modifier = Modifier,
-    componentScope: AmityComposeComponentScope? = null,
     message: AmityMessage,
     isChannelModerator: Boolean,
     onDelete: () -> Unit,
     onReport: (String) -> Unit = {},
     onUnreport: (String) -> Unit = {},
-    canInviteCohost: Boolean = false,
-    onInviteCohost: (String, AmityUser?) -> Unit = { _, _ -> },
+    isHostMessage: Boolean = false,
 ) {
     Column(
         modifier = modifier
@@ -630,7 +618,7 @@ fun AmityLivestreamMessageActionsContainer(
                 }
             }
         }
-        if (message.getCreatorId() == AmityCoreClient.getUserId() || isChannelModerator) {
+        if (message.getCreatorId() == AmityCoreClient.getUserId() || (isChannelModerator && !isHostMessage)) {
             AmityBottomSheetActionItem(
                 icon = R.drawable.amity_ic_delete_story,
                 text = "Delete message",
@@ -681,6 +669,9 @@ fun AmityUserActionsSheet(
                     text = displayName,
                     color = Color(0xFFEBECEF),
                     style = AmityTheme.typography.titleBold,
+                    maxLines = 1,
+                    modifier = Modifier.weight(1f, false),
+                    overflow = TextOverflow.Ellipsis,
                 )
 
                 // Show brand badge if user is a brand
@@ -696,7 +687,7 @@ fun AmityUserActionsSheet(
                 // Muted icon if user is muted
                 if (isMuted) {
                     Icon(
-                        painter = painterResource(id = R.drawable.amity_v4_ic_mute),
+                        painter = painterResource(id = R.drawable.amity_ic_mute_user),
                         contentDescription = "Muted badge",
                         tint = AmityTheme.colors.baseShade2,
                         modifier = Modifier

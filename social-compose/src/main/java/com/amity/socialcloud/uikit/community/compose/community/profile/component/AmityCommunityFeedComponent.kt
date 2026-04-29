@@ -100,8 +100,9 @@ fun AmityCommunityFeedComponent(
                         pageContext = context,
                     ),
                     postId = post.getPostId(),
-                    category = AmityPostCategory.PIN
-                )
+                    category = AmityPostCategory.PIN,
+                    autoFocusCommentInput = true,
+                    )
             }
         )
     }

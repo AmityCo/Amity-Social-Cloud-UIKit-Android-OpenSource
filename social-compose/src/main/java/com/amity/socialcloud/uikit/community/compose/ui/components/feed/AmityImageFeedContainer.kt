@@ -36,36 +36,46 @@ import com.amity.socialcloud.uikit.community.compose.R
 @Composable
 fun AmityImageFeedContainer(
     availablePostIds: Set<String> = emptySet(), // Pass current available post IDs
+    onProductTagClick: ((String) -> Unit)? = null, // Pass postId when product tag clicked
     content: @Composable (
-        openDialog: (AmityImage?, String?, onBottomSheetRequest: (() -> Unit)?) -> Unit
+        openDialog: (AmityImage?, String?, Int, onBottomSheetRequest: (() -> Unit)?) -> Unit
     ) -> Unit
 ) {
-    var dialogData by remember { mutableStateOf<Triple<AmityImage?, String?, (() -> Unit)?>?>(null) }
+    // Tuple4: image, postId, productTagCount, onBottomSheetRequest
+    var dialogData by remember { mutableStateOf<Array<Any?>?>(null) }
 
-    content { image, postId, onBottomSheetRequest ->
-        dialogData = Triple(image, postId, onBottomSheetRequest)
+    content { image, postId, productTagCount, onBottomSheetRequest ->
+        dialogData = arrayOf(image, postId, productTagCount, onBottomSheetRequest)
     }
 
-    dialogData?.let { (image, postId, onBottomSheetRequest) ->
+    dialogData?.let { data ->
+        val image = data[0] as? AmityImage
+        val postId = data[1] as? String
+        val productTagCount = data[2] as? Int ?: 0
+        val onBottomSheetRequest = data[3] as? (() -> Unit)
 
         // Check if the current dialog's post still exists in the available post IDs
-        val isItemDeleted = postId != null && 
-                           availablePostIds.isNotEmpty() && 
+        val isItemDeleted = postId != null &&
+                           availablePostIds.isNotEmpty() &&
                            !availablePostIds.contains(postId)
 
         if (isItemDeleted) {
             ImageNotAvailableDialog(
-                onDismiss = { 
-                    dialogData = null 
+                onDismiss = {
+                    dialogData = null
                 }
             )
         } else {
             AmityProfileImageFeedItemPreviewDialog(
                 data = image,
                 postId = postId,
+                productTagCount = productTagCount,
                 onPostClick = { clickedPostId ->
                     onBottomSheetRequest?.invoke()
-                }
+                },
+                onProductTagClick = if (postId != null && onProductTagClick != null) {
+                    { onProductTagClick(postId) }
+                } else null
             ) {
                 dialogData = null
             }

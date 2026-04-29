@@ -11,12 +11,14 @@ class AmityPostSearchResultComponentBehaviour {
         id: String,
         category: AmityPostCategory = AmityPostCategory.GENERAL,
         hideTarget: Boolean = false,
+        autoFocusCommentInput: Boolean = false,
     ) {
         val intent = AmityPostDetailPageActivity.newIntent(
             context = context,
             id = id,
             category = category,
             hideTarget = hideTarget,
+            autoFocusCommentInput = autoFocusCommentInput,
         )
         context.startActivity(intent)
     }

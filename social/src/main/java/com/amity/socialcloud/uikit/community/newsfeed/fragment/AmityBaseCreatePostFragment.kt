@@ -1096,7 +1096,7 @@ abstract class AmityBaseCreatePostFragment : AmityBaseFragment(),
     override fun onClickPositiveButton() {
         consumeBackPress = false
         viewModel.discardPost()
-        activity?.onBackPressed()
+        activity?.onBackPressedDispatcher?.onBackPressed()
     }
 
     @ExperimentalPagingApi

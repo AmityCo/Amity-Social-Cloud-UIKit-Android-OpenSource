@@ -1,10 +1,12 @@
 package com.amity.socialcloud.uikit.community.compose.community.pending.elements
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,6 +25,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,7 +41,7 @@ import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.getText
 import com.amity.socialcloud.uikit.common.utils.shimmerBackground
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.compose.R
 
 @Composable
 fun AmityPendingJoinRequestComponent(
@@ -81,24 +85,42 @@ fun AmityPendingJoinRequestComponent(
 
                     Spacer(modifier = Modifier.width(12.dp))
 
-                    //User Name
-                    request.getUser()?.getDisplayName()?.let {
-                        Text(
-                            text = it,
-                            style = AmityTheme.typography.bodyBold,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier
-                                .weight(1f, fill = false)
-                                .clickableWithoutRipple {
-                                    request.getUser()?.let {
-                                        behavior.goToUserProfilePage(
-                                            context = context,
-                                            userId = it.getUserId(),
-                                        )
-                                    }
-                                }
-                        )
+                    //User Name and Brand Badge
+                    Row(modifier = Modifier.weight(1f)) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(2.dp),
+                            modifier = Modifier.width(IntrinsicSize.Max)
+                        ) {
+                            request.getUser()?.getDisplayName()?.let {
+                                Text(
+                                    text = it,
+                                    style = AmityTheme.typography.bodyBold,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .clickableWithoutRipple {
+                                            request.getUser()?.let {
+                                                behavior.goToUserProfilePage(
+                                                    context = context,
+                                                    userId = it.getUserId(),
+                                                )
+                                            }
+                                        }
+                                )
+                            }
+
+                            if (request.getUser()?.isBrand() == true) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.amity_ic_brand_badge),
+                                    contentDescription = "",
+                                    modifier = Modifier
+                                        .size(20.dp)
+                                        .testTag("user_view/brand_user_icon")
+                                )
+                            }
+                        }
                     }
                 }
 

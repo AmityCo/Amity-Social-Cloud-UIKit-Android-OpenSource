@@ -79,7 +79,7 @@ fun AmityCommunityLiveRoomTarget(
                     modifier = Modifier
                         .fillMaxSize()
                         .clip(CircleShape)
-                        .background(AmityTheme.colors.alert),
+                        .background(Color(0xFFFF305A)),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(

@@ -142,6 +142,13 @@ fun AmityDraftClipPage(
     }
 
     DisposableEffectWithLifeCycle(
+        onResume = {
+            // Resume playback when returning to this page (e.g. after back from post composer)
+            if (clipUploadState is AmityDraftClipViewModel.ClipUploadState.Success) {
+                exoPlayer.prepare()
+                exoPlayer.playWhenReady = true
+            }
+        },
         onStop = {
             // Stop the player when the page is stopped
             if (exoPlayer.isPlaying) {

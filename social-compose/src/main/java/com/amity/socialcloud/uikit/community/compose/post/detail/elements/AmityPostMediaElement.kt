@@ -117,6 +117,10 @@ fun AmityChildPostMediaElement(
         getChildPostData(post)
     }
 
+    val postChildrenList = remember(post.getPostId(), post.getUpdatedAt()) {
+        post.getChildren()
+    }
+
     val images by remember {
         derivedStateOf {
             childPosts.mapNotNull { data ->
@@ -224,12 +228,12 @@ fun AmityChildPostMediaElement(
         }
     }
 
-    when (post.getChildren().size) {
+    when (postChildrenList.size) {
         0 -> {}
         1 -> AmityPostMediaImageChildrenOne(
             modifier = modifier,
             isVideoPost = isVideoPost,
-            postChild = post.getChildren().first(),
+            postChild = postChildrenList.first(),
             onProductTagClick = onProductTagClick,
         ) {
             if (it.getData() is AmityPost.Data.CLIP) {
@@ -242,7 +246,7 @@ fun AmityChildPostMediaElement(
 
         2 -> AmityPostMediaImageChildrenTwo(
             modifier = modifier,
-            postChildren = post.getChildren(),
+            postChildren = postChildrenList,
             images = images,
             isVideoPost = isVideoPost,
             onProductTagClick = onProductTagClick,
@@ -253,7 +257,7 @@ fun AmityChildPostMediaElement(
 
         3 -> AmityPostMediaImageChildrenThree(
             modifier = modifier,
-            postChildren = post.getChildren(),
+            postChildren = postChildrenList,
             images = images,
             isVideoPost = isVideoPost,
             onProductTagClick = onProductTagClick,
@@ -264,7 +268,7 @@ fun AmityChildPostMediaElement(
 
         else -> AmityPostMediaImageChildrenFour(
             modifier = modifier,
-            postChildren = post.getChildren(),
+            postChildren = postChildrenList,
             images = images,
             isVideoPost = isVideoPost,
             onProductTagClick = onProductTagClick,
@@ -325,7 +329,7 @@ fun AmityPostMediaImageChildrenTwo(
     onProductTagClick: (AmityPost) -> Unit = {},
     onClick: (AmityPost) -> Unit,
 ) {
-    val productTagCounts = remember(postChildren.map { it.getPostId() to it.getUpdatedAt() }) {
+    val productTagCounts = remember(postChildren.joinToString(separator = "|") { "${it.getPostId()}@${it.getUpdatedAt()}" }) {
         postChildren.map { getProductTagCount(it) }
     }
 
@@ -406,7 +410,7 @@ fun AmityPostMediaImageChildrenThree(
     onProductTagClick: (AmityPost) -> Unit = {},
     onClick: (AmityPost) -> Unit,
 ) {
-    val productTagCounts = remember(postChildren.map { it.getPostId() to it.getUpdatedAt() }) {
+    val productTagCounts = remember(postChildren.joinToString(separator = "|") { "${it.getPostId()}@${it.getUpdatedAt()}" }) {
         postChildren.map { getProductTagCount(it) }
     }
 
@@ -523,7 +527,7 @@ fun AmityPostMediaImageChildrenFour(
     onProductTagClick: (AmityPost) -> Unit = {},
     onClick: (AmityPost) -> Unit,
 ) {
-    val productTagCounts = remember(postChildren.map { it.getPostId() to it.getUpdatedAt() }) {
+    val productTagCounts = remember(postChildren.joinToString(separator = "|") { "${it.getPostId()}@${it.getUpdatedAt()}" }) {
         postChildren.map { getProductTagCount(it) }
     }
 

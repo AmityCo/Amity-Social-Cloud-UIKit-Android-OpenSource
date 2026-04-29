@@ -71,6 +71,7 @@ fun AmityCommentEngagementBar(
     allowInteraction: Boolean,
     allowAction: Boolean = true,
     isReplyComment: Boolean,
+    isL2Comment: Boolean = false,
     comment: AmityComment,
     isCreatedByMe: Boolean,
     fromNonMemberCommunity: Boolean = false,
@@ -297,7 +298,7 @@ fun AmityCommentEngagementBar(
                         .testTag("comment_list/comment_bubble_reaction_button")
                 )
 
-                if (!isReplyComment) {
+                if (!fromNonMemberCommunity || comment.getParentId() != null) {
                     Text(
                         text = context.getString(R.string.amity_reply),
                         style = AmityTheme.typography.captionLegacy.copy(
@@ -310,12 +311,22 @@ fun AmityCommentEngagementBar(
                                 } else if (fromNonMemberCommunity) {
                                     behavior.handleNonMemberAction()
                                 }  else {
+                                    // L0 → child = L1 (parentId = L0.id)
+                                    // L1 → child = L2 (parentId = L1.id)
+                                    // L2 → sibling L2 (parentId = L2.getParentId() = L1.id)
+                                    val parentIdForReply = if (isL2Comment && comment.getParentId() != null) {
+                                        comment.getParentId()!!
+                                    } else {
+                                        comment.getCommentId()
+                                    }
+                                    viewModel.setReplyContext(comment, parentIdForReply)
                                     onReply(comment.getCommentId())
                                 }
                             }
                             .testTag("comment_list/comment_bubble_reply_button")
                     )
                 }
+
                 if (allowAction) {
                     Icon(
                         painter = painterResource(id = R.drawable.amity_ic_more_horiz),

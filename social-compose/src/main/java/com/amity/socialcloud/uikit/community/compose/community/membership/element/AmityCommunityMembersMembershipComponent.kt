@@ -1,13 +1,17 @@
 package com.amity.socialcloud.uikit.community.compose.community.membership.element
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +36,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmitySearchBarView
 import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.utils.isModerator
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.community.membership.list.AmityCommunityMembershipPageBehavior
 import com.amity.socialcloud.uikit.community.compose.community.membership.list.AmityCommunityMembershipPageViewModel
@@ -104,18 +109,45 @@ fun AmityCommunityMembersMembershipComponent(
                                 .fillMaxSize()
                                 .padding(horizontal = 16.dp, vertical = 8.dp)
                         ) {
-                            AmityUserAvatarView(
-                                user = member.getUser(),
-                                size = 40.dp,
-                                modifier = modifier.clickableWithoutRipple {
-                                    behavior.goToUserProfilePage(
-                                        AmityCommunityMembershipPageBehavior.Context(
-                                            pageContext = context,
-                                            userId = member.getUserId(),
+                            Box(
+                                modifier = Modifier
+                                    .size(40.dp)
+                            ) {
+                                AmityUserAvatarView(
+                                    user = member.getUser(),
+                                    size = 40.dp,
+                                    modifier = modifier.clickableWithoutRipple {
+                                        behavior.goToUserProfilePage(
+                                            AmityCommunityMembershipPageBehavior.Context(
+                                                pageContext = context,
+                                                userId = member.getUserId(),
+                                            )
                                         )
-                                    )
+                                    }
+                                )
+                                if (member.isModerator()) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(16.dp)
+                                            .offset(x = 4.dp)
+                                            .align(Alignment.BottomEnd)
+                                            .background(
+                                                color = AmityTheme.colors.primaryShade3,
+                                                shape = CircleShape
+                                            )
+                                    ) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.amity_ic_moderator_social),
+                                            contentDescription = "Moderator badge",
+                                            tint = AmityTheme.colors.primary,
+                                            modifier = Modifier
+                                                .size(12.dp)
+                                                .align(Alignment.Center)
+                                        )
+                                    }
                                 }
-                            )
+                            }
+
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = modifier.weight(1f)

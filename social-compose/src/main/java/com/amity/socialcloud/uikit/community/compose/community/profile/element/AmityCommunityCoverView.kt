@@ -312,7 +312,7 @@ fun AmityCommunityCoverView(
                             if (community.isOfficial()) {
                                 Box(modifier = Modifier
                                     .size(24.dp)
-                                    .padding(top = 2.dp, start = 6.dp)
+                                    .padding(start = 6.dp)
                                 ) {
                                     AmityBaseElement(
                                         pageScope = pageScope,

@@ -1,6 +1,7 @@
 package com.amity.socialcloud.uikit.common.memberpicker
 
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
@@ -58,6 +59,11 @@ class AmityMemberPickerActivity : AmityBaseActivity<AmityActivityPickMemberListB
         getViewDataBinding().smToolBar.setRightString(getString(R.string.amity_done))
         getViewDataBinding().smToolBar.setClickListener(this@AmityMemberPickerActivity)
         setSelectionCount()
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                mFragment.finishActivity(true)
+            }
+        })
     }
 
     private fun setSelectionCount() {
@@ -67,10 +73,6 @@ class AmityMemberPickerActivity : AmityBaseActivity<AmityActivityPickMemberListB
     }
 
     override fun leftIconClick() {
-        mFragment.finishActivity(true)
-    }
-
-    override fun onBackPressed() {
         mFragment.finishActivity(true)
     }
 

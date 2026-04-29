@@ -91,7 +91,6 @@ fun AmityStoryGlobalTabComponent(
             onStateChanged(it)
             viewModel.setTargetListState(it)
         }
-        onStateChanged(targetListState)
         Column(
             modifier = modifier.fillMaxWidth()
         ) {

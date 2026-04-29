@@ -38,14 +38,16 @@
     <string name="amity_delete_comment_warning_message">This comment will be permanently deleted.</string>
     <string name="amity_delete_reply_title">Delete reply</string>
     <string name="amity_delete_reply_warning_message">This reply will be permanently deleted.</string>
-    <string name="amity_add_reply_error_message">Failed to add reply. Please try again.</string>
-    <string name="amity_add_comment_error_message">Failed to add comment. Please try again.</string>
+    <string name="amity_add_reply_error_message">Oops, something went wrong</string>
+    <string name="amity_add_comment_error_message">Oops, something went wrong</string>
     <string name="amity_add_blocked_words_comment_error_message">Your comment contains inappropriate word. Please review and delete it.</string>
     <string name="amity_add_blocked_links_comment_error_message">Your comment contains a link that\'s not allowed. Please review and delete it.</string>
     <string name="amity_add_comment_exceed_error_message">Your comment exceeds the maximum character limit of %d. Please shorten your comment.</string>
+    <string name="amity_add_reply_parent_deleted_error_message">This comment is no longer available.</string>
+    <string name="amity_reply_no_longer_available_error_message">This reply is no longer available.</string>
 
     <string name="amity_update_comment_error_message">Unable to update comment</string>
-    <string name="amity_update_blocked_words_comment_error_message">Your comment wasn’t updated as it contained blocked words. Only you can see this</string>
+    <string name="amity_update_blocked_words_comment_error_message">Your comment contains inappropriate word. Please review and delete it.</string>
 
     <string name="amity_cancel">Cancel</string>
     <string name="amity_delete">Delete</string>
@@ -85,10 +87,12 @@
     <string name="amity_discard_post_title">Discard post?</string>
     <string name="amity_discard_post_message">Do you want to discard your post?</string>
     <string name="amity_add_blocked_words_post_error_message">Your post wasn\'t posted because it contains a blocked word.</string>
+    <string name="amity_user_profile_blocked_word_error_message">Your profile wasn\'t updated as it contains an inappropriate word.</string>
     <string name="amity_add_blocked_links_post_error_message">Your post wasn\'t posted because it contains a link that is not allowed.</string>
     <string name="amity_post_text_exceed_error_message">Your post wasn\'t posted because it exceeds the %1$d characters limit</string>
     <string name="amity_post_create_generic_error_message">Failed to create post. Please try again.</string>
     <string name="amity_post_edit_generic_error_message">Failed to edit post. Please try again.</string>
+    <string name="amity_v4_product_already_tagged">Already tagged</string>
 
 
     <!-- Alt text-->
@@ -158,11 +162,11 @@
     <string name="amity_v4_community_setup_toast_create_success">Successfully created community!</string>
     <string name="amity_v4_community_setup_toast_create_failed">Failed to create community. Please try again.</string>
     <string name="amity_v4_community_setup_toast_updating">Updating…</string>
-    <string name="amity_v4_community_setup_toast_update_success">Successfully updated community profile!</string>
+    <string name="amity_v4_community_setup_toast_update_success">Successfully updated community profile.</string>
     <string name="amity_v4_community_setup_toast_update_failed">Failed to save your community profile. Please try again.</string>
 
     <!--community setup page dialog-->
-    <string name="amity_v4_community_setup_dialog_change_privacy_title">Change community privacy settings</string>
+    <string name="amity_v4_community_setup_dialog_change_privacy_title">Change community privacy settings?</string>
     <string name="amity_v4_community_setup_dialog_change_privacy_message">This community has globally featured posts. Changing the community from public to private will remove these posts from being featured globally</string>
     <string name="amity_v4_community_setup_dialog_leave_title">Leave without finishing</string>
     <string name="amity_v4_community_setup_dialog_leave_description">Your progress won\'t be saved and your community won\'t be created.</string>
@@ -235,4 +239,45 @@
 
     <!--- Generic error -->
     <string name="amity_no_internet_error_message">No internet connection.</string>
+    <string name="amity_v4_tagged_products_empty_desc">You can add or remove products anytime and pin them to control what viewers see while you\'re live.</string>
+    <string name="amity_v4_tagged_products_empty_title">No products tagged yet</string>
+    <string name="amity_v4_tagged_products_empty_action">Add products</string>
+    <string name="amity_v4_tagged_products_deleted_info">Unavailable</string>
+    <string name="amity_v4_tagged_products_archived_info">Unlisted</string>
+    <string name="amity_v4_pinned_product_label">Pinned product</string>
+    <string name="amity_v4_other_products_label">Other products</string>
+    <string name="amity_v4_pinned_product_badge_label">Pinned</string>
+    <string name="amity_v4_pin_label">Pin</string>
+    <string name="amity_v4_unpin_label">Unpin</string>
+    <string name="amity_v4_post_products_unavailable_toast">Some products that you\'ve tagged are no longer available.</string>
+
+    <!--livestream post thumbnail state messages-->
+    <string name="amity_v4_livestream_post_thumbnail_processing_title">This live stream has ended.</string>
+    <string name="amity_v4_livestream_post_thumbnail_processing_desc">Playback will be available for you to watch shortly.</string>
+    <string name="amity_v4_livestream_post_thumbnail_terminated_title">The stream has been terminated.</string>
+    <string name="amity_v4_livestream_post_thumbnail_terminated_desc">It looks like this live stream goes against our content moderation guidelines.</string>
+    <string name="amity_v4_livestream_post_thumbnail_ended_too_short_title">Playback unavailable.</string>
+    <string name="amity_v4_livestream_post_thumbnail_ended_too_short_desc">This live stream was too short to have a playback.</string>
+    <string name="amity_v4_livestream_post_thumbnail_unavailable_title">This stream is currently unavailable.</string>
+
+    <!--user actions — Ulta overrides (community=group, user=member terminology)-->
+    <string name="amity_report_user">Report member</string>
+    <string name="amity_unreport_user">Cancel report member</string>
+    <string name="amity_block_user">Block member</string>
+    <string name="amity_unblock_user">Unblock member</string>
+    <string name="amity_block_user_dialog_title">Block member?</string>
+    <string name="amity_block_user_dialog_confirm">Block</string>
+    <string name="amity_user_reported_toast">Report sent</string>
+    <string name="amity_user_unreported_toast">Report canceled</string>
+    <string name="amity_user_blocked_toast">Member blocked!</string>
+    <string name="amity_user_report_failed_toast">Report not successful. Please try again.</string>
+    <string name="amity_user_unreport_failed_toast">Failed to cancel report. Please try again.</string>
+    <string name="amity_user_block_failed_toast">Failed to block member. Please try again.</string>
+
+    <!--search tabs — Ulta overrides-->
+    <string name="amity_search_tab_communities">Groups</string>
+    <string name="amity_search_tab_users">Members</string>
+
+    <!--communities component tabs — Ulta overrides-->
+    <string name="amity_tab_my_communities">My groups</string>
 </resources>

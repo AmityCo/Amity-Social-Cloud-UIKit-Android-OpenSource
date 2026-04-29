@@ -69,7 +69,7 @@ fun AmityProductCarousel(
     if (post.getChildren().any { it.getData() is AmityPost.Data.LIVE_STREAM || it.getData() is AmityPost.Data.ROOM }) return
     val postId = post.getPostId()
     // Collect all product IDs from parent and children posts
-    val products = remember(post) {
+    val products = remember(post.getPostId()) {
         buildSet {
             // Add product tags from parent post
             post.getProductTags().forEach { tag ->

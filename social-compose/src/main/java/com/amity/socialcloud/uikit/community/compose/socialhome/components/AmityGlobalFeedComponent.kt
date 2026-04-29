@@ -82,8 +82,9 @@ fun AmityGlobalFeedComponent(
                     onClick = {
                         behavior.goToPostDetailPage(
                             context = context,
-                            id = it.getPostId()
-                        )
+                            id = it.getPostId(),
+                            autoFocusCommentInput = true,
+                            )
                     },
                     onCreateCommunityClicked = {
                         behavior.goToCreateCommunityPage(context)

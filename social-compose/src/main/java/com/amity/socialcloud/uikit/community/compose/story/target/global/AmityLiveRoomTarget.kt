@@ -87,7 +87,7 @@ fun AmityLiveRoomTarget(
                     .align(Alignment.TopCenter)
                     .border(1.5.dp, Color.White, RoundedCornerShape(6.dp))
                     .background(
-                        color = AmityTheme.colors.alert,
+                        color = Color(0xFFFF305A),
                         shape = RoundedCornerShape(6.dp)
                     )
                     .padding(horizontal = 6.dp, vertical = 2.dp),

@@ -19,27 +19,22 @@ fun AmityReplyCommentView(
     editingCommentId: String?,
     showEngagementRow: Boolean,
     comment: AmityComment,
+    isL2Comment: Boolean = false,
+    onReply: (String) -> Unit,
     onEdit: (String?) -> Unit,
     replyCount: Int? = null,
     previewLines: Int = EXPANDABLE_TEXT_MAX_LINES,
     allowAction: Boolean = true,
     shouldShowReplies: (Boolean) -> Unit = {},
+    replyTargetId: String? = null,
+    showBounceEffect: Boolean = false,
+    expandReplies: Boolean = false,
+    shouldHighlight: Boolean = false,
     fromNonMemberCommunity: Boolean = false,
 ) {
     if (comment.isDeleted()) {
         AmityDeletedCommentView(modifier = modifier, isReplyComment = true, replyCount = replyCount)
 
-        replyCount?.let {
-            if (replyCount - 1 > 0) {
-                AmityCommentViewReplyBar(
-                    modifier = modifier,
-                    isViewAllReplies = true,
-                    replyCount = replyCount - 1,
-                ) {
-                    shouldShowReplies(true)
-                }
-            }
-        }
     } else {
         AmitySingleCommentView(
             modifier = modifier,
@@ -49,15 +44,20 @@ fun AmityReplyCommentView(
             referenceId = referenceId,
             referenceType = referenceType,
             isReplyComment = true,
+            isL2Comment = isL2Comment,
             currentUserId = currentUserId,
             editingCommentId = editingCommentId,
             showEngagementRow = showEngagementRow,
-            onReply = {},
+            onReply = onReply,
             onEdit = onEdit,
             replyCount = replyCount,
             shouldShowReplies = shouldShowReplies,
             previewLines = previewLines,
             allowAction = allowAction,
+            replyTargetId = replyTargetId,
+            showBounceEffect = showBounceEffect,
+            expandReplies = expandReplies,
+            shouldHighlight = shouldHighlight,
             fromNonMemberCommunity = fromNonMemberCommunity,
         )
     }

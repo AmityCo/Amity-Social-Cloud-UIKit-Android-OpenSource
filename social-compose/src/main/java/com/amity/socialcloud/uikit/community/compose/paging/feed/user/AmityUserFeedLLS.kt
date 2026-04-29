@@ -137,6 +137,7 @@ fun LazyListScope.amityUserFeedLLS(
                                 behavior.goToPostDetailPage(
                                     context = context,
                                     postId = post.getPostId(),
+                                    autoFocusCommentInput = true,
                                 )
                             },
                         )

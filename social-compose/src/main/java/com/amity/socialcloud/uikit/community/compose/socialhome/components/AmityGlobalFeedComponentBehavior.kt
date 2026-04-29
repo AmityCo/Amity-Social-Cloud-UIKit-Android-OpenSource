@@ -14,12 +14,14 @@ open class AmityGlobalFeedComponentBehavior {
     open fun goToPostDetailPage(
         context: Context,
         id: String,
-        category: AmityPostCategory = AmityPostCategory.GENERAL
+        category: AmityPostCategory = AmityPostCategory.GENERAL,
+        autoFocusCommentInput: Boolean = false,
     ) {
         val intent = AmityPostDetailPageActivity.newIntent(
             context = context,
             id = id,
-            category = category
+            category = category,
+            autoFocusCommentInput = autoFocusCommentInput,
         )
         context.startActivity(intent)
     }

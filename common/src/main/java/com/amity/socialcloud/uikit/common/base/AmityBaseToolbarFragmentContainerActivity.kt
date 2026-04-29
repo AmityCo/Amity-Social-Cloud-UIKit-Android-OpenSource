@@ -45,7 +45,7 @@ abstract class AmityBaseToolbarFragmentContainerActivity : RxAppCompatActivity()
     abstract fun getContentFragment(): Fragment
 
     override fun leftIconClick() {
-        onBackPressed()
+        onBackPressedDispatcher.onBackPressed()
     }
 
     override fun rightIconClick() {

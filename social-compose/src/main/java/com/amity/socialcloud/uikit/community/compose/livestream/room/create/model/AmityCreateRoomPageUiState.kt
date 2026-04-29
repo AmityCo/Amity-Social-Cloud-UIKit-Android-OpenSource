@@ -4,6 +4,7 @@ import android.net.Uri
 import com.amity.socialcloud.sdk.core.session.model.NetworkConnectionEvent
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.invitation.AmityInvitation
+import com.amity.socialcloud.sdk.model.core.product.AmityProduct
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.sdk.model.video.room.AmityRoom
@@ -44,4 +45,16 @@ data class AmityCreateRoomPageUiState(
     val cameraPosition: CameraPosition = CameraPosition.FRONT,
     val isPreparingInitialData: Boolean = false,
     val viewerCount: Int? = null,
-)
+    val taggedProducts: List<AmityProduct>? = null,
+    val pinnedProductId: String? = null,
+    val isProductCatalogueEnabled: Boolean = false
+) {
+    fun getRoomPost() : AmityPost? {
+        return post?.getChildren()?.firstOrNull{ it.getData() is AmityPost.Data.ROOM }
+    }
+
+    fun isCoHostCanManageProducts() : Boolean {
+        return room?.getParticipants()?.find { it.userId == cohostUserId }?.canManageProductTags == true
+    }
+}
+

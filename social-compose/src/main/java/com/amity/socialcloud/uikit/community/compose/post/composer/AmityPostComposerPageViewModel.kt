@@ -29,6 +29,12 @@ import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.launch
 import java.util.UUID
 import androidx.core.net.toUri
@@ -39,14 +45,28 @@ import com.amity.socialcloud.sdk.model.core.file.AmityClip
 import com.amity.socialcloud.sdk.model.core.file.AmityFileType
 import com.amity.socialcloud.sdk.model.core.file.AmityRawFile
 import com.amity.socialcloud.sdk.model.core.link.AmityLinkPreviewMetadata
+import com.amity.socialcloud.sdk.model.core.producttag.AmityAttachmentProductTags
+import com.amity.socialcloud.sdk.model.core.producttag.AmityProductTag
+import com.amity.socialcloud.sdk.model.core.product.AmityProduct
+import com.amity.socialcloud.sdk.model.core.product.AmityProductStatus
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.AltTextMedia
+import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
+import com.amity.socialcloud.uikit.common.infra.initializer.AmityAppContext
+import com.amity.socialcloud.uikit.community.compose.R
 import kotlin.apply
+import kotlin.math.min
+import kotlin.math.max
 
 
 class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
 
     private val MAX_CHAR_LIMIT = 50000
     private val MAX_ATTACHMENTS = 10
+    private val MAX_PRODUCT_TAGS_PER_MEDIA = 5
+
+    companion object {
+        const val MAX_TOTAL_PRODUCT_TAGS = 20
+    }
 
     private var options: AmityPostComposerOptions? = null
 
@@ -63,6 +83,203 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
     private val uploadFailedMediaMap = LinkedHashMap<String, Boolean>()
     private val showAltTextConfigSheet = mutableStateOf(false)
     private val altTextMedia = mutableStateOf<AltTextMedia?>(null)
+
+    // Product tags per media file: key = fileId/uploadId, value = list of products
+    private val _mediaProductTags by lazy {
+        MutableStateFlow<Map<String, List<AmityProduct>>>(emptyMap())
+    }
+    val mediaProductTags get() = _mediaProductTags
+
+    // Product tags from text mentions with index for sorting
+    private val _textProductTagsWithIndex by lazy {
+        MutableStateFlow<List<Pair<Int, AmityProduct>>>(emptyList())
+    }
+
+    // Product tags from text mentions
+    private val _textProductTags by lazy {
+        MutableStateFlow<List<AmityProduct>>(emptyList())
+    }
+    val textProductTags get() = _textProductTags
+
+    private val _originalMediaProductTagIds =
+        MutableStateFlow<Map<String, Set<String>>>(emptyMap())
+    val originalMediaProductTagIds: StateFlow<Map<String, Set<String>>> =
+        _originalMediaProductTagIds.asStateFlow()
+
+    private val _originalTextProductTagIds =
+        MutableStateFlow<List<String>>(emptyList())
+    val originalTextProductTagIds: StateFlow<List<String>> =
+        _originalTextProductTagIds.asStateFlow()
+
+    // All distinct product tags across all media AND text mentions
+    // Order: text tags sorted by index first, then media tags in order of media files
+    val allDistinctProductTags: kotlinx.coroutines.flow.Flow<List<AmityProduct>>
+        get() = kotlinx.coroutines.flow.combine(
+            _mediaProductTags,
+            _textProductTagsWithIndex,
+            _selectedMediaFiles
+        ) { mediaTags, textTagsWithIndex, mediaFiles ->
+            val seenProductIds = mutableSetOf<String>()
+            val result = mutableListOf<AmityProduct>()
+
+            // 1. Add text tags sorted by index first
+            textTagsWithIndex
+                .sortedBy { it.first }
+                .forEach { (_, product) ->
+                    if (seenProductIds.add(product.getProductId())) {
+                        result.add(product)
+                    }
+                }
+
+            // 2. Add media tags in order of media files
+            mediaFiles.forEach { media ->
+                val mediaId = media.id ?: media.url.toString()
+                mediaTags[mediaId]?.forEach { product ->
+                    if (seenProductIds.add(product.getProductId())) {
+                        result.add(product)
+                    }
+                }
+            }
+
+            result
+        }
+
+    // Total count of distinct product tags across text and media
+    val totalDistinctProductTagCount: kotlinx.coroutines.flow.Flow<Int>
+        get() = allDistinctProductTags.map { it.size }
+
+    // Set product tags from text mentions with index for sorting
+    fun setTextProductTags(productsWithIndex: List<Pair<Int, AmityProduct>>) {
+        viewModelScope.launch {
+            _textProductTagsWithIndex.value = productsWithIndex
+            _textProductTags.value = productsWithIndex.map { it.second }
+        }
+    }
+
+    // Set product tags for a specific media file
+    fun setProductTagsForMedia(mediaId: String, products: List<AmityProduct>) {
+        viewModelScope.launch {
+            val currentTags = _mediaProductTags.value.toMutableMap()
+            currentTags[mediaId] = products
+            _mediaProductTags.value = currentTags
+        }
+    }
+
+    // Total distinct product count as StateFlow
+    val totalDistinctProductCount: StateFlow<Int> by lazy {
+        allDistinctProductTags
+            .map { it.size }
+            .stateIn(viewModelScope, SharingStarted.Eagerly, 0)
+    }
+
+    // Check if can add more products
+    fun canAddMoreProducts(): Boolean {
+        return totalDistinctProductCount.value < MAX_TOTAL_PRODUCT_TAGS
+    }
+
+    // Calculate max selection for media product tagging
+    fun getMaxSelectionForMedia(): Int {
+        val currentTotal = totalDistinctProductCount.value
+        val remaining = MAX_TOTAL_PRODUCT_TAGS - currentTotal
+        return min(5, max(0, remaining))
+    }
+
+    // Get product tags for a specific media file
+    fun getProductTagsForMedia(mediaId: String): List<AmityProduct> {
+        return _mediaProductTags.value[mediaId] ?: emptyList()
+    }
+
+    // Remove product tags for a specific media file
+    fun removeProductTagsForMedia(mediaId: String) {
+        viewModelScope.launch {
+            val currentTags = _mediaProductTags.value.toMutableMap()
+            currentTags.remove(mediaId)
+            _mediaProductTags.value = currentTags
+        }
+    }
+
+    // Build AmityAttachmentProductTags from current media product tags state
+    fun buildAttachmentProductTags(): AmityAttachmentProductTags? {
+        val currentTags = _mediaProductTags.value
+        if (currentTags.isEmpty()) return null
+
+        val builder = AmityAttachmentProductTags.Builder()
+        currentTags.forEach { (fileId, products) ->
+            val mediaProductTags = products.map { product ->
+                AmityProductTag.Media(
+                    productId = product.getProductId(),
+                    product = product
+                )
+            }
+            builder.set(fileId, mediaProductTags)
+        }
+        return builder.build()
+    }
+
+    // Check if there are any attachment product tags
+    fun hasAttachmentProductTags(): Boolean {
+        return _mediaProductTags.value.values.any { it.isNotEmpty() }
+    }
+
+    // Clear all product tags
+    fun clearAllProductTags() {
+        viewModelScope.launch {
+            _mediaProductTags.value = emptyMap()
+        }
+    }
+
+    /**
+     * Compute the total count of distinct product IDs across all media and text tags.
+     */
+    fun getTotalDistinctProductCount(): Int {
+        val productIds = mutableSetOf<String>()
+        _textProductTagsWithIndex.value.forEach { (_, product) ->
+            productIds.add(product.getProductId())
+        }
+        _mediaProductTags.value.values.forEach { products ->
+            products.forEach { product ->
+                productIds.add(product.getProductId())
+            }
+        }
+        return productIds.size
+    }
+
+    /**
+     * Calculate how many products can still be selected for a specific media,
+     * respecting both the per-media limit (5) and the per-post limit (20).
+     *
+     * @param mediaId The media whose selection sheet is about to open.
+     * @return The effective maxSelection to pass to the product selection component.
+     */
+    fun getMaxSelectionForMedia(mediaId: String): Int {
+        val totalDistinct = getTotalDistinctProductCount()
+        val thisMediaProducts = _mediaProductTags.value[mediaId] ?: emptyList()
+        val thisMediaProductIds = thisMediaProducts.map { it.getProductId() }.toSet()
+
+        // Count distinct products in OTHER media + text (excluding this media's unique products)
+        val allProductIds = mutableSetOf<String>()
+        _textProductTagsWithIndex.value.forEach { (_, product) ->
+            allProductIds.add(product.getProductId())
+        }
+        _mediaProductTags.value.forEach { (id, products) ->
+            if (id != mediaId) {
+                products.forEach { product ->
+                    allProductIds.add(product.getProductId())
+                }
+            }
+        }
+
+        val otherDistinctCount = allProductIds.size
+        val remainingSlots = MAX_TOTAL_PRODUCT_TAGS - otherDistinctCount
+        return remainingSlots.coerceIn(0, MAX_PRODUCT_TAGS_PER_MEDIA)
+    }
+
+    /**
+     * Check whether the per-post product tag limit has been reached.
+     */
+    fun isProductTagLimitReached(): Boolean {
+        return getTotalDistinctProductCount() >= MAX_TOTAL_PRODUCT_TAGS
+    }
 
     fun showAltTextConfigSheet() {
         showAltTextConfigSheet.value = true
@@ -191,24 +408,24 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
         val metadataDomain = metadata.getDomain()
         val metadataTitle = metadata.getTitle()
         val imageUrl = metadata.getImageUrl()
-        
+
         _detectedUrls.value = _detectedUrls.value.mapIndexed { index, link ->
             try {
                 val linkUrl = link.getUrl() ?: ""
-                
+
                 // Extract original text by checking if https:// was auto-added
                 // If URL starts with https:// but originalText didn't, remove it for display
-                val originalText = if (linkUrl.startsWith("https://") && 
+                val originalText = if (linkUrl.startsWith("https://") &&
                     !linkUrl.substring(8).startsWith("http")) {
                     linkUrl.substring(8) // Remove "https://"
                 } else {
                     linkUrl
                 }
-                
+
                 // Determine domain and title based on what metadata is available
                 val finalDomain: String
                 val finalTitle: String
-                
+
                 when {
                     // Both null → use original text for both
                     metadataDomain == null && metadataTitle == null -> {
@@ -231,7 +448,7 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
                         finalTitle = metadataTitle!!
                     }
                 }
-                
+
                 AmityLink(
                     index = link.getIndex(),
                     length = link.getLength(),
@@ -318,15 +535,17 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
             onPostLoaded = { post ->
                 this.community = (post.getTarget() as? AmityPost.Target.COMMUNITY)?.getCommunity()
                 this._post.value = post
-
-                when (post.getData()) {
+                when (val postData = post.getData()) {
                     is AmityPost.Data.TEXT -> prepareTextPost(post)
                     is AmityPost.Data.IMAGE -> prepareImagePost(post)
-                    is AmityPost.Data.VIDEO -> prepareVideoPost(post)
+                    is AmityPost.Data.VIDEO -> prepareVideoPost(postData)
                     is AmityPost.Data.CLIP -> prepareClipPost(post)
 //            is AmityPost.Data.FILE -> prepareFilePost(post)
                     else -> {}
                 }
+
+                // Prepare product tags from parent post and child posts
+                prepareProductTags(post)
 
                 setPostAttachmentAllowedPickerType(
                     when (post.getChildren().firstOrNull()?.getData()) {
@@ -387,13 +606,18 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
         _selectedMediaFiles.value = mediaMap.values.toList()
     }
 
-    private fun prepareVideoPost(post: AmityPost) {
-        val thumbnail = getPostVideoThumbnail(post)
+    private fun prepareVideoPost(videoData: AmityPost.Data.VIDEO) {
+        val thumbnail = videoData.getThumbnailImage()
         val videoPost = if (thumbnail != null) {
+            mapVideoToFeedImage(
+                video = videoData.getVideo().blockingGet(),
+                thumbnail = thumbnail,
+                type = Type.VIDEO
+            )
             mapImageToFeedImage(thumbnail, Type.VIDEO)
         } else {
             // Create placeholder for video without thumbnail
-            createPlaceholderVideoMedia(post)
+            createPlaceholderVideoMedia(videoData)
         }
         mediaMap[videoPost.url.toString()] = videoPost
         _selectedMediaFiles.value = mediaMap.values.toList()
@@ -405,6 +629,69 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
             mediaMap[videoPost.url.toString()] = videoPost
         }
         _selectedMediaFiles.value = mediaMap.values.toList()
+    }
+
+    /**
+     * Prepare product tags from existing post for edit mode.
+     * Collects product tags from:
+     * 1. Parent post text (AmityProductTag.Text) - use post.getProducts() for full product data
+     * 2. Child posts media (AmityProductTag.Media)
+     */
+    private fun prepareProductTags(post: AmityPost) {
+        // 1. Get text product tags from parent post
+        // Use post.getProducts() which contains full product data, then filter by productIds from text tags
+        val textTags = post.getProductTags()
+            .filterIsInstance<AmityProductTag.Text>()
+
+        val productsMap = post.getProducts()?.associateBy { it.getProductId() } ?: emptyMap()
+
+        // Create list with index for sorting
+        val textProductTagsWithIndex = textTags.mapNotNull { tag ->
+            productsMap[tag.productId]?.let { product ->
+                tag.index to product
+            }
+        }
+
+        if (textProductTagsWithIndex.isNotEmpty()) {
+            _textProductTagsWithIndex.value = textProductTagsWithIndex
+            _textProductTags.value = textProductTagsWithIndex.map { it.second }
+        }
+        _originalTextProductTagIds.value = textProductTagsWithIndex.map { it.second.getProductId() }
+
+        // 2. Get media product tags from child posts
+        val productTagsMap = mutableMapOf<String, List<AmityProduct>>()
+
+        post.getChildren().forEach { childPost ->
+            val fileId = when (val childData = childPost.getData()) {
+                is AmityPost.Data.IMAGE -> childData.getImage()?.getFileId()
+                is AmityPost.Data.VIDEO -> childData.getVideo().blockingGet().getFileId()
+                else -> null
+            }
+
+            if (fileId != null) {
+                // Get product tags from child post using getProducts() for full product data
+                val mediaTagProductIds = childPost.getProductTags()
+                    .filterIsInstance<AmityProductTag.Media>()
+                    .map { it.productId }
+                    .toSet()
+
+                val childProductTags = childPost.getProducts()
+                    ?.filter { it.getProductId() in mediaTagProductIds }
+                    ?: emptyList()
+
+                if (childProductTags.isNotEmpty()) {
+                    productTagsMap[fileId] = childProductTags
+                }
+            }
+        }
+
+        // Update the media product tags state
+        _originalMediaProductTagIds.value = productTagsMap.mapValues { entry ->
+            entry.value.map { it.getProductId() }.toSet()
+        }
+        if (productTagsMap.isNotEmpty()) {
+            _mediaProductTags.value = productTagsMap
+        }
     }
 
     private fun setUpPostTextWithImagesOrFiles(post: AmityPost) {
@@ -432,12 +719,17 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
     }
 
     private fun setupVideoPost(postChildren: List<AmityPost>) {
-        postChildren.forEach { post ->
+        postChildren.filter { it.getData() is AmityPost.Data.VIDEO }.forEach { post ->
             val thumbnail = getPostVideoThumbnail(post)
+            val videoData = post.getData() as AmityPost.Data.VIDEO
             val videoMedia = if (thumbnail != null) {
-                mapImageToFeedImage(thumbnail, Type.VIDEO)
+                mapVideoToFeedImage(
+                    video = videoData.getVideo().blockingGet(),
+                    thumbnail = thumbnail,
+                    type = Type.VIDEO
+                )
             } else {
-                createPlaceholderVideoMedia(post)
+                createPlaceholderVideoMedia(videoData)
             }
             mediaMap[videoMedia.url.toString()] = videoMedia
         }
@@ -445,9 +737,10 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
     }
 
     private fun mapImageToFeedImage(image: AmityImage, type: Type): AmityPostMedia {
+        val fileId = image.getFileId()
         return AmityPostMedia(
-            id = image.getFileId(),
-            uploadId = null,
+            id = fileId,
+            uploadId = fileId, // Use fileId as uploadId for existing media so tag icon shows in edit mode
             url = image.getUrl(AmityImage.Size.MEDIUM).toUri(),
             uploadState = AmityFileUploadState.COMPLETE,
             currentProgress = 100,
@@ -456,12 +749,25 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
         )
     }
 
-    private fun createPlaceholderVideoMedia(post: AmityPost): AmityPostMedia {
-        val videoData = post.getData() as? AmityPost.Data.VIDEO
+    private fun mapVideoToFeedImage(video: AmityVideo, thumbnail: AmityImage, type: Type): AmityPostMedia {
+        val fileId = video.getFileId()
+        return AmityPostMedia(
+            id = fileId,
+            uploadId = fileId, // Use fileId as uploadId for existing media so tag icon shows in edit mode
+            url = thumbnail.getUrl(AmityImage.Size.MEDIUM).toUri(),
+            uploadState = AmityFileUploadState.COMPLETE,
+            currentProgress = 100,
+            type = type,
+            media = AmityPostMedia.Media.Video(video)
+        )
+    }
+
+    private fun createPlaceholderVideoMedia(videoData: AmityPost.Data.VIDEO): AmityPostMedia {
+        val fileId = videoData.getVideo().blockingGet().getFileId()
 
         return AmityPostMedia(
-            id = videoData?.getThumbnailImage()?.getFileId() ?: post.getPostId(),
-            uploadId = null,
+            id = fileId,
+            uploadId = fileId, // Use fileId as uploadId for existing media so tag icon shows in edit mode
             url = Uri.EMPTY, // Use empty URI as placeholder
             uploadState = AmityFileUploadState.COMPLETE,
             currentProgress = 100,
@@ -491,6 +797,8 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
         mentionedUsers: List<AmityMentionMetadata.USER>,
         hashtags: List<AmityHashtag> = emptyList(),
         links: List<AmityLink> = emptyList(),
+        productTags: List<AmityProductTag.Text>? = null,
+        attachmentProductTags: AmityAttachmentProductTags? = null,
     ) {
         if (postText.length > MAX_CHAR_LIMIT) {
             setPostCreationEvent(
@@ -567,6 +875,8 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
                         mentionedUsers,
                         hashtags,
                         links,
+                        productTags = productTags,
+                        attachmentProductTags = attachmentProductTags,
                     )
                 })
                 .andThen(Single.defer {
@@ -581,6 +891,7 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
                         setPostCreationEvent(AmityPostCreationEvent.Pending)
                     } else {
                         AmityPostComposerHelper.updatePost(postId)
+                        checkAndNotifyMissingProductTags(it, productTags)
                         setPostCreationEvent(AmityPostCreationEvent.Success)
                     }
                 }
@@ -632,7 +943,9 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
         newAttachments: List<AmityFileInfo>,
         mentionedUsers: List<AmityMentionMetadata.USER>,
         hashtags: List<AmityHashtag> = emptyList(),
-        links: List<AmityLink> = emptyList()
+        links: List<AmityLink> = emptyList(),
+        productTags: List<AmityProductTag.Text>? = null,
+        attachmentProductTags: AmityAttachmentProductTags? = null,
     ): Completable {
         // Determine attachment type by examining all attachments, not just the first one
         val attachmentType: Type? = run {
@@ -676,12 +989,13 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
             Type.VIDEO -> {
                 val videos = attachments.mapNotNull {
                     it as? AmityPost.Data.VIDEO
-                }.filter {
-                    !(it.getThumbnailImage()?.getFileId()?.let(deletedImageIds::contains)
-                        ?: false)
-                }.map {
-                    it.getVideo().blockingGet()
-                } + newAttachments.map { it as AmityVideo }
+                }
+                    .map {
+                        it.getVideo().blockingGet()
+                    }
+                    .filter {
+                        !(it.getFileId().let(deletedImageIds::contains))
+                    } + newAttachments.map { it as AmityVideo }
 
                 postEditor.attachments(*videos.toTypedArray())
             }
@@ -714,9 +1028,9 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
                     this.mentionUsers(mentionUserIds.toList())
                     this.hashtags(hashtags.map { it.getText() })
                 }
-                if (links.isNotEmpty()) {
-                    this.links(links)
-                }
+                this.links(links)
+                productTags?.let(this::productTags)
+                attachmentProductTags?.let(this::taggedProducts)
             }
 
         return postEditor
@@ -730,6 +1044,8 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
         mentionedUsers: List<AmityMentionMetadata.USER>,
         hashtags: List<AmityHashtag> = emptyList(),
         links: List<AmityLink> = emptyList(),
+        productTags: List<AmityProductTag.Text>? = null,
+        attachmentProductTags: AmityAttachmentProductTags? = null,
     ) {
         if (postText.length > MAX_CHAR_LIMIT) {
             setPostCreationEvent(
@@ -774,6 +1090,8 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
                     metadata = metadata,
                     mentionUserIds = mentionUserIds,
                     hashtags = hashtags.map { it.getText() },
+                    productTags = productTags,
+                    attachmentProductTags = attachmentProductTags,
                 )
             }
 
@@ -791,6 +1109,8 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
                     metadata = metadata,
                     mentionUserIds = mentionUserIds,
                     hashtags = hashtags.map { it.getText() },
+                    productTags = productTags,
+                    attachmentProductTags = attachmentProductTags,
                 )
             }
 
@@ -819,6 +1139,7 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
                     mentionUserIds = mentionUserIds,
                     hashtags = hashtags.map { it.getText() },
                     links = links,
+                    productTags = productTags,
                 )
             }
         }
@@ -829,6 +1150,7 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
                     setPostCreationEvent(AmityPostCreationEvent.Pending)
                 } else {
                     AmityPostComposerHelper.addNewPost(it)
+                    checkAndNotifyMissingProductTags(it, productTags)
                     setPostCreationEvent(AmityPostCreationEvent.Success)
                 }
             }
@@ -847,6 +1169,7 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
         mentionUserIds: Set<String>,
         hashtags: List<String>,
         links: List<AmityLink> = emptyList(),
+        productTags: List<AmityProductTag.Text>? = null,
     ): Single<AmityPost> {
         return AmitySocialClient.newPostRepository()
             .createTextPost(
@@ -858,6 +1181,7 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
                 mentionUserIds = mentionUserIds,
                 hashtags = hashtags,
                 links = links,
+                productTags = productTags,
             )
     }
 
@@ -870,6 +1194,8 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
         metadata: JsonObject?,
         mentionUserIds: Set<String>,
         hashtags: List<String>,
+        productTags: List<AmityProductTag.Text>? = null,
+        attachmentProductTags: AmityAttachmentProductTags? = null,
     ): Single<AmityPost> {
         return AmitySocialClient.newPostRepository()
             .createImagePost(
@@ -881,6 +1207,8 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
                 metadata = metadata,
                 mentionUserIds = mentionUserIds,
                 hashtags = hashtags,
+                productTags = productTags,
+                attachmentProductTags = attachmentProductTags,
             )
     }
 
@@ -893,6 +1221,8 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
         metadata: JsonObject?,
         mentionUserIds: Set<String>,
         hashtags: List<String>,
+        productTags: List<AmityProductTag.Text>? = null,
+        attachmentProductTags: AmityAttachmentProductTags? = null,
     ): Single<AmityPost> {
         return AmitySocialClient.newPostRepository()
             .createVideoPost(
@@ -904,6 +1234,8 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
                 metadata = metadata,
                 mentionUserIds = mentionUserIds,
                 hashtags = hashtags,
+                productTags = productTags,
+                attachmentProductTags = attachmentProductTags,
             )
     }
 
@@ -975,6 +1307,8 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
             } else {
                 uploadedMediaMap.remove(postMedia.id!!)
             }
+            // Remove product tags for this media
+            removeProductTagsForMedia(postMedia.id!!)
         }
         _selectedMediaFiles.value = mediaMap.values.toList()
 
@@ -982,6 +1316,8 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
 
         if (mediaMap.isEmpty()) {
             setPostAttachmentAllowedPickerType(AmityPostAttachmentAllowedPickerType.All)
+            // Clear all product tags when all media is removed
+            clearAllProductTags()
         } else {
             val mediaType = mediaMap.values.first().type
             setPostAttachmentAllowedPickerType(
@@ -1032,6 +1368,86 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
             delay(500)
             _postCreationEvent.value = AmityPostCreationEvent.Initial
         }
+    }
+
+    /**
+     * Returns true if an error snackbar was shown (some products became unavailable).
+     */
+    private fun checkAndNotifyMissingProductTags(
+        post: AmityPost,
+        sentProductTags: List<AmityProductTag.Text>?,
+    ): Boolean {
+        if (sentProductTags != null) {
+            val unavailableMessage = AmityAppContext.getContext()
+                .getString(R.string.amity_v4_post_products_unavailable_toast)
+
+            // Condition 3: any product tagged in text or media is ARCHIVED
+            val hasArchivedProduct = post.getProductTags().firstOrNull { (it as? AmityProductTag.Text)?.product?.getStatus() == AmityProductStatus.ARCHIVED } != null ||
+                    post.getChildren().any { child ->
+                        child.getProductTags().firstOrNull { (it as? AmityProductTag.Media)?.product?.getStatus() == AmityProductStatus.ARCHIVED } != null
+                    }
+            if (hasArchivedProduct) {
+                AmityUIKitSnackbar.publishSnackbarErrorMessage(message = unavailableMessage)
+                return true
+            }
+
+            // Condition 1: sent text product count > result text product count
+            val sentTextProductIds = sentProductTags.map { it.productId }
+            val resultTextProductIds = post.getProductTags()
+                .filterIsInstance<AmityProductTag.Text>()
+                .map { it.productId }
+
+            if (sentTextProductIds.size > resultTextProductIds.size) {
+                AmityUIKitSnackbar.publishSnackbarErrorMessage(message = unavailableMessage)
+                return true
+            }
+
+            // Condition 2: any media entry has more sent products than what came back in child post
+            val sentMediaProductTagsMap = _mediaProductTags.value
+            if (sentMediaProductTagsMap.isNotEmpty()) {
+                val childTagCountMap = mutableMapOf<String, Int>()
+                post.getChildren().forEach { childPost ->
+                    val fileId = when (val childData = childPost.getData()) {
+                        is AmityPost.Data.IMAGE -> childData.getImage()?.getFileId()
+                        is AmityPost.Data.VIDEO -> childData.getVideo().blockingGet().getFileId()
+                        else -> null
+                    }
+                    if (fileId != null) {
+                        childTagCountMap[fileId] = childPost.getProductTags()
+                            .filterIsInstance<AmityProductTag.Media>()
+                            .size
+                    }
+                }
+
+                val hasMissingMediaTag = sentMediaProductTagsMap.any { (fileId, sentProducts) ->
+                    sentProducts.size > (childTagCountMap[fileId] ?: 0)
+                }
+
+                if (hasMissingMediaTag) {
+                    AmityUIKitSnackbar.publishSnackbarErrorMessage(message = unavailableMessage)
+                }
+                return true
+            }
+        }
+        return false
+    }
+
+    private fun hasProductTagsChanged(): Boolean {
+        val currentMediaTagIds = _mediaProductTags.value.mapValues { (_, products) ->
+            products.map { it.getProductId() }.toSet()
+        }
+        val originalMediaTagIds = _originalMediaProductTagIds.value
+
+        if (currentMediaTagIds.keys != originalMediaTagIds.keys) return true
+        for ((fileId, currentIds) in currentMediaTagIds) {
+            if (currentIds != originalMediaTagIds[fileId]) return true
+        }
+
+        val currentTextTagIds = _textProductTags.value.map { it.getProductId() }.toSet()
+        val originalTextTagIds = _originalTextProductTagIds.value.toSet()
+        if (currentTextTagIds != originalTextTagIds) return true
+
+        return false
     }
 
     private fun cancelUpload(uploadId: String?) {
@@ -1243,7 +1659,7 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
             updateList(pm)
         }
     }
-    
+
     override fun onCleared() {
         super.onCleared()
         metadataDisposable?.dispose()

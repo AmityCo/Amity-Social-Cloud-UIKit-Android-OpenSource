@@ -23,12 +23,15 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -42,6 +45,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -55,6 +59,7 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.helper.core.asAmityImage
+import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.model.core.file.AmityFileType
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
@@ -62,6 +67,7 @@ import com.amity.socialcloud.sdk.model.social.poll.AmityPollAnswer
 import com.amity.socialcloud.uikit.common.common.isNotEmptyOrBlank
 import com.amity.socialcloud.uikit.common.common.readableNumber
 import com.amity.socialcloud.uikit.common.components.setImageDrawable
+import com.amity.socialcloud.uikit.common.ui.elements.AmityRoundCheckbox
 import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
@@ -101,6 +107,12 @@ fun AmityPostImagePollElement(
     val screenWidth = configuration.screenWidthDp.dp
     val totalSpacing = (itemSpacing * (columns - 1)).dp
     val itemWidth = (screenWidth - totalSpacing - 32.dp) / columns
+
+    // Hoist currentUser here so all PollItems share one subscription instead of each creating
+    // their own subscription to the same stream.
+    val currentUser by produceState<AmityUser?>(initialValue = null) {
+        AmityCoreClient.getCurrentUser().asFlow().collect { value = it }
+    }
 
     // State to store the maximum height
 //    var maxHeight by remember { mutableStateOf(0.dp) }
@@ -147,6 +159,7 @@ fun AmityPostImagePollElement(
 
                     PollItem(
                         answer = answer,
+                        currentUser = currentUser,
                         modifier = Modifier
                             .width(itemWidth)
                             .then(
@@ -231,11 +244,13 @@ fun AmityPostImagePollElement(
 private fun PollItem(
     modifier: Modifier = Modifier,
     answer: AmityPollAnswer,
+    currentUser: AmityUser? = null,
     isSelected: Boolean = false,
     isSingleSelected: Boolean = true,
     canVote: Boolean = true,
     viewResultMode: Boolean = false,
     totalVoteCount: Int = 0,
+    isExpanded: Boolean = false,
     imagePreviewClick: (AmityImage) -> Unit = {},
     selectAnswer: () -> Unit = {},
 ) {
@@ -307,12 +322,12 @@ private fun PollItem(
         }
     }
 
-    // Optimize image loading with better caching
-    val imageUrl = remember(answer.id) {
-        answer.getImage()?.getUrl(AmityImage.Size.MEDIUM)
-    }
-    
-    val imageRequest = remember(answer.id) {
+    // Don't memoize the image URL - let it update if answer object changes
+    val imageUrl = answer.getImage()?.getUrl(AmityImage.Size.MEDIUM)
+
+    // currentUser is passed from parent to avoid one subscription per poll answer item
+    // Create image request with stable memoization based on URL
+    val imageRequest = remember(imageUrl, isExpanded) {
         ImageRequest.Builder(context)
             .data(imageUrl)
             .crossfade(300)
@@ -346,6 +361,7 @@ private fun PollItem(
                 .background(AmityTheme.colors.baseShade4, shape = RoundedCornerShape(4.dp))
                 .aspectRatio(4f / 3f)
                 .clip(RoundedCornerShape(4.dp))
+                .testTag("poll_answer_${answer.id}")
                 .clickableWithoutRipple(enabled = canVote && !viewResultMode) {
                     isLocalSelected = !isLocalSelected
                     selectAnswer()
@@ -427,14 +443,29 @@ private fun PollItem(
             )
 
             if (isSelected && !viewResultMode) {
-                Image(
-                    painter = painterResource(if (isSingleSelected) R.drawable.amity_v4_radio_button else R.drawable.amity_v4_poll_multiple_select),
-                    contentDescription = "Selected Icon",
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .size(24.dp)
-                        .align(Alignment.TopStart)
-                )
+                if (isSingleSelected) {
+                    RadioButton(
+                        selected = true,
+                        onClick = null,
+                        colors = RadioButtonDefaults.colors(
+                            selectedColor = AmityTheme.colors.primary,
+                        ),
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .size(24.dp)
+                            .align(Alignment.TopStart)
+                    )
+                } else {
+                    AmityRoundCheckbox(
+                        isChecked = true,
+                        enabled = false,
+                        size = 24.dp,
+                        onValueChange = {},
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .align(Alignment.TopStart)
+                    )
+                }
             }
         }
 
@@ -485,15 +516,9 @@ private fun PollItem(
                 }
                 Spacer(Modifier.width(4.dp))
                 if (answer.isVotedByUser) {
-                    var user: AmityUser? = null
-                    try {
-                        user = AmityCoreClient.getCurrentUser().blockingFirst()
-                    } catch (e: Exception) {
-                        // missing user
-                    }
                     AmityUserAvatarView(
                         size = 16.dp,
-                        user = user
+                        user = currentUser
                     )
                 }
             }

@@ -109,7 +109,7 @@ fun AmityClipModalBottomSheet(
                             viewModel.updateSheetUIState(AmityClipModalSheetUIState.CloseSheet)
                             behavior.goToPostDetailPage(
                                 context = context,
-                                postId = data.post.getPostId()
+                                postId = data.post.getParentPostId() ?: data.post.getPostId()
                             )
                         }
 

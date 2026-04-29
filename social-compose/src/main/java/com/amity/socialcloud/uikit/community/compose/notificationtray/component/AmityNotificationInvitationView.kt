@@ -18,6 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -70,11 +71,13 @@ fun AmityNotificationInvitationView(
             onError = { error ->
                 if (AmityError.from(error) == AmityError.ITEM_NOT_FOUND) {
                     AmityUIKitSnackbar.publishSnackbarErrorMessage(
-                        message = errorUnavailableMessage
+                        message = errorUnavailableMessage,
+                        offsetFromBottom = 50
                     )
                 } else {
                     AmityUIKitSnackbar.publishSnackbarErrorMessage(
-                        message = errorRejectMessage
+                        message = errorRejectMessage,
+                        offsetFromBottom = 50
                     )
                 }
                 onError(error)

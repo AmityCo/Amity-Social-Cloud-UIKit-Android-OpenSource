@@ -52,6 +52,7 @@ open class AmityEventDetailPageBehavior : AmityBaseBehavior() {
         context: Context,
         postId: String,
         category: AmityPostCategory,
+        autoFocusCommentInput: Boolean = false,
     ) {
         val intent = AmityPostDetailPageActivity.newIntent(
             context = context.pageContext,
@@ -59,6 +60,7 @@ open class AmityEventDetailPageBehavior : AmityBaseBehavior() {
             category = category,
             hideTarget = true,
             eventHostId = null,
+            autoFocusCommentInput = autoFocusCommentInput,
         )
         context.pageContext.startActivity(intent)
     }

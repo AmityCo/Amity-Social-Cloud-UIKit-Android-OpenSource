@@ -193,53 +193,51 @@ fun AmityUserProfileHeaderComponent(
             Row(
                 modifier = Modifier.padding(vertical = 4.dp)
             ) {
-                if (!user.isBrand()) {
-                    AmityBaseElement(
-                        pageScope = pageScope,
-                        componentScope = getComponentScope(),
-                        elementId = "user_following"
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = modifier.clickableWithoutRipple {
-                                if (userFollowInfo?.getStatus() == AmityFollowStatus.ACCEPTED || state.isMyUserProfile()) {
-                                    behavior.goToUserRelationshipPage(
-                                        context = context,
-                                        userId = user.getUserId(),
-                                        selectedTab = AmityUserRelationshipPageTab.FOLLOWING,
-                                    )
-                                } else if (AmityCoreClient.isVisitor()) {
-                                    behavior.handleVisitorUserAction()
-                                } else if (userFollowInfo?.getStatus() != AmityFollowStatus.ACCEPTED) {
-                                    behavior.handleNonFollowerAction()
-                                }
+                AmityBaseElement(
+                    pageScope = pageScope,
+                    componentScope = getComponentScope(),
+                    elementId = "user_following"
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = modifier.clickableWithoutRipple {
+                            if (userFollowInfo?.getStatus() == AmityFollowStatus.ACCEPTED || state.isMyUserProfile()) {
+                                behavior.goToUserRelationshipPage(
+                                    context = context,
+                                    userId = user.getUserId(),
+                                    selectedTab = AmityUserRelationshipPageTab.FOLLOWING,
+                                )
+                            } else if (AmityCoreClient.isVisitor()) {
+                                behavior.handleVisitorUserAction()
+                            } else if (userFollowInfo?.getStatus() != AmityFollowStatus.ACCEPTED) {
+                                behavior.handleNonFollowerAction()
                             }
-                        ) {
-                            Text(
-                                text = getNumberAbbreveation(followingCount),
-                                style = AmityTheme.typography.bodyLegacy.copy(
-                                    fontWeight = FontWeight.SemiBold,
-                                ),
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = getConfig().getText(),
-                                style = AmityTheme.typography.captionLegacy.copy(
-                                    fontWeight = FontWeight.Normal,
-                                    color = AmityTheme.colors.baseShade2,
-                                ),
-                            )
                         }
+                    ) {
+                        Text(
+                            text = getNumberAbbreveation(followingCount),
+                            style = AmityTheme.typography.bodyLegacy.copy(
+                                fontWeight = FontWeight.SemiBold,
+                            ),
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = getConfig().getText(),
+                            style = AmityTheme.typography.captionLegacy.copy(
+                                fontWeight = FontWeight.Normal,
+                                color = AmityTheme.colors.baseShade2,
+                            ),
+                        )
                     }
-
-                    Box(
-                        modifier = Modifier
-                            .padding(horizontal = 12.dp)
-                            .width(1.dp)
-                            .height(20.dp)
-                            .background(color = AmityTheme.colors.baseShade4)
-                    )
                 }
+
+                Box(
+                    modifier = Modifier
+                        .padding(horizontal = 12.dp)
+                        .width(1.dp)
+                        .height(20.dp)
+                        .background(color = AmityTheme.colors.baseShade4)
+                )
 
                 AmityBaseElement(
                     pageScope = pageScope,
@@ -280,7 +278,17 @@ fun AmityUserProfileHeaderComponent(
                 }
             }
             Spacer(modifier.height(12.dp))
-            if (!state.isMyUserProfile() && (userFollowStatus != null)) {
+            if (AmityCoreClient.isVisitor()) {
+                AmityUserFollowRelationshipButton(
+                    modifier = modifier,
+                    pageScope = pageScope,
+                    componentScope = getComponentScope(),
+                    followStatus = AmityFollowStatus.NONE,
+                    onClick = {
+                        behavior.handleVisitorUserAction()
+                    }
+                )
+            } else if (!state.isMyUserProfile() && (userFollowStatus != null)) {
                 AmityUserFollowRelationshipButton(
                     modifier = modifier,
                     pageScope = pageScope,
@@ -314,16 +322,6 @@ fun AmityUserProfileHeaderComponent(
                                 )
                             }
                         }
-                    }
-                )
-            } else if (AmityCoreClient.isVisitor()) {
-                AmityUserFollowRelationshipButton(
-                    modifier = modifier,
-                    pageScope = pageScope,
-                    componentScope = getComponentScope(),
-                    followStatus = AmityFollowStatus.NONE,
-                    onClick = {
-                        behavior.handleVisitorUserAction()
                     }
                 )
             }

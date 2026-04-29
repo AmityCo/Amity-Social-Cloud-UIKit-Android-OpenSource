@@ -59,6 +59,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.social.post.query.AmityFeedSource
 import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.core.follow.AmityFollowStatus
@@ -70,6 +71,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.closePage
 import com.amity.socialcloud.uikit.common.utils.closePageWithResult
+import com.amity.socialcloud.uikit.common.utils.isSignedIn
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipFeedPageType
@@ -303,16 +305,18 @@ fun AmityUserProfilePage(
                             context.closePageWithResult(Activity.RESULT_CANCELED)
                         }
                     ) {
-                        Icon(
-                            painter = painterResource(R.drawable.amity_ic_more_horiz),
-                            contentDescription = "Close",
-                            tint = AmityTheme.colors.base,
-                            modifier = modifier
-                                .size(24.dp)
-                                .clickableWithoutRipple {
-                                    showMenuSheet = true
-                                }
-                        )
+                        if (AmityCoreClient.isSignedIn()) {
+                            Icon(
+                                painter = painterResource(R.drawable.amity_ic_more_horiz),
+                                contentDescription = "Close",
+                                tint = AmityTheme.colors.base,
+                                modifier = modifier
+                                    .size(24.dp)
+                                    .clickableWithoutRipple {
+                                        showMenuSheet = true
+                                    }
+                            )
+                        }
                     }
                 }
                 item {

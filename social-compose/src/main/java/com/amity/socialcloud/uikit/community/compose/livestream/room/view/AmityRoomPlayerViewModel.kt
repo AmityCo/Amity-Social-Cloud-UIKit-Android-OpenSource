@@ -18,6 +18,8 @@ import com.amity.socialcloud.sdk.model.core.events.AmityPostEvents
 import com.amity.socialcloud.sdk.model.core.events.AmityRoomEvents
 import com.amity.socialcloud.sdk.model.core.invitation.AmityInvitation
 import com.amity.socialcloud.sdk.model.core.invitation.AmityInvitationStatus
+import com.amity.socialcloud.sdk.model.core.product.AmityProduct
+import com.amity.socialcloud.sdk.model.core.producttag.AmityProductTag
 import com.amity.socialcloud.sdk.model.core.reaction.AmityLiveReactionReferenceType
 import com.amity.socialcloud.sdk.model.core.reaction.live.AmityLiveReaction
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
@@ -46,7 +48,15 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import org.joda.time.DateTime
 import java.util.concurrent.TimeUnit
+import kotlin.collections.map
+import kotlin.collections.orEmpty
+import kotlin.collections.plus
+import java.util.Date
 
 class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel() {
     val disposable = CompositeDisposable()
@@ -60,6 +70,18 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
 
     val fetchRecordedUrlsRelay = PublishProcessor.create<String>()
 
+    // Watch minute tracking
+    private var watchSessionId: String? = null
+    private var watchSessionStartTime: DateTime? = null
+    private var watchTrackingJob: Job? = null
+    private var isWatchingPaused: Boolean = false
+    private var accumulatedWatchTimeSeconds: Int = 0
+    private var lastResumeTime: DateTime? = null
+    private val watchTrackingLock = Any() // Lock to prevent concurrent access
+    private var isUpdatingSession: Boolean = false // Flag to prevent duplicate updates
+    private var watchingRoomId: String? = null // Track which room we're currently tracking to avoid duplicate sessions
+    private var heartbeatDisposable = CompositeDisposable() // Separate disposable for heartbeat to manage it independently
+
     init {
         refresh()
     }
@@ -70,6 +92,7 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
         getPost(post.getPostId())
         observeRoom()
         observeRecordedUrls()
+        fetchProductCatalogueSettings()
     }
 
     private fun observeRoom() {
@@ -77,7 +100,7 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
             .distinctUntilChanged()
             .doOnNext { room ->
                 _uiState.update { currentState ->
-                    if(currentState.room?.getRoomId() != room.getRoomId()) {
+                    if (currentState.room?.getRoomId() != room.getRoomId()) {
                         val currentRoomId = currentState.room?.getRoomId()
                         if (!currentRoomId.isNullOrBlank()) {
                             unsubscribeRoomRT(currentState.room)
@@ -171,6 +194,9 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
                     is AmityCoHostEvent.CoHostLeft,
                     is AmityCoHostEvent.CoHostInviteCancelled,
                     is AmityCoHostEvent.CoHostInviteRejected -> {
+                        if (event is AmityCoHostEvent.CoHostLeft) {
+                            AmityUIKitSnackbar.publishSnackbarMessage(message = "Co-host left the live stream.")
+                        }
                         _uiState.update { currentState ->
                             currentState.copy(
                                 invitation = null,
@@ -184,6 +210,13 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
                             )
                         }
                     }
+                    is AmityCoHostEvent.CoHostPermissionUpdated -> {
+                        if (event.cohostCanManageProduct) {
+                            AmityUIKitSnackbar.publishSnackbarMessage(
+                                message = "You can now manage tagged products in this live stream."
+                            )
+                        }
+                    }
                     else -> {}
                 }
             }
@@ -193,7 +226,7 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
             .let(::addDisposable)
     }
 
-    private fun getPost(postId: String) {
+    fun getPost(postId: String) {
         viewModelScope.launch {
             AmitySocialClient.newPostRepository()
                 .getPost(postId)
@@ -253,11 +286,12 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
                                 )
                             }
                         }
-                } ?: if (wasInvited) {
+                    } ?: if (wasInvited) {
                     AmityUIKitSnackbar.publishSnackbarErrorMessage(
                         message = "This invitation is no longer available."
                     )
-                } else { }
+                } else {
+                }
             }
             .doOnError {
                 if (wasInvited) {
@@ -335,7 +369,7 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
         return (post.getChildren()
             .map { it.getData() }
             .find { it is AmityPost.Data.ROOM }
-            as? AmityPost.Data.ROOM)
+                as? AmityPost.Data.ROOM)
             ?.getRoomId()
             ?.let { roomId ->
                 getRoomFlow(roomId = roomId)
@@ -399,7 +433,6 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
     }
 
 
-
     private fun unsubscribeToSubChannel(subChannelId: String) {
         AmityChatClient
             .newChannelRepository()
@@ -427,7 +460,7 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
     fun flagMessage(
         message: AmityMessage,
         onSuccess: () -> Unit = {},
-        onError: (Throwable) -> Unit = {}
+        onError: (Throwable) -> Unit = {},
     ) {
         AmityChatClient.newMessageRepository()
             .flagMessage(message.getMessageId())
@@ -445,7 +478,7 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
     fun unFlagMessage(
         message: AmityMessage,
         onSuccess: () -> Unit = {},
-        onError: (Throwable) -> Unit = {}
+        onError: (Throwable) -> Unit = {},
     ) {
         AmityChatClient.newMessageRepository()
             .unflagMessage(message.getMessageId())
@@ -552,24 +585,24 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
         getRoomBroadcasterData(room.getRoomId())
             .doOnSuccess { broadcastData ->
 
-            val coHostData = broadcastData as? AmityRoomBroadcastData.CoHosts
-            viewModelScope.launch {
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        broadcasterData = broadcastData
-                    )
+                val coHostData = broadcastData as? AmityRoomBroadcastData.CoHosts
+                viewModelScope.launch {
+                    _uiState.update { currentState ->
+                        currentState.copy(
+                            broadcasterData = broadcastData
+                        )
+                    }
                 }
+                subscribeRoomStreamerRT(room, post)
             }
-            subscribeRoomStreamerRT(room, post)
-        }
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe({
-            onJoinedCompleted.invoke(it, viewModelScope)
-        }, { error ->
-            onJoinedFailed(error.message ?: "")
-        })
-        .let(::addDisposable)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                onJoinedCompleted.invoke(it, viewModelScope)
+            }, { error ->
+                onJoinedFailed(error.message ?: "")
+            })
+            .let(::addDisposable)
     }
 
     private fun getRoomBroadcasterData(roomId: String): Single<AmityRoomBroadcastData> {
@@ -628,7 +661,7 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
 
     fun rejectInvitation(
         invitation: AmityInvitation,
-        onSuccess: () -> Unit
+        onSuccess: () -> Unit,
     ) {
         invitation.reject()
             .subscribeOn(Schedulers.io())
@@ -665,17 +698,19 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
     }
 
     fun startRoomHeartbeat(roomId: String) {
+        heartbeatDisposable.clear()
         AmityCoreClient.newRoomPresenceRepository()
             .roomId(roomId = roomId)
             .startHeartbeat()
             .subscribeOn(Schedulers.io())
             .subscribe()
-            .let(::addDisposable)
+            .let(heartbeatDisposable::add)
 
         observeOnlineUsersCount(roomId = roomId)
     }
 
     fun stopRoomHeartbeat(roomId: String) {
+        heartbeatDisposable.clear()
         AmityCoreClient.newRoomPresenceRepository()
             .roomId(roomId = roomId)
             .stopHeartbeat()
@@ -709,6 +744,321 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
                 )
             }
         }
+    }
+
+    // Watch minute tracking functions
+
+    /**
+     * Start watch session tracking for viewer
+     * Only call when user is in viewer mode (not co-host)
+     * Room must be LIVE or RECORDED
+     */
+    fun startWatchTracking() {
+        val room = _uiState.value.room ?: return
+        val roomId = room.getRoomId()
+        val roomStatus = room.getStatus()
+
+        // Only track for LIVE or RECORDED rooms
+        if (roomStatus != AmityRoomStatus.LIVE && roomStatus != AmityRoomStatus.RECORDED) {
+            return
+        }
+
+        // Skip if already tracking this room (prevents duplicate sessions from LaunchedEffect re-triggers)
+        if (watchSessionId != null && watchingRoomId == roomId) {
+            return
+        }
+
+        // Stop any existing tracking
+        stopWatchTracking()
+
+        // Track which room we're watching
+        watchingRoomId = roomId
+
+        viewModelScope.launch {
+            try {
+                // Create watch session
+                watchSessionStartTime = DateTime.now()
+                isWatchingPaused = false
+                accumulatedWatchTimeSeconds = 0
+                lastResumeTime = DateTime.now()
+
+                room.analytics().createWatchSession(watchSessionStartTime!!)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({ sessionId ->
+                        watchSessionId = sessionId
+
+                        // Start 1-second interval updates
+                        watchTrackingJob = viewModelScope.launch {
+                            while (isActive) {
+                                delay(1000) // 1 second
+                                updateCurrentWatchSession()
+                            }
+                        }
+                    }, { error ->
+                        // Handle error silently - don't interrupt user experience
+                        watchSessionId = null
+                        watchSessionStartTime = null
+                        isWatchingPaused = false
+                        accumulatedWatchTimeSeconds = 0
+                        lastResumeTime = null
+                        watchingRoomId = null
+                    })
+                    .let { disposable.add(it) }
+            } catch (e: Exception) {
+                // Handle error silently - don't interrupt user experience
+                watchSessionId = null
+                watchSessionStartTime = null
+                isWatchingPaused = false
+                accumulatedWatchTimeSeconds = 0
+                lastResumeTime = null
+                watchingRoomId = null
+            }
+        }
+    }
+
+    fun addTaggedProducts(
+        taggedProducts: List<AmityProduct>
+    ) {
+        val currentTaggedProduct = _uiState.value.getRoomPost()?.getProducts().orEmpty().map {
+            AmityProductTag.Media(it.getProductId())
+        }
+        AmitySocialClient.newPostRepository()
+            .editPost(
+                postId = _uiState.value.getRoomPost()?.getPostId() ?: "",
+            )
+            .taggedProducts(
+                productTags = (currentTaggedProduct + taggedProducts.map { AmityProductTag.Media(it.getProductId()) }).distinct(),
+            )
+            .build()
+            .apply()
+            .doOnError {
+                AmityUIKitSnackbar.publishSnackbarMessage(
+                    offsetFromBottom = 50,
+                    message = "Failed to add product tags. Please try again."
+                )
+            }
+            .doOnComplete {
+                AmityUIKitSnackbar.publishSnackbarMessage(
+                    offsetFromBottom = 50,
+                    message = "Product tags added."
+                )
+            }
+            .subscribe()
+    }
+
+    fun removeTaggedProduct(productId: String) {
+        // straight hit api
+        AmitySocialClient.newPostRepository()
+            .editPost(
+                postId = _uiState.value.getRoomPost()?.getPostId() ?: "",
+            )
+            .taggedProducts(
+                productTags = _uiState.value.getRoomPost()?.getProducts()
+                    ?.filter { it.getProductId() != productId }
+                    ?.map { AmityProductTag.Media(it.getProductId()) }
+                    .orEmpty(),
+            )
+            .build()
+            .apply()
+            .doOnError {
+                AmityUIKitSnackbar.publishSnackbarMessage(
+                    offsetFromBottom = 50,
+                    message = "Failed to remove product tag. Please try again."
+                )
+            }
+            .doOnComplete {
+                AmityUIKitSnackbar.publishSnackbarMessage(
+                    offsetFromBottom = 50,
+                    message = "Product tag removed."
+                )
+            }
+            .subscribe()
+    }
+
+    fun togglePinProduct(
+        productId: String?
+    ) {
+        AmitySocialClient.newPostRepository()
+            .let {
+                if (productId == null) {
+                    it.unpinProduct(
+                        postId = _uiState.value.getRoomPost()?.getPostId() ?: ""
+                    )
+                } else {
+                    it.pinProduct(
+                        productId = productId,
+                        postId = _uiState.value.getRoomPost()?.getPostId() ?: ""
+                    )
+                }
+            }
+            .doOnComplete {
+                if (productId == null) {
+                    AmityUIKitSnackbar.publishSnackbarMessage(
+                        offsetFromBottom = 50,
+                        message = "Product tag unpinned."
+                    )
+                } else {
+                    AmityUIKitSnackbar.publishSnackbarMessage(
+                        offsetFromBottom = 50,
+                        message = "Product tag pinned."
+                    )
+                }
+            }
+            .doOnError {
+                if (productId == null) {
+                    AmityUIKitSnackbar.publishSnackbarErrorMessage(
+                        offsetFromBottom = 50,
+                        message = "Failed to unpin product tag. Please try again."
+                    )
+                } else {
+                    AmityUIKitSnackbar.publishSnackbarErrorMessage(
+                        offsetFromBottom = 50,
+                        message = "Failed to pin product tag. Please try again."
+                    )
+                }
+            }
+            .subscribe()
+            .let(::addDisposable)
+
+    }
+
+    fun fetchProductCatalogueSettings(
+        onEnabledAction: (() -> Unit)? = null,
+        onDisabledAction: (() -> Unit)? = null
+    ) {
+        AmityCoreClient.getProductCatalogueSetting()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSuccess { settings ->
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        isProductCatalogueEnabled = settings.enabled
+                    )
+                }
+                if (settings.enabled) {
+                    onEnabledAction?.invoke()
+                } else {
+                    onDisabledAction?.invoke()
+                }
+            }
+            .subscribe()
+            .let(::addDisposable)
+    }
+
+    /**
+     * Stop watch session tracking
+     * Call when user becomes co-host or leaves the page
+     */
+    fun stopWatchTracking(shouldSync: Boolean = false) {
+        watchTrackingJob?.cancel()
+        watchTrackingJob = null
+
+        // Final update before stopping
+        if (watchSessionId != null) {
+            viewModelScope.launch {
+                try {
+                    updateCurrentWatchSession()
+
+                    if (shouldSync) {
+                        // Sync pending sessions when leaving the page
+                        _uiState.value.room?.analytics()?.syncPendingWatchSessions()
+                    }
+                } catch (e: Exception) {
+                    // Handle error silently
+                } finally {
+                    watchSessionId = null
+                    watchSessionStartTime = null
+                    isWatchingPaused = false
+                    accumulatedWatchTimeSeconds = 0
+                    lastResumeTime = null
+                    watchingRoomId = null
+                }
+            }
+        }
+    }
+
+    /**
+     * Update the current watch session with elapsed time
+     * Only accumulates time when video is not paused
+     * Uses synchronized block to prevent concurrent duplicate counting
+     */
+    private fun updateCurrentWatchSession() {
+        synchronized(watchTrackingLock) {
+            // Prevent concurrent updates
+            if (isUpdatingSession) return
+
+            val sessionId = watchSessionId ?: return
+            val room = _uiState.value.room ?: return
+
+            // Skip update if paused - only accumulate and send when playing
+            if (isWatchingPaused) return
+
+            isUpdatingSession = true
+
+            try {
+                // Accumulate time since last resume
+                val lastResume = lastResumeTime ?: return
+                val nowMillis = DateTime.now().millis
+                val elapsedSinceResumeSeconds = ((nowMillis - lastResume.millis) / 1000).toInt()
+                accumulatedWatchTimeSeconds += elapsedSinceResumeSeconds
+                lastResumeTime = DateTime.now()
+
+                room.analytics()
+                    .updateWatchSession(
+                        sessionId = sessionId,
+                        duration = accumulatedWatchTimeSeconds.toLong(),
+                        endedAt = DateTime.now()
+                    )
+                    .subscribeOn(Schedulers.io())
+                    .doOnError {
+                        // ignore
+                    }
+                    .subscribe()
+            } finally {
+                isUpdatingSession = false
+            }
+        }
+    }
+
+    /**
+     * Pause watch tracking when user pauses the video
+     * Accumulates the elapsed time before pausing but does NOT sync
+     * Sync only happens on page exit or becoming co-host
+     */
+    fun pauseWatchTracking() {
+        synchronized(watchTrackingLock) {
+            if (watchSessionId == null || isWatchingPaused) return
+
+            // Accumulate time up to this point (no sync, just save locally)
+            lastResumeTime?.let {
+                val nowMillis = DateTime.now().millis
+                val elapsedSinceResumeSeconds = ((nowMillis - it.millis) / 1000).toInt()
+                accumulatedWatchTimeSeconds += elapsedSinceResumeSeconds
+            }
+
+            isWatchingPaused = true
+            lastResumeTime = null
+        }
+    }
+
+    /**
+     * Resume watch tracking when user resumes the video
+     * Restarts the timer from current time
+     */
+    fun resumeWatchTracking() {
+        synchronized(watchTrackingLock) {
+            if (watchSessionId == null || !isWatchingPaused) return
+
+            isWatchingPaused = false
+            lastResumeTime = DateTime.now()
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        // Stop tracking and sync when ViewModel is destroyed
+        stopWatchTracking(shouldSync = true)
     }
 
     companion object {
@@ -747,7 +1097,16 @@ data class RoomPlayerState(
     val cohostUser: AmityUser? = null,
     val viewerCount: Int? = null,
     val cameraPosition: CameraPosition = CameraPosition.FRONT,
+    val isProductCatalogueEnabled: Boolean = false
 ) {
+
+    fun getRoomPost() : AmityPost? {
+        return post.getChildren().firstOrNull{ it.getData() is AmityPost.Data.ROOM }
+    }
+
+    fun isCoHostCanManageProducts() : Boolean {
+        return room?.getParticipants()?.find { it.userId == cohostUserId }?.canManageProductTags == true
+    }
 
     companion object {
         fun initial(post: AmityPost) = RoomPlayerState(

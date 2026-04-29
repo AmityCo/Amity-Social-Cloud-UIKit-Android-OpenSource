@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -26,6 +28,7 @@ import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 
 @Composable
 fun AmityPostImageView(
@@ -57,25 +60,38 @@ fun AmityPostImageView(
         )
     } else if(data is AmityPost.Data.VIDEO) {
         val thumbnail = data.getThumbnailImage()?.getUrl(AmityImage.Size.MEDIUM)
-        AsyncImage(
-            model = ImageRequest
-                .Builder(LocalContext.current)
-                .data(thumbnail)
-                .crossfade(true)
-                .networkCachePolicy(CachePolicy.ENABLED)
-                .diskCachePolicy(CachePolicy.ENABLED)
-                .memoryCachePolicy(CachePolicy.ENABLED)
-                .build(),
-            contentDescription = "Video Thumbnail",
-            contentScale = ContentScale.Crop,
-            modifier = modifier
-                .fillMaxSize()
-                .background(AmityTheme.colors.baseShade4)
-                .clickableWithoutRipple { onClick() }
-                .semantics {
-                    role = Role.Image
-                }
-        )
+        if (thumbnail != null) {
+            AsyncImage(
+                model = ImageRequest
+                    .Builder(LocalContext.current)
+                    .data(thumbnail)
+                    .crossfade(true)
+                    .networkCachePolicy(CachePolicy.ENABLED)
+                    .diskCachePolicy(CachePolicy.ENABLED)
+                    .memoryCachePolicy(CachePolicy.ENABLED)
+                    .build(),
+                contentDescription = "Video Thumbnail",
+                contentScale = ContentScale.Crop,
+                modifier = modifier
+                    .fillMaxSize()
+                    .background(AmityTheme.colors.baseShade4)
+                    .clickableWithoutRipple { onClick() }
+                    .semantics {
+                        role = Role.Image
+                    }
+            )
+        } else {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .background(AmityTheme.colors.baseShade4)
+                    .clickableWithoutRipple { onClick() }
+                    .semantics {
+                        role = Role.Image
+                    },
+            )
+        }
 //            val imageLoader = ImageLoader.Builder(LocalContext.current)
 //                .components {
 //                    add(VideoFrameDecoder.Factory())
@@ -117,7 +133,11 @@ fun AmityPostImageView(
                 }
         )
     } else if (data is AmityPost.Data.LIVE_STREAM) {
-        val thumbnail = data.getStream().blockingFirst().getThumbnailImage()?.getUrl(AmityImage.Size.MEDIUM) ?: ""
+        val thumbnail by produceState(initialValue = "") {
+            data.getStream().asFlow().collect { stream ->
+                value = stream.getThumbnailImage()?.getUrl(AmityImage.Size.MEDIUM) ?: ""
+            }
+        }
         AsyncImage(
             model = ImageRequest
                 .Builder(LocalContext.current)

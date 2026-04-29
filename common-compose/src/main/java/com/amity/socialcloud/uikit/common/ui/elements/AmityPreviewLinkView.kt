@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -34,15 +35,19 @@ import coil3.compose.AsyncImage
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import coil3.request.crossfade
-import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.model.core.link.AmityLink
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.compose.R
 import com.amity.socialcloud.uikit.common.extionsions.extractUrls
+import com.amity.socialcloud.uikit.common.extionsions.parseUrls
 import com.amity.socialcloud.uikit.common.linkpreview.AmityPreviewUrl
+import com.amity.socialcloud.uikit.common.linkpreview.models.AmityPreviewMetadataCacheItem
 import com.amity.socialcloud.uikit.common.linkpreview.models.AmityPreviewNoUrl
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.utils.shimmerBackground
+import org.joda.time.DateTime
 
 @Composable
 fun AmityPostPreviewLinkView(
@@ -55,90 +60,45 @@ fun AmityPostPreviewLinkView(
         }
     }
 
-    // Get links from post data instead of extracting from text
-    val links by remember(post.getPostId(), post.getUpdatedAt()) {
+    val postId by remember(post.getPostId()) {
         derivedStateOf {
-            post.getLinks()
+            post.getPostId()
         }
     }
 
-    // Get the first link
-    val linkToDisplay = remember(links) {
-        val link = links?.firstOrNull()
-        
-        val postData = post.getData()
-        val postText = if (postData is AmityPost.Data.TEXT) postData.getText() else ""
-
-        link
+    val postEditedAt by remember(post.getUpdatedAt()) {
+        derivedStateOf {
+            post.getUpdatedAt()
+        }
     }
 
-    // Extract URLs from post text if no link object exists, or if link object has renderPreview=true but all metadata missing
-    val detectedUrl by remember(post.getPostId(), post.getUpdatedAt(), linkToDisplay) {
+    val previewUrlCache by remember(postId, postEditedAt) {
         derivedStateOf {
-            if (isAllowedPostDataType) {
-                if (linkToDisplay != null) {
-                    // If link has renderPreview=true but all metadata is missing, fetch from server
-                    if (linkToDisplay.getRenderPreview()) {
-                        val allMetadataMissing = linkToDisplay.getDomain().isNullOrEmpty() && 
-                                               linkToDisplay.getTitle().isNullOrEmpty() && 
-                                               linkToDisplay.getImageUrl().isNullOrEmpty()
-                        if (allMetadataMissing) {
-                            linkToDisplay.getUrl()
-                        } else {
-                            null
-                        }
-                    } else {
-                        null
-                    }
-                } else {
-                    // No link object, try to extract URL from text
-                    val postText = (post.getData() as? AmityPost.Data.TEXT)?.getText() ?: ""
-                    postText.extractUrls().firstOrNull()?.url
-                }
+            val sdkLinks = post.getLinks()
+            val postText = (post.getData() as? AmityPost.Data.TEXT)?.getText() ?: ""
+            val url = if (!sdkLinks.isNullOrEmpty()) {
+                val firstLink = sdkLinks.first()
+                val linkUrl = if (firstLink.getRenderPreview()) firstLink.getUrl() else null
+                // Cross-validate against post text: SDK may truncate URLs (e.g. "path(1" → "path"),
+                // so we must also confirm our regex finds a URL in the original text.
+                // If extractUrls() returns empty, the original URL was malformed → don't preview.
+                if (linkUrl != null && postText.extractUrls().isNotEmpty()) linkUrl else null
             } else {
-                null
+                postText.extractUrls().firstOrNull()?.url
             }
+            AmityPreviewUrl.getPostPreviewUrl(postId, url, postEditedAt)
         }
     }
 
-    // Fetch metadata for detected URL using AmityCoreClient
-    val linkPreviewMetadata by (remember(detectedUrl) {
-        detectedUrl?.let { 
-            AmityCoreClient.getLinkPreviewMetadata(it) 
-        }
-    }?.subscribeAsState(null) ?: remember { mutableStateOf(null) })
+    if (!isAllowedPostDataType
+        || previewUrlCache == null
+        || previewUrlCache is AmityPreviewNoUrl
+    ) return
 
-    if (!isAllowedPostDataType) return
-
-    // Check if link object has any metadata
-    val linkHasAnyMetadata = linkToDisplay != null && 
-        (!linkToDisplay.getDomain().isNullOrEmpty() || 
-         !linkToDisplay.getTitle().isNullOrEmpty() || 
-         !linkToDisplay.getImageUrl().isNullOrEmpty())
-
-    // Show preview if we have a link object with renderPreview=true and any metadata
-    if (linkToDisplay != null && linkToDisplay.getRenderPreview() && linkHasAnyMetadata) {
-        AmityPreviewLinkViewWithMetadata(
-            modifier = Modifier.padding(12.dp),
-            url = linkToDisplay.getUrl() ?: "",
-            domain = linkToDisplay.getDomain(),
-            title = linkToDisplay.getTitle(),
-            imageUrl = linkToDisplay.getImageUrl(),
-        )
-    } 
-    // Show preview if we fetched metadata from server and it has any metadata
-    else if (detectedUrl != null && linkPreviewMetadata != null && 
-             (!linkPreviewMetadata!!.getDomain().isNullOrEmpty() || 
-              !linkPreviewMetadata!!.getTitle().isNullOrEmpty() || 
-              !linkPreviewMetadata!!.getImageUrl().isNullOrEmpty())) {
-        AmityPreviewLinkViewWithMetadata(
-            modifier = Modifier.padding(12.dp),
-            url = detectedUrl!!,
-            domain = linkPreviewMetadata!!.getDomain(),
-            title = linkPreviewMetadata!!.getTitle(),
-            imageUrl = linkPreviewMetadata!!.getImageUrl(),
-        )
-    }
+    AmityPreviewLinkView(
+        modifier = Modifier.padding(12.dp),
+        url = previewUrlCache!!.url,
+    )
 }
 
 @Composable
@@ -154,8 +114,17 @@ fun AmityCommentPreviewLinkView(
 
     val previewUrlCache by remember(comment.getCommentId()) {
         derivedStateOf {
+            val sdkLinks = comment.getLinks()
             val commentText = (comment.getData() as? AmityComment.Data.TEXT)?.getText() ?: ""
-            val url = commentText.extractUrls().firstOrNull()?.url
+            val url = if (!sdkLinks.isNullOrEmpty()) {
+                val firstLink = sdkLinks.first()
+                val linkUrl = if (firstLink.getRenderPreview()) firstLink.getUrl() else null
+                // Cross-validate against comment text: SDK may truncate URLs (e.g. "path(1" → "path"),
+                // so we must also confirm our regex finds a URL in the original text.
+                if (linkUrl != null && commentText.extractUrls().isNotEmpty()) linkUrl else null
+            } else {
+                commentText.extractUrls().firstOrNull()?.url
+            }
             val commentId = comment.getCommentId()
             val editedAt = comment.getEditedAt()
             AmityPreviewUrl.getCommentPreviewUrl(commentId, url, editedAt)
@@ -178,12 +147,38 @@ fun AmityPreviewLinkView(
     modifier: Modifier = Modifier,
     url: String,
 ) {
+    val initialUrl = "initial"
+    val placeHolderUrl = "placeholder"
+    val errorUrl = "error"
     val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
 
+    val initial = AmityPreviewMetadataCacheItem(
+        url = url,
+        domain = "",
+        title = "",
+        imageUrl = initialUrl,
+        timestamp = DateTime.now()
+    )
+
+    val errorItem = AmityPreviewMetadataCacheItem(
+        url = url,
+        domain = "",
+        title = "",
+        imageUrl = "error",
+        timestamp = DateTime.now()
+    )
+
     val previewMetadata by remember(url) {
-        AmityPreviewUrl.fetchMetadata(url)
-    }.subscribeAsState(null)
+        AmityPreviewUrl.fetchMetadataFlow(url, errorItem)
+    }.subscribeAsState(initial)
+
+    if (previewMetadata.imageUrl == initialUrl
+        || previewMetadata.imageUrl == errorUrl
+        || previewMetadata.imageUrl.isEmpty()
+    ) {
+        return
+    }
 
     Column(
         modifier = modifier
@@ -197,7 +192,12 @@ fun AmityPreviewLinkView(
                 uriHandler.openUri(url)
             }
     ) {
-        Box(
+        val hasImage = previewMetadata.imageUrl.isNotEmpty()
+                && previewMetadata.imageUrl != errorUrl
+                && previewMetadata.imageUrl != placeHolderUrl
+        val showImageSection = hasImage || previewMetadata.imageUrl == placeHolderUrl
+
+        if (showImageSection) Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp))
@@ -243,54 +243,56 @@ fun AmityPreviewLinkView(
             }
         }
 
-        HorizontalDivider(
-            thickness = 1.dp,
-            color = AmityTheme.colors.baseShade4,
-        )
+        if (showImageSection) {
+            HorizontalDivider(
+                thickness = 1.dp,
+                color = AmityTheme.colors.baseShade4,
+            )
+        }
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(12.dp)
         ) {
-            if (previewMetadata != null) {
+            if (previewMetadata != null
+                && previewMetadata.imageUrl != initialUrl
+                && previewMetadata.imageUrl != placeHolderUrl
+            ) {
+                // Title first (bodyBold), then domain (caption shade1) — per spec + iOS
+                // Fallback: if title empty use domain; if domain also empty use url.
+                val displayTitle = previewMetadata!!.title.ifEmpty {
+                    previewMetadata!!.domain.ifEmpty { url }
+                }
+                val displayDomain = previewMetadata!!.domain.ifEmpty {
+                    runCatching { java.net.URI(url).host }.getOrNull()?.removePrefix("www.") ?: url
+                }
                 Text(
                     modifier = Modifier.padding(top = 6.dp, bottom = 2.dp),
-                    text = previewMetadata!!.title,
+                    text = displayTitle,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
-                    style = AmityTheme.typography.bodyLegacy.copy(
-                        fontWeight = FontWeight.SemiBold,
-                    ),
+                    style = AmityTheme.typography.bodyBold
                 )
                 Text(
-                    text = previewMetadata!!.domain,
-                    style = AmityTheme.typography.captionLegacy.copy(
-                        fontWeight = FontWeight.Normal,
+                    text = displayDomain,
+                    style = AmityTheme.typography.caption.copy(
                         color = AmityTheme.colors.baseShade1,
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 6.dp),
                 )
-            } else {
-                Text(
-                    modifier = Modifier.padding(top = 6.dp),
-                    text = context.getString(R.string.amity_preview_not_available_title),
-                    lineHeight = 10.sp,
-                    style = AmityTheme.typography.bodyLegacy.copy(
-                        fontWeight = FontWeight.SemiBold,
-                    ),
-                )
-                Text(
-                    modifier = Modifier.padding(top = 6.dp),
-                    text = context.getString(R.string.amity_preview_not_available_message),
-                    maxLines = 2,
-                    lineHeight = 14.sp,
-                    overflow = TextOverflow.Ellipsis,
-                    style = AmityTheme.typography.bodyLegacy.copy(
-                        color = AmityTheme.colors.baseShade1,
-                    ),
+            } else if (previewMetadata.imageUrl == placeHolderUrl) {
+                Box(
+                    modifier = Modifier
+                        .padding(top = 6.dp)
+                        .height(10.dp)
+                        .width(140.dp)
+                        .shimmerBackground(
+                            color = AmityTheme.colors.baseShade4,
+                            shape = RoundedCornerShape(6.dp)
+                        )
                 )
             }
         }
@@ -318,7 +320,7 @@ fun AmityPreviewLinkViewWithMetadata(
                 shape = RoundedCornerShape(8.dp)
             )
             .clickableWithoutRipple {
-                uriHandler.openUri(url)
+                uriHandler.openUri(url.parseUrls())
             }
     ) {
         // Only show image Box if imageUrl exists

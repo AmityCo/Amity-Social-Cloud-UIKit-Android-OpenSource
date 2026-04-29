@@ -24,17 +24,17 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import java.util.concurrent.TimeUnit
 
-class AmityPostDetailPageViewModel : AmityBaseViewModel() {
+open class AmityPostDetailPageViewModel : AmityBaseViewModel() {
 
     private val changeReactionSubject: PublishSubject<ReactionAction> =
         PublishSubject.create()
     private val _internetState =
         MutableStateFlow<NetworkConnectionEvent>(NetworkConnectionEvent.Connected)
-    val internetState = _internetState.asStateFlow()
+    open val internetState = _internetState.asStateFlow()
 
     private val _postErrorState =
         MutableStateFlow<Boolean>(false)
-    val postErrorState = _postErrorState.asStateFlow()
+    open val postErrorState = _postErrorState.asStateFlow()
 
     init {
         observeReactionChange()
@@ -42,15 +42,15 @@ class AmityPostDetailPageViewModel : AmityBaseViewModel() {
 
     private val fetchPostError = MutableStateFlow<Throwable?>(null)
 
-    fun getFetchErrorState() = fetchPostError.asStateFlow()
+    open fun getFetchErrorState() = fetchPostError.asStateFlow()
 
-    fun getCurrentUser(): Flowable<AmityUser> {
+    open fun getCurrentUser(): Flowable<AmityUser> {
         return AmityCoreClient.getCurrentUser()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }
 
-    fun getPost(postId: String): Flow<AmityPost> {
+    open fun getPost(postId: String): Flow<AmityPost> {
         fetchPostError.value = null
         return AmitySocialClient.newPostRepository()
             .getPost(postId)
@@ -69,14 +69,14 @@ class AmityPostDetailPageViewModel : AmityBaseViewModel() {
             }
     }
 
-    fun subscribePostRT(post: AmityPost) {
+    open fun subscribePostRT(post: AmityPost) {
         post.subscription(events = AmityPostEvents.POST)
             .subscribeTopic()
             .subscribeOn(Schedulers.io())
             .subscribe()
     }
 
-    fun unSubscribePostRT(post: AmityPost) {
+    open fun unSubscribePostRT(post: AmityPost) {
         post.subscription(events = AmityPostEvents.POST)
             .unsubscribeTopic()
             .subscribeOn(Schedulers.io())

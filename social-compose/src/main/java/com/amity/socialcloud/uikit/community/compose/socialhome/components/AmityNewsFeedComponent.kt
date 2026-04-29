@@ -179,7 +179,8 @@ fun AmityNewsFeedComponent(
                                 behavior.goToPostDetailPage(
                                     context = context,
                                     id = it.getPostId(),
-                                    category = AmityPostCategory.GLOBAL
+                                    category = AmityPostCategory.GLOBAL,
+                                    autoFocusCommentInput = true,
                                 )
                             },
                             onClipClicked = {
@@ -201,7 +202,8 @@ fun AmityNewsFeedComponent(
                     onClick = {
                         behavior.goToPostDetailPage(
                             context = context,
-                            id = it.getPostId()
+                            id = it.getPostId(),
+                            autoFocusCommentInput = true,
                         )
                     },
                     onClipClick = { childPost ->

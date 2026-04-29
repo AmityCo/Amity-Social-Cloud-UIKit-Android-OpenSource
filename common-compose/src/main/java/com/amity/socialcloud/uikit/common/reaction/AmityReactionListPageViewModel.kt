@@ -77,10 +77,19 @@ class AmityReactionListPageViewModel(
             .removeReaction(getReference(), reactionName)
             .subscribeOn(Schedulers.io())
             .doOnComplete {
-
+                // Refresh reaction tabs to update counts
+                viewModelScope.launch {
+                    getReactionTabs(state.referenceType, state.referenceId)
+                        .catch {
+                            // Ignore errors during refresh
+                        }
+                        .collect { tabs ->
+                            state = state.copy(tabItems = tabs)
+                        }
+                }
             }
             .doOnError {
-
+                // Handle error if needed
             }
             .subscribe()
     }

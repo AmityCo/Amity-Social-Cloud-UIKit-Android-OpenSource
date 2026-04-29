@@ -39,7 +39,7 @@ fun AmityCreateRoomSettings(
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    "Read-only chat",
+                    "Set live stream to read-only",
                     color = Color.White,
                     style = AmityTheme.typography.bodyBold
                 )
@@ -47,7 +47,7 @@ fun AmityCreateRoomSettings(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    "Everyone can read event messages. Only hosts, co-hosts or moderators can send messages.",
+                    "Members who are not streamer can read messages but cannot send any messages.",
                     color = Color(0xFFA5A9B5),
                     style = AmityTheme.typography.caption
                 )

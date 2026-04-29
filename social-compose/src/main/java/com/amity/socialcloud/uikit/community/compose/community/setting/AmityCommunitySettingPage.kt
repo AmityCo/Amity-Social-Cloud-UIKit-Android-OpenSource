@@ -105,6 +105,7 @@ fun AmityCommunitySettingPage(
     val hasReviewPermission by viewModel.hasReviewPermission().subscribeAsState(initial = false)
 
     var showLeaveCommunityDialog by remember { mutableStateOf(false) }
+    var showModeratorLeaveCommunityDialog by remember { mutableStateOf(false) }
     var showCloseCommunityDialog by remember { mutableStateOf(false) }
     var showUnableToLeaveCommunityDialog by remember { mutableStateOf(false) }
     var showUnableToCloseCommunityDialog by remember { mutableStateOf(false) }
@@ -113,7 +114,10 @@ fun AmityCommunitySettingPage(
 
     LaunchedEffect(uiState) {
         when (uiState) {
-            AmityCommunitySettingUIState.ShowConfirmModeratorLeaveDialog,
+            AmityCommunitySettingUIState.ShowConfirmModeratorLeaveDialog -> {
+                showModeratorLeaveCommunityDialog = true
+            }
+            
             AmityCommunitySettingUIState.ShowConfirmUserLeaveDialog -> {
                 showLeaveCommunityDialog = true
             }
@@ -571,6 +575,23 @@ fun AmityCommunitySettingPage(
                 },
                 onDismissRequest = {
                     showLeaveCommunityDialog = false
+                }
+            )
+        }
+
+        if (showModeratorLeaveCommunityDialog) {
+            AmityAlertDialog(
+                dialogTitle = "Leave community?",
+                dialogText = "Leaving community, you'll give up your moderator status and won't no longer be able to post and interact in this community.",
+                confirmText = "Leave",
+                dismissText = "Cancel",
+                confirmTextColor = AmityTheme.colors.alert,
+                onConfirmation = {
+                    showModeratorLeaveCommunityDialog = false
+                    viewModel.updateUIEvent(AmityCommunitySettingUIEvent.ProceedLeavingCommunity)
+                },
+                onDismissRequest = {
+                    showModeratorLeaveCommunityDialog = false
                 }
             )
         }

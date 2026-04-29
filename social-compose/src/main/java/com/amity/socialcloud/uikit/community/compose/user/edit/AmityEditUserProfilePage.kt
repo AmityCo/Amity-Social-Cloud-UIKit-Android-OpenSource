@@ -54,6 +54,7 @@ import com.amity.socialcloud.uikit.common.utils.closePage
 import com.amity.socialcloud.uikit.common.utils.getKeyboardHeight
 import com.amity.socialcloud.uikit.common.utils.getText
 import com.amity.socialcloud.uikit.common.utils.isKeyboardVisible
+import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.user.edit.elements.AmityEditUserAvatar
 import kotlinx.coroutines.flow.catch
 
@@ -306,7 +307,11 @@ fun AmityEditUserProfilePage(
                                 },
                                 onInappropriateImageError = {
                                     showInappropriateImageDialog = true
-                                }
+                                },
+                                onBlockedWordError = {
+                                    shouldDisabledClicking = false
+                                    AmityUIKitSnackbar.publishSnackbarErrorMessage(context.getString(R.string.amity_user_profile_blocked_word_error_message))
+                                },
                             )
                             shouldDisabledClicking = true
                         }
