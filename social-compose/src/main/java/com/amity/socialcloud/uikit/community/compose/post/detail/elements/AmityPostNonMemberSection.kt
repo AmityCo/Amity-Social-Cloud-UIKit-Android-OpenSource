@@ -50,7 +50,7 @@ fun AmityPostNonMemberSection(
 	onShareButtonClick: (postId: String) -> Unit = {}
 ) {
 	val context = LocalContext.current
-	val behavior by lazy {
+	val behavior = remember {
 		AmitySocialBehaviorHelper.postContentComponentBehavior
 	}
 	var showReactionListSheet by remember { mutableStateOf(false) }

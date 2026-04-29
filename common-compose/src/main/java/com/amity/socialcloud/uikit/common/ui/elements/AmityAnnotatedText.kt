@@ -31,12 +31,33 @@ fun AmityAnnotatedText(
     onLongPress: () -> Unit = {},
 ) {
     val uriHandler = LocalUriHandler.current
-    val annotatedText = buildAnnotatedString {
-        append(text)
-        mentionGetter.getMentionedUsers().forEach { mentionItem ->
-            if (mentionees.any { (it as? AmityMentionee.USER)?.getUserId() == mentionItem.getUserId() }
-                && mentionItem.getIndex() < text.length
-            ) {
+    // Note: mentionGetter is excluded from the key because AmityMentionMetadataGetter does not
+    // implement equals/hashCode — using it as a key would cause a cache miss on every recomposition
+    // if callers construct a new instance each time (common pattern). `text` is a sufficient
+    // stability proxy since mention metadata is derived from post text.
+    val annotatedText = remember(text, highlightColor) {
+        buildAnnotatedString {
+            append(text)
+            mentionGetter.getMentionedUsers().forEach { mentionItem ->
+                if (mentionees.any { (it as? AmityMentionee.USER)?.getUserId() == mentionItem.getUserId() }
+                    && mentionItem.getIndex() < text.length
+                ) {
+                    val start = mentionItem.getIndex()
+                    val end = mentionItem.getIndex().plus(mentionItem.getLength()).inc()
+                    addStyle(
+                        style = SpanStyle(highlightColor),
+                        start = start,
+                        end = end,
+                    )
+                    addStringAnnotation(
+                        tag = "USER_MENTION",
+                        annotation = mentionItem.getUserId(),
+                        start = start,
+                        end = end
+                    )
+                }
+            }
+            mentionGetter.getMentionedChannels().forEach { mentionItem ->
                 val start = mentionItem.getIndex()
                 val end = mentionItem.getIndex().plus(mentionItem.getLength()).inc()
                 addStyle(
@@ -45,40 +66,25 @@ fun AmityAnnotatedText(
                     end = end,
                 )
                 addStringAnnotation(
-                    tag = "USER_MENTION",
-                    annotation = mentionItem.getUserId(),
+                    tag = "CHANNEL_MENTION",
+                    annotation = "",
                     start = start,
                     end = end
                 )
             }
-        }
-        mentionGetter.getMentionedChannels().forEach { mentionItem ->
-            val start = mentionItem.getIndex()
-            val end = mentionItem.getIndex().plus(mentionItem.getLength()).inc()
-            addStyle(
-                style = SpanStyle(highlightColor),
-                start = start,
-                end = end,
-            )
-            addStringAnnotation(
-                tag = "CHANNEL_MENTION",
-                annotation = "",
-                start = start,
-                end = end
-            )
-        }
-        text.extractUrls().forEach {
-            addStyle(
-                style = SpanStyle(color = highlightColor, textDecoration = TextDecoration.Underline),
-                start = it.start,
-                end = it.end,
-            )
-            addStringAnnotation(
-                tag = "URL",
-                annotation = it.url,
-                start = it.start,
-                end = it.end
-            )
+            text.extractUrls().forEach {
+                addStyle(
+                    style = SpanStyle(color = highlightColor, textDecoration = TextDecoration.Underline),
+                    start = it.start,
+                    end = it.end,
+                )
+                addStringAnnotation(
+                    tag = "URL",
+                    annotation = it.url,
+                    start = it.start,
+                    end = it.end
+                )
+            }
         }
     }
     val layoutResult = remember { mutableStateOf<TextLayoutResult?>(null) }

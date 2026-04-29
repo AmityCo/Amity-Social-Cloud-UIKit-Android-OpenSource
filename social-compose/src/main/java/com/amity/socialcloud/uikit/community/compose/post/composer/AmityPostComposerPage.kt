@@ -1003,8 +1003,7 @@ fun AmityPostComposerPage(
                     (options as AmityPostComposerOptions.AmityPostComposerCreateClipOptions).aspectRatio
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp)
+                        .padding(start = 16.dp, top = 16.dp)
                         .height(142.dp)
                         .width(80.dp)
                         .clip(RoundedCornerShape(4.dp))
@@ -1046,8 +1045,7 @@ fun AmityPostComposerPage(
                 AmityClipAttachmentElement(
                     post = post,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp)
+                        .padding(start = 16.dp, top = 16.dp)
                 )
             }
         }
@@ -1178,7 +1176,7 @@ fun AmityPostComposerPage(
                         .padding(horizontal = 16.dp, vertical = 20.dp),
                     value = localPostText,
                     maxLines = 30,
-                    hintText = "What's on your mind?",
+                    hintText = if (isCreateClipMode) "Add a caption..." else "What's on your mind?",
                     mentionedUser = selectedUserToMention,
                     mentionedProduct = selectedProductToMention,
                     mentionMetadata = mentionGetter.getMentionedUsers(),

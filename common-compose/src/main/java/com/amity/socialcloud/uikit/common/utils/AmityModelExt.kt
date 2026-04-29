@@ -10,7 +10,6 @@ import com.amity.socialcloud.sdk.model.social.notification.AmityCommunityNotific
 import com.amity.socialcloud.sdk.model.social.notification.AmityCommunityNotificationSettings
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 
-
 fun AmityComment.isCreatorCommunityModerator(): Boolean {
     return (this.getTarget() as? AmityComment.Target.COMMUNITY)
         ?.getCreatorMember()

@@ -82,10 +82,16 @@ fun AmityUserFollowRelationshipButton(
                     )
 
                     Text(
-                        text = getConfig().getText(),
-                        style = AmityTheme.typography.bodyLegacy.copy(
-                            fontWeight = FontWeight.SemiBold
-                        ),
+                        text = getConfig().getText().ifEmpty {
+                            when (followStatus) {
+                                AmityFollowStatus.PENDING -> "Pending"
+                                AmityFollowStatus.ACCEPTED -> "Following"
+                                AmityFollowStatus.BLOCKED -> "Unblock"
+                                AmityFollowStatus.NONE -> "Follow"
+                            }
+                        },
+                        color = AmityTheme.colors.base,
+                        style = AmityTheme.typography.bodyLegacy.copy(fontWeight = FontWeight.SemiBold),
                     )
                 }
             }

@@ -7,6 +7,7 @@ import com.amity.socialcloud.uikit.common.linkpreview.models.AmityPreviewMetadat
 import com.amity.socialcloud.uikit.common.linkpreview.models.AmityPreviewNoUrl
 import com.amity.socialcloud.uikit.common.linkpreview.models.AmityPreviewUrlCacheItem
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 import okhttp3.OkHttpClient
@@ -16,6 +17,7 @@ import org.jsoup.Jsoup
 
 object AmityPreviewUrl {
 
+    private val httpClient: OkHttpClient by lazy { OkHttpClient() }
     private val postUrlCache: MutableMap<String, AmityPreviewUrlCacheItem> = mutableMapOf()
     private val commentUrlCache: MutableMap<String, AmityPreviewUrlCacheItem> = mutableMapOf()
     private val previewMetadataCache: MutableMap<String, AmityPreviewMetadataCacheItem> =
@@ -67,6 +69,43 @@ object AmityPreviewUrl {
         }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
+    }
+
+    fun fetchMetadataFlow(
+        url: String,
+        errorItem: AmityPreviewMetadataCacheItem = AmityPreviewMetadataCacheItem(
+            url = url,
+            domain = "",
+            title = "",
+            imageUrl = "error",
+            timestamp = DateTime.now()
+        )
+    ): Flowable<AmityPreviewMetadataCacheItem> {
+        val placeholder = AmityPreviewMetadataCacheItem(
+            url = url,
+            domain = "",
+            title = "",
+            imageUrl = "placeholder",
+            timestamp = DateTime.now()
+        )
+        val cache = getPreviewFromCache(url)
+        return if (cache != null) {
+            Flowable.just(cache)
+        } else {
+            Flowable.concat(
+                Flowable.fromIterable(listOf(placeholder)),
+                fetchPreviewMetadata(url).toFlowable()
+            )
+                .doOnNext {
+                    previewMetadataCache[url] = it
+                }
+                .onErrorReturn {
+                    previewMetadataCache[url] = errorItem
+                    errorItem
+                }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+        }
     }
 
     private fun getPostUrlFromCache(postId: String): AmityPreviewUrlCacheItem? {
@@ -122,7 +161,7 @@ object AmityPreviewUrl {
         return Single.create { emitter ->
             try {
                 val response =
-                    OkHttpClient().newCall(Request.Builder().url(url).build()).execute()
+                    httpClient.newCall(Request.Builder().url(url).build()).execute()
                 if (response.isSuccessful) {
                     val html = response.body?.string() ?: ""
                     val doc = Jsoup.parse(html)

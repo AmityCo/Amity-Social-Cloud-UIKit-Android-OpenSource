@@ -90,9 +90,10 @@ fun AmityPostEngagementView(
     onCommentAction: (() -> Unit)? = null,
 ) {
     val context = LocalContext.current
-    val behavior by lazy {
+    val behavior = remember {
         AmitySocialBehaviorHelper.postContentComponentBehavior
     }
+
     val myReactionState = remember {
         val firstReaction = post.getMyReactions().firstOrNull()
         mutableStateOf(firstReaction ?: "")
@@ -555,7 +556,7 @@ fun AmityPostEngagementView(
                  */
         }
 
-        if (reactionExpanded && anchorInWindow != null) {
+        if (reactionExpanded && anchorInWindow != null && !fromNonMemberCommunity && !AmityCoreClient.isVisitor()) {
             val anchor = anchorInWindow!!
             Popup(
                 properties = PopupProperties(

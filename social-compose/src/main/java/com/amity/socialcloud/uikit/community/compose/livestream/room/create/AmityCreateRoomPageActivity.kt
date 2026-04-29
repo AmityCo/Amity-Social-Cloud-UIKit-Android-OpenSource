@@ -3,6 +3,7 @@ package com.amity.socialcloud.uikit.community.compose.livestream.room.create
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.KeyEvent
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -12,8 +13,34 @@ import androidx.compose.ui.Modifier
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.event.AmityEvent
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 
 class AmityCreateRoomPageActivity : AppCompatActivity() {
+
+    private val _remoteShutterFlow = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    internal val remoteShutterFlow: SharedFlow<Unit> = _remoteShutterFlow.asSharedFlow()
+
+    internal var isLiveActive: Boolean = false
+
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        if (!isLiveActive && event.action == KeyEvent.ACTION_DOWN) {
+            when (event.keyCode) {
+                KeyEvent.KEYCODE_VOLUME_UP,
+                KeyEvent.KEYCODE_VOLUME_DOWN,
+                KeyEvent.KEYCODE_CAMERA,
+                KeyEvent.KEYCODE_FOCUS,
+                KeyEvent.KEYCODE_HEADSETHOOK,
+                KeyEvent.KEYCODE_MEDIA_PLAY -> {
+                    _remoteShutterFlow.tryEmit(Unit)
+                    return true
+                }
+            }
+        }
+        return super.dispatchKeyEvent(event)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

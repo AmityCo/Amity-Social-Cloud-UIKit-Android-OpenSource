@@ -15,9 +15,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 
-class NotificationTrayViewModel : AmityBaseViewModel() {
+open class NotificationTrayViewModel : AmityBaseViewModel() {
 
-    fun getNotificationTrayItem(): Flow<PagingData<NotificationTrayListItem>> {
+    open fun getNotificationTrayItem(): Flow<PagingData<NotificationTrayListItem>> {
         return AmityCoreClient
             .notificationTray()
             .getNotificationTrayItems()
@@ -53,7 +53,7 @@ class NotificationTrayViewModel : AmityBaseViewModel() {
             }
     }
 
-    fun getCommunityInvitations(): Flow<PagingData<AmityInvitation>> {
+    open fun getCommunityInvitations(): Flow<PagingData<AmityInvitation>> {
         return AmityCoreClient.newInvitationRepository()
             .getMyCommunityInvitations()
             .subscribeOn(Schedulers.io())

@@ -181,10 +181,17 @@ fun AmityCommunityProfilePage(
         else -> allEvents
     }
 
-    val hasCreatePrivilege by if (!AmityCoreClient.isSignedIn()) {
+    // Check if user is creator or has moderator permission (for admin-only post setting)
+    val isCreator by remember(community?.getCreatorId()) {
+        derivedStateOf {
+            AmityCoreClient.getUserId() == community?.getCreatorId()
+        }
+    }
+
+    val hasModeratorPermission by if (!AmityCoreClient.isSignedIn()) {
         remember { mutableStateOf(false) }
     } else {
-        AmityCoreClient.hasPermission(AmityPermission.CREATE_PRIVILEGED_POST)
+        AmityCoreClient.hasPermission(AmityPermission.REVIEW_COMMUNITY_POST)
             .atCommunity(communityId)
             .check()
             .asFlow()
@@ -192,6 +199,12 @@ fun AmityCommunityProfilePage(
                 emit(false)
             }
             .collectAsState(initial = false)
+    }
+
+    val hasCreatePrivilege by remember(isCreator, hasModeratorPermission) {
+        derivedStateOf {
+            isCreator || hasModeratorPermission
+        }
     }
 
     val hasManageStoryPermission by if (!AmityCoreClient.isSignedIn()) {
@@ -213,6 +226,19 @@ fun AmityCommunityProfilePage(
         AmitySocialClient.getSettings()
             .asFlow()
             .map { it.getStorySettings().isAllowAllUserToCreateStory() }
+            .catch {
+                emit(false)
+            }
+            .collectAsState(initial = false)
+    }
+
+    val hasEventCreationPermission by if (!AmityCoreClient.isSignedIn()) {
+        remember { mutableStateOf(false) }
+    } else {
+        AmityCoreClient.hasPermission(AmityPermission.CREATE_EVENT)
+            .atCommunity(communityId)
+            .check()
+            .asFlow()
             .catch {
                 emit(false)
             }
@@ -350,7 +376,7 @@ fun AmityCommunityProfilePage(
                             } ?: false
                         val shouldShowAnnouncement = announcementPosts.itemCount > 0
                                 && (selectedTabIndex == 0 || (selectedTabIndex == 1 && hasAnnouncementPin))
-                        if (community?.isJoined() == false && community?.isPublic() == false) {
+                        if (!state.isRefreshing && community?.isJoined() == false && community?.isPublic() == false) {
                             item {
                                 Box(
                                     modifier = Modifier
@@ -416,6 +442,7 @@ fun AmityCommunityProfilePage(
                                                     ),
                                                     postId = post.getPostId(),
                                                     category = category,
+                                                    autoFocusCommentInput = true,
                                                 )
                                             }
                                         )
@@ -595,6 +622,7 @@ fun AmityCommunityProfilePage(
                             shouldShow = expanded,
                             shouldShowPostCreationButton = shouldShowPostCreationButton,
                             shouldShowStoryCreationButton = shouldShowStoryCreationButton,
+                            shouldShowEventCreationButton = hasEventCreationPermission,
                             showPollTypeSelectionSheet = {
                                 showPollSelectionBottomSheet = true
                             },

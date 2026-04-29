@@ -65,7 +65,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import android.text.format.DateFormat
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.ui.text.style.TextOverflow
 import coil3.compose.AsyncImage
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
@@ -626,86 +625,38 @@ fun AmityEventSetupPage(
                             modifier = modifier.testTag(getAccessibilityId())
                         )
                     }
+                    Text(
+                        text = "${eventName.length}/60",
+                        style = AmityTheme.typography.caption.copy(
+                            fontWeight = FontWeight.Normal,
+                            color = AmityTheme.colors.baseShade1,
+                        )
+                    )
                 }
 
                 Spacer(modifier = modifier.height(4.dp))
 
-                var isEventNameFocused by remember { mutableStateOf(false) }
-                var eventNameFieldValue by remember { mutableStateOf(TextFieldValue(eventName)) }
                 val hapticFeedback = LocalHapticFeedback.current
 
-                LaunchedEffect(eventName) {
-                    if (eventNameFieldValue.text != eventName) {
-                        eventNameFieldValue = TextFieldValue(eventName)
-                    }
-                }
+                AmityTextField(
+                    maxCharacters = 60,
+                    text = eventName,
+                    maxLines = 3,
+                    hint = "Name your event",
+                    onValueChange = { newValue ->
+                        val filteredText = newValue.replace("\n", "")
+                        if (filteredText.length > 60) {
+                            hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                        } else {
+                            eventName = filteredText
+                        }
+                    },
+                    innerPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
+                )
 
-                val isEventNameNotEmpty = eventName.trim().isNotEmpty()
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                        .background(
-                            color = Color.Transparent,
-                            shape = RoundedCornerShape(4.dp)
-                        )
-                        .padding(vertical = 4.dp)
-                ) {
-                    AmityBasicTextField(
-                        value = eventNameFieldValue,
-                        maxChar = 60,
-                        onValueChange = { newValue: TextFieldValue ->
-                            val filteredText = newValue.text.replace("\n", "")
-                            if (filteredText.length > 60) {
-                                hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
-                            } else {
-                                eventNameFieldValue = newValue.copy(text = filteredText)
-                                eventName = filteredText
-                            }
-                        },
-                        textStyle = AmityTheme.typography.bodyLegacy.copy(
-                            color = AmityTheme.colors.base
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 12.dp)
-                            .onFocusChanged { focus ->
-                                isEventNameFocused = focus.isFocused
-                            },
-                        placeholder = {
-                            Text(
-                                text = "Name your event",
-                                style = AmityTheme.typography.bodyLegacy,
-                                color = Color(0xFF6E6E6E)
-                            )
-                        },
-                        colors = TextFieldDefaults.colors(
-                            unfocusedContainerColor = Color.Transparent,
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                        ),
-                        singleLine = false,
-                        minHeight = 40.dp,
-                        contentPadding = PaddingValues(
-                            start = 0.dp,
-                            end = 0.dp,
-                            top = 12.dp,
-                            bottom = 12.dp
-                        ),
-                        maxLines = 3,
-                    )
-                }
-
-                Spacer(modifier = modifier.height(8.dp))
-
-                Text(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    text = "${eventName.length}/60",
-                    style = AmityTheme.typography.caption.copy(
-                        fontWeight = FontWeight.Normal,
-                        color = AmityTheme.colors.baseShade1,
-                    )
+                HorizontalDivider(
+                    color = AmityTheme.colors.divider,
+                    modifier = modifier.padding(horizontal = 16.dp)
                 )
 
                 Spacer(modifier = modifier.height(24.dp))
@@ -729,85 +680,35 @@ fun AmityEventSetupPage(
                             modifier = modifier.testTag(getAccessibilityId())
                         )
                     }
+                    Text(
+                        text = "${eventDetails.length}/1,000",
+                        style = AmityTheme.typography.caption.copy(
+                            fontWeight = FontWeight.Normal,
+                            color = AmityTheme.colors.baseShade1,
+                        )
+                    )
                 }
                 Spacer(modifier = modifier.height(4.dp))
 
-                var isEventDetailsFocused by remember { mutableStateOf(false) }
-                var eventDetailsFieldValue by remember { mutableStateOf(TextFieldValue(eventDetails)) }
+                AmityTextField(
+                    maxCharacters = 1000,
+                    text = eventDetails,
+                    maxLines = 10,
+                    hint = "Share what this event is all about",
+                    onValueChange = { newValue ->
+                        val filteredText = newValue.replace("\n", "")
+                        if (filteredText.length > 1000) {
+                            hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                        } else {
+                            eventDetails = filteredText
+                        }
+                    },
+                    innerPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
+                )
 
-                LaunchedEffect(eventDetails) {
-                    if (eventDetailsFieldValue.text != eventDetails) {
-                        eventDetailsFieldValue = TextFieldValue(eventDetails)
-                    }
-            }
-
-                val isEventDetailsNotEmpty = eventDetails.trim().isNotEmpty()
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(min = 112.dp)
-                        .padding(horizontal = 16.dp)
-                        .background(
-                            AmityTheme.colors.baseShade4,
-                            RoundedCornerShape(8.dp)
-                        )
-                        .padding(vertical = 4.dp)
-                ) {
-                    AmityBasicTextField(
-                        value = eventDetailsFieldValue,
-                        maxChar = 1000,
-                        onValueChange = { newValue: TextFieldValue ->
-                            val filteredText = newValue.text.replace("\n", "")
-                            if (filteredText.length > 1000) {
-                                hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
-                            } else {
-                                eventDetailsFieldValue = newValue.copy(text = filteredText)
-                                eventDetails = filteredText
-                            }
-                        },
-                        textStyle = AmityTheme.typography.bodyLegacy.copy(
-                            color = AmityTheme.colors.base
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 12.dp)
-                            .onFocusChanged { focus ->
-                                isEventDetailsFocused = focus.isFocused
-                            },
-                        placeholder = {
-                            Text(
-                                text = "Share details about the event and what to expect",
-                                style = AmityTheme.typography.bodyLegacy,
-                                color = Color(0xFF6E6E6E)
-                            )
-                        },
-                        colors = TextFieldDefaults.colors(
-                            unfocusedContainerColor = Color.Transparent,
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                        ),
-                        singleLine = false,
-                        minHeight = 40.dp,
-                        contentPadding = PaddingValues(
-                            start = 0.dp,
-                            end = 0.dp,
-                            top = 12.dp,
-                            bottom = 12.dp
-                        ),
-                        maxLines = 10,
-                    )
-                }
-
-                Spacer(modifier = modifier.height(8.dp))
-
-                Text(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    text = "${eventDetails.length}/1,000",
-                    style = AmityTheme.typography.caption.copy(
-                        fontWeight = FontWeight.Normal,
-                        color = AmityTheme.colors.baseShade1,
-                    )
+                HorizontalDivider(
+                    color = AmityTheme.colors.divider,
+                    modifier = modifier.padding(horizontal = 16.dp)
                 )
 
                 Spacer(modifier = modifier.height(24.dp))
@@ -915,7 +816,7 @@ fun AmityEventSetupPage(
                         )
 
                         val is24HourFormat = DateFormat.is24HourFormat(context)
-                        val timeFormat = DateTimeFormat.forPattern(if (is24HourFormat) "HH:mm" else "hh:mm a")
+                        val timeFormat = DateTimeFormat.forPattern(if (is24HourFormat) "HH:mm" else "h:mm a")
                         Text(
                             text = startDateTime.toString(timeFormat),
                             style = AmityTheme.typography.body,
@@ -958,7 +859,7 @@ fun AmityEventSetupPage(
                                 horizontalArrangement = Arrangement.spacedBy(12.dp)
                             ) {
                                 // Date box - takes half width
-                                val dayFormat = DateTimeFormat.forPattern("dd MMM yyyy")
+                                val dayFormat = DateTimeFormat.forPattern("MMM dd yyyy")
                                 Text(
                                     text = currentEndDateTime.toString(dayFormat),
                                 style = AmityTheme.typography.body,
@@ -982,7 +883,7 @@ fun AmityEventSetupPage(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 val is24HourFormat = DateFormat.is24HourFormat(context)
-                                val timeFormat = DateTimeFormat.forPattern(if (is24HourFormat) "HH:mm" else "hh:mm a")
+                                val timeFormat = DateTimeFormat.forPattern(if (is24HourFormat) "HH:mm" else "h:mm a")
                                 Text(
                                     text = currentEndDateTime.toString(timeFormat),
                                     style = AmityTheme.typography.body,

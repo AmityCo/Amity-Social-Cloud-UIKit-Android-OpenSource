@@ -17,23 +17,23 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.printStackTrace
 
-class AmityPostMenuViewModel : AmityBaseViewModel() {
+open class AmityPostMenuViewModel : AmityBaseViewModel() {
 
     private val _sheetUIState by lazy {
         MutableStateFlow<AmityPostMenuSheetUIState>(AmityPostMenuSheetUIState.CloseSheet)
     }
-    val sheetUIState get() = _sheetUIState
+    open val sheetUIState get() = _sheetUIState
 
     private val _dialogUIState by lazy {
         MutableStateFlow<AmityPostMenuDialogUIState>(AmityPostMenuDialogUIState.CloseDialog)
     }
-    val dialogUIState get() = _dialogUIState
+    open val dialogUIState get() = _dialogUIState
 
     private val _hasDeleteCommunityPostPermission = MutableStateFlow<Boolean>(false)
-    val hasDeleteCommunityPostPermission get() = _hasDeleteCommunityPostPermission.asStateFlow()
+    open val hasDeleteCommunityPostPermission get() = _hasDeleteCommunityPostPermission.asStateFlow()
 
     private val _hasDeleteUserFeedPostPermission = MutableStateFlow<Boolean>(false)
-    val hasDeleteUserFeedPostPermission get() = _hasDeleteUserFeedPostPermission.asStateFlow()
+    open val hasDeleteUserFeedPostPermission get() = _hasDeleteUserFeedPostPermission.asStateFlow()
 
     fun updateSheetUIState(uiState: AmityPostMenuSheetUIState) {
         viewModelScope.launch {

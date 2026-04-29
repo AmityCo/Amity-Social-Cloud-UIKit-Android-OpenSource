@@ -634,7 +634,7 @@ fun CommunityLivestreamPlayerHeader(
                     Text(
                         text = "By ${post?.getCreator()?.getDisplayName() ?: "Unknown User"}",
                         color = Color.White.copy(alpha = 0.8f),
-                        fontSize = 14.sp,
+                        fontSize = 16.sp,
                         maxLines = 1,
                         overflow = TextOverflow1.Ellipsis
                     )

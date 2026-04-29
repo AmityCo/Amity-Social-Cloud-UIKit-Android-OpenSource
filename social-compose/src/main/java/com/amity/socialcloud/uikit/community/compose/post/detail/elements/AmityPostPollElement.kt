@@ -33,6 +33,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -63,6 +64,7 @@ import com.amity.socialcloud.sdk.model.social.poll.AmityPoll
 import com.amity.socialcloud.sdk.model.social.poll.AmityPollAnswer
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.common.isNotEmptyOrBlank
+import com.amity.socialcloud.uikit.common.extionsions.UrlPosition
 import com.amity.socialcloud.uikit.common.common.readableNumber
 import com.amity.socialcloud.uikit.common.common.readableTimeLeft
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
@@ -127,7 +129,7 @@ fun AmityPostPollElement(
         factory = AmityPostPollElementViewModel.create(post.getPostId()),
         viewModelStoreOwner = viewModelStoreOwner
     )
-    val behavior by lazy {
+    val behavior = remember {
         AmitySocialBehaviorHelper.postContentComponentBehavior
     }
 
@@ -144,8 +146,8 @@ fun AmityPostPollElement(
     val isPollPost = (data is AmityPost.Data.POLL)
     if (!isPollPost) return
 
-    val mentionGetter = AmityMentionMetadataGetter(post.getMetadata() ?: JsonObject())
-    val hashtagGetter = AmityHashtagMetadataGetter(post.getMetadata() ?: JsonObject())
+    val mentionGetter = remember(post.getPostId(), post.getUpdatedAt()) { AmityMentionMetadataGetter(post.getMetadata() ?: JsonObject()) }
+    val hashtagGetter = remember(post.getPostId(), post.getUpdatedAt()) { AmityHashtagMetadataGetter(post.getMetadata() ?: JsonObject()) }
     // Use more specific keys and avoid unnecessary recompositions
     val pollData by remember(post.getPostId()) {
         (data as? AmityPost.Data.POLL)!!.getPoll().asFlow()
@@ -183,15 +185,19 @@ fun AmityPostPollElement(
 
     val poll = pollData!!
 
+    val currentUser by produceState<AmityUser?>(initialValue = null) {
+        AmityCoreClient.getCurrentUser().asFlow().collect { value = it }
+    }
+
     val textTypePoll = poll.getAnswers().any { it.dataType == "text" }
 
-    val isEndedState = mutableStateOf(
-        poll.getClosedAt().isBefore(DateTime.now()) || poll.getStatus() == AmityPoll.Status.CLOSED
-    )
-
-    val isEnded by remember {
-        isEndedState
-    }
+    // Optimistic closed flag — survives poll data refreshes. Set to true when server returns
+    // BAD_REQUEST_ERROR (poll just closed server-side before local data propagates).
+    var isEndedByError by remember { mutableStateOf(false) }
+    // Pure derived value — recalculated every recomposition, no remember needed.
+    val isEnded = isEndedByError
+        || poll.getClosedAt().isBefore(DateTime.now())
+        || poll.getStatus() == AmityPoll.Status.CLOSED
 
     var isResultState by remember {
         mutableStateOf(
@@ -251,9 +257,28 @@ fun AmityPostPollElement(
             Spacer(modifier = Modifier.height(16.dp))
         }
 
+        val questionText = (post.getData() as? AmityPost.Data.TEXT)?.getText() ?: poll.getQuestion()
+        val links = remember(post.getPostId(), post.getEditedAt()) {
+            post.getLinks()?.mapNotNull { link ->
+                val index = link.getIndex()
+                val length = link.getLength()
+                val url = link.getUrl()
+                if (index != null && length != null) {
+                    UrlPosition(
+                        url = url,
+                        start = index,
+                        end = index + length,
+                        originalText = questionText.substring(
+                            index.coerceAtMost(questionText.length),
+                            (index + length).coerceAtMost(questionText.length)
+                        )
+                    )
+                } else null
+            }?.takeIf { it.isNotEmpty() }
+        }
         AmityExpandableText(
             modifier = modifier,
-            text = (post.getData() as? AmityPost.Data.TEXT)?.getText() ?: poll.getQuestion(),
+            text = questionText,
             mentionGetter = mentionGetter,
             mentionees = post.getMentionees(),
             hashtagGetter = hashtagGetter,
@@ -263,6 +288,7 @@ fun AmityPostPollElement(
             onClick = onClick,
             onMentionedUserClick = onMentionedUserClick,
             onHashtagClick = onHashtagClick,
+            linkPositions = links,
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -317,7 +343,7 @@ fun AmityPostPollElement(
                                     post.getPostId(),
                                     isExpanded = isOptionsExpanded,
                                     isResultMode = isResultState,
-                                    selectedOption = selectedIndices,
+                                    selectedOption = selectedIndices.toMutableList(),
                                 )
                             }
                             .border(
@@ -345,7 +371,7 @@ fun AmityPostPollElement(
                                 RadioButton(
                                     modifier = modifier.testTag(text),
                                     enabled = canVote,
-                                    selected = isOptionSelected,//selectedIndices.contains(index),
+                                    selected = isOptionSelected,
                                     colors = RadioButtonDefaults.colors(
                                         selectedColor = AmityTheme.colors.primary,
                                         unselectedColor = AmityTheme.colors.baseShade2,
@@ -359,7 +385,7 @@ fun AmityPostPollElement(
                         } else {
                             AmityRoundCheckbox(
                                 enabled = canVote,
-                                isChecked = isOptionSelected,//selectedIndices.contains(index),
+                                isChecked = isOptionSelected,
                                 onValueChange = {
                                     if (selectedIndices.contains(index)) {
                                         selectedIndices.remove(index)
@@ -412,7 +438,7 @@ fun AmityPostPollElement(
                     isExpanded = isOptionsExpanded,
                     isSingleSelected = poll.getAnswerType() == AmityPoll.AnswerType.SINGLE,
                     selectedIndex = pollStateUiState.find { it.postId == post.getPostId() }?.selectedOption
-                        ?: selectedIndices,//selectedIndices,
+                        ?: selectedIndices,
                     selectedVote = { index ->
                         if (canVote) {
                             if (poll.getAnswerType() == AmityPoll.AnswerType.SINGLE) {
@@ -432,7 +458,7 @@ fun AmityPostPollElement(
                             post.getPostId(),
                             isExpanded = isOptionsExpanded,
                             isResultMode = isResultState,
-                            selectedOption = selectedIndices,
+                            selectedOption = selectedIndices.toMutableList(),
                         )
                     },
                     imagePreviewClick = {
@@ -488,7 +514,7 @@ fun AmityPostPollElement(
                                 } catch (e: Exception) {
                                 if (e is AmityException) {
                                     if (e.code == AmityError.BAD_REQUEST_ERROR.code) {
-                                        isEndedState.value = true
+                                        isEndedByError = true
                                         AmityUIKitSnackbar.publishSnackbarErrorMessage(
                                             message = "Poll ended.",
                                             offsetFromBottom = 52,
@@ -521,11 +547,12 @@ fun AmityPostPollElement(
             Spacer(modifier = Modifier.height(12.dp))
 
         } else { // result state
-            val answersOrder = poll.getAnswers()
-            val (votedOptions, noVoteOptions) = answersOrder.partition { it.voteCount > 0 }
-            val results =
+            val results = remember(poll.getAnswers()) {
+                val answersOrder = poll.getAnswers()
+                val (votedOptions, noVoteOptions) = answersOrder.partition { it.voteCount > 0 }
                 votedOptions.sortedWith(compareByDescending<AmityPollAnswer> { it.voteCount }
                     .thenBy { answersOrder.indexOf(it) }) + noVoteOptions
+            }
 
             if (textTypePoll) {
                 results.forEachIndexed { index, answer ->
@@ -649,15 +676,9 @@ fun AmityPostPollElement(
                             Spacer(modifier = Modifier.width(4.dp))
 
                             if (answer.isVotedByUser) {
-                                var user: AmityUser? = null
-                                try {
-                                    user = AmityCoreClient.getCurrentUser().blockingFirst()
-                                } catch (e: Exception) {
-                                    // missing user
-                                }
                                 AmityUserAvatarView(
                                     size = 16.dp,
-                                    user = user
+                                    user = currentUser
                                 )
                             }
                         }
@@ -776,6 +797,7 @@ fun AmityPostPollElement(
                 poll.getClosedAt().readableTimeLeft(DateTime.now())
             }
             val totalVotes = NumberFormat.getNumberInstance(Locale.getDefault()).format(totalVote)
+            val voteText = if (totalVote == 1) "vote" else "votes"
 
             Text(
                 modifier = Modifier.weight(1f),
@@ -783,7 +805,7 @@ fun AmityPostPollElement(
                     color = AmityTheme.colors.baseShade2,
                     fontWeight = FontWeight.SemiBold
                 ),
-                text = "$totalVotes votes" + " • " + endText,
+                text = "$totalVotes $voteText" + " • " + endText,
             )
 
             if (poll.getStatus() != AmityPoll.Status.CLOSED
@@ -835,8 +857,8 @@ fun AmityPostPollElement(
                                             )
                                         }
                                         .doOnError { e ->
-                                            val text = if (e is AmityException && e.code == AmityError.BAD_REQUEST_ERROR.code) {
-                                                isEndedState.value = true
+                                    val text = if (e is AmityException && e.code == AmityError.BAD_REQUEST_ERROR.code) {
+                                        isEndedByError = true
                                                 "Poll ended."
                                             } else {
                                                 "Oops, something went wrong."

@@ -1,6 +1,7 @@
 package com.amity.socialcloud.uikit.chat.home
 
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import com.amity.socialcloud.uikit.chat.BR
 import com.amity.socialcloud.uikit.chat.R
@@ -15,6 +16,11 @@ class AmityChatHomePageActivity : AmityBaseActivity<AmityActivityChatHomeBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initializeFragment()
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                finish()
+            }
+        })
     }
 
     private fun initializeFragment() {
@@ -23,10 +29,6 @@ class AmityChatHomePageActivity : AmityBaseActivity<AmityActivityChatHomeBinding
         transaction.replace(R.id.chatHomeContainer, chatHomeFragment)
         transaction.addToBackStack(null)
         transaction.commit()
-    }
-
-    override fun onBackPressed() {
-        this.finish()
     }
 
     override fun getLayoutId(): Int = R.layout.amity_activity_chat_home

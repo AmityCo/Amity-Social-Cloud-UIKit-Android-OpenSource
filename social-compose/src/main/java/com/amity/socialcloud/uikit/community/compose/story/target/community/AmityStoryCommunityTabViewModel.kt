@@ -5,6 +5,7 @@ import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.sdk.model.social.story.AmityStory
 import com.amity.socialcloud.sdk.model.social.story.AmityStoryTarget
@@ -53,5 +54,12 @@ class AmityStoryCommunityTabViewModel : AmityBaseViewModel() {
             .catch {
                 emit(emptyList())
             }
+    }
+
+    fun getCommunity(communityId: String): Flowable<AmityCommunity> {
+        return AmitySocialClient.newCommunityRepository()
+            .getCommunity(communityId)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
     }
 }

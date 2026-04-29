@@ -168,6 +168,7 @@ fun AmityJoinCommunityView(
     community: AmityCommunity,
     joinRequest: AmityJoinRequest? = null,
     label: String? = null,
+    showLabelOnAvatar: Boolean = true,
     onClick: (AmityCommunity) -> Unit,
 ) {
     Row(
@@ -188,7 +189,7 @@ fun AmityJoinCommunityView(
             AmityCommunityAvatarWithLabelView(
                 community = community,
                 modifier = modifier.testTag(getAccessibilityId()),
-                label = label
+                label = if (showLabelOnAvatar) label else null
             )
         }
 
@@ -240,7 +241,7 @@ fun AmityJoinCommunityView(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier
-                            .weight(1f)
+                            .weight(1f, false)
                             .testTag(getAccessibilityId()),
                     )
                 }

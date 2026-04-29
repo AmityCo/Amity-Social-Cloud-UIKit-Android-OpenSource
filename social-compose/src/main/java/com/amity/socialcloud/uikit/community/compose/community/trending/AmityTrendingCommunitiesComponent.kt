@@ -89,6 +89,7 @@ fun AmityTrendingCommunitiesComponent(
                             community = community,
                             joinRequest = joinRequest,
                             label = "0" + (index + 1),
+                            showLabelOnAvatar = false,
                             onClick = {
                                 behavior.goToCommunityProfilePage(
                                     context = context,

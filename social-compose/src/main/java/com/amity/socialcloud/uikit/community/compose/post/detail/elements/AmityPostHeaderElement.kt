@@ -60,7 +60,7 @@ fun AmityPostHeaderElement(
     onMenuClick: (AmityPost) -> Unit = {}
 ) {
     val context = LocalContext.current
-    val behavior by lazy {
+    val behavior = remember {
         AmitySocialBehaviorHelper.postContentComponentBehavior
     }
 
@@ -70,7 +70,7 @@ fun AmityPostHeaderElement(
     val viewModel =
         viewModel<AmityPostDetailPageViewModel>(viewModelStoreOwner = viewModelStoreOwner)
 
-    val isCommunityModerator = remember(post) {
+    val isCommunityModerator = remember(post.getPostId(), post.getUpdatedAt()) {
         viewModel.isCommunityModerator(post)
     }
 

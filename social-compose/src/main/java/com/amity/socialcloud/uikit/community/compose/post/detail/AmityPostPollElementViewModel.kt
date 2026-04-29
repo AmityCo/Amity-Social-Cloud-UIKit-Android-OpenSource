@@ -20,7 +20,7 @@ class AmityPostPollElementViewModel(postId: String) : AmityBaseViewModel() {
 
     init {
         _uiState.update { currentState ->
-            mutableListOf(PollStateUiState())
+            mutableListOf(PollStateUiState(postId = postId))
         }
     }
 

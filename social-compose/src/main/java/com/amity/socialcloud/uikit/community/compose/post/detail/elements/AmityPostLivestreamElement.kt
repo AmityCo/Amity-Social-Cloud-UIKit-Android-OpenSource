@@ -48,6 +48,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.amity.socialcloud.sdk.api.video.AmityVideoClient
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.model.core.product.AmityProduct
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
@@ -66,6 +67,7 @@ import com.amity.socialcloud.uikit.community.compose.post.composer.components.Am
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.RenderModeEnum
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetailPageActivity.Companion.REQUEST_CODE_VIEW_LIVESTREAM
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 
 @Composable
 fun AmityPostLivestreamElement(
@@ -486,9 +488,10 @@ fun AmityChildRoomPostElement(
 ) {
     val context = LocalContext.current
     val activity = context as Activity
-    val room = remember(post.getPostId(), post.getUpdatedAt()) {
-        getRoomPostData(post)
-    }
+    val roomState = remember(post.getPostId(), post.getUpdatedAt()) {
+        getRoomPostDataFlow(post)
+    }?.collectAsState(initial = getRoomPostData(post))
+    val room = roomState?.value
 
     val textPostData = remember (post.getPostId(), post.getUpdatedAt() ) {
         post.getData() as? AmityPost.Data.TEXT
@@ -769,7 +772,7 @@ fun AmityChildRoomPostElement(
                     }
 
                     // Play button overlay (all states except IDLE)
-                    if (roomStatus != AmityRoomStatus.IDLE) {
+                    if (room != null && roomStatus != AmityRoomStatus.IDLE) {
                         Image(
                             painter = painterResource(id = R.drawable.amity_ic_play_v4),
                             contentDescription = null,
@@ -825,6 +828,20 @@ fun getRoomPostData(post: AmityPost): AmityRoom? {
     return post.getChildren().firstOrNull()?.let {
         when (val data = it.getData()) {
             is AmityPost.Data.ROOM -> data.getRoom()
+            else -> null
+        }
+    }
+}
+
+fun getRoomPostDataFlow(post: AmityPost): Flow<AmityRoom>? {
+    return post.getChildren().firstOrNull()?.let {
+        when (val data = it.getData()) {
+            is AmityPost.Data.ROOM -> {
+                AmityVideoClient.newRoomRepository()
+                    .getRoom(data.getRoomId())
+                    .asFlow()
+                    .catch { /* room unavailable (deleted, network error) — composable handles null room gracefully */ }
+            }
             else -> null
         }
     }

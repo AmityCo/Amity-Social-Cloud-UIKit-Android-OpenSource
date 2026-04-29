@@ -33,13 +33,12 @@ fun LazyListScope.amityGlobalFeedLLS(
 
     items(
         count = createdPosts.size,
-        key = { "temp_" + AmityPostComposerHelper.getCreatedPosts()[it].getPostId() }
+        key = { "temp_" + createdPosts[it].getPostId() }
     ) { it ->
         val post = createdPosts[it]
 
         val isFeatured = pinnedPosts.value
-            .map { pinned -> pinned.postId }
-            .contains(post.getPostId())
+            .any { pinned -> pinned.postId == post.getPostId() }
 
         if (isFeatured) {
             return@items
@@ -66,11 +65,9 @@ fun LazyListScope.amityGlobalFeedLLS(
                     is AmityListItem.PostItem -> {
                         val post = data.post
                         val isFeatured = pinnedPosts.value
-                            .map { pinned -> pinned.postId }
-                            .contains(post.getPostId())
+                            .any { pinned -> pinned.postId == post.getPostId() }
                         val isIncludedInCreatedList = createdPosts
-                            .map { pinned -> pinned.getPostId() }
-                            .contains(post.getPostId())
+                            .any { created -> created.getPostId() == post.getPostId() }
                         if (!post.isSupportedDataTypes() || isFeatured || isIncludedInCreatedList) {
                             return@items
                         }

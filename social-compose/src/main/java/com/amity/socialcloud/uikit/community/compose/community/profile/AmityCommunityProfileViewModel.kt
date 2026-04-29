@@ -256,6 +256,10 @@ class AmityCommunityProfileViewModel(private val communityId: String) :
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnComplete {
+                    // Clear invitation from state after successful acceptance
+                    _communityProfileState.update { currentState ->
+                        currentState.copy(invitation = null, isRefreshing = true)
+                    }
                     onSuccess()
                 }
                 .doOnError {
@@ -275,6 +279,10 @@ class AmityCommunityProfileViewModel(private val communityId: String) :
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnComplete {
+                    // Clear invitation from state after successful rejection
+                    _communityProfileState.update { currentState ->
+                        currentState.copy(invitation = null)
+                    }
                     onSuccess()
                 }
                 .doOnError {
