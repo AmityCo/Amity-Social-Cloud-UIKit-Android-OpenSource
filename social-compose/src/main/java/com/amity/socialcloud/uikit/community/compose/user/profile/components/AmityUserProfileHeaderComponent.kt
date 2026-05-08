@@ -189,91 +189,92 @@ fun AmityUserProfileHeaderComponent(
             } else {
                 Spacer(modifier.height(12.dp))
             }
-
-            Row(
-                modifier = Modifier.padding(vertical = 4.dp)
+            AmityBaseElement(
+                pageScope = pageScope,
+                componentScope = getComponentScope(),
+                elementId = "user_profile_action",
             ) {
-                AmityBaseElement(
-                    pageScope = pageScope,
-                    componentScope = getComponentScope(),
-                    elementId = "user_following"
+                Row(
+                    modifier = Modifier.padding(vertical = 4.dp)
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = modifier.clickableWithoutRipple {
-                            if (userFollowInfo?.getStatus() == AmityFollowStatus.ACCEPTED || state.isMyUserProfile()) {
-                                behavior.goToUserRelationshipPage(
-                                    context = context,
-                                    userId = user.getUserId(),
-                                    selectedTab = AmityUserRelationshipPageTab.FOLLOWING,
-                                )
-                            } else if (AmityCoreClient.isVisitor()) {
-                                behavior.handleVisitorUserAction()
-                            } else if (userFollowInfo?.getStatus() != AmityFollowStatus.ACCEPTED) {
-                                behavior.handleNonFollowerAction()
-                            }
-                        }
+                    AmityBaseElement(
+                        pageScope = pageScope,
+                        componentScope = getComponentScope(),
+                        elementId = "user_following"
                     ) {
-                        Text(
-                            text = getNumberAbbreveation(followingCount),
-                            style = AmityTheme.typography.bodyLegacy.copy(
-                                fontWeight = FontWeight.SemiBold,
-                            ),
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = getConfig().getText(),
-                            style = AmityTheme.typography.captionLegacy.copy(
-                                fontWeight = FontWeight.Normal,
-                                color = AmityTheme.colors.baseShade2,
-                            ),
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = modifier.clickableWithoutRipple {
+                                if (userFollowInfo?.getStatus() == AmityFollowStatus.ACCEPTED || state.isMyUserProfile()) {
+                                    behavior.goToUserRelationshipPage(
+                                        context = context,
+                                        userId = user.getUserId(),
+                                        selectedTab = AmityUserRelationshipPageTab.FOLLOWING,
+                                    )
+                                } else if (AmityCoreClient.isVisitor()) {
+                                    behavior.handleVisitorUserAction()
+                                } else if (userFollowInfo?.getStatus() != AmityFollowStatus.ACCEPTED) {
+                                    behavior.handleNonFollowerAction()
+                                }
+                            }
+                        ) {
+                            Text(
+                                text = getNumberAbbreveation(followingCount),
+                                style = AmityTheme.typography.bodyLegacy.copy(
+                                    fontWeight = FontWeight.SemiBold,
+                                ),
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = getConfig().getText(),
+                                style = AmityTheme.typography.captionLegacy.copy(
+                                    fontWeight = FontWeight.Normal,
+                                    color = AmityTheme.colors.baseShade2,
+                                ),
+                            )
+                        }
                     }
-                }
 
-                Box(
-                    modifier = Modifier
-                        .padding(horizontal = 12.dp)
-                        .width(1.dp)
-                        .height(20.dp)
-                        .background(color = AmityTheme.colors.baseShade4)
-                )
+                    Box(
+                        modifier = Modifier
+                            .padding(horizontal = 12.dp)
+                            .width(1.dp)
+                            .height(20.dp)
+                            .background(color = AmityTheme.colors.baseShade4)
+                    )
 
-                AmityBaseElement(
-                    pageScope = pageScope,
-                    componentScope = getComponentScope(),
-                    elementId = "user_follower"
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = modifier.clickableWithoutRipple {
-                            if (userFollowInfo?.getStatus() == AmityFollowStatus.ACCEPTED || state.isMyUserProfile()) {
-                                behavior.goToUserRelationshipPage(
-                                    context = context,
-                                    userId = user.getUserId(),
-                                    selectedTab = AmityUserRelationshipPageTab.FOLLOWER,
-                                )
-                            }  else if (AmityCoreClient.isVisitor()) {
-                                behavior.handleVisitorUserAction()
-                            } else if (userFollowInfo?.getStatus() != AmityFollowStatus.ACCEPTED) {
-                                behavior.handleNonFollowerAction()
-                            }
-                        }
+                    AmityBaseElement(
+                        pageScope = pageScope,
+                        componentScope = getComponentScope(),
+                        elementId = "user_follower"
                     ) {
-                        Text(
-                            text = getNumberAbbreveation(followerCount),
-                            style = AmityTheme.typography.bodyLegacy.copy(
-                                fontWeight = FontWeight.SemiBold,
-                            ),
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = getConfig().getText(),
-                            style = AmityTheme.typography.captionLegacy.copy(
-                                fontWeight = FontWeight.Normal,
-                                color = AmityTheme.colors.baseShade2,
-                            ),
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = modifier.clickableWithoutRipple {
+                                if (userFollowInfo?.getStatus() == AmityFollowStatus.ACCEPTED || state.isMyUserProfile()) {
+                                    behavior.goToUserRelationshipPage(
+                                        context = context,
+                                        userId = user.getUserId(),
+                                        selectedTab = AmityUserRelationshipPageTab.FOLLOWER,
+                                    )
+                                }
+                            }
+                        ) {
+                            Text(
+                                text = getNumberAbbreveation(followerCount),
+                                style = AmityTheme.typography.bodyLegacy.copy(
+                                    fontWeight = FontWeight.SemiBold,
+                                ),
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = getConfig().getText(),
+                                style = AmityTheme.typography.captionLegacy.copy(
+                                    fontWeight = FontWeight.Normal,
+                                    color = AmityTheme.colors.baseShade2,
+                                ),
+                            )
+                        }
                     }
                 }
             }
@@ -314,8 +315,7 @@ fun AmityUserProfileHeaderComponent(
                                     onError = {
                                         if (it == AmityError.PERMISSION_DENIED) {
                                             showUserIsBlockedDialog = true
-                                        }
-                                        else {
+                                        } else {
                                             showFollowErrorDialog = true
                                         }
                                     }

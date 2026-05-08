@@ -35,6 +35,7 @@ import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityV
 @Composable
 fun AmityVideoFeedContainer(
     availablePostIds: Set<String> = emptySet(), // Pass current available post IDs
+    showMenuButton: Boolean = true,
     content: @Composable (
         openDialog: (AmityPost, onViewOriginalPost: (() -> Unit)?) -> Unit
     ) -> Unit
@@ -62,7 +63,7 @@ fun AmityVideoFeedContainer(
             AmityVideoPlayerPage(
                 childPosts = listOf(post),
                 selectedFileId = postId,
-                showMenuButton = true,
+                showMenuButton = showMenuButton,
                 onDismiss = {
                     dialogData = null
                 },

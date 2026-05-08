@@ -357,7 +357,7 @@ fun AmityPostMediaPreviewDialog(
                         }
                     )
 
-                    if (isPostCreator) {
+                    if (isPostCreator && !isVideoPost) {
                         AmityMenuButton(
                             icon = R.drawable.amity_ic_more_horiz,
                             size = 32.dp,
@@ -378,12 +378,14 @@ fun AmityPostMediaPreviewDialog(
                         childPosts.getOrNull(pagerState.currentPage)?.let { getProductTagCount(it) } ?: 0
                     }
                 }
-                AmityProductTagBadge(
-                    count = currentProductTagCount,
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(end = 12.dp, bottom = 120.dp)
-                )
+                if (currentProductTagCount > 0) {
+                    AmityProductTagBadge(
+                        count = currentProductTagCount,
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(end = 12.dp, bottom = 120.dp)
+                    )
+                }
 
             } // End of Box wrapper
             RenderAltTextConfigSheet(

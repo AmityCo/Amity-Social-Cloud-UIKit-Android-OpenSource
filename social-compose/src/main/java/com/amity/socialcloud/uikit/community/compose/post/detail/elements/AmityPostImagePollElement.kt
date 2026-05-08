@@ -343,7 +343,11 @@ private fun PollItem(
     val painterState by painter.state.collectAsState()
 
     Card(
-        modifier = modifier,
+        modifier = modifier
+            .clickableWithoutRipple(enabled = canVote && !viewResultMode) {
+                isLocalSelected = !isLocalSelected
+                selectAnswer()
+            },
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color.White,
@@ -361,11 +365,7 @@ private fun PollItem(
                 .background(AmityTheme.colors.baseShade4, shape = RoundedCornerShape(4.dp))
                 .aspectRatio(4f / 3f)
                 .clip(RoundedCornerShape(4.dp))
-                .testTag("poll_answer_${answer.id}")
-                .clickableWithoutRipple(enabled = canVote && !viewResultMode) {
-                    isLocalSelected = !isLocalSelected
-                    selectAnswer()
-                }
+
         ) {
 
             answer.getImage()?.let { image ->

@@ -192,6 +192,8 @@ fun AmityPostEngagementView(
                         reactionCount = reactionCount,
                     )
                 }
+            } else {
+                Box {}
             }
 
             if (commentCount > 0) {
@@ -485,8 +487,7 @@ fun AmityPostEngagementView(
                                 .testTag(getAccessibilityId())
                         )
                         Text(
-                            text = if (isPostDetailPage) getConfig().getText()
-                            else post.getCommentCount().readableNumber(),
+                            text = getConfig().getText(),
                             style = AmityTheme.typography.bodyLegacy.copy(
                                 fontWeight = FontWeight.SemiBold,
                                 color = AmityTheme.colors.baseShade2

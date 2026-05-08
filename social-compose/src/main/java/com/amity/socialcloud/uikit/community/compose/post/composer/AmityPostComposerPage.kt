@@ -1391,6 +1391,7 @@ fun AmityPostComposerPage(
         }
 
 
+
         if (options is AmityPostComposerOptions.AmityPostComposerCreateOptions ||
             options is AmityPostComposerOptions.AmityPostComposerEditOptions
         ) {
@@ -1438,11 +1439,8 @@ fun AmityPostComposerPage(
                     tint = Color(0xFF636878),
                     modifier = Modifier.size(32.dp)
                 )
-            }
-
-            // Badge with count at top right - dark gray color
-            Box(
-                modifier = Modifier
+                Box(
+                    modifier = Modifier
                     .align(Alignment.TopEnd)
                     .offset(x = 4.dp, y = (-4).dp)
                     .size(20.dp)
@@ -1463,6 +1461,7 @@ fun AmityPostComposerPage(
         }
         }
     }
+}
 
     // Attachment bar - positioned at bottom center (OUTSIDE Column, INSIDE root Box)
     Box(

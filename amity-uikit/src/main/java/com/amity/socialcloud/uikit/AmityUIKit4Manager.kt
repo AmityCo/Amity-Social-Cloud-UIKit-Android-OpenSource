@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit
 
+import android.util.Log
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.core.encryption.AmityDBEncryption
 import com.amity.socialcloud.sdk.api.core.endpoint.AmityEndpoint
@@ -11,6 +12,7 @@ import com.amity.socialcloud.uikit.common.eventbus.NetworkConnectionEventPublish
 import com.amity.socialcloud.uikit.common.infra.db.AmityUIKitDB
 import com.amity.socialcloud.uikit.common.infra.initializer.AmityAppContext
 import com.amity.socialcloud.uikit.common.networkconfig.AmityNetworkConfigService
+import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetailPageBehavior
 import io.reactivex.rxjava3.core.Completable
 
 object AmityUIKit4Manager {

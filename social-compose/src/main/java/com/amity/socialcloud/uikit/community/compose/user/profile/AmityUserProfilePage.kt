@@ -3,6 +3,7 @@ package com.amity.socialcloud.uikit.community.compose.user.profile
 import android.app.Activity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,15 +26,12 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Text
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -64,6 +62,7 @@ import com.amity.socialcloud.sdk.api.social.post.query.AmityFeedSource
 import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.core.follow.AmityFollowStatus
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
+import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
 import com.amity.socialcloud.uikit.common.ui.elements.AmityToolBar
@@ -93,7 +92,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(
-    ExperimentalMaterialApi::class, ExperimentalFoundationApi::class,
+    ExperimentalFoundationApi::class,
     ExperimentalMaterial3Api::class
 )
 @Composable
@@ -138,12 +137,7 @@ fun AmityUserProfilePage(
     var targetUser by remember(state) { mutableStateOf<AmityUser?>(null) }
 
     var isHeaderSticky by remember { mutableStateOf(false) }
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = state.isRefreshing,
-        onRefresh = {
-            viewModel.refresh()
-        }
-    )
+    val onRefresh = { viewModel.refresh() }
     var showAvatarPopupDialog by remember { mutableStateOf(false) }
 
     var showMenuSheet by remember { mutableStateOf(false) }
@@ -204,12 +198,19 @@ fun AmityUserProfilePage(
     val mediaTabTitles = listOf("Images", "Videos", "Clips")
 
     AmityBasePage("user_profile_page") {
-        Box(
+        val isUserProfileContentVisible = remember {
+            !AmityUIKitConfigController.isExcluded(
+                "${getPageScope().getId()}/*/user_profile_content"
+            )
+        }
+
+        PullToRefreshBox(
+            isRefreshing = state.isRefreshing,
+            onRefresh = onRefresh,
             modifier = Modifier
                 .fillMaxSize()
                 .background(AmityTheme.colors.background)
-                .windowInsetsPadding(WindowInsets.safeDrawing)
-                .pullRefresh(pullRefreshState),
+                .windowInsetsPadding(WindowInsets.safeDrawing),
         ) {
             LaunchedEffect(lazyListState) {
                 snapshotFlow { lazyListState.firstVisibleItemIndex }
@@ -338,19 +339,25 @@ fun AmityUserProfilePage(
                     }
                 }
                 item {
-                    AmityUserProfileTabRow(
-                        selectedIndex = selectedTabIndex,
-                        onSelect = { it ->
-                            selectedTabIndex = it
-                        },
-                        currentFilter = feedFilter[selectedFilterIndex],
-                        onFilterLaunch = {
-                            showFeedFilterSheet = true
-                        }
-                    )
-                }
+                    AmityBaseElement(
+                        pageScope = getPageScope(),
+                        elementId = "user_profile_content",
+                    ) {
+                        AmityUserProfileTabRow(
+                            selectedIndex = selectedTabIndex,
+                            onSelect = { it ->
+                                selectedTabIndex = it
+                            },
+                            currentFilter = feedFilter[selectedFilterIndex],
+                            onFilterLaunch = {
+                                showFeedFilterSheet = true
+                            }
+                        )
 
-                when (selectedTabIndex) {
+                    }
+                }
+                if (isUserProfileContentVisible) {
+                    when (selectedTabIndex) {
                     0 -> {
                         AmityUserProfilePageViewModel.PostListState.from(
                             loadState = userPosts.loadState.refresh,
@@ -478,36 +485,35 @@ fun AmityUserProfilePage(
                         }
 
                     }
+                    }
                 }
             }
 
-            PullRefreshIndicator(
-                refreshing = state.isRefreshing,
-                state = pullRefreshState,
-                modifier = Modifier.align(Alignment.TopCenter),
-                contentColor = androidx.compose.ui.graphics.Color(0xFFF26B1C),
-            )
-
             if (state.isMyUserProfile()) {
-                FloatingActionButton(
-                    onClick = {
-                        showUserActionSheet = true
-                    },
-                    shape = RoundedCornerShape(size = 32.dp),
-                    containerColor = AmityTheme.colors.primary,
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .size(64.dp)
-                        .align(Alignment.BottomEnd)
+                AmityBaseElement(
+                    pageScope = getPageScope(),
+                    elementId = "create_post_button",
                 ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.amity_ic_plus),
-                        contentDescription = "create post",
-                        tint = Color.White,
+                    FloatingActionButton(
+                        onClick = {
+                            showUserActionSheet = true
+                        },
+                        shape = RoundedCornerShape(size = 32.dp),
+                        containerColor = AmityTheme.colors.primary,
                         modifier = Modifier
-                            .size(32.dp)
-                            .padding(4.dp)
-                    )
+                            .padding(16.dp)
+                            .size(64.dp)
+                            .align(Alignment.BottomEnd)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.amity_ic_plus),
+                            contentDescription = "create post",
+                            tint = Color.White,
+                            modifier = Modifier
+                                .size(32.dp)
+                                .padding(4.dp)
+                        )
+                    }
                 }
             }
 

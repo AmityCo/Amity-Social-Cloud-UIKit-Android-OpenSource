@@ -1,6 +1,12 @@
 package com.amity.socialcloud.uikit.community.compose.socialhome.components
 
 import android.content.Context
+import android.content.Intent
+import android.util.Log
+import androidx.activity.result.ActivityResultLauncher
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.post.AmityPost
+import com.amity.socialcloud.uikit.common.behavior.AmityBaseBehaviorContext
 import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipFeedPageActivity
 import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipFeedPageType
 import com.amity.socialcloud.uikit.community.compose.community.setup.AmityCommunitySetupPageActivity
@@ -11,8 +17,27 @@ import com.amity.socialcloud.uikit.community.compose.user.profile.AmityUserProfi
 
 open class AmityGlobalFeedComponentBehavior {
 
+    class Context(
+        val pageContext: android.content.Context,
+        val target: AmityPost.Target? = null,
+    ) : AmityBaseBehaviorContext(pageContext)
+
     open fun goToPostDetailPage(
         context: Context,
+        id: String,
+        category: AmityPostCategory = AmityPostCategory.GENERAL,
+        autoFocusCommentInput: Boolean = false,
+    ) {
+        val intent = AmityPostDetailPageActivity.newIntent(
+            context = context.pageContext,
+            id = id,
+            category = category
+        )
+        context.pageContext.startActivity(intent)
+    }
+
+    open fun goToPostDetailPage(
+        context: android.content.Context,
         id: String,
         category: AmityPostCategory = AmityPostCategory.GENERAL,
         autoFocusCommentInput: Boolean = false,
@@ -27,7 +52,7 @@ open class AmityGlobalFeedComponentBehavior {
     }
 
     open fun goToCreateCommunityPage(
-        context: Context,
+        context: android.content.Context,
     ) {
         val intent = AmityCommunitySetupPageActivity.newIntent(
             context = context,
@@ -37,7 +62,7 @@ open class AmityGlobalFeedComponentBehavior {
     }
 
     open fun goToUserProfilePage(
-        context: Context,
+        context: android.content.Context,
         userId: String
     ) {
         val intent = AmityUserProfilePageActivity.newIntent(
@@ -48,7 +73,7 @@ open class AmityGlobalFeedComponentBehavior {
     }
 
     open fun goToClipFeedPage(
-        context: Context,
+        context: android.content.Context,
         postId: String,
     ) {
         val intent = AmityClipFeedPageActivity.newIntent(

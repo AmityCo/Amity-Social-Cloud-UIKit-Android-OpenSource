@@ -243,9 +243,14 @@ fun AmityMentionTextField(
     // When value changes from outside (like initial setup)
     LaunchedEffect(value) {
         if (value != textFieldValue.text) {
+            // Preserve current selection as much as possible (clamp into new text bounds)
+            val newSelection = TextRange(
+                start = textFieldValue.selection.start.coerceIn(0, value.length),
+                end = textFieldValue.selection.end.coerceIn(0, value.length)
+            )
             textFieldValue = TextFieldValue(
                 text = value,
-                selection = TextRange(value.length) // Keep cursor at end when text changes
+                selection = newSelection
             )
         }
     }
@@ -422,9 +427,9 @@ fun AmityMentionTextField(
             .onGloballyPositioned { latestCoordinates = it }
     ) {
         BasicTextField(
-            value = TextFieldValue(
-                annotatedString = formattedText,
-                selection = textFieldValue.selection
+            value = textFieldValue.copy(
+                // Keep selection/composition from state, only inject formatting.
+                annotatedString = formattedText
             ),
             onValueChange = { newValue ->
                 // --- Product mention: delete whole mention with a single backspace (like user mentions) ---
@@ -494,17 +499,11 @@ fun AmityMentionTextField(
                     )
                 }
 
-                // Update selection even if text hasn't changed (for cursor positioning)
-                if (limitedValue.selection != textFieldValue.selection) {
-                    textFieldValue = textFieldValue.copy(selection = limitedValue.selection)
-                }
+                // Always update state with the latest selection/composition.
+                val oldText = textFieldValue.text
 
-                // Only update text content, preserve the annotated string formatting
-                if (limitedValue.text != textFieldValue.text) {
+                if (limitedValue.text != oldText) {
                     // Text has changed, update mentions
-                    val oldText = textFieldValue.text
-                    val newText = newValue.text
-
                     val diff = calculateTextDiff(oldText, limitedValue)
 
                     // Update mention positions if text changed
@@ -517,7 +516,7 @@ fun AmityMentionTextField(
                     } else productMentions
 
                     // Update hashtag positions if text changed
-                    var updatedHashtags = if (diff != null) {
+                    val updatedHashtags = if (diff != null) {
                         updateHashtagPositions(hashtags, diff.position, diff.change)
                     } else hashtags
 
@@ -549,18 +548,14 @@ fun AmityMentionTextField(
                     val hasActiveHashtag = detectActiveHashtagToken(limitedValue)
 
                     if (hasActiveMention != null) {
-                        // We found an active @ query token
                         onQueryToken(hasActiveMention)
                     } else {
-                        // No active @ token, ensure suggestion list is hidden
                         onQueryToken(null)
                     }
 
                     if (hasActiveHashtag != null) {
-                        // We found an active # query token
                         onHashtagToken(hasActiveHashtag)
                     } else {
-                        // No active # token, ensure suggestion list is hidden
                         onHashtagToken(null)
                     }
 
@@ -587,8 +582,8 @@ fun AmityMentionTextField(
                     val hashtagRegex = "(?:^|\\s)#(\\w+)".toRegex()
                     val detectedHashtags = hashtagRegex.findAll(limitedValue.text).map {
                         val matchResult = it
-                        val hashtagText = matchResult.groupValues[1] // Get the captured group (hashtag without #)
-                        val hashtagIndex = matchResult.range.last - hashtagText.length // Position of # character
+                        val hashtagText = matchResult.groupValues[1]
+                        val hashtagIndex = matchResult.range.last - hashtagText.length
                         hashtagText to hashtagIndex
                     }.toList()
                     if (detectedHashtags.isNotEmpty()) {
@@ -607,8 +602,9 @@ fun AmityMentionTextField(
                             }
                         }
                     }
-
-
+                } else {
+                    // Text didn't change (cursor move / selection change). Keep the new selection.
+                    textFieldValue = limitedValue
                 }
             },
             modifier = Modifier

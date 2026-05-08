@@ -4,7 +4,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,14 +15,13 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -51,12 +49,12 @@ import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityExploreCate
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityRecommendedCommunityShimmer
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityTrendingCommunityShimmer
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun AmityExploreComponent(
     modifier: Modifier = Modifier,
     pageScope: AmityComposePageScope? = null,
 ) {
+    val pullRefreshState = rememberPullToRefreshState()
 
     val context = LocalContext.current
 
@@ -73,18 +71,20 @@ fun AmityExploreComponent(
 
     val isError by viewModel.isError.collectAsState()
 
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = isRefreshing,
+
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
         onRefresh = {
             viewModel.setRefreshing()
-        }
-    )
-
-
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .pullRefresh(pullRefreshState)
+        },
+        indicator = {
+            PullToRefreshDefaults.Indicator(
+                isRefreshing = isRefreshing,
+                state = pullRefreshState,
+                modifier = Modifier.align(Alignment.TopCenter),
+            )
+        },
+        modifier = modifier.fillMaxSize(),
     ) {
         if (isRefreshing) {
             Column {
@@ -249,11 +249,6 @@ fun AmityExploreComponent(
                     },
                 )
             }
-            PullRefreshIndicator(
-                refreshing = isRefreshing,
-                state = pullRefreshState,
-                modifier = Modifier.align(Alignment.TopCenter),
-            )
         }
     }
 }
