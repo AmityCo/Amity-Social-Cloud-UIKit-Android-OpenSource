@@ -41,6 +41,7 @@ import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.community.bycategory.AmityCommunitiesByCategoryPageActivity
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityCategoryListShimmer
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 
 @Composable
@@ -67,7 +68,7 @@ fun AmityAllCategoriesPage(
                 .windowInsetsPadding(WindowInsets.safeDrawing)
         ) {
             AmityToolBar(
-                title = "All Categories",
+                title = amitySocialString("amity_social_button_all_categories"),
                 onBackClick = {
                     context.closePageWithResult(
                         resultCode = Activity.RESULT_CANCELED

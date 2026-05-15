@@ -99,3 +99,4 @@ captures/
 *.ipr
 *~
 *.swp
+.check_hardcoded_kt_files.tmp

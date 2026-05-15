@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.ui.components.mentions
 
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -91,7 +92,7 @@ fun AmityProductMentionSuggestionView(
             isInitialState -> {
                 // Initial state: keyword length < MIN_SEARCH_LENGTH
                 ProductMentionPlaceholder(
-                    message = "Start typing to search for products.",
+                    message = amitySocialString("amity_social_label_start_typing_to_search"),
                     modifier = Modifier.height(heightIn)
                 )
             }
@@ -110,7 +111,7 @@ fun AmityProductMentionSuggestionView(
             isNoResultsState -> {
                 // No results state: API returned empty
                 ProductMentionPlaceholder(
-                    message = "No results found",
+                    message = amitySocialString("amity_social_label_no_results_found"),
                     modifier = Modifier.height(heightIn)
                 )
             }
@@ -148,7 +149,7 @@ fun AmityProductMentionSuggestionView(
                                 )
                                 if (isDuplicated) {
                                     Text(
-                                        text = androidx.compose.ui.res.stringResource(R.string.amity_v4_product_already_tagged),
+                                        text = amitySocialString("amity_social_button_product_already_tagged"),
                                         style = AmityTheme.typography.caption,
                                         color = AmityTheme.colors.baseShade2,
                                     )

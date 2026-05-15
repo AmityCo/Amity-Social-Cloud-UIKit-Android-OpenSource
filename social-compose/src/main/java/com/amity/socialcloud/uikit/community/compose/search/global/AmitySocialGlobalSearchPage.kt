@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.search.global
 
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,13 +38,11 @@ fun AmitySocialGlobalSearchPage(
     val viewModel =
         viewModel<AmityGlobalSearchViewModel>(viewModelStoreOwner = viewModelStoreOwner)
 
-    val tabs = remember {
-        listOf(
-            AmityTabRowItem(title = "Posts"),
-            AmityTabRowItem(title = "Communities"),
-            AmityTabRowItem(title = "Users"),
-        )
-    }
+    val tabs = listOf(
+        AmityTabRowItem(title = amitySocialString("amity_social_tab_tab_posts")),
+        AmityTabRowItem(title = amitySocialString("amity_social_tab_tab_communities")),
+        AmityTabRowItem(title = amitySocialString("amity_social_tab_tab_users")),
+    )
     var selectedTabIndex by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(selectedTabIndex) {

@@ -59,6 +59,7 @@ import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComp
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityProductTagBadge
 import com.amity.socialcloud.uikit.community.compose.post.model.AmityFileUploadState
 import com.amity.socialcloud.uikit.community.compose.post.model.AmityPostMedia
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -105,13 +106,15 @@ fun AmitySelectedMediaComponent(
         }
     }
 
-    val mediaErrorTitle by remember {
+    val uploadFailedPhotoTitle = amitySocialString("amity_social_error_upload_failed_photo_must")
+    val uploadFailedVideoTitle = amitySocialString("amity_social_error_upload_failed_video_must")
+    val mediaErrorTitle by remember(uploadFailedPhotoTitle, uploadFailedVideoTitle) {
         derivedStateOf {
             if(shouldShowMediaError) {
                 if(selectedMediaFiles.firstOrNull()?.type == AmityPostMedia.Type.IMAGE) {
-                    "Upload failed. Photo must:"
+                    uploadFailedPhotoTitle
                 } else {
-                    "Upload failed. Video must:"
+                    uploadFailedVideoTitle
                 }
             } else {
                 ""
@@ -460,7 +463,7 @@ fun AmitySelectedMediaElement(
                     },
             ) {
                 Text(
-                    text = "ALT",
+                    text = amitySocialString("amity_social_button_alt"),
                     style = AmityTheme.typography.captionBold.copy(
                         color = Color.White,
                     ),

@@ -47,6 +47,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.BottomConfirmDeletePopup
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.localization.amityCommonString
 
 @Composable
 fun AmityMessageOption(
@@ -247,7 +248,7 @@ fun CenterConfirmDeletePopup(
 						horizontalAlignment = Alignment.CenterHorizontally
 					) {
 						Text(
-							text = "Delete this message?",
+							text = amityCommonString("amity_social_modal_dialog_delete_message_title"),
 							fontSize = 17.sp,
 							lineHeight = 22.sp,
 							fontWeight = FontWeight(600),

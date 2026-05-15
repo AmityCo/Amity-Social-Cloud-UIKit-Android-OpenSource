@@ -56,6 +56,7 @@ import com.amity.socialcloud.uikit.community.compose.R
 import kotlin.apply
 import kotlin.math.min
 import kotlin.math.max
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 
 
 class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
@@ -1378,8 +1379,8 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
         sentProductTags: List<AmityProductTag.Text>?,
     ): Boolean {
         if (sentProductTags != null) {
-            val unavailableMessage = AmityAppContext.getContext()
-                .getString(R.string.amity_v4_post_products_unavailable_toast)
+            val unavailableMessage = DefaultAmitySocialStringProvider.getInstance()
+                .getString("amity_social_toast_post_products_unavailable_toast")
 
             // Condition 3: any product tagged in text or media is ARCHIVED
             val hasArchivedProduct = post.getProductTags().firstOrNull { (it as? AmityProductTag.Text)?.product?.getStatus() == AmityProductStatus.ARCHIVED } != null ||

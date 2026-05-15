@@ -43,6 +43,7 @@ import com.amity.socialcloud.uikit.community.compose.community.membership.list.A
 import com.amity.socialcloud.uikit.community.compose.community.membership.list.AmityCommunityMembershipSheetUIState
 import com.amity.socialcloud.uikit.community.compose.search.components.AmityEmptySearchResultComponent
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityUserListShimmer
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityCommunityMembersMembershipComponent(
@@ -70,7 +71,7 @@ fun AmityCommunityMembersMembershipComponent(
     }
 
     Column(modifier.fillMaxSize()) {
-        AmitySearchBarView(hint = "Search member") {
+        AmitySearchBarView(hint = amitySocialString("amity_social_placeholder_search_member_hint")) {
             keyword = it
         }
 

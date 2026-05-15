@@ -21,6 +21,7 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getText
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 
 @Composable
@@ -38,7 +39,6 @@ fun AmityPrivateUserFeed(
             AmityUserFeedType.CLIP -> "private_user_video_feed"// TODO : Might need to change this later
         }
     }
-
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -57,7 +57,7 @@ fun AmityPrivateUserFeed(
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = getConfig().getText(),
+                text = amitySocialString("amity_social_label_private_user_feed"),
                 style = AmityTheme.typography.titleLegacy.copy(
                     color = AmityTheme.colors.baseShade3,
                 ),
@@ -70,7 +70,7 @@ fun AmityPrivateUserFeed(
             elementId = elementId + "_info"
         ) {
             Text(
-                text = getConfig().getText(),
+                text = amitySocialString("amity_social_label_private_user_feed_info"),
                 style = AmityTheme.typography.captionLegacy.copy(
                     fontWeight = FontWeight.Normal,
                     color = AmityTheme.colors.baseShade3,

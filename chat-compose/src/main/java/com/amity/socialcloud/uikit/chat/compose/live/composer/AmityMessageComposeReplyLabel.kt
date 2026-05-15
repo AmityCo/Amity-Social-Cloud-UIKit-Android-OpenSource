@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
 import com.amity.socialcloud.uikit.chat.compose.R
 import com.amity.socialcloud.uikit.chat.compose.live.elements.AmityMessageAvatarView
+import com.amity.socialcloud.uikit.common.localization.amityCommonString
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 
 @Composable
@@ -40,6 +41,7 @@ fun AmityMessageComposeReplyLabel(
             .padding(start = 16.dp, top = 0.dp, end = 12.dp, bottom = 0.dp)
     ) {
         val creator = parentMessage?.getCreator()
+        val replyString = amityCommonString("amity_social_button_replying_to")
         val text = buildAnnotatedString {
             append("Replying to ")
             append(creator?.getDisplayName() ?: "")

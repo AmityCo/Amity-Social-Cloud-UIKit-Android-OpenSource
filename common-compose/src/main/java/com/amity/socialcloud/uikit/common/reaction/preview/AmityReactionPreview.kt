@@ -16,20 +16,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
 import com.amity.socialcloud.uikit.common.compose.R
-import com.amity.socialcloud.uikit.common.model.AmityMessageReactions
+import com.amity.socialcloud.uikit.common.localization.amitySocialReactionDisplayName
 import com.amity.socialcloud.uikit.common.model.AmitySocialReactions
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
@@ -155,16 +149,18 @@ fun AmityReactionPreviewIcon(
 	modifier: Modifier = Modifier,
 	reaction: String
 ) {
+	val displayName = amitySocialReactionDisplayName(reaction)
+
 	AmitySocialReactions.getList().firstOrNull { it.name == reaction }?.let {
 		Image(
 			imageVector = ImageVector.vectorResource(id = it.icon),
-			contentDescription = reaction,
+			contentDescription = displayName,
 			modifier = modifier
 				.size(20.dp)
 		)
 	} ?: Image(
 		imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_message_reaction_missing),
-		contentDescription = reaction,
+		contentDescription = displayName,
 		modifier = modifier
 			.size(20.dp)
 	)

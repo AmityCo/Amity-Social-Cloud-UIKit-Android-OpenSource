@@ -55,6 +55,7 @@ import com.amity.socialcloud.uikit.common.utils.closePage
 import com.amity.socialcloud.uikit.common.utils.isSignedIn
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.community.compose.story.view.components.AmityStoryAdView
 import com.amity.socialcloud.uikit.community.compose.story.view.components.AmityStoryBodyRow
 import com.amity.socialcloud.uikit.community.compose.story.view.components.AmityStoryBottomRow
@@ -329,17 +330,17 @@ fun AmityViewCommunityStoryPage(
             viewModel.handleSegmentTimer(true)
             val data = dialogState as AmityStoryModalDialogUIState.OpenConfirmDeleteDialog
             AmityAlertDialog(
-                dialogTitle = context.getString(R.string.amity_delete_story_title),
-                dialogText = context.getString(R.string.amity_delete_story_warning_message),
-                confirmText = context.getString(R.string.amity_delete),
-                dismissText = context.getString(R.string.amity_cancel),
+                dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_delete_story_title"),
+                dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_discard_story_body"),
+                confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_delete"),
+                dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel"),
                 onConfirmation = {
                     shouldShowLoading = true
                     viewModel.deleteStory(
                         storyId = data.storyId,
                         onSuccess = {
                             shouldShowLoading = false
-                            AmityUIKitSnackbar.publishSnackbarMessage(context.getString(R.string.amity_delete_story_success))
+                            AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_delete_story_success"))
                             viewModel.updateDialogUIState(AmityStoryModalDialogUIState.CloseDialog)
                             viewModel.handleSegmentTimer(false)
 
@@ -359,7 +360,7 @@ fun AmityViewCommunityStoryPage(
                         },
                         onError = {
                             shouldShowLoading = false
-                            AmityUIKitSnackbar.publishSnackbarErrorMessage(context.getString(R.string.amity_delete_story_fail))
+                            AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_something_went_wrong"))
                             viewModel.updateDialogUIState(AmityStoryModalDialogUIState.CloseDialog)
                             viewModel.handleSegmentTimer(false)
                         }

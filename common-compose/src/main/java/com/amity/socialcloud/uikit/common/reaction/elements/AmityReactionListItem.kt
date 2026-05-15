@@ -22,6 +22,7 @@ import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.core.reaction.AmityReaction
 import com.amity.socialcloud.sdk.model.core.reaction.AmityReactionReferenceType
 import com.amity.socialcloud.uikit.common.compose.R
+import com.amity.socialcloud.uikit.common.localization.amityCommonString
 import com.amity.socialcloud.uikit.common.model.AmityMessageReactions
 import com.amity.socialcloud.uikit.common.model.AmitySocialReactions
 import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
@@ -92,7 +93,7 @@ fun AmityReactionListItem(
 
             if (isMyReaction) {
                 Text(
-                    text = "Tap to remove reaction",
+                    text = amityCommonString("amity_common_button_tap_to_remove_reaction"),
                     style = AmityTheme.typography.captionLegacy.copy(
                         color = AmityTheme.colors.baseShade1
                     ),

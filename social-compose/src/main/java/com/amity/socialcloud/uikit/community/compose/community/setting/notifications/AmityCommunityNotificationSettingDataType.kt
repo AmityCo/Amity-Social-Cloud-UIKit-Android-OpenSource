@@ -7,9 +7,9 @@ import com.amity.socialcloud.uikit.common.utils.AmityConstants
 
 
 enum class AmityCommunityNotificationSettingDataType(val title: String) {
-    EVERYONE("Everyone"),
-    ONLY_MODERATOR("Only moderator"),
-    OFF("Off");
+    EVERYONE("amity_social_notification_notification_everyone"),
+    ONLY_MODERATOR("amity_social_notification_notification_only_moderator"),
+    OFF("amity_social_notification_notification_off");
 
     fun getUpdateModelData(): Pair<Boolean, AmityRolesFilter> {
         val rolesFilter = if (this == ONLY_MODERATOR) {

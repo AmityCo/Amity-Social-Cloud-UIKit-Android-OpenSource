@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.clip.view.element
 
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -103,7 +104,7 @@ fun AmityClipModalBottomSheet(
                     ) {
                         AmityBottomSheetActionItem(
                             icon = R.drawable.amity_v4_bottom_sheet_view_post,
-                            text = "View post",
+                            text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_view_post"),
                             modifier = modifier,
                         ) {
                             viewModel.updateSheetUIState(AmityClipModalSheetUIState.CloseSheet)
@@ -114,22 +115,23 @@ fun AmityClipModalBottomSheet(
                         }
 
                         val postLink = AmityUIKitConfigController.getPostLink(data.post)
+                        val linkCopiedStr = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_link_copied")
                         if (postLink.isNotEmptyOrBlank()) {
                             AmityBottomSheetActionItem(
                                 icon = R.drawable.amity_v4_link_icon,
-                                text = "Copy post link",
+                                text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_copy_post_link"),
                                 modifier = modifier.testTag("bottom_sheet_copy_link_button"),
                             ) {
                                 viewModel.updateSheetUIState(AmityClipModalSheetUIState.CloseSheet)
                                 // Generate the post link URL (adjust the URL format according to your app's deep linking structure)
                                 // Copy to clipboard
                                 clipboardManager.setText(AnnotatedString(postLink))
-                                AmityUIKitSnackbar.publishSnackbarMessage("Link copied")
+                                AmityUIKitSnackbar.publishSnackbarMessage(linkCopiedStr)
                             }
 
                             AmityBottomSheetActionItem(
                                 icon = R.drawable.amity_v4_share_icon,
-                                text = "Share to",
+                                text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_share_to"),
                                 modifier = modifier.testTag("bottom_sheet_share_to_button"),
                             ) {
                                 viewModel.updateSheetUIState(AmityClipModalSheetUIState.CloseSheet)

@@ -40,6 +40,7 @@ import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmitySt
 import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmityStoryReactionCountElement
 import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmityStoryViewCountElement
 import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 
 @Composable
 fun AmityStoryBottomRow(
@@ -200,7 +201,7 @@ fun AmityStoryUploadProgressRow(
         )
 
         Text(
-            text = "Uploading...",
+            text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_uploading"),
             color = Color.White
         )
     }
@@ -225,9 +226,9 @@ fun AmityStoryUploadFailedRow(
         viewModel.handleSegmentTimer(shouldPause = true)
 
         AmityAlertDialog(
-            dialogTitle = "Failed to upload story",
-            dialogText = "Would you like to discard or retry uploading?",
-            dismissText = "Cancel",
+            dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_error_upload_failed"),
+            dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_upload_failed"),
+            dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel"),
             action1Text = "Discard",
             action2Text = "Retry",
             onAction1 = {
@@ -245,12 +246,12 @@ fun AmityStoryUploadFailedRow(
                     onSuccess = {
                         pageScope?.showSnackbar(
                             drawableRes = CommonR.drawable.amity_ic_check_circle,
-                            message = "Successfully shared story"
+                            message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_story_shared")
                         )
                     },
                     onError = {
                         pageScope?.showSnackbar(
-                            message = it.message ?: "Failed to reupload story",
+                            message = it.message ?: DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_dialog_title_failed_to_upload_story"),
                         )
                     }
                 )
@@ -281,7 +282,7 @@ fun AmityStoryUploadFailedRow(
             )
 
             Text(
-                text = "Failed to upload",
+                text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_failed_to_upload"),
                 color = Color.White
             )
         }

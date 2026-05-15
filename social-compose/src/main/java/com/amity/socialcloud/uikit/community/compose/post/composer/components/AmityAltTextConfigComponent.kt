@@ -58,6 +58,7 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerPageViewModel
 
 
@@ -170,7 +171,7 @@ fun AmityAltTextConfigComponent(
                                 elementId = if (isInEditMode) "edit_alt_text_title" else "add_alt_text_title"
                             ) {
                                 Text(
-                                    text = if (isInEditMode) context.getString(R.string.amity_image_edit_alt_text_title) else context.getString(R.string.amity_image_add_alt_text_title),
+                                    text = if (isInEditMode) DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_image_edit_alt_text_title") else DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_image_add_alt_text_title"),
                                     style = AmityTheme.typography.titleBold.copy(color = AmityTheme.colors.base),
                                     modifier = modifier.testTag(getAccessibilityId()),
                                 )
@@ -186,7 +187,7 @@ fun AmityAltTextConfigComponent(
                             elementId = if (isInEditMode) "edit_alt_text_button" else "add_alt_text_button"
                         ) {
                             Text(
-                                text = if (isInEditMode) context.getString(R.string.amity_v4_dialog_save_button) else context.getString(R.string.amity_v4_dialog_done_button),
+                                text = if (isInEditMode) DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_save_button") else DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_done_button"),
                                 style = AmityTheme.typography.bodyLegacy.copy(
                                     color = if (shouldAllowToSave) AmityTheme.colors.primary else AmityTheme.colors.primaryShade2
                                 ),
@@ -200,31 +201,31 @@ fun AmityAltTextConfigComponent(
                                                     result(refreshImage)
                                                     onDismiss()
                                                 },
-                                                onError = { exception ->
-                                                    val message =
-                                                        AmityError.from(exception).let { error ->
-                                                            when (error) {
-                                                                AmityError.LINK_NOT_ALLOWED -> {
-                                                                    R.string.amity_image_alt_text_ban_url_error_message
-                                                                }
-                                                                AmityError.CONNECTION_ERROR -> {
-                                                                    R.string.amity_no_internet_error_message
-                                                                }
-                                                                AmityError.BAN_WORD_FOUND -> {
-                                                                    R.string.amity_image_alt_text_ban_word_error_message
-                                                                }
-                                                                else -> {
-                                                                    if (isInEditMode)
-                                                                        R.string.amity_image_edit_alt_text_generic_error_message
-                                                                    else
-                                                                        R.string.amity_image_add_alt_text_generic_error_message
-                                                                }
-                                                            }
-                                                        }
-                                                    AmityUIKitSnackbar.publishSnackbarErrorMessage(
-                                                        message = context.getString(message),
-                                                    )
-                                                },
+                                                 onError = { exception ->
+                                                     val message =
+                                                         AmityError.from(exception).let { error ->
+                                                             when (error) {
+                                                                 AmityError.LINK_NOT_ALLOWED -> {
+                                                                     DefaultAmitySocialStringProvider.getInstance().getString("amity_social_error_image_alt_text_ban_url_error_message")
+                                                                 }
+                                                                 AmityError.CONNECTION_ERROR -> {
+                                                                     DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_no_internet_connection")
+                                                                 }
+                                                                 AmityError.BAN_WORD_FOUND -> {
+                                                                     DefaultAmitySocialStringProvider.getInstance().getString("amity_social_error_image_alt_text_ban_word_error_message")
+                                                                 }
+                                                                 else -> {
+                                                                     if (isInEditMode)
+                                                                         DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_image_edit_alt_text_generic_error_message")
+                                                                     else
+                                                                         DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_image_add_alt_text_generic_error_message")
+                                                                 }
+                                                             }
+                                                         }
+                                                     AmityUIKitSnackbar.publishSnackbarErrorMessage(
+                                                         message = message,
+                                                     )
+                                                 },
                                             )
                                         }
                                     }
@@ -277,7 +278,7 @@ fun AmityAltTextConfigComponent(
                                 .defaultMinSize(minHeight = 500.dp)
                                 .padding(start = 16.dp, end = 16.dp, bottom = 20.dp),
                             text = altText.value ?: "",
-                            hint = context.getString(R.string.amity_image_alt_text_hint_message),
+                            hint = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_placeholder_image_alt_text_hint_message"),
                             maxCharacters = 180,
                             maxLines = 30,
                             textStyle = AmityTheme.typography.body.copy(
@@ -296,7 +297,7 @@ fun AmityAltTextConfigComponent(
                                 .defaultMinSize(minHeight = 500.dp)
                                 .padding(start = 16.dp, end = 16.dp, bottom = 20.dp),
                             text = altText.value ?: "",
-                            hint = context.getString(R.string.amity_image_alt_text_hint_message),
+                            hint = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_placeholder_image_alt_text_hint_message"),
                             maxCharacters = 180,
                             maxLines = 30,
                             textStyle = AmityTheme.typography.body.copy(

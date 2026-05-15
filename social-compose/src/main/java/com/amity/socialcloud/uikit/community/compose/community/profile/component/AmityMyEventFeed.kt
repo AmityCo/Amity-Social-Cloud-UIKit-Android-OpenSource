@@ -21,6 +21,7 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityEventCardListShimmer
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityMyEventFeedComponent(
@@ -51,7 +52,7 @@ fun AmityMyEventFeedComponent(
         // Upcoming Events Section
         item {
             Text(
-                text = "Upcoming events",
+                text = amitySocialString("amity_social_status_upcoming_events"),
                 style = AmityTheme.typography.title.copy(fontWeight = FontWeight.Bold),
                 color = AmityTheme.colors.base,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
@@ -96,7 +97,7 @@ fun AmityMyEventFeedComponent(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "View all",
+                            text = amitySocialString("amity_social_button_view_all"),
                             style = AmityTheme.typography.body.copy(fontWeight = FontWeight.Medium),
                             color = AmityTheme.colors.base
                         )
@@ -122,7 +123,7 @@ fun AmityMyEventFeedComponent(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            text = "No events yet",
+                            text = amitySocialString("amity_social_label_no_events_yet"),
                             style = AmityTheme.typography.title.copy(fontWeight = FontWeight.Bold),
                             color = AmityTheme.colors.baseShade3
                         )
@@ -134,7 +135,7 @@ fun AmityMyEventFeedComponent(
         // Past Events Section
         item {
             Text(
-                text = "Past events",
+                text = amitySocialString("amity_social_button_past_events"),
                 style = AmityTheme.typography.title.copy(fontWeight = FontWeight.Bold),
                 color = AmityTheme.colors.base,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
@@ -179,7 +180,7 @@ fun AmityMyEventFeedComponent(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "View all",
+                            text = amitySocialString("amity_social_button_view_all"),
                             style = AmityTheme.typography.body.copy(fontWeight = FontWeight.Medium),
                             color = AmityTheme.colors.base
                         )
@@ -205,7 +206,7 @@ fun AmityMyEventFeedComponent(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            text = "No events yet",
+                            text = amitySocialString("amity_social_label_no_events_yet"),
                             style = AmityTheme.typography.title.copy(fontWeight = FontWeight.Bold),
                             color = AmityTheme.colors.baseShade3
                         )

@@ -33,6 +33,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.ui.theme.isUIKitInDarkTheme
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getText
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialConfigString
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -87,7 +88,7 @@ fun AmityMediaImageSelectionSheet(
                             )
                         }
                     },
-                    text = getConfig().getText(),
+                    text = amitySocialConfigString("amity_social_button_community_setup_camera_button"),
                 ) {
                     onSelect(AmityMediaImageSelectionType.CAMERA)
                 }
@@ -122,7 +123,7 @@ fun AmityMediaImageSelectionSheet(
                             )
                         }
                     },
-                    text = getConfig().getText(),
+                    text = amitySocialConfigString("amity_social_button_community_setup_image_button"),
                 ) {
                     onSelect(AmityMediaImageSelectionType.IMAGE)
                 }

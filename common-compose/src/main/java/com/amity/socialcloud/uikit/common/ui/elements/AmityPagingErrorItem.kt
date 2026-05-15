@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.amity.socialcloud.uikit.common.localization.amityCommonString
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 
 
@@ -23,7 +24,7 @@ fun AmityPagingErrorItem(
             .padding(16.dp)
     ) {
         Text(
-            text = "Unable to load content",
+            text = amityCommonString("amity_common_label_unable_to_load_content"),
             style = AmityTheme.typography.bodyLegacy.copy(
                 fontWeight = FontWeight.Normal,
                 color = AmityTheme.colors.baseShade2,

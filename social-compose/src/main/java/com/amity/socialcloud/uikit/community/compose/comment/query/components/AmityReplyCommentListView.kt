@@ -13,7 +13,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -23,6 +22,7 @@ import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.elements.EXPANDABLE_TEXT_MAX_LINES
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentViewModel
 import com.amity.socialcloud.uikit.community.compose.comment.query.AmityReplyCommentView
 import com.amity.socialcloud.uikit.community.compose.comment.query.elements.AmityCommentItemShimmer
@@ -55,7 +55,6 @@ fun AmityReplyCommentListView(
     onReply: (String) -> Unit,
     fromNonMemberCommunity: Boolean = false,
 ) {
-    val context = LocalContext.current
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current)
     val commentViewModel =
         viewModel<AmityCommentTrayComponentViewModel>(viewModelStoreOwner = viewModelStoreOwner)
@@ -106,7 +105,7 @@ fun AmityReplyCommentListView(
     LaunchedEffect(replyUnavailable) {
         if (replyUnavailable) {
             AmityUIKitSnackbar.publishSnackbarErrorMessage(
-                context.getString(R.string.amity_reply_no_longer_available_error_message)
+                DefaultAmitySocialStringProvider.getInstance().getString("amity_social_error_reply_no_longer_available_error_message")
             )
             commentViewModel.clearReplyUnavailable(commentId)
         }
@@ -124,7 +123,7 @@ fun AmityReplyCommentListView(
                 threadLineState?.branchYPositions?.clear()
             }
 
-            if (isL2Thread && !showOtherL2Replies) {
+            if (isL2Thread && !showOtherL2Replies && replyTargetId != null) {
                 comments.find { it.getCommentId() == replyTargetId }?.let { comment ->
                     Box(
                         modifier = if (threadLineState != null) {
@@ -209,7 +208,7 @@ fun AmityReplyCommentListView(
             AmityCommentItemShimmer(
                 modifier = modifier.padding(top = 5.dp)
             )
-        } else if (shouldShowLoadMoreButton || (isL2Thread && !showOtherL2Replies)) {
+        } else if (shouldShowLoadMoreButton || (isL2Thread && !showOtherL2Replies && replyTargetId != null)) {
             Box {
                 AmityCommentViewReplyBar(
                     modifier = modifier.padding(top = 5.dp),

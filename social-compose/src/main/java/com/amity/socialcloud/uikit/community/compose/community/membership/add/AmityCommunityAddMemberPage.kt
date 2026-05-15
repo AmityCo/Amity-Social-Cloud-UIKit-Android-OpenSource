@@ -54,6 +54,7 @@ import com.amity.socialcloud.uikit.community.compose.community.membership.elemen
 import com.amity.socialcloud.uikit.community.compose.search.components.AmityEmptySearchResultComponent
 import com.amity.socialcloud.uikit.community.compose.search.components.AmitySearchPlaceholderComponent
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityUserListShimmer
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityCommunityAddMemberPage(
@@ -107,7 +108,7 @@ fun AmityCommunityAddMemberPage(
                     )
 
                     Text(
-                        text = "Add member",
+                        text = amitySocialString("amity_social_button_add_member"),
                         style = AmityTheme.typography.titleLegacy,
                         modifier = modifier
                             .padding(vertical = 17.dp)
@@ -120,7 +121,7 @@ fun AmityCommunityAddMemberPage(
                 )
                 Spacer(modifier.height(4.dp))
 
-                AmitySearchBarView(hint = "Search user") {
+                AmitySearchBarView(hint = amitySocialString("amity_social_placeholder_search_user_hint")) {
                     keyword = it
                 }
 
@@ -243,7 +244,7 @@ fun AmityCommunityAddMemberPage(
                     }
                 ) {
                     Text(
-                        text = "Add member",
+                        text = amitySocialString("amity_social_button_add_member"),
                         style = AmityTheme.typography.captionLegacy.copy(
                             Color.White
                         ),

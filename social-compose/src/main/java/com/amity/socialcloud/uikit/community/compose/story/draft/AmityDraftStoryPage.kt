@@ -88,6 +88,7 @@ import com.amity.socialcloud.uikit.community.compose.story.hyperlink.elements.Am
 import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmityStoryVideoPlayer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -166,10 +167,10 @@ fun AmityDraftStoryPage(
 
     if (openAlertDialog.value) {
         AmityAlertDialog(
-            dialogTitle = "Discard story?",
-            dialogText = "The story will be permanently discarded. It cannot be undone.",
-            confirmText = "Discard",
-            dismissText = "Cancel",
+            dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_title_discard_story"),
+            dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_discard_story_body"),
+            confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_discard"),
+            dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel"),
             onConfirmation = { context.closePage() },
             onDismissRequest = { openAlertDialog.value = false }
         )
@@ -302,7 +303,7 @@ fun AmityDraftStoryPage(
                             if (hyperlinkUrlText.isEmpty()) {
                                 showBottomSheet = true
                             } else {
-                                AmityUIKitSnackbar.publishSnackbarErrorMessage("Can't add more than one link to your story.")
+                                AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_story_link_limit"))
                             }
                         }
                     )
@@ -369,7 +370,7 @@ fun AmityDraftStoryPage(
                                             hyperlinkCustomText = hyperlinkCustomText,
                                             onSuccess = {
                                                 AmityUIKitSnackbar.publishSnackbarMessage(
-                                                    "Successfully shared story"
+                                                    DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_story_shared")
                                                 )
                                             },
                                             onError = { message ->
@@ -390,7 +391,7 @@ fun AmityDraftStoryPage(
                                             hyperlinkCustomText = hyperlinkCustomText,
                                             onSuccess = {
                                                 AmityUIKitSnackbar.publishSnackbarMessage(
-                                                    "Successfully shared story"
+                                                    DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_story_shared")
                                                 )
                                             },
                                             onError = { message ->
@@ -418,7 +419,7 @@ fun AmityDraftStoryPage(
                         }
 
                         Text(
-                            text = "Share story",
+                            text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_share_story"),
                             style = MaterialTheme.typography.titleMedium
                         )
 

@@ -44,6 +44,7 @@ import com.amity.socialcloud.sdk.model.core.reaction.AmityReaction
 import com.amity.socialcloud.sdk.model.core.reaction.AmityReactionReferenceType
 import com.amity.socialcloud.uikit.common.common.readableNumber
 import com.amity.socialcloud.uikit.common.compose.R
+import com.amity.socialcloud.uikit.common.localization.amityCommonString
 import com.amity.socialcloud.uikit.common.model.AmityMessageReactions
 import com.amity.socialcloud.uikit.common.model.AmitySocialReactions
 import com.amity.socialcloud.uikit.common.reaction.elements.AmityReactionListItem
@@ -142,7 +143,7 @@ fun AmityReactionTab(
                     }
                 }
             ) {
-                val title = if (tab.title == "All") "All" else ""
+                val title = if (tab.title == "All") amityCommonString("amity_common_button_all") else ""
                 val count = if (tab.count == 0) "0" else tab.count.readableNumber()
                 val highlightColor = AmityTheme.colors.highlight
                 Row(
@@ -219,13 +220,13 @@ fun AmityReactionItems(
 
             Text(
                 modifier = Modifier.padding(top = 16.dp),
-                text = "No reactions yet",
+                text = amityCommonString("amity_common_button_no_reactions_yet"),
                 style = AmityTheme.typography.bodyLegacy.copy(
                     color = AmityTheme.colors.baseShade2,
                 ),
             )
             val type = state.referenceType.value
-            val text = "Be the first to react to this $type!"
+            val text = amityCommonString("amity_common_label_be_first_to_react", type)
             Text(
                 modifier = Modifier.padding(top = 4.dp),
                 text = text,
@@ -280,13 +281,13 @@ fun AmityReactionItems(
 
                         Text(
                             modifier = Modifier.padding(top = 16.dp),
-                            text = "Unable to load content",
+                            text = amityCommonString("amity_common_button_unable_to_load_reactions"),
                             style = AmityTheme.typography.bodyLegacy.copy(
                                 color = AmityTheme.colors.baseShade2,
                             ),
                         )
                         val type = state.referenceType.value
-                        val text = "Reactions aren't available for this $type"
+                        val text = amityCommonString("amity_common_button_reactions_not_available", type)
                         Text(
                             modifier = Modifier.padding(top = 4.dp),
                             text = text,
@@ -317,7 +318,7 @@ fun AmityReactionItems(
 
                             Text(
                                 modifier = Modifier.padding(top = 16.dp),
-                                text = "Unable to load reactions",
+                                text = amityCommonString("amity_common_button_unable_to_load_reactions"),
                                 style = AmityTheme.typography.bodyLegacy.copy(
                                     color = AmityTheme.colors.baseShade2,
                                 ),

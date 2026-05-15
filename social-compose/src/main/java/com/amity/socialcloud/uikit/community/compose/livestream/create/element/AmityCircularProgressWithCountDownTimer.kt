@@ -20,13 +20,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.R
 import kotlinx.coroutines.delay
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityCircularProgressWithCountDownTimer(totalTime: Int, onTimeUp: () -> Unit) {
@@ -52,7 +52,7 @@ fun AmityCircularProgressWithCountDownTimer(totalTime: Int, onTimeUp: () -> Unit
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = stringResource(R.string.amity_v4_create_livestream_count_down_title),
+                text = amitySocialString("amity_social_status_create_livestream_count_down_title"),
                 color = Color.White,
                 style = AmityTheme.typography.titleLegacy.copy(
                     fontWeight = FontWeight.SemiBold

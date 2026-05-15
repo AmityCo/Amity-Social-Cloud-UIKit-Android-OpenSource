@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlin.collections.orEmpty
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 
 class AmityVideoPlayerViewModel : AmityBaseViewModel() {
 
@@ -58,7 +59,7 @@ class AmityVideoPlayerViewModel : AmityBaseViewModel() {
             .doOnError {
                 AmityUIKitSnackbar.publishSnackbarMessage(
                     offsetFromBottom = 50,
-                    message = "Failed to add product tags. Please try again."
+                    message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_product_tag_add_failed")
                 )
             }
             .doOnComplete {
@@ -67,12 +68,12 @@ class AmityVideoPlayerViewModel : AmityBaseViewModel() {
                 if (expectedSize > actualSize) {
                     AmityUIKitSnackbar.publishSnackbarErrorMessage(
                         offsetFromBottom = 50,
-                        message = "Some products that you've tagged are no longer available."
+                        message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_tagged_products_unavailable")
                     )
                 } else {
                     AmityUIKitSnackbar.publishSnackbarMessage(
                         offsetFromBottom = 50,
-                        message = "Product tags added."
+                        message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_product_tags_added")
                     )
                 }
                 _taggedProducts.value = currentProducts + newProducts
@@ -103,14 +104,14 @@ class AmityVideoPlayerViewModel : AmityBaseViewModel() {
             .doOnError {
                 AmityUIKitSnackbar.publishSnackbarMessage(
                     offsetFromBottom = 50,
-                    message = "Failed to remove product tag. Please try again."
+                    message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_product_tag_remove_failed")
                 )
             }
             .doOnComplete {
                 _taggedProducts.value = currentProducts.filter { it.getProductId() != productId }
                 AmityUIKitSnackbar.publishSnackbarMessage(
                     offsetFromBottom = 50,
-                    message = "Product tag removed."
+                    message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_product_tag_removed")
                 )
             }
             .subscribe()

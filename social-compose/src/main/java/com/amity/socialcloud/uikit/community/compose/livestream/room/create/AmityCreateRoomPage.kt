@@ -75,7 +75,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -170,6 +169,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
 import kotlin.collections.orEmpty
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 
 private const val LIVESTREAM_DURATION_SNACK_BAR = 14220
 private const val LIVESTREAM_COUNTDOWN_DURATION = 10
@@ -187,6 +187,7 @@ fun AmityCreateRoomPage(
 ) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
+    val myTimelineLabel = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_my_timeline")
 
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
@@ -211,7 +212,7 @@ fun AmityCreateRoomPage(
             val targetTypeString = result.data?.getStringExtra(EXTRA_PARAM_TARGET_TYPE)
             val targetType = AmityPost.TargetType.enumOf(targetTypeString)
             if (targetType == AmityPost.TargetType.USER) {
-                viewModel.setupScreen()
+                viewModel.setupScreen(myTimelineLabel = myTimelineLabel)
             } else {
                 viewModel.setupScreen(targetId)
             }
@@ -476,7 +477,7 @@ fun AmityCreateRoomPage(
 
     LaunchedEffect(Unit) {
         if (targetType == AmityPost.TargetType.USER) {
-            viewModel.setupScreen()
+            viewModel.setupScreen(myTimelineLabel = myTimelineLabel)
         } else {
             targetCommunity?.let {
                 viewModel.setupScreen(it.getCommunityId())
@@ -721,7 +722,7 @@ fun AmityCreateRoomPage(
                                             horizontalArrangement = Arrangement.End
                                         ) {
                                             Text(
-                                                text = stringResource(R.string.amity_v4_create_livestream_target_title),
+                                                text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_create_livestream_target_title"),
                                                 color = Color.White,
                                                 style = AmityTheme.typography.bodyLegacy
                                             )
@@ -796,7 +797,7 @@ fun AmityCreateRoomPage(
                                                 modifier = Modifier.padding(horizontal = 16.dp),
                                                 placeHolder = {
                                                     Text(
-                                                        text = stringResource(R.string.amity_v4_create_livestream_title_placeholder),
+                                                        text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_placeholder_create_livestream_title_placeholder"),
                                                         color = Color.White.copy(alpha = 0.8f),
                                                         style = AmityTheme.typography.headLine.copy(
                                                             color = Color.White,
@@ -824,7 +825,7 @@ fun AmityCreateRoomPage(
                                                     .imePadding(),
                                                 placeHolder = {
                                                     Text(
-                                                        text = stringResource(R.string.amity_v4_create_livestream_desc_placeholder),
+                                                        text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_placeholder_create_livestream_desc_placeholder"),
                                                         color = Color.White.copy(alpha = 0.8f),
                                                         style = AmityTheme.typography.body.copy(
                                                             color = Color.White,
@@ -852,8 +853,8 @@ fun AmityCreateRoomPage(
                                         modifier = Modifier
                                             .weight(1f)
                                             .background(Color.Black.copy(alpha = 0.5f)),
-                                        title = stringResource(R.string.amity_v4_create_livestream_no_camera_permission_title),
-                                        description = stringResource(R.string.amity_v4_create_livestream_no_camera_permission_desc),
+                                        title = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_permission_title_allow_camera_mic_access"),
+                                        description = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_allow_camera_desc"),
                                         onOpenSettingClick = {
                                             val intent =
                                                 Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
@@ -1082,7 +1083,7 @@ fun AmityCreateRoomPage(
                                 )
                                 Spacer(Modifier.height(13.dp))
                                 Text(
-                                    text = stringResource(R.string.amity_v4_create_livestream_connecting_text),
+                                    text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_create_livestream_connecting_text"),
                                     color = Color.White,
                                     style = AmityTheme.typography.titleLegacy.copy(
                                         fontWeight = FontWeight.SemiBold
@@ -1573,7 +1574,7 @@ fun AmityCreateRoomPage(
                     if(postLink.isNotEmptyOrBlank()) {
                         AmityBottomSheetActionItem(
                             icon = R.drawable.amity_v4_link_icon,
-                            text = "Copy live stream link",
+                            text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_copy_live_stream_link"),
                             modifier = Modifier
                                 .padding(horizontal = 12.dp),
                             color = Color(0xFFEBECEF)
@@ -1581,12 +1582,12 @@ fun AmityCreateRoomPage(
                             showCreateRoomBottomSheet = false
                             // Generate the post link URL (adjust the URL format according to your app's deep linking structure)
                             clipboardManager.setText(AnnotatedString(postLink))
-                            AmityUIKitSnackbar.publishSnackbarMessage("Link copied")
+                            AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_link_copied"))
                         }
 
                         AmityBottomSheetActionItem(
                             icon = R.drawable.amity_v4_share_icon,
-                            text = "Share to",
+                            text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_share_to"),
                             modifier = Modifier
                                 .padding(horizontal = 12.dp),
                             color = Color(0xFFEBECEF)
@@ -1603,9 +1604,9 @@ fun AmityCreateRoomPage(
 
         if (showCannotStartLivestreamDialog) {
             AmityAlertDialog(
-                dialogTitle = "Cannot start live stream",
-                dialogText = "Something went wrong while trying to complete your request.\nPlease try again.",
-                dismissText = "OK",
+                dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_title_cannot_start_livestream"),
+                dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_request_failed"),
+                dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_ok"),
                 onDismissRequest = {
                     showCannotStartLivestreamDialog = false
                 },
@@ -1615,20 +1616,20 @@ fun AmityCreateRoomPage(
         if (showThumbnailErrorUploadDialog.first) {
             val title =
                 if (showThumbnailErrorUploadDialog.second == AmityError.BUSINESS_ERROR.code) {
-                    "Inappropriate image"
+                    DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_inappropriate_image")
                 } else {
-                    "Upload failed"
+                    DefaultAmitySocialStringProvider.getInstance().getString("amity_social_error_upload_failed")
                 }
             val desc =
                 if (showThumbnailErrorUploadDialog.second == AmityError.BUSINESS_ERROR.code) {
-                    "Please choose a different image to upload."
+                    DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_choose_different_image")
                 } else {
-                    "Please try again."
+                    DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_please_try_again")
                 }
             AmityAlertDialog(
                 dialogTitle = title,
                 dialogText = desc,
-                dismissText = "OK",
+                dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_ok"),
                 onDismissRequest = {
                     showThumbnailErrorUploadDialog = Pair(false, 0)
                 },
@@ -1637,10 +1638,10 @@ fun AmityCreateRoomPage(
 
         if (showDiscardPostDialog) {
             AmityAlertDialog(
-                dialogTitle = stringResource(R.string.amity_v4_create_livestream_discard_livestream_dialog_title),
-                dialogText = stringResource(R.string.amity_v4_create_livestream_discard_livestream_dialog_desc),
-                confirmText = stringResource(R.string.amity_v4_create_livestream_discard_livestream_dialog_confirm_text),
-                dismissText = stringResource(R.string.amity_v4_create_livestream_dialog_dismiss_text),
+                dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_create_livestream_discard_livestream_dialog_title"),
+                dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_create_livestream_discard_livestream_dialog_desc"),
+                confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_create_livestream_discard_livestream_dialog_confirm_text"),
+                dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_cancel_button"),
                 confirmTextColor = AmityTheme.colors.alert,
                 dismissTextColor = AmityTheme.colors.highlight,
                 onConfirmation = {
@@ -1654,10 +1655,10 @@ fun AmityCreateRoomPage(
 
         if (showEndLivestreamDialog) {
             AmityAlertDialog(
-                dialogTitle = stringResource(R.string.amity_v4_create_livestream_end_livestream_dialog_title),
-                dialogText = stringResource(R.string.amity_v4_create_livestream_end_livestream_dialog_desc),
-                confirmText = stringResource(R.string.amity_v4_create_livestream_end_livestream_dialog_confirm_text),
-                dismissText = stringResource(R.string.amity_v4_create_livestream_dialog_dismiss_text),
+                dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_create_livestream_end_livestream_dialog_title"),
+                dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_create_livestream_end_livestream_dialog_desc"),
+                confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_create_livestream_end_livestream_dialog_confirm_text"),
+                dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_cancel_button"),
                 confirmTextColor = AmityTheme.colors.alert,
                 dismissTextColor = AmityTheme.colors.highlight,
                 onConfirmation = {
@@ -1698,10 +1699,10 @@ fun AmityCreateRoomPage(
 
         showInviteConfirmDialog?.let {
             AmityAlertDialog(
-                dialogTitle = "Invite co-host",
-                dialogText = "If ${it.second?.getDisplayName() ?: "the user"} accepts your invitation, they'll become your co-host with moderator access. Co-host can turn on camera and mic, appear alongside you on stage and help manage the event chat. ",
-                confirmText = "Invite co-host",
-                dismissText = stringResource(R.string.amity_v4_create_livestream_dialog_dismiss_text),
+                dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_invite_co_host"),
+                dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_confirm_invite_cohost_message").format(it.second?.getDisplayName() ?: "the user"),
+                confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_invite_co_host"),
+                dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_cancel_button"),
                 confirmTextColor = AmityTheme.colors.highlight,
                 dismissTextColor = AmityTheme.colors.highlight,
                 onConfirmation = {
@@ -1716,10 +1717,10 @@ fun AmityCreateRoomPage(
 
         if (showCancelInvitationDialog) {
             AmityAlertDialog(
-                dialogTitle = "Cancel co-host invitation?",
-                dialogText = "If you cancel, this user will remain in your live stream as a viewer. You will need to send a new invitation for them to become co-host.",
-                confirmText = "Confirm",
-                dismissText = stringResource(R.string.amity_v4_create_livestream_dialog_dismiss_text),
+                dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_alert_cancel_cohost_invitation_title"),
+                dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_alert_cancel_cohost_invitation_message"),
+                confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_confirm"),
+                dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_cancel_button"),
                 confirmTextColor = AmityTheme.colors.alert,
                 dismissTextColor = AmityTheme.colors.highlight,
                 onConfirmation = {
@@ -1736,10 +1737,10 @@ fun AmityCreateRoomPage(
 
         if (showRemoveCoHostConfirmDialog) {
             AmityAlertDialog(
-                dialogTitle = "Remove co-host?",
-                dialogText = "This user will immediately stop broadcasting as co-host in your live stream and will return to the event as a viewer.",
-                confirmText = "Remove",
-                dismissText = stringResource(R.string.amity_v4_create_livestream_dialog_dismiss_text),
+                dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_alert_remove_cohost_title"),
+                dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_alert_remove_cohost_message"),
+                confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_remove"),
+                dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_cancel_button"),
                 confirmTextColor = AmityTheme.colors.alert,
                 dismissTextColor = AmityTheme.colors.highlight,
                 onConfirmation = {
@@ -1761,7 +1762,7 @@ fun AmityCreateRoomPage(
 
         if (showLivestreamLimitSnackBar) {
             AmityUIKitSnackbar.publishSnackbarErrorMessage(
-                message = stringResource(R.string.amity_v4_create_livestream_duration_exceed_snackbar),
+                message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_create_livestream_duration_exceed_snackbar"),
                 offsetFromBottom = 130
             )
             showLivestreamLimitSnackBar = false
@@ -1795,7 +1796,7 @@ fun AmityCreateRoomPage(
                         .navigationBarsPadding()
                 ) {
                     Text(
-                        text = uiState.cohostUser?.getDisplayName() ?: "Unknown User",
+                        text = uiState.cohostUser?.getDisplayName() ?: DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_unknown_user"),
                         style = AmityTheme.typography.titleBold.copy(
                             color = Color(0xFFEBECEF)
                         ),
@@ -1834,7 +1835,7 @@ fun AmityCreateRoomPage(
                     }
                     AmityBottomSheetActionItem(
                         icon = R.drawable.amity_ic_cohost_remove,
-                        text = if (notJoinedYet) "Cancel invitation" else "Remove from live",
+                        text = if (notJoinedYet) DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel_invitation") else DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_remove_from_live"),
                         modifier = Modifier
                             .padding(horizontal = 12.dp),
                         color = AmityTheme.colors.alert,
@@ -1929,10 +1930,10 @@ fun AmityCreateRoomPage(
 
         if (showProductTaggingUnavailableDialog != null) {
             AmityAlertDialog(
-                dialogTitle = "Product tagging isn't available",
-                dialogText = "Any products you’ve tagged will be removed and won’t be shown to viewers.",
-                confirmText = "Go live",
-                dismissText = "Edit live",
+                dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_product_tagging_unavailable_title"),
+                dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_remove_products_description"),
+                confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_go_live"),
+                dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_edit_live"),
                 onDismissRequest = {
                     showProductTaggingUnavailableDialog = null
                 },
@@ -1945,10 +1946,10 @@ fun AmityCreateRoomPage(
 
         if (showDisableCohostManageProductPermissionDialog != null) {
             AmityAlertDialog(
-                dialogTitle = "Disable co-host product tags control?",
-                dialogText = "If you disable this, the co-host can’t add, remove, or pin products in this live stream.",
-                confirmText = "Disable",
-                dismissText = "Cancel",
+                dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_title_disable_cohost_product_tags"),
+                dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_disable_product_tagging_description"),
+                confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_disable"),
+                dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel"),
                 onDismissRequest = {
                     showDisableCohostManageProductPermissionDialog = null
                 },
@@ -1961,9 +1962,9 @@ fun AmityCreateRoomPage(
 
         if (showProductTaggingDisabledDialog) {
             AmityAlertDialog(
-                dialogTitle = "Product tagging isn't available",
-                dialogText = "Any products you’ve tagged will be removed and won’t be shown to viewers.",
-                confirmText = "OK",
+                dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_product_tagging_unavailable_title"),
+                dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_remove_products_description"),
+                confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_ok"),
                 dismissText = "",
                 onDismissRequest = {
                     showProductTaggingDisabledDialog = false
@@ -2003,10 +2004,11 @@ private fun endLivestream(
 }
 
 fun formatTime(hour: Int, minute: Int, second: Int): String {
+    val liveString = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_live")
     return when {
-        hour > 0 -> "LIVE $hour:%02d:%02d".format(minute, second)
-        minute >= 10 -> "LIVE %d:%02d".format(minute, second)
-        else -> "LIVE %d:%02d".format(minute, second)
+        hour > 0 -> "$liveString $hour:%02d:%02d".format(minute, second)
+        minute >= 10 -> "$liveString %d:%02d".format(minute, second)
+        else -> "$liveString %d:%02d".format(minute, second)
     }
 }
 
@@ -2073,7 +2075,7 @@ fun EventRoomPlayerHeader(
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Text(
-                        text = "By ${creator?.getDisplayName() ?: "Unknown User"}",
+                        text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_by_creator").format(creator?.getDisplayName() ?: DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_unknown_user")),
                         color = Color.White.copy(alpha = 0.8f),
                         fontSize = 16.sp,
                         maxLines = 1,
@@ -2106,7 +2108,7 @@ fun AmityInviteCoHostHeader(
             .padding(horizontal = 16.dp, vertical = 12.dp)
     ) {
         Text(
-            text = "Invite co-host",
+            text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_invite_co_host"),
             style = AmityTheme.typography.titleBold.copy(
                 fontWeight = FontWeight.SemiBold,
                 color = Color.White
@@ -2140,11 +2142,11 @@ fun AmityViewerListItem(
     onRemoveClick: (() -> Unit)? = null,
 ) {
     val buttonText = if (onRemoveClick != null) {
-        "Remove"
+        DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_remove")
     } else if (onCancelClick != null) {
-        "Cancel"
+        DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel")
     } else {
-        "Invite"
+        DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_invite")
     }
     Row(
         modifier = modifier
@@ -2166,7 +2168,7 @@ fun AmityViewerListItem(
             horizontalArrangement = Arrangement.Start,
         ) {
             Text(
-                text = user.getDisplayName() ?: "Unknown user",
+                text = user.getDisplayName() ?: DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_unknown_user_lowercase"),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = AmityTheme.typography.bodyBold.copy(
@@ -2259,7 +2261,7 @@ fun AmityInviteCoHostBottomSheet(
             )
             if (coHostUser != null) {
                 Text(
-                    text = "Co-hosting",
+                    text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_co_hosting"),
                     style = AmityTheme.typography.titleBold.copy(
                         fontWeight = FontWeight.SemiBold,
                         color = Color.White
@@ -2274,7 +2276,7 @@ fun AmityInviteCoHostBottomSheet(
                 )
             } else if (invitedUser != null) {
                 Text(
-                    text = "Pending invitation",
+                    text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_pending_invitation"),
                     style = AmityTheme.typography.titleBold.copy(
                         fontWeight = FontWeight.SemiBold,
                         color = Color.White
@@ -2290,7 +2292,7 @@ fun AmityInviteCoHostBottomSheet(
             }
             if (remainingUsers.isNotEmpty()) {
                 Text(
-                    text = "Who's watching",
+                    text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_whos_watching"),
                     style = AmityTheme.typography.titleBold.copy(
                         fontWeight = FontWeight.SemiBold,
                         color = Color.White
@@ -2340,14 +2342,14 @@ fun EmptyViewerList() {
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "No one's watching right now",
+            text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_no_viewers_title"),
             style = AmityTheme.typography.titleBold.copy(
                 color = Color(0xFF898E9E),
                 textAlign = TextAlign.Center,
             )
         )
         Text(
-            text = "Come back to invite a co-host once viewers have joined your live stream.",
+            text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_no_viewers_message"),
             style = AmityTheme.typography.caption.copy(
                 color = Color(0xFF898E9E),
                 textAlign = TextAlign.Center,
@@ -2374,7 +2376,7 @@ fun AmityCoHostManageProductPermission(
             verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
             Text(
-                text = "Allow co-host to manage product tags",
+                text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_allow_co_host_to_manage_product_tags"),
                 color = AmityTheme.colors.background,
                 style = AmityTheme.typography.bodyBold
             )
@@ -2382,7 +2384,7 @@ fun AmityCoHostManageProductPermission(
             Spacer(modifier = Modifier.height(2.dp))
 
             Text(
-                text = "When enabled, co-host can add or remove tagged products and pin or unpin a product during the live stream.",
+                text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_when_enabled_co_host_can_add_or_remove_tagged_products_"),
                 color = AmityTheme.colors.baseShade1,
                 style = AmityTheme.typography.caption
             )

@@ -556,7 +556,6 @@ object FakePostFactory {
      * All answers have [dataType] = "image" and [getImage] = null (no Coil request).
      * The number of vote counts is set to produce realistic percentage bars in result mode.
      *
-<<<<<<< HEAD
      * @param answerCount          Number of poll answers (2–10).
      * @param answerType           SINGLE or MULTIPLE.
      * @param isVoted              Whether the current user has already voted.

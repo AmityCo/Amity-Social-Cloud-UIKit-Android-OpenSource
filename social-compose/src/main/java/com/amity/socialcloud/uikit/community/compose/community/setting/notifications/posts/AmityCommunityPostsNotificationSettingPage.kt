@@ -38,6 +38,7 @@ import com.amity.socialcloud.uikit.community.compose.community.setting.notificat
 import com.amity.socialcloud.uikit.community.compose.community.setting.notifications.AmityCommunityNotificationSettingPageViewModel
 import com.amity.socialcloud.uikit.community.compose.community.setting.notifications.elements.AmityCommunityNotificationSettingMenuItem
 import com.amity.socialcloud.uikit.community.compose.community.setting.notifications.getSettingDataType
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 
 @Composable
 fun AmityCommunityPostsNotificationSettingPage(
@@ -93,13 +94,13 @@ fun AmityCommunityPostsNotificationSettingPage(
                 .windowInsetsPadding(WindowInsets.safeDrawing)
         ) {
             AmityToolBar(
-                title = "Posts",
+                title = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_title_posts"),
                 onBackClick = {
                     showLeaveConfirmDialog = true
                 }
             ) {
                 Text(
-                    text = "Save",
+                    text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_edit_user_save_button"),
                     style = AmityTheme.typography.bodyLegacy.copy(
                         color = if (shouldAllowToSave) AmityTheme.colors.highlight
                         else AmityTheme.colors.highlight.shade(AmityColorShade.SHADE2),
@@ -111,11 +112,11 @@ fun AmityCommunityPostsNotificationSettingPage(
                             reactPostSetting = reactPostSetting,
                             reactPostDefaultSetting = reactPostDefaultSetting,
                             onSuccess = {
-                                AmityUIKitSnackbar.publishSnackbarMessage("Successfully updated community profile!")
+                                AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_community_profile_updated"))
                                 context.closePage()
                             },
                             onError = {
-                                AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to update community profile")
+                                AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_community_profile_update_failed"))
                             }
                         )
                     }
@@ -131,8 +132,8 @@ fun AmityCommunityPostsNotificationSettingPage(
                     reactPostDefaultSetting = setting.getSettingDataType()
 
                     AmityCommunityNotificationSettingMenuItem(
-                        title = "React posts",
-                        description = "Receive notifications when someone make a reaction to your posts in this community.",
+                        title = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_title_react_posts"),
+                        description = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_notif_post_reaction"),
                         selectedSetting = reactPostSetting
                     ) {
                         reactPostSetting = it
@@ -159,8 +160,8 @@ fun AmityCommunityPostsNotificationSettingPage(
                     newPostDefaultSetting = setting.getSettingDataType()
 
                     AmityCommunityNotificationSettingMenuItem(
-                        title = "New posts",
-                        description = "Receive notifications when someone create new posts in  this community.",
+                        title = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_title_new_posts"),
+                        description = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_notification_notif_new_post"),
                         selectedSetting = newPostSetting
                     ) {
                         newPostSetting = it
@@ -172,10 +173,10 @@ fun AmityCommunityPostsNotificationSettingPage(
         if (showLeaveConfirmDialog) {
             if (shouldAllowToSave) {
                 AmityAlertDialog(
-                    dialogTitle = context.amityStringResource(id = R.string.amity_v4_community_dialog_leave_title),
-                    dialogText = context.amityStringResource(id = R.string.amity_v4_community_dialog_leave_description),
-                    confirmText = context.getString(R.string.amity_v4_dialog_leave_button),
-                    dismissText = context.getString(R.string.amity_v4_dialog_cancel_button),
+                    dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_community_dialog_leave_title"),
+                    dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_community_dialog_leave_description"),
+                    confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_leave_button"),
+                    dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_cancel_button"),
                     confirmTextColor = AmityTheme.colors.alert,
                     onConfirmation = {
                         context.closePage()

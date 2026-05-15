@@ -26,6 +26,7 @@ import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.socialhome.elements.AmityJoinCommunityView
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityTrendingCommunityShimmer
 import kotlin.collections.map
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 
 @Composable
@@ -71,7 +72,7 @@ fun AmityTrendingCommunitiesComponent(
                             .padding(horizontal = 16.dp)
                     ) {
                         Text(
-                            text = "Trending now",
+                            text = amitySocialString("amity_social_button_trending_now"),
                             style = AmityTheme.typography.titleLegacy
                         )
                     }

@@ -17,6 +17,7 @@ import com.amity.socialcloud.sdk.model.core.product.AmityProduct
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.community.compose.livestream.room.create.ManageProductTagListComponent
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 
 
 @Composable
@@ -76,7 +77,7 @@ fun AmityProductTaggingBottomSheet(
 
                 LaunchedEffect(isNetworkConnected) {
                     if (!isNetworkConnected) {
-                        getComponentScope().showProgressSnackbar("Waiting for network...")
+                        getComponentScope().showProgressSnackbar(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_waiting_network_toast"))
                     } else {
                         getComponentScope().dismissSnackbar()
                     }

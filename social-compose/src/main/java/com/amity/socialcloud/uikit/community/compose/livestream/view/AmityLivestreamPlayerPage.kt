@@ -82,6 +82,7 @@ import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.livestream.chat.AmityLivestreamMessageComposeBar
 import com.amity.socialcloud.uikit.community.compose.livestream.chat.ChatOverlay
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.community.compose.livestream.chat.FloatingReaction
 import com.amity.socialcloud.uikit.community.compose.livestream.chat.FloatingReactionsOverlay
 import com.amity.socialcloud.uikit.community.compose.livestream.chat.ReactionPicker
@@ -515,13 +516,13 @@ fun AmityLivestreamPlayerPage(
 
                 AmityBottomSheetActionItem(
                     icon = R.drawable.amity_v4_link_icon,
-                    text = "Copy live stream link",
+                    text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_copy_live_stream_link"),
                     modifier = Modifier
                         .padding(horizontal = 12.dp),
                     color = Color(0xFFEBECEF)
                 ) {
                     clipboardManager.setText(AnnotatedString(postLink))
-                    AmityUIKitSnackbar.publishSnackbarMessage("Link copied")
+                    AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_link_copied"))
                     // Delay the bottom sheet dismissal slightly
                     CoroutineScope(Dispatchers.Main).launch {
                         delay(100)
@@ -531,7 +532,7 @@ fun AmityLivestreamPlayerPage(
 
                 AmityBottomSheetActionItem(
                     icon = R.drawable.amity_v4_share_icon,
-                    text = "Share to",
+                    text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_share_to"),
                     modifier = Modifier
                         .padding(horizontal = 12.dp),
                     color = Color(0xFFEBECEF)
@@ -564,7 +565,7 @@ fun CommunityLivestreamPlayerHeader(
         is AmityPost.Target.COMMUNITY -> {
             val community = (post.getTarget() as? AmityPost.Target.COMMUNITY)?.getCommunity()
             Pair(
-                community?.getDisplayName() ?: "Unknown Community",
+                community?.getDisplayName() ?: DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_community"),
                 community?.getAvatar()?.getUrl(AmityImage.Size.MEDIUM) ?: ""
             )
         }
@@ -572,7 +573,7 @@ fun CommunityLivestreamPlayerHeader(
         is AmityPost.Target.USER -> {
             val user = (post.getTarget() as? AmityPost.Target.USER)?.getUser()
             Pair(
-                user?.getDisplayName() ?: "Unknown User",
+                user?.getDisplayName() ?: DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_unknown_user"),
                 user?.getAvatar()?.getUrl(AmityImage.Size.MEDIUM) ?: ""
             )
         }
@@ -632,13 +633,13 @@ fun CommunityLivestreamPlayerHeader(
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Text(
-                        text = "By ${post?.getCreator()?.getDisplayName() ?: "Unknown User"}",
+                        text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_by_creator").format(post?.getCreator()?.getDisplayName() ?: DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_unknown_user")),
                         color = Color.White.copy(alpha = 0.8f),
                         fontSize = 16.sp,
                         maxLines = 1,
                         overflow = TextOverflow1.Ellipsis
                     )
-                    
+
                     // Show brand badge if user is a brand
                     val isBrandCreator = post?.getCreator()?.isBrand() == true
                     if (isBrandCreator) {
@@ -664,7 +665,7 @@ fun CommunityLivestreamPlayerHeader(
                     .padding(horizontal = 12.dp, vertical = 6.dp)
             ) {
                 Text(
-                    text = "LIVE",
+                    text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_live"),
                     color = Color.White,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
@@ -679,7 +680,7 @@ fun CommunityLivestreamPlayerHeader(
                     painter = painterResource(
                         id = R.drawable.amity_v4_option_vertical
                     ),
-                    contentDescription = "Options",
+                    contentDescription = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_options"),
                     tint = Color.White,
                     modifier = Modifier
                         .size(32.dp)

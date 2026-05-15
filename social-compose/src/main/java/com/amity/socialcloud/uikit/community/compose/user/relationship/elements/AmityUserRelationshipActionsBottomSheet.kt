@@ -18,6 +18,7 @@ import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -50,7 +51,7 @@ fun AmityUserRelationshipActionsBottomSheet(
             if (user.isFlaggedByMe()) {
                 AmityBottomSheetActionItem(
                     icon = R.drawable.amity_ic_unreport,
-                    text = "Unreport user",
+                    text = amitySocialString("amity_social_button_unreport_user"),
                     modifier = modifier,
                 ) {
                     onDismiss()
@@ -59,7 +60,7 @@ fun AmityUserRelationshipActionsBottomSheet(
             } else {
                 AmityBottomSheetActionItem(
                     icon = R.drawable.amity_ic_report1,
-                    text = "Report user",
+                    text = amitySocialString("amity_social_button_report_user"),
                     modifier = modifier,
                 ) {
                     onDismiss()
@@ -70,7 +71,7 @@ fun AmityUserRelationshipActionsBottomSheet(
             if (allowToBlock) {
                 AmityBottomSheetActionItem(
                     icon = R.drawable.amity_ic_blocked_user,
-                    text = "Block user",
+                    text = amitySocialString("amity_social_button_block_user"),
                     modifier = modifier,
                 ) {
                     onDismiss()

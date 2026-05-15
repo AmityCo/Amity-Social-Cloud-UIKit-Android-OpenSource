@@ -52,6 +52,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.joda.time.Duration
 import java.util.concurrent.TimeUnit
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 
 class AmityCreateRoomPageViewModel constructor(val postId: String? = null) : AmityBaseViewModel() {
     private val _uiState = MutableStateFlow(AmityCreateRoomPageUiState())
@@ -81,11 +82,11 @@ class AmityCreateRoomPageViewModel constructor(val postId: String? = null) : Ami
         postId?.let(::getRoomPost)
     }
 
-    fun setupScreen(communityId: String? = null) {
+    fun setupScreen(communityId: String? = null, myTimelineLabel: String = "My timeline") {
         communityId?.let {
             getCommunity(it)
         } ?: run {
-            getCurrentUser()
+            getCurrentUser(myTimelineLabel = myTimelineLabel)
         }
     }
 
@@ -124,7 +125,7 @@ class AmityCreateRoomPageViewModel constructor(val postId: String? = null) : Ami
         }
     }
 
-    private fun getCurrentUser() {
+    private fun getCurrentUser(myTimelineLabel: String = "My timeline") {
         viewModelScope.launch {
             addDisposable(
                 AmityCoreClient.getCurrentUser()
@@ -133,7 +134,7 @@ class AmityCreateRoomPageViewModel constructor(val postId: String? = null) : Ami
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSuccess { user ->
                         user.getDisplayName()?.let {
-                            updateTargetInformation(name = "My timeline", userId = user.getUserId())
+                            updateTargetInformation(name = myTimelineLabel, userId = user.getUserId())
                         }
                     }
                     .subscribe()
@@ -274,7 +275,7 @@ class AmityCreateRoomPageViewModel constructor(val postId: String? = null) : Ami
             }
             .flatMap {
                 createLiveChannel(
-                    livestreamTitle = room.getTitle() ?: "No title",
+                    livestreamTitle = room.getTitle() ?: "",
                     postId = post.getPostId(),
                     roomId = room.getRoomId()
                 )
@@ -325,7 +326,7 @@ class AmityCreateRoomPageViewModel constructor(val postId: String? = null) : Ami
                         ?.await()
 
                     AmityUIKitSnackbar.publishSnackbarMessage(
-                        message = "Invitation sent."
+                        message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_invitation_sent")
                     )
 //                    if (user == null) {
 //                        fetchCohostUser(userId)
@@ -349,7 +350,7 @@ class AmityCreateRoomPageViewModel constructor(val postId: String? = null) : Ami
             .observeOn(AndroidSchedulers.mainThread())
             .doOnComplete {
                 AmityUIKitSnackbar.publishSnackbarMessage(
-                    message = "Co-host invitation cancelled."
+                    message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_invitation_cancelled_toast")
                 )
             }
             .subscribe()
@@ -384,7 +385,7 @@ class AmityCreateRoomPageViewModel constructor(val postId: String? = null) : Ami
                             }
                         } else if (invitation.getStatus() == AmityInvitationStatus.REJECTED) {
                             AmityUIKitSnackbar.publishSnackbarMessage(
-                                message = "Co-host declined the invitation."
+                                message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_cohost_declined_invitation")
                             )
                             _uiState.update {
                                 it.copy(
@@ -745,7 +746,7 @@ class AmityCreateRoomPageViewModel constructor(val postId: String? = null) : Ami
                 when (event) {
                     is AmityCoHostEvent.CoHostInviteRejected -> {
                         AmityUIKitSnackbar.publishSnackbarMessage(
-                            message = "Co-host declined the invitation.",
+                            message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_cohost_declined_invitation"),
                             offsetFromBottom = 50
                         )
                     }
@@ -754,20 +755,20 @@ class AmityCreateRoomPageViewModel constructor(val postId: String? = null) : Ami
                         val actorInternalId = event.actorInternalId
                         if (hostInternalId != actorInternalId) {
                             AmityUIKitSnackbar.publishSnackbarMessage(
-                                message = "Co-host left the live stream.",
+                                message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_cohost_left"),
                                 offsetFromBottom = 50
                             )
                         }
                     }
                     is AmityCoHostEvent.CoHostInviteAccepted -> {
                         AmityUIKitSnackbar.publishSnackbarMessage(
-                            message = "Co-host accepted the invitation.",
+                            message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_cohost_accepted_invitation"),
                             offsetFromBottom = 50
                         )
                     }
                     is AmityCoHostEvent.CoHostRemoved -> {
                         AmityUIKitSnackbar.publishSnackbarMessage(
-                            message = "Co-host removed from live.",
+                            message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_cohost_removed"),
                             offsetFromBottom = 50
                         )
                     }
@@ -1015,7 +1016,7 @@ class AmityCreateRoomPageViewModel constructor(val postId: String? = null) : Ami
                 .doOnError {
                     AmityUIKitSnackbar.publishSnackbarMessage(
                         offsetFromBottom = 50,
-                        message = "Failed to add product tags. Please try again."
+                        message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_product_tag_add_failed")
                     )
                 }
                 .doOnComplete {
@@ -1025,12 +1026,12 @@ class AmityCreateRoomPageViewModel constructor(val postId: String? = null) : Ami
                         if (newTaggedProductSize > _uiState.value.getRoomPost()?.getProductTags().orEmpty().size) {
                             AmityUIKitSnackbar.publishSnackbarErrorMessage(
                                 offsetFromBottom = 50,
-                                message = "Some products that you’ve tagged are no longer available."
+                                message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_tagged_products_unavailable")
                             )
                         } else {
                             AmityUIKitSnackbar.publishSnackbarMessage(
                                 offsetFromBottom = 50,
-                                message = "Product tags added."
+                                message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_product_tags_added")
                             )
                         }
                     }
@@ -1065,13 +1066,13 @@ class AmityCreateRoomPageViewModel constructor(val postId: String? = null) : Ami
                 .doOnError {
                     AmityUIKitSnackbar.publishSnackbarMessage(
                         offsetFromBottom = 50,
-                        message = "Failed to remove product tag. Please try again."
+                        message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_product_tag_remove_failed")
                     )
                 }
                 .doOnComplete {
                     AmityUIKitSnackbar.publishSnackbarMessage(
                         offsetFromBottom = 50,
-                        message = "Product tag removed."
+                        message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_product_tag_removed")
                     )
                 }
                 .subscribe()
@@ -1112,12 +1113,12 @@ class AmityCreateRoomPageViewModel constructor(val postId: String? = null) : Ami
                         }
                         AmityUIKitSnackbar.publishSnackbarMessage(
                             offsetFromBottom = 50,
-                            message = "Product tag unpinned."
+                            message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_product_tag_unpinned")
                         )
                     } else {
                         AmityUIKitSnackbar.publishSnackbarMessage(
                             offsetFromBottom = 50,
-                            message = "Product tag pinned."
+                            message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_product_tag_pinned")
                         )
                     }
                 }
@@ -1125,12 +1126,12 @@ class AmityCreateRoomPageViewModel constructor(val postId: String? = null) : Ami
                     if (productId == null) {
                         AmityUIKitSnackbar.publishSnackbarErrorMessage(
                             offsetFromBottom = 50,
-                            message = "Failed to unpin product tag. Please try again."
+                            message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_unpin_product_tag_failed")
                         )
                     } else {
                         AmityUIKitSnackbar.publishSnackbarErrorMessage(
                             offsetFromBottom = 50,
-                            message = "Failed to pin product tag. Please try again."
+                            message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_pin_product_tag_failed")
                         )
                     }
                 }
@@ -1182,7 +1183,7 @@ class AmityCreateRoomPageViewModel constructor(val postId: String? = null) : Ami
             .observeOn(AndroidSchedulers.mainThread())
             .doOnError {
                 AmityUIKitSnackbar.publishSnackbarMessage(
-                    message = "Failed to update co-host product tagging permission. Please try again."
+                    message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_update_cohost_permission_failed")
                 )
             }
             .subscribe()

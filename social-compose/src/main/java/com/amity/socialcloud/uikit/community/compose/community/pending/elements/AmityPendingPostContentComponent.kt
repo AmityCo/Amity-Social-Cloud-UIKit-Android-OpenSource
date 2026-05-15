@@ -30,6 +30,7 @@ import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityP
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuDialogUIState
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuSheetUIState
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuViewModel
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 
 @Composable
 fun AmityPendingPostContentComponent(
@@ -60,25 +61,25 @@ fun AmityPendingPostContentComponent(
                 viewModel.deletePost(
                     postId = data.postId,
                     onSuccess = {
-                        AmityUIKitSnackbar.publishSnackbarMessage("Post deleted")
+                        AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_post_deleted"))
                         viewModel.updateDialogUIState(AmityPostMenuDialogUIState.CloseDialog)
                     },
                     onError = {
-                        AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to delete post")
+                        AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_delete_post_failed"))
                         viewModel.updateDialogUIState(AmityPostMenuDialogUIState.CloseDialog)
                     }
                 )
                 /*
                 AmityAlertDialog(
-                    dialogTitle = context.getString(R.string.amity_delete_post_title),
-                    dialogText = context.getString(R.string.amity_delete_post_warning_message),
-                    confirmText = context.getString(R.string.amity_delete),
-                    dismissText = context.getString(R.string.amity_cancel),
+                    dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_delete_post_title"),
+                    dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_delete_post_warning_message_2"),
+                    confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_delete"),
+                    dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel"),
                     onConfirmation = {
                         viewModel.deletePost(
                             postId = data.postId,
                             onSuccess = {
-                                context.showToast("Post deleted")
+                                context.showToast(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_post_deleted"))
                                 viewModel.updateDialogUIState(AmityPostMenuDialogUIState.CloseDialog)
                             },
                             onError = {

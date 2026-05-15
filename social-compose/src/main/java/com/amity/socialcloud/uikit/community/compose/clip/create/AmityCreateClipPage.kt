@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.clip.create
 
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import android.Manifest
 import android.app.Activity
 import android.content.Context
@@ -154,13 +155,17 @@ fun AmityCreateClipPage(
 
                 if (isFileSizeExceed) {
                     showUploadFileSizeError = Pair(
-                        "Maximum file size limit reached",
-                        "Please choose a video with smaller file size."
+                        DefaultAmitySocialStringProvider.getInstance()
+                            .getString("amity_social_modal_dialog_title_max_file_size_limit"),
+                        DefaultAmitySocialStringProvider.getInstance()
+                            .getString("amity_social_label_choose_video_smaller_size")
                     )
                 } else if (checkVideoIsExceedLength(context, it, 15)) {
                     showUploadFileSizeError = Pair(
-                        "Clip must be under 15 minutes",
-                        "Please choose a different video to upload."
+                        DefaultAmitySocialStringProvider.getInstance()
+                            .getString("amity_social_label_clip_duration_limit"),
+                        DefaultAmitySocialStringProvider.getInstance()
+                            .getString("amity_social_label_choose_different_video")
                     )
                 } else {
                     behavior.goToDraftClipPage(
@@ -356,9 +361,8 @@ fun AmityCreateClipPage(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(16.dp),
-                    title = "Allow access to your\ncamera and microphone",
-                    description = "This lets you record and live stream\n" +
-                            "from this device.",
+                    title = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_permission_title_allow_camera_mic_access"),
+                    description = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_allow_camera_desc"),
                     onOpenSettingClick = {
                         val intent =
                             Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
@@ -438,9 +442,9 @@ fun AmityCreateClipPage(
                 onDismissRequest = {
                     isShowClipTooShortDialog = false
                 },
-                dialogTitle = "Clip too short",
-                dialogText = "Clip must be at least 1 second long.",
-                dismissText = "OK",
+                dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_title_clip_too_short"),
+                dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_clip_min_duration"),
+                dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_ok"),
             )
         }
 
@@ -452,7 +456,7 @@ fun AmityCreateClipPage(
                 },
                 dialogTitle = showUploadFileSizeError?.first ?: "",
                 dialogText = showUploadFileSizeError?.second ?: "",
-                dismissText = "OK",
+                dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_ok"),
             )
         }
     }

@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.ui.components.feed.user
 
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -37,14 +38,14 @@ fun AmityUnknownUserFeed(
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Something went wrong",
+            text = amitySocialString("amity_social_label_something_went_wrong"),
             style = AmityTheme.typography.titleLegacy.copy(
                 color = AmityTheme.colors.baseShade3,
             ),
         )
 
         Text(
-            text = "We couldn’t recognize this feed.",
+            text = amitySocialString("amity_social_label_we_couldn_t_recognize_this_feed"),
             style = AmityTheme.typography.captionLegacy.copy(
                 fontWeight = FontWeight.Normal,
                 color = AmityTheme.colors.baseShade3,

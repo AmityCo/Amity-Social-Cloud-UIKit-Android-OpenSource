@@ -27,6 +27,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityUserListItem
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityUserListShimmer
 import com.amity.socialcloud.uikit.community.compose.user.relationship.AmityUserRelationshipPageViewModel
 
@@ -70,7 +71,7 @@ fun AmityUserFollowingListComponent(
                         )
                         Spacer(modifier = modifier.size(8.dp))
                         Text(
-                            "Nothing here to see yet",
+                            amitySocialString("amity_social_label_nothing_here_yet"),
                             style = AmityTheme.typography.titleLegacy.copy(
                                 color = AmityTheme.colors.baseShade3
                             )

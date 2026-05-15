@@ -24,6 +24,7 @@ import com.amity.socialcloud.uikit.community.compose.post.composer.AmityMediaAtt
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostAttachmentAllowedPickerType
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostAttachmentPickerEvent
 import com.amity.socialcloud.uikit.community.compose.post.composer.elements.AmityPostAttachmentButton
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialConfigString
 
 @Composable
 fun AmityDetailedMediaAttachmentComponent(
@@ -163,7 +164,15 @@ fun AmityDetailedMediaAttachmentElement(
                 isEnabled = isEnabled
             )
             Text(
-                text = getConfig().getText(),
+                text = amitySocialConfigString(
+                    when (elementId) {
+                        "camera_button" -> "amity_social_button_post_composer_camera_button"
+                        "image_button" -> "amity_social_button_post_composer_image_button"
+                        "video_button" -> "amity_social_button_post_composer_video_button"
+                        "file_button" -> "amity_social_button_post_composer_file_button"
+                        else -> elementId
+                    }
+                ),
                 style = AmityTheme.typography.bodyLegacy.copy(
                     fontWeight = FontWeight.SemiBold,
                     color = if(isEnabled) AmityTheme.colors.base else AmityTheme.colors.baseShade3

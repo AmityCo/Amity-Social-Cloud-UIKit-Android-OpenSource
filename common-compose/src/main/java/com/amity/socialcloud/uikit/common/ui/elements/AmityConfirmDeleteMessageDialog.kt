@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.amity.socialcloud.uikit.common.localization.amityCommonString
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
@@ -60,7 +61,7 @@ fun BottomConfirmDeletePopup(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "Your message wasn’t sent",
+                            text = amityCommonString("amity_common_label_message_not_sent"),
                             fontSize = 13.sp,
                             lineHeight = 18.sp,
                             fontWeight = FontWeight(600),
@@ -81,7 +82,7 @@ fun BottomConfirmDeletePopup(
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(
-                                text = "Delete",
+                                text = amityCommonString("amity_common_button_delete"),
                                 fontSize = 17.sp,
                                 lineHeight = 22.sp,
                                 fontWeight = FontWeight(600),
@@ -109,7 +110,7 @@ fun BottomConfirmDeletePopup(
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(
-                                text = "Cancel",
+                                text = amityCommonString("amity_common_button_cancel"),
                                 fontSize = 17.sp,
                                 lineHeight = 22.sp,
                                 fontWeight = FontWeight(600),

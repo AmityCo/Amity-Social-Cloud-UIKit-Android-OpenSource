@@ -14,13 +14,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.amity.socialcloud.uikit.community.compose.R
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityCreateLivestreamNoInternetView() {
@@ -42,7 +42,7 @@ fun AmityCreateLivestreamNoInternetView() {
         )
         Spacer(Modifier.height(12.dp))
         Text(
-            text = stringResource(R.string.amity_v4_create_livestream_no_internet_view_title),
+            text = amitySocialString("amity_social_label_create_livestream_no_internet_view_title"),
             color = Color.White,
             style = AmityTheme.typography.titleLegacy.copy(
                 fontWeight = FontWeight.SemiBold
@@ -50,7 +50,7 @@ fun AmityCreateLivestreamNoInternetView() {
         )
         Spacer(Modifier.height(4.dp))
         Text(
-            text = stringResource(R.string.amity_v4_create_livestream_no_internet_view_desc),
+            text = amitySocialString("amity_social_status_create_livestream_no_internet_view_desc"),
             color = Color.White,
             style = AmityTheme.typography.captionLegacy.copy(
                 fontWeight = FontWeight.Normal,

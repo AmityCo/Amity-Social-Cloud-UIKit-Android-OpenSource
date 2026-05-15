@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityCreateRoomSettings(
@@ -39,7 +40,7 @@ fun AmityCreateRoomSettings(
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    "Set live stream to read-only",
+                    amitySocialString("amity_social_status_set_livestream_read_only"),
                     color = Color.White,
                     style = AmityTheme.typography.bodyBold
                 )
@@ -47,7 +48,7 @@ fun AmityCreateRoomSettings(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    "Members who are not streamer can read messages but cannot send any messages.",
+                    amitySocialString("amity_social_label_livestream_read_only_description"),
                     color = Color(0xFFA5A9B5),
                     style = AmityTheme.typography.caption
                 )

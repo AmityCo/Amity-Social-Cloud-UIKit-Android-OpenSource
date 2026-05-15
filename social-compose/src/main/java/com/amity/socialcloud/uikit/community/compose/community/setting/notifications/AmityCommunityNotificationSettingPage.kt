@@ -41,6 +41,7 @@ import com.amity.socialcloud.uikit.common.utils.isPostNotificationEnabled
 import com.amity.socialcloud.uikit.common.utils.isSocialNotificationEnabled
 import com.amity.socialcloud.uikit.common.utils.isStoryNotificationEnabled
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.community.setting.elements.AmityCommunitySettingItem
 
@@ -86,7 +87,7 @@ fun AmityCommunityNotificationSettingPage(
                 .windowInsetsPadding(WindowInsets.safeDrawing)
         ) {
             AmityToolBar(
-                title = "Notifications",
+                title = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_notification_title_notifications"),
                 onBackClick = {
                     context.closePageWithResult(Activity.RESULT_CANCELED)
                 }
@@ -102,13 +103,13 @@ fun AmityCommunityNotificationSettingPage(
                     modifier = modifier.weight(1f)
                 ) {
                     Text(
-                        text = "Allow notifications",
+                        text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_notification_allow_notifications"),
                         style = AmityTheme.typography.bodyLegacy.copy(
                             fontWeight = FontWeight.SemiBold
                         )
                     )
                     Text(
-                        text = "Turn on to receive push notifications from this community.",
+                        text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_notification_turn_on_to_receive_push_notifications_from_this_communi"),
                         style = AmityTheme.typography.captionLegacy.copy(
                             fontWeight = FontWeight.Normal,
                             color = AmityTheme.colors.baseShade1,
@@ -131,10 +132,10 @@ fun AmityCommunityNotificationSettingPage(
                         viewModel.updateCommunityNotificationSetting(
                             enable = isChecked,
                             onSuccess = {
-                                AmityUIKitSnackbar.publishSnackbarMessage("Successfully updated community profile!")
+                                AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_community_profile_updated"))
                             },
                             onError = {
-                                AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to update community profile")
+                                AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_community_profile_update_failed"))
                             }
                         )
                     }
@@ -154,7 +155,7 @@ fun AmityCommunityNotificationSettingPage(
                         modifier = modifier.size(20.dp),
                     )
                     Text(
-                        text = "Moderator has disabled notification for this community",
+                        text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_notification_moderator_has_disabled_notification_for_this_community"),
                         style = AmityTheme.typography.captionLegacy.copy(
                             color = AmityTheme.colors.baseShade2,
                             fontWeight = FontWeight.Normal,
@@ -172,92 +173,77 @@ fun AmityCommunityNotificationSettingPage(
                 )
 
                 if (communityNotificationSettings?.isPostNotificationEnabled() == true) {
-                    AmityBaseElement(
-                        pageScope = getPageScope(),
-                        elementId = "post_notification_setting"
-                    ) {
-                        AmityCommunitySettingItem(
-                            title = "Posts",
-                            titleStyle = AmityTheme.typography.bodyLegacy.copy(
-                                fontWeight = FontWeight.SemiBold
-                            ),
-                            modifier = modifier.padding(start = 16.dp, end = 8.dp),
-                            icon = {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.amity_ic_community_notification_post),
-                                    contentDescription = "",
-                                    tint = AmityTheme.colors.base,
-                                    modifier = modifier.size(24.dp)
-                                )
-                            }
-                        ) {
-                            behavior.goToPostsNotificationSettingPage(
-                                AmityCommunityNotificationSettingPageBehavior.Context(
-                                    pageContext = context,
-                                    community = community,
-                                )
+                    AmityCommunitySettingItem(
+                        title = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_tab_tab_posts"),
+                        titleStyle = AmityTheme.typography.bodyLegacy.copy(
+                            fontWeight = FontWeight.SemiBold
+                        ),
+                        modifier = modifier.padding(start = 16.dp, end = 8.dp),
+                        icon = {
+                            Icon(
+                                painter = painterResource(id = R.drawable.amity_ic_community_notification_post),
+                                contentDescription = "",
+                                tint = AmityTheme.colors.base,
+                                modifier = modifier.size(24.dp)
                             )
                         }
+                    ) {
+                        behavior.goToPostsNotificationSettingPage(
+                            AmityCommunityNotificationSettingPageBehavior.Context(
+                                pageContext = context,
+                                community = community,
+                            )
+                        )
                     }
                 }
 
                 if (communityNotificationSettings?.isCommentNotificationEnabled() == true) {
-                    AmityBaseElement(
-                        pageScope = getPageScope(),
-                        elementId = "comment_notification_setting"
-                    ) {
-                        AmityCommunitySettingItem(
-                            title = "Comments",
-                            titleStyle = AmityTheme.typography.bodyLegacy.copy(
-                                fontWeight = FontWeight.SemiBold
-                            ),
-                            modifier = modifier.padding(start = 16.dp, end = 8.dp),
-                            icon = {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.amity_ic_community_notification_comment),
-                                    contentDescription = "",
-                                    tint = AmityTheme.colors.base,
-                                    modifier = modifier.size(24.dp)
-                                )
-                            }
-                        ) {
-                            behavior.goToCommentsNotificationSettingPage(
-                                AmityCommunityNotificationSettingPageBehavior.Context(
-                                    pageContext = context,
-                                    community = community,
-                                )
+                    AmityCommunitySettingItem(
+                        title = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_title_comments"),
+                        titleStyle = AmityTheme.typography.bodyLegacy.copy(
+                            fontWeight = FontWeight.SemiBold
+                        ),
+                        modifier = modifier.padding(start = 16.dp, end = 8.dp),
+                        icon = {
+                            Icon(
+                                painter = painterResource(id = R.drawable.amity_ic_community_notification_comment),
+                                contentDescription = "",
+                                tint = AmityTheme.colors.base,
+                                modifier = modifier.size(24.dp)
                             )
                         }
+                    ) {
+                        behavior.goToCommentsNotificationSettingPage(
+                            AmityCommunityNotificationSettingPageBehavior.Context(
+                                pageContext = context,
+                                community = community,
+                            )
+                        )
                     }
                 }
 
                 if (communityNotificationSettings?.isStoryNotificationEnabled() == true) {
-                    AmityBaseElement(
-                        pageScope = getPageScope(),
-                        elementId = "story_notification_setting"
-                    ) {
-                        AmityCommunitySettingItem(
-                            title = "Stories",
-                            titleStyle = AmityTheme.typography.bodyLegacy.copy(
-                                fontWeight = FontWeight.SemiBold
-                            ),
-                            modifier = modifier.padding(start = 16.dp, end = 8.dp),
-                            icon = {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.amity_ic_community_story_setting),
-                                    contentDescription = "",
-                                    tint = AmityTheme.colors.base,
-                                    modifier = modifier.size(24.dp)
-                                )
-                            }
-                        ) {
-                            behavior.goToStoriesNotificationSettingPage(
-                                AmityCommunityNotificationSettingPageBehavior.Context(
-                                    pageContext = context,
-                                    community = community,
-                                )
+                    AmityCommunitySettingItem(
+                        title = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_title_stories"),
+                        titleStyle = AmityTheme.typography.bodyLegacy.copy(
+                            fontWeight = FontWeight.SemiBold
+                        ),
+                        modifier = modifier.padding(start = 16.dp, end = 8.dp),
+                        icon = {
+                            Icon(
+                                painter = painterResource(id = R.drawable.amity_ic_community_story_setting),
+                                contentDescription = "",
+                                tint = AmityTheme.colors.base,
+                                modifier = modifier.size(24.dp)
                             )
                         }
+                    ) {
+                        behavior.goToStoriesNotificationSettingPage(
+                            AmityCommunityNotificationSettingPageBehavior.Context(
+                                pageContext = context,
+                                community = community,
+                            )
+                        )
                     }
                 }
             }

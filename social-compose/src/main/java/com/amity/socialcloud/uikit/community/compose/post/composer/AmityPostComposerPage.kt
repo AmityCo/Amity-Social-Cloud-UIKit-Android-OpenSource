@@ -63,7 +63,6 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -129,6 +128,9 @@ import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.Amit
 import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.ProductMentionData
 import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.UrlHighlight
 import com.google.gson.JsonObject
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialConfigString
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @OptIn(UnstableApi::class)
 @UnstableApi
@@ -459,7 +461,7 @@ fun AmityPostComposerPage(
         rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
             isCameraPermissionGranted = permissions.entries.all { it.value }
             if (!isCameraPermissionGranted) {
-                AmityUIKitSnackbar.publishSnackbarErrorMessage("Camera permission not granted")
+                AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_permission_camera_access_denied"))
             }
         }
 
@@ -512,13 +514,13 @@ fun AmityPostComposerPage(
                 if (isCameraPermissionGranted) {
                     val imageFile = AmityCameraUtil.createImageFile(context)
                     if (imageFile == null) {
-                        AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to create image file")
+                        AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_failed_create_image_file"))
                     } else {
                         capturedMediaUri = AmityCameraUtil.createPhotoUri(context, imageFile)
                         imageCaptureLauncher.launch(capturedMediaUri)
                     }
                 } else {
-                    AmityUIKitSnackbar.publishSnackbarErrorMessage("Camera permission not granted")
+                    AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_permission_camera_access_denied"))
 
 
                     val permissions = arrayOf(
@@ -542,19 +544,19 @@ fun AmityPostComposerPage(
                 if (isCameraPermissionGranted) {
                     val videoFile = AmityCameraUtil.createVideoFile(context)
                     if (videoFile == null) {
-                        AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to create video file")
+                        AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_failed_create_video_file"))
 
                     } else {
                         val videoUri = AmityCameraUtil.createVideoUri(context, videoFile)
                         if (videoUri == null) {
-                            AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to create video URI")
+                            AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_failed_create_video_uri"))
                         } else {
                             capturedMediaUri = videoUri
                             videoCaptureLauncher.launch(videoUri)
                         }
                     }
                 } else {
-                    AmityUIKitSnackbar.publishSnackbarErrorMessage("Camera permission not granted")
+                    AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_permission_camera_access_denied"))
 
 
                     val permissions = arrayOf(
@@ -665,11 +667,11 @@ fun AmityPostComposerPage(
         LaunchedEffect(postCreationEvent) {
             when (postCreationEvent) {
                 AmityPostCreationEvent.Creating -> {
-                    getPageScope().showProgressSnackbar("Posting...")
+                    getPageScope().showProgressSnackbar(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_poll_create_posting_toast"))
                 }
 
                 AmityPostCreationEvent.Updating -> {
-                    getPageScope().showProgressSnackbar("Updating...")
+                    getPageScope().showProgressSnackbar(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_updating"))
                 }
 
                 AmityPostCreationEvent.Success -> {
@@ -686,14 +688,14 @@ fun AmityPostComposerPage(
                     val exception = (postCreationEvent as AmityPostCreationEvent.Failed).throwable
                     val error = AmityError.from(exception)
                     val text = when (error) {
-                        AmityError.LINK_NOT_ALLOWED -> context.getString(R.string.amity_add_blocked_links_post_error_message)
-                        AmityError.BAN_WORD_FOUND -> context.getString(R.string.amity_add_blocked_words_post_error_message)
-                        else -> if (exception is TextPostExceedException) context.getString(
-                            R.string.amity_post_text_exceed_error_message,
+                        AmityError.LINK_NOT_ALLOWED -> DefaultAmitySocialStringProvider.getInstance().getString("amity_social_error_add_blocked_links_post_error_message")
+                        AmityError.BAN_WORD_FOUND -> DefaultAmitySocialStringProvider.getInstance().getString("amity_social_error_poll_post_create_ban_word_error")
+                        else -> if (exception is TextPostExceedException) DefaultAmitySocialStringProvider.getInstance().getString(
+                            "amity_social_error_post_text_exceed_error_message",
                             exception.charLimit
                         )
-                        else if (isInEditMode || isEditClipMode) context.getString(R.string.amity_post_edit_generic_error_message) else context.getString(
-                            R.string.amity_post_create_generic_error_message
+                        else if (isInEditMode || isEditClipMode) DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_post_edit_generic_error_message") else DefaultAmitySocialStringProvider.getInstance().getString(
+                            "amity_social_toast_post_create_generic_error_message"
                         )
                     }
                     AmityUIKitSnackbar.publishSnackbarErrorMessage(
@@ -778,31 +780,31 @@ fun AmityPostComposerPage(
                     is AmityPostComposerOptions.AmityPostComposerCreateOptions -> {
                         if (options.targetType == AmityPostTargetType.USER) {
                             if (options.targetId == AmityCoreClient.getUserId()) {
-                                "My timeline"
+                                DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_my_timeline")
                             } else {
                                 options.targetId ?: ""
                             }
                         } else {
-                            options.community?.getDisplayName() ?: "Group"
+                            options.community?.getDisplayName() ?: DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_community")
                         }
                     }
 
                     is AmityPostComposerOptions.AmityPostComposerCreateClipOptions -> {
                         if (options.targetType == AmityPostTargetType.USER) {
                             if (options.targetId == AmityCoreClient.getUserId()) {
-                                "My timeline"
+                                DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_my_timeline")
                             } else {
                                 options.targetId ?: ""
                             }
                         } else {
-                            options.community?.getDisplayName() ?: "Group"
+                            options.community?.getDisplayName() ?: DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_group")
                         }
                     }
 
                     is AmityPostComposerOptions.AmityPostComposerEditOptions,
                     is AmityPostComposerOptions.AmityPostComposerEditClipOptions,
                         -> {
-                        "Edit Post"
+                        DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_edit_post")
                     }
                 }
 
@@ -811,7 +813,7 @@ fun AmityPostComposerPage(
                     elementId = if (isInEditMode || isEditClipMode) "edit_post_title" else "community_display_name"
                 ) {
                     Text(
-                        text = if (isInEditMode || isEditClipMode) getConfig().getText() else title,
+                        text = if (isInEditMode || isEditClipMode) amitySocialConfigString("amity_social_label_post_composer_edit_title") else title,
                         style = AmityTheme.typography.titleBold,
                         modifier = modifier
                             .align(Alignment.Center)
@@ -825,7 +827,7 @@ fun AmityPostComposerPage(
                     elementId = if (isInEditMode || isEditClipMode) "edit_post_button" else "create_new_post_button"
                 ) {
                     Text(
-                        text = if (isInEditMode || isEditClipMode) "Save" else getConfig().getText(),
+                        text = if (isInEditMode || isEditClipMode) amitySocialConfigString("amity_social_button_post_composer_edit_button") else amitySocialConfigString("amity_social_button_post_composer_create_button"),
                         style = AmityTheme.typography.body.copy(
                             color = if (shouldAllowToPost) AmityTheme.colors.primary else AmityTheme.colors.primaryShade2
                         ),
@@ -978,7 +980,7 @@ fun AmityPostComposerPage(
                     decorationBox = { innerTextField ->
                         if (titleText.isEmpty()) {
                             Text(
-                                text = "Title (Optional)",
+                                text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_title_optional"),
                                 style = AmityTheme.typography.titleBold.copy(
                                     color = AmityTheme.colors.baseShade3,
                                     fontSize = 17.sp,
@@ -1002,51 +1004,61 @@ fun AmityPostComposerPage(
                 val aspect =
                     (options as AmityPostComposerOptions.AmityPostComposerCreateClipOptions).aspectRatio
                 Box(
-                    modifier = Modifier
-                        .padding(start = 16.dp, top = 16.dp)
-                        .height(142.dp)
-                        .width(80.dp)
-                        .clip(RoundedCornerShape(4.dp))
-                        .background(
-                            color = Color.Black,
-                            shape = RoundedCornerShape(4.dp)
-                        )
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center,
                 ) {
-                    AmityStoryVideoPlayer(
-                        exoPlayer = exoPlayer,
-                        isVisible = true,
-                        modifier = Modifier
-                            .aspectRatio(9f / 16f)
-                            .fillMaxSize()
-                            .clip(RoundedCornerShape(4.dp)),
-                        scaleMode = if (aspect == AmityClip.DisplayMode.FIT) AspectRatioFrameLayout.RESIZE_MODE_FIT else AspectRatioFrameLayout.RESIZE_MODE_ZOOM
-                    )
-
                     Box(
                         modifier = Modifier
-                            .align(Alignment.Center)
-                            .size(24.dp)
+                            .padding(start = 16.dp, top = 16.dp)
+                            .height(142.dp)
+                            .width(80.dp)
+                            .clip(RoundedCornerShape(4.dp))
                             .background(
-                                color = Color(0x88000000),
-                                shape = CircleShape
+                                color = Color.Black,
+                                shape = RoundedCornerShape(4.dp)
                             )
                     ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.amity_ic_play_v4),
-                            contentDescription = null,
+                        AmityStoryVideoPlayer(
+                            exoPlayer = exoPlayer,
+                            isVisible = true,
+                            modifier = Modifier
+                                .aspectRatio(9f / 16f)
+                                .fillMaxSize()
+                                .clip(RoundedCornerShape(4.dp)),
+                            scaleMode = if (aspect == AmityClip.DisplayMode.FIT) AspectRatioFrameLayout.RESIZE_MODE_FIT else AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+                        )
+
+                        Box(
                             modifier = Modifier
                                 .align(Alignment.Center)
-                        )
+                                .size(24.dp)
+                                .background(
+                                    color = Color(0x88000000),
+                                    shape = CircleShape
+                                )
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.amity_ic_play_v4),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .align(Alignment.Center)
+                            )
+                        }
                     }
                 }
             }
         } else if (isEditClipMode) {
             item {
-                AmityClipAttachmentElement(
-                    post = post,
-                    modifier = Modifier
-                        .padding(start = 16.dp, top = 16.dp)
-                )
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    AmityClipAttachmentElement(
+                        post = post,
+                        modifier = Modifier
+                            .padding(start = 16.dp, top = 16.dp)
+                    )
+                }
             }
         }
 
@@ -1059,7 +1071,7 @@ fun AmityPostComposerPage(
                             .padding(horizontal = 16.dp, vertical = 20.dp),
                         value = localPostText,
                         maxLines = 30,
-                        hintText = "What's on your mind?",
+                        hintText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_placeholder_whats_on_your_mind"),
                         mentionedUser = selectedUserToMention,
                         mentionedProduct = selectedProductToMention,
                         mentionMetadata = mentionGetter.getMentionedUsers(),
@@ -1070,7 +1082,7 @@ fun AmityPostComposerPage(
                         maxProductTags = AmityPostComposerPageViewModel.MAX_TOTAL_PRODUCT_TAGS,
                         onProductTagLimitReached = {
                             AmityUIKitSnackbar.publishSnackbarErrorMessage(
-                                message = "You can only tag up to ${AmityPostComposerPageViewModel.MAX_TOTAL_PRODUCT_TAGS} products per post."
+                                message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_product_tag_limit").format(AmityPostComposerPageViewModel.MAX_TOTAL_PRODUCT_TAGS)
                             )
                         },
                         textStyle = AmityTheme.typography.body.copy(
@@ -1170,13 +1182,15 @@ fun AmityPostComposerPage(
             }
         } else {
             item {
+                val captionPlaceholder = amitySocialString("amity_social_placeholder_clip_caption")
+                val textPostPlaceholder = amitySocialString("amity_social_placeholder_whats_on_your_mind")
                 AmityMentionTextField(
                     modifier = modifier
                         .fillMaxSize()
                         .padding(horizontal = 16.dp, vertical = 20.dp),
                     value = localPostText,
                     maxLines = 30,
-                    hintText = if (isCreateClipMode) "Add a caption..." else "What's on your mind?",
+                    hintText = if (isCreateClipMode) captionPlaceholder else textPostPlaceholder,
                     mentionedUser = selectedUserToMention,
                     mentionedProduct = selectedProductToMention,
                     mentionMetadata = mentionGetter.getMentionedUsers(),
@@ -1186,7 +1200,7 @@ fun AmityPostComposerPage(
                     maxProductTags = AmityPostComposerPageViewModel.MAX_TOTAL_PRODUCT_TAGS,
                     onProductTagLimitReached = {
                         AmityUIKitSnackbar.publishSnackbarErrorMessage(
-                            message = "You can only tag up to ${AmityPostComposerPageViewModel.MAX_TOTAL_PRODUCT_TAGS} products per post."
+                            message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_product_tag_limit").format(AmityPostComposerPageViewModel.MAX_TOTAL_PRODUCT_TAGS)
                         )
                     },
                     textStyle = AmityTheme.typography.body.copy(
@@ -1508,9 +1522,9 @@ fun AmityPostComposerPage(
     }
 
     AmityAlertDialog(
-        dialogTitle = "Maximum upload limit reached",
-        dialogText = "You've reached the upload limit of $limit $mediaType. Any additional $mediaType will not be saved.",
-        dismissText = "Close",
+        dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_title_max_upload_limit"),
+        dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_max_upload_limit_message").format(limit, mediaType, mediaType),
+        dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_close"),
     ) {
         showMaxUploadLimitReachedDialog = false
     }
@@ -1518,10 +1532,10 @@ fun AmityPostComposerPage(
 
     if (showDiscardPostDialog) {
         AmityAlertDialog(
-            dialogTitle = "Discard changes?",
-            dialogText = "Do you want to discard your changes to this post?",
-            confirmText = "Discard",
-            dismissText = "Keep editing",
+            dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_discard_changes_title"),
+            dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_title_discard_post"),
+            confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_discard"),
+            dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_keep_editing"),
             confirmTextColor = AmityTheme.colors.alert,
             dismissTextColor = AmityTheme.colors.primary,
             onConfirmation = {
@@ -1535,9 +1549,9 @@ fun AmityPostComposerPage(
 
     if (showLinkLimitDialog) {
         AmityAlertDialog(
-            dialogTitle = "Link limit reached",
-            dialogText = "You can only add link up to 100 links per post.",
-            dismissText = "OK",
+            dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_title_link_limit_reached"),
+            dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_link_limit"),
+            dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_ok"),
         ) {
             showLinkLimitDialog = false
         }
@@ -1545,10 +1559,10 @@ fun AmityPostComposerPage(
 
     if (showProductCatalogueDisabledDialog) {
         AmityAlertDialog(
-            dialogTitle = "Unable to tag products",
-            dialogText = "Product tagging is currently not available. Would you like to publish this post without tagging any products?",
-            confirmText = "Publish",
-            dismissText = "Review post",
+            dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_product_tagging_unavailable_title"),
+            dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_product_tagging_unavailable_description"),
+            confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_publish"),
+            dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_review_post"),
             confirmTextColor = AmityTheme.colors.primary,
             dismissTextColor = AmityTheme.colors.baseShade1,
             onConfirmation = {
@@ -1573,9 +1587,9 @@ fun AmityPostComposerPage(
 
     if (showProductLimitDialog) {
         AmityAlertDialog(
-            dialogTitle = "Product tag limit reached",
-            dialogText = "You can only tag up to 20 products per post.",
-            dismissText = "OK",
+            dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_title_product_tag_limit_reached"),
+            dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_product_tag_limit"),
+            dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_ok"),
             onDismissRequest = { showProductLimitDialog = false }
         )
     }
@@ -1583,7 +1597,7 @@ fun AmityPostComposerPage(
     if (showProductSelectionDialog && selectedMediaForTagging != null) {
         val mediaId = selectedMediaForTagging?.id ?: ""
         val existingTags = viewModel.getProductTagsForMedia(mediaId)
-        val savedLabel = stringResource(R.string.amity_v4_product_already_tagged)
+        val savedLabel = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_product_already_tagged")
         // Products tagged elsewhere (text mentions + other media) — shown as "Already tagged"
         val existingTagIds = existingTags.map { it.getProductId() }.toSet()
         val otherTaggedProducts = (currentTextProductTags + currentMediaProductTags.values.flatten())
@@ -1619,7 +1633,7 @@ fun AmityPostComposerPage(
                 selectedProductTags = existingTags,
                 savedProducts = otherTaggedProducts,
                 savedProductsLabel = savedLabel,
-                title = "Tag products",
+                title = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_tag_products"),
                 maxSelection = remainingSlots,
                 instanceKey = "media_$mediaId", // Unique key per media
                 onClose = {
@@ -1634,7 +1648,7 @@ fun AmityPostComposerPage(
                     showProductSelectionDialog = false
                     selectedMediaForTagging = null
                     hasUnsavedProductTagChanges = false
-                    getPageScope().showSnackbar("Product tags have been added")
+                    getPageScope().showSnackbar(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_product_tags_added"))
                 },
                 onProductToggled = {
                     hasUnsavedProductTagChanges = true
@@ -1649,10 +1663,10 @@ fun AmityPostComposerPage(
     // Discard product tag dialog (rendered outside ModalBottomSheet)
     if (showProductDiscardConfirmationDialog) {
         AmityAlertDialog(
-            dialogTitle = "Discard product tags",
-            dialogText = "You have tagged products that haven't been saved yet. If you leave now, your changes will be lost.",
-            confirmText = "Discard",
-            dismissText = "Keep editing",
+            dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_title_discard_product_tags"),
+            dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_unsaved_tagged_products"),
+            confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_discard"),
+            dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_keep_editing"),
             confirmTextColor = AmityTheme.colors.alert,
             dismissTextColor = AmityTheme.colors.primary,
             onDismissRequest = {
@@ -1682,9 +1696,9 @@ fun AmityPostComposerPage(
 
     if (showPendingPostDialog) {
         AmityAlertDialog(
-            dialogTitle = "Posts sent for review",
-            dialogText = "Your post has been submitted to the pending list. It will be published once approved by the community moderator.",
-            dismissText = "OK",
+            dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_title_posts_sent_for_review"),
+            dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_post_pending_approval"),
+            dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_ok"),
         ) {
             showPendingPostDialog = false
             context.closePageWithResult(Activity.RESULT_OK)

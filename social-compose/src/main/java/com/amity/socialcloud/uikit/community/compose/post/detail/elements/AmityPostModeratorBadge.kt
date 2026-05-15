@@ -22,6 +22,7 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getText
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialConfigString
 
 @Composable
 fun AmityPostModeratorBadge(
@@ -50,7 +51,7 @@ fun AmityPostModeratorBadge(
                 tint = AmityTheme.colors.primary,
             )
             Text(
-                text = getConfig().getText(),
+                text = amitySocialConfigString("amity_common_button_moderator"),
                 style = TextStyle(
                     fontSize = 10.sp,
                     lineHeight = 18.sp,

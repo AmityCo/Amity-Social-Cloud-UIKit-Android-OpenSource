@@ -59,6 +59,7 @@ import com.amity.socialcloud.uikit.common.utils.isSignedIn
 import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipFeedPageType
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityModalSheetUIState
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageBehavior
@@ -282,14 +283,14 @@ fun AmityCommunityProfilePage(
     LaunchedEffect(isCommunityJustCreated) {
         isShowCompleteCreatedCommunity = isCommunityJustCreated
         if (isShowCompleteCreatedCommunity) {
-            AmityUIKitSnackbar.publishSnackbarMessage(context.getString(R.string.amity_v4_community_setup_toast_create_success))
+            AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_community_setup_toast_create_success"))
         }
         delay(200L)
         isShowCompleteCreatedCommunity = false
     }
 
     var selectedMediaTabIndex by remember { mutableIntStateOf(0) }
-    val mediaTabTitles = listOf("Photos", "Videos", "Clips")
+    val mediaTabTitles = listOf(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_tab_tab_photos"), DefaultAmitySocialStringProvider.getInstance().getString("amity_social_tab_tab_videos"), DefaultAmitySocialStringProvider.getInstance().getString("amity_social_tab_tab_clips"))
 
     AmityBasePage(pageId = "community_profile_page") {
         Scaffold { padding ->

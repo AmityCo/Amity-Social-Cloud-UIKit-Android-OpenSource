@@ -24,7 +24,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
@@ -41,6 +40,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityPagingLoadingItem
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.isSignedIn
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import com.amity.socialcloud.uikit.community.compose.comment.create.AmityCommentComposerBar
 import com.amity.socialcloud.uikit.community.compose.comment.elements.AmityDisabledCommentView
 import com.amity.socialcloud.uikit.community.compose.comment.query.elements.AmityCommentItemShimmer
@@ -57,7 +57,6 @@ fun AmityCommentTrayComponent(
     includeDeleted : Boolean = true,
     fromNonMemberCommunity: Boolean = false,
 ) {
-    val context = LocalContext.current
     val focusManager = LocalFocusManager.current
 
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
@@ -109,7 +108,7 @@ fun AmityCommentTrayComponent(
             Column(modifier = modifier.fillMaxWidth()) {
                 if (referenceType == AmityCommentReferenceType.STORY || referenceType == AmityCommentReferenceType.POST) {
                     Text(
-                        text = context.getString(R.string.amity_comments),
+                        text = amitySocialString("amity_social_button_comments"),
                         style = AmityTheme.typography.titleLegacy,
                         modifier = modifier
                             .fillMaxWidth()
@@ -139,7 +138,7 @@ fun AmityCommentTrayComponent(
                         AmityCommentTrayComponentViewModel.CommentListState.EMPTY -> {
                             item {
                                 AmityPagingEmptyItem(
-                                    text = "No comments yet",
+                                    text = amitySocialString("amity_social_empty_state_no_comments_yet"),
                                     modifier = Modifier.testTag("comment_tray_component/empty_text_view")
                                 )
                             }

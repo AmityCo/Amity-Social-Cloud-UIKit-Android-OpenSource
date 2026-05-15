@@ -32,6 +32,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityMenuButton
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityImageFeedContainer(
@@ -112,7 +113,7 @@ private fun ImageNotAvailableDialog(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "This photo is no longer available.",
+                    text = amitySocialString("amity_social_label_this_photo_is_no_longer_available"),
                     style = TextStyle(
                         fontSize = 15.sp,
                         lineHeight = 20.sp,

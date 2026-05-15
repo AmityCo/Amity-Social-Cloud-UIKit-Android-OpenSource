@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.target.event
 
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialConfigString
 import android.app.Activity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -82,7 +83,7 @@ fun AmityEventTargetSelectionPage(
                     elementId = "title"
                 ) {
                     Text(
-                        text = getConfig().getText(),
+                        text = amitySocialConfigString("amity_social_label_select_event_target_title"),
                         style = AmityTheme.typography.titleLegacy,
                         modifier = modifier
                             .align(Alignment.Center)

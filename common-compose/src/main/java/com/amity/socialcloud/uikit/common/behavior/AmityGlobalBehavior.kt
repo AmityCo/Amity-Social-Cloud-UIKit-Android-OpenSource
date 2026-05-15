@@ -5,6 +5,7 @@ import androidx.activity.result.ActivityResultLauncher
 import com.amity.socialcloud.sdk.model.core.product.AmityProduct
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
+import com.amity.socialcloud.uikit.common.localization.DefaultAmityCommonStringProvider
 
 
 
@@ -17,15 +18,21 @@ open class AmityGlobalBehavior : AmityBaseBehavior()  {
     ) : AmityBaseBehaviorContext(pageContext, activityLauncher)
 
     open fun handleVisitorUserAction() {
-        AmityUIKitSnackbar.publishSnackbarMessage("Create an account or sign in to continue.")
+        AmityUIKitSnackbar.publishSnackbarMessage(
+            DefaultAmityCommonStringProvider.getInstance().getString("amity_common_label_sign_in_to_continue")
+        )
     }
 
     open fun handleNonMemberAction() {
-        AmityUIKitSnackbar.publishSnackbarMessage("Join community to interact.")
+        AmityUIKitSnackbar.publishSnackbarMessage(
+            DefaultAmityCommonStringProvider.getInstance().getString("amity_common_label_join_community_to_interact")
+        )
     }
 
     open fun handleNonFollowerAction() {
-        AmityUIKitSnackbar.publishSnackbarMessage("Follow user to interact.")
+        AmityUIKitSnackbar.publishSnackbarMessage(
+            DefaultAmityCommonStringProvider.getInstance().getString("amity_common_label_follow_user_to_interact")
+        )
     }
 
     open fun onPostProductTagClick(context: AmityGlobalBehavior.Context): Boolean {

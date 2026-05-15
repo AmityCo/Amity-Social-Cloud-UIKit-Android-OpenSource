@@ -15,6 +15,10 @@ fun JsonObject.getValue(name: String): String {
     return get(name)?.asString ?: ""
 }
 
+fun JsonObject.resolveValue(name: String, fallback: String): String {
+    return get(name)?.asString ?: fallback
+}
+
 fun JsonObject.getValueAsList(name: String): List<String> {
     return get(name)?.asJsonArray?.map { it.asString } ?: emptyList()
 }

@@ -29,7 +29,6 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -39,6 +38,7 @@ import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.livestream.create.element.AmityNoOutlineTextField
 import kotlinx.coroutines.delay
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityReportOtherReasonScreen(
@@ -86,7 +86,7 @@ fun AmityReportOtherReasonScreen(
             )
 
             Text(
-                text = "Others",
+                text = amitySocialString("amity_social_button_others"),
                 style = AmityTheme.typography.titleBold,
                 modifier = Modifier.align(Alignment.Center),
                 color = AmityTheme.colors.base
@@ -126,13 +126,13 @@ fun AmityReportOtherReasonScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = stringResource(R.string.amity_report_other_reason_desc),
+                    text = amitySocialString("amity_social_label_report_other_reason_desc"),
                     style = AmityTheme.typography.titleBold,
                     color = AmityTheme.colors.base
                 )
                 Spacer(modifier.width(4.dp))
                 Text(
-                    text = stringResource(R.string.amity_report_other_reason_optional),
+                    text = amitySocialString("amity_social_button_report_other_reason_optional"),
                     style = AmityTheme.typography.caption,
                     color = AmityTheme.colors.baseShade3
                 )
@@ -157,7 +157,7 @@ fun AmityReportOtherReasonScreen(
                     .focusRequester(focusRequester),
                 placeHolder = {
                     Text(
-                        text = stringResource(R.string.amity_report_text_placeholder),
+                        text = amitySocialString("amity_social_placeholder_report_text_placeholder"),
                         color = AmityTheme.colors.baseShade3,
                         style = AmityTheme.typography.body
                     )
@@ -200,7 +200,7 @@ fun AmityReportOtherReasonScreen(
             ),
         ) {
             Text(
-                text = stringResource(R.string.amity_report_submit_button),
+                text = amitySocialString("amity_social_button_report_submit_button"),
                 style = AmityTheme.typography.bodyBold,
                 color = Color.White
             )

@@ -30,6 +30,7 @@ import com.amity.socialcloud.uikit.common.utils.asColorList
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.getValueAsList
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import com.amity.socialcloud.uikit.community.compose.story.target.utils.AmityStoryTargetRingUiState
 
 @Composable
@@ -69,7 +70,7 @@ fun AmityStoryTargetElement(
         }
 
         val displayName = if (isCommunityTarget) {
-            "Story"
+            amitySocialString("amity_social_button_story")
         } else {
             community?.getDisplayName()?.trim() ?: ""
         }

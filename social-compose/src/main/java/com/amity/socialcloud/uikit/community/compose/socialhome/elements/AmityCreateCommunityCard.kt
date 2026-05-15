@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.socialhome.elements
 
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialConfigString
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -68,7 +69,7 @@ fun AmityCreateCommunityCard(
                 ) {
                     Icon(
                         painter = painterResource(id = getConfig().getIcon()),
-                        contentDescription = "Create community",
+                        contentDescription = amitySocialConfigString("amity_social_button_setup_create_button"),
                         tint = AmityTheme.colors.base,
                         modifier = Modifier.size(24.dp)
                     )
@@ -82,7 +83,7 @@ fun AmityCreateCommunityCard(
                 elementId = "create_community_text"
             ) {
                 Text(
-                    text = getConfig().getText(),
+                    text = amitySocialConfigString("amity_social_button_setup_create_button"),
                     style = AmityTheme.typography.bodyLegacy.copy(
                         fontWeight = FontWeight.SemiBold
                     ),

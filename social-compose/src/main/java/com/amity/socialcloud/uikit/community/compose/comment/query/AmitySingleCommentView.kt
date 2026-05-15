@@ -50,6 +50,7 @@ import com.amity.socialcloud.uikit.community.compose.comment.query.elements.Thre
 import com.amity.socialcloud.uikit.community.compose.comment.query.elements.threadLineConnector
 import com.amity.socialcloud.uikit.community.compose.comment.query.elements.trackAvatarBottom
 import io.reactivex.rxjava3.schedulers.Schedulers
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import kotlin.math.max
 
 @Composable
@@ -318,9 +319,9 @@ fun AmitySingleCommentView(
     if (showDeleteBannedWordCommentDialog) {
         AmityAlertDialog(
             dialogTitle = "",
-            dialogText = "Your comment was not post",
-            confirmText = "Delete",
-            dismissText = "Cancel",
+            dialogText = amitySocialString("amity_social_button_add_blocked_words_comment_error_message"),
+            confirmText = amitySocialString("amity_social_button_delete"),
+            dismissText = amitySocialString("amity_social_button_cancel"),
             confirmTextColor = AmityTheme.colors.alert,
             dismissTextColor = AmityTheme.colors.highlight,
             onConfirmation = {

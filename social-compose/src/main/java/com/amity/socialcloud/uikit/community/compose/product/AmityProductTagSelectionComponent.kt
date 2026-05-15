@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.product
 
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -91,7 +92,7 @@ import com.amity.socialcloud.uikit.community.compose.product.AmityProductSelecti
 @Composable
 fun AmityProductTagSelectionComponent(
     modifier: Modifier = Modifier,
-    title: String = "Tag products",
+    title: String? = null,
     selectedProductTags: List<AmityProduct>,
     maxSelection: Int = 5,
     pageScope: AmityComposePageScope? = null,
@@ -111,6 +112,7 @@ fun AmityProductTagSelectionComponent(
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
     }
+    val resolvedTitle = title ?: amitySocialString("amity_social_button_tag_products")
     val viewModel = viewModel<AmityProductSelectionViewModel>(
         viewModelStoreOwner = viewModelStoreOwner,
         key = "amity_product_selection_viewmodel_${maxSelection}_${instanceKey}",
@@ -166,8 +168,8 @@ fun AmityProductTagSelectionComponent(
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
                 AmityProductSelectionTopBar(
-                    title = title,
-                    actionText = "Done",
+                    title = resolvedTitle,
+                    actionText = amitySocialString("amity_social_button_done"),
                     subtitle = "${uiState.selectedProducts.size}/${uiState.maxSelection}",
                     onClose = {
                         if (hasUnsavedChanges) {
@@ -212,7 +214,7 @@ fun AmityProductTagSelectionComponent(
                 }
 
                 AmitySearchBarView(
-                    hint = "Search by product name",
+                    hint = amitySocialString("amity_social_placeholder_search_product_hint"),
                     requestFocus = requestFocus,
                     onSearch = {
                         viewModel.onKeywordChange(it)
@@ -266,14 +268,14 @@ fun AmityProductTagSelectionComponent(
                         AmityProductSelectionEmptyOverlay(
                             theme = theme,
                             modifier = Modifier.fillMaxSize(),
-                            message = "Start typing to search for products",
+                            message = amitySocialString("amity_social_label_start_typing_to_search"),
                         )
                     } else if (showNoResults) {
                         AmityProductSelectionEmptyOverlay(
                             theme = theme,
                             modifier = Modifier.fillMaxSize(),
                             iconRes = R.drawable.amity_ic_no_search_result,
-                            message = "No results found",
+                            message = amitySocialString("amity_social_label_no_results_found"),
                         )
                     }
                 }
@@ -281,7 +283,7 @@ fun AmityProductTagSelectionComponent(
                 if (showBottomBar) {
                     AmityProductSelectionBottomBar(
                         enabled = uiState.selectedProducts.isNotEmpty(),
-                        buttonText = "Add products",
+                        buttonText = amitySocialString("amity_social_button_add_products"),
                         onClick = { onDone(uiState.selectedProducts) },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -295,10 +297,10 @@ fun AmityProductTagSelectionComponent(
         // Discard confirmation dialog
         if (showDiscardDialog && onDiscardRequest == null) {
             AmityAlertDialog(
-                dialogTitle = "Discard product tags",
-                dialogText = discardConfirmationMessage ?: "You have tagged products that haven't been saved yet. If you leave now, your changes will be lost.",
-                confirmText = "Discard",
-                dismissText = "Keep editing",
+                dialogTitle = amitySocialString("amity_social_modal_dialog_title_discard_product_tags"),
+                dialogText = discardConfirmationMessage ?: amitySocialString("amity_social_modal_dialog_discard_post"),
+                confirmText = amitySocialString("amity_social_button_discard"),
+                dismissText = amitySocialString("amity_social_button_cancel"),
                 confirmTextColor = AmityTheme.colors.alert,
                 dismissTextColor = AmityTheme.colors.primary,
                 onConfirmation = {
@@ -314,7 +316,7 @@ fun AmityProductTagSelectionComponent(
 
 
         if (!isNetworkConnected) {
-            getComponentScope().showProgressSnackbar("Waiting for network...")
+            getComponentScope().showProgressSnackbar(amitySocialString("amity_social_toast_waiting_network_toast"))
         } else {
             getComponentScope().dismissSnackbar()
         }
@@ -399,7 +401,7 @@ private fun AmityTaggedProductsSection(
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
-            text = "Tagged products",
+            text = amitySocialString("amity_social_button_tagged_products"),
             style = AmityTheme.typography.bodyBold.copy(
                 color = theme?.baseColor?.asColor() ?: AmityTheme.colors.base
             ),
@@ -490,7 +492,7 @@ private fun AmityProductTagSelectedItemElement(
             ) {
                 Icon(
                     painter = painterResource(R.drawable.amity_ic_close),
-                    contentDescription = "Remove",
+                    contentDescription = amitySocialString("amity_social_modal_alert_remove_button"),
                     tint = Color.White,
                     modifier = Modifier
                         .size(10.dp)

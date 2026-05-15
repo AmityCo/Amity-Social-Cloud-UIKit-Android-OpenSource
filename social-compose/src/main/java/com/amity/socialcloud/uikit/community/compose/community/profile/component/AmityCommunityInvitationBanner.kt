@@ -21,7 +21,6 @@ import androidx.compose.runtime.rxjava3.subscribeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -42,6 +41,7 @@ import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfileViewModel
 import com.amity.socialcloud.uikit.community.compose.common.DeclineInvitationDialog
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityCommunityInvitationBanner(
@@ -66,11 +66,11 @@ fun AmityCommunityInvitationBanner(
     val communityName =
         (invitation.getTarget() as? AmityInvitation.Target.Community)?.community?.getDisplayName()
             ?: "the community"
-    val acceptSuccessMessage = stringResource(R.string.amity_v4_community_invitation_accept_success, communityName)
-    val rejectSuccessMessage = stringResource(R.string.amity_v4_community_invitation_reject_success)
-    val errorAcceptMessage = stringResource(R.string.amity_v4_community_invitation_fail_to_accept)
-    val errorRejectMessage = stringResource(R.string.amity_v4_community_invitation_fail_to_reject)
-    val errorUnavailableMessage = stringResource(R.string.amity_v4_community_invitation_unavailable_error)
+    val acceptSuccessMessage = amitySocialString("amity_social_label_community_invitation_accept_success", communityName)
+    val rejectSuccessMessage = amitySocialString("amity_social_toast_snackbar_invitation_declined")
+    val errorAcceptMessage = amitySocialString("amity_social_toast_accept_invitation_failed")
+    val errorRejectMessage = amitySocialString("amity_social_toast_decline_invitation_failed")
+    val errorUnavailableMessage = amitySocialString("amity_social_label_invitation_unavailable")
 
     val requiresJoinApproval = (invitation.getTarget() as? AmityInvitation.Target.Community)?.community?.requiresJoinApproval() ?: false
     val showDeclineDialog = remember { mutableStateOf(false) }
@@ -137,7 +137,7 @@ fun AmityCommunityInvitationBanner(
                         )
                         Text(
                             text = "${
-                                invitation.getInviterUser()?.getDisplayName() ?: "Unknown User"
+                                invitation.getInviterUser()?.getDisplayName() ?: amitySocialString("amity_social_button_unknown_user")
                             } invited you.",
                             style = AmityTheme.typography.bodyBold,
                             fontSize = 15.sp,
@@ -182,7 +182,7 @@ fun AmityCommunityInvitationBanner(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Join",
+                            text = amitySocialString("amity_social_button_community_invitation_accept_button"),
                             style = AmityTheme.typography.bodyBold,
                             color = Color.White,
                         )
@@ -208,7 +208,7 @@ fun AmityCommunityInvitationBanner(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Decline",
+                            text = amitySocialString("amity_social_button_decline"),
                             style = AmityTheme.typography.bodyBold,
                             color = AmityTheme.colors.baseShade1,
                         )

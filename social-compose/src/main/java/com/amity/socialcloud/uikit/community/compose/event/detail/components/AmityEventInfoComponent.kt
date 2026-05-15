@@ -38,6 +38,7 @@ import com.google.gson.JsonObject
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityChildRoomPostElement
 import org.joda.time.DateTime
 import org.joda.time.Minutes
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 private fun CopyButton(
@@ -72,7 +73,7 @@ private fun CopyButton(
                 .padding(end = 8.dp)
         )
         Text(
-            text = "Copy",
+            text = amitySocialString("amity_social_button_copy"),
             style = AmityTheme.typography.body.copy(
                 fontWeight = FontWeight.SemiBold
             ),
@@ -99,7 +100,7 @@ fun AmityEventInfoComponent(
     ) {
         // About the event section
         Text(
-            text = "About the event",
+            text = amitySocialString("amity_social_label_about_the_event"),
             style = AmityTheme.typography.title.copy(
                 fontWeight = FontWeight.Bold,
                 fontSize = 17.sp
@@ -126,7 +127,7 @@ fun AmityEventInfoComponent(
         // Event address section (only for in-person events)
         if (event.getType() == AmityEventType.IN_PERSON) {
             Text(
-                text = "Location",
+                text = amitySocialString("amity_social_button_location"),
                 style = AmityTheme.typography.title.copy(
                     fontWeight = FontWeight.Bold,
                     fontSize = 17.sp
@@ -147,7 +148,7 @@ fun AmityEventInfoComponent(
             
             // Copy button
             CopyButton(
-                text = "Address copied.",
+                text = amitySocialString("amity_social_button_address_copied"),
                 onCopy = {
                     event.getLocation()?.let { location ->
                         clipboardManager.setText(AnnotatedString(location.toString()))
@@ -164,7 +165,7 @@ fun AmityEventInfoComponent(
             if (isExternalLink) {
                 // Show Event link section with copy button
                 Text(
-                    text = "Event link",
+                    text = amitySocialString("amity_social_placeholder_event_link_hint"),
                     style = AmityTheme.typography.title.copy(
                         fontWeight = FontWeight.Bold,
                     ),
@@ -184,7 +185,7 @@ fun AmityEventInfoComponent(
                 
                 // Copy button
                 CopyButton(
-                    text = "Link copied.",
+                    text = amitySocialString("amity_social_button_link_copied"),
                     onCopy = {
                         clipboardManager.setText(AnnotatedString(event.getExternalUrl()!!))
                         onLinkCopied()
@@ -203,7 +204,7 @@ fun AmityEventInfoComponent(
                 val shouldShowDescription = minutesUntilStart > 15
                 
                 Text(
-                    text = "Live stream",
+                    text = amitySocialString("amity_social_status_live_stream"),
                     style = AmityTheme.typography.title.copy(
                         fontWeight = FontWeight.Bold,
                         fontSize = 17.sp
@@ -215,7 +216,7 @@ fun AmityEventInfoComponent(
                 // Live stream description - only show if more than 15 minutes before event
                 if (shouldShowDescription) {
                     Text(
-                        text = "You can start setting up live 15 minutes before the event starts.",
+                        text = amitySocialString("amity_social_status_you_can_start_setting_up_live_15_minutes_before_the_eve"),
                         style = AmityTheme.typography.body,
                         color = AmityTheme.colors.baseShade1,
                         modifier = Modifier.padding(bottom = 16.dp)
@@ -270,7 +271,7 @@ fun AmityEventInfoComponent(
                                 .padding(horizontal = 8.dp, vertical = 4.dp)
                         ) {
                             Text(
-                                text = "UPCOMING LIVE",
+                                text = amitySocialString("amity_social_status_upcoming_live"),
                                 style = AmityTheme.typography.caption.copy(
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 11.sp

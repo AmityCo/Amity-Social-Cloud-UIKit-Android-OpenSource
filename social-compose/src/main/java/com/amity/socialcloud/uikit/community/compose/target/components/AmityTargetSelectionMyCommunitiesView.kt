@@ -39,6 +39,7 @@ import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.community.compose.target.AmityTargetSelectionPageViewModel
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityCommunityTargetListShimmer
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 
 @Composable
@@ -64,7 +65,7 @@ fun AmityTargetSelectionMyCommunitiesView(
     // Only show "My Communities" text if there are communities or still loading
     if (communities.loadState.refresh is LoadState.Loading || communities.itemCount > 0) {
         Text(
-            text = "My Communities",
+            text = amitySocialString("amity_social_button_my_communities"),
             style = AmityTheme.typography.bodyLegacy.copy(
                 color = AmityTheme.colors.base.copy(alpha = 0.4f),
             ),
@@ -101,7 +102,7 @@ fun AmityTargetSelectionMyCommunitiesView(
                         Spacer(modifier = modifier.height(4.dp))
                         
                         Text(
-                            text = "You haven't joined any communities yet.",
+                            text = amitySocialString("amity_social_label_you_havent_joined_any_communities_yet"),
                             style = AmityTheme.typography.titleBold,
                             color = AmityTheme.colors.baseShade3,
                             textAlign = TextAlign.Center

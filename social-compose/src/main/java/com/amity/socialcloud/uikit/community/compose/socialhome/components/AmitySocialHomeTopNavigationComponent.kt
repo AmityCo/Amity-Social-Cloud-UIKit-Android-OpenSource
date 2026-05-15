@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.socialhome.components
 
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialConfigString
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -70,7 +71,7 @@ fun AmitySocialHomeTopNavigationComponent(
                 elementId = "header_label"
             ) {
                 Text(
-                    text = getConfig().getText(),
+                    text = amitySocialConfigString("amity_social_label_social_home_header_label"),
                     style = AmityTheme.typography.captionLegacy.copy(
                         fontSize = 20.sp,
                     ),

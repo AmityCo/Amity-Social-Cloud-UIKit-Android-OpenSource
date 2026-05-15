@@ -38,6 +38,7 @@ import com.amity.socialcloud.uikit.community.compose.community.setting.notificat
 import com.amity.socialcloud.uikit.community.compose.community.setting.notifications.AmityCommunityNotificationSettingPageViewModel
 import com.amity.socialcloud.uikit.community.compose.community.setting.notifications.elements.AmityCommunityNotificationSettingMenuItem
 import com.amity.socialcloud.uikit.community.compose.community.setting.notifications.getSettingDataType
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 
 @Composable
 fun AmityCommunityStoriesNotificationSettingPage(
@@ -102,13 +103,13 @@ fun AmityCommunityStoriesNotificationSettingPage(
                 .windowInsetsPadding(WindowInsets.safeDrawing)
         ) {
             AmityToolBar(
-                title = "Stories",
+                title = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_title_stories"),
                 onBackClick = {
                     showLeaveConfirmDialog = true
                 }
             ) {
                 Text(
-                    text = "Save",
+                    text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_edit_user_save_button"),
                     style = AmityTheme.typography.bodyLegacy.copy(
                         color = if (shouldAllowToSave) AmityTheme.colors.highlight
                         else AmityTheme.colors.highlight.shade(AmityColorShade.SHADE2),
@@ -122,11 +123,11 @@ fun AmityCommunityStoriesNotificationSettingPage(
                             storyCommentSetting = storyCommentSetting,
                             storyCommentDefaultSetting = storyCommentDefaultSetting,
                             onSuccess = {
-                                AmityUIKitSnackbar.publishSnackbarMessage("Successfully updated community profile!")
+                                AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_community_profile_updated"))
                                 context.closePage()
                             },
                             onError = {
-                                AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to update community profile")
+                                AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_community_profile_update_failed"))
                             }
                         )
                     }
@@ -141,8 +142,8 @@ fun AmityCommunityStoriesNotificationSettingPage(
                     newStoryDefaultSetting = setting.getSettingDataType()
 
                     AmityCommunityNotificationSettingMenuItem(
-                        title = "New stories",
-                        description = "Receive notifications when someone creates a new story in this community.",
+                        title = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_title_new_stories"),
+                        description = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_notification_notif_new_story"),
                         selectedSetting = newStorySetting
                     ) {
                         newStorySetting = it
@@ -168,8 +169,8 @@ fun AmityCommunityStoriesNotificationSettingPage(
                     reactStoryDefaultSetting = setting.getSettingDataType()
 
                     AmityCommunityNotificationSettingMenuItem(
-                        title = "Story reactions",
-                        description = "Receive notifications when someone reacts to your story in this community.",
+                        title = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_title_story_reactions"),
+                        description = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_notif_story_reaction"),
                         selectedSetting = reactStorySetting
                     ) {
                         reactStorySetting = it
@@ -195,8 +196,8 @@ fun AmityCommunityStoriesNotificationSettingPage(
                     storyCommentDefaultSetting = setting.getSettingDataType()
 
                     AmityCommunityNotificationSettingMenuItem(
-                        title = "Story comments",
-                        description = "Receive notifications when someone comments to your story in this community.",
+                        title = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_title_story_comments"),
+                        description = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_notification_notif_story_comment"),
                         selectedSetting = storyCommentSetting
                     ) {
                         storyCommentSetting = it
@@ -209,10 +210,10 @@ fun AmityCommunityStoriesNotificationSettingPage(
         if (showLeaveConfirmDialog) {
             if (shouldAllowToSave) {
                 AmityAlertDialog(
-                    dialogTitle = context.amityStringResource(id = R.string.amity_v4_community_dialog_leave_title),
-                    dialogText = context.amityStringResource(id = R.string.amity_v4_community_dialog_leave_description),
-                    confirmText = context.getString(R.string.amity_v4_dialog_leave_button),
-                    dismissText = context.getString(R.string.amity_v4_dialog_cancel_button),
+                    dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_community_dialog_leave_title"),
+                    dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_community_dialog_leave_description"),
+                    confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_leave_button"),
+                    dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_cancel_button"),
                     confirmTextColor = AmityTheme.colors.alert,
                     onConfirmation = {
                         context.closePage()

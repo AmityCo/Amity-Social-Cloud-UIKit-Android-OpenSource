@@ -21,6 +21,9 @@ allprojects {
 }
 
 apply from: "buildsystem/dependencies.gradle"
+apply from: "buildscripts/checkLocalizationBypass.gradle"
+apply from: "buildscripts/checkHardcodedStrings.gradle"
+apply from: "buildscripts/checkMissingTranslations.gradle"
 
 tasks.register('clean', Delete) {
     delete rootProject.buildDir

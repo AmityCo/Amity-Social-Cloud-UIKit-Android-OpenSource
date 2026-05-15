@@ -17,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -25,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityDeletedCommentView(
@@ -32,7 +32,6 @@ fun AmityDeletedCommentView(
     isReplyComment: Boolean,
     replyCount: Int? = null,
 ) {
-    val context = LocalContext.current
     if (isReplyComment) {
         Box(
             modifier = modifier
@@ -65,7 +64,7 @@ fun AmityDeletedCommentView(
                     modifier = modifier.size(16.dp)
                 )
                 Text(
-                    text = context.getString(R.string.amity_reply_deleted_message),
+                    text = amitySocialString("amity_social_button_reply_deleted_message"),
                     style = AmityTheme.typography.captionLegacy.copy(
                         fontWeight = FontWeight.Normal,
                         color = AmityTheme.colors.baseShade2,
@@ -93,7 +92,7 @@ fun AmityDeletedCommentView(
                     modifier = modifier.size(16.dp)
                 )
                 Text(
-                    text = context.getString(R.string.amity_comment_deleted_message),
+                    text = amitySocialString("amity_social_button_comment_deleted_message"),
                     style = AmityTheme.typography.captionLegacy.copy(
                         fontWeight = FontWeight.Normal,
                         color = AmityTheme.colors.baseShade2,

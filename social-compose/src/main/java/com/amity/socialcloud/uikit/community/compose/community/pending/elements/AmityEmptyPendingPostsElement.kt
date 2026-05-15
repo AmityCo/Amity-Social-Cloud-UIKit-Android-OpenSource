@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 
 @Composable
@@ -41,7 +42,7 @@ fun AmityEmptyPendingPostsElement(
                 modifier = Modifier.size(60.dp)
             )
             Text(
-                text = title?: "No pending posts",
+                text = title?: amitySocialString("amity_social_label_no_pending_posts"),
                 style = AmityTheme.typography.titleLegacy.copy(
                     color = AmityTheme.colors.baseShade3,
                 )

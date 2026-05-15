@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityPollPostTypeSelectionBottomSheet(
@@ -49,7 +50,7 @@ fun AmityPollPostTypeSelectionBottomSheet(
             .background(Color.White)
     ) {
         Text(
-            text = "Choose poll type",
+            text = amitySocialString("amity_social_label_choose_poll_type"),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 12.dp),
@@ -102,7 +103,7 @@ fun AmityPollPostTypeSelectionBottomSheet(
             )
         ) {
             Text(
-                text = "Next",
+                text = amitySocialString("amity_social_button_next"),
                 style = AmityTheme.typography.bodyBold,
                 color = Color.White,
                 textAlign = TextAlign.Center
@@ -163,7 +164,7 @@ fun AmityPollSelectionItem(
         Spacer(Modifier.weight(1f))
 
         Text(
-            text = if (type == "text") "Text-only poll" else "Image poll",
+            text = if (type == "text") amitySocialString("amity_social_button_text_only_poll") else amitySocialString("amity_social_button_image_poll"),
             modifier = Modifier,
             style = AmityTheme.typography.bodyBold,
             color = if (isSelected) Color(0xFF292B32) else AmityTheme.colors.baseShade1,

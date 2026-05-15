@@ -39,6 +39,7 @@ import com.amity.socialcloud.uikit.community.compose.community.bycategory.AmityC
 import com.amity.socialcloud.uikit.community.compose.community.category.AmityAllCategoriesPageActivity
 import com.amity.socialcloud.uikit.community.compose.community.category.element.AmityCommunityCategoryElement
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityExploreCategoryShimmer
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityCommunityCategoriesComponent(
@@ -133,7 +134,7 @@ fun AmityCommunityCategoriesComponent(
                                         )
 
                                         Text(
-                                            text = "See more",
+                                            text = amitySocialString("amity_social_button_see_more"),
                                             style = AmityTheme.typography.bodyLegacy.copy(fontWeight = FontWeight.SemiBold)
                                         )
                                         Spacer(modifier.width(4.dp))

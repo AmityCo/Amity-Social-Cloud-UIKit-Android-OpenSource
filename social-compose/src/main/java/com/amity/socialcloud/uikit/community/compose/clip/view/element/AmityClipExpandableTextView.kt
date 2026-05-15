@@ -26,6 +26,7 @@ import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionee
 import com.amity.socialcloud.uikit.common.extionsions.extractUrls
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import com.google.gson.JsonObject
 
 @Composable
@@ -38,6 +39,7 @@ fun AmityClipExpandableText(
     style: TextStyle = AmityTheme.typography.body.copy(color = Color.White),
     previewLines: Int = 8,
     intialExpand: Boolean = false,
+    readMoreText: String = amitySocialString("amity_social_button_see_more"),
     onClick: () -> Unit = {},
     seeMoreClick: () -> Unit = {},
     onMentionedUserClick: (String) -> Unit = {},
@@ -55,12 +57,13 @@ fun AmityClipExpandableText(
                 constraints = Constraints(maxWidth = this.constraints.maxWidth)
             )
         }
-        val trimmedText by rememberSaveable(text) {
+        val trimmedText by rememberSaveable(text, readMoreText) {
             mutableStateOf(
                 getTrimmedText(
                     text = text,
                     textLayoutResult = textLayoutResult,
                     visiblePreviewLines = previewLines,
+                    readMoreLength = readMoreText.length,
                 )
             )
         }
@@ -146,8 +149,8 @@ fun AmityClipExpandableText(
                     color = Color.White,
                     fontWeight = FontWeight.SemiBold
                 )) {
-                    pushStringAnnotation(tag = readMore, annotation = readMore)
-                    append(readMore)
+                    pushStringAnnotation(tag = readMoreText, annotation = readMoreText)
+                    append(readMoreText)
                 }
             }
         }
@@ -182,7 +185,7 @@ fun AmityClipExpandableText(
                         }
 
                         val seeMoreAnnotation = annotatedString.getStringAnnotations(
-                            tag = readMore,
+                            tag = readMoreText,
                             start = position,
                             end = position
                         )
@@ -218,7 +221,8 @@ private fun findMatchIndices(input: String, pattern: String): List<Pair<Int, Int
 private fun getTrimmedText(
     text: String,
     textLayoutResult: TextLayoutResult,
-    visiblePreviewLines: Int
+    visiblePreviewLines: Int,
+    readMoreLength: Int = 8,
 ): String {
     return if (textLayoutResult.lineCount >= visiblePreviewLines) {
         val startIndex = textLayoutResult.getLineStart(visiblePreviewLines - 1)
@@ -226,7 +230,7 @@ private fun getTrimmedText(
         val lastLine = text.substring(startIndex, endIndex)
 
         val newText = if (lastLine.length > 25) {
-            val lengthToReduce = readMore.length * 3 / 2
+            val lengthToReduce = readMoreLength * 3 / 2
             text.substring(0, endIndex - lengthToReduce)
         } else {
             text.substring(0, endIndex)
@@ -241,8 +245,6 @@ private fun getTrimmedText(
         text
     }
 }
-
-private const val readMore = "See more"
 
 @Preview()
 @Composable

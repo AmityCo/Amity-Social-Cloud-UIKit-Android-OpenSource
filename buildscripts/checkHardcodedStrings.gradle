@@ -1,0 +1,235 @@
+tasks.register('checkHardcodedStrings') {
+    group = 'verification'
+    description = 'Detects hardcoded user-facing strings in Compose UI code that should use the localization provider.'
+
+    doLast {
+        def baselineFile = file("${rootDir}/buildscripts/hardcoded-strings-baseline.txt")
+        def baseline = [] as Set
+        if (baselineFile.exists()) {
+            baselineFile.eachLine { String line ->
+                def trimmed = line.trim()
+                if (trimmed && !trimmed.startsWith('#')) {
+                    baseline.add(trimmed)
+                }
+            }
+        }
+
+        // UI parameter names that typically hold user-facing text
+        def uiParamNames = ['text', 'title', 'message', 'label', 'placeholder', 'subtitle', 'description']
+        def paramPattern = uiParamNames.collect { "(?:${it})" }.join('|')
+
+        // Matches: paramName = "any string with at least one letter"
+        // Captures both the parameter name and the string value
+        def hardcodedRegex = ~/\b(${paramPattern})\s*=\s*"([^"]*[a-zA-Z][^"]*)"/
+
+        def violations = []
+
+        def moduleConfigs = [
+            [
+                name       : 'social-compose',
+                sourceDir  : file("${rootDir}/social-compose/src/main/java"),
+                suggestion : 'amitySocialString("amity_social_<key>")',
+            ],
+            [
+                name       : 'common-compose',
+                sourceDir  : file("${rootDir}/common-compose/src/main/java"),
+                suggestion : 'amityCommonString("amity_common_<key>")',
+            ],
+        ]
+
+        moduleConfigs.each { config ->
+            if (!config.sourceDir.exists()) return
+
+            def sourceTree = fileTree(config.sourceDir) {
+                include '**/*.kt'
+                exclude '**/localization/**'
+            }
+
+            sourceTree.each { File file ->
+                def lines = file.readLines()
+                def relativePath = config.name + file.path.substring(config.sourceDir.path.length())
+
+                boolean inBlockComment = false
+                boolean inPreview = false
+                int previewBraceDepth = 0
+
+                lines.eachWithIndex { String line, int index ->
+                    int lineNumber = index + 1
+                    def trimmed = line.trim()
+
+                    // Track block comments
+                    if (trimmed.startsWith('/*')) inBlockComment = true
+                    if (inBlockComment) {
+                        if (trimmed.contains('*/')) inBlockComment = false
+                        return
+                    }
+                    if (trimmed.startsWith('//')) return
+
+                    // Track @Preview functions — skip hardcoded strings inside them
+                    if (trimmed.startsWith('@Preview')) {
+                        inPreview = true
+                        previewBraceDepth = 0
+                    }
+                    if (inPreview) {
+                        for (char c : line.toCharArray()) {
+                            if (c == '{' as char) previewBraceDepth++
+                            if (c == '}' as char) previewBraceDepth--
+                        }
+                        if (previewBraceDepth <= 0 && line.contains('}')) {
+                            inPreview = false
+                        }
+                        return
+                    }
+
+                    def matcher = line =~ hardcodedRegex
+                    while (matcher.find()) {
+                        int matchStart = matcher.start()
+                        def beforeMatch = line.substring(0, matchStart)
+                        // Skip if the match is inside an inline comment
+                        if (beforeMatch.contains('//')) break
+
+                        def paramName = matcher.group(1)
+                        def stringValue = matcher.group(2)
+
+                        // Skip strings that are purely interpolation with no hardcoded words
+                        // e.g. "${count}/${max}" is fine, but "Hello ${name}" is not
+                        def withoutInterpolation = stringValue.replaceAll(/\$\{[^}]*\}/, '').replaceAll(/\$\w+/, '')
+                        if (!withoutInterpolation.find(/[a-zA-Z]/)) continue
+
+                        // Skip contentDescription and testTag (accessibility/test, not user-facing in same way)
+                        if (beforeMatch =~ /contentDescription\s*=\s*$/) continue
+                        if (beforeMatch =~ /testTag\s*\(\s*$/) continue
+
+                        def violationKey = "${relativePath}:${lineNumber}".toString()
+
+                        violations << [
+                            key       : violationKey,
+                            file      : relativePath,
+                            line      : lineNumber,
+                            param     : paramName,
+                            value     : stringValue,
+                            suggestion: config.suggestion,
+                        ]
+                    }
+                }
+            }
+        }
+
+        // Separate baselined vs new violations
+        def newViolations = violations.findAll { !baseline.contains(it.key) }
+        def baselinedCount = violations.size() - newViolations.size()
+
+        if (!newViolations.isEmpty()) {
+            def report = new StringBuilder()
+            report.append('\nHARDCODED STRING DETECTED:\n')
+
+            newViolations.each { v ->
+                report.append("  ${v.file}:${v.line}\n")
+                report.append("    ${v.param} = \"${v.value}\"\n")
+                report.append("    → Use ${v.suggestion} instead\n\n")
+            }
+
+            report.append("Found ${newViolations.size()} NEW hardcoded string(s) not in the baseline.\n")
+            if (baselinedCount > 0) {
+                report.append("(${baselinedCount} existing violations are baselined and will be migrated incrementally.)\n")
+            }
+            report.append('\nAll user-facing strings must go through the localization provider.\n')
+            report.append('If this is intentional (e.g. a format pattern), add the entry to buildscripts/hardcoded-strings-baseline.txt\n')
+
+            throw new GradleException(report.toString())
+        } else {
+            def msg = 'checkHardcodedStrings: No new hardcoded strings found. ✓'
+            if (baselinedCount > 0) {
+                msg += " (${baselinedCount} baselined violations remain to migrate)"
+            }
+            logger.lifecycle(msg)
+        }
+    }
+}
+
+// Convenience task to regenerate the baseline from current violations
+tasks.register('generateHardcodedStringsBaseline') {
+    group = 'verification'
+    description = 'Generates (overwrites) the hardcoded-strings-baseline.txt from current source state.'
+
+    doLast {
+        def uiParamNames = ['text', 'title', 'message', 'label', 'placeholder', 'subtitle', 'description']
+        def paramPattern = uiParamNames.collect { "(?:${it})" }.join('|')
+        def hardcodedRegex = ~/\b(${paramPattern})\s*=\s*"([^"]*[a-zA-Z][^"]*)"/
+
+        def entries = [] as TreeSet
+
+        def moduleConfigs = [
+            [name: 'social-compose',  sourceDir: file("${rootDir}/social-compose/src/main/java")],
+            [name: 'common-compose',  sourceDir: file("${rootDir}/common-compose/src/main/java")],
+        ]
+
+        moduleConfigs.each { config ->
+            if (!config.sourceDir.exists()) return
+
+            def sourceTree = fileTree(config.sourceDir) {
+                include '**/*.kt'
+                exclude '**/localization/**'
+            }
+
+            sourceTree.each { File file ->
+                def lines = file.readLines()
+                def relativePath = config.name + file.path.substring(config.sourceDir.path.length())
+
+                boolean inBlockComment = false
+                boolean inPreview = false
+                int previewBraceDepth = 0
+
+                lines.eachWithIndex { String line, int index ->
+                    int lineNumber = index + 1
+                    def trimmed = line.trim()
+
+                    if (trimmed.startsWith('/*')) inBlockComment = true
+                    if (inBlockComment) {
+                        if (trimmed.contains('*/')) inBlockComment = false
+                        return
+                    }
+                    if (trimmed.startsWith('//')) return
+
+                    if (trimmed.startsWith('@Preview')) {
+                        inPreview = true
+                        previewBraceDepth = 0
+                    }
+                    if (inPreview) {
+                        for (char c : line.toCharArray()) {
+                            if (c == '{' as char) previewBraceDepth++
+                            if (c == '}' as char) previewBraceDepth--
+                        }
+                        if (previewBraceDepth <= 0 && line.contains('}')) {
+                            inPreview = false
+                        }
+                        return
+                    }
+
+                    def matcher = line =~ hardcodedRegex
+                    while (matcher.find()) {
+                        int matchStart = matcher.start()
+                        def beforeMatch = line.substring(0, matchStart)
+                        if (beforeMatch.contains('//')) break
+
+                        def stringValue = matcher.group(2)
+                        def withoutInterpolation = stringValue.replaceAll(/\$\{[^}]*\}/, '').replaceAll(/\$\w+/, '')
+                        if (!withoutInterpolation.find(/[a-zA-Z]/)) continue
+                        if (beforeMatch =~ /contentDescription\s*=\s*$/) continue
+                        if (beforeMatch =~ /testTag\s*\(\s*$/) continue
+
+                        entries.add("${relativePath}:${lineNumber}")
+                    }
+                }
+            }
+        }
+
+        def baselineFile = file("${rootDir}/buildscripts/hardcoded-strings-baseline.txt")
+        baselineFile.text = "# Hardcoded strings baseline — generated by ./gradlew generateHardcodedStringsBaseline\n" +
+            "# These are pre-existing violations that will be migrated incrementally.\n" +
+            "# Remove entries as you fix them. Do NOT add new entries — fix the code instead.\n" +
+            entries.collect { it.toString() }.join('\n') + '\n'
+
+        logger.lifecycle("Generated baseline with ${entries.size()} entries at ${baselineFile.path}")
+    }
+}

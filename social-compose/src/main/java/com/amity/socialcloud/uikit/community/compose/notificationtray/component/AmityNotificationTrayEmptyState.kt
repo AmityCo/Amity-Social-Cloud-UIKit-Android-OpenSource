@@ -17,7 +17,7 @@ import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.getIcon
-import com.amity.socialcloud.uikit.common.utils.getText
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityNotificationTrayEmptyState(
@@ -41,16 +41,9 @@ fun AmityNotificationTrayEmptyState(
                 contentDescription = null
             )
             Spacer(Modifier.height(8.dp))
-            val text = getConfig().getText().ifEmpty { "No notifications" }
             Text(
-                text = text,
+                text = amitySocialString("amity_social_notification_no_notifications"),
                 style = AmityTheme.typography.titleBold,
-                color = AmityTheme.colors.baseShade3
-            )
-            Spacer(Modifier.height(4.dp))
-            Text(
-                text = "You're up to date!",
-                style = AmityTheme.typography.body,
                 color = AmityTheme.colors.baseShade3
             )
         }

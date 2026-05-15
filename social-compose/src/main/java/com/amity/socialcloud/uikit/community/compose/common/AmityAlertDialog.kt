@@ -5,12 +5,12 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun DeclineInvitationDialog(
@@ -20,10 +20,10 @@ fun DeclineInvitationDialog(
 ) {
     if (showDialog) {
         AmityAlertDialog(
-            title = stringResource(R.string.amity_v4_community_invitation_reject_dialog_title),
-            subtitle = stringResource(R.string.amity_v4_community_invitation_reject_dialog_subtitle),
-            dismissText = stringResource(R.string.amity_cancel),
-            confirmText = stringResource(R.string.amity_decline),
+            title = amitySocialString("amity_social_modal_community_invitation_reject_dialog_title"),
+            subtitle = amitySocialString("amity_social_modal_community_invitation_reject_dialog_subtitle"),
+            dismissText = amitySocialString("amity_social_button_cancel"),
+            confirmText = amitySocialString("amity_social_button_decline"),
             onDismiss = onDismiss,
             onConfirm = onConfirm,
         )

@@ -17,6 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityCommunitiesComponent(
@@ -24,7 +25,7 @@ fun AmityCommunitiesComponent(
     pageScope: AmityComposePageScope? = null,
 ) {
     var selectedTabIndex by remember { mutableStateOf(0) }
-    val tabTitles = listOf("Explore", "My communities")
+    val tabTitles = listOf(amitySocialString("amity_social_tab_tab_explore"), amitySocialString("amity_social_tab_tab_my_communities"))
 
     Column(modifier = modifier.fillMaxSize()) {
         // Tab Row

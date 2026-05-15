@@ -1,283 +1,1189 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="take_photo">Take Photo</string>
-    <string name="start_capture">Start Capture</string>
-    <string name="stop_capture">Stop Capture</string>
-
-    <string name="amity_like">Like</string>
-    <string name="amity_liked">Liked</string>
-    <string name="amity_reply">Reply</string>
-
-    <string name="amity_join_community_to_interact">Join community to interact with all stories</string>
-
-    <string name="amity_comments">Comments</string>
-    <string name="amity_comments_disabled_message">Comments are disabled for this story</string>
-    <string name="amity_delete_comment">Delete Comment</string>
-    <string name="amity_comment_deleted_toast_message">Comment deleted</string>
-    <string name="amity_edit_comment">Edit Comment</string>
-    <string name="amity_report_comment">Report comment.</string>
-    <string name="amity_unreport_comment">Unreport comment.</string>
-    <string name="amity_unreport_reply">Unreport reply.</string>
-    <string name="amity_comment_reported_toast_message">Comment reported.</string>
-    <string name="amity_comment_reported_failed_toast_message">Failed to report comment. Please try again.</string>
-    <string name="amity_comment_unreported_toast_message">Comment unreported.</string>
-    <string name="amity_comment_unreported_failed_toast_message">Failed to unreport comment. Please try again.</string>
-    <string name="amity_undo_report">Undo Report</string>
-    <string name="amity_edit_reply">Edit reply</string>
-    <string name="amity_delete_reply">Delete reply</string>
-    <string name="amity_report_reply_v4">Report reply</string>
-    <string name="amity_reply_deleted_message">This reply has been deleted</string>
-    <string name="amity_reply_reported_toast_message">Reply reported.</string>
-    <string name="amity_reply_reported_failed_toast_message">Failed to report reply. Please try again.</string>
-    <string name="amity_reply_unreported_toast_message">Reply unreported.</string>
-    <string name="amity_reply_unreported_failed_toast_message">Failed to unreport reply. Please try again.</string>
-    <string name="amity_comment_deleted_message">This comment has been deleted</string>
-    <string name="amity_comment_delete_failed_toast_message">Failed to delete comment. Please try again.</string>
-    <string name="amity_view_more_replies">View more replies</string>
-    <string name="amity_delete_comment_title">Delete comment</string>
-    <string name="amity_delete_comment_warning_message">This comment will be permanently deleted.</string>
-    <string name="amity_delete_reply_title">Delete reply</string>
-    <string name="amity_delete_reply_warning_message">This reply will be permanently deleted.</string>
-    <string name="amity_add_reply_error_message">Oops, something went wrong</string>
-    <string name="amity_add_comment_error_message">Oops, something went wrong</string>
-    <string name="amity_add_blocked_words_comment_error_message">Your comment contains inappropriate word. Please review and delete it.</string>
-    <string name="amity_add_blocked_links_comment_error_message">Your comment contains a link that\'s not allowed. Please review and delete it.</string>
-    <string name="amity_add_comment_exceed_error_message">Your comment exceeds the maximum character limit of %d. Please shorten your comment.</string>
-    <string name="amity_add_reply_parent_deleted_error_message">This comment is no longer available.</string>
-    <string name="amity_reply_no_longer_available_error_message">This reply is no longer available.</string>
-
-    <string name="amity_update_comment_error_message">Unable to update comment</string>
-    <string name="amity_update_blocked_words_comment_error_message">Your comment contains inappropriate word. Please review and delete it.</string>
-
-    <string name="amity_cancel">Cancel</string>
-    <string name="amity_delete">Delete</string>
-    <string name="amity_decline">Decline</string>
-
-    <plurals name="amity_feed_reaction_count">
-        <item quantity="one">%s like</item>
-        <item quantity="other">%s likes</item>
-    </plurals>
-    <plurals name="amity_feed_comment_count">
-        <item quantity="one">%s comment</item>
-        <item quantity="other">%s comments</item>
-    </plurals>
-
-    <string name="amity_delete_post_title">Delete this post?</string>
-
-    <string name="amity_v4_delete_post_warning_message">This post will be permanently deleted.</string>
-    <string name="amity_delete_post_warning_message">This post will be permanently deleted. You’ll no longer to see and find this post.</string>
-
-    <string name="amity_delete_story_title">Delete story?</string>
-    <string name="amity_delete_story_warning_message">The story will be permanently deleted. It cannot be undone.</string>
-
-    <string name="amity_delete_story_success">Story deleted</string>
-    <string name="amity_delete_story_fail">Failed to delete story</string>
-
-    <string name="amity_deleted_post_dialog_title">This post has been deleted.</string>
-    <string name="amity_deleted_user_dialog_title">This user has been deleted.</string>
-    <string name="amity_deleted_group_dialog_title">This group has been deleted.</string>
-    <string name="amity_invalid_user_dialog_title">This user is invalid.</string>
-    <string name="amity_invalid_post_dialog_title">This post is invalid.</string>
-    <string name="amity_invalid_group_dialog_title">This group is invalid.</string>
 
 
-    <string name="amity_post_to">Post to</string>
-    <string name="amity_story_to">Story to</string>
 
-    <string name="amity_discard_post_title">Discard post?</string>
-    <string name="amity_discard_post_message">Do you want to discard your post?</string>
-    <string name="amity_add_blocked_words_post_error_message">Your post wasn\'t posted because it contains a blocked word.</string>
-    <string name="amity_user_profile_blocked_word_error_message">Your profile wasn\'t updated as it contains an inappropriate word.</string>
-    <string name="amity_add_blocked_links_post_error_message">Your post wasn\'t posted because it contains a link that is not allowed.</string>
-    <string name="amity_post_text_exceed_error_message">Your post wasn\'t posted because it exceeds the %1$d characters limit</string>
-    <string name="amity_post_create_generic_error_message">Failed to create post. Please try again.</string>
-    <string name="amity_post_edit_generic_error_message">Failed to edit post. Please try again.</string>
-    <string name="amity_v4_product_already_tagged">Already tagged</string>
+
+
+
 
 
     <!-- Alt text-->
-    <string name="amity_image_add_alt_text_generic_error_message">Failed to add alt text. Please try again.</string>
-    <string name="amity_image_edit_alt_text_generic_error_message">Failed to edit alt text. Please try again.</string>
-    <string name="amity_image_alt_text_ban_word_error_message">Your alt text contains an inappropriate word.</string>
-    <string name="amity_image_alt_text_ban_url_error_message">Your alt text contains a link that is not allowed.</string>
-    <string name="amity_image_alt_text_updated_message">Alt text updated.</string>
-    <string name="amity_image_add_alt_text_title">Alt text</string>
-    <string name="amity_image_edit_alt_text_title">Edit alt text</string>
-    <string name="amity_image_alt_text_hint_message">Describe this photo briefly to help visually impaired users understand its content</string>
 
-    <string name="amity_only_admin">Only admin can post</string>
-    <string name="amity_add_members">Add members<font fgcolor='#FF0000'>*</font></string>
-    <string name="amity_cancel_request">Cancel request</string>
-    <string name="amity_select_members">Select members</string>
-
-    <string name="amity_close_community">Close community</string>
-    <string name="amity_close_community_description">Closing this community will remove the community page and all its content and comments.</string>
-    <string name="amity_leave_community">Leave community</string>
-    <string name="amity_moderator_leave_community_msg">Leaving community, you’ll give up your moderator status and won’t no longer be able to post and interact in this community.</string>
-    <string name="amity_moderator_leave_community_error_msg">You’re the only moderator in this group. To leave community, nominate other members to moderator role.</string>
-    <string name="amity_last_moderator_leave_community_msg">As you’re the last moderator and member, leaving will also close this community. All posts shared in community will be deleted. This cannot be undone.</string>
-    <string name="amity_close_community_msg">All members will be removed from the community. All posts, messages, reactions, and media shared in community will be deleted. This cannot be undone.</string>
-    <string name="amity_leave_community_msg">You won\’t no longer be able to post and interact in this community after leaving.</string>
-    <string name="amity_leave_community_error_title">Unable to leave community</string>
-    <string name="amity_close_community_error_title">Unable to close community</string>
 
     <!--dialog action button-->
-    <string name="amity_v4_dialog_confirm_button">Confirm</string>
-    <string name="amity_v4_dialog_cancel_button">Cancel</string>
-    <string name="amity_v4_dialog_leave_button">Leave</string>
-    <string name="amity_v4_dialog_close_button">Close</string>
-    <string name="amity_v4_dialog_save_button">Save</string>
-    <string name="amity_v4_dialog_done_button">Done</string>
-    <string name="amity_v4_dialog_discard_button">Discard</string>
 
     <!--community setup page-->
-    <string name="amity_v4_community_setup_create_title">Create community</string>
-    <string name="amity_v4_community_setup_edit_title">Edit community</string>
-    <string name="amity_v4_community_setup_name_title">Community name</string>
-    <string name="amity_v4_community_setup_name_description">Name your community</string>
-    <string name="amity_v4_community_setup_about_title">About</string>
-    <string name="amity_v4_community_setup_about_optional_title">(Optional)</string>
-    <string name="amity_v4_community_setup_about_description">Enter description</string>
-    <string name="amity_v4_community_setup_categories_title">Categories</string>
-    <string name="amity_v4_community_setup_categories_description">Select category</string>
-    <string name="amity_v4_community_setup_privacy_title">Privacy</string>
-    <string name="amity_v4_community_setup_privacy_public_title">Public</string>
-    <string name="amity_v4_community_setup_privacy_public_description">Anyone can join, view, and search the posts in this community.</string>
-    <string name="amity_v4_community_setup_privacy_private_title">Private</string>
-    <string name="amity_v4_community_setup_privacy_private_and_visible_title">Private &amp; visible</string>
-    <string name="amity_v4_community_setup_privacy_private_and_hidden_title">Private &amp; hidden</string>
-    <string name="amity_v4_community_setup_privacy_private_description">Only members invited by the moderators can join, view, and search the posts in this community.</string>
-    <string name="amity_v4_community_setup_privacy_private_and_visible_description">Community is discoverable by anyone. Content is hidden from non-members.</string>
-    <string name="amity_v4_community_setup_privacy_private_and_hidden_description">Community and content are hidden from non-members, and cannot be discovered via search.</string>
-    <string name="amity_v4_community_setup_membership_title">Membership</string>
-    <string name="amity_v4_community_setup_membership_desc">Requires moderator approval</string>
-    <string name="amity_v4_community_setup_membership_sub_desc">Users will become members only when their join request is approved by a moderator of this community.</string>
-    <string name="amity_v4_community_setup_create_button">Create community</string>
-    <string name="amity_v4_community_setup_invite_members_title">Invite members</string>
-    <string name="amity_v4_community_setup_invite_members_description">They will join as members after accepting your invitation.</string>
-    <string name="amity_v4_community_setup_edit_button">Save</string>
 
     <!--community setup page toast-->
-    <string name="amity_v4_community_setup_toast_creating">Creating…</string>
-    <string name="amity_v4_community_setup_toast_create_success">Successfully created community!</string>
-    <string name="amity_v4_community_setup_toast_create_failed">Failed to create community. Please try again.</string>
-    <string name="amity_v4_community_setup_toast_updating">Updating…</string>
-    <string name="amity_v4_community_setup_toast_update_success">Successfully updated community profile.</string>
-    <string name="amity_v4_community_setup_toast_update_failed">Failed to save your community profile. Please try again.</string>
 
     <!--community setup page dialog-->
-    <string name="amity_v4_community_setup_dialog_change_privacy_title">Change community privacy settings?</string>
-    <string name="amity_v4_community_setup_dialog_change_privacy_message">This community has globally featured posts. Changing the community from public to private will remove these posts from being featured globally</string>
-    <string name="amity_v4_community_setup_dialog_leave_title">Leave without finishing</string>
-    <string name="amity_v4_community_setup_dialog_leave_description">Your progress won\'t be saved and your community won\'t be created.</string>
-    <string name="amity_v4_community_setup_dialog_leave_edit_title">Unsaved changes</string>
-    <string name="amity_v4_community_setup_dialog_leave_edit_description">Are you sure you want to discard the changes? They will be lost when you leave this page.</string>
 
     <!--general community related pages dialog-->
-    <string name="amity_v4_community_dialog_leave_title">Leave without finishing</string>
-    <string name="amity_v4_community_dialog_leave_description">Your changes that you made may not be saved.</string>
 
-    <string name="amity_v4_user_profile_feed_option_all">Public community \&amp; profile posts</string>
-    <string name="amity_v4_user_profile_feed_option_community">Public community posts</string>
-    <string name="amity_v4_user_profile_feed_option_user">Profile posts</string>
 
     <!--create livestream pages-->
-    <string name="amity_v4_create_livestream_target_title">Live on</string>
-    <string name="amity_v4_create_livestream_title_placeholder">Add live stream title…</string>
-    <string name="amity_v4_create_livestream_desc_placeholder">Add description (optional)</string>
-    <string name="amity_v4_create_livestream_no_camera_permission_title">Allow access to your\ncamera and microphone</string>
-    <string name="amity_v4_create_livestream_no_camera_permission_desc">This lets you recode and live stream\nfrom this device.</string>
-    <string name="amity_v4_create_livestream_connecting_text">Starting live stream</string>
-    <string name="amity_v4_create_livestream_live_timer_status">LIVE %s:%s</string>
-    <string name="amity_v4_create_livestream_discard_livestream_dialog_title">Unsaved changes</string>
-    <string name="amity_v4_create_livestream_discard_livestream_dialog_desc">Are you sure you want to discard the changes? They will be lost when you leave this page.</string>
-    <string name="amity_v4_create_livestream_discard_livestream_dialog_confirm_text">Discard</string>
-    <string name="amity_v4_create_livestream_dialog_dismiss_text">Cancel</string>
-    <string name="amity_v4_create_livestream_end_livestream_dialog_title">End live stream?</string>
-    <string name="amity_v4_create_livestream_end_livestream_dialog_desc">If you end your live stream, it will also end for all your viewers.</string>
-    <string name="amity_v4_create_livestream_end_livestream_dialog_confirm_text">End</string>
-    <string name="amity_v4_create_livestream_terminated_toolbar_title">Live terminated</string>
-    <string name="amity_v4_create_livestream_terminated_title">Your live stream has been\nterminated.</string>
-    <string name="amity_v4_create_livestream_terminated_watch_part_title">The live stream has been\nterminated..</string>
-    <string name="amity_v4_create_livestream_terminated_desc">It looks like your live stream goes against our\ncontent moderation guidelines.</string>
-    <string name="amity_v4_create_livestream_terminated_watch_part_desc">It looks like the live stream you’re watching goes\nagainst our content moderation guidelines.</string>
-    <string name="amity_v4_create_livestream_terminated_question">What does it mean?</string>
-    <string name="amity_v4_create_livestream_terminated_first_reason">The live stream has also been terminated for\nall your viewers.</string>
-    <string name="amity_v4_create_livestream_terminated_second_reason">There will be no playback of this live stream\non any feeds.</string>
-    <string name="amity_v4_create_livestream_count_down_title">Live stream ends in</string>
-    <string name="amity_v4_create_livestream_duration_exceed_snackbar">Your live will automatically end once it\nreaches 4-hour limit.</string>
-    <string name="amity_v4_create_livestream_no_internet_view_title">Reconnecting</string>
-    <string name="amity_v4_create_livestream_no_internet_view_desc">Due to poor connection, this live stream has been\npaused. It will resume automatically\nonce the connection is stable.</string>
-    <string name="amity_v4_livestream_deleted_page_title">Something went wrong</string>
-    <string name="amity_v4_livestream_deleted_page_desc">The content you’re looking for is unavailable.</string>
-    <string name="amity_report_list_screen_description">Tell us why you\'re reporting this content. Your report will be reviewed by our moderators and kept confidential.</string>
-    <string name="amity_report_submit_button">Submit</string>
-    <string name="amity_report_other_reason_desc">Describe your reason</string>
-    <string name="amity_report_other_reason_optional">(Optional)</string>
-    <string name="amity_report_text_placeholder">Share more details about this issue</string>
 
     <!--community invitation-->
-    <string name="amity_v4_community_information_title">Community information</string>
-    <string name="amity_v4_community_permission_title">Community permissions</string>
-    <string name="amity_v4_community_your_preferences_title">Your preferences</string>
-    <string name="amity_v4_community_invitation_accept_button">Join</string>
-    <string name="amity_v4_community_invitation_reject_button">Decline</string>
-    <string name="amity_v4_community_invitation_message_template">%s invited you to join %s.</string>
-    <string name="amity_v4_community_invitation_unavailable_error">This invitation is no longer available.</string>
-    <string name="amity_v4_community_invitation_accept_success">You joined %s.</string>
-    <string name="amity_v4_community_invitation_reject_success">Invitation declined.</string>
-    <string name="amity_v4_community_invitation_fail_to_accept">Failed to accept invitation. Please try again.</string>
-    <string name="amity_v4_community_invitation_fail_to_reject">Failed to decline invitation. Please try again.</string>
-    <string name="amity_v4_community_invitation_create_success">Successfully invited members to this community.</string>
-    <string name="amity_v4_community_invitation_create_failed">Failed to invite members. Please try again.</string>
-    <string name="amity_v4_community_add_member_success">Successfully added members to this community!</string>
-    <string name="amity_v4_community_add_member_failed">Failed to add members to this community. Please try again!</string>
-    <string name="amity_v4_community_search_placeholder">Start your search by typing\nat least 3 letters</string>
-    <string name="amity_v4_community_invitation_reject_dialog_title">Decline invitation?</string>
-    <string name="amity_v4_community_invitation_reject_dialog_subtitle">If you change your mind, you’ll have to request to join again.</string>
 
 
     <!--- Generic error -->
-    <string name="amity_no_internet_error_message">No internet connection.</string>
-    <string name="amity_v4_tagged_products_empty_desc">You can add or remove products anytime and pin them to control what viewers see while you\'re live.</string>
-    <string name="amity_v4_tagged_products_empty_title">No products tagged yet</string>
-    <string name="amity_v4_tagged_products_empty_action">Add products</string>
-    <string name="amity_v4_tagged_products_deleted_info">Unavailable</string>
-    <string name="amity_v4_tagged_products_archived_info">Unlisted</string>
-    <string name="amity_v4_pinned_product_label">Pinned product</string>
-    <string name="amity_v4_other_products_label">Other products</string>
-    <string name="amity_v4_pinned_product_badge_label">Pinned</string>
-    <string name="amity_v4_pin_label">Pin</string>
-    <string name="amity_v4_unpin_label">Unpin</string>
-    <string name="amity_v4_post_products_unavailable_toast">Some products that you\'ve tagged are no longer available.</string>
 
     <!--livestream post thumbnail state messages-->
-    <string name="amity_v4_livestream_post_thumbnail_processing_title">This live stream has ended.</string>
-    <string name="amity_v4_livestream_post_thumbnail_processing_desc">Playback will be available for you to watch shortly.</string>
-    <string name="amity_v4_livestream_post_thumbnail_terminated_title">The stream has been terminated.</string>
-    <string name="amity_v4_livestream_post_thumbnail_terminated_desc">It looks like this live stream goes against our content moderation guidelines.</string>
-    <string name="amity_v4_livestream_post_thumbnail_ended_too_short_title">Playback unavailable.</string>
-    <string name="amity_v4_livestream_post_thumbnail_ended_too_short_desc">This live stream was too short to have a playback.</string>
-    <string name="amity_v4_livestream_post_thumbnail_unavailable_title">This stream is currently unavailable.</string>
 
-    <!--user actions — Ulta overrides (community=group, user=member terminology)-->
-    <string name="amity_report_user">Report member</string>
-    <string name="amity_unreport_user">Cancel report member</string>
-    <string name="amity_block_user">Block member</string>
-    <string name="amity_unblock_user">Unblock member</string>
-    <string name="amity_block_user_dialog_title">Block member?</string>
-    <string name="amity_block_user_dialog_confirm">Block</string>
-    <string name="amity_user_reported_toast">Report sent</string>
-    <string name="amity_user_unreported_toast">Report canceled</string>
-    <string name="amity_user_blocked_toast">Member blocked!</string>
-    <string name="amity_user_report_failed_toast">Report not successful. Please try again.</string>
-    <string name="amity_user_unreport_failed_toast">Failed to cancel report. Please try again.</string>
-    <string name="amity_user_block_failed_toast">Failed to block member. Please try again.</string>
+    <!-- === Localization: new externalized strings === -->
 
-    <!--search tabs — Ulta overrides-->
-    <string name="amity_search_tab_communities">Groups</string>
-    <string name="amity_search_tab_users">Members</string>
+    <!-- Livestream chat actions -->
 
-    <!--communities component tabs — Ulta overrides-->
-    <string name="amity_tab_my_communities">My groups</string>
+    <!-- Post actions -->
+
+    <!-- Camera / media -->
+
+    <!-- User actions -->
+
+    <!-- Follow requests -->
+
+    <!-- Community membership -->
+
+    <!-- Community actions -->
+
+    <!-- Search / empty states -->
+
+    <!-- Search hints -->
+
+    <!-- Page titles -->
+
+    <!-- Polls -->
+
+    <!-- Product tags -->
+
+    <!-- Clips -->
+
+    <!-- Livestream -->
+
+    <!-- Permissions -->
+    <!-- Notification descriptions -->
+
+    <!-- Community settings -->
+    <!-- Livestream error states -->
+
+    <!-- Event -->
+
+    <!-- Tabs -->
+
+    <!-- Config-driven element texts (fallback for getConfig().getText()) -->
+
+    <!-- Social Home Page -->
+
+    <!-- Post Composer Page -->
+
+    <!-- Post Content Elements -->
+
+
+
+    <!-- Target Selection Pages -->
+
+    <!-- Community Setting Page -->
+
+    <!-- Community Setup - Camera/Image buttons -->
+
+    <!-- Community Membership -->
+
+    <!-- Pending Requests -->
+
+    <!-- Edit User Profile Page -->
+
+    <!-- User Profile Page -->
+
+    <!-- User Feed Placeholders -->
+
+    <!-- Community modal bottom sheet -->
+
+    <!-- Livestream -->
+
+    <!-- Hardcoded string literals (previously not localized) -->
+
+    <!-- Simple strings missed in initial agent pass -->
+
+    <!-- Format strings (use String.format() with these) -->
+
+    <!-- New strings: message/title/dialog/tab localizations -->
+
+    <!-- New strings: dialog/button/snackbar/standalone localizations -->
+
+    <!-- Format strings: dates, polls, counts -->
+
+    <!-- Poll strings -->
+
+    <!-- Post/Comment edited suffix -->
+
+    <!-- Post menu -->
+
+    <!-- Livestream strings -->
+
+    <!-- Permission strings -->
+
+    <!-- Product tag strings -->
+
+    <!-- Community setting -->
+
+    <!-- Event strings -->
+
+    <!-- Notification tray -->
+
+    <!-- Time left strings (poll countdown) -->
+
+    <!-- Event type labels -->
+
+    <!-- Event status labels -->
+
+    <!-- Livestream chat error messages -->
+
+    <!-- Event setup error dialog -->
+
+    <!-- Story hyperlink validation -->
+
+    <!-- Community profile info labels -->
+
+    <!-- Notification setting options -->
+
+    <!-- Localization alignment: hardcoded string replacements -->
+
+    <!-- Community member counts / pending -->
+
+    <!-- Community success/progress toasts -->
+
+    <!-- Community post review -->
+
+    <!-- Livestream / Co-host -->
+
+    <!-- Events -->
+
+    <!-- Poll -->
+
+    <!-- Story / Clip -->
+
+    <!-- User Profile / Follow / Block -->
+
+    <!-- Copy / Share -->
+
+    <!-- Report / Moderation -->
+
+    <!-- Product Tags -->
+
+    <!-- Misc / General -->
+    <string name="amity_social_button_delete_story">Delete story</string>
+    <string name="amity_common_label_message_not_sent">Your message wasn\'t sent</string>
+    <string name="amity_social_button_accept_button">Accept</string>
+    <string name="amity_social_button_pending_join_accept_button">Accept</string>
+    <string name="amity_social_button_pending_post_accept_button">Accept</string>
+    <string name="amity_social_button_accept_invite">Accept</string>
+    <string name="amity_social_button_add_blocked_links_comment_error_message">Your comment contains a link that\'s not allowed. Please review and delete it.</string>
+    <string name="amity_social_button_add_blocked_words_comment_error_message">Your comment contains inappropriate word. Please review and delete it.</string>
+    <string name="amity_social_button_add_category">Add category</string>
+    <string name="amity_social_button_add_link">Add Link</string>
+    <string name="amity_social_button_add_member">Add member</string>
+    <string name="amity_social_button_add_option">Add option</string>
+    <string name="amity_social_button_tagged_products_empty_action">Add products</string>
+    <string name="amity_social_button_address">Address</string>
+    <string name="amity_social_button_address_copied">Address copied.</string>
+    <string name="amity_social_button_all_categories">All Categories</string>
+    <string name="amity_social_button_all_members">All members</string>
+    <string name="amity_social_button_alt">ALT</string>
+    <string name="amity_social_button_attendees">Attendees</string>
+    <string name="amity_social_button_block">Block</string>
+    <string name="amity_social_button_block_user">Block user</string>
+    <string name="amity_social_button_by">By</string>
+    <string name="amity_social_button_by_creator">By %s</string>
+    <string name="amity_social_button_cancel">Cancel</string>
+    <string name="amity_social_button_cancel_invitation">Cancel invitation</string>
+    <string name="amity_social_button_change_thumbnail">Change thumbnail</string>
+    <string name="amity_social_button_clip">Clip</string>
+    <string name="amity_social_button_close">Close</string>
+    <string name="amity_social_button_close_community">Close community</string>
+    <string name="amity_social_button_close_community_msg">All members will be removed from the community. All posts, messages, reactions, and media shared in community will be deleted. This cannot be undone.</string>
+    <string name="amity_social_button_close_poll">Close poll</string>
+    <string name="amity_social_button_co_hosting">Co-hosting</string>
+    <string name="amity_social_button_cohost">Co-host</string>
+    <string name="amity_social_button_comment_deleted_message">This comment has been deleted</string>
+    <string name="amity_social_button_comments">Comments</string>
+    <string name="amity_social_button_community">Community</string>
+    <string name="amity_social_button_community_and">and</string>
+    <string name="amity_social_button_community_invitation_accept_button">Join</string>
+    <string name="amity_social_button_community_require_approval">%s require approval</string>
+    <string name="amity_social_button_community_requires_approval">%s requires approval</string>
+    <string name="amity_social_button_post_composer_camera_button">Camera</string>
+    <string name="amity_social_button_community_setup_categories_description">Select category</string>
+    <string name="amity_social_button_post_composer_image_button">Photo</string>
+    <string name="amity_social_button_confirm">Confirm</string>
+    <string name="amity_social_button_confirm_invite_cohost_title">Confirm invite co-host</string>
+    <string name="amity_social_button_livestream_unavailable_desc">The content you\'re looking for is unavailable.</string>
+    <string name="amity_social_button_copy">Copy</string>
+    <string name="amity_social_button_copy_link">Copy link</string>
+    <string name="amity_social_button_create_event">Create event</string>
+    <string name="amity_social_button_create_livestream_terminated_desc">It looks like your live stream goes against our\ncontent moderation guidelines.</string>
+    <string name="amity_social_button_create_livestream_terminated_watch_part_desc">It looks like the live stream you\'re watching goes against our content moderation guidelines.</string>
+    <string name="amity_social_button_decline">Decline</string>
+    <string name="amity_social_button_community_invitation_reject_button">Decline</string>
+    <string name="amity_social_button_pending_join_decline_button">Decline</string>
+    <string name="amity_social_button_pending_post_decline_button">Decline</string>
+    <string name="amity_social_button_decline_pending_post_will_permanently_delete_the_select">Decline pending post will permanently delete the selected post from community.</string>
+    <string name="amity_social_button_delete">Delete</string>
+    <string name="amity_social_button_delete_comment">Delete Comment</string>
+    <string name="amity_social_button_delete_comment_title">Delete comment</string>
+    <string name="amity_social_button_delete_comment_warning_message">This comment will be permanently deleted.</string>
+    <string name="amity_social_button_delete_event">Delete event</string>
+    <string name="amity_social_button_delete_message">Delete message</string>
+    <string name="amity_social_button_delete_message_failed">Unable to delete message. Please try again.</string>
+    <string name="amity_social_button_delete_post">Delete post</string>
+    <string name="amity_social_button_delete_post_title">Delete this post?</string>
+    <string name="amity_social_button_delete_post_warning_message">This post will be permanently deleted.</string>
+    <string name="amity_social_button_delete_post_warning_message_2">This post will be permanently deleted. You’ll no longer see and find this post.</string>
+    <string name="amity_social_button_delete_reply_title">Delete reply</string>
+    <string name="amity_social_button_delete_reply_warning_message">This reply will be permanently deleted.</string>
+    <string name="amity_social_button_delete_story_message">This story will be permanently deleted. You\'ll no longer be able to see and find this story</string>
+    <string name="amity_social_button_delete_story_success">Story deleted</string>
+    <string name="amity_social_label_hyperlinkconfig_this_text_will_show_">This text will show on the link instead of URL.</string>
+    <string name="amity_social_button_delete_story_title">Delete this story?</string>
+    <string name="amity_social_button_delete_thumbnail">Delete thumbnail</string>
+    <string name="amity_social_button_demote">Demote</string>
+    <string name="amity_social_button_disable">Disable</string>
+    <string name="amity_social_button_discard">Discard</string>
+    <string name="amity_social_button_report_reason_done_button">Done</string>
+    <string name="amity_social_button_edit">Edit</string>
+    <string name="amity_social_button_edit_comment">Edit Comment</string>
+    <string name="amity_social_button_edit_event">Edit event</string>
+    <string name="amity_social_button_edit_post">Edit Post</string>
+    <string name="amity_social_button_edit_profile">Edit profile</string>
+    <string name="amity_social_button_edit_reply">Edit reply</string>
+    <string name="amity_social_button_edit_tags">Edit tags</string>
+    <string name="amity_social_button_edit_user_save_button">Save</string>
+    <string name="amity_social_button_edited_suffix">(edited)</string>
+    <string name="amity_social_button_event_setup_ends_on">Ends on</string>
+    <string name="amity_social_button_event">Event</string>
+    <string name="amity_social_button_event_detail_header_status_cancelled">Cancelled</string>
+    <string name="amity_social_button_event_details">Event details</string>
+    <string name="amity_social_button_event_feed_past">Past</string>
+    <string name="amity_social_button_event_info_event_address">Event address</string>
+    <string name="amity_social_button_event_info_see_more">...See more</string>
+    <string name="amity_social_button_event_name">Event name</string>
+    <string name="amity_social_button_event_platform">Platform</string>
+    <string name="amity_social_button_event_progress_not_saved">Your progress won\'t be saved and your event won\'t be created.</string>
+    <string name="amity_social_button_event_setup_starts_on">Starts on</string>
+    <string name="amity_social_button_event_type">Event type</string>
+    <string name="amity_social_button_event_unsaved_changes">Your changes that you made may not be saved.</string>
+    <string name="amity_social_button_social_home_explore_button">Explore Community</string>
+    <string name="amity_social_button_featured">Featured</string>
+    <string name="amity_social_button_feed_comment_count_plural">%d comments</string>
+    <string name="amity_social_button_feed_comment_count_singular">%d comment</string>
+    <string name="amity_social_button_followers">Followers</string>
+    <string name="amity_social_button_user_following_button">Following</string>
+    <string name="amity_social_button_general_anonymous">Anonymous</string>
+    <string name="amity_social_button_go_back">Go back</string>
+    <string name="amity_social_button_going">Going</string>
+    <string name="amity_social_button_happening_now">Happening now</string>
+    <string name="amity_social_button_host">Host</string>
+    <string name="amity_social_button_hosted_by">Hosted by</string>
+    <string name="amity_social_button_image">Image</string>
+    <string name="amity_social_button_image_poll">Image poll</string>
+    <string name="amity_social_button_poll_voters">%s votes</string>
+    <string name="amity_social_button_image_poll_voter">%s vote</string>
+    <string name="amity_social_button_inappropriate_image">Inappropriate image</string>
+    <string name="amity_social_button_invitation_sent">Invitation sent.</string>
+    <string name="amity_social_button_community_add_member_button">Invite</string>
+    <string name="amity_social_button_invite_member">Invite member</string>
+    <string name="amity_social_button_join_group">Join group</string>
+    <string name="amity_social_button_joined">Joined</string>
+    <string name="amity_social_button_keep_editing">Keep editing</string>
+    <string name="amity_social_button_last_moderator_leave_community_msg">As you\'re the last moderator and member, leaving will also close this community. All posts shared in community will be deleted. This cannot be undone.</string>
+    <string name="amity_social_button_leave">Leave</string>
+    <string name="amity_social_button_leave_as_co_host">Leave as co-host</string>
+    <string name="amity_social_button_leave_backstage_message">Are you sure you want to leave backstage?You\'ll return to viewer mode and need a new invite to rejoin.</string>
+    <string name="amity_social_button_leave_backstage_title">Leave backstage</string>
+    <string name="amity_social_button_leave_community">Leave community</string>
+    <string name="amity_social_button_leave_community_error_title">Unable to leave community</string>
+    <string name="amity_social_button_post_content_reaction_button">Like</string>
+    <string name="amity_social_button_v3_loadmore">Load More</string>
+    <string name="amity_social_button_link_copied">Link copied</string>
+    <string name="amity_social_button_livestream_add_thumbnail">Add thumbnail</string>
+    <string name="amity_social_button_livestream_deleted_page_desc">The content you’re looking for is unavailable.</string>
+    <string name="amity_social_button_livestream_post_thumbnail_terminated_desc">It looks like this live stream goes against our content moderation guidelines.</string>
+    <string name="amity_social_button_location">Location</string>
+    <string name="amity_social_button_member_count_plural">%s members</string>
+    <string name="amity_social_button_member_count_singular">%s member</string>
+    <string name="amity_social_toast_member_removed_toast">Member removed from this community.</string>
+    <string name="amity_social_button_user_reported">User reported.</string>
+    <string name="amity_social_button_user_unreported">User unreported.</string>
+    <string name="amity_social_button_members">Members</string>
+    <string name="amity_social_button_message_deleted">This message was deleted.</string>
+    <string name="amity_social_button_message_reported">Message reported</string>
+    <string name="amity_social_button_message_unreported">Message unreported</string>
+    <string name="amity_social_button_moderator_leave_community_error_msg">You\'re the only moderator in this group. To leave community, nominate other members to moderator role.</string>
+    <string name="amity_social_button_moderators">Moderators</string>
+    <string name="amity_social_button_multiple_selection">Multiple selection</string>
+    <string name="amity_social_button_mute">Mute</string>
+    <string name="amity_social_button_mute_user">Mute user</string>
+    <string name="amity_social_button_my_communities">My Communities</string>
+    <string name="amity_social_button_my_timeline">My timeline</string>
+    <string name="amity_social_button_next">Next</string>
+    <string name="amity_social_button_no">No</string>
+    <string name="amity_social_button_image_poll_no_votes">No votes</string>
+    <string name="amity_social_button_not_going">Not going</string>
+    <string name="amity_social_button_notif_comment_reaction">Receive notifications when someone likes your comment in this community.</string>
+    <string name="amity_social_button_notif_post_reaction">Receive notifications when someone reacts to your posts in this community.</string>
+    <string name="amity_social_button_notif_story_reaction">Receive notifications when someone reacts to your story in this community.</string>
+    <string name="amity_social_notification_notification_off">Off</string>
+    <string name="amity_social_button_livestream_terminated_ok">OK</string>
+    <string name="amity_social_button_on">On</string>
+    <string name="amity_social_button_option_number">Option %d</string>
+    <string name="amity_social_button_options">Options</string>
+    <string name="amity_social_button_others">Others</string>
+    <string name="amity_social_button_past_events">Past events</string>
+    <string name="amity_social_button_pending">Pending</string>
+    <string name="amity_social_button_pending_invitation">Pending invitation</string>
+    <string name="amity_social_button_pending_posts">Pending posts</string>
+    <string name="amity_social_button_pending_request_singular">Pending request</string>
+    <string name="amity_social_button_pending_requests">Pending requests</string>
+    <string name="amity_social_button_post_menu_type_poll">Poll</string>
+    <string name="amity_social_button_poll_answer_result_voted_by_and_you">and you</string>
+    <string name="amity_social_button_poll_duration">Poll duration</string>
+    <string name="amity_social_button_poll_duration_14_days">14 days</string>
+    <string name="amity_social_button_poll_duration_1_day">1 day</string>
+    <string name="amity_social_button_poll_duration_30_days">30 days</string>
+    <string name="amity_social_button_poll_duration_3_days">3 days</string>
+    <string name="amity_social_button_poll_duration_7_days">7 days</string>
+    <string name="amity_social_button_poll_duration_plural_days">%d days</string>
+    <string name="amity_social_button_poll_duration_singular_day">%d day</string>
+    <string name="amity_social_button_poll_ended">Poll ended.</string>
+    <string name="amity_social_button_poll_question">Poll question</string>
+    <string name="amity_social_button_poll_upload_image">Upload image</string>
+    <string name="amity_social_button_post_accepted">Post accepted.</string>
+    <string name="amity_social_button_community_setup_edit_button">Save</string>
+    <string name="amity_social_button_post_composer_file_button">Attachment</string>
+    <string name="amity_social_button_post_composer_video_button">Video</string>
+    <string name="amity_social_button_post_content_comment_button">Comment</string>
+    <string name="amity_social_button_post_content_share_button">Share</string>
+    <string name="amity_social_button_post_declined">Post declined.</string>
+    <string name="amity_social_button_post_deleted">Post deleted</string>
+    <string name="amity_social_button_post_reported">Post reported</string>
+    <string name="amity_social_button_post_to">Post to</string>
+    <string name="amity_social_button_post_unreported">Post unreported</string>
+    <string name="amity_social_button_product_already_tagged">Already tagged</string>
+    <string name="amity_social_button_products_tagged">Products tagged</string>
+    <string name="amity_social_button_promote">Promote</string>
+    <string name="amity_social_button_publish">Publish</string>
+    <string name="amity_social_button_reconnecting">Reconnecting</string>
+    <string name="amity_social_button_remove">Remove</string>
+    <string name="amity_social_button_remove_link">Remove link</string>
+    <string name="amity_social_button_reply">Reply</string>
+    <string name="amity_social_button_reply_deleted_message">This reply has been deleted</string>
+    <string name="amity_social_button_replying_to">Replying to</string>
+    <string name="amity_social_button_report_comment">Report comment.</string>
+    <string name="amity_social_button_report_message">Report message</string>
+    <string name="amity_social_button_report_other_reason_optional">(Optional)</string>
+    <string name="amity_social_button_report_post">Report post</string>
+    <string name="amity_social_button_report_reason">Report reason</string>
+    <string name="amity_social_button_report_reply_v4">Report reply</string>
+    <string name="amity_social_button_report_submit_button">Submit</string>
+    <string name="amity_social_button_report_user">Report user</string>
+    <string name="amity_social_button_requests">Requests</string>
+    <string name="amity_social_button_retry">Retry</string>
+    <string name="amity_social_button_review_post">Review post</string>
+    <string name="amity_social_button_rsvp">RSVP</string>
+    <string name="amity_social_button_search">Search</string>
+    <string name="amity_social_button_see_less">See less</string>
+    <string name="amity_social_button_see_more">See more</string>
+    <string name="amity_social_button_see_results">See results</string>
+    <string name="amity_social_button_select_event_target_my_timeline">My Timeline</string>
+    <string name="amity_social_button_select_post_target_my_timeline">My Timeline</string>
+    <string name="amity_social_button_select_livestream_target_my_timeline">My Timeline</string>
+    <string name="amity_social_button_select_poll_target_my_timeline">My Timeline</string>
+    <string name="amity_social_button_setup_add_member_button">Add</string>
+    <string name="amity_social_button_share_story">Share story</string>
+    <string name="amity_social_button_share_to">Share to</string>
+    <string name="amity_social_button_social_home_clips_button">Clips</string>
+    <string name="amity_social_button_social_home_communities_button">Communities</string>
+    <string name="amity_social_button_community_setup_create_button">Create community</string>
+    <string name="amity_social_button_setup_create_button">Create community</string>
+    <string name="amity_social_button_post_composer_create_button">Post</string>
+    <string name="amity_social_button_social_home_events_button">Events</string>
+    <string name="amity_social_button_social_home_newsfeed_button">Newsfeed</string>
+    <string name="amity_social_button_starts">Starts</string>
+    <string name="amity_social_button_social_home_create_story_button">Story</string>
+    <string name="amity_social_button_tag_products">Tag products</string>
+    <string name="amity_social_button_tagged_products">Tagged products</string>
+    <string name="amity_social_button_text_only_poll">Text-only poll</string>
+    <string name="amity_social_button_timezone">Timezone</string>
+    <string name="amity_social_button_title_story_reactions">Story reactions</string>
+    <string name="amity_social_button_trending_now">Trending now</string>
+    <string name="amity_social_button_user_unblock_button">Unblock</string>
+    <string name="amity_social_button_unfollow">Unfollow</string>
+    <string name="amity_social_button_unknown">Unknown</string>
+    <string name="amity_social_button_unknown_user">Unknown User</string>
+    <string name="amity_social_button_unknown_user_lowercase">Unknown user</string>
+    <string name="amity_social_button_tagged_products_archived_info">Unlisted</string>
+    <string name="amity_social_button_unmute">Unmute</string>
+    <string name="amity_social_button_unmute_user">Unmute user</string>
+    <string name="amity_social_button_unpin">Unpin</string>
+    <string name="amity_social_button_unreport_comment">Unreport comment.</string>
+    <string name="amity_social_button_unreport_message">Unreport message</string>
+    <string name="amity_social_button_unreport_post">Unreport post</string>
+    <string name="amity_social_button_unreport_reply">Unreport reply.</string>
+    <string name="amity_social_button_unreport_user">Unreport user</string>
+    <string name="amity_social_button_unvote">Unvote</string>
+    <string name="amity_social_button_uploading">Uploading…</string>
+    <string name="amity_social_button_user_blocked">User blocked.</string>
+    <string name="amity_social_button_user_follow_button">Follow</string>
+    <string name="amity_social_button_user_muted">User muted</string>
+    <string name="amity_social_button_user_profile_feed_option_user">Profile posts</string>
+    <string name="amity_social_button_user_profile_follower">followers</string>
+    <string name="amity_social_button_user_profile_following">following</string>
+    <string name="amity_social_button_user_profile_followings">Followings</string>
+    <string name="amity_social_button_user_unblocked">User unblocked.</string>
+    <string name="amity_social_button_user_unmuted">User unmuted</string>
+    <string name="amity_social_button_view">View</string>
+    <string name="amity_social_button_view_all">View all</string>
+    <string name="amity_social_button_view_post">View post</string>
+    <string name="amity_social_overlay_leaving_stage_description">You\'ll return to the livestream as a viewer shortly.</string>
+    <string name="amity_social_button_vote">Vote</string>
+    <string name="amity_social_button_vote_removed">Vote removed.</string>
+    <string name="amity_social_button_whos_watching">Who\'s watching</string>
+    <string name="amity_social_button_yes">Yes</string>
+    <string name="amity_social_placeholder_clip_caption">Add a caption...</string>
+    <string name="amity_social_empty_state_empty_clip_feed">No clips yet</string>
+    <string name="amity_social_poll_post_composer_page_ends_on">Ends on %s at %s</string>
+    <string name="amity_social_empty_state_empty_user_image_feed">No photos yet</string>
+    <string name="amity_social_empty_state_empty_user_video_feed">No videos yet</string>
+    <string name="amity_social_empty_state_explore_empty">Your explore is empty</string>
+    <string name="amity_social_empty_state_no_comments_yet">No comments yet</string>
+    <string name="amity_social_empty_state_social_home_empty_title">Your Feed is empty</string>
+    <string name="amity_social_empty_state_tagged_products_empty_desc">You can add or remove products anytime and pin them to control what viewers see while you\'re live.</string>
+    <string name="amity_social_empty_state_tagged_products_empty_title">No products tagged yet</string>
+    <string name="amity_social_error_add_blocked_links_post_error_message">Your post wasn\'t posted because it contains a link that is not allowed.</string>
+    <string name="amity_social_error_add_reply_error_message">Oops, something went wrong</string>
+    <string name="amity_social_error_add_reply_parent_deleted_error_message">This comment is no longer available.</string>
+    <string name="amity_social_error_error_unknown">Unknown error</string>
+    <string name="amity_social_error_event_create_time_error">Your event wasn\'t created as it needs to start at least 15 minutes from now.</string>
+    <string name="amity_social_error_event_setup_create_ban_word_error">Your event wasn\'t created as it contains an inappropriate word.</string>
+    <string name="amity_social_error_event_setup_update_ban_word_error">Your event wasn\'t updated as it contains an inappropriate word.</string>
+    <string name="amity_social_error_event_setup_update_time_limit_error">Your event wasn\'t updated as it needs to start at least 15 minutes from now.</string>
+    <string name="amity_social_error_image_alt_text_ban_url_error_message">Your alt text contains a link that is not allowed.</string>
+    <string name="amity_social_error_image_alt_text_ban_word_error_message">Your alt text contains an inappropriate word.</string>
+    <string name="amity_social_error_poll_option_char_limit_error">Poll option cannot exceed %d characters.</string>
+    <string name="amity_social_error_poll_post_create_ban_word_error">Your post wasn\'t posted as it contains an inappropriate word.</string>
+    <string name="amity_social_error_poll_question_char_limit_error">Poll question cannot exceed %d characters.</string>
+    <string name="amity_social_error_post_text_exceed_error_message">Your post wasn\'t posted because it exceeds the %1$d characters limit</string>
+    <string name="amity_social_error_reply_no_longer_available_error_message">This reply is no longer available.</string>
+    <string name="amity_social_error_upload_failed_title">Upload failed</string>
+    <string name="amity_social_error_upload_failed_photo_must">Upload failed. Photo must:</string>
+    <string name="amity_social_error_upload_failed_video_must">Upload failed. Video must:</string>
+    <string name="amity_social_error_user_profile_blocked_word_error_message">Your profile wasn\'t updated as it contains an inappropriate word.</string>
+    <string name="amity_social_label_about_the_event">About the event</string>
+    <string name="amity_social_label_add_end_date_and_time">Add end date and time</string>
+    <string name="amity_social_modal_add_calendar_sheet_add_button">Add to calendar</string>
+    <string name="amity_social_label_allow_co_host_to_manage_product_tags">Allow co-host to manage product tags</string>
+    <string name="amity_social_label_allow_comments_on_community_stories">Allow comments on community stories</string>
+    <string name="amity_social_label_event_platform_external_description">Users will join the event on an external platform.</string>
+    <string name="amity_social_label_back_to_poll">Back to poll</string>
+    <string name="amity_social_label_banned_message">Based on your previous activities, your account has been banned from all feeds.</string>
+    <string name="amity_social_label_title_you_have_been_banned">You\'ve been banned.</string>
+    <string name="amity_social_label_player_banned_title">You\'ve been banned.</string>
+    <string name="amity_social_label_blocked_user_feed">You\'ve blocked this user</string>
+    <string name="amity_social_label_blocked_user_image_feed">You\'ve blocked this user</string>
+    <string name="amity_social_label_blocked_user_video_feed">You\'ve blocked this user</string>
+    <string name="amity_social_label_blocked_user_feed_info">Unblock to see their posts.</string>
+    <string name="amity_social_label_blocked_user_image_feed_info">Unblock to see their posts.</string>
+    <string name="amity_social_label_blocked_user_video_feed_info">Unblock to see their posts.</string>
+    <string name="amity_social_modal_dialog_image_upload_error">Please choose a different image to upload.</string>
+    <string name="amity_social_label_choose_different_video">Please choose a different video to upload.</string>
+    <string name="amity_social_label_choose_poll_type">Choose poll type</string>
+    <string name="amity_social_label_choose_video_smaller_size">Please choose a video with smaller file size.</string>
+    <string name="amity_social_label_clip_duration_limit">Clip must be under 15 minutes</string>
+    <string name="amity_social_label_close_community_description">Closing this community will remove the community page and all its content and comments.</string>
+    <string name="amity_social_label_cohost_accepted_invitation">Co-host accepted the invitation.</string>
+    <string name="amity_social_label_cohost_declined_invitation">Co-host declined the invitation.</string>
+    <string name="amity_social_label_comments_disabled_message">Comments are disabled for this story</string>
+    <string name="amity_social_label_community_information_title">Community information</string>
+    <string name="amity_social_label_community_invitation_message_template">%s invited you to join %s.</string>
+    <string name="amity_social_label_community_join_request_label">join request</string>
+    <string name="amity_social_label_community_join_requests_label">join requests</string>
+    <string name="amity_social_label_community_members_label">members</string>
+    <string name="amity_social_setting_community_setting_pending_invitations">Pending invitations</string>
+    <string name="amity_social_label_post_label_singular">post</string>
+    <string name="amity_social_label_community_posts_label">posts</string>
+    <string name="amity_social_label_community_posts_pending_review">Your posts are pending for review</string>
+    <string name="amity_social_label_community_setup_about_optional_title">(Optional)</string>
+    <string name="amity_social_label_community_setup_categories_title">Categories</string>
+    <string name="amity_social_label_community_setup_create_title">Create community</string>
+    <string name="amity_social_label_community_setup_edit_title">Edit community</string>
+    <string name="amity_social_label_community_setup_invite_members_description">They will join as members after accepting your invitation.</string>
+    <string name="amity_social_label_community_setup_invite_members_title">Invite members</string>
+    <string name="amity_social_label_community_setup_membership_desc">Requires moderator approval</string>
+    <string name="amity_social_label_community_setup_membership_sub_desc">Users will become members only when their join request is approved by a moderator of this community.</string>
+    <string name="amity_social_label_community_setup_membership_title">Membership</string>
+    <string name="amity_social_label_community_setup_name_description">Name your community</string>
+    <string name="amity_social_label_community_setup_name_title">Community name</string>
+    <string name="amity_social_label_community_setup_privacy_private_and_hidden_description">Community and content are hidden from non-members, and cannot be discovered via search.</string>
+    <string name="amity_social_label_community_setup_privacy_private_and_hidden_title">Private &amp; hidden</string>
+    <string name="amity_social_label_community_setup_privacy_private_and_visible_description">Community is discoverable by anyone. Content is hidden from non-members.</string>
+    <string name="amity_social_label_community_setup_privacy_private_and_visible_title">Private &amp; visible</string>
+    <string name="amity_social_label_community_setup_privacy_private_description">Only members invited by the moderators can join, view, and search the posts in this community.</string>
+    <string name="amity_social_label_community_setup_privacy_private_title">Private</string>
+    <string name="amity_social_label_community_setup_privacy_public_title">Public</string>
+    <string name="amity_social_label_community_setup_privacy_title">Privacy</string>
+    <string name="amity_social_label_community_your_preferences_title">Your preferences</string>
+    <string name="amity_social_modal_dialog_cohost_invitation_description">If they accept your invitation, they\'ll join as a co-host with moderator access. They can turn on their camera and mic, appear on stage, and help manage chat.</string>
+    <string name="amity_social_label_copy_clip_link">Copy clip link</string>
+    <string name="amity_social_label_copy_post_link">Copy post link</string>
+    <string name="amity_social_label_copy_profile_link">Copy profile link</string>
+    <string name="amity_social_label_create_account_or_sign_in">Create an account or sign in to continue.</string>
+    <string name="amity_social_label_create_livestream_no_internet_view_title">Reconnecting</string>
+    <string name="amity_social_label_create_livestream_terminated_question">What does it mean?</string>
+    <string name="amity_social_label_no_community_yet_description">Let\'s create your own communities</string>
+    <string name="amity_social_label_customize_link_text">Customize link text</string>
+    <string name="amity_social_label_date_and_time">Date and time</string>
+    <string name="amity_social_label_declining_a_follow_request_is_irreversible_the_user_mus">Declining a follow request is irreversible. The user must send a new request if declined.</string>
+    <string name="amity_social_decline_follow_request_message">Declining a follow request is irreversible. The user must send a new request if declined.</string>
+    <string name="amity_social_label_declining_a_join_request_is_irreversible_the_user_must_">Declining a join request is irreversible. The user must send a new request if declined.</string>
+    <string name="amity_social_label_demote_to_member">Demote to member</string>
+    <string name="amity_social_label_edit_user_about_title">About</string>
+    <string name="amity_social_label_community_setup_about_title">About</string>
+    <string name="amity_social_label_edit_user_display_name_title">Display name</string>
+    <string name="amity_social_label_enter_address_of_where_this_event_will_be_happening">Enter address of where this event will be happening</string>
+    <string name="amity_social_label_enter_valid_url">Please enter a valid URL.</string>
+    <string name="amity_social_label_enter_whitelisted_url">Please enter a whitelisted URL.</string>
+    <string name="amity_social_label_event_attendees_page_title">Attendees</string>
+    <string name="amity_social_label_event_date_tomorrow">Tomorrow, %1$s to %2$s</string>
+    <string name="amity_social_label_event_location_title">Location</string>
+    <string name="amity_social_label_event_select_location">Select where this event will be happening</string>
+    <string name="amity_social_label_edit_event">Edit event</string>
+    <string name="amity_social_label_find_community_or_create_your_own">Find community or create your own.</string>
+    <string name="amity_social_label_follow_request_accepted">%1$s is now following you.</string>
+    <string name="amity_social_label_follow_request_declined">Following request declined.</string>
+    <string name="amity_social_label_follow_requests">Follow requests (%1$d)</string>
+    <string name="amity_social_label_image_add_alt_text_title">Alt text</string>
+    <string name="amity_social_label_image_alt_text_updated_message">Alt text updated.</string>
+    <string name="amity_social_label_image_edit_alt_text_title">Edit alt text</string>
+    <string name="amity_social_label_invitation_no_longer_valid">This invitation is no longer available.</string>
+    <string name="amity_social_error_community_invitation_unavailable_error">This invitation is no longer available.</string>
+    <string name="amity_social_label_invite_as_co_host">Invite as co-host</string>
+    <string name="amity_social_label_invite_member_description">Invite people to join your community</string>
+     <string name="amity_social_label_join_as_co_host">Join as co-host</string>
+     <string name="amity_social_label_join_request_accepted">Join request accepted.</string>
+    <string name="amity_social_label_join_request_declined">Join request declined.</string>
+    <string name="amity_social_label_join_request_sent">Requested to join. You will be notified once your request is accepted.</string>
+    <string name="amity_social_label_join_request_unavailable">This join request is no longer available.</string>
+    <string name="amity_social_label_join_this_community_to_see_its_content_and_members">Join this community to see its content and members.</string>
+     <string name="amity_social_modal_join_community_sheet_description">Become a member of %s to attend events and join the conversation.</string>
+     <string name="amity_social_modal_join_community_sheet_join_and_rsvp">Join community and RSVP</string>
+     <string name="amity_social_label_community_invitation_accept_success">You joined %s.</string>
+     <string name="amity_social_label_left_stage">You left the stage and are now watching as a viewer.</string>
+     <string name="amity_social_label_only_admin">Only admins can post</string>
+     <string name="amity_social_label_title_approve_member_posts">Approve member posts</string>
+    <string name="amity_social_label_let_participants_vote_more_than_one_option">Let participants vote more than one option.</string>
+    <string name="amity_social_label_livestream_deleted_page_title">Something went wrong</string>
+    <string name="amity_social_label_livestream_post_thumbnail_ended_too_short_title">Playback unavailable.</string>
+    <string name="amity_social_label_livestream_post_thumbnail_processing_desc">Playback will be available for you to watch shortly.</string>
+    <string name="amity_social_label_livestream_post_thumbnail_terminated_title">The stream has been terminated.</string>
+    <string name="amity_social_label_livestream_post_thumbnail_unavailable_title">This stream is currently unavailable.</string>
+    <string name="amity_social_label_livestream_read_only_description">Members who are not streamer can read messages but cannot send any messages.</string>
+    <string name="amity_social_label_manage_blocked_users">Manage blocked users</string>
+    <string name="amity_social_label_max_upload_limit_message">You\'ve reached the upload limit of 10 %s. Any additional %s will not be saved.</string>
+    <string name="amity_social_label_member_label_singular">member</string>
+    <string name="amity_social_label_msg_blocked_word">Your message wasn\'t sent as it contained a blocked word.</string>
+    <string name="amity_social_label_msg_link_not_allowed">Your message wasn\'t sent as it contained a link that\'s not allowed.</string>
+    <string name="amity_social_label_name_your_event">Name your event</string>
+    <string name="amity_social_label_new_follow_requests">New follow requests</string>
+    <string name="amity_social_label_no_community_yet">No community yet</string>
+    <string name="amity_social_label_no_description_available">No description available</string>
+    <string name="amity_social_label_no_events_yet">No events yet</string>
+    <string name="amity_social_label_no_internet_connection">No internet connection.</string>
+    <string name="amity_social_label_no_pending_posts">No pending posts</string>
+    <string name="amity_social_label_no_pending_requests">No pending requests</string>
+    <string name="amity_social_label_no_pinned_posts_yet">No pinned posts yet</string>
+    <string name="amity_social_label_no_post_to_review">No post to review</string>
+    <string name="amity_social_label_no_requests_to_review">No requests to review</string>
+    <string name="amity_social_label_no_results_found">No results found</string>
+    <string name="amity_social_label_no_users_available">No users available</string>
+    <string name="amity_social_label_nothing_here_yet">Nothing here to see yet</string>
+    <string name="amity_social_label_open_in_browser">Open in Browser</string>
+    <string name="amity_social_label_other_products_label">Other products</string>
+    <string name="amity_social_label_page_pending_post_title">Pending post</string>
+    <string name="amity_social_label_pin_label">Pin</string>
+    <string name="amity_social_label_pinned_product_label">Pinned product</string>
+    <string name="amity_social_label_player_unavailable_message">Please try again later.</string>
+    <string name="amity_social_label_poll_duration_pick_date_and_time">Pick date and time</string>
+    <string name="amity_social_label_poll_image_options_title">Options</string>
+    <string name="amity_social_label_poll_min_options_with_images">Poll must contain at least 2 options, and an image must be uploaded for every option.</string>
+    <string name="amity_social_label_poll_option_label">Option</string>
+    <string name="amity_social_label_poll_post_title">Post title</string>
+    <string name="amity_social_label_post_composer_edit_title">Edit post</string>
+    <string name="amity_social_label_post_composer_post_update_sent_for_review_message">Your post update has been submitted to the pending list. It will be published once approved by the community moderator</string>
+    <string name="amity_social_label_post_composer_post_updates_sent_for_review_title">Post updates sent for review</string>
+    <string name="amity_social_label_post_title_max_char">Post title cannot exceed %d characters.</string>
+    <string name="amity_social_label_private_user_feed">This account is private</string>
+    <string name="amity_social_label_private_user_image_feed">This account is private</string>
+    <string name="amity_social_label_private_user_video_feed">This account is private</string>
+    <string name="amity_social_label_private_user_feed_info">Follow this user to see their posts.</string>
+    <string name="amity_social_label_private_user_image_feed_info">Follow this user to see their posts.</string>
+    <string name="amity_social_label_private_user_video_feed_info">Follow this user to see their posts.</string>
+    <string name="amity_social_label_product_tag_added">Product tags added.</string>
+    <string name="amity_social_label_product_tag_pinned">Product tag pinned.</string>
+    <string name="amity_social_label_product_tag_removed">Product tag removed.</string>
+    <string name="amity_social_label_product_tag_unpinned">Product tag unpinned.</string>
+    <string name="amity_social_label_product_tags_added">Product tags have been added</string>
+    <string name="amity_social_label_product_tags_updated">Product tags have been updated.</string>
+    <string name="amity_social_label_products_tagged_in_photo">Products tagged in this photo</string>
+    <string name="amity_social_label_products_tagged_in_post">Products tagged in this post</string>
+    <string name="amity_social_label_products_tagged_in_video">Products tagged in this video</string>
+    <string name="amity_social_label_promote_to_moderator">Promote to moderator</string>
+    <string name="amity_social_label_reach_mention_limit_title">Unable to mention user</string>
+    <string name="amity_social_label_recommended_for_you">Recommended for you</string>
+    <string name="amity_social_label_remove_from_community">Remove from community</string>
+    <string name="amity_social_label_report_list_screen_description">Tell us why you\'re reporting this content. Your report will be reviewed by our moderators and kept confidential.</string>
+    <string name="amity_social_label_report_reason_community_guidelines">Against community guidelines</string>
+    <string name="amity_social_label_report_reason_false_information">False information or misinformation</string>
+    <string name="amity_social_label_report_reason_harassment_or_bullying">Harassment or bullying</string>
+    <string name="amity_social_label_report_reason_self_harm_or_suicide">Self-harm or suicide</string>
+    <string name="amity_social_label_report_reason_selling_restricted">Selling and promoting restricted items</string>
+    <string name="amity_social_label_report_reason_sexual_content_or_nudity">Sexual content or nudity</string>
+    <string name="amity_social_label_report_reason_spam_or_scams">Spam or scams</string>
+    <string name="amity_social_label_report_reason_violence_or_threatening">Violence or threatening content</string>
+    <string name="amity_social_label_report_other_reason_desc">Describe your reason</string>
+    <string name="amity_social_label_report_thanks_message">Our moderators will review this content and take action if it violates our guidelines.</string>
+    <string name="amity_social_label_report_thanks_title">Thanks for your report.</string>
+    <string name="amity_social_label_rsvp_after_join">You\'ll be able to RSVP once your join request is accepted</string>
+    <string name="amity_social_label_search_my_communities">Search my communities</string>
+    <string name="amity_social_label_see_full_results">See full results</string>
+    <string name="amity_social_label_see_more_options">See %d more options</string>
+    <string name="amity_social_label_select_event_target_title">Create event in</string>
+    <string name="amity_social_label_select_multiple_options">Select one or more options</string>
+    <string name="amity_social_label_select_one_option">Select one option</string>
+    <string name="amity_social_label_setup_privacy_public_description">Community is discoverable by anyone. Content is visible to anyone.</string>
+    <string name="amity_social_label_social_home_header_label">Community</string>
+    <string name="amity_social_label_oops_something_went_wrong">Oops, something went wrong.</string>
+    <string name="amity_social_label_start_typing_to_search">Start typing to search for products.</string>
+    <string name="amity_social_label_text_contains_blocklisted">Your text contains a blocklisted word.</string>
+    <string name="amity_social_label_the_page_could_not_be_loaded_you_can_open_it_in_your_br">The page could not be loaded. You can open it in your browser instead.</string>
+    <string name="amity_social_label_this_clip_is_no_longer_available">This clip is no longer available.</string>
+    <string name="amity_social_label_this_community_is_private">This community is private</string>
+    <string name="amity_social_label_this_photo_is_no_longer_available">This photo is no longer available.</string>
+    <string name="amity_social_label_this_video_is_no_longer_available">This video is no longer available.</string>
+    <string name="amity_social_label_title_comments">Comments</string>
+    <string name="amity_social_label_title_new_comments">New comments</string>
+    <string name="amity_social_label_title_new_posts">New posts</string>
+    <string name="amity_social_label_title_new_stories">New stories</string>
+    <string name="amity_social_label_title_posts">Posts</string>
+    <string name="amity_social_label_title_react_comments">React comments</string>
+    <string name="amity_social_label_title_react_posts">React posts</string>
+    <string name="amity_social_label_title_replies">Replies</string>
+    <string name="amity_social_label_title_stories">Stories</string>
+    <string name="amity_social_setting_community_setting_story_setting">Story comments</string>
+    <string name="amity_social_label_turn_on_to_receive_comments_on_stories_in_this_communit">Turn on to receive comments on stories in this community.</string>
+    <string name="amity_social_label_unable_to_load_clip">Unable to load clip</string>
+    <string name="amity_social_label_unable_to_load_page">Unable to load page</string>
+    <string name="amity_social_label_unable_to_send_message">Unable to send message</string>
+    <string name="amity_social_label_unpin_label">Unpin</string>
+    <string name="amity_social_label_upload_new_image">Upload new image</string>
+    <string name="amity_social_label_user_block_message_format">%s won\'t be able to see posts and comments that you\'ve created. They won\'t be notified that you\'ve blocked them.</string>
+    <string name="amity_social_toast_member_demote_success_toast">Successfully demoted to member!</string>
+    <string name="amity_social_toast_live_chat_demote_to_member_success_toast">Successfully demoted to member!</string>
+    <string name="amity_social_toast_live_chat_demoted">User demoted.</string>
+    <string name="amity_social_label_user_profile_feed_option_community">Public community posts</string>
+    <string name="amity_social_label_user_unblock_message_format">%s will now be able to see posts and comments that you\'ve created. They won\'t be notified that you\'ve unblocked them.</string>
+    <string name="amity_social_label_view_more_replies">View more replies</string>
+    <string name="amity_social_label_view_replies">View %d replies</string>
+    <string name="amity_social_label_view_reply">View %d reply</string>
+    <string name="amity_social_label_voted_by_participants">Voted by %s participants</string>
+    <string name="amity_social_label_voted_by_1_participant">Voted by 1 participant</string>
+    <string name="amity_social_label_image_poll_voted_by_you">Voted by you</string>
+    <string name="amity_social_label_waiting_for_approval">Waiting for approval</string>
+    <string name="amity_social_label_waiting_for_cohost">Waiting for co-host\nto get ready…</string>
+    <string name="amity_social_label_waiting_for_host">Waiting for host\nto get resume…</string>
+    <string name="amity_social_label_watch_next_clip">Watch next clip</string>
+    <string name="amity_social_label_we_couldn_t_recognize_this_feed">We couldn’t recognize this feed.</string>
+    <string name="amity_social_label_who_can_post_on_this_community">Who can post on this community</string>
+    <string name="amity_social_label_you_can_always_close_the_poll_before_the_set_duration">You can always close the poll before the set duration.</string>
+    <string name="amity_social_label_you_can_control_who_can_create_posts_in_your_community">You can control who can create posts in your community.</string>
+    <string name="amity_social_label_you_can_no_longer_edit_this_event_changes_are_restricte">You can no longer edit this event. Changes are restricted 15 minutes before the start time.</string>
+    <string name="amity_social_label_you_have_been_muted">You have been muted.</string>
+    <string name="amity_social_label_you_havent_joined_any_communities_yet">You haven\'t joined any communities yet.</string>
+    <string name="amity_social_label_you_re_in_the_backstage">You’re in the backstage</string>
+    <string name="amity_social_label_your_image_couldn_t_be_uploaded">Your image couldn’t be uploaded</string>
+    <string name="amity_social_label_your_message_is_too_long_please_shorten_your_message_an">Your message is too long. Please shorten your message and try again.</string>
+    <string name="amity_social_modal_add_calendar_sheet_description">You can also keep track of this event by adding it to your device\'s calendar.</string>
+    <string name="amity_social_modal_add_calendar_sheet_title">You\'ll be notified</string>
+     <string name="amity_social_modal_alert_cancel_cohost_invitation_title">Cancel co-host invitation</string>
+     <string name="amity_social_modal_alert_cohost_leave_title">Leave live stream</string>
+     <string name="amity_social_modal_alert_remove_button">Remove</string>
+     <string name="amity_social_modal_alert_remove_cohost_title">Remove co-host from live</string>
+    <string name="amity_social_modal_clip_alert_unsupported_video_title">Unsupported video type</string>
+     <string name="amity_social_modal_community_dialog_leave_description">Your changes that you made may not be saved.</string>
+     <string name="amity_social_modal_community_dialog_leave_title">Leave without finishing</string>
+    <string name="amity_social_modal_community_invitation_reject_dialog_subtitle">If you change your mind, you’ll have to request to join again.</string>
+    <string name="amity_social_modal_community_invitation_reject_dialog_title">Decline invitation?</string>
+    <string name="amity_social_modal_community_setup_dialog_change_privacy_message">This community has globally featured posts. Changing the community from public to private will remove these posts from being featured globally</string>
+    <string name="amity_social_modal_community_setup_dialog_change_privacy_title">Change community privacy settings?</string>
+    <string name="amity_social_modal_community_setup_dialog_leave_edit_description">Are you sure you want to discard the changes? They will be lost when you leave this page.</string>
+    <string name="amity_social_modal_create_livestream_discard_livestream_dialog_confirm_text">Discard</string>
+    <string name="amity_social_modal_create_livestream_discard_livestream_dialog_desc">Are you sure you want to discard the changes? They will be lost when you leave this page.</string>
+    <string name="amity_social_modal_create_livestream_discard_livestream_dialog_title">Unsaved changes</string>
+    <string name="amity_social_modal_create_livestream_end_livestream_dialog_confirm_text">End</string>
+    <string name="amity_social_modal_create_livestream_end_livestream_dialog_desc">If you end your live stream, it will also end for all your viewers.</string>
+    <string name="amity_social_modal_create_livestream_end_livestream_dialog_title">End live stream?</string>
+    <string name="amity_social_modal_dialog_banned_from_community">You will no longer be able to post and interact in this community.</string>
+    <string name="amity_social_modal_create_livestream_dialog_dismiss_text">Cancel</string>
+    <string name="amity_social_modal_dialog_cancel_unsaved_changes">Are you sure you want to cancel? Your changes won\'t be saved.</string>
+    <string name="amity_social_modal_dialog_clip_min_duration">Clip must be at least 1 second long.</string>
+    <string name="amity_social_modal_dialog_close_button">Close</string>
+    <string name="amity_social_modal_dialog_confirm_button">Confirm</string>
+    <string name="amity_social_modal_dialog_delete_message_title">Delete this message?</string>
+    <string name="amity_social_modal_dialog_delete_event_description">This event will be permanently deleted. You and others will no longer see and find this event.</string>
+    <string name="amity_social_modal_dialog_demote_moderator_description">Are you sure you want to demote this moderator? They will lose access to all moderator permissions in this live stream.</string>
+    <string name="amity_social_modal_dialog_disable_product_tagging_description">If you disable this, the co-host can\'t add, remove, or pin products in this live stream.</string>
+    <string name="amity_social_modal_dialog_discard_button">Discard</string>
+    <string name="amity_social_modal_dialog_discard_changes_description">Are you sure you want to discard the changes? They will be lost when you leave this page.</string>
+    <string name="amity_social_modal_dialog_discard_clip">The clip will be permanently discarded. It cannot be undone.</string>
+     <string name="amity_social_modal_dialog_discard_post">The post will be permanently discarded. It cannot be undone.</string>
+     <string name="amity_social_modal_alert_cancel_cohost_invitation_message">Are you sure you want to cancel this invitation? They\'ll no longer be invited as a co-host and will remain as a viewer.</string>
+     <string name="amity_social_modal_alert_leave_as_cohost_message">Are you sure you want to stop co-hosting? You\'ll leave the stage and continue watching as a viewer.</string>
+     <string name="amity_social_modal_dialog_something_went_wrong">Something went wrong. Please try again later.</string>
+    <string name="amity_social_modal_dialog_discard_story_body">The story will be permanently discarded. It cannot be undone.</string>
+    <string name="amity_social_modal_dialog_done_button">Done</string>
+    <string name="amity_social_modal_dialog_featured_post_edit_warning">The post you\'re editing has been featured globally. If you edit your post, it would need to be re-approved, and will no longer be globally featured.</string>
+    <string name="amity_social_modal_dialog_generic_error">Oops! something went wrong. Please try again later.</string>
+    <string name="amity_social_modal_dialog_hashtag_limit">You can only add hashtag up to %d hashtags per post.</string>
+    <string name="amity_social_modal_dialog_join_request_sent">Requested to join the community. You\'ll be notified once your request is accepted.</string>
+    <string name="amity_social_modal_dialog_leave_button">Leave</string>
+    <string name="amity_social_modal_dialog_leave_community_description">If you change your mind, you\'ll have to request to join again.</string>
+    <string name="amity_social_modal_dialog_link_limit">You can only add up to 100 links per post.</string>
+    <string name="amity_social_modal_dialog_livestream_time_limit">Your live stream has been automatically terminated since you reached 4-hour limit.</string>
+    <string name="amity_social_modal_dialog_mute_user_description">Are you sure you want to mute this user? They will no longer be able to send messages.</string>
+    <string name="amity_social_modal_dialog_pending_requests_warning">Please address these requests before switching off membership approval.</string>
+    <string name="amity_social_modal_dialog_poll_duration_warning">The Poll duration you\'ve set will be ignored and your poll will be closed immediately.</string>
+    <string name="amity_social_modal_post_sent_for_review_alert_message">Your post has been submitted to the pending list. It will be published once approved by the community moderator.</string>
+    <string name="amity_social_modal_dialog_product_tag_limit">You can only tag up to 20 products per post.</string>
+    <string name="amity_social_modal_dialog_promote_moderator_description">Are you sure you want to promote this member to moderator? They will gain access to all moderator permissions in this live stream.</string>
+    <string name="amity_social_modal_dialog_remove_products_description">Any products you\'ve tagged will be removed and won\'t be shown to viewers.</string>
+    <string name="amity_social_modal_dialog_remove_story_link">This link will be removed from story.</string>
+    <string name="amity_social_modal_dialog_request_failed">Something went wrong while trying to complete your request. Please try again.</string>
+    <string name="amity_social_modal_dialog_save_button">Save</string>
+    <string name="amity_social_modal_dialog_title_block_user">Block user?</string>
+    <string name="amity_social_modal_dialog_title_cannot_start_livestream">Cannot start live stream</string>
+    <string name="amity_social_modal_dialog_title_clip_too_short">Clip too short</string>
+    <string name="amity_social_modal_dialog_title_close_community">Close community?</string>
+    <string name="amity_social_modal_dialog_title_close_poll">Close poll?</string>
+    <string name="amity_social_modal_dialog_title_confirm_mute">Confirm mute</string>
+    <string name="amity_social_modal_dialog_title_confirm_unmute">Confirm unmute</string>
+    <string name="amity_social_modal_dialog_title_disable_cohost_product_tags">Disable co-host product tags control?</string>
+    <string name="amity_social_modal_dialog_title_discard_clip">Discard this clip?</string>
+    <string name="amity_social_modal_dialog_title_discard_post">Discard this post?</string>
+    <string name="amity_social_modal_dialog_title_discard_product_selection">Discard product selection?</string>
+    <string name="amity_social_modal_dialog_title_discard_product_tags">Discard product tags</string>
+    <string name="amity_social_modal_dialog_title_discard_story">Discard story?</string>
+    <string name="amity_social_modal_dialog_title_edit_globally_featured">Edit globally featured post?</string>
+    <string name="amity_social_modal_post_composer_hashtag_limit_alert_title">Hashtag limit reached</string>
+    <string name="amity_social_modal_dialog_title_leave_community">Leave community?</string>
+    <string name="amity_social_modal_dialog_title_link_limit_reached">Link limit reached</string>
+    <string name="amity_social_modal_dialog_title_livestream_ended">Live stream ended</string>
+    <string name="amity_social_modal_dialog_title_max_file_size_limit">Maximum file size limit reached</string>
+    <string name="amity_social_modal_dialog_title_max_upload_limit">Maximum upload limit reached</string>
+    <string name="amity_social_modal_dialog_title_moderator_demotion">Moderator demotion</string>
+    <string name="amity_social_modal_dialog_title_moderator_promotion">Moderator promotion</string>
+    <string name="amity_social_modal_dialog_title_pending_join_requests">You have pending join requests</string>
+    <string name="amity_social_modal_dialog_title_posts_sent_for_review">Posts sent for review</string>
+    <string name="amity_social_modal_dialog_title_product_tag_limit_reached">Product tag limit reached</string>
+    <string name="amity_social_modal_dialog_title_remove_link">Remove link?</string>
+    <string name="amity_social_modal_dialog_title_unable_to_follow_user">Unable to follow this user</string>
+    <string name="amity_social_modal_dialog_title_unblock_user">Unblock user?</string>
+    <string name="amity_social_button_unblock_user">Unblock user</string>
+    <string name="amity_social_modal_dialog_title_unfollow_user">Unfollow this user?</string>
+    <string name="amity_social_modal_community_setup_dialog_leave_edit_title">Unsaved changes</string>
+    <string name="amity_social_modal_dialog_unblock_user_description">They will now be able to see posts and comments that you\'ve created. They won\'t be notified that you\'ve unblocked them.</string>
+    <string name="amity_social_modal_dialog_unfollow_description">If you change your mind, you\'ll have to request to follow them again.</string>
+    <string name="amity_social_modal_dialog_unmute_user_description">Are you sure you want to unmute this user? They can now send messages.</string>
+    <string name="amity_social_modal_dialog_unsaved_products">You have products selected that haven\'t been added yet. If you close now, your selection will be lost.</string>
+    <string name="amity_social_modal_dialog_unsaved_tagged_products">You have tagged products that haven\'t been saved yet. If you leave now, your changes will be lost.</string>
+    <string name="amity_social_modal_dialog_upload_failed">Would you like to discard or retry uploading?</string>
+    <string name="amity_social_modal_dialog_video_upload_error">Please check your connection or choose a different video to upload</string>
+     <string name="amity_social_modal_event_detail_alert_delete_event_title">Delete this event?</string>
+     <string name="amity_social_modal_dialog_title_leave_without_finishing">Leave without finishing?</string>
+    <string name="amity_social_modal_event_setup_leave_alert_title">Leave without finishing?</string>
+    <string name="amity_social_modal_invalid_user_dialog_title">This user is invalid.</string>
+    <string name="amity_social_modal_join_community_sheet_join">Join community</string>
+    <string name="amity_social_modal_post_sent_for_review_alert_title">Post sent for review</string>
+    <string name="amity_social_modal_community_setup_dialog_leave_description">Your progress won\'t be saved and your community won\'t be created.</string>
+    <string name="amity_social_notification_allow_notifications">Allow notifications</string>
+    <string name="amity_social_notification_no_notifications">No notifications</string>
+    <string name="amity_social_notification_notif_comment_reply">Receive notifications when someone replies to your comments in this community.</string>
+    <string name="amity_social_notification_notif_new_post">Receive notifications when someone creates a new post in this community.</string>
+    <string name="amity_social_notification_notif_new_story">Receive notifications when someone creates a new story in this community.</string>
+    <string name="amity_social_notification_notif_post_comment">Receive notifications when someone comments on your posts in this community.</string>
+    <string name="amity_social_notification_notif_story_comment">Receive notifications when someone comments on your story in this community.</string>
+    <string name="amity_social_notification_notification_everyone">Everyone</string>
+    <string name="amity_social_notification_notification_older">Older</string>
+    <string name="amity_social_notification_notification_only_moderator">Only moderator</string>
+    <string name="amity_social_notification_notification_recent">Recent</string>
+    <string name="amity_social_notification_notification_tray_invited_to_join_separator">invited you to join</string>
+    <string name="amity_social_notification_community_setting_notifications">Notifications</string>
+    <string name="amity_social_notification_turn_on_to_receive_push_notifications_from_this_communi">Turn on to receive push notifications from this community.</string>
+    <string name="amity_social_permission_community_permission_title">Community permissions</string>
+    <string name="amity_social_permission_permission_required">Permission Required!!</string>
+     <string name="amity_social_permission_post_permission_admin_review_setting">Admin review post</string>
+     <string name="amity_social_permission_post_permission_everyone">Everyone can post</string>
+     <string name="amity_social_permission_community_setting_post_permission">Post permissions</string>
+    <string name="amity_social_permission_title_allow_camera_mic_access">Allow access to your camera and microphone</string>
+    <string name="amity_social_placeholder_chat_hint">Chat…</string>
+    <string name="amity_social_label_comment_compose_bar_placeholder">Share something…</string>
+    <string name="amity_social_placeholder_comment_text_field_placeholder">Say something nice...</string>
+    <string name="amity_social_placeholder_community_search_placeholder">Start your search by typing\nat least 3 letters</string>
+    <string name="amity_social_placeholder_create_livestream_desc_placeholder">Add description (optional)</string>
+    <string name="amity_social_placeholder_create_livestream_title_placeholder">Add live stream title…</string>
+    <string name="amity_social_button_community_setup_about_description">Enter description</string>
+    <string name="amity_social_placeholder_event_link_hint">Event link</string>
+    <string name="amity_social_placeholder_event_setup_event_details_placeholder">Share what this event is all about</string>
+    <string name="amity_social_placeholder_hint_poll_headline">Give your poll a headline</string>
+    <string name="amity_social_placeholder_hint_poll_question">What\'s your poll question?</string>
+    <string name="amity_social_placeholder_hyperlink_name_hint">Name your link</string>
+    <string name="amity_social_placeholder_hyperlink_url_hint">https://example.com</string>
+    <string name="amity_social_placeholder_image_alt_text_hint_message">Describe this photo briefly to help visually impaired users understand its content</string>
+    <string name="amity_social_placeholder_post_composer_body_clip_placeholder">What\'s going on? (optional)</string>
+    <string name="amity_social_placeholder_post_composer_body_placeholder">What\'s going on...</string>
+    <string name="amity_social_placeholder_report_text_placeholder">Share more details about this issue</string>
+    <string name="amity_social_placeholder_search_community_user_placeholder">Search community and user</string>
+    <string name="amity_social_label_optional">(Optional)</string>
+    <string name="amity_social_placeholder_search_hint_3_letters">Start your search by typing at least 3 letters</string>
+    <string name="amity_social_placeholder_search_member_hint">Search member</string>
+    <string name="amity_social_placeholder_search_product_hint">Search by product name</string>
+    <string name="amity_social_placeholder_search_user_hint">Search user</string>
+    <string name="amity_social_setting_community_settings">Community settings</string>
+    <string name="amity_social_setting_open_settings">Open settings</string>
+    <string name="amity_social_setting_setting_edit_profile">Community profile</string>
+    <string name="amity_social_label_event_platform_livestream_description">Attendees join the live stream directly on the app or website.</string>
+    <string name="amity_social_status_livestream_no_access">You can no longer access this live stream.</string>
+    <string name="amity_social_status_cohost_invitation_message">%s invited you to join their live stream as a co-host. You\'ll enter the backstage room to prepare before going live.</string>
+    <string name="amity_social_status_cohost_left">Co-host left the live stream.</string>
+    <string name="amity_social_status_cohost_removed">Co-host removed from live.</string>
+    <string name="amity_social_status_copy_live_stream_link">Copy live stream link</string>
+    <string name="amity_social_status_create_livestream_connecting_text">Starting live stream</string>
+    <string name="amity_social_status_create_livestream_count_down_title">Live stream ends in</string>
+    <string name="amity_social_status_create_livestream_no_internet_view_desc">Due to poor connection, this live stream has been paused. It will resume automatically once the connection is stable.</string>
+    <string name="amity_social_status_select_livestream_target_title">Live on</string>
+    <string name="amity_social_status_create_livestream_terminated_first_reason">The live stream has also been terminated for all your viewers.</string>
+    <string name="amity_social_status_create_livestream_terminated_second_reason">There will be no playback of this live stream on any feeds.</string>
+    <string name="amity_social_status_create_livestream_terminated_title">Your live stream has been\nterminated.</string>
+    <string name="amity_social_status_create_livestream_terminated_toolbar_title">Live terminated</string>
+    <string name="amity_social_status_create_livestream_terminated_watch_part_title">The live stream has been\nterminated.</string>
+    <string name="amity_social_status_edit_live">Edit live</string>
+     <string name="amity_social_status_event_detail_header_attending_status_change_not_allowed">Your attending status cannot be changed once the event has started.</string>
+     <string name="amity_social_status_event_detail_header_status_ended">Ended</string>
+     <string name="amity_social_status_event_feed_upcoming">Upcoming</string>
+    <string name="amity_social_status_go_live">Go live</string>
+    <string name="amity_social_status_host_badge">Host</string>
+    <string name="amity_social_status_join_community_to_interact_with_live_stream">Join community to interact with live stream</string>
+    <string name="amity_social_status_join_live">Join LIVE</string>
+    <string name="amity_social_status_live">LIVE</string>
+    <string name="amity_social_status_banned_page_title">Live stream</string>
+    <string name="amity_social_status_live_stream_duration_label">LIVE %s</string>
+    <string name="amity_social_status_live_stream_ending_stream_title">Ending live stream</string>
+    <string name="amity_social_status_live_stream">Live stream</string>
+    <string name="amity_social_status_live_stream_reconnecting_state_message">Due to poor connection, this live stream has been paused. It will resume automatically once the connection is stable.</string>
+    <string name="amity_social_status_livestream_end_live">End live</string>
+    <string name="amity_social_status_livestream_post_thumbnail_ended_too_short_desc">This live stream was too short to have a playback.</string>
+    <string name="amity_social_status_livestream_post_thumbnail_processing_title">This live stream has ended.</string>
+    <string name="amity_social_status_livestream_read_only">This live stream is now read-only.</string>
+    <string name="amity_social_status_no_viewers_message">Viewers who join your livestream will appear here.</string>
+    <string name="amity_social_status_permission_photo_thumbnail">This lets you use photos from this device as live stream thumbnail image.</string>
+    <string name="amity_social_status_pinned_product_badge_label">Pinned</string>
+    <string name="amity_common_button_moderator">Moderator</string>
+    <string name="amity_social_status_product_tagging_enabled">You can now manage tagged products in this live stream.</string>
+    <string name="amity_social_status_event_info_stream_status_recorded">RECORDED</string>
+    <string name="amity_social_status_remove_from_live">Remove from live</string>
+    <string name="amity_social_status_set_livestream_read_only">Set live stream to read-only</string>
+    <string name="amity_social_status_set_up_live_stream">Set up live stream</string>
+    <string name="amity_social_status_set_up_your_camera_mic_and_lighting_before_the_livestre">Set up your camera, mic, and lighting before the livestream begins.</string>
+    <string name="amity_social_status_this_live_stream_has_started_but_with_limited_visibilit">This live stream has started, but with limited visibility until the post has been approved.</string>
+    <string name="amity_social_status_this_live_stream_has_started_however_it_will_have_limit">This live stream has started. However, it will have limited visibility until your post has been approved.</string>
+    <string name="amity_social_status_upcoming_events">Upcoming events</string>
+    <string name="amity_social_status_event_info_stream_status_upcoming_live">UPCOMING LIVE</string>
+    <string name="amity_social_status_when_enabled_co_host_can_add_or_remove_tagged_products_">When enabled, co-host can add or remove tagged products and pin or unpin a product during the live stream.</string>
+    <string name="amity_social_status_you_can_start_setting_up_live_15_minutes_before_the_eve">You can start setting up live 15 minutes before the event starts.</string>
+    <string name="amity_social_tab_tab_all">All</string>
+    <string name="amity_social_tab_tab_clips">Clips</string>
+    <string name="amity_social_tab_tab_communities">Communities</string>
+    <string name="amity_social_tab_tab_explore">Explore</string>
+    <string name="amity_social_tab_tab_hosting">Hosting</string>
+    <string name="amity_social_tab_tab_join_requests_count">Join requests (%s)</string>
+    <string name="amity_social_tab_tab_my_communities">My communities</string>
+    <string name="amity_social_tab_tab_my_event">My event</string>
+    <string name="amity_social_tab_tab_past">Past</string>
+    <string name="amity_social_tab_tab_photos">Photos</string>
+    <string name="amity_social_tab_tab_posts">Posts</string>
+    <string name="amity_social_tab_tab_posts_count">Posts (%s)</string>
+    <string name="amity_social_tab_tab_upcoming">Upcoming</string>
+    <string name="amity_social_tab_tab_users">Users</string>
+    <string name="amity_social_tab_tab_videos">Videos</string>
+    <string name="amity_social_time_event_date">%1$s to %2$s</string>
+    <string name="amity_social_time_event_date_today">Today, %1$s to %2$s</string>
+    <string name="amity_social_time_event_date_yesterday">Yesterday, %1$s to %2$s</string>
+    <string name="amity_social_time_event_without_specified_end_time_will_end_after_12_hour">Event without specified end time will end after 12 hours.</string>
+    <string name="amity_social_time_time_left_days">%sd left</string>
+    <string name="amity_social_time_time_left_hours">%sh left</string>
+    <string name="amity_social_time_time_left_minutes">%sm left</string>
+    <string name="amity_social_toast_community_invitation_fail_to_accept">Failed to accept invitation. Please try again.</string>
+    <string name="amity_social_toast_accept_join_request_failed">Failed to accept join request. Please try again.</string>
+    <string name="amity_social_toast_cancel_request_failed">Failed to cancel your request. Please try again.</string>
+    <string name="amity_social_toast_co_host_left_stage_toast">Co-host left the stage.</string>
+    <string name="amity_social_toast_comment_delete_failed_toast_message">Failed to delete comment. Please try again.</string>
+    <string name="amity_social_toast_comment_reported_failed_toast_message">Failed to report comment. Please try again.</string>
+    <string name="amity_social_toast_comment_reported_toast_message">Comment reported.</string>
+    <string name="amity_social_toast_comment_unreported_failed_toast_message">Failed to unreport comment. Please try again.</string>
+    <string name="amity_social_toast_comment_unreported_toast_message">Comment unreported.</string>
+    <string name="amity_social_toast_community_add_member_success">Successfully added members to this community!</string>
+    <string name="amity_social_toast_community_invitation_create_failed">Failed to invite members. Please try again.</string>
+    <string name="amity_social_toast_community_invitation_create_success">Successfully invited members to this community.</string>
+    <string name="amity_social_toast_community_report_failed">Failed to report community. Please try again.</string>
+    <string name="amity_social_toast_community_setup_toast_create_failed">Failed to create community. Please try again.</string>
+    <string name="amity_social_toast_community_setup_toast_create_success">Successfully created community!</string>
+    <string name="amity_social_toast_community_setup_toast_update_failed">Failed to save your community profile. Please try again.</string>
+    <string name="amity_social_toast_community_setup_toast_update_success">Successfully updated community profile.</string>
+    <string name="amity_social_toast_community_unreport_failed">Failed to unreport community. Please try again.</string>
+    <string name="amity_social_toast_crated_story_failed">Failed to share story</string>
+    <string name="amity_social_toast_create_livestream_duration_exceed_snackbar">Your live will automatically end once it reaches 4-hour limit.</string>
+    <string name="amity_social_toast_community_invitation_fail_to_reject">Failed to decline invitation. Please try again.</string>
+    <string name="amity_social_toast_decline_join_request_failed">Failed to decline join request. Please try again.</string>
+    <string name="amity_social_toast_delete_post_failed">Failed to delete post. Please try again.</string>
+    <string name="amity_social_toast_error_create_community_failed">Failed to create community</string>
+    <string name="amity_social_toast_post_create_generic_error_message">Failed to create post. Please try again.</string>
+    <string name="amity_social_toast_error_update_community_failed">Failed to update community</string>
+    <string name="amity_social_toast_event_setup_upload_failed_message">Failed to upload image. Please try again.</string>
+    <string name="amity_social_toast_event_detail_header_update_attending_status_failed">Failed to update your attending status. Please try again.</string>
+    <string name="amity_social_toast_dialog_title_failed_to_upload">Failed to upload</string>
+    <string name="amity_social_toast_follow_request_accept_failed">Failed to accept follow request. Please try again.</string>
+    <string name="amity_social_toast_follow_request_decline_failed">Failed to decline follow request. Please try again.</string>
+    <string name="amity_social_toast_hardcoded_storypage_communityfeedstory_content_failed_to_delete_story_please_try_again">Failed to delete story. Please try again.</string>
+    <string name="amity_social_toast_image_add_alt_text_generic_error_message">Failed to add alt text. Please try again.</string>
+    <string name="amity_social_toast_image_edit_alt_text_generic_error_message">Failed to edit alt text. Please try again.</string>
+    <string name="amity_social_toast_invitation_send_failed_toast">Failed to send invitation.</string>
+    <string name="amity_social_toast_snackbar_join_community_failed">Failed to join the community. Please try again.</string>
+    <string name="amity_social_toast_leave_community_failed">Failed to leave the community. Please try again.</string>
+    <string name="amity_social_toast_left_backstage_toast">You have left the backstage.</string>
+    <string name="amity_social_toast_member_ban_failed">Failed to ban member. Please try again.</string>
+    <string name="amity_social_toast_user_promoted_failed">Failed to promote user. Please try again.</string>
+    <string name="amity_social_toast_member_promote_success_toast">Successfully promoted to moderator!</string>
+    <string name="amity_social_toast_member_remove_failed">Failed to remove member. Please try again.</string>
+    <string name="amity_social_toast_user_report_failed">Failed to report user. Please try again.</string>
+    <string name="amity_social_toast_member_reported_toast">Member reported.</string>
+    <string name="amity_social_toast_member_unban_failed">Failed to unban member. Please try again.</string>
+    <string name="amity_social_toast_member_unreported_toast">Member unreported.</string>
+    <string name="amity_social_toast_community_add_member_failed">Failed to add members to this community. Please try again.</string>
+    <string name="amity_social_toast_message_report_failed">Failed to report message. Please try again.</string>
+    <string name="amity_social_toast_message_unreport_failed">This message failed to be unreported. Please try again.</string>
+    <string name="amity_social_toast_pin_product_tag_failed">Failed to pin product tag. Please try again.</string>
+    <string name="amity_social_toast_post_unavailable_toast_message">This post is no longer available.</string>
+    <string name="amity_social_toast_post_edit_generic_error_message">Failed to edit post. Please try again.</string>
+    <string name="amity_social_toast_post_report_failed">Failed to report post. Please try again.</string>
+    <string name="amity_social_toast_post_unreport_failed">Failed to unreport post. Please try again.</string>
+    <string name="amity_social_toast_product_tag_add_failed">Failed to add product tags. Please try again.</string>
+    <string name="amity_social_toast_product_tag_remove_failed">Failed to remove product tag. Please try again.</string>
+    <string name="amity_social_toast_remove_co_host_failed_toast">Failed to remove co-host.</string>
+    <string name="amity_social_toast_reply_reported_failed_toast_message">Failed to report reply. Please try again.</string>
+    <string name="amity_social_toast_reply_reported_toast_message">Reply reported.</string>
+    <string name="amity_social_toast_reply_unreported_failed_toast_message">Failed to unreport reply. Please try again.</string>
+    <string name="amity_social_toast_reply_unreported_toast_message">Reply unreported.</string>
+    <string name="amity_social_toast_report_reason_success_toast_message">%s reported.</string>
+    <string name="amity_social_toast_review_post_failed">Failed to review post. Please try again.</string>
+    <string name="amity_social_toast_setting_close_success">Successfully closed community!</string>
+    <string name="amity_social_toast_setting_closing_toast">Closing the community.</string>
+    <string name="amity_social_toast_setting_leave_success">Successfully left community!</string>
+    <string name="amity_social_toast_setting_leaving_toast">Leaving the community.</string>
+    <string name="amity_social_toast_snackbar_attending_status_updated">Successfully updated your attending status.</string>
+    <string name="amity_social_toast_snackbar_close_community_failed">Failed to close community. Please try again later.</string>
+    <string name="amity_social_toast_snackbar_create_event_failed">Failed to create event. Please try again.</string>
+    <string name="amity_social_toast_snackbar_delete_event_failed">Failed to delete event. Please try again.</string>
+    <string name="amity_social_toast_snackbar_event_added_to_calendar">Event added to your calendar.</string>
+    <string name="amity_social_toast_snackbar_event_created">Successfully created event.</string>
+    <string name="amity_social_toast_snackbar_event_deleted">Event deleted.</string>
+    <string name="amity_social_toast_snackbar_event_updated">Successfully updated event.</string>
+    <string name="amity_social_toast_snackbar_profile_save_failed">Failed to save your profile. Please try again.</string>
+    <string name="amity_social_toast_snackbar_profile_updated">Successfully updated your profile!</string>
+    <string name="amity_social_toast_snackbar_story_link_limit">Can\'t add more than one link to your story.</string>
+    <string name="amity_social_toast_snackbar_update_event_failed">Failed to update event. Please try again.</string>
+    <string name="amity_social_toast_snackbar_user_muted">User muted.</string>
+    <string name="amity_social_toast_snackbar_user_promoted">User promoted.</string>
+    <string name="amity_social_toast_snackbar_user_unmuted">User unmuted.</string>
+    <string name="amity_social_toast_snackbar_story_shared">Successfully shared story</string>
+    <string name="amity_social_toast_unjoined_toast">You unjoined %s!</string>
+    <string name="amity_social_toast_unpin_product_tag_failed">Failed to unpin product tag. Please try again.</string>
+    <string name="amity_social_toast_update_cohost_permission_failed">Failed to update co-host product tagging permission. Please try again.</string>
+    <string name="amity_social_toast_user_demoted_failed">Failed to demote user. Please try again.</string>
+    <string name="amity_social_toast_user_muted_failed">Failed to mute user. Please try again.</string>
+    <string name="amity_social_toast_user_unblock_failed">Failed to unblock user. Please try again.</string>
+    <string name="amity_social_toast_user_unmuted_failed">Failed to unmute user. Please try again.</string>
+    <string name="amity_social_toast_snackbar_waiting_for_network">Waiting for network…</string>
+
+    <!-- Cross-platform gap keys — Group B batch (29 new keys) -->
+    <string name="amity_social_label_no_community_yet_2">No community yet</string>
+    <string name="amity_social_label_setup_category_title">Categories</string>
+    <string name="amity_social_permission_post_permission_admin_review">Admin review required</string>
+    <string name="amity_social_toast_dialog_title_failed_to_upload_story">Failed to upload story</string>
+    <string name="amity_social_toast_snackbar_address_copied">Address copied</string>
+    <string name="amity_social_toast_snackbar_link_copied">Link copied.</string>
+    <string name="amity_chat_label_banned_from_chat">You are banned from chat</string>
+    <string name="amity_chat_label_loading_chat">Loading chat...</string>
+    <string name="amity_chat_toast_message_reported">Message reported.</string>
+    <string name="amity_social_cancel_unsaved_changes">Are you sure you want to cancel? Your changes won\'t be saved.</string>
+    <string name="amity_social_couldnt_load_chat">Couldn\'t Load Chat</string>
+    <string name="amity_social_disable_product_tagging_description">If you disable this, the co-host can\'t add, remove, or pin products in this live stream.</string>
+    <string name="amity_social_label_product_tagging_unavailable_description">Any products you\'ve tagged will be removed and won\'t be shown to viewers.</string>
+    <string name="amity_social_label_product_tagging_unavailable_title">Product tagging isn\'t available</string>
+    <string name="amity_social_livestream_terminated_second_reason">There will be no playback of this live stream on any feeds.</string>
+    <string name="amity_social_permission_post_permission_only_admin">Only admins can post</string>
+    <string name="amity_social_report_list_screen_description">Tell us why you\'re reporting this content. Your report will be reviewed by our moderators and kept confidential.</string>
+    <string name="amity_social_toast_event_create_blocked_url_error">Your event wasn\'t created as it contains a link that\'s not allowed.</string>
+    <string name="amity_social_toast_event_create_start_time_too_soon_error">Your event wasn\'t created as it needs to start at least 15 minutes from now.</string>
+    <string name="amity_social_toast_event_update_blocked_url_error">Your event wasn\'t updated as it contains a link that\'s not allowed.</string>
+    <string name="amity_social_toast_member_demote_failed">Failed to demote member. Please try again.</string>
+    <string name="amity_social_unfollow_user_dialog_content">If you change your mind, you\'ll have to request to follow them again.</string>
+    <string name="amity_social_unsaved_products">You have products selected that haven\'t been added yet. If you close now, your selection will be lost.</string>
+    <string name="amity_social_unsaved_tagged_products">You have tagged products that haven\'t been saved yet. If you leave now, your changes will be lost.</string>
+    <string name="amity_social_user_profile_blocked_word_error">Your profile wasn\'t updated as it contains an inappropriate word.</string>
+    <string name="amity_social_you_havent_joined_any_communities">You haven\'t joined any communities yet.</string>
+
+
+    <!-- New keys: Group C camera permission remap -->
+    <string name="amity_social_status_allow_camera_desc">This lets you record and live stream\nfrom this device.</string>
+    <string name="amity_social_permission_camera_access_denied">Please grant camera permission in settings.</string>
+
+    <!-- Restored keys: removed incorrectly in commit 4e9775450 -->
+    <string name="amity_social_button_cancel_request">Cancel request</string>
+    <string name="amity_social_button_group">Group</string>
+    <string name="amity_social_button_in_person">In-person</string>
+    <string name="amity_social_button_invite_co_host">Invite co-host</string>
+    <string name="amity_social_button_story_to">Story to</string>
+    <string name="amity_social_button_unknown_community">Unknown Community</string>
+    <string name="amity_social_button_user_pending_button">Cancel request</string>
+    <string name="amity_social_button_virtual">Virtual</string>
+    <string name="amity_social_button_vote_plural">votes</string>
+    <string name="amity_social_button_vote_singular">vote</string>
+    <string name="amity_social_error_add_comment_exceed_error_message">Your comment exceeds the maximum character limit of %d. Please shorten your comment.</string>
+    <string name="amity_social_error_close_community_error_title">Unable to close community</string>
+    <string name="amity_social_failed_to_unfollow_user">Unable to unfollow this user</string>
+    <string name="amity_social_label_editing_is_not_possible">Editing is not possible</string>
+    <string name="amity_social_label_find_or_create_community">Find community or create your own</string>
+    <string name="amity_social_modal_join_community_sheet_title">Join community to continue</string>
+    <string name="amity_social_label_member_promoted">User promoted to moderator</string>
+    <string name="amity_social_label_no_viewers_title">No viewers available right now</string>
+    <string name="amity_social_label_please_try_again">Please try again.</string>
+    <string name="amity_social_label_poll_ends_on">Ends on %s</string>
+    <string name="amity_social_label_poll_options_desc">Poll must contain at least 2 options</string>
+    <string name="amity_social_label_post_already_reviewed">Post has been reviewed by another moderator.</string>
+    <string name="amity_social_label_tagged_products_unavailable">Some products that you\'ve tagged are no longer available.</string>
+    <string name="amity_social_label_title_optional">Title (Optional)</string>
+    <string name="amity_social_label_unsupported_message_type">Unsupport message type</string>
+    <string name="amity_social_label_user_profile_all_post_title">Public community &amp; profile posts</string>
+    <string name="amity_social_label_user_promoted">User promoted to moderator</string>
+    <string name="amity_social_label_youre_going_to_this_event">You\'re going to this event!</string>
+    <string name="amity_social_modal_alert_cohost_leave_message">Are you sure you want to leave this livestream? You\'ll stop broadcasting and exit the session completely.</string>
+    <string name="amity_social_modal_alert_remove_cohost_message">Are you sure you want to remove this co-host from the live stream? They\'ll immediately stop broadcasting and return as a viewer.</string>
+    <string name="amity_social_modal_community_setup_dialog_leave_title">Leave without finishing</string>
+    <string name="amity_social_modal_deleted_user_dialog_title">This user has been deleted.</string>
+    <string name="amity_social_modal_dialog_discard_changes_title">Discard changes?</string>
+    <string name="amity_social_modal_dialog_title_cannot_join_cohost">Cannot join as co-host</string>
+    <string name="amity_social_modal_dialog_title_unable_to_cancel_follow">Unable to cancel the follow request</string>
+    <string name="amity_social_notification_moderator_has_disabled_notification_for_this_community">Moderator has disabled notification for this community</string>
+    <string name="amity_social_permission_allow_photos_title">Allow access to your photos</string>
+    <string name="amity_social_placeholder_whats_on_your_mind">What\'s on your mind?</string>
+    <string name="amity_social_time_time_left_zero">0m left</string>
+    <string name="amity_social_toast_community_setup_toast_updating">Updating…</string>
+    <string name="amity_social_toast_error_update_community_profile">Failed to update community profile</string>
+    <string name="amity_social_toast_error_update_user_failed">Failed to update user.</string>
+    <string name="amity_social_toast_failed_create_image_file">Failed to create image file</string>
+    <string name="amity_social_toast_failed_create_video_file">Failed to create video file</string>
+    <string name="amity_social_toast_failed_create_video_uri">Failed to create video URI</string>
+    <string name="amity_social_toast_invitation_cancelled_toast">Invitation cancelled.</string>
+    <string name="amity_social_toast_member_unreport_failed">Failed to unreport member. Please try again.</string>
+    <string name="amity_social_toast_message_send_failed">This message failed to be sent. Please try again.</string>
+    <string name="amity_social_toast_post_products_unavailable_toast">Some products that you\'ve tagged are no longer available.</string>
+    <string name="amity_social_toast_snackbar_community_id_required">Community ID is required</string>
+    <string name="amity_social_toast_snackbar_community_profile_update_failed">Failed to update community profile</string>
+    <string name="amity_social_toast_snackbar_community_profile_updated">Successfully updated community profile!</string>
+    <string name="amity_social_button_event_setup_creating">Creating…</string>
+    <string name="amity_social_toast_snackbar_invitation_declined">Invitation declined.</string>
+    <string name="amity_social_toast_poll_create_posting_toast">Posting...</string>
+    <string name="amity_social_button_event_setup_saving">Saving…</string>
+    <string name="amity_social_toast_snackbar_updating">Updating…</string>
+    <string name="amity_social_toast_success_updated_community_profile">Successfully updated community profile!</string>
+    <string name="amity_social_toast_user_block_failed">Failed to block user. Please try again.</string>
+    <string name="amity_social_toast_user_unreport_failed">Failed to unreport user. Please try again.</string>
+
+    <!-- Restored entries for registry compatibility -->
+    <string name="amity_social_button_delete_reply">Delete reply</string>
+    <string name="amity_social_modal_dialog_cancel_button">Cancel</string>
+    <string name="amity_social_label_user_demoted">Successfully demoted to member!</string>
+    <string name="amity_social_toast_member_promote_failed">Failed to promote user. Please try again.</string>
+    <string name="amity_social_button_member_removed">Member removed from this community.</string>
+    <string name="amity_social_button_member_reported">User reported.</string>
+    <string name="amity_social_toast_member_report_failed">Failed to report user. Please try again.</string>
+    <string name="amity_social_button_member_unreported">User unreported.</string>
+    <string name="amity_social_button_following">Following</string>
+    <string name="amity_social_button_add_products">Add products</string>
+    <string name="amity_social_label_something_went_wrong">Oops, something went wrong.</string>
+    <string name="amity_social_label_banned_title">You\'ve been banned.</string>
+    <string name="amity_social_status_banned_desc">You can no longer access this live stream.</string>
+    <string name="amity_social_error_add_comment_error_message">Oops, something went wrong</string>
+    <string name="amity_social_button_ok">OK</string>
+    <string name="amity_social_status_create_livestream_target_title">Live on</string>
+    <string name="amity_social_button_like">Like</string>
+    <string name="amity_social_button_social_home_create_post_button">Post</string>
+    <string name="amity_social_button_social_home_create_community">Create community</string>
+    <string name="amity_social_button_post_composer_edit_button">Save</string>
+    <string name="amity_social_button_community_setup_camera_button">Camera</string>
+    <string name="amity_social_button_community_setup_image_button">Photo</string>
+    <string name="amity_social_label_add_to_calendar">Add to calendar</string>
+    <string name="amity_social_button_ends_on">Ends on</string>
+    <string name="amity_social_toast_failed_to_upload">Failed to upload</string>
+    <string name="amity_social_button_loading_more">Load More</string>
+    <string name="amity_social_button_poll">Poll</string>
+    <string name="amity_social_status_recorded">RECORDED</string>
+    <string name="amity_social_status_upcoming_live">UPCOMING LIVE</string>
+    <string name="amity_social_button_unlisted">Unlisted</string>
+    <string name="amity_social_button_done">Done</string>
+    <string name="amity_social_label_voted_by_you">Voted by you</string>
+    <string name="amity_social_label_join_to_attend_events">Become a member of %s to attend events and join the conversation.</string>
+    <string name="amity_social_notification_title_notifications">Notifications</string>
+    <string name="amity_social_label_title_story_comments">Story comments</string>
+    <string name="amity_social_toast_join_community_failed">Failed to join the community. Please try again.</string>
+    <string name="amity_social_toast_story_shared">Successfully shared story</string>
+    <string name="amity_social_label_invitation_unavailable">Invitation is no longer valid.</string>
+    <string name="amity_social_label_joined_community">You joined %s.</string>
+    <string name="amity_social_modal_dialog_post_pending_approval">Your post has been submitted to the pending list. It will be published once approved by the community moderator.</string>
+    <string name="amity_social_label_choose_different_image">Please choose a different image to upload.</string>
+    <string name="amity_social_modal_dialog_title_unsaved_changes">Unsaved changes</string>
+    <string name="amity_social_toast_error_create_post_failed">Failed to create post. Please try again.</string>
+    <string name="amity_social_toast_error_upload_image_failed">Failed to upload image. Please try again.</string>
+    <string name="amity_social_button_invite">Invite</string>
+    <string name="amity_social_button_no_votes">No votes</string>
+    <string name="amity_social_button_story">Story</string>
+    <string name="amity_social_button_unblock">Unblock</string>
+    <string name="amity_social_error_upload_failed">Upload failed</string>
+    <string name="amity_social_button_content_unavailable">The content you\'re looking for is unavailable.</string>
+    <string name="amity_social_button_off">Off</string>
+    <string name="amity_social_label_community_post_label">post</string>
+    <string name="amity_social_status_event_detail_header_status_upcoming">Upcoming</string>
+    <string name="amity_social_label_confirm_invite_cohost_message">If they accept your invitation, they\'ll join as a co-host with moderator access. They can turn on their camera and mic, appear on stage, and help manage chat.</string>
+    <string name="amity_social_toast_membership_add_failed">Failed to add members to this community. Please try again.</string>
+    <string name="amity_social_toast_waiting_network_toast">Waiting for network…</string>
+    <string name="amity_social_toast_accept_invitation_failed">Failed to accept invitation. Please try again.</string>
+    <string name="amity_social_toast_decline_invitation_failed">Failed to decline invitation. Please try again.</string>
+    <string name="amity_social_button_explore_community_button">Explore Community</string>
+    <string name="amity_social_label_community_pending_invitations_title">Pending invitations</string>
+    <string name="amity_social_modal_event_detail_alert_leave_without_finishing_title">Leave without finishing?</string>
+    <string name="amity_social_modal_setup_alert_message">Your progress won\'t be saved and your community won\'t be created.</string>
+    <string name="amity_social_toast_poll_post_unavailable_toast">This post is no longer available.</string>
+    <string name="amity_social_button_reaction_like">Like</string>
+    <string name="amity_social_button_reaction_love">Love</string>
+    <string name="amity_social_button_reaction_fire">Fire</string>
+    <string name="amity_social_button_reaction_happy">Happy</string>
+    <string name="amity_social_button_reaction_sad">Sad</string>
 </resources>

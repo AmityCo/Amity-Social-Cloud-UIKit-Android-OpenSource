@@ -20,14 +20,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.core.invitation.AmityInvitation
-import com.amity.socialcloud.uikit.common.common.readableSocialTimeDiff
+import com.amity.socialcloud.uikit.common.utils.readableSocialTimeDiff
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
@@ -35,6 +34,7 @@ import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.common.DeclineInvitationDialog
 import com.amity.socialcloud.uikit.community.compose.notificationtray.NotificationTrayViewModel
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityNotificationInvitationView(
@@ -53,11 +53,11 @@ fun AmityNotificationInvitationView(
     val communityName =
         (invitation.getTarget() as? AmityInvitation.Target.Community)?.community?.getDisplayName()
             ?: "the community"
-    val acceptSuccessMessage = stringResource(R.string.amity_v4_community_invitation_accept_success, communityName)
-    val rejectSuccessMessage = stringResource(R.string.amity_v4_community_invitation_reject_success)
-    val errorAcceptMessage = stringResource(R.string.amity_v4_community_invitation_fail_to_accept)
-    val errorRejectMessage = stringResource(R.string.amity_v4_community_invitation_fail_to_reject)
-    val errorUnavailableMessage = stringResource(R.string.amity_v4_community_invitation_unavailable_error)
+    val acceptSuccessMessage = amitySocialString("amity_social_label_community_invitation_accept_success", communityName)
+    val rejectSuccessMessage = amitySocialString("amity_social_toast_snackbar_invitation_declined")
+    val errorAcceptMessage = amitySocialString("amity_social_toast_accept_invitation_failed")
+    val errorRejectMessage = amitySocialString("amity_social_toast_decline_invitation_failed")
+    val errorUnavailableMessage = amitySocialString("amity_social_label_invitation_unavailable")
 
     val requiresJoinApproval = (invitation.getTarget() as? AmityInvitation.Target.Community)?.community?.requiresJoinApproval() ?: false
     val showDeclineDialog = remember { mutableStateOf(false) }
@@ -114,15 +114,15 @@ fun AmityNotificationInvitationView(
                 )
             }
             Spacer(Modifier.width(12.dp))
-            val inviterDisplayName = invitation.getInviterUser()?.getDisplayName() ?: "Unknown User"
+            val inviterDisplayName = invitation.getInviterUser()?.getDisplayName() ?: amitySocialString("amity_social_button_unknown_user")
             val targetCommunityName =
                 (invitation.getTarget() as? AmityInvitation.Target.Community)?.community?.getDisplayName()
-                    ?: "Community"
+                    ?: amitySocialString("amity_social_button_unknown_community")
 
             HighlightText(
                 modifier = Modifier.weight(1f),
-                text = stringResource(R.string.amity_v4_community_invitation_message_template, inviterDisplayName, targetCommunityName),
-                templatedText = stringResource(R.string.amity_v4_community_invitation_message_template, "{{$inviterDisplayName}}", "{{$targetCommunityName}}"),
+                text = amitySocialString("amity_social_label_community_invitation_message_template", inviterDisplayName, targetCommunityName),
+                templatedText = amitySocialString("amity_social_label_community_invitation_message_template", "{{$inviterDisplayName}}", "{{$targetCommunityName}}"),
             )
             Spacer(Modifier.width(12.dp))
             Text(
@@ -169,7 +169,7 @@ fun AmityNotificationInvitationView(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = stringResource(R.string.amity_v4_community_invitation_accept_button),
+                    text = amitySocialString("amity_social_button_community_invitation_accept_button"),
                     style = AmityTheme.typography.bodyBold,
                     color = Color.White,
                 )
@@ -194,7 +194,7 @@ fun AmityNotificationInvitationView(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = stringResource(R.string.amity_v4_community_invitation_reject_button),
+                    text = amitySocialString("amity_social_button_decline"),
                     style = AmityTheme.typography.bodyBold,
                     color = AmityTheme.colors.baseShade1,
                 )

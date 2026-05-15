@@ -36,6 +36,7 @@ import com.amity.socialcloud.uikit.common.common.views.text.AmityTextStyle
 import com.amity.socialcloud.uikit.common.extionsions.UrlPosition
 import com.amity.socialcloud.uikit.common.extionsions.extractUrls
 import com.amity.socialcloud.uikit.common.extionsions.parseUrls
+import com.amity.socialcloud.uikit.common.localization.amityCommonString
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -53,6 +54,7 @@ fun AmityExpandableText(
     style: TextStyle = AmityTheme.typography.body,
     previewLines: Int = EXPANDABLE_TEXT_MAX_LINES,
     intialExpand: Boolean = false,
+    readMoreText: String = amityCommonString("amity_common_button_see_more"),
     onClick: () -> Unit = {},
     onMentionedUserClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
@@ -73,12 +75,13 @@ fun AmityExpandableText(
                 constraints = Constraints(maxWidth = this.constraints.maxWidth)
             )
         }
-        val trimmedText by rememberSaveable(text) {
+        val trimmedText by rememberSaveable(text, readMoreText) {
             mutableStateOf(
                 getTrimmedText(
                     text = text,
                     textLayoutResult = textLayoutResult,
                     visiblePreviewLines = previewLines,
+                    readMoreLength = readMoreText.length,
                 )
             )
         }
@@ -215,8 +218,8 @@ fun AmityExpandableText(
                     color = AmityTheme.colors.primary,
                     textDecoration = TextDecoration.Underline
                 )) {
-                    pushStringAnnotation(tag = readMore, annotation = readMore)
-                    append(readMore)
+                    pushStringAnnotation(tag = readMoreText, annotation = readMoreText)
+                    append(readMoreText)
                 }
             }
         }
@@ -264,7 +267,7 @@ fun AmityExpandableText(
                         }
 
                         val seeMoreAnnotation = annotatedString.getStringAnnotations(
-                            tag = readMore,
+                            tag = readMoreText,
                             start = position,
                             end = position
                         )
@@ -341,6 +344,7 @@ private fun getTrimmedText(
     text: String,
     textLayoutResult: TextLayoutResult,
     visiblePreviewLines: Int,
+    readMoreLength: Int = 8,
 ): String {
     return if (textLayoutResult.lineCount >= visiblePreviewLines) {
         val startIndex = textLayoutResult.getLineStart(visiblePreviewLines - 1)
@@ -348,7 +352,7 @@ private fun getTrimmedText(
         val lastLine = text.substring(startIndex, endIndex)
 
         val newText = if (lastLine.length > 25) {
-            val lengthToReduce = readMore.length * 3 / 2
+            val lengthToReduce = readMoreLength * 3 / 2
             text.substring(0, endIndex - lengthToReduce)
         } else {
             text.substring(0, endIndex)
@@ -364,7 +368,6 @@ private fun getTrimmedText(
     }
 }
 
-private const val readMore = "See more"
 const val EXPANDABLE_TEXT_MAX_LINES = 8
 
 @Preview(showBackground = true)

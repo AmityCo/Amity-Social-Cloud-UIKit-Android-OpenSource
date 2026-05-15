@@ -27,6 +27,7 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getText
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityUserFollowRelationshipButton(
@@ -48,6 +49,14 @@ fun AmityUserFollowRelationshipButton(
         when (followStatus) {
             AmityFollowStatus.NONE -> false
             else -> true
+        }
+    }
+    val fallbackKey = remember(followStatus) {
+        when (followStatus) {
+            AmityFollowStatus.PENDING -> "amity_social_button_user_pending_button"
+            AmityFollowStatus.ACCEPTED -> "amity_social_button_user_following_button"
+            AmityFollowStatus.BLOCKED -> "amity_social_button_user_unblock_button"
+            AmityFollowStatus.NONE -> "amity_social_button_user_follow_button"
         }
     }
 
@@ -82,16 +91,11 @@ fun AmityUserFollowRelationshipButton(
                     )
 
                     Text(
-                        text = getConfig().getText().ifEmpty {
-                            when (followStatus) {
-                                AmityFollowStatus.PENDING -> "Pending"
-                                AmityFollowStatus.ACCEPTED -> "Following"
-                                AmityFollowStatus.BLOCKED -> "Unblock"
-                                AmityFollowStatus.NONE -> "Follow"
-                            }
-                        },
+                        text = amitySocialString(fallbackKey),
                         color = AmityTheme.colors.base,
-                        style = AmityTheme.typography.bodyLegacy.copy(fontWeight = FontWeight.SemiBold),
+                        style = AmityTheme.typography.bodyLegacy.copy(
+                            fontWeight = FontWeight.SemiBold
+                        ),
                     )
                 }
             }
@@ -119,7 +123,7 @@ fun AmityUserFollowRelationshipButton(
                     )
 
                     Text(
-                        text = getConfig().getText(),
+                        text = amitySocialString(fallbackKey),
                         style = AmityTheme.typography.bodyLegacy.copy(
                             color = Color.White,
                             fontWeight = FontWeight.SemiBold

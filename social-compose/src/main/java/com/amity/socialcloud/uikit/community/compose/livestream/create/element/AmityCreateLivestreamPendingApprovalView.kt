@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityCreateLivestreamPendingApprovalView() {
@@ -42,7 +43,7 @@ fun AmityCreateLivestreamPendingApprovalView() {
         )
         Spacer(Modifier.height(12.dp))
         Text(
-            text = "Waiting for approval",
+            text = amitySocialString("amity_social_label_waiting_for_approval"),
             color = Color.White,
             style = AmityTheme.typography.titleLegacy.copy(
                 fontWeight = FontWeight.SemiBold
@@ -50,7 +51,7 @@ fun AmityCreateLivestreamPendingApprovalView() {
         )
         Spacer(Modifier.height(4.dp))
         Text(
-            text = "This live stream has started. However, it will have limited visibility until your post has been approved.",
+            text = amitySocialString("amity_social_status_this_live_stream_has_started_however_it_will_have_limit"),
             color = Color.White,
             modifier = Modifier.padding(horizontal = 16.dp),
             style = AmityTheme.typography.captionLegacy.copy(

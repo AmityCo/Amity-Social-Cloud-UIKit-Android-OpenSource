@@ -23,6 +23,7 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityCommunityEmptyPinnedFeedView(
@@ -43,7 +44,7 @@ fun AmityCommunityEmptyPinnedFeedView(
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "No pinned posts yet",
+            text = amitySocialString("amity_social_label_no_pinned_posts_yet"),
             style = TextStyle(
                 fontSize = 17.sp,
                 lineHeight = 22.sp,

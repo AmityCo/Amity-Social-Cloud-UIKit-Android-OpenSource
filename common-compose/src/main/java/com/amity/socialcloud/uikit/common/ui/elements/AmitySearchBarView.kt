@@ -33,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.R
+import com.amity.socialcloud.uikit.common.localization.amityCommonString
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 
@@ -147,7 +148,7 @@ fun AmitySearchBarView(
 @Composable
 fun AmitySearchBarViewPreview() {
     AmitySearchBarView(
-        hint = "Search category",
+        hint = "",
         onSearch = {}
     )
 }

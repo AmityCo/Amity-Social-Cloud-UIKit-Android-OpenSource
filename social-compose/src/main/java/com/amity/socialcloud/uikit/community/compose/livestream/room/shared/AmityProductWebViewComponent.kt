@@ -43,6 +43,7 @@ import com.amity.socialcloud.sdk.model.core.product.AmityProductStatus
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.common.AmityWebView
 import org.joda.time.DateTime
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityProductWebViewComponent(
@@ -154,7 +155,7 @@ fun AmityProductWebViewComponent(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Unable to load page",
+                        text = amitySocialString("amity_social_label_unable_to_load_page"),
                         fontSize = 17.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = Color(0xFF292B32),
@@ -162,7 +163,7 @@ fun AmityProductWebViewComponent(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "The page could not be loaded. You can open it in your browser instead.",
+                        text = amitySocialString("amity_social_label_the_page_could_not_be_loaded_you_can_open_it_in_your_br"),
                         fontSize = 14.sp,
                         color = Color(0xFF636878),
                         textAlign = TextAlign.Center
@@ -177,7 +178,7 @@ fun AmityProductWebViewComponent(
                             containerColor = Color(0xFF1054DE)
                         )
                     ) {
-                        Text(text = "Open in Browser", color = Color.White)
+                        Text(text = amitySocialString("amity_social_label_open_in_browser"), color = Color.White)
                     }
                 }
             }

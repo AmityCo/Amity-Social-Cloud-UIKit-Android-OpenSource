@@ -68,7 +68,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -164,6 +163,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @UnstableApi
 @OptIn(ExperimentalMaterial3Api::class)
@@ -183,6 +184,7 @@ fun AmityRoomPlayerPage(
         viewModelStoreOwner = viewModelStoreOwner
     )
     val uiState by remember { viewModel.roomPlayerState }.collectAsState()
+    val isLeaving = uiState.isLeaving
 
     var wasLive by remember { mutableStateOf(false) }
 
@@ -635,34 +637,34 @@ fun AmityRoomPlayerPage(
                             ) {
                                 when {
                                     //Disable leaving transition
-//                                    isLeaving
-//                                        -> {
-//                                        Spacer(Modifier.weight(1f))
-//                                        CircularProgressIndicator(
-//                                            modifier = Modifier
-//                                                .width(40.dp)
-//                                                .height(40.dp),
-//                                            color = Color.White,
-//                                            trackColor = Color.Gray,
-//                                            strokeWidth = 2.dp,
-//                                            strokeCap = StrokeCap.Round
-//                                        )
-//                                        Spacer(Modifier.height(13.dp))
-//                                        Text(
-//                                            text = "Leaving stage…",
-//                                            color = Color.White,
-//                                            style = AmityTheme.typography.titleLegacy.copy(
-//                                                fontWeight = FontWeight.SemiBold
-//                                            )
-//                                        )
-//                                        Text(
-//                                            text = "You’ll return to the livestream as a viewer shortly.",
-//                                            style = AmityTheme.typography.caption.copy(
-//                                                color = Color.White
-//                                            ),
-//                                        )
-//                                        Spacer(Modifier.weight(1f))
-//                                    }
+                                    isLeaving
+                                        -> {
+                                        Spacer(Modifier.weight(1f))
+                                        CircularProgressIndicator(
+                                            modifier = Modifier
+                                                .width(40.dp)
+                                                .height(40.dp),
+                                            color = Color.White,
+                                            trackColor = Color.Gray,
+                                            strokeWidth = 2.dp,
+                                            strokeCap = StrokeCap.Round
+                                        )
+                                        Spacer(Modifier.height(13.dp))
+                                        Text(
+                                            text = "Leaving stage…",
+                                            color = Color.White,
+                                            style = AmityTheme.typography.titleLegacy.copy(
+                                                fontWeight = FontWeight.SemiBold
+                                            )
+                                        )
+                                        Text(
+                                            text = amitySocialString("amity_social_overlay_leaving_stage_description"),
+                                            style = AmityTheme.typography.caption.copy(
+                                                color = Color.White
+                                            ),
+                                        )
+                                        Spacer(Modifier.weight(1f))
+                                    }
                                     liveKitRoomState == Room.State.DISCONNECTED && !isStarting -> {
                                         Row(
                                             modifier = Modifier
@@ -693,7 +695,7 @@ fun AmityRoomPlayerPage(
                                                 )
                                             }
                                             Text(
-                                                text = "You’re in the backstage",
+                                                text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_you_re_in_the_backstage"),
                                                 style = TextStyle(
                                                     fontSize = 15.sp,
                                                     lineHeight = 20.sp,
@@ -723,8 +725,8 @@ fun AmityRoomPlayerPage(
                                                 modifier = Modifier
                                                     .weight(1f)
                                                     .background(Color.Black.copy(alpha = 0.5f)),
-                                                title = stringResource(R.string.amity_v4_create_livestream_no_camera_permission_title),
-                                                description = stringResource(R.string.amity_v4_create_livestream_no_camera_permission_desc),
+                                                title = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_permission_title_allow_camera_mic_access"),
+                                                description = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_allow_camera_desc"),
                                                 onOpenSettingClick = {
                                                     val intent =
                                                         Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
@@ -766,7 +768,7 @@ fun AmityRoomPlayerPage(
                                                 horizontalAlignment = Alignment.Start,
                                             ) {
                                                 Text(
-                                                    text = "Set up your camera, mic, and lighting before the livestream begins.",
+                                                    text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_set_up_your_camera_mic_and_lighting_before_the_livestre"),
 // Typography/Body
                                                     style = TextStyle(
                                                         fontSize = 15.sp,
@@ -823,7 +825,7 @@ fun AmityRoomPlayerPage(
                                                             contentScale = ContentScale.Fit
                                                         )
                                                         Text(
-                                                            text = "Join LIVE",
+                                                            text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_join_live"),
                                                             fontSize = 15.sp,
                                                             fontWeight = FontWeight.SemiBold,
                                                             color = Color.White
@@ -891,7 +893,7 @@ fun AmityRoomPlayerPage(
                                         )
                                         Spacer(Modifier.height(13.dp))
                                         Text(
-                                            text = stringResource(R.string.amity_v4_create_livestream_connecting_text),
+                                            text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_create_livestream_connecting_text"),
                                             color = Color.White,
                                             style = AmityTheme.typography.titleLegacy.copy(
                                                 fontWeight = FontWeight.SemiBold
@@ -1341,13 +1343,13 @@ fun AmityRoomPlayerPage(
 
                 AmityBottomSheetActionItem(
                     icon = R.drawable.amity_v4_link_icon,
-                    text = "Copy live stream link",
+                    text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_copy_live_stream_link"),
                     modifier = Modifier
                         .padding(horizontal = 12.dp),
                     color = Color(0xFFEBECEF)
                 ) {
                     clipboardManager.setText(AnnotatedString(postLink))
-                    AmityUIKitSnackbar.publishSnackbarMessage("Link copied")
+                    AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_link_copied"))
                     // Delay the bottom sheet dismissal slightly
                     CoroutineScope(Dispatchers.Main).launch {
                         delay(100)
@@ -1357,7 +1359,7 @@ fun AmityRoomPlayerPage(
 
                 AmityBottomSheetActionItem(
                     icon = R.drawable.amity_v4_share_icon,
-                    text = "Share to",
+                    text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_share_to"),
                     modifier = Modifier
                         .padding(horizontal = 12.dp),
                     color = Color(0xFFEBECEF)
@@ -1388,7 +1390,7 @@ fun AmityRoomPlayerPage(
             onDecline = {
                 showInvitationSheet = false
                 viewModel.rejectInvitation(invitation, {
-                    AmityUIKitSnackbar.publishSnackbarMessage("Invitation declined.")
+                    AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_invitation_declined"))
                 })
             },
             onDismiss = {
@@ -1426,7 +1428,7 @@ fun AmityRoomPlayerPage(
             ) {
                 AmityBottomSheetActionItem(
                     icon = R.drawable.amity_ic_cohost_leave,
-                    text = "Leave as co-host",
+                    text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_leave_as_co_host"),
                     modifier = Modifier
                         .padding(horizontal = 12.dp),
                     color = AmityTheme.colors.alert,
@@ -1441,10 +1443,10 @@ fun AmityRoomPlayerPage(
 
     if (showLeaveBackstageDialog) {
         AmityAlertDialog(
-            dialogTitle = "Leave backstage",
-            dialogText = "Are you sure you want to leave backstage? You’ll return to viewer mode and need a new invite to rejoin.",
-            confirmText = "Leave",
-            dismissText = "Cancel",
+            dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_leave_backstage_title"),
+            dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_leave_backstage_message"),
+            confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_leave"),
+            dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel"),
             confirmTextColor = AmityTheme.colors.alert,
             dismissTextColor = AmityTheme.colors.highlight,
             onConfirmation = {
@@ -1459,28 +1461,30 @@ fun AmityRoomPlayerPage(
 
     if (showLeaveAsCoHostDialog) {
         AmityAlertDialog(
-            dialogTitle = "Leave as co-host?",
-            dialogText = "If you leave as co-host, you'll immediately stop broadcasting live and return to the event as a viewer.",
-            confirmText = "Leave",
-            dismissText = "Cancel",
+            dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_leave_as_co_host"),
+            dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_alert_leave_as_cohost_message"),
+            confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_leave"),
+            dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel"),
             confirmTextColor = AmityTheme.colors.alert,
             dismissTextColor = AmityTheme.colors.highlight,
             onConfirmation = {
+                viewModel.setIsLeaving(true)
                 leaveRoom(
                     context = context,
                     behavior = behavior,
                     uiState = uiState,
                     viewModel = viewModel,
                     onSuccess = {
-                        AmityUIKitSnackbar.publishSnackbarMessage("You left as co-host and are now watching as a viewer.")
+                        AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_left_stage"))
                         // Set viewer mode - LaunchedEffect will start watch tracking
                         viewModel.setIsStreamerMode(false)
+                        viewModel.setIsLeaving(false)
                     },
                     onError = {
-                        AmityUIKitSnackbar.publishSnackbarErrorMessage("Something went wrong. Please try again.")
+                        viewModel.setIsLeaving(false)
+                        AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_something_went_wrong"))
                     }
                 )
-                viewModel.setIsStreamerMode(false)
                 showLeaveAsCoHostDialog = false
             },
             onDismissRequest = {
@@ -1491,13 +1495,14 @@ fun AmityRoomPlayerPage(
 
     if (showLeaveLivestreamDialog) {
         AmityAlertDialog(
-            dialogTitle = "Leave live stream",
-            dialogText = "Are you sure you want to leave this live stream? You'll stop broadcasting and exit the session completely.",
-            confirmText = "Leave",
-            dismissText = "Cancel",
+            dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_alert_cohost_leave_title"),
+            dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_alert_cohost_leave_message"),
+            confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_leave"),
+            dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel"),
             confirmTextColor = AmityTheme.colors.alert,
             dismissTextColor = AmityTheme.colors.highlight,
             onConfirmation = {
+                viewModel.setIsLeaving(true)
                 leaveLivestream(
                     context = context,
                     behavior = behavior,
@@ -1505,6 +1510,7 @@ fun AmityRoomPlayerPage(
                     viewModel = viewModel,
                 )
                 viewModel.setIsStreamerMode(false)
+                viewModel.setIsLeaving(false)
                 showLeaveLivestreamDialog = false
             },
             onDismissRequest = {
@@ -1515,9 +1521,9 @@ fun AmityRoomPlayerPage(
 
     if (showCannotStartLivestreamDialog) {
         AmityAlertDialog(
-            dialogTitle = "Cannot join as co-host",
-            dialogText = "Please try again.",
-            dismissText = "OK",
+            dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_title_cannot_join_cohost"),
+            dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_please_try_again"),
+            dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_ok"),
             onDismissRequest = {
                 showCannotStartLivestreamDialog = false
             },
@@ -1535,9 +1541,9 @@ fun AmityRoomPlayerPage(
 
     if (showProductTaggingDisabledDialog) {
         AmityAlertDialog(
-            dialogTitle = "Product tagging isn't available",
-            dialogText = "Any products you’ve tagged will be removed and won’t be shown to viewers.",
-            confirmText = "OK",
+            dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_product_tagging_unavailable_title"),
+            dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_remove_products_description"),
+            confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_ok"),
             dismissText = "",
             onDismissRequest = {
                 showProductTaggingDisabledDialog = false
@@ -1699,7 +1705,7 @@ fun CommunityRoomPlayerHeader(
                         }
                         Text(
                             modifier = Modifier.weight(1f, fill = false),
-                            text = target.getCommunity()?.getDisplayName() ?: "Unknown Community",
+                            text = target.getCommunity()?.getDisplayName() ?: DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_unknown_community"),
                             style = AmityTheme.typography.body.copy(
                                 fontSize = 16.sp,
                                 color = Color.White,
@@ -1727,9 +1733,10 @@ fun CommunityRoomPlayerHeader(
                     ) {
                         Text(
                             modifier = Modifier.weight(1f, fill = false),
-                            text = "By ${post?.getCreator()?.getDisplayName() ?: "Unknown User"}",
-                            color = Color.White.copy(alpha = 0.8f),
-                            fontSize = 16.sp,
+                            text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_by_creator").format(post?.getCreator()?.getDisplayName() ?: DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_unknown_user")),
+                            style = AmityTheme.typography.caption.copy(
+                                color = Color.White.copy(alpha = 0.8f),
+                            ),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
@@ -1751,7 +1758,7 @@ fun CommunityRoomPlayerHeader(
                     ) {
                         Text(
                             modifier = Modifier.weight(1f, fill = false),
-                            text = target.getUser()?.getDisplayName() ?: "Unknown User",
+                            text = target.getUser()?.getDisplayName() ?: DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_unknown_user"),
                             style = AmityTheme.typography.body.copy(
                                 color = Color.White,
                                 fontWeight = FontWeight.SemiBold,
@@ -1784,7 +1791,7 @@ fun CommunityRoomPlayerHeader(
                     painter = painterResource(
                         id = R.drawable.amity_v4_option_vertical
                     ),
-                    contentDescription = "Options",
+                    contentDescription = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_options"),
                     tint = Color.White,
                     modifier = Modifier
                         .size(32.dp)
@@ -1900,7 +1907,7 @@ fun CoHostBottomSheet(
                                 .padding(start = 1.dp, top = 1.dp, bottom = 1.dp, end = 2.dp)
                         )
                         Text(
-                            text = "HOST",
+                            text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_host_badge"),
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.White
@@ -1922,7 +1929,7 @@ fun CoHostBottomSheet(
 
             // Title
             Text(
-                text = "Join as co-host",
+                text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_join_as_co_host"),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = Color(0xFFEBECEF),
@@ -1931,7 +1938,7 @@ fun CoHostBottomSheet(
 
             // Description
             Text(
-                text = "${hostUser?.getDisplayName() ?: "Unknown user"} invited you to join their live stream as a co-host. You'll enter the backstage room to prepare before going live.",
+                text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_cohost_invitation_message").format(hostUser?.getDisplayName() ?: DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_unknown_user_lowercase")),
                 fontSize = 15.sp,
                 color = AmityTheme.colors.baseShade1,
                 textAlign = TextAlign.Center,
@@ -1963,7 +1970,7 @@ fun CoHostBottomSheet(
                 shape = RoundedCornerShape(24.dp)
             ) {
                 Text(
-                    text = "Accept invite",
+                    text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_accept_invite"),
                     fontSize = 15.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color.White
@@ -1988,7 +1995,7 @@ fun CoHostBottomSheet(
                 shape = RoundedCornerShape(24.dp)
             ) {
                 Text(
-                    text = "Decline",
+                    text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_decline"),
                     fontSize = 15.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color.White

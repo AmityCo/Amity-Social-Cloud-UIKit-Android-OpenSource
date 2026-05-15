@@ -44,7 +44,6 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -68,6 +67,7 @@ import com.amity.socialcloud.uikit.common.utils.formatCurrencyForLocale
 import com.amity.socialcloud.uikit.community.compose.R
 import org.joda.time.DateTime
 import kotlin.math.max
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun ManageProductTagListComponent(
@@ -104,7 +104,7 @@ fun ManageProductTagListComponent(
                 modifier = Modifier.align(Alignment.Center)
             ) {
                 Text(
-                    text = if (canManageProducts) "Tagged products" else "Products tagged",
+                    text = if (canManageProducts) amitySocialString("amity_social_button_tagged_products") else amitySocialString("amity_social_button_products_tagged"),
                     color = componentTheme?.baseColor?.asColor() ?: AmityTheme.colors.base,
                     style = AmityTheme.typography.titleBold,
                 )
@@ -189,7 +189,7 @@ private fun TaggedProductsEmpty(
         Spacer(modifier = modifier.size(8.dp))
 
         Text(
-            text = stringResource(R.string.amity_v4_tagged_products_empty_title),
+            text = amitySocialString("amity_social_empty_state_tagged_products_empty_title"),
             color = componentTheme?.baseShade2Color?.asColor() ?: AmityTheme.colors.baseShade2,
             style = AmityTheme.typography.body.copy(fontWeight = FontWeight.SemiBold)
         )
@@ -198,7 +198,7 @@ private fun TaggedProductsEmpty(
 
         Text(
             textAlign = TextAlign.Center,
-            text = stringResource(R.string.amity_v4_tagged_products_empty_desc),
+            text = amitySocialString("amity_social_empty_state_tagged_products_empty_desc"),
             color = componentTheme?.baseShade2Color?.asColor() ?: AmityTheme.colors.baseShade2,
             style = AmityTheme.typography.body
         )
@@ -268,7 +268,7 @@ fun TaggedProductsFilled(
             pinnedProduct?.let { product ->
                 item {
                     Text(
-                        text = stringResource(R.string.amity_v4_pinned_product_label),
+                        text = amitySocialString("amity_social_label_pinned_product_label"),
                         style = AmityTheme.typography.titleBold,
                         color = componentTheme?.baseColor?.asColor() ?: AmityTheme.colors.base,
                         modifier = Modifier.padding(bottom = 16.dp)
@@ -294,7 +294,7 @@ fun TaggedProductsFilled(
                 if (unpinnedProducts.isNotEmpty()) {
                     item {
                         Text(
-                            text = stringResource(R.string.amity_v4_other_products_label),
+                            text = amitySocialString("amity_social_label_other_products_label"),
                             style = AmityTheme.typography.titleBold,
                             color = componentTheme?.baseColor?.asColor() ?: AmityTheme.colors.base,
                             modifier = Modifier.padding(vertical = 16.dp)
@@ -417,7 +417,7 @@ private fun ProductTagCard(
                                 .padding(end = 4.dp)
                         )
                         Text(
-                            text = "Pinned",
+                            text = amitySocialString("amity_social_status_pinned_product_badge_label"),
                             style = AmityTheme.typography.captionBold,
                             color = componentTheme?.baseColor?.asColor() ?: AmityTheme.colors.base,
                         )
@@ -450,7 +450,7 @@ private fun ProductTagCard(
                 ) {
                     if (isProductArchived) {
                         Text(
-                            text = stringResource(R.string.amity_v4_tagged_products_archived_info),
+                            text = amitySocialString("amity_social_button_unlisted"),
                             style = AmityTheme.typography.caption,
                             color = componentTheme?.baseShade2Color?.asColor()
                                 ?: AmityTheme.colors.baseShade2,
@@ -519,7 +519,7 @@ private fun ProductTagCard(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = "View",
+                                    text = amitySocialString("amity_social_button_view"),
                                     style = AmityTheme.typography.captionBold.copy(
                                         color = Color.White
                                     )
@@ -583,8 +583,8 @@ private fun ProductActionButton(
         )
         Spacer(Modifier.width(4.dp))
         Text(
-            text = if (isPinned) stringResource(R.string.amity_v4_unpin_label)
-                   else stringResource(R.string.amity_v4_pin_label),
+            text = if (isPinned) amitySocialString("amity_social_label_unpin_label")
+                   else amitySocialString("amity_social_label_pin_label"),
             style = AmityTheme.typography.captionBold,
             color = Color.White,
         )
@@ -619,7 +619,7 @@ private fun AddProductsButton(
         enabled = isEnabled
     ) {
         Text(
-            text = stringResource(R.string.amity_v4_tagged_products_empty_action),
+            text = amitySocialString("amity_social_button_add_products"),
             style = AmityTheme.typography.bodyBold.copy(
                 color = textColor
             ),

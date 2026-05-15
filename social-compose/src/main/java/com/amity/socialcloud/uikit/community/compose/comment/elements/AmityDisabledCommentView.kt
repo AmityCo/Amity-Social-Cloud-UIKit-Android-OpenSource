@@ -11,19 +11,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 
 @Composable
 fun AmityDisabledCommentView(
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
     Column(
         modifier = modifier.background(AmityTheme.colors.background)
     ) {
@@ -42,7 +41,7 @@ fun AmityDisabledCommentView(
                 tint = AmityTheme.colors.baseShade2
             )
             Text(
-                text = context.getString(R.string.amity_comments_disabled_message),
+                text = amitySocialString("amity_social_label_comments_disabled_message"),
                 style = AmityTheme.typography.bodyLegacy.copy(
                     color = AmityTheme.colors.baseShade2
                 ),

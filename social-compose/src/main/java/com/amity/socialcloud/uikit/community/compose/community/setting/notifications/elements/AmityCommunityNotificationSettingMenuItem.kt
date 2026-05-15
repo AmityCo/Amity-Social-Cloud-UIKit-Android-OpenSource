@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.community.setting.elements.AmityCommunitySettingRadioGroupItem
 import com.amity.socialcloud.uikit.community.compose.community.setting.notifications.AmityCommunityNotificationSettingDataType
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityCommunityNotificationSettingMenuItem(
@@ -43,21 +44,21 @@ fun AmityCommunityNotificationSettingMenuItem(
         )
 
         AmityCommunitySettingRadioGroupItem(
-            text = AmityCommunityNotificationSettingDataType.EVERYONE.title,
+            text = amitySocialString(AmityCommunityNotificationSettingDataType.EVERYONE.title),
             isSelected = selectedSetting == AmityCommunityNotificationSettingDataType.EVERYONE,
         ) {
             onSelected(AmityCommunityNotificationSettingDataType.EVERYONE)
         }
 
         AmityCommunitySettingRadioGroupItem(
-            text = AmityCommunityNotificationSettingDataType.ONLY_MODERATOR.title,
+            text = amitySocialString(AmityCommunityNotificationSettingDataType.ONLY_MODERATOR.title),
             isSelected = selectedSetting == AmityCommunityNotificationSettingDataType.ONLY_MODERATOR,
         ) {
             onSelected(AmityCommunityNotificationSettingDataType.ONLY_MODERATOR)
         }
 
         AmityCommunitySettingRadioGroupItem(
-            text = AmityCommunityNotificationSettingDataType.OFF.title,
+            text = amitySocialString(AmityCommunityNotificationSettingDataType.OFF.title),
             isSelected = selectedSetting == AmityCommunityNotificationSettingDataType.OFF,
         ) {
             onSelected(AmityCommunityNotificationSettingDataType.OFF)

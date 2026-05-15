@@ -90,6 +90,7 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.delay
 import java.util.Locale
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
@@ -723,7 +724,7 @@ private fun VideoPlayerMenuBottomSheet(
             if (onViewOriginalPost != null) {
                 com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem(
                     icon = R.drawable.amity_ic_view_post,
-                    text = "View original post",
+                    text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_view_post"),
                 ) {
                     onDismiss()
                     onViewOriginalPost()
@@ -751,7 +752,7 @@ private fun VideoPlayerMenuBottomSheet(
                             .testTag("product_tagging_button_element")
                     )
                     Text(
-                        text = "Tag products",
+                        text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_tag_products"),
                         style = AmityTheme.typography.bodyLegacy.copy(
                             fontWeight = FontWeight.SemiBold,
                             color = Color(0xFFEBECEF)
@@ -782,19 +783,19 @@ private fun VideoPlayerMenuBottomSheet(
                     // Copy post link
                     com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem(
                         icon = R.drawable.amity_v4_link_icon,
-                        text = "Copy post link",
+                        text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_copy_post_link"),
                     ) {
                         onDismiss()
                         clipboardManager.setText(androidx.compose.ui.text.AnnotatedString(postLink))
                         com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar.publishSnackbarMessage(
-                            "Link copied"
+                            DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_link_copied")
                         )
                     }
 
                     // Share to
                     com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem(
                         icon = R.drawable.amity_v4_share_icon,
-                        text = "Share to",
+                        text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_share_to"),
                     ) {
                         onDismiss()
                         sharePost(context, postLink)

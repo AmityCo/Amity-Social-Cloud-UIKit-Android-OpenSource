@@ -29,6 +29,7 @@ import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuDialogUIState
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuSheetUIState
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuViewModel
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
@@ -75,7 +76,7 @@ fun AmityPendingPostMenuBottomSheet(
                         if (post.getCreatorId() == AmityCoreClient.getUserId()) {
                             AmityBottomSheetActionItem(
                                 icon = R.drawable.amity_ic_delete_story,
-                                text = "Delete post",
+                                text = amitySocialString("amity_social_button_delete_post"),
                                 color = AmityTheme.colors.alert,
                                 modifier = modifier.testTag("bottom_sheet_delete_button"),
                             ) {

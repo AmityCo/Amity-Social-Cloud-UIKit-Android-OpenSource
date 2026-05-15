@@ -32,6 +32,7 @@ import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.socialhome.elements.AmityJoinCommunityView
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityCommunityListShimmer
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityCommunitiesByCategoryPage(
@@ -93,7 +94,7 @@ fun AmityCommunitiesByCategoryPage(
                         )
 
                         Text(
-                            text = "No community yet",
+                            text = amitySocialString("amity_social_label_no_community_yet"),
                             modifier = Modifier.padding(top = 8.dp),
                             style = AmityTheme.typography.titleLegacy.copy(
                                 color = AmityTheme.colors.baseShade3
@@ -117,14 +118,14 @@ fun AmityCommunitiesByCategoryPage(
                         )
 
                         Text(
-                            text = "Something went wrong",
+                            text = amitySocialString("amity_social_label_something_went_wrong"),
                             modifier = Modifier.padding(top = 16.dp),
                             style = AmityTheme.typography.titleLegacy.copy(
                                 color = AmityTheme.colors.baseShade3
                             )
                         )
                         Text(
-                            text = "Please try again.",
+                            text = amitySocialString("amity_social_label_please_try_again"),
                             modifier = Modifier.padding(top = 4.dp),
                             style = AmityTheme.typography.captionLegacy.copy(
                                 color = AmityTheme.colors.baseShade3

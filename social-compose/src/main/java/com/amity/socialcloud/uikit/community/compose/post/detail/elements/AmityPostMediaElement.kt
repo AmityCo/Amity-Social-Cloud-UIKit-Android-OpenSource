@@ -47,6 +47,7 @@ import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityProductWebViewBottomSheet
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.AmityProductTagListComponent
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.RenderModeEnum
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 
 @Composable
 fun AmityPostMediaElement(
@@ -703,7 +704,7 @@ fun getChildPostData(post: AmityPost): List<AmityPost.Data> {
 
 fun getAltText(post: AmityPost): String {
     return (post.getData() as? AmityPost.Data.IMAGE)?.getImage()?.getAltText()
-        ?: "No description available"
+        ?: DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_no_description_available")
 }
 
 fun getProductTagCount(childPost: AmityPost): Int {

@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.socialhome
 
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialConfigString
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -132,7 +133,7 @@ fun AmitySocialHomePage(
                             elementId = "newsfeed_button"
                         ) {
                             AmitySocialHomeTabButton(
-                                title = getConfig().getText(),
+                                title = amitySocialConfigString("amity_social_button_social_home_newsfeed_button"),
                                 item = AmitySocialHomePageTab.NEWSFEED,
                                 isSelected = selectedTab == AmitySocialHomePageTab.NEWSFEED,
                                 modifier = modifier.testTag(getAccessibilityId()),
@@ -151,7 +152,7 @@ fun AmitySocialHomePage(
                         elementId = "communities_button"
                     ) {
                         AmitySocialHomeTabButton(
-                            title = getConfig().getText(),
+                            title = amitySocialConfigString("amity_social_button_social_home_communities_button"),
                             item = AmitySocialHomePageTab.COMMUNITIES,
                             isSelected = selectedTab == AmitySocialHomePageTab.COMMUNITIES,
                             modifier = modifier.testTag(getAccessibilityId()),
@@ -169,7 +170,7 @@ fun AmitySocialHomePage(
                         elementId = "events_button"
                     ) {
                         AmitySocialHomeTabButton(
-                            title = getConfig().getText(),
+                            title = amitySocialConfigString("amity_social_button_social_home_events_button"),
                             item = AmitySocialHomePageTab.EVENTS,
                             isSelected = selectedTab == AmitySocialHomePageTab.EVENTS,
                             modifier = modifier.testTag(getAccessibilityId()),
@@ -187,7 +188,7 @@ fun AmitySocialHomePage(
                         elementId = "clips_button"
                     ) {
                         AmitySocialHomeTabButton(
-                            title = getConfig().getText(),
+                            title = amitySocialConfigString("amity_social_button_social_home_clips_button"),
                             item = AmitySocialHomePageTab.CLIPS,
                             isSelected = selectedTab == AmitySocialHomePageTab.CLIPS,
                             modifier = modifier.testTag(getAccessibilityId()),

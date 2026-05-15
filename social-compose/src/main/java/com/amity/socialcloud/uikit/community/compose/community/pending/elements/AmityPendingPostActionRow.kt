@@ -22,6 +22,7 @@ import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.getText
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialConfigString
 
 @Composable
 fun AmityPendingPostActionRow(
@@ -59,7 +60,7 @@ fun AmityPendingPostActionRow(
                     onClick = onAccept,
                 ) {
                     Text(
-                        text = getConfig().getText(),
+                        text = amitySocialConfigString("amity_social_button_accept_button"),
                         style = AmityTheme.typography.bodyBold,
                         color = Color.White
                     )
@@ -83,7 +84,7 @@ fun AmityPendingPostActionRow(
                     onClick = onDecline,
                 ) {
                     Text(
-                        text = getConfig().getText(),
+                        text = amitySocialConfigString("amity_social_button_pending_post_decline_button"),
                         style = AmityTheme.typography.bodyBold,
                         color = AmityTheme.colors.secondary
                     )

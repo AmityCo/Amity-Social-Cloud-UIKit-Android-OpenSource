@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.amity.socialcloud.uikit.common.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityNewsFeedDivider
 import com.amity.socialcloud.uikit.common.ui.elements.AmityToolBar
@@ -52,7 +53,7 @@ fun AmityUserPendingFollowRequestsPage(
                 .windowInsetsPadding(WindowInsets.safeDrawing)
         ) {
             AmityToolBar(
-                title = "Follow requests (${lazyPagingItems.itemCount})",
+                title = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_follow_requests", lazyPagingItems.itemCount),
                 onBackClick = {
                     context.closePageWithResult(Activity.RESULT_CANCELED)
                 }
@@ -60,7 +61,7 @@ fun AmityUserPendingFollowRequestsPage(
 
             if (lazyPagingItems.itemCount > 0) {
                 Text(
-                    text = "Declining a follow request is irreversible. The user must send a new request if declined.",
+                    text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_declining_a_follow_request_is_irreversible_the_user_mus"),
                     style = AmityTheme.typography.captionLegacy.copy(
                         fontWeight = FontWeight.Normal,
                         color = AmityTheme.colors.baseShade1
@@ -100,14 +101,14 @@ fun AmityUserPendingFollowRequestsPage(
                                         onSuccess = {
                                             lazyPagingItems.refresh()
                                             getPageScope().showSnackbar(
-                                                message = "${follower.getDisplayName()} is now following you.",
+                                                message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_follow_request_accepted", follower.getDisplayName() ?: ""),
                                                 drawableRes = R.drawable.amity_ic_snack_bar_success
                                             )
                                         },
                                         onError = {
                                             lazyPagingItems.refresh()
                                             getPageScope().showSnackbar(
-                                                message = "Failed to accept follow request. Please try again.",
+                                                message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_follow_request_accept_failed"),
                                                 drawableRes = R.drawable.amity_ic_snack_bar_warning
                                             )
                                         }
@@ -119,14 +120,14 @@ fun AmityUserPendingFollowRequestsPage(
                                         onSuccess = {
                                             lazyPagingItems.refresh()
                                             getPageScope().showSnackbar(
-                                                message = "Following request declined.",
+                                                message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_follow_request_declined"),
                                                 drawableRes = R.drawable.amity_ic_snack_bar_success
                                             )
                                         },
                                         onError = {
                                             lazyPagingItems.refresh()
                                             getPageScope().showSnackbar(
-                                                message = "Failed to decline follow request. Please try again.",
+                                                message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_follow_request_decline_failed"),
                                                 drawableRes = R.drawable.amity_ic_snack_bar_warning
                                             )
                                         }

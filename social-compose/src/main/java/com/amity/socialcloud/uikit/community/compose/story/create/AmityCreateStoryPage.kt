@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
@@ -192,7 +193,7 @@ fun AmityCreateStoryPage(
     AmityBasePage(pageId = "camera_page") {
         LaunchedEffect(shouldShowPermissionRequiredMessage) {
             if (shouldShowPermissionRequiredMessage) {
-                getPageScope().showSnackbar("Required permission is not granted.")
+                getPageScope().showSnackbar(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_permission_camera_access_denied"))
             }
         }
 

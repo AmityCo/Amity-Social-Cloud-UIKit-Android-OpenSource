@@ -1,4 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="empty_string" />
+
+    <!-- Ad system -->
+
+    <!-- Reaction list -->
+
+    <!-- Global behavior -->
+
+    <!-- Delete message dialog -->
+
+    <!-- Error / empty states -->
+
+    <!-- Preview link (legacy names kept for backward compatibility) -->
+
+    <!-- Simple strings -->
+
+    <!-- Reaction list -->
+
+    <!-- Time strings -->
+    <!-- Reaction display names -->
+
+    <!-- Cross-platform gap keys — common module aliases -->
+    <string name="amity_common_ad_ad_about_advertiser">About this advertiser</string>
+    <string name="amity_common_ad_ad_about_title">About this advertisement</string>
+    <string name="amity_common_ad_ad_advertiser_name">Advertiser name: %1$s</string>
+    <string name="amity_common_ad_ad_why_description">You\'re seeing this advertisement because it was displayed to all users in the system.</string>
+    <string name="amity_common_ad_ad_why_title">Why this advertisement?</string>
+    <string name="amity_common_ad_sponsored">Sponsored</string>
+    <string name="amity_common_button_all">All</string>
+    <string name="amity_common_button_cancel">Cancel</string>
+    <string name="amity_common_button_delete">Delete</string>
+    <string name="amity_common_button_delete_story">Delete story</string>
+    <string name="amity_common_button_join">Join</string>
+    <string name="amity_common_button_no_reactions_yet">No reactions yet</string>
+    <string name="amity_common_button_reaction_all_tab">All</string>
+    <string name="amity_common_button_reaction_fire">Fire</string>
+    <string name="amity_common_button_reaction_grinning">Grinning</string>
+    <string name="amity_common_button_reaction_heart">Heart</string>
+    <string name="amity_common_button_reaction_like">Like</string>
+    <string name="amity_common_button_reaction_sad">Sad</string>
+    <string name="amity_social_button_reaction_fire">Fire</string>
+    <string name="amity_social_button_reaction_happy">Happy</string>
+    <string name="amity_social_button_reaction_like">Like</string>
+    <string name="amity_social_button_reaction_love">Love</string>
+    <string name="amity_social_button_reaction_sad">Sad</string>
+    <string name="amity_common_button_reactions_not_available">Reactions aren\'t available for this %1$s</string>
+    <string name="amity_common_button_remove">Remove</string>
+    <string name="amity_common_button_required_indicator"> *</string>
+    <string name="amity_common_button_see_less">See less</string>
+    <string name="amity_social_button_replying_to">Replying to</string>
+    <string name="amity_common_button_see_more">See more</string>
+    <string name="amity_common_button_select_time">Select time</string>
+    <string name="amity_common_button_tap_to_remove_reaction">Tap to remove reaction</string>
+    <string name="amity_common_button_unable_to_load_reactions">Unable to load reactions</string>
+    <string name="amity_common_empty_state_empty_string"></string>
+    <string name="amity_common_empty_state_no_comments_yet">No comments yet</string>
+    <string name="amity_common_label_be_first_to_react">Be the first to react to this %1$s!</string>
+    <string name="amity_common_label_follow_user_to_interact">Follow user to interact.</string>
+    <string name="amity_common_label_join_community_to_interact">Join community to interact.</string>
+    <string name="amity_common_label_message_not_sent">Your message wasn\'t sent</string>
+    <string name="amity_common_label_preview_not_available_message">This link does not have a preview</string>
+    <string name="amity_common_label_preview_not_available_title">Preview not available</string>
+    <string name="amity_common_label_sign_in_to_continue">Create an account or sign in to continue.</string>
+    <string name="amity_common_time_just_now">Just now</string>
+    <string name="amity_common_time_time_days_suffix">d</string>
+    <string name="amity_common_time_time_hours_suffix">h</string>
+    <string name="amity_common_time_time_minutes_suffix">m</string>
+    <string name="amity_common_time_time_seconds_suffix">s</string>
+    <string name="amity_social_button_delete_story">Delete story</string>
+    <string name="amity_social_toast_message_unreport_failed">This message failed to be unreported. Please try again.</string>
+    <string name="amity_social_modal_dialog_delete_message_title">Delete this message?</string>
 </resources>

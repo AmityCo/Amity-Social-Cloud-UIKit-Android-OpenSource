@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityEmptyUserListComponent(
@@ -37,7 +38,7 @@ fun AmityEmptyUserListComponent(
         )
         Spacer(modifier = modifier.size(8.dp))
         Text(
-            "No users available",
+            amitySocialString("amity_social_label_no_users_available"),
             style = AmityTheme.typography.titleLegacy.copy(
                 color = AmityTheme.colors.baseShade3
             )

@@ -49,6 +49,7 @@ import com.amity.socialcloud.uikit.common.ui.image.zoomable
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerPageViewModel
 import com.amity.socialcloud.uikit.community.compose.post.composer.RenderAltTextConfigSheet
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.AltTextMedia
@@ -60,8 +61,6 @@ fun AmityPollMediaPreviewDialog(
     isPostCreator: Boolean,
     onDismiss: () -> Unit,
 ) {
-    val context = LocalContext.current
-
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
     }
@@ -165,7 +164,7 @@ fun AmityPollMediaPreviewDialog(
                     ) {
                         AmityBottomSheetActionItem(
                             icon = R.drawable.amity_ic_edit_profile,
-                            text = "Edit alt text",
+                            text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_image_edit_alt_text_title"),
                             modifier = Modifier.testTag("bottom_sheet_edit_alt_text_button"),
                         ) {
                             viewModel.showAltTextConfigSheet()
@@ -180,7 +179,7 @@ fun AmityPollMediaPreviewDialog(
                 onSuccess = { image ->
                     localImage = image
                     AmityUIKitSnackbar.publishSnackbarMessage(
-                        message = context.getString(R.string.amity_image_alt_text_updated_message),
+                        message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_image_alt_text_updated_message"),
                     )
                 },
                 onDismiss = {

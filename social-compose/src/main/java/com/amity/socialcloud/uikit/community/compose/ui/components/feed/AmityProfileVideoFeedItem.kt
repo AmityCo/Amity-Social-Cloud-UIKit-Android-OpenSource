@@ -57,6 +57,7 @@ import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostVideoPlayerHelper
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostMediaVideoPlayer
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityProductTagBadge
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -177,7 +178,7 @@ fun AmityProfileVideoFeedItem(
             ) {
                 AmityBottomSheetActionItem(
                     icon = R.drawable.amity_ic_view_post,
-                    text = "View original post",
+                    text = amitySocialString("amity_social_button_view_post"),
                     modifier = Modifier,
                     onClick = {
                         showBottomSheet = false

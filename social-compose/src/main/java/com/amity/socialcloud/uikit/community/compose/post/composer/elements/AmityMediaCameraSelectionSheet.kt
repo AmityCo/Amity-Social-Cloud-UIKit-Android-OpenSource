@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.post.model.AmityPostMedia
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,14 +41,14 @@ fun AmityMediaCameraSelectionSheet(
         ) {
             AmityBottomSheetActionItem(
                 icon = null,
-                text = "Image",
+                text = amitySocialString("amity_social_button_image"),
             ) {
                 onSelect(AmityPostMedia.Type.IMAGE)
             }
 
             AmityBottomSheetActionItem(
                 icon = null,
-                text = "Video",
+                text = amitySocialString("amity_social_button_post_composer_video_button"),
             ) {
                 onSelect(AmityPostMedia.Type.VIDEO)
             }

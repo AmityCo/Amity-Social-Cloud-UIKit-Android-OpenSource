@@ -33,6 +33,7 @@ import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityModalSheetUIState
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.community.compose.utils.sharePost
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlin.text.replace
@@ -77,7 +78,7 @@ fun AmityUserMenuBottomSheet(
             if (user.getUserId() == AmityCoreClient.getUserId()) {
                 AmityBottomSheetActionItem(
                     icon = R.drawable.amity_ic_edit_profile,
-                    text = "Edit profile",
+                    text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_edit_profile"),
                     modifier = modifier.testTag("bottom_sheet_edit_profile"),
                 ) {
                     onCloseSheet()
@@ -88,7 +89,7 @@ fun AmityUserMenuBottomSheet(
 
                 AmityBottomSheetActionItem(
                     icon = R.drawable.amity_ic_blocked_user,
-                    text = "Manage blocked users",
+                    text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_manage_blocked_users"),
                     modifier = modifier.testTag("bottom_sheet_manage_blocked_users"),
                 ) {
                     onCloseSheet()
@@ -100,7 +101,7 @@ fun AmityUserMenuBottomSheet(
                 if (isFollowedByMe) {
                     AmityBottomSheetActionItem(
                         icon = R.drawable.amity_ic_user_unfollow,
-                        text = "Unfollow",
+                        text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_unfollow"),
                         modifier = modifier,
                     ) {
                         onCloseSheet()
@@ -111,7 +112,7 @@ fun AmityUserMenuBottomSheet(
                 if (user.isFlaggedByMe()) {
                     AmityBottomSheetActionItem(
                         icon = R.drawable.amity_ic_unreport,
-                        text = "Unreport user",
+                        text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_unreport_user"),
                         modifier = modifier.testTag("bottom_sheet_unreport_user"),
                     ) {
                         AmityCoreClient.newUserRepository()
@@ -119,13 +120,13 @@ fun AmityUserMenuBottomSheet(
                             .subscribeOn(Schedulers.io())
                             .doOnComplete {
                                 pageScope?.showSnackbar(
-                                    message = "User unreported.",
+                                    message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_user_unreported"),
                                     drawableRes = R.drawable.amity_ic_snack_bar_success
                                 )
                             }
                             .doOnError {
                                 pageScope?.showSnackbar(
-                                    message = "Failed to unreport user. Please try again.",
+                                    message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_user_unreport_failed"),
                                     drawableRes = R.drawable.amity_ic_snack_bar_warning
                                 )
                             }.subscribe()
@@ -135,7 +136,7 @@ fun AmityUserMenuBottomSheet(
                 } else {
                     AmityBottomSheetActionItem(
                         icon = R.drawable.amity_ic_report1,
-                        text = "Report user",
+                        text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_report_user"),
                         modifier = modifier.testTag("bottom_sheet_report_user"),
                     ) {
                         if (AmityCoreClient.isVisitor()) {
@@ -146,13 +147,13 @@ fun AmityUserMenuBottomSheet(
                                 .subscribeOn(Schedulers.io())
                                 .doOnComplete {
                                     pageScope?.showSnackbar(
-                                        message = "User reported.",
+                                        message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_user_reported"),
                                         drawableRes = R.drawable.amity_ic_snack_bar_success
                                     )
                                 }
                                 .doOnError {
                                     pageScope?.showSnackbar(
-                                        message = "Failed to report user. Please try again.",
+                                        message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_user_report_failed"),
                                         drawableRes = R.drawable.amity_ic_snack_bar_warning
                                     )
                                 }
@@ -166,7 +167,7 @@ fun AmityUserMenuBottomSheet(
                 if (isBlockedByMe) {
                     AmityBottomSheetActionItem(
                         icon = R.drawable.amity_ic_blocked_user,
-                        text = "Unblock user",
+                        text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_unblock_user"),
                         modifier = modifier.testTag("bottom_sheet_unblock_user"),
                     ) {
                         onCloseSheet()
@@ -175,7 +176,7 @@ fun AmityUserMenuBottomSheet(
                 } else {
                     AmityBottomSheetActionItem(
                         icon = R.drawable.amity_ic_blocked_user,
-                        text = "Block user",
+                        text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_block_user"),
                         modifier = modifier.testTag("bottom_sheet_block_user"),
                     ) {
                         onCloseSheet()
@@ -192,18 +193,18 @@ fun AmityUserMenuBottomSheet(
             if (userLink.isNotEmptyOrBlank()) {
                 AmityBottomSheetActionItem(
                     icon = R.drawable.amity_v4_link_icon,
-                    text = "Copy profile link",
+                    text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_copy_profile_link"),
                     modifier = modifier.testTag("bottom_sheet_copy_link_button"),
                 ) {
                     onCloseSheet()
                     // Generate the post link URL (adjust the URL format according to your app's deep linking structure)
                     clipboardManager.setText(AnnotatedString(userLink))
-                    AmityUIKitSnackbar.publishSnackbarMessage("Link copied")
+                    AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_link_copied"))
                 }
 
                 AmityBottomSheetActionItem(
                     icon = R.drawable.amity_v4_share_icon,
-                    text = "Share to",
+                    text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_share_to"),
                     modifier = modifier.testTag("bottom_sheet_share_to_button"),
                 ) {
                     onCloseSheet()

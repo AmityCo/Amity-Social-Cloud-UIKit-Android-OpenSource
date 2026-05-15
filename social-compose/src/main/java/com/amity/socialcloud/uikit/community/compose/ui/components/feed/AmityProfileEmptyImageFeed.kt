@@ -14,6 +14,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 
 @Composable
@@ -32,7 +33,7 @@ fun AmityProfileEmptyImageFeed(
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "No photos yet",
+            text = amitySocialString("amity_social_empty_state_empty_user_image_feed"),
             style = AmityTheme.typography.titleLegacy.copy(
                 color = AmityTheme.colors.baseShade3,
             ),

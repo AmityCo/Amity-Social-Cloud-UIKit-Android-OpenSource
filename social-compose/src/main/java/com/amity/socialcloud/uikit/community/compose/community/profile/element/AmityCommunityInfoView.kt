@@ -28,6 +28,7 @@ import com.amity.socialcloud.uikit.common.utils.AmityNumberUtil.getNumberAbbreve
 import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageBehavior
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityCommunityInfoView(
@@ -61,7 +62,7 @@ fun AmityCommunityInfoView(
 			)
 			Spacer(modifier = Modifier.width(4.dp))
 			Text(
-				text = "posts",
+				text = amitySocialString("amity_social_label_community_posts_label"),
 				style = TextStyle(
 					fontSize = 13.sp,
 					lineHeight = 18.sp,
@@ -104,7 +105,7 @@ fun AmityCommunityInfoView(
 				)
 				Spacer(modifier = Modifier.width(4.dp))
 				Text(
-					text = "members",
+					text = amitySocialString("amity_social_label_community_members_label"),
 					style = TextStyle(
 						fontSize = 13.sp,
 						lineHeight = 18.sp,

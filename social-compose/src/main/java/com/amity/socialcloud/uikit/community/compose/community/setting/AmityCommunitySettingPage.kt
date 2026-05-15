@@ -36,7 +36,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -59,6 +58,9 @@ import com.amity.socialcloud.uikit.common.utils.isStoryNotificationEnabled
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.community.setting.elements.AmityCommunitySettingItem
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialConfigString
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import kotlinx.coroutines.delay
 
 @Composable
@@ -117,7 +119,7 @@ fun AmityCommunitySettingPage(
             AmityCommunitySettingUIState.ShowConfirmModeratorLeaveDialog -> {
                 showModeratorLeaveCommunityDialog = true
             }
-            
+
             AmityCommunitySettingUIState.ShowConfirmUserLeaveDialog -> {
                 showLeaveCommunityDialog = true
             }
@@ -135,16 +137,25 @@ fun AmityCommunitySettingPage(
             }
 
             AmityCommunitySettingUIState.CloseCommunitySuccess -> {
+                AmityUIKitSnackbar.publishSnackbarMessage(
+                    message = DefaultAmitySocialStringProvider.getInstance()
+                        .getString("amity_social_toast_setting_close_success")
+                )
                 context.closePage()
             }
 
             is AmityCommunitySettingUIState.CloseCommunityFailed -> {
                 val error = (uiState as AmityCommunitySettingUIState.CloseCommunityFailed).error
-                AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to close community. Please try again later.")
+                AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance()
+                    .getString("amity_social_toast_snackbar_close_community_failed"))
                 showUnableToCloseCommunityDialog = true
             }
 
             AmityCommunitySettingUIState.LeaveCommunitySuccess -> {
+                AmityUIKitSnackbar.publishSnackbarMessage(
+                    message = DefaultAmitySocialStringProvider.getInstance()
+                        .getString("amity_social_toast_setting_leave_success")
+                )
                 context.closePage()
             }
 
@@ -217,7 +228,7 @@ fun AmityCommunitySettingPage(
             Spacer(modifier.height(4.dp))
 
             Text(
-                text = stringResource(R.string.amity_v4_community_information_title),
+                text = amitySocialString("amity_social_label_community_information_title"),
                 style = AmityTheme.typography.titleLegacy,
                 modifier = modifier.padding(vertical = 12.dp)
             )
@@ -229,7 +240,7 @@ fun AmityCommunitySettingPage(
                 ) {
                     AmityCommunitySettingItem(
                         modifier = modifier.testTag(getAccessibilityId()),
-                        title = getConfig().getText(),
+                        title = amitySocialConfigString("amity_social_button_edit_profile"),
                         icon = {
                             Box(
                                 modifier = modifier
@@ -265,7 +276,7 @@ fun AmityCommunitySettingPage(
             ) {
                 AmityCommunitySettingItem(
                     modifier = modifier.testTag(getAccessibilityId()),
-                    title = getConfig().getText(),
+                    title = amitySocialConfigString("amity_social_button_members"),
                     icon = {
                         Box(
                             modifier = modifier
@@ -300,7 +311,7 @@ fun AmityCommunitySettingPage(
                 ) {
                     AmityCommunitySettingItem(
                         modifier = modifier.testTag(getAccessibilityId()),
-                        title = getConfig().getText(),
+                        title = amitySocialConfigString("amity_social_label_community_pending_invitations_title"),
                         icon = {
                             Box(
                                 modifier = modifier
@@ -336,7 +347,7 @@ fun AmityCommunitySettingPage(
                     modifier = modifier.padding(top = 4.dp, bottom = 8.dp)
                 )
                 Text(
-                    text = stringResource(R.string.amity_v4_community_permission_title),
+                    text = amitySocialString("amity_social_permission_community_permission_title"),
                     style = AmityTheme.typography.titleLegacy,
                     modifier = modifier.padding(vertical = 12.dp)
                 )
@@ -349,7 +360,7 @@ fun AmityCommunitySettingPage(
                 ) {
                     AmityCommunitySettingItem(
                         modifier = modifier.testTag(getAccessibilityId()),
-                        title = getConfig().getText(),
+                        title = amitySocialConfigString("amity_social_permission_community_setting_post_permission"),
                         icon = {
                             Box(
                                 modifier = modifier
@@ -386,7 +397,7 @@ fun AmityCommunitySettingPage(
                 ) {
                     AmityCommunitySettingItem(
                         modifier = modifier.testTag(getAccessibilityId()),
-                        title = getConfig().getText(),
+                        title = amitySocialConfigString("amity_social_label_title_story_comments"),
                         icon = {
                             Box(
                                 modifier = modifier
@@ -428,7 +439,7 @@ fun AmityCommunitySettingPage(
                 modifier = modifier.padding(top = 4.dp, bottom = 8.dp)
             )
             Text(
-                text = stringResource(R.string.amity_v4_community_your_preferences_title),
+                text = amitySocialString("amity_social_label_community_your_preferences_title"),
                 style = AmityTheme.typography.titleLegacy,
                 modifier = modifier.padding(vertical = 12.dp)
             )
@@ -440,7 +451,7 @@ fun AmityCommunitySettingPage(
                 ) {
                     AmityCommunitySettingItem(
                         modifier = modifier.testTag(getAccessibilityId()),
-                        title = getConfig().getText(),
+                        title = amitySocialConfigString("amity_social_notification_title_notifications"),
                         icon = {
                             Box(
                                 modifier = modifier
@@ -470,7 +481,7 @@ fun AmityCommunitySettingPage(
                 }
 
                 Text(
-                    text = if (isNotificationEnabled) "On" else "Off",
+                    text = if (isNotificationEnabled) amitySocialString("amity_social_button_on") else amitySocialString("amity_social_button_off"),
                     style = AmityTheme.typography.bodyLegacy.copy(
                         color = AmityTheme.colors.baseShade1,
                     ),
@@ -491,7 +502,7 @@ fun AmityCommunitySettingPage(
                     elementId = "leave_community"
                 ) {
                     Text(
-                        text = getConfig().getText(),
+                        text = amitySocialConfigString("amity_social_button_leave_community"),
                         style = AmityTheme.typography.bodyLegacy.copy(
                             color = AmityTheme.colors.alert,
                             fontWeight = FontWeight.SemiBold,
@@ -527,7 +538,7 @@ fun AmityCommunitySettingPage(
                         elementId = "close_community"
                     ) {
                         Text(
-                            text = getConfig().getText(),
+                            text = amitySocialConfigString("amity_social_button_close_community"),
                             style = AmityTheme.typography.bodyLegacy.copy(
                                 color = AmityTheme.colors.alert,
                                 fontWeight = FontWeight.SemiBold,
@@ -545,7 +556,7 @@ fun AmityCommunitySettingPage(
                         elementId = "close_community_description"
                     ) {
                         Text(
-                            text = getConfig().getText(),
+                            text = amitySocialConfigString("amity_social_label_close_community_description"),
                             style = AmityTheme.typography.captionLegacy.copy(
                                 fontWeight = FontWeight.Normal,
                                 color = AmityTheme.colors.baseShade1,
@@ -564,10 +575,10 @@ fun AmityCommunitySettingPage(
 
         if (showLeaveCommunityDialog) {
             AmityAlertDialog(
-                dialogTitle = "Leave community?",
-                dialogText = "You will no longer be able to post and interact in this community.",
-                confirmText = "Leave",
-                dismissText = "Cancel",
+                dialogTitle = amitySocialString("amity_social_modal_dialog_title_leave_community"),
+                dialogText = amitySocialString("amity_social_modal_dialog_banned_from_community"),
+                confirmText = amitySocialString("amity_social_button_leave"),
+                dismissText = amitySocialString("amity_social_button_cancel"),
                 confirmTextColor = AmityTheme.colors.alert,
                 onConfirmation = {
                     showLeaveCommunityDialog = false
@@ -581,10 +592,10 @@ fun AmityCommunitySettingPage(
 
         if (showModeratorLeaveCommunityDialog) {
             AmityAlertDialog(
-                dialogTitle = "Leave community?",
-                dialogText = "Leaving community, you'll give up your moderator status and won't no longer be able to post and interact in this community.",
-                confirmText = "Leave",
-                dismissText = "Cancel",
+                dialogTitle = amitySocialString("amity_social_modal_dialog_title_leave_community"),
+                dialogText = amitySocialString("amity_social_button_last_moderator_leave_community_msg"),
+                confirmText = amitySocialString("amity_social_button_leave"),
+                dismissText = amitySocialString("amity_social_button_cancel"),
                 confirmTextColor = AmityTheme.colors.alert,
                 onConfirmation = {
                     showModeratorLeaveCommunityDialog = false
@@ -598,10 +609,10 @@ fun AmityCommunitySettingPage(
 
         if (showCloseCommunityDialog) {
             AmityAlertDialog(
-                dialogTitle = "Close community?",
-                dialogText = "All members will be removed from the community. All posts, messages, reactions, and media shared in community will be deleted. This cannot be undone.",
-                confirmText = "Confirm",
-                dismissText = "Cancel",
+                dialogTitle = amitySocialString("amity_social_modal_dialog_title_close_community"),
+                dialogText = amitySocialString("amity_social_button_close_community_msg"),
+                confirmText = amitySocialString("amity_social_button_confirm"),
+                dismissText = amitySocialString("amity_social_button_cancel"),
                 confirmTextColor = AmityTheme.colors.alert,
                 onConfirmation = {
                     showCloseCommunityDialog = false
@@ -615,9 +626,9 @@ fun AmityCommunitySettingPage(
 
         if (showUserIsLastModeratorDialog) {
             AmityAlertDialog(
-                dialogTitle = "Unable to leave community",
-                dialogText = "You're the only moderator in this group. To leave community, nominate other members to moderator role.",
-                dismissText = "OK",
+                dialogTitle = amitySocialString("amity_social_button_leave_community_error_title"),
+                dialogText = amitySocialString("amity_social_button_moderator_leave_community_error_msg"),
+                dismissText = amitySocialString("amity_social_button_ok"),
                 onDismissRequest = {
                     showUserIsLastModeratorDialog = false
                 }
@@ -626,11 +637,11 @@ fun AmityCommunitySettingPage(
 
         if (showUserIsLastMemberDialog) {
             AmityAlertDialog(
-                dialogTitle = "Leave community?",
-                dialogText = "As you're the last moderator and member, leaving will also close this community. All posts shared in community will be deleted. This cannot be undone.",
-                confirmText = "Close",
+                dialogTitle = amitySocialString("amity_social_modal_dialog_title_leave_community"),
+                dialogText = amitySocialString("amity_social_button_last_moderator_leave_community_msg"),
+                confirmText = amitySocialString("amity_social_button_close"),
                 confirmTextColor = AmityTheme.colors.alert,
-                dismissText = "Cancel",
+                dismissText = amitySocialString("amity_social_button_cancel"),
                 onConfirmation = {
                     showUserIsLastMemberDialog = false
                     viewModel.updateUIEvent(AmityCommunitySettingUIEvent.ProceedClosingCommunity)
@@ -644,7 +655,8 @@ fun AmityCommunitySettingPage(
         if (showUnableToLeaveCommunityDialog) {
             LaunchedEffect(Unit) {
                 AmityUIKitSnackbar.publishSnackbarErrorMessage(
-                    "Failed to leave the community. Please try again."
+                    DefaultAmitySocialStringProvider.getInstance()
+                        .getString("amity_social_toast_leave_community_failed")
                 )
                 delay(200L)
                 showUnableToLeaveCommunityDialog = false
@@ -653,9 +665,9 @@ fun AmityCommunitySettingPage(
 
         if (showUnableToCloseCommunityDialog) {
             AmityAlertDialog(
-                dialogTitle = "Unable to close community",
-                dialogText = "Something went wrong. Please try again later.",
-                dismissText = "OK",
+                dialogTitle = amitySocialString("amity_social_error_close_community_error_title"),
+                dialogText = amitySocialString("amity_social_modal_dialog_something_went_wrong"),
+                dismissText = amitySocialString("amity_social_button_ok"),
                 onDismissRequest = {
                     showUnableToCloseCommunityDialog = false
                 }

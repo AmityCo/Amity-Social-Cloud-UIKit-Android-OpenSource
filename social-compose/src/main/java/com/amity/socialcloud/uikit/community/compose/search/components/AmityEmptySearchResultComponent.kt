@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.search.components
 
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -37,7 +38,7 @@ fun AmityEmptySearchResultComponent(
         )
         Spacer(modifier = modifier.size(8.dp))
         Text(
-            "No results found",
+            amitySocialString("amity_social_label_no_results_found"),
             style = AmityTheme.typography.titleLegacy.copy(
                 color = AmityTheme.colors.baseShade3
             )

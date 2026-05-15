@@ -14,6 +14,7 @@ import com.amity.socialcloud.sdk.model.social.community.AmityJoinRequest
 import com.amity.socialcloud.sdk.model.social.community.AmityJoinRequestStatus
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Flowable
@@ -135,12 +136,12 @@ class AmityCommunitySetupPageViewModel : AmityBaseViewModel() {
             .doOnNext { uploadStatus ->
                 when (uploadStatus) {
                     is AmityUploadResult.COMPLETE -> onSuccess(uploadStatus.getFile())
-                    is AmityUploadResult.ERROR, AmityUploadResult.CANCELLED -> onError("Failed to upload image")
+                    is AmityUploadResult.ERROR, AmityUploadResult.CANCELLED -> onError(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_error_upload_image_failed"))
                     else -> {}
                 }
             }
             .doOnError {
-                onError(it.message ?: "Failed to upload image")
+                onError(it.message ?: DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_error_upload_image_failed"))
             }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -176,7 +177,7 @@ class AmityCommunitySetupPageViewModel : AmityBaseViewModel() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSuccess(onSuccess)
-            .doOnError { onError(it.message ?: "Failed to create community") }
+            .doOnError { onError(it.message ?: DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_error_create_community_failed")) }
             .flatMapCompletable { community ->
                 if (membershipAcceptanceType == AmityMembershipAcceptanceType.INVITATION && userIds.isNotEmpty()) {
                     community.createInvitations(userIds)
@@ -217,7 +218,7 @@ class AmityCommunitySetupPageViewModel : AmityBaseViewModel() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSuccess(onSuccess)
-            .doOnError { onError(it.message ?: "Failed to update community") }
+            .doOnError { onError(it.message ?: DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_error_update_community_failed")) }
             .subscribe()
     }
 

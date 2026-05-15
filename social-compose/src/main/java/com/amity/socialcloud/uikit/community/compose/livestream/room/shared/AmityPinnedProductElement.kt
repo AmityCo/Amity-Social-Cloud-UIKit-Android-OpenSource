@@ -42,6 +42,7 @@ import com.amity.socialcloud.uikit.common.utils.getValue
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.common.utils.formatCurrencyForLocale
 import org.joda.time.DateTime
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 
 @Composable
@@ -132,7 +133,7 @@ fun LivestreamPinnedProductElement(
                     ) {
                         if (isProductArchived) {
                             Text(
-                                text = "Unlisted",
+                                text = amitySocialString("amity_social_button_unlisted"),
                                 style = AmityTheme.typography.caption.copy(
                                     color = getConfig().getValue("base_shade2_color").asColor(AmityTheme.colors.baseShade2
                                     )
@@ -199,7 +200,7 @@ fun LivestreamPinnedProductElement(
                                             tint = AmityTheme.colors.base
                                         )
                                         Text(
-                                            text = "Unpin",
+                                            text = amitySocialString("amity_social_button_unpin"),
                                             style = AmityTheme.typography.captionBold.copy(
                                                 color = AmityTheme.colors.base
                                             )
@@ -221,7 +222,7 @@ fun LivestreamPinnedProductElement(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = "View",
+                                    text = amitySocialString("amity_social_button_view"),
                                     style = AmityTheme.typography.captionBold.copy(
                                         color = Color.White
                                     )

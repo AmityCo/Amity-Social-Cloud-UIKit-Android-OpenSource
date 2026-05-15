@@ -1,5 +1,7 @@
 package com.amity.socialcloud.uikit.community.compose.clip.view.element
 
+import com.amity.socialcloud.uikit.common.localization.DefaultAmityCommonStringProvider
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import android.content.res.Resources
 import androidx.annotation.OptIn
 import androidx.compose.foundation.Image
@@ -66,7 +68,6 @@ import com.amity.socialcloud.sdk.model.core.file.AmityClip
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.common.readableNumber
-import com.amity.socialcloud.uikit.common.common.readableSocialTimeDiff
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.model.AmitySocialReactions
 import com.amity.socialcloud.uikit.common.reaction.picker.AmityReactionPicker
@@ -77,6 +78,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.AmityConstants.POST_REACTION
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.isVisitor
+import com.amity.socialcloud.uikit.common.utils.readableSocialTimeDiff
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipFeedPageType
 import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipFeedPageViewModel
@@ -391,7 +393,7 @@ fun ClipItem(
                                     Text(
                                         text = (parentPost?.getCreatedAt()?.readableSocialTimeDiff()
                                             ?: post.getCreatedAt()?.readableSocialTimeDiff() ?: "")
-                                                + if (post.isEdited()) " (edited)" else "",
+                                                + if (post.isEdited()) DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_edited_suffix") else "",
                                         style = AmityTheme.typography.caption,
                                         color = Color.White,
                                         modifier = Modifier,
@@ -417,7 +419,7 @@ fun ClipItem(
                                             tint = AmityTheme.colors.primary,
                                         )
                                         Text(
-                                            text = "Moderator",
+                                            text = DefaultAmitySocialStringProvider.getInstance().getString("amity_common_button_moderator"),
                                             style = AmityTheme.typography.captionSmall,
                                             color = AmityTheme.colors.primary,
                                         )
@@ -455,6 +457,7 @@ fun ClipItem(
                     }
 
                     // Interaction buttons (right side)
+                    val joinCommunityForClipStr = DefaultAmityCommonStringProvider.getInstance().getString("amity_common_label_join_community_to_interact")
                     Column(
                         modifier = Modifier
                             .padding(bottom = 56.dp),
@@ -491,7 +494,7 @@ fun ClipItem(
                                                     )
 
                                                     if (community != null && !isCommunityJoined) {
-                                                        AmityUIKitSnackbar.publishSnackbarErrorMessage(message = "Join community to interact with this clip.")
+                                                        AmityUIKitSnackbar.publishSnackbarErrorMessage(message = joinCommunityForClipStr)
                                                         return@let
                                                     }
 

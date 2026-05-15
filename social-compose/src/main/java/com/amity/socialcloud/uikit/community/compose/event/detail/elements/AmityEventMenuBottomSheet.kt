@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,11 +30,11 @@ fun AmityEventMenuBottomSheet(
     hasRsvpd: Boolean = false
 ) {
     var showEditingNotPossibleDialog by remember { mutableStateOf(false) }
-    
+
     // Check if event has ended
     val now = org.joda.time.DateTime.now()
     val hasEventEnded = eventEndTime?.let { now.isAfter(it) } ?: false
-    
+
     // Determine who can see "Add to calendar":
     // - If event ended: no one can see
     // - Host: always see (if not ended)
@@ -43,7 +44,7 @@ fun AmityEventMenuBottomSheet(
     } else {
         isEventCreator || hasRsvpd
     }
-    
+
     if (shouldShow) {
         ModalBottomSheet(
             onDismissRequest = onDismiss,
@@ -70,14 +71,14 @@ fun AmityEventMenuBottomSheet(
                                 if (eventStartTime != null) {
                                     val now = org.joda.time.DateTime.now()
                                     val minutesUntilStart = org.joda.time.Minutes.minutesBetween(now, eventStartTime).minutes
-                                    
+
                                     if (minutesUntilStart < 15) {
                                         showEditingNotPossibleDialog = true
                                         onDismiss()
                                         return@clickable
                                     }
                                 }
-                                
+
                                 onEditClick()
                                 onDismiss()
                             }
@@ -86,13 +87,13 @@ fun AmityEventMenuBottomSheet(
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.amity_ic_edit_profile),
-                            contentDescription = "Edit event",
+                            contentDescription = amitySocialString("amity_social_label_edit_event"),
                             tint = AmityTheme.colors.base,
                             modifier = Modifier.size(24.dp)
                         )
                         Spacer(modifier = Modifier.width(16.dp))
                         Text(
-                            text = "Edit event",
+                            text = amitySocialString("amity_social_label_edit_event"),
                             style = AmityTheme.typography.body.copy(
                                 fontWeight = FontWeight.Medium,
                                 fontSize = 15.sp
@@ -101,7 +102,7 @@ fun AmityEventMenuBottomSheet(
                         )
                     }
                 }
-                
+
                 // Add to calendar option
                 // This appears after Edit event for event creators
                 if (showAddToCalendar) {
@@ -117,13 +118,13 @@ fun AmityEventMenuBottomSheet(
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.amity_ic_event_add_to_calendar_button),
-                            contentDescription = "Add to calendar",
+                            contentDescription = amitySocialString("amity_social_label_add_to_calendar"),
                             tint = AmityTheme.colors.base,
                             modifier = Modifier.size(24.dp)
                         )
                         Spacer(modifier = Modifier.width(16.dp))
                         Text(
-                            text = "Add to calendar",
+                            text = amitySocialString("amity_social_label_add_to_calendar"),
                             style = AmityTheme.typography.body.copy(
                                 fontWeight = FontWeight.Medium,
                                 fontSize = 15.sp
@@ -153,7 +154,7 @@ fun AmityEventMenuBottomSheet(
                         )
                         Spacer(modifier = Modifier.width(16.dp))
                         Text(
-                            text = "Delete event",
+                            text = amitySocialString("amity_social_button_delete_event"),
                             style = AmityTheme.typography.body.copy(
                                 fontWeight = FontWeight.Medium,
                                 fontSize = 15.sp
@@ -165,14 +166,14 @@ fun AmityEventMenuBottomSheet(
             }
         }
     }
-    
+
     // Dialog for editing not possible
     if (showEditingNotPossibleDialog) {
         AlertDialog(
             onDismissRequest = { showEditingNotPossibleDialog = false },
             title = {
                 Text(
-                    text = "Editing is not possible",
+                    text = amitySocialString("amity_social_label_editing_is_not_possible"),
                     style = AmityTheme.typography.title.copy(
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 18.sp
@@ -182,7 +183,7 @@ fun AmityEventMenuBottomSheet(
             },
             text = {
                 Text(
-                    text = "You can no longer edit this event. Changes are restricted 15 minutes before the start time.",
+                    text = amitySocialString("amity_social_label_you_can_no_longer_edit_this_event_changes_are_restricte"),
                     style = AmityTheme.typography.body.copy(
                         fontSize = 15.sp
                     ),
@@ -194,7 +195,7 @@ fun AmityEventMenuBottomSheet(
                     onClick = { showEditingNotPossibleDialog = false }
                 ) {
                     Text(
-                        text = "OK",
+                        text = amitySocialString("amity_social_button_ok"),
                         style = AmityTheme.typography.body.copy(
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 15.sp

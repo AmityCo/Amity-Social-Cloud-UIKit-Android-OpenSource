@@ -83,6 +83,7 @@ import com.amity.socialcloud.uikit.community.compose.post.detail.components.Amit
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuSheetUIState
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuViewModel
 import kotlinx.coroutines.delay
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -160,7 +161,7 @@ fun AmityPostDetailPage(
         if (error == null) {
             if (commentTargetUnavailable || parentTargetUnavailable) {
                 AmityUIKitSnackbar.publishSnackbarErrorMessage(
-                    context.getString(R.string.amity_reply_no_longer_available_error_message)
+                    DefaultAmitySocialStringProvider.getInstance().getString("amity_social_error_reply_no_longer_available_error_message")
                 )
             }
         }
@@ -295,7 +296,7 @@ fun AmityPostDetailPage(
                                 }
 
                                 Text(
-                                    text = "Post",
+                                    text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_social_home_create_post_button"),
                                     style = AmityTheme.typography.titleLegacy,
                                     modifier = modifier
                                         .padding(horizontal = 48.dp)
@@ -409,9 +410,9 @@ fun AmityPostDetailPage(
 
                     if (showLivestreamLimitExceededDialog) {
                         AmityAlertDialog(
-                            dialogTitle = "Live stream ended",
-                            dialogText = "Your live stream has been automatically terminated since you reached 4-hour limit.",
-                            dismissText = "OK",
+                            dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_title_livestream_ended"),
+                            dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_livestream_time_limit"),
+                            dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_ok"),
                             onDismissRequest = {
                                 showLivestreamLimitExceededDialog = false
                             }
@@ -420,7 +421,7 @@ fun AmityPostDetailPage(
 
                     if (internetState is NetworkConnectionEvent.Disconnected) {
                         AmityUIKitSnackbar.publishSnackbarErrorMessage(
-                            message = "No internet connection.",
+                            message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_no_internet_connection"),
                             offsetFromBottom = 70
                         )
                     }

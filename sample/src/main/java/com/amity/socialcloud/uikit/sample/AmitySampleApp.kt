@@ -12,6 +12,7 @@ import com.amity.socialcloud.uikit.feed.settings.AmityPostShareClickListener
 import com.amity.socialcloud.uikit.feed.settings.AmityPostSharingSettings
 import com.amity.socialcloud.uikit.feed.settings.AmityPostSharingTarget
 import com.amity.socialcloud.uikit.sample.env.SamplePreferences
+import com.amity.socialcloud.uikit.sample.localization.AmityLocaleHelper
 
 class AmitySampleApp : Application()  {
 
@@ -28,6 +29,9 @@ class AmitySampleApp : Application()  {
                 SamplePreferences.getUploadUrl().get(),
             )
         )
+
+        // Apply locale-specific string overrides (Thai demo)
+        AmityLocaleHelper.apply(this)
 
         // V3 Ex. override post sharing event
         val settings = AmityPostSharingSettings()

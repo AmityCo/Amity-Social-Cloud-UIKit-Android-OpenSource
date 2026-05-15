@@ -75,6 +75,7 @@ import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipFeedPageType
 import com.amity.socialcloud.uikit.community.compose.community.profile.element.AmityVideoAndClipChipSelector
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.community.compose.paging.feed.user.amityUserClipFeedLLS
 import com.amity.socialcloud.uikit.community.compose.paging.feed.user.amityUserFeedLLS
 import com.amity.socialcloud.uikit.community.compose.paging.feed.user.amityUserImageFeedLLS
@@ -173,9 +174,9 @@ fun AmityUserProfilePage(
 
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     val feedFilter = listOf(
-        context.getString(R.string.amity_v4_user_profile_feed_option_all),
-        context.getString(R.string.amity_v4_user_profile_feed_option_community),
-        context.getString(R.string.amity_v4_user_profile_feed_option_user),
+        DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_user_profile_all_post_title"),
+        DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_user_profile_feed_option_community"),
+        DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_user_profile_feed_option_user"),
     )
 
     val error by remember(userId) {
@@ -195,7 +196,7 @@ fun AmityUserProfilePage(
     }
 
     var selectedMediaTabIndex by remember { mutableIntStateOf(0) }
-    val mediaTabTitles = listOf("Images", "Videos", "Clips")
+    val mediaTabTitles = listOf(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_image"), DefaultAmitySocialStringProvider.getInstance().getString("amity_social_tab_tab_videos"), DefaultAmitySocialStringProvider.getInstance().getString("amity_social_tab_tab_clips"))
 
     AmityBasePage("user_profile_page") {
         val isUserProfileContentVisible = remember {
@@ -558,7 +559,7 @@ fun AmityUserProfilePage(
 
             if (showBlockUserDialog && user != null) {
                 AmityAlertDialog(
-                    dialogTitle = "Block member?",
+                    dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_title_block_user"),
                     dialogText = buildAnnotatedString {
                         val displayName = user?.getDisplayName() ?: ""
                         append(displayName)
@@ -569,8 +570,8 @@ fun AmityUserProfilePage(
                         )
                         append(" won't be able to see posts and comments that you've created. They won't be notified that you've blocked them.")
                     },
-                    confirmText = "Block",
-                    dismissText = "Cancel",
+                    confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_block"),
+                    dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel"),
                     confirmTextColor = AmityTheme.colors.alert,
                     onConfirmation = {
                         showBlockUserDialog = false
@@ -579,13 +580,13 @@ fun AmityUserProfilePage(
                             targetUserId = user!!.getUserId(),
                             onSuccess = {
                                 getPageScope().showSnackbar(
-                                    message = "User blocked",
+                                    message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_user_blocked"),
                                     drawableRes = R.drawable.amity_ic_snack_bar_success,
                                 )
                             },
                             onError = {
                                 getPageScope().showErrorSnackbar(
-                                    message = "Block not successful. Please try again.",
+                                    message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_user_block_failed"),
                                     drawableRes = R.drawable.amity_ic_snack_bar_warning
                                 )
                             }
@@ -599,7 +600,7 @@ fun AmityUserProfilePage(
 
             if (showUnblockUserDialog && user != null) {
                 AmityAlertDialog(
-                    dialogTitle = "Unblock member?",
+                    dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_title_unblock_user"),
                     dialogText = buildAnnotatedString {
                         val displayName = user?.getDisplayName() ?: ""
                         append(displayName)
@@ -610,8 +611,8 @@ fun AmityUserProfilePage(
                         )
                         append(" will now be able to see posts and comments that you've created. They won't be notified that you've unblocked them.")
                     },
-                    confirmText = "Unblock",
-                    dismissText = "Cancel",
+                    confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_unblock"),
+                    dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel"),
                     confirmTextColor = AmityTheme.colors.alert,
                     onConfirmation = {
                         showUnblockUserDialog = false
@@ -620,13 +621,13 @@ fun AmityUserProfilePage(
                             targetUserId = user!!.getUserId(),
                             onSuccess = {
                                 getPageScope().showSnackbar(
-                                    message = "User unblocked.",
+                                    message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_user_unblocked"),
                                     drawableRes = R.drawable.amity_ic_snack_bar_success,
                                 )
                             },
                             onError = {
                                 getPageScope().showErrorSnackbar(
-                                    message = "Failed to unblock user. Please try again.",
+                                    message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_user_unblock_failed"),
                                     drawableRes = R.drawable.amity_ic_snack_bar_warning
                                 )
                             }
@@ -703,10 +704,10 @@ fun AmityUserProfilePage(
 
             if (showUnfollowPopupDialog) {
                 AmityAlertDialog(
-                    dialogTitle = "Unfollow this user?",
-                    dialogText = "If you change your mind, you'll have to request to follow them again.",
-                    confirmText = "Unfollow",
-                    dismissText = "Cancel",
+                    dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_title_unfollow_user"),
+                    dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_unfollow_description"),
+                    confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_unfollow"),
+                    dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel"),
                     confirmTextColor = AmityTheme.colors.alert,
                     onConfirmation = {
                         showUnfollowPopupDialog = false
@@ -728,14 +729,14 @@ fun AmityUserProfilePage(
 
         if (AmityError.from(error) == AmityError.ITEM_NOT_FOUND || user?.isDeleted() == true) {
             val title = if (user?.isDeleted() == true) {
-                context.getString(R.string.amity_invalid_user_dialog_title)
+                DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_invalid_user_dialog_title")
             } else {
-                context.getString(R.string.amity_deleted_user_dialog_title)
+                DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_deleted_user_dialog_title")
             }
             AmityAlertDialog(
                 dialogTitle = title,
                 dialogText = "",
-                dismissText = context.getString(R.string.amity_ok),
+                dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_ok"),
                 onDismissRequest = {
                     context.closePage()
                 }
@@ -744,9 +745,9 @@ fun AmityUserProfilePage(
 
         if (showUnfollowErrorDialog) {
             AmityAlertDialog(
-                dialogTitle = "Unable to unfollow this user",
-                dialogText = "Oops! something went wrong. Please try again later.",
-                dismissText = "OK",
+                dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_failed_to_unfollow_user"),
+                dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_generic_error"),
+                dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_ok"),
                 onDismissRequest = {
                     showUnfollowErrorDialog = false
                 }

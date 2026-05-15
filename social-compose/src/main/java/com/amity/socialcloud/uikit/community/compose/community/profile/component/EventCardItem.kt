@@ -32,6 +32,7 @@ import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.event.formatEventTimestamp
 import org.joda.time.DateTime
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 /**
  * Composable that wraps the event host badge with a circular background
@@ -59,7 +60,7 @@ private fun EventHostBadge(
 
 /**
  * EventCardItem displays an event in different layout styles.
- * 
+ *
  * @param event The event to display
  * @param style The layout style for the card (Large, Medium, or List)
  * @param onClick Callback when the card is clicked
@@ -142,7 +143,7 @@ private fun EventCardLarge(
                 error = painterResource(R.drawable.amity_ic_event_list_placeholder),
                 modifier = Modifier.fillMaxSize()
             )
-            
+
             // Event Type Badge
             Box(
                 modifier = Modifier
@@ -156,9 +157,9 @@ private fun EventCardLarge(
             ) {
                 Text(
                     text = when (event?.getType()) {
-                        AmityEventType.IN_PERSON -> "In-person"
-                        AmityEventType.VIRTUAL -> "Virtual"
-                        else -> "Virtual"
+                        AmityEventType.IN_PERSON -> amitySocialString("amity_social_button_in_person")
+                        AmityEventType.VIRTUAL -> amitySocialString("amity_social_button_virtual")
+                        else -> amitySocialString("amity_social_button_virtual")
                     },
                     style = AmityTheme.typography.caption.copy(
                         fontSize = 12.sp
@@ -166,7 +167,7 @@ private fun EventCardLarge(
                     color = androidx.compose.ui.graphics.Color.White
                 )
             }
-            
+
             // Host Badge
             val currentUserId = AmityCoreClient.getUserId()
             val isHost = event?.getCreator()?.getUserId() == currentUserId
@@ -187,7 +188,7 @@ private fun EventCardLarge(
         ) {
             val startTime = event?.getStartTime()
             val endTime = event?.getEndTime()
-            
+
             startTime?.let {
                 Text(
                     text = formatEventTimestamp(it, endTime),
@@ -195,29 +196,29 @@ private fun EventCardLarge(
                     color = AmityTheme.colors.baseShade1
                 )
             }
-            
+
             Spacer(modifier = Modifier.height(6.dp))
-            
+
             Text(
-                text = event?.getTitle() ?: "Make Every Minute Count",
+                text = event?.getTitle() ?: "",
                 style = AmityTheme.typography.title.copy(fontWeight = FontWeight.Bold),
                 color = AmityTheme.colors.base,
                 maxLines = 2
             )
-            
+
             Spacer(modifier = Modifier.height(6.dp))
-            
+
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
-                    text = "By ",
+                    text = amitySocialString("amity_social_button_by"),
                     style = AmityTheme.typography.body,
                     color = AmityTheme.colors.baseShade1
                 )
                 Text(
-                    text = event?.getCreator()?.getDisplayName() ?: "Community Name",
+                    text = event?.getCreator()?.getDisplayName() ?: amitySocialString("amity_social_label_community_setup_name_title"),
                     style = AmityTheme.typography.body.copy(fontWeight = FontWeight.Medium),
                     color = AmityTheme.colors.baseShade1
                 )
@@ -277,7 +278,7 @@ private fun EventCardMedium(
                 .fillMaxWidth()
                 .height(180.dp)
         )
-        
+
         // Event Type Badge (Top Left)
         Box(
             modifier = Modifier
@@ -291,9 +292,9 @@ private fun EventCardMedium(
         ) {
             Text(
                 text = when (event?.getType()) {
-                    AmityEventType.IN_PERSON -> "In-person"
-                    AmityEventType.VIRTUAL -> "Virtual"
-                    else -> "Virtual"
+                    AmityEventType.IN_PERSON -> amitySocialString("amity_social_button_in_person")
+                    AmityEventType.VIRTUAL -> amitySocialString("amity_social_button_virtual")
+                    else -> amitySocialString("amity_social_button_virtual")
                 },
                 style = AmityTheme.typography.body.copy(
                     fontSize = 13.sp,
@@ -302,7 +303,7 @@ private fun EventCardMedium(
                 color = androidx.compose.ui.graphics.Color.White
             )
         }
-        
+
         // Host Badge
         val currentUserId = AmityCoreClient.getUserId()
         val isHost = event?.getCreator()?.getUserId() == currentUserId
@@ -333,12 +334,12 @@ private fun EventCardMedium(
                     color = AmityTheme.colors.baseShade1
                 )
             }
-            
+
             Spacer(modifier = Modifier.height(8.dp))
-            
+
             // Event Title
             Text(
-                text = event?.getTitle() ?: "Meet Your Perfect Match with...",
+                text = event?.getTitle() ?: "",
                 style = AmityTheme.typography.body.copy(
                     fontSize = 15.sp,
                     fontWeight = FontWeight.SemiBold
@@ -346,21 +347,21 @@ private fun EventCardMedium(
                 color = AmityTheme.colors.base,
                 maxLines = 2
             )
-            
+
             Spacer(modifier = Modifier.height(8.dp))
-            
+
             // Creator/Community Name
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
-                    text = "By ",
+                    text = amitySocialString("amity_social_button_by"),
                     style = AmityTheme.typography.caption,
                     color = AmityTheme.colors.baseShade1
                 )
                 Text(
-                    text = event?.getCreator()?.getDisplayName() ?: "Benefit Cosmetics",
+                    text = event?.getCreator()?.getDisplayName() ?: "",
                     style = AmityTheme.typography.caption,
                     color = AmityTheme.colors.baseShade1
                 )
@@ -415,7 +416,7 @@ private fun EventCardList(
                 error = painterResource(R.drawable.amity_ic_event_list_placeholder),
                 modifier = Modifier.fillMaxSize()
             )
-            
+
             // Event Type Badge on top left of image
             Box(
                 modifier = Modifier
@@ -429,15 +430,15 @@ private fun EventCardList(
             ) {
                 Text(
                     text = when (event?.getType()) {
-                        AmityEventType.IN_PERSON -> "In-person"
-                        AmityEventType.VIRTUAL -> "Virtual"
-                        else -> "Virtual"
+                        AmityEventType.IN_PERSON -> amitySocialString("amity_social_button_in_person")
+                        AmityEventType.VIRTUAL -> amitySocialString("amity_social_button_virtual")
+                        else -> amitySocialString("amity_social_button_virtual")
                     },
                     style = AmityTheme.typography.caption,
                     color = androidx.compose.ui.graphics.Color.White
                 )
             }
-            
+
             // Host Badge
             val currentUserId = AmityCoreClient.getUserId()
             val isHost = event?.getCreator()?.getUserId() == currentUserId
@@ -449,7 +450,7 @@ private fun EventCardList(
                 )
             }
         }
-        
+
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -468,32 +469,32 @@ private fun EventCardList(
                     maxLines = 2
                 )
             }
-            
+
             Spacer(modifier = Modifier.height(4.dp))
-            
+
             // Event Title
             Text(
-                text = event?.getTitle() ?: "Sample Event Title",
+                text = event?.getTitle() ?: "",
                 style = AmityTheme.typography.body.copy(fontWeight = FontWeight.SemiBold),
                 color = AmityTheme.colors.base,
                 maxLines = 1
             )
-            
+
             Spacer(modifier = Modifier.height(4.dp))
-            
+
             // Community Name
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
-                    text = "By ",
+                    text = amitySocialString("amity_social_button_by"),
                     style = AmityTheme.typography.caption,
                     color = AmityTheme.colors.baseShade1,
                     maxLines = 1
                 )
                 Text(
-                    text = event?.getCreator()?.getDisplayName() ?: "Community Name",
+                    text = event?.getCreator()?.getDisplayName() ?: amitySocialString("amity_social_label_community_setup_name_title"),
                     style = AmityTheme.typography.caption,
                     color = AmityTheme.colors.baseShade1,
                     maxLines = 1

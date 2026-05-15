@@ -73,6 +73,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.shimmerBackground
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -230,7 +231,7 @@ fun AmityPostImagePollElement(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = if (viewResultMode) "See full results" else "See ${answers.size - maxItemsToShow} more options",
+                    text = if (viewResultMode) DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_see_full_results") else DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_see_more_options").format(answers.size - maxItemsToShow),
                     style = AmityTheme.typography.bodyBold,
                     color = AmityTheme.colors.secondary
                 )
@@ -297,9 +298,9 @@ private fun PollItem(
             }
 
             val calculatedVotedBy = when {
-                voteCount == 0 -> "No votes"
-                voteCount == 1 && answer.isVotedByUser -> "Voted by you"
-                voteCount == 1 -> "1 voter"
+                voteCount == 0 -> DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_image_poll_no_votes")
+                voteCount == 1 && answer.isVotedByUser -> DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_image_poll_voted_by_you")
+                voteCount == 1 -> DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_image_poll_voter").format("1")
                 else -> {
                     val nextThreshold = getNextThreshold(voteCount)
                     val kSign = if (voteCount > nextThreshold) "k" else ""
@@ -308,9 +309,9 @@ private fun PollItem(
                     } else {
                         voteCount.readableNumber()
                     }
-                    var text = "$displayVoteCount${kSign} voters"
+                    var text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_poll_voters").format("$displayVoteCount${kSign}")
                     if (displayVoteCount == "1") {
-                        text = "1 voter"
+                        text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_image_poll_voter").format("1")
                     }
                     text
                 }
@@ -335,11 +336,11 @@ private fun PollItem(
             .memoryCachePolicy(CachePolicy.ENABLED)
             .build()
     }
-    
+
     val painter = rememberAsyncImagePainter(
         model = imageRequest
     )
-    
+
     val painterState by painter.state.collectAsState()
 
     Card(

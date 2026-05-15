@@ -38,6 +38,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityUserListShimmer
 import com.amity.socialcloud.uikit.community.compose.search.components.AmityEmptySearchResultComponent
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityEventAttendeesPage(
@@ -71,7 +72,7 @@ fun AmityEventAttendeesPage(
                 .windowInsetsPadding(WindowInsets.safeDrawing)
         ) {
             AmityToolBar(
-                title = "Attendees",
+                title = amitySocialString("amity_social_button_attendees"),
                 onBackClick = {
                     context.closePageWithResult(Activity.RESULT_CANCELED)
                 }

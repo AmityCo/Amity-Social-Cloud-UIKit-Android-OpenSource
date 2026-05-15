@@ -33,6 +33,8 @@ import com.amity.socialcloud.uikit.community.compose.story.view.AmityStoryModalS
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import com.amity.socialcloud.uikit.common.localization.amityCommonString
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -102,7 +104,7 @@ fun AmityStoryModalBottomSheet(
                     ) {
                         AmityBottomSheetActionItem(
                             icon = R.drawable.amity_ic_delete_story,
-                            text = "Delete story",
+                            text = amityCommonString("amity_common_button_delete_story"),
                             modifier = modifier.testTag("bottom_sheet_delete_button"),
                         ) {
                             viewModel.updateSheetUIState(AmityStoryModalSheetUIState.CloseSheet)

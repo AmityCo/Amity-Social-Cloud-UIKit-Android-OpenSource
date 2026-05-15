@@ -1,5 +1,7 @@
 package com.amity.socialcloud.uikit.common.model
 
+import com.amity.socialcloud.sdk.model.core.reaction.AmityReaction
+
 object AmitySocialReactions {
 	private val reactions = mutableListOf<AmityReactionType>()
 

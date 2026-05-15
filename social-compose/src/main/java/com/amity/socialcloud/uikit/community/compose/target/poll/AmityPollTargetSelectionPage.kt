@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.target.poll
 
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialConfigString
 import android.app.Activity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -119,7 +120,7 @@ fun AmityPollTargetSelectionPage(
                     elementId = "title"
                 ) {
                     Text(
-                        text = getConfig().getText(),
+                        text = amitySocialConfigString("amity_social_button_post_to"),
                         style = AmityTheme.typography.titleLegacy,
                         modifier = modifier
                             .align(Alignment.Center)
@@ -156,7 +157,7 @@ fun AmityPollTargetSelectionPage(
                     elementId = "my_timeline_text"
                 ) {
                     Text(
-                        text = getConfig().getText(),
+                        text = amitySocialConfigString("amity_social_button_select_poll_target_my_timeline"),
                         style = AmityTheme.typography.bodyLegacy.copy(
                             fontWeight = FontWeight.SemiBold
                         ),

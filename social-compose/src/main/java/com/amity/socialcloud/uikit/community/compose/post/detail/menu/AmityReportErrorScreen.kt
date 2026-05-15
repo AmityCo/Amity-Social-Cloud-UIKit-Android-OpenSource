@@ -25,12 +25,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityReportErrorScreen(
@@ -58,14 +58,14 @@ fun AmityReportErrorScreen(
             )
             Spacer(Modifier.height(16.dp))
             Text(
-                text = stringResource(R.string.amity_v4_livestream_deleted_page_title),
+                text = amitySocialString("amity_social_label_livestream_deleted_page_title"),
                 style = AmityTheme.typography.headLine.copy(
                     color = AmityTheme.colors.baseShade3,
                 )
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = stringResource(R.string.amity_v4_livestream_deleted_page_desc),
+                text = amitySocialString("amity_social_button_livestream_deleted_page_desc"),
                 style = AmityTheme.typography.bodyLegacy.copy(
                     color = AmityTheme.colors.baseShade3,
                     fontWeight = FontWeight.Normal
@@ -98,7 +98,7 @@ fun AmityReportErrorScreen(
                 ),
             ) {
                 Text(
-                    text = "Close",
+                    text = amitySocialString("amity_social_modal_dialog_close_button"),
                     style = AmityTheme.typography.bodyBold,
                     color = Color.White
                 )

@@ -32,6 +32,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.community.compose.community.membership.element.AmityCommunityJoinButton
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityCommunityView(
@@ -145,7 +146,7 @@ fun AmityCommunityView(
                 elementId = "community_members_count"
             ) {
                 Text(
-                    text = "${community.getMemberCount().readableNumber()} members",
+                    text = "${community.getMemberCount().readableNumber()} ${amitySocialString("amity_social_label_community_members_label")}",
                     style = AmityTheme.typography.captionLegacy.copy(
                         fontWeight = FontWeight.Normal,
                         color = AmityTheme.colors.baseShade1,
@@ -294,7 +295,7 @@ fun AmityJoinCommunityView(
                         elementId = "community_members_count"
                     ) {
                         Text(
-                            text = "${community.getMemberCount().readableNumber()} members",
+                            text = "${community.getMemberCount().readableNumber()} ${amitySocialString("amity_social_label_community_members_label")}",
                             style = AmityTheme.typography.captionLegacy.copy(
                                 fontWeight = FontWeight.Normal,
                                 color = AmityTheme.colors.baseShade1,

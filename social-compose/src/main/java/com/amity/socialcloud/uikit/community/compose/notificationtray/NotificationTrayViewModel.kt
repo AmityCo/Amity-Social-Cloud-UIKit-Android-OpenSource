@@ -13,6 +13,7 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import kotlinx.coroutines.flow.map
 
 open class NotificationTrayViewModel : AmityBaseViewModel() {
@@ -32,9 +33,9 @@ open class NotificationTrayViewModel : AmityBaseViewModel() {
                         // When beginning of list, add header based on first item
                         if (before == null && after is NotificationTrayListItem.NotificationItem) {
                             if (after.item.isRecent() == true) {
-                                return@insertSeparators NotificationTrayListItem.Header("Recent")
+                                return@insertSeparators NotificationTrayListItem.Header(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_notification_notification_recent"))
                             } else {
-                                return@insertSeparators NotificationTrayListItem.Header("Older")
+                                return@insertSeparators NotificationTrayListItem.Header(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_notification_notification_older"))
                             }
                         }
                         // Insert header if there's a switch from recent to older items
@@ -43,9 +44,9 @@ open class NotificationTrayViewModel : AmityBaseViewModel() {
                             before.item.isRecent() != after.item.isRecent()
                         ) {
                             if (after.item.isRecent() == true) {
-                                return@insertSeparators NotificationTrayListItem.Header("Recent")
+                                return@insertSeparators NotificationTrayListItem.Header(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_notification_notification_recent"))
                             } else {
-                                return@insertSeparators NotificationTrayListItem.Header("Older")
+                                return@insertSeparators NotificationTrayListItem.Header(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_notification_notification_older"))
                             }
                         }
                         null

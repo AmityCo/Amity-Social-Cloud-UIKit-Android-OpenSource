@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.socialhome.components
 
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialConfigString
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -29,6 +30,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getText
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityEmptyNewsFeedComponent(
@@ -72,7 +74,7 @@ fun AmityEmptyNewsFeedComponent(
                     elementId = "title"
                 ) {
                     Text(
-                        text = getConfig().getText(),
+                        text = amitySocialConfigString("amity_social_empty_state_social_home_empty_title"),
                         style = AmityTheme.typography.titleLegacy.copy(
                             color = AmityTheme.colors.secondaryShade3
                         ),
@@ -85,7 +87,7 @@ fun AmityEmptyNewsFeedComponent(
                     elementId = "description"
                 ) {
                     Text(
-                        text = getConfig().getText(),
+                        text = amitySocialConfigString("amity_social_label_find_or_create_community"),
                         style = AmityTheme.typography.captionLegacy.copy(
                             fontWeight = FontWeight.Normal,
                             color = AmityTheme.colors.secondaryShade3
@@ -122,7 +124,7 @@ fun AmityEmptyNewsFeedComponent(
                         Spacer(modifier = modifier.width(8.dp))
 
                         Text(
-                            text = getConfig().getText(),
+                            text = amitySocialConfigString("amity_social_button_explore_community_button"),
                             style = AmityTheme.typography.bodyLegacy.copy(
                                 color = Color.White
                             ),
@@ -138,7 +140,7 @@ fun AmityEmptyNewsFeedComponent(
                     elementId = "create_community_button"
                 ) {
                     Text(
-                        text = "Create community",
+                        text = amitySocialString("amity_social_button_social_home_create_community"),
                         style = AmityTheme.typography.bodyLegacy.copy(
                             color = AmityTheme.colors.primary
                         ),

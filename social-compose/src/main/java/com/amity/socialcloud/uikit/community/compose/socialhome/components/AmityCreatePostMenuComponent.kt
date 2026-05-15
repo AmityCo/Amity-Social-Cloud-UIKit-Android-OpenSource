@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.socialhome.components
 
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialConfigString
 import android.app.Activity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -45,6 +46,7 @@ import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostTargetType
 import com.amity.socialcloud.uikit.community.compose.target.AmityPostTargetSelectionPageType
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -125,7 +127,7 @@ fun AmityCreatePostMenuComponent(
                                     modifier = modifier.size(20.dp)
                                 )
                                 Text(
-                                    text = getConfig().getText(),
+                                    text = amitySocialConfigString("amity_social_button_post_composer_create_button"),
                                     style = AmityTheme.typography.bodyLegacy.copy(
                                         fontWeight = FontWeight.SemiBold
                                     )
@@ -165,7 +167,7 @@ fun AmityCreatePostMenuComponent(
                                 modifier = modifier.size(20.dp)
                             )
                             Text(
-                                "Poll",
+                                amitySocialString("amity_social_button_poll"),
                                 style = AmityTheme.typography.bodyLegacy.copy(
                                     fontWeight = FontWeight.SemiBold
                                 )
@@ -195,7 +197,7 @@ fun AmityCreatePostMenuComponent(
                                 modifier = modifier.size(20.dp)
                             )
                             Text(
-                                "Live stream",
+                                amitySocialString("amity_social_status_live_stream"),
                                 style = AmityTheme.typography.bodyLegacy.copy(
                                     fontWeight = FontWeight.SemiBold
                                 )
@@ -241,7 +243,7 @@ fun AmityCreatePostMenuComponent(
                                         modifier = modifier.size(20.dp)
                                     )
                                     Text(
-                                        text = getConfig().getText(),
+                                        text = amitySocialConfigString("amity_social_button_story"),
                                         style = AmityTheme.typography.bodyLegacy.copy(
                                             fontWeight = FontWeight.SemiBold
                                         )
@@ -279,7 +281,7 @@ fun AmityCreatePostMenuComponent(
                                 modifier = modifier.size(20.dp)
                             )
                             Text(
-                                "Clip",
+                                amitySocialString("amity_social_button_clip"),
                                 style = AmityTheme.typography.bodyLegacy.copy(
                                     fontWeight = FontWeight.SemiBold
                                 )
@@ -327,7 +329,7 @@ fun AmityCreatePostMenuComponent(
                                         modifier = modifier.size(20.dp)
                                     )
                                     Text(
-                                        text = "Event",
+                                        text = amitySocialString("amity_social_button_event"),
                                         style = AmityTheme.typography.bodyLegacy.copy(
                                             fontWeight = FontWeight.SemiBold
                                         )

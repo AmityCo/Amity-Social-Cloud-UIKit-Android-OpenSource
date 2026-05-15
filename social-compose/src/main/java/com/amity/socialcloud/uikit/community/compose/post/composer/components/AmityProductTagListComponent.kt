@@ -43,6 +43,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.common.utils.formatCurrencyForLocale
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 enum class RenderModeEnum {
     POST, IMAGE , VIDEO, LIVESTREAM
@@ -85,10 +86,10 @@ fun AmityProductTagListComponent(
             ) {
                 Text(
                     text = when (renderMode) {
-                        RenderModeEnum.IMAGE -> "Products tagged in this photo"
-                        RenderModeEnum.VIDEO -> "Products tagged in this video"
-                        RenderModeEnum.POST -> "Products tagged in this post"
-                        RenderModeEnum.LIVESTREAM -> "Products tagged"
+                        RenderModeEnum.IMAGE -> amitySocialString("amity_social_label_products_tagged_in_photo")
+                        RenderModeEnum.VIDEO -> amitySocialString("amity_social_label_products_tagged_in_video")
+                        RenderModeEnum.POST -> amitySocialString("amity_social_label_products_tagged_in_post")
+                        RenderModeEnum.LIVESTREAM -> amitySocialString("amity_social_button_products_tagged")
                     },
                     color = AmityTheme.colors.base,
                     style = AmityTheme.typography.titleBold,
@@ -200,7 +201,7 @@ private fun AmityProductTagElement(
         ) {
             if (isUnavailable) {
                 Text(
-                    text = "Unlisted",
+                    text = amitySocialString("amity_social_button_unlisted"),
                     style = AmityTheme.typography.caption,
                     color = AmityTheme.colors.baseShade1,
                 )
@@ -246,7 +247,7 @@ private fun AmityProductTagElement(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = "View",
+                                text = amitySocialString("amity_social_button_view"),
                                 style = AmityTheme.typography.captionBold.copy(
                                     color = Color.White
                                 )

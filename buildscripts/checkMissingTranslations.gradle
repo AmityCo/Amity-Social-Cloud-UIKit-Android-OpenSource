@@ -1,0 +1,151 @@
+/**
+ * checkMissingTranslations
+ *
+ * Verifies that every user-facing string defined in the library modules
+ * (social-compose and common-compose) has a corresponding translation
+ * in every registered locale in the sample app.
+ *
+ * Checks two types of locale registrations:
+ *   1. Kotlin locale bundles — AmityXxxThaiStrings.kt, AmityXxxItalianStrings.kt, etc.
+ *      Discovered by pattern: Amity(Social|Common)<Locale>Strings.kt
+ *      Each module file covers keys for its respective module.
+ *   2. XML resource overlays — sample/src/main/res/values-<locale>/strings.xml
+ *      A single overlay covers keys from all modules.
+ *
+ * Keys intentionally excluded from translation (e.g. empty utility strings):
+ *   See the `excludedKeys` set below.
+ *
+ * Run:   ./gradlew checkMissingTranslations
+ * CI:    add to your check task: check.dependsOn checkMissingTranslations
+ */
+tasks.register('checkMissingTranslations') {
+    group = 'verification'
+    description = 'Checks that all string keys in social-compose and common-compose have translations in every locale registered in the sample app.'
+
+    doLast {
+
+        // Keys with no translatable text (empty utility strings, internal constants).
+        def excludedKeys = [
+            'empty_string',    // <string name="empty_string" /> — intentionally empty
+        ] as Set
+
+        // ── Helpers ──────────────────────────────────────────────────────────
+
+        /** Extract all string names from an XML strings file. */
+        def xmlKeys = { File f ->
+            if (!f?.exists()) return ([] as Set)
+            def keys = [] as Set
+            f.text.findAll(/name="([^"]+)"/) { full, key -> keys << key }
+            return keys
+        }
+
+        /** Extract all keys from a Kotlin locale bundle (Map<String, String> literal). */
+        def ktKeys = { File f ->
+            if (!f?.exists()) return ([] as Set)
+            def keys = [] as Set
+            f.text.findAll(/"([^"\\]+)"\s*to\s*"/) { full, key -> keys << key }
+            return keys
+        }
+
+        // ── 1. Collect base keys per module ──────────────────────────────────
+
+        def socialBase = xmlKeys(file("${rootDir}/social-compose/src/main/res/values/strings.xml")) - excludedKeys
+        def commonBase = xmlKeys(file("${rootDir}/common-compose/src/main/res/values/strings.xml")) - excludedKeys
+        def allBase    = socialBase + commonBase
+
+        if (socialBase.isEmpty() && commonBase.isEmpty()) {
+            throw new GradleException("checkMissingTranslations: No base string keys found. Check that social-compose and common-compose strings.xml files exist.")
+        }
+
+        println "checkMissingTranslations: Base keys — social: ${socialBase.size()}, common: ${commonBase.size()}, total: ${allBase.size()}"
+
+        def violations = []
+        def warnings   = []
+
+        def report = { String tag, Set translated ->
+            def missing = allBase - translated
+            def orphans = translated - allBase
+
+            missing.each { key ->
+                def mod = socialBase.contains(key) ? 'social-compose' : 'common-compose'
+                violations << "[${tag}] Missing key '${key}' (from ${mod})"
+            }
+            orphans.each { key ->
+                warnings << "[${tag}] Orphan key '${key}' — not in any base strings.xml (stale translation?)"
+            }
+        }
+
+        // ── 2. Kotlin locale bundles ─────────────────────────────────────────
+        //
+        // Convention: Amity(Social|Common)<Locale>Strings.kt
+        //   - The module segment ("Social" / "Common") routes the file to its
+        //     base key set.
+        //   - The locale segment (e.g. "Thai") groups files into a locale.
+
+        def localizationDir = file("${rootDir}/sample/src/main/java/com/amity/socialcloud/uikit/sample/localization")
+
+        // Group files by locale name: locale → { social: Set<key>, common: Set<key> }
+        def kotlinLocales = [:].withDefault { [social: [] as Set, common: [] as Set] }
+
+        localizationDir.listFiles()?.findAll { f ->
+            f.name =~ /^Amity(Social|Common)\w+Strings\.kt$/
+        }?.each { f ->
+            def m = (f.name =~ /^Amity(Social|Common)(\w+)Strings\.kt$/)
+            if (!m.matches()) return
+            def module = m[0][1].toLowerCase()   // "social" or "common"
+            def locale = m[0][2]                  // e.g. "Thai"
+            kotlinLocales[locale][module] = ktKeys(f) - excludedKeys
+        }
+
+        kotlinLocales.each { locale, moduleMap ->
+            def translated = (moduleMap.social as Set) + (moduleMap.common as Set)
+            report("${locale} Kotlin bundle", translated)
+        }
+
+        // ── 3. XML resource overlays ─────────────────────────────────────────
+
+        def sampleRes = file("${rootDir}/sample/src/main/res")
+        sampleRes.listFiles()?.findAll { d ->
+            d.isDirectory() && d.name ==~ /^values-.+$/ && d.name != 'values-night'
+        }?.each { dir ->
+            def locale   = dir.name - 'values-'
+            def stringsF = new File(dir, 'strings.xml')
+            if (!stringsF.exists()) return
+            report("${locale} XML overlay", xmlKeys(stringsF) - excludedKeys)
+        }
+
+        // ── 4. Require at least one locale registered ────────────────────────
+
+        if (kotlinLocales.isEmpty() && sampleRes.listFiles()?.findAll { d ->
+            d.isDirectory() && d.name ==~ /^values-.+$/ && d.name != 'values-night'
+        }?.isEmpty()) {
+            println "checkMissingTranslations: ⚠ No locale bundles or XML overlays found. Nothing to check."
+            return
+        }
+
+        // ── 5. Output ─────────────────────────────────────────────────────────
+
+        if (warnings) {
+            println "\ncheckMissingTranslations: ${warnings.size()} warning(s) (stale keys):"
+            warnings.each { println "  ⚠  ${it}" }
+        }
+
+        if (violations) {
+            def sb = new StringBuilder()
+            sb.append("\ncheckMissingTranslations FAILED — ${violations.size()} missing translation(s):\n\n")
+
+            // Group by locale tag for readability
+            def byTag = violations.groupBy { (it =~ /^\[([^\]]+)\]/)[0][1] }
+            byTag.each { tag, items ->
+                sb.append("  [${tag}]\n")
+                items.each { sb.append("    ✗ ${it.replaceFirst(/^\[[^\]]+\] /, '')}\n") }
+            }
+
+            sb.append("\nTo fix: add the missing key(s) to the corresponding locale bundle or XML overlay.\n")
+            sb.append("See LOCALIZATION_GUIDE.md for instructions on adding translations.\n")
+            throw new GradleException(sb.toString())
+        }
+
+        println "checkMissingTranslations: All ${kotlinLocales.size() + sampleRes.listFiles()?.count { d -> d.isDirectory() && d.name ==~ /^values-.+$/ && d.name != 'values-night' } ?: 0} locale(s) fully covered. ✓"
+    }
+}

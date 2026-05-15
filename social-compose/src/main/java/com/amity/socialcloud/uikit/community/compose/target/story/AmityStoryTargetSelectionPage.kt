@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.target.story
 
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialConfigString
 
 import android.app.Activity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -83,7 +84,7 @@ fun AmityStoryTargetSelectionPage(
                     elementId = "title"
                 ) {
                     Text(
-                        text = getConfig().getText(),
+                        text = amitySocialConfigString("amity_social_button_story_to"),
                         style = AmityTheme.typography.titleLegacy,
                         modifier = modifier.align(Alignment.Center)
                     )

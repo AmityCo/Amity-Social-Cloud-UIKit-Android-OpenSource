@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.compose.R
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.localization.amityCommonString
 
 @Composable
 fun AmityBottomSheetActionItem(
@@ -86,7 +87,7 @@ fun AmityBottomSheetActionItem(
 @Composable
 fun AmityBottomSheetActionItemPreview() {
     AmityBottomSheetActionItem(
-        text = "Delete story",
+        text = amityCommonString("amity_common_button_delete_story"),
         onClick = {},
         icon = {
             Icon(

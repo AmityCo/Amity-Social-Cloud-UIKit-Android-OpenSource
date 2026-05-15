@@ -35,7 +35,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.res.stringResource
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -61,6 +60,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityProductWebViewBottomSheet
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import com.amity.socialcloud.uikit.community.compose.livestream.room.view.AmityRoomPlayerPageActivity
 import com.amity.socialcloud.uikit.community.compose.livestream.view.AmityLivestreamPlayerPageActivity
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.AmityProductTagListComponent
@@ -235,7 +235,7 @@ fun AmityChildLivestreamPostElement(
                         AmityStream.Status.RECORDED -> {
                             AmityLivestreamPostIdleOrRecordedLabel(
                                 modifier = Modifier.padding(start = 12.dp, top = 12.dp),
-                                text = "RECORDED"
+                                text = amitySocialString("amity_social_status_recorded")
                             )
                         }
 
@@ -248,7 +248,7 @@ fun AmityChildLivestreamPostElement(
                         AmityStream.Status.IDLE -> {
                             AmityLivestreamPostIdleOrRecordedLabel(
                                 modifier = Modifier.padding(start = 12.dp, top = 12.dp),
-                                text = "UPCOMING LIVE"
+                                text = amitySocialString("amity_social_status_upcoming_live")
                             )
                         }
 
@@ -300,7 +300,7 @@ fun AmityLivestreamPostLiveLabel(
             .padding(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 4.dp)
     ) {
         Text(
-            text = "LIVE",
+            text = amitySocialString("amity_social_status_live"),
             style = AmityTheme.typography.captionBold.copy(
                 color = AmityTheme.colors.background,
             ),
@@ -312,8 +312,8 @@ fun AmityLivestreamPostLiveLabel(
 fun AmityLivestreamEndedView(modifier: Modifier = Modifier) {
     AmityLivestreamNoticeView(
         modifier = modifier,
-        title = stringResource(R.string.amity_v4_livestream_post_thumbnail_processing_title),
-        description = stringResource(R.string.amity_v4_livestream_post_thumbnail_processing_desc),
+        title = amitySocialString("amity_social_status_livestream_post_thumbnail_processing_title"),
+        description = amitySocialString("amity_social_label_livestream_post_thumbnail_processing_desc"),
     )
 }
 
@@ -322,7 +322,7 @@ fun AmityLivestreamUnavailableView(modifier: Modifier = Modifier) {
     AmityLivestreamNoticeView(
         modifier = modifier,
         icon = R.drawable.amity_ic_warning,
-        title = stringResource(R.string.amity_v4_livestream_post_thumbnail_unavailable_title),
+        title = amitySocialString("amity_social_label_livestream_post_thumbnail_unavailable_title"),
     )
 }
 
@@ -331,8 +331,8 @@ fun AmityLivestreamReplayUnavailableView(modifier: Modifier = Modifier) {
     AmityLivestreamNoticeView(
         modifier = modifier,
         icon = R.drawable.amity_ic_warning,
-        title = stringResource(R.string.amity_v4_livestream_post_thumbnail_ended_too_short_title),
-        description = stringResource(R.string.amity_v4_livestream_post_thumbnail_ended_too_short_desc),
+        title = amitySocialString("amity_social_label_livestream_post_thumbnail_ended_too_short_title"),
+        description = amitySocialString("amity_social_status_livestream_post_thumbnail_ended_too_short_desc"),
     )
 }
 
@@ -341,8 +341,8 @@ fun AmityLivestreamReplayUnavailableView(modifier: Modifier = Modifier) {
 fun AmityLivestreamTerminatedView(modifier: Modifier = Modifier) {
     AmityLivestreamNoticeView(
         modifier = modifier,
-        title = stringResource(R.string.amity_v4_livestream_post_thumbnail_terminated_title),
-        description = stringResource(R.string.amity_v4_livestream_post_thumbnail_terminated_desc),
+        title = amitySocialString("amity_social_label_livestream_post_thumbnail_terminated_title"),
+        description = amitySocialString("amity_social_button_livestream_post_thumbnail_terminated_desc"),
     )
 }
 
@@ -350,8 +350,8 @@ fun AmityLivestreamTerminatedView(modifier: Modifier = Modifier) {
 fun AmityLivestreamBannedView(modifier: Modifier = Modifier) {
     AmityLivestreamNoticeView(
         modifier = modifier,
-        title = "You’ve been banned.",
-        description = "You can no longer access this live stream.",
+        title = amitySocialString("amity_social_label_banned_title"),
+        description = amitySocialString("amity_social_status_banned_desc"),
     )
 }
 
@@ -359,8 +359,8 @@ fun AmityLivestreamBannedView(modifier: Modifier = Modifier) {
 fun AmityLivestreamDisconnectedView(modifier: Modifier = Modifier) {
     AmityLivestreamNoticeView(
         modifier = modifier,
-        title = "Reconnecting",
-        description = "Connection is unstable and the live stream is paused.\nOnce the connection is stable, it will resume automatically.",
+        title = amitySocialString("amity_social_button_reconnecting"),
+        description = amitySocialString("amity_social_status_live_stream_reconnecting_state_message"),
         shouldShowLoading = true,
         background = Color.Black.copy(alpha = 0.5f)
     )
@@ -787,7 +787,7 @@ fun AmityChildRoomPostElement(
                                 modifier = Modifier
                                     .align(Alignment.TopEnd)
                                     .padding(end = 12.dp, top = 12.dp),
-                                text = "RECORDED"
+                                text = amitySocialString("amity_social_status_recorded")
                             )
                         }
                         AmityRoomStatus.LIVE, AmityRoomStatus.WAITING_RECONNECT -> {
@@ -802,7 +802,7 @@ fun AmityChildRoomPostElement(
                                 modifier = Modifier
                                     .align(Alignment.TopEnd)
                                     .padding(end = 12.dp, top = 12.dp),
-                                text = "UPCOMING LIVE"
+                                text = amitySocialString("amity_social_status_upcoming_live")
                             )
                         }
                         else -> {}

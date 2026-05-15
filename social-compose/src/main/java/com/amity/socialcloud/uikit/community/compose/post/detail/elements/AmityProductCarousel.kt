@@ -51,6 +51,7 @@ import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.Amit
 import com.amity.socialcloud.uikit.common.utils.formatCurrencyForLocale
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.AmityProductTagListComponent
 import com.amity.socialcloud.sdk.api.social.post.review.AmityReviewStatus
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 private const val MAX_VISIBLE_PRODUCTS = 5
 
@@ -105,7 +106,7 @@ fun AmityProductCarousel(
     ) {
         // Header
         Text(
-            text = "Products tagged",
+            text = amitySocialString("amity_social_button_products_tagged"),
             style = AmityTheme.typography.caption,
             color = AmityTheme.colors.baseShade1,
             modifier = Modifier.padding(horizontal = 16.dp)
@@ -260,7 +261,7 @@ private fun ProductCarouselCard(
             // Unlisted label
             if (isUnavailable) {
                 Text(
-                    text = "Unlisted",
+                    text = amitySocialString("amity_social_button_unlisted"),
                     style = AmityTheme.typography.caption,
                     color = AmityTheme.colors.baseShade1,
                 )

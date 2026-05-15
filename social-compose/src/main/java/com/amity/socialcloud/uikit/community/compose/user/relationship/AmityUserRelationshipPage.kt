@@ -36,6 +36,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityToolBar
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.community.compose.user.relationship.components.AmityUserFollowerListComponent
 import com.amity.socialcloud.uikit.community.compose.user.relationship.components.AmityUserFollowingListComponent
 import com.amity.socialcloud.uikit.community.compose.user.relationship.elements.AmityUserRelationshipActionsBottomSheet
@@ -60,10 +61,12 @@ fun AmityUserRelationshipPage(
         viewModel.getUser()
     }.collectAsState(null)
 
-    val tabs = remember {
+    val followingLabel = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_user_following_button")
+    val followersLabel = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_followers")
+    val tabs = remember(followingLabel, followersLabel) {
         listOf(
-            AmityTabRowItem(title = "Following"),
-            AmityTabRowItem(title = "Followers"),
+            AmityTabRowItem(title = followingLabel),
+            AmityTabRowItem(title = followersLabel),
         )
     }
     var selectedTabIndex by remember(selectedTab) {
@@ -139,13 +142,13 @@ fun AmityUserRelationshipPage(
                         userId = it.getUserId(),
                         onSuccess = {
                             getPageScope().showSnackbar(
-                                message = "User reported.",
+                                message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_user_reported"),
                                 drawableRes = R.drawable.amity_ic_snack_bar_success
                             )
                         },
                         onError = {
                             getPageScope().showSnackbar(
-                                message = "Failed to report user. Please try again.",
+                                message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_user_report_failed"),
                                 drawableRes = R.drawable.amity_ic_snack_bar_warning
                             )
                         }
@@ -156,13 +159,13 @@ fun AmityUserRelationshipPage(
                         userId = it.getUserId(),
                         onSuccess = {
                             getPageScope().showSnackbar(
-                                message = "User unreported.",
+                                message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_user_unreported"),
                                 drawableRes = R.drawable.amity_ic_snack_bar_success
                             )
                         },
                         onError = {
                             getPageScope().showSnackbar(
-                                message = "Failed to unreport user. Please try again.",
+                                message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_user_unreport_failed"),
                                 drawableRes = R.drawable.amity_ic_snack_bar_warning
                             )
                         }
@@ -178,7 +181,7 @@ fun AmityUserRelationshipPage(
 
         if (showBlockUserDialog && targetUser != null) {
             AmityAlertDialog(
-                dialogTitle = "Block user?",
+                dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_title_block_user"),
                 dialogText = buildAnnotatedString {
                     val displayName = targetUser?.getDisplayName() ?: ""
                     append(displayName)
@@ -189,8 +192,8 @@ fun AmityUserRelationshipPage(
                     )
                     append(" won't be able to see posts and comments that you've created. They won't be notified that you've blocked them.")
                 },
-                confirmText = "Block",
-                dismissText = "Cancel",
+                confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_block"),
+                dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel"),
                 confirmTextColor = AmityTheme.colors.alert,
                 onConfirmation = {
                     showBlockUserDialog = false
@@ -199,13 +202,13 @@ fun AmityUserRelationshipPage(
                         userId = targetUser!!.getUserId(),
                         onSuccess = {
                             getPageScope().showSnackbar(
-                                message = "User blocked.",
+                                message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_user_blocked"),
                                 drawableRes = R.drawable.amity_ic_snack_bar_success
                             )
                         },
                         onError = {
                             getPageScope().showSnackbar(
-                                message = "Failed to block user. Please try again.",
+                                message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_user_unblock_failed"),
                                 drawableRes = R.drawable.amity_ic_snack_bar_warning
                             )
                         }

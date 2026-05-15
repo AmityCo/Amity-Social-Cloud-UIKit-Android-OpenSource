@@ -26,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -37,6 +36,8 @@ import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.common.utils.getText
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.livestream.util.LivestreamScreenType
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialConfigString
 
 @Composable
 fun AmityLivestreamTerminatedPage(
@@ -53,14 +54,14 @@ fun AmityLivestreamTerminatedPage(
         }
     )
     val mainTitle = if (livestreamScreenType == LivestreamScreenType.CREATE) {
-        stringResource(R.string.amity_v4_create_livestream_terminated_title)
+        amitySocialString("amity_social_status_create_livestream_terminated_title")
     } else {
-        stringResource(R.string.amity_v4_create_livestream_terminated_watch_part_title)
+        amitySocialString("amity_social_status_create_livestream_terminated_watch_part_title")
     }
     val mainDesc = if (livestreamScreenType == LivestreamScreenType.CREATE) {
-        stringResource(R.string.amity_v4_create_livestream_terminated_desc)
+        amitySocialString("amity_social_button_create_livestream_terminated_desc")
     } else {
-        stringResource(R.string.amity_v4_create_livestream_terminated_watch_part_desc)
+        amitySocialString("amity_social_button_create_livestream_terminated_watch_part_desc")
     }
 
     AmityBasePage(pageId = "livestream_terminated_page") {
@@ -79,7 +80,7 @@ fun AmityLivestreamTerminatedPage(
                     modifier = Modifier
                         .align(Alignment.Center)
                         .padding(vertical = 17.dp),
-                    text = stringResource(R.string.amity_v4_create_livestream_terminated_toolbar_title),
+                    text = amitySocialString("amity_social_status_create_livestream_terminated_toolbar_title"),
                     style = AmityTheme.typography.titleLegacy.copy(
                         fontWeight = FontWeight.SemiBold
                     ),
@@ -135,7 +136,7 @@ fun AmityLivestreamTerminatedPage(
             ) {
                 Text(
                     modifier = Modifier,
-                    text = stringResource(R.string.amity_v4_create_livestream_terminated_question),
+                    text = amitySocialString("amity_social_label_create_livestream_terminated_question"),
                     style = AmityTheme.typography.bodyLegacy.copy(
                         fontWeight = FontWeight.SemiBold
                     ),
@@ -155,7 +156,7 @@ fun AmityLivestreamTerminatedPage(
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             modifier = Modifier.fillMaxWidth(),
-                            text = stringResource(R.string.amity_v4_create_livestream_terminated_first_reason),
+                            text = amitySocialString("amity_social_status_create_livestream_terminated_first_reason"),
                             style = AmityTheme.typography.bodyLegacy
                         )
                     }
@@ -172,7 +173,7 @@ fun AmityLivestreamTerminatedPage(
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         modifier = Modifier.fillMaxWidth(),
-                        text = stringResource(R.string.amity_v4_create_livestream_terminated_second_reason),
+                        text = amitySocialString("amity_social_status_create_livestream_terminated_second_reason"),
                         style = AmityTheme.typography.bodyLegacy
                     )
                 }
@@ -204,7 +205,7 @@ fun AmityLivestreamTerminatedPage(
                 ) {
                     Text(
                         modifier = Modifier.fillMaxWidth(),
-                        text = getConfig().getText(),
+                        text = amitySocialConfigString("amity_social_button_livestream_terminated_ok"),
                         style = AmityTheme.typography.bodyLegacy.copy(
                             fontWeight = FontWeight.SemiBold,
                             textAlign = TextAlign.Center,

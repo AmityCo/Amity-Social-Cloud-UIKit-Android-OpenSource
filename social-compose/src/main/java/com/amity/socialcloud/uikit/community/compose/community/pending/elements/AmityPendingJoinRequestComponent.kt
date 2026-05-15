@@ -41,6 +41,7 @@ import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.getText
 import com.amity.socialcloud.uikit.common.utils.shimmerBackground
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialConfigString
 import com.amity.socialcloud.uikit.common.compose.R
 
 @Composable
@@ -153,7 +154,7 @@ fun AmityPendingJoinRequestComponent(
                                 },
                             ) {
                                 Text(
-                                    text = getConfig().getText(),
+                                    text = amitySocialConfigString("amity_social_button_accept_button"),
                                     style = AmityTheme.typography.captionLegacy.copy(
                                         color = AmityTheme.colors.background,
                                     ),
@@ -183,7 +184,7 @@ fun AmityPendingJoinRequestComponent(
                                 },
                             ) {
                                 Text(
-                                    text = getConfig().getText(),
+                                    text = amitySocialConfigString("amity_social_button_pending_post_decline_button"),
                                     style = AmityTheme.typography.bodyBold,
                                 )
                             }

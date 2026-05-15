@@ -31,7 +31,6 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
@@ -63,6 +62,7 @@ import androidx.compose.ui.window.PopupPositionProvider
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 /**
  * A pure Compose implementation of mention text field
@@ -71,7 +71,7 @@ import androidx.compose.ui.unit.IntSize
 fun AmityMentionTextField(
     modifier: Modifier = Modifier,
     value: String = "",
-    hintText: String = "Share something...",
+    hintText: String = amitySocialString("amity_social_label_comment_compose_bar_placeholder"),
     maxLines: Int = 8,
     maxChar: Int = Int.MAX_VALUE,
     mentionedUser: AmityUser? = null,
@@ -1303,9 +1303,9 @@ fun HashtagsExceedDialog(
     onDismiss: () -> Unit = {},
 ) {
     AmityAlertDialog(
-        dialogTitle = "Hashtags limit reached",
-        dialogText = "You can only add hashtag up to 30 hashtags to per post.",
-        dismissText = stringResource(R.string.amity_ok),
+        dialogTitle = amitySocialString("amity_social_modal_post_composer_hashtag_limit_alert_title"),
+        dialogText = amitySocialString("amity_social_modal_dialog_hashtag_limit", 30),
+        dismissText = amitySocialString("amity_social_button_ok"),
         onDismissRequest = onDismiss,
     )
 }

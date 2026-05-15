@@ -8,6 +8,7 @@ import com.amity.socialcloud.sdk.model.core.shareablelink.AmityShareableLinkConf
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
+import com.amity.socialcloud.uikit.common.localization.DefaultAmityCommonStringProvider
 import com.amity.socialcloud.uikit.common.model.AmityMessageReactions
 import com.amity.socialcloud.uikit.common.model.AmityReactionType
 import com.amity.socialcloud.uikit.common.model.AmitySocialReactions
@@ -84,6 +85,7 @@ object AmityUIKitConfigController {
     }
 
     fun setup(context: Context) {
+        DefaultAmityCommonStringProvider.initialize(context)
         parseConfig(context)
         initReactions()
         callbacks.values.forEach {

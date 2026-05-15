@@ -10,6 +10,7 @@ import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -44,7 +45,7 @@ class AmityDraftClipViewModel : AmityBaseViewModel() {
                     is AmityUploadResult.ERROR -> {
                         val error = uploadResult.getError()
                         _clipUploadState.update {
-                            ClipUploadState.Error(error.message ?: "Unknown error")
+                            ClipUploadState.Error(error.message ?: DefaultAmitySocialStringProvider.getInstance().getString("amity_social_error_error_unknown"))
                         }
                     }
 

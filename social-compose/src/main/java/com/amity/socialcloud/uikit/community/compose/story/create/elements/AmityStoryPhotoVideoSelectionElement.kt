@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityStoryPhotoVideoSelectionElement(
@@ -56,7 +57,7 @@ fun AmityStoryPhotoVideoSelectionElement(
                 }
         ) {
             Text(
-                text = "Photo",
+                text = amitySocialString("amity_social_button_community_setup_image_button"),
                 style = AmityTheme.typography.bodyLegacy.copy(
                     color = if (isPhotoSelected) AmityTheme.colors.secondaryShade1
                     else AmityTheme.colors.secondaryShade2,
@@ -78,7 +79,7 @@ fun AmityStoryPhotoVideoSelectionElement(
                 }
         ) {
             Text(
-                text = "Video",
+                text = amitySocialString("amity_social_button_post_composer_video_button"),
                 style = AmityTheme.typography.bodyLegacy.copy(
                     color = if (isPhotoSelected) AmityTheme.colors.secondaryShade2
                     else AmityTheme.colors.secondaryShade1,

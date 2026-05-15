@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
+import com.amity.socialcloud.uikit.common.localization.amityCommonString
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 
 @ExperimentalMaterial3Api
@@ -49,7 +50,7 @@ fun AmityTimePickerDialog(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(24.dp),
-                text = "Select time",
+                text = amityCommonString("amity_common_button_select_time"),
                 color = baseColor
             )
             TimePicker(

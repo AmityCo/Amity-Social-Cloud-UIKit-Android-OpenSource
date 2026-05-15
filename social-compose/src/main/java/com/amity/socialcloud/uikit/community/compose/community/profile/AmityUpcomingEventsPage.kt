@@ -37,6 +37,7 @@ import com.amity.socialcloud.uikit.community.compose.community.profile.component
 import com.amity.socialcloud.uikit.community.compose.community.profile.component.EventCardStyle
 import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmityEventsComponentViewModel
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityEventCardListShimmer
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 /**
  * Page displaying all upcoming events in a list format.
@@ -65,7 +66,7 @@ fun AmityUpcomingEventsPage(
 
     // Tab state
     var selectedTabIndex by remember { mutableStateOf(0) }
-    val tabTitles = listOf("All", "Hosting")
+    val tabTitles = listOf(amitySocialString("amity_social_tab_tab_all"), amitySocialString("amity_social_tab_tab_hosting"))
     
     // Get events based on selected tab and showAllEvents parameter
     val events = remember(selectedTabIndex, showAllEvents) {
@@ -82,7 +83,7 @@ fun AmityUpcomingEventsPage(
                 TopAppBar(
                     title = {
                         Text(
-                        text = "Upcoming events",
+                        text = amitySocialString("amity_social_status_upcoming_events"),
                         style = AmityTheme.typography.title.copy(fontWeight = FontWeight.Bold),
                         color = AmityTheme.colors.base,
                         textAlign = TextAlign.Center,
@@ -176,7 +177,7 @@ fun AmityUpcomingEventsPage(
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                             Text(
-                                text = "No events yet",
+                                text = amitySocialString("amity_social_label_no_events_yet"),
                                 style = AmityTheme.typography.title.copy(fontWeight = FontWeight.Bold),
                                 color = AmityTheme.colors.baseShade3
                             )
@@ -208,7 +209,7 @@ fun AmityUpcomingEventsPage(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
-                                        text = "Loading more...",
+                                        text = amitySocialString("amity_social_button_loading_more"),
                                         style = AmityTheme.typography.caption,
                                         color = AmityTheme.colors.baseShade1
                                     )

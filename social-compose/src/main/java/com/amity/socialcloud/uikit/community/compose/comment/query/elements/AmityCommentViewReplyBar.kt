@@ -15,12 +15,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 
 @Composable
@@ -31,7 +31,6 @@ fun AmityCommentViewReplyBar(
     isReplyComment: Boolean = false,
     onClick: () -> Unit
 ) {
-    val context = LocalContext.current
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
@@ -57,9 +56,9 @@ fun AmityCommentViewReplyBar(
         }
 
         val text = if (isViewAllReplies) {
-            context.getString(R.string.amity_view_more_replies)
+            amitySocialString("amity_social_label_view_more_replies")
         } else {
-            "View $replyCount ${if (replyCount > 1) "replies" else "reply"}"
+            if (replyCount > 1) amitySocialString("amity_social_label_view_replies").format(replyCount) else amitySocialString("amity_social_label_view_reply").format(replyCount)
         }
 
         Text(

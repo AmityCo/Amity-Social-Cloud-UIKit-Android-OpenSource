@@ -23,7 +23,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
@@ -41,9 +40,12 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.getBackgroundColor
 import com.amity.socialcloud.uikit.common.utils.getValue
+import com.amity.socialcloud.uikit.common.utils.resolveValue
 import com.amity.socialcloud.uikit.common.utils.shade
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentViewModel
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.AmityMentionTextField
 import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.AmityMentionSuggestionView
 import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.UrlHighlight
@@ -106,7 +108,6 @@ fun AmityEditCommentContainer(
 
     var selectedUserToMention by remember { mutableStateOf<AmityUser?>(null) }
     var mentionedUsers by remember { mutableStateOf<List<AmityMentionMetadata.USER>>(emptyList()) }
-    val context = LocalContext.current
 
     // Define character limit constant for comments
     val COMMENT_MAX_CHAR_LIMIT = 50000
@@ -198,7 +199,12 @@ fun AmityEditCommentContainer(
                         }
                     ) {
                         Text(
-                            text = getElementScope().getConfig().getValue("cancel_button_text"),
+                            text = getElementScope()
+                                .getConfig()
+                                .resolveValue(
+                                    "cancel_button_text",
+                                    amitySocialString("amity_social_button_cancel")
+                                ),
                             style = AmityTheme.typography.captionLegacy.copy(
                                 color = AmityTheme.colors.baseShade1,
                             ),
@@ -225,7 +231,7 @@ fun AmityEditCommentContainer(
                             // Check character limit before proceeding
                             if (localCommentText.length > COMMENT_MAX_CHAR_LIMIT) {
                                 AmityUIKitSnackbar.publishSnackbarErrorMessage(
-                                    context.getString(R.string.amity_add_comment_exceed_error_message, COMMENT_MAX_CHAR_LIMIT)
+                                    DefaultAmitySocialStringProvider.getInstance().getString("amity_social_error_add_comment_exceed_error_message", COMMENT_MAX_CHAR_LIMIT)
                                 )
                                 return@Button
                             }
@@ -240,11 +246,11 @@ fun AmityEditCommentContainer(
                                 },
                                 onError = {
                                     val errorMessage = if (AmityError.from(it) == AmityError.BAN_WORD_FOUND) {
-                                        context.getString(R.string.amity_add_blocked_words_comment_error_message)
+                                        DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_add_blocked_words_comment_error_message")
                                     } else if(AmityError.from(it) == AmityError.LINK_NOT_ALLOWED) {
-                                        context.getString(R.string.amity_add_blocked_links_comment_error_message)
+                                        DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_add_blocked_links_comment_error_message")
                                     } else {
-                                        it.message
+                                        DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_oops_something_went_wrong")
                                     }
                                     AmityUIKitSnackbar.publishSnackbarErrorMessage(errorMessage)
                                 }
@@ -252,7 +258,13 @@ fun AmityEditCommentContainer(
                         }
                     ) {
                         Text(
-                            text = getElementScope().getConfig().getValue("save_button_text"),
+
+                            text = getElementScope()
+                                .getConfig()
+                                .resolveValue(
+                                    "save_button_text",
+                                    amitySocialString("amity_social_modal_dialog_save_button")
+                                ),
                             style = AmityTheme.typography.captionLegacy.copy(
                                 color = Color.White,
                             ),

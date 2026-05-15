@@ -45,6 +45,7 @@ import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityUserListShimmer
 
 @Composable
@@ -103,7 +104,7 @@ fun AmityBlockedUsersPage(
                                 )
                                 Spacer(modifier = modifier.size(8.dp))
                                 Text(
-                                    "Nothing here to see yet",
+                                    DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_nothing_here_yet"),
                                     style = AmityTheme.typography.titleLegacy.copy(
                                         color = AmityTheme.colors.baseShade3
                                     )
@@ -156,7 +157,7 @@ fun AmityBlockedUsersPage(
                                                 },
                                         ) {
                                             Text(
-                                                text = "Unblock",
+                                                text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_unblock"),
                                                 style = AmityTheme.typography.captionLegacy.copy(
                                                     fontWeight = FontWeight.SemiBold
                                                 ),
@@ -174,10 +175,10 @@ fun AmityBlockedUsersPage(
 
         if (showUnblockUserDialog && targetUser != null) {
             AmityAlertDialog(
-                dialogTitle = "Unblock user?",
-                dialogText = "They will now be able to see posts and comments that you’ve created. They won’t be notified that you’ve unblocked them.",
-                confirmText = "Unblock",
-                dismissText = "Cancel",
+                dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_title_unblock_user"),
+                dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_unblock_user_description"),
+                confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_unblock"),
+                dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel"),
                 confirmTextColor = AmityTheme.colors.alert,
                 onConfirmation = {
                     showUnblockUserDialog = false
@@ -185,13 +186,13 @@ fun AmityBlockedUsersPage(
                         userId = targetUser!!.getUserId(),
                         onSuccess = {
                             getPageScope().showSnackbar(
-                                message = "User unblocked.",
+                                message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_user_unblocked"),
                                 drawableRes = R.drawable.amity_ic_snack_bar_success,
                             )
                         },
                         onError = {
                             getPageScope().showSnackbar(
-                                message = "Failed to unblock user. Please try again.",
+                                message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_user_unblock_failed"),
                                 drawableRes = R.drawable.amity_ic_snack_bar_warning,
                             )
                         }

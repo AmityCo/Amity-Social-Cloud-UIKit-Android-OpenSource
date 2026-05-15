@@ -44,6 +44,7 @@ import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getText
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.community.membership.add.AmityCommunityAddMemberPageViewModel
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialConfigString
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -191,7 +192,7 @@ fun AmityCommunityAddMemberButton(
             }
             Spacer(modifier.height(4.dp))
             Text(
-                text = getConfig().getText(),
+                text = amitySocialConfigString("amity_social_button_invite"),
                 style = AmityTheme.typography.bodyLegacy,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,

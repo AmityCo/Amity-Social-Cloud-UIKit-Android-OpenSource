@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityUserPendingRequestButton(
@@ -56,7 +57,7 @@ fun AmityUserPendingRequestButton(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "New follow requests",
+                        text = amitySocialString("amity_social_label_new_follow_requests"),
                         style = TextStyle(
                             fontSize = 15.sp,
                             lineHeight = 20.sp,

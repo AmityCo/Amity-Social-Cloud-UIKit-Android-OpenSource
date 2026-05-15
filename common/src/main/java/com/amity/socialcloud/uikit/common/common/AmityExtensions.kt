@@ -119,55 +119,6 @@ fun Int.readableNumber(): String {
     return String.format("%s%c", value, "KMBTPE"[exp - 1])
 }
 
-fun DateTime.readableTimeDiff(): String {
-    val diff = DateTime.now().millis - this.millis
-    diff.let {
-        val days = TimeUnit.MILLISECONDS.toDays(diff)
-        val hours = TimeUnit.MILLISECONDS.toHours(diff)
-        val minutes = TimeUnit.MILLISECONDS.toMinutes(diff)
-        val seconds = TimeUnit.MILLISECONDS.toSeconds(diff)
-
-        return when {
-            days > 0 -> days.toString() + "d"
-            hours > 0 -> hours.toString() + "h"
-            minutes > 0 -> minutes.toString() + "m"
-            seconds > 1 -> seconds.toString() + "s"
-            else -> "Just now"
-        }
-    }
-}
-
-fun DateTime.readableSocialTimeDiff(): String {
-    val now = DateTime.now()
-
-    if (now.year().get() > this.year().get()) {
-        val formatter = SimpleDateFormat("d MMM yyyy", Locale.getDefault())
-        val formattedDateTime: String = formatter.format(this.toDate())
-        return formattedDateTime
-    } else {
-        if (now.dayOfYear - this.dayOfYear <= 7) {
-            //  within 7 days
-            val diff = now.millis - this.millis
-            diff.let {
-                val days = TimeUnit.MILLISECONDS.toDays(diff)
-                val hours = TimeUnit.MILLISECONDS.toHours(diff)
-                val minutes = TimeUnit.MILLISECONDS.toMinutes(diff)
-
-                return when {
-                    days > 0 -> days.toString() + "d"
-                    hours > 0 -> hours.toString() + "h"
-                    minutes > 0 -> minutes.toString() + "m"
-                    else -> "Just now"
-                }
-            }
-        } else {
-            val formatter = SimpleDateFormat("d MMM", Locale.getDefault())
-            val formattedDateTime: String = formatter.format(this.toDate())
-            return formattedDateTime
-        }
-    }
-}
-
 fun Int.readableMinuteSeconds(): String {
     val minutes = this / 60
     val seconds = this % 60

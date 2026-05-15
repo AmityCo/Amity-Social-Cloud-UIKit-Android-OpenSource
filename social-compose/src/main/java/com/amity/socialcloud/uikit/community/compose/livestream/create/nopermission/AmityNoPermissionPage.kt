@@ -26,6 +26,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.DisposableEffectWithLifeCy
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import com.amity.socialcloud.uikit.community.compose.livestream.create.element.AmityMediaAndCameraNoPermissionView
 
 @Composable
@@ -69,8 +70,8 @@ fun AmityNoPermissionPage() {
 
         AmityMediaAndCameraNoPermissionView(
             modifier = Modifier.weight(1f),
-            title = "Allow access to your photos",
-            description = "This lets you use photos from this device\nas live stream thumbnail image.",
+            title = amitySocialString("amity_social_permission_allow_photos_title"),
+            description = amitySocialString("amity_social_status_permission_photo_thumbnail"),
             onOpenSettingClick = {
                 val intent =
                     Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {

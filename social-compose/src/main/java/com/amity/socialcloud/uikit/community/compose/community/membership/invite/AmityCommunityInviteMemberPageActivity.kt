@@ -22,6 +22,7 @@ import com.amity.socialcloud.uikit.community.compose.community.membership.list.A
 import com.amity.socialcloud.uikit.community.compose.community.membership.list.AmityCommunityMembershipPageViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 
 class AmityCommunityInviteMemberPageActivity : AppCompatActivity() {
 
@@ -37,8 +38,8 @@ class AmityCommunityInviteMemberPageActivity : AppCompatActivity() {
                 users = users,
             ) { users ->
                 if (community != null) {
-                    val successMessage = getString(R.string.amity_v4_community_invitation_create_success)
-                    val failMessage = getString(R.string.amity_v4_community_invitation_create_failed)
+                    val successMessage = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_community_invitation_create_success")
+                    val failMessage = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_community_invitation_create_failed")
                     community.createInvitations(users.map { it.getUserId() })
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())

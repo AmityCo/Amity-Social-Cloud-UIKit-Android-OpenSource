@@ -37,8 +37,10 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.localization.amityCommonString
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityPostNonMemberSection(
@@ -91,11 +93,10 @@ fun AmityPostNonMemberSection(
 				val commentCount = post.getCommentCount()
 				if (commentCount > 0) {
 					Text(
-						text = pluralStringResource(
-							id = R.plurals.amity_feed_comment_count,
-							count = commentCount,
-							commentCount.readableNumber()
-						),
+						text = if (commentCount == 1)
+							amitySocialString("amity_social_button_feed_comment_count_singular").format(commentCount)
+						else
+							amitySocialString("amity_social_button_feed_comment_count_plural").format(commentCount),
 						style = AmityTheme.typography.captionLegacy.copy(
 							fontWeight = FontWeight.Normal,
 							color = AmityTheme.colors.baseShade2
@@ -121,7 +122,7 @@ fun AmityPostNonMemberSection(
 					}
 			) {
 				Text(
-					text = "Join community to interact with all posts",
+					text = amityCommonString("amity_common_label_join_community_to_interact"),
 					style = AmityTheme.typography.body.copy(
 						color = AmityTheme.colors.baseShade2
 					),

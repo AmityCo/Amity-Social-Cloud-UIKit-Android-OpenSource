@@ -55,8 +55,10 @@ import com.amity.socialcloud.uikit.common.utils.getKeyboardHeight
 import com.amity.socialcloud.uikit.common.utils.getText
 import com.amity.socialcloud.uikit.common.utils.isKeyboardVisible
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.community.compose.user.edit.elements.AmityEditUserAvatar
 import kotlinx.coroutines.flow.catch
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialConfigString
 
 @Composable
 fun AmityEditUserProfilePage(
@@ -166,7 +168,7 @@ fun AmityEditUserProfilePage(
                             .padding(horizontal = 16.dp)
                     ) {
                         Text(
-                            text = getConfig().getText(),
+                            text = amitySocialConfigString("amity_social_label_edit_user_display_name_title"),
                             style = AmityTheme.typography.titleLegacy.copy(
                                 textAlign = TextAlign.Start,
                             ),
@@ -187,7 +189,7 @@ fun AmityEditUserProfilePage(
 
                     AmityTextField(
                         text = displayName,
-                        hint = getConfig().getText(),
+                        hint = amitySocialConfigString("amity_social_label_edit_user_display_name_title"),
                         maxCharacters = UserDisplayNameLimit,
                         enabled = shouldAllowDisplayNameEditing,
                         maxLines = 3,
@@ -216,14 +218,14 @@ fun AmityEditUserProfilePage(
                     ) {
                         Text(
                             buildAnnotatedString {
-                                append(getConfig().getText())
+                                append(amitySocialConfigString("amity_social_label_edit_user_about_title"))
                                 withStyle(
                                     style = SpanStyle(
                                         fontWeight = FontWeight.Normal,
                                         color = AmityTheme.colors.baseShade2,
                                     )
                                 ) {
-                                    append(" (Optional)")
+                                    append(" ${amitySocialConfigString("amity_social_label_optional")}")
                                 }
                             },
                             style = AmityTheme.typography.titleLegacy.copy(
@@ -246,7 +248,7 @@ fun AmityEditUserProfilePage(
 
                     AmityTextField(
                         text = about,
-                        hint = getConfig().getText(),
+                        hint = amitySocialConfigString("amity_social_placeholder_edit_user_about_hint"),
                         maxLines = 5,
                         maxCharacters = UserAboutLimit,
                         onValueChange = {
@@ -298,26 +300,26 @@ fun AmityEditUserProfilePage(
                                 avatarUri = avatarUri,
                                 onSuccess = {
                                     shouldDisabledClicking = false
-                                    AmityUIKitSnackbar.publishSnackbarMessage("Successfully updated your profile!")
+                                    AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_profile_updated"))
                                     context.closePage()
                                 },
                                 onError = {
                                     shouldDisabledClicking = false
-                                    AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to save your profile. Please try again.")
+                                    AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_profile_save_failed"))
                                 },
                                 onInappropriateImageError = {
                                     showInappropriateImageDialog = true
                                 },
                                 onBlockedWordError = {
                                     shouldDisabledClicking = false
-                                    AmityUIKitSnackbar.publishSnackbarErrorMessage(context.getString(R.string.amity_user_profile_blocked_word_error_message))
+                                    AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_error_user_profile_blocked_word_error_message"))
                                 },
                             )
                             shouldDisabledClicking = true
                         }
                     ) {
                         Text(
-                            text = getConfig().getText(),
+                            text = amitySocialConfigString("amity_social_button_edit_user_save_button"),
                             style = AmityTheme.typography.bodyLegacy.copy(
                                 color = if (isSaveButtonEnabled) Color.White else AmityTheme.colors.baseShade3,
                             ),
@@ -329,10 +331,10 @@ fun AmityEditUserProfilePage(
 
             if (showUnsavedDialog) {
                 AmityAlertDialog(
-                    dialogTitle = "Unsaved changes",
-                    dialogText = "Are you sure you want to discard the changes? They will be lost when you leave this page.",
-                    confirmText = "Discard",
-                    dismissText = "Cancel",
+                    dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_title_unsaved_changes"),
+                    dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_discard_changes_description"),
+                    confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_discard"),
+                    dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel"),
                     confirmTextColor = AmityTheme.colors.alert,
                     onConfirmation = {
                         context.closePage()
@@ -345,9 +347,9 @@ fun AmityEditUserProfilePage(
 
             if (showInappropriateImageDialog) {
                 AmityAlertDialog(
-                    dialogTitle = "Inappropriate image",
-                    dialogText = "Please choose a different image to upload.",
-                    dismissText = "OK",
+                    dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_inappropriate_image"),
+                    dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_choose_different_image"),
+                    dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_ok"),
                     onDismissRequest = {
                         showInappropriateImageDialog = false
                     }

@@ -14,11 +14,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmitySearchPlaceholderComponent(
@@ -40,7 +40,7 @@ fun AmitySearchPlaceholderComponent(
         )
         Spacer(modifier = modifier.size(8.dp))
         Text(
-            stringResource(R.string.amity_v4_community_search_placeholder),
+            amitySocialString("amity_social_placeholder_community_search_placeholder"),
             style = AmityTheme.typography.titleLegacy.copy(
                 color = AmityTheme.colors.baseShade3
             )

@@ -31,6 +31,7 @@ import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.ui.elements.AmityMenuButton
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityVideoPlayerPage
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityVideoFeedContainer(
@@ -102,7 +103,7 @@ private fun VideoNotAvailableDialog(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "This video is no longer available.",
+                    text = amitySocialString("amity_social_label_this_video_is_no_longer_available"),
                     style = TextStyle(
                         fontSize = 15.sp,
                         lineHeight = 20.sp,

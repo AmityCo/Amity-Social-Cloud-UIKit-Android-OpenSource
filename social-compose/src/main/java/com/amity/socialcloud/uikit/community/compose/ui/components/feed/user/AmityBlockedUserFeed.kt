@@ -21,6 +21,7 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getText
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityBlockedUserFeed(
@@ -37,7 +38,6 @@ fun AmityBlockedUserFeed(
             AmityUserFeedType.CLIP -> "blocked_user_video_feed" //TODO handle clip feed
         }
     }
-
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -56,7 +56,7 @@ fun AmityBlockedUserFeed(
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = getConfig().getText(),
+                text = amitySocialString("amity_social_label_blocked_user_feed"),
                 style = AmityTheme.typography.titleLegacy.copy(
                     color = AmityTheme.colors.baseShade3,
                 ),
@@ -69,7 +69,7 @@ fun AmityBlockedUserFeed(
             elementId = elementId + "_info"
         ) {
             Text(
-                text = getConfig().getText(),
+                text = amitySocialString("amity_social_label_blocked_user_feed_info"),
                 style = AmityTheme.typography.captionLegacy.copy(
                     fontWeight = FontWeight.Normal,
                     color = AmityTheme.colors.baseShade3,

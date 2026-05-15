@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.livestream.room.shared
 
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -53,7 +54,7 @@ fun AmityAddProductBottomSheet(
             },
             onDone = onDone,
             maxSelection = 20 - taggedProduct.size,
-            title = "Add products",
+            title = amitySocialString("amity_social_button_add_products"),
             pageScope = pageScope,
             showBottomBar = true,
             savedProducts = taggedProduct,
@@ -77,10 +78,10 @@ fun AmityAddProductBottomSheet(
 
     if (showDiscardConfirmationDialog) {
         AmityAlertDialog(
-            dialogTitle = "Discard product selection?",
-            dialogText = "You have products selected that haven’t been added yet. If you close now, your selection will be lost.",
-            confirmText = "Discard",
-            dismissText = "Keep editing",
+            dialogTitle = amitySocialString("amity_social_modal_dialog_title_discard_product_selection"),
+            dialogText = amitySocialString("amity_social_modal_dialog_unsaved_products"),
+            confirmText = amitySocialString("amity_social_button_discard"),
+            dismissText = amitySocialString("amity_social_button_keep_editing"),
             onDismissRequest = {
                 showDiscardConfirmationDialog = false
             },

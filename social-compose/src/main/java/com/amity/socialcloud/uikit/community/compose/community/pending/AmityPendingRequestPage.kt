@@ -61,6 +61,7 @@ import com.amity.socialcloud.uikit.community.compose.community.pending.elements.
 import com.amity.socialcloud.uikit.community.compose.community.pending.elements.AmityPendingJoinRequestComponent
 import com.amity.socialcloud.uikit.community.compose.community.pending.elements.AmityPendingPostContentComponent
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostShimmer
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 
 @Composable
 fun AmityPendingRequestPage(
@@ -100,18 +101,19 @@ fun AmityPendingRequestPage(
     var selectedTabIndex by remember { mutableIntStateOf(0) }
 
     // Set up tabs based on community settings and item counts
+    // Use a typed pair (type, label) so tab routing is locale-independent
     val tabs = remember(
         isRequireJoinApproval,
         isRequirePostApproval,
         pendingPosts.itemCount,
         joinRequest.itemCount
     ) {
-        val tabList = mutableListOf<String>()
+        val tabList = mutableListOf<Pair<PendingTabType, String>>()
         if (isRequirePostApproval) {
-            tabList.add("Posts (${if (pendingPosts.itemCount > 10) "10+" else pendingPosts.itemCount})")
+            tabList.add(PendingTabType.POSTS to DefaultAmitySocialStringProvider.getInstance().getString("amity_social_tab_tab_posts_count").format(if (pendingPosts.itemCount > 10) "10+" else pendingPosts.itemCount.toString()))
         }
         if (isRequireJoinApproval) {
-            tabList.add("Join requests (${if (joinRequest.itemCount > 10) "10+" else joinRequest.itemCount})")
+            tabList.add(PendingTabType.JOIN_REQUESTS to DefaultAmitySocialStringProvider.getInstance().getString("amity_social_tab_tab_join_requests_count").format(if (joinRequest.itemCount > 10) "10+" else joinRequest.itemCount.toString()))
         }
         tabList
     }
@@ -161,7 +163,7 @@ fun AmityPendingRequestPage(
                 .windowInsetsPadding(WindowInsets.safeDrawing)
         ) {
             AmityToolBar(
-                title = "Pending requests",
+                title = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_pending_requests"),
                 onBackClick = {
                     context.closePage()
                 }
@@ -169,30 +171,33 @@ fun AmityPendingRequestPage(
 
             AmityCustomTabRow(
                 selectedTabIndex = selectedTabIndex,
-                tabs = tabs,
+                tabs = tabs.map { it.second },
                 onTabSelected = { index ->
                     selectedTabIndex = index
                 },
             )
 
             if (tabs.isNotEmpty()) {
-                val currentTab = tabs[selectedTabIndex]
-                if (currentTab.startsWith("Posts")) {
-                    PendingPostsListContent(
-                        isModerator = isModerator,
-                        pendingPosts = pendingPosts,
-                        requestListState = postListState,
-                        viewModel = viewModel,
-                        pageScope = getPageScope()
-                    )
-                } else if (currentTab.startsWith("Join requests")) {
-                    PendingJoinRequestsContent(
-                        isModerator = isModerator,
-                        joinRequests = joinRequest,
-                        requestListState = postListState,
-                        viewModel = viewModel,
-                        pageScope = getPageScope()
-                    )
+                when (tabs.getOrNull(selectedTabIndex)?.first) {
+                    PendingTabType.POSTS -> {
+                        PendingPostsListContent(
+                            isModerator = isModerator,
+                            pendingPosts = pendingPosts,
+                            requestListState = postListState,
+                            viewModel = viewModel,
+                            pageScope = getPageScope()
+                        )
+                    }
+                    PendingTabType.JOIN_REQUESTS -> {
+                        PendingJoinRequestsContent(
+                            isModerator = isModerator,
+                            joinRequests = joinRequest,
+                            requestListState = postListState,
+                            viewModel = viewModel,
+                            pageScope = getPageScope()
+                        )
+                    }
+                    null -> {}
                 }
             }
         }
@@ -210,7 +215,7 @@ fun PendingPostsListContent(
     Column(modifier = Modifier.fillMaxSize()) {
         if (isModerator && (requestListState == AmityPendingRequestPageViewModel.RequestListState.SUCCESS || requestListState == AmityPendingRequestPageViewModel.RequestListState.EMPTY)) {
             Text(
-                text = "Decline pending post will permanently delete the selected post from community.",
+                text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_decline_pending_post_will_permanently_delete_the_select"),
                 style = AmityTheme.typography.bodyLegacy.copy(
                     color = AmityTheme.colors.baseShade1
                 ),
@@ -260,19 +265,19 @@ fun PendingPostsListContent(
                                     postId = post.getPostId(),
                                     onApproved = {
                                         pageScope.showSnackbar(
-                                            message = "Post accepted.",
+                                            message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_post_accepted"),
                                             drawableRes = R.drawable.amity_ic_snack_bar_success,
                                         )
                                     },
                                     onAlreadyApproved = {
                                         pageScope.showSnackbar(
-                                            message = "Post has been reviewed by another moderator",
+                                            message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_post_already_reviewed"),
                                             drawableRes = R.drawable.amity_ic_snack_bar_success,
                                         )
                                     },
                                     onError = {
                                         pageScope.showSnackbar(
-                                            message = "Failed to review post. Please try again!",
+                                            message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_review_post_failed"),
                                             drawableRes = R.drawable.amity_ic_snack_bar_warning,
                                         )
                                     }
@@ -283,19 +288,19 @@ fun PendingPostsListContent(
                                     postId = post.getPostId(),
                                     onApproved = {
                                         pageScope.showSnackbar(
-                                            message = "Post declined.",
+                                            message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_post_declined"),
                                             drawableRes = R.drawable.amity_ic_snack_bar_success,
                                         )
                                     },
                                     onAlreadyDeclined = {
                                         pageScope.showSnackbar(
-                                            message = "Post has been reviewed by another moderator.",
+                                            message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_post_already_reviewed"),
                                             drawableRes = R.drawable.amity_ic_snack_bar_success,
                                         )
                                     },
                                     onError = {
                                         pageScope.showSnackbar(
-                                            message = "Failed to review post. Please try again!",
+                                            message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_review_post_failed"),
                                             drawableRes = R.drawable.amity_ic_snack_bar_warning,
                                         )
                                     }
@@ -329,7 +334,7 @@ fun PendingJoinRequestsContent(
 
         if (isModerator && (requestListState == AmityPendingRequestPageViewModel.RequestListState.SUCCESS || requestListState == AmityPendingRequestPageViewModel.RequestListState.EMPTY)) {
             Text(
-                text = "Declining a join request is irreversible. The user must send a new request if declined.",
+                text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_decline_follow_request_message"),
                 style = AmityTheme.typography.bodyLegacy.copy(
                     color = AmityTheme.colors.baseShade1
                 ),
@@ -352,7 +357,7 @@ fun PendingJoinRequestsContent(
                     item {
                         AmityEmptyPendingPostsElement(
                             modifier = Modifier.fillParentMaxSize(),
-                            title = "No pending requests"
+                            title = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_no_pending_requests")
                         )
                     }
                 }
@@ -377,19 +382,19 @@ fun PendingJoinRequestsContent(
                                     joinRequest = joinRequest,
                                     onApproved = {
                                         pageScope.showSnackbar(
-                                            message = "Join request accepted.",
+                                            message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_join_request_accepted"),
                                             drawableRes = R.drawable.amity_ic_snack_bar_success,
                                         )
                                     },
                                     onAlreadyApproved = {
                                         pageScope.showSnackbar(
-                                            message = "This join request is no longer available.",
+                                            message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_join_request_unavailable"),
                                             drawableRes = R.drawable.amity_ic_snack_bar_success,
                                         )
                                     },
                                     onError = {
                                         pageScope.showSnackbar(
-                                            message = "Failed to accept join request. Please try again.",
+                                            message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_accept_join_request_failed"),
                                             drawableRes = R.drawable.amity_ic_snack_bar_warning,
                                         )
                                     }
@@ -400,19 +405,19 @@ fun PendingJoinRequestsContent(
                                     joinRequest = joinRequest,
                                     onDeclined = {
                                         pageScope.showSnackbar(
-                                            message = "Join request declined.",
+                                            message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_join_request_declined"),
                                             drawableRes = R.drawable.amity_ic_snack_bar_success,
                                         )
                                     },
                                     onAlreadyDeclined = {
                                         pageScope.showSnackbar(
-                                            message = "This join request is no longer available.",
+                                            message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_join_request_unavailable"),
                                             drawableRes = R.drawable.amity_ic_snack_bar_success,
                                         )
                                     },
                                     onError = {
                                         pageScope.showSnackbar(
-                                            message = "Failed to decline join request. Please try again.",
+                                            message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_decline_join_request_failed"),
                                             drawableRes = R.drawable.amity_ic_snack_bar_warning,
                                         )
                                     }
@@ -517,6 +522,11 @@ private fun AmityCustomTabRow(
         }
         HorizontalDivider(color = AmityTheme.colors.baseShade4)
     }
+}
+
+internal enum class PendingTabType {
+    POSTS,
+    JOIN_REQUESTS,
 }
 
 @Preview

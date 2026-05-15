@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityBaseWarningPage(
@@ -66,7 +67,7 @@ fun AmityBaseWarningPage(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Live stream",
+                    text = amitySocialString("amity_social_status_live_stream"),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Medium,
                     color = Color.Black
@@ -172,8 +173,8 @@ fun AmityLivestreamBannedPage(
     AmityBaseWarningPage(
         pageId = "live_stream_banned_page",
         iconRes = R.drawable.amity_ic_base_warning,
-        title =  "You've been banned.",
-        description = "You can no longer access this live stream.", buttonText = "OK",
+        title = amitySocialString("amity_social_label_banned_title"),
+        description = amitySocialString("amity_social_status_banned_desc"), buttonText = amitySocialString("amity_social_button_ok"),
         onOkClick = onOkClick,
     )
 }
@@ -185,8 +186,8 @@ fun AmityLivestreamDeclinedPage(
     AmityBaseWarningPage(
         pageId = "live_stream_declined_page",
         iconRes = R.drawable.amity_ic_livestream_unavailable,
-        title =  "Something went wrong",
-        description = "The content you're looking for is unavailable.", buttonText = "Go back",
+        title =  amitySocialString("amity_social_label_something_went_wrong"),
+        description = amitySocialString("amity_social_button_content_unavailable"), buttonText = amitySocialString("amity_social_button_go_back"),
         onOkClick = onOkClick,
     )
 }

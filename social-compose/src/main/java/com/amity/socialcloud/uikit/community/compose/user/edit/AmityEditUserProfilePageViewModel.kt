@@ -8,6 +8,7 @@ import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.file.upload.AmityUploadResult
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.flow.Flow
@@ -81,7 +82,7 @@ class AmityEditUserProfilePageViewModel : AmityBaseViewModel() {
                 }
             }
             .doOnError {
-                onError(it.message ?: "Failed to upload image")
+                onError(it.message ?: DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_error_upload_image_failed"))
             }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -111,7 +112,7 @@ class AmityEditUserProfilePageViewModel : AmityBaseViewModel() {
                 if (AmityError.from(exception) == AmityError.BAN_WORD_FOUND) {
                     onBlockedWordError()
                 } else {
-                    onError(exception.message ?: "Failed to update user.")
+                    onError(exception.message ?: DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_error_update_user_failed"))
                 }
             }
             .subscribe()

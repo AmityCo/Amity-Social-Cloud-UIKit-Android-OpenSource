@@ -55,6 +55,7 @@ import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.copyText
+import com.amity.socialcloud.uikit.common.localization.DefaultAmityCommonStringProvider
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import com.amity.socialcloud.uikit.common.compose.R as CommonR
@@ -298,7 +299,7 @@ fun AmityLiveChatMessageList(
                                         },
                                         onError = {
                                             getComponentScope().showSnackbar(
-                                                message = "This message failed to be unreported. Please try again."
+                                                message = DefaultAmityCommonStringProvider.getInstance().getString("amity_social_toast_message_unreport_failed")
                                             )
                                         }
                                     )

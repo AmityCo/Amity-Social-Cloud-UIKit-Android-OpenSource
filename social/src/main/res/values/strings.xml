@@ -350,10 +350,6 @@
         <item quantity="one">%s like</item>
         <item quantity="other">%s likes</item>
     </plurals>
-    <plurals name="amity_feed_comment_count">
-        <item quantity="one">%s comment</item>
-        <item quantity="other">%s comments</item>
-    </plurals>
 
     <string name="amity_delete_post_title">Delete this post?</string>
     <string name="amity_delete_post_warning_message">This post will be permanently deleted. You’ll no longer to see and find this post</string>

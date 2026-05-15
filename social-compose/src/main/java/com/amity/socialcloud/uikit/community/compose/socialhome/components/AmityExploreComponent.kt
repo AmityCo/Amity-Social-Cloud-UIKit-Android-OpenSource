@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.socialhome.components
 
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -123,16 +124,16 @@ fun AmityExploreComponent(
 
                     val title =
                         if (viewModel.getCategoryState() == AmityCommunityCategoriesViewModel.CategoryListState.EMPTY) {
-                            "Your explore is empty"
+                            amitySocialString("amity_social_empty_state_explore_empty")
                         } else {
-                            "No community yet"
+                            amitySocialString("amity_social_label_no_community_yet")
                         }
 
                     val caption =
                         if (viewModel.getCategoryState() == AmityCommunityCategoriesViewModel.CategoryListState.EMPTY) {
-                            "Find community or create your own"
+                            amitySocialString("amity_social_empty_state_social_home_empty_description")
                         } else {
-                            "Let's create your own communities.."
+                            amitySocialString("amity_social_label_no_community_yet_description")
                         }
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -190,7 +191,7 @@ fun AmityExploreComponent(
                             )
                             Text(
                                 modifier = Modifier.padding(end = 16.dp),
-                                text = "Create community",
+                                text = amitySocialString("amity_social_button_social_home_create_community"),
                                 style = AmityTheme.typography.bodyLegacy.copy(
                                     fontWeight = FontWeight.SemiBold,
                                     color = Color.White,
@@ -220,14 +221,14 @@ fun AmityExploreComponent(
                         )
 
                         Text(
-                            text = "Something went wrong",
+                            text = amitySocialString("amity_social_label_something_went_wrong"),
                             modifier = Modifier.padding(top = 16.dp),
                             style = AmityTheme.typography.titleLegacy.copy(
                                 color = AmityTheme.colors.baseShade3,
                             )
                         )
                         Text(
-                            text = "Please try again.",
+                            text = amitySocialString("amity_social_label_please_try_again"),
                             modifier = Modifier.padding(top = 4.dp),
                             style = AmityTheme.typography.captionLegacy.copy(
                                 color = AmityTheme.colors.baseShade3,

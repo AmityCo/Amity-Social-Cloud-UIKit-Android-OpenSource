@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.AmityNumberUtil.getNumberAbbreveation
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityRoomViewerCountBadge(
@@ -61,7 +62,7 @@ fun AmityRoomViewerCountBadge(
         } else {
             Spacer(modifier = Modifier.width(2.dp))
             Text(
-                text = "LIVE",
+                text = amitySocialString("amity_social_status_live"),
                 style = AmityTheme.typography.captionBold.copy(
                     fontSize = 13.sp,
                     lineHeight = 18.sp,

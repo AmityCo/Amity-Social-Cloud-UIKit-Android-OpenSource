@@ -53,6 +53,7 @@ import com.amity.socialcloud.uikit.community.compose.search.components.AmityEmpt
 import com.amity.socialcloud.uikit.community.compose.search.components.AmityEmptyUserListComponent
 import com.amity.socialcloud.uikit.community.compose.search.components.AmitySearchPlaceholderComponent
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityUserListShimmer
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityCommunityInviteMemberPage(
@@ -106,7 +107,7 @@ fun AmityCommunityInviteMemberPage(
                     )
 
                     Text(
-                        text = "Invite member",
+                        text = amitySocialString("amity_social_button_invite_member"),
                         style = AmityTheme.typography.titleLegacy,
                         modifier = modifier
                             .padding(vertical = 17.dp)
@@ -119,7 +120,7 @@ fun AmityCommunityInviteMemberPage(
                 )
                 Spacer(modifier.height(4.dp))
 
-                AmitySearchBarView(hint = "Search user") {
+                AmitySearchBarView(hint = amitySocialString("amity_social_placeholder_search_user_hint")) {
                     keyword = it
                 }
 
@@ -244,7 +245,7 @@ fun AmityCommunityInviteMemberPage(
                     }
                 ) {
                     Text(
-                        text = "Invite",
+                        text = amitySocialString("amity_social_button_invite"),
                         style = AmityTheme.typography.captionLegacy.copy(
                             Color.White
                         ),

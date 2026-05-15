@@ -30,6 +30,7 @@ import com.amity.socialcloud.uikit.common.utils.closePage
 import com.amity.socialcloud.uikit.community.compose.community.pending.elements.AmityEmptyPendingPostsElement
 import com.amity.socialcloud.uikit.community.compose.community.pending.elements.AmityPendingPostContentComponent
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostShimmer
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 
 @Composable
 fun AmityPendingPostsPage(
@@ -61,7 +62,7 @@ fun AmityPendingPostsPage(
                 .windowInsetsPadding(WindowInsets.safeDrawing)
         ) {
             AmityToolBar(
-                title = "Pending posts" + if (isModerator) " (${pendingPosts.itemCount})" else "",
+                title = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_pending_posts") + if (isModerator) " (${pendingPosts.itemCount})" else "",
                 onBackClick = {
                     context.closePage()
                 }
@@ -69,7 +70,7 @@ fun AmityPendingPostsPage(
 
             if (isModerator && postListState == AmityPendingRequestPageViewModel.RequestListState.SUCCESS) {
                 Text(
-                    text = "Decline pending post will permanently delete the selected post from community.",
+                    text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_decline_pending_post_will_permanently_delete_the_select"),
                     style = AmityTheme.typography.bodyLegacy.copy(
                         color = AmityTheme.colors.baseShade1
                     ),
@@ -115,19 +116,19 @@ fun AmityPendingPostsPage(
                                         postId = post.getPostId(),
                                         onApproved = {
                                             getPageScope().showSnackbar(
-                                                message = "Post accepted.",
+                                                message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_post_accepted"),
                                                 drawableRes = R.drawable.amity_ic_snack_bar_success,
                                             )
                                         },
                                         onAlreadyApproved = {
                                             getPageScope().showSnackbar(
-                                                message = "Post has been reviewed by another moderator",
+                                                message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_post_already_reviewed"),
                                                 drawableRes = R.drawable.amity_ic_snack_bar_success,
                                             )
                                         },
                                         onError = {
                                             getPageScope().showSnackbar(
-                                                message = "Failed to review post. Please try again!",
+                                                message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_review_post_failed"),
                                                 drawableRes = R.drawable.amity_ic_snack_bar_warning,
                                             )
                                         }
@@ -138,19 +139,19 @@ fun AmityPendingPostsPage(
                                         postId = post.getPostId(),
                                         onApproved = {
                                             getPageScope().showSnackbar(
-                                                message = "Post declined.",
+                                                message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_post_declined"),
                                                 drawableRes = R.drawable.amity_ic_snack_bar_success,
                                             )
                                         },
                                         onAlreadyDeclined = {
                                             getPageScope().showSnackbar(
-                                                message = "Post has been reviewed by another moderator.",
+                                                message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_post_already_reviewed"),
                                                 drawableRes = R.drawable.amity_ic_snack_bar_success,
                                             )
                                         },
                                         onError = {
                                             getPageScope().showSnackbar(
-                                                message = "Failed to review post. Please try again!",
+                                                message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_review_post_failed"),
                                                 drawableRes = R.drawable.amity_ic_snack_bar_warning,
                                             )
                                         }

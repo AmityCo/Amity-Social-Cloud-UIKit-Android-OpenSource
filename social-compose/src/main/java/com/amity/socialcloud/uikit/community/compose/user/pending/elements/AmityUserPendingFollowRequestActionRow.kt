@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityUserPendingFollowRequestActionRow(
@@ -41,7 +42,7 @@ fun AmityUserPendingFollowRequestActionRow(
             onClick = onAccept,
         ) {
             Text(
-                text = "Accept",
+                text = amitySocialString("amity_social_button_accept_button"),
                 style = AmityTheme.typography.captionLegacy.copy(
                     color = AmityTheme.colors.background,
                 ),
@@ -59,7 +60,7 @@ fun AmityUserPendingFollowRequestActionRow(
             onClick = onDecline,
         ) {
             Text(
-                text = "Decline",
+                text = amitySocialString("amity_social_button_decline"),
                 style = AmityTheme.typography.bodyLegacy,
             )
         }

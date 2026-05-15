@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityShortSearchInputComponent(
@@ -38,7 +39,7 @@ fun AmityShortSearchInputComponent(
         )
         Spacer(modifier = modifier.size(8.dp))
         Text(
-            "Start your search by typing at least 3 letters",
+            amitySocialString("amity_social_button_search"),
             style = AmityTheme.typography.titleLegacy.copy(
                 color = AmityTheme.colors.baseShade2
             )

@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityEmptyClipFeedScreen(
@@ -78,12 +79,12 @@ fun AmityEmptyClipFeedScreen(
                     .size(160.dp)
             )
             Text(
-                text = "Your feed is empty",
+                text = amitySocialString("amity_social_empty_state_social_home_empty_title"),
                 style = AmityTheme.typography.titleBold,
                 color = Color.White
             )
             Text(
-                text = "Find community or create your own. ",
+                text = amitySocialString("amity_social_label_find_community_or_create_your_own"),
                 style = AmityTheme.typography.caption,
                 color = Color.White
             )
@@ -107,14 +108,14 @@ fun AmityEmptyClipFeedScreen(
                 )
                 Spacer(Modifier.width(8.dp))
                 Text(
-                    text = "Explore community",
+                    text = amitySocialString("amity_social_button_explore_community_button"),
                     style = AmityTheme.typography.bodyBold,
                     color = Color.White,
                 )
             }
             Spacer(Modifier.height(16.dp))
             Text(
-                text = "Create community",
+                text = amitySocialString("amity_social_button_social_home_create_community"),
                 style = AmityTheme.typography.bodyBold,
                 color = Color.White,
                 modifier = Modifier.clickableWithoutRipple {

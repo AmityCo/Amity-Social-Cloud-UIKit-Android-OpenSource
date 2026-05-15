@@ -25,6 +25,7 @@ import com.amity.socialcloud.uikit.community.compose.community.profile.AmityUpco
 import com.amity.socialcloud.uikit.community.compose.event.detail.AmityEventDetailPageActivity
 import com.amity.socialcloud.uikit.community.compose.community.profile.component.AmityExploreEventFeedComponent
 import com.amity.socialcloud.uikit.community.compose.community.profile.component.AmityMyEventFeedComponent
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityEventsComponent(
@@ -48,7 +49,7 @@ fun AmityEventsComponent(
     val pastEvents = remember { viewModel.getPastEvents(AmityEventOriginType.COMMUNITY, AmityCoreClient.getUserId()) }.collectAsLazyPagingItems()
 
     var selectedTabIndex by remember { mutableStateOf(0) }
-    val tabTitles = listOf("Explore", "My event")
+    val tabTitles = listOf(amitySocialString("amity_social_tab_tab_explore"), amitySocialString("amity_social_tab_tab_my_event"))
 
     Column(modifier = modifier.fillMaxSize()) {
         // Tab Row

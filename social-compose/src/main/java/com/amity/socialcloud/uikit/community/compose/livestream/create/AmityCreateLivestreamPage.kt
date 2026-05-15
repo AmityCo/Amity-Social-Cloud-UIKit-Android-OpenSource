@@ -70,7 +70,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -129,6 +128,7 @@ import com.amity.socialcloud.uikit.community.compose.livestream.create.element.A
 import com.amity.socialcloud.uikit.community.compose.livestream.create.element.AmityThumbnailView
 import com.amity.socialcloud.uikit.community.compose.livestream.create.model.AmityCreateLivestreamPageUiState
 import com.amity.socialcloud.uikit.community.compose.livestream.create.model.LivestreamThumbnailUploadUiState
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.community.compose.livestream.util.LivestreamErrorScreenType
 import com.amity.socialcloud.uikit.community.compose.livestream.util.LivestreamScreenType
 import com.amity.socialcloud.uikit.community.compose.livestream.view.AmityLivestreamDeclinedPage
@@ -145,6 +145,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
 import kotlin.text.replace
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialConfigString
 
 private const val LIVESTREAM_DURATION_SNACK_BAR = 14220
 private const val LIVESTREAM_COUNTDOWN_DURATION = 10
@@ -540,7 +541,7 @@ fun AmityCreateLivestreamPage(
                                         horizontalArrangement = Arrangement.End
                                     ) {
                                         Text(
-                                            text = stringResource(R.string.amity_v4_create_livestream_target_title),
+                                            text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_create_livestream_target_title"),
                                             color = Color.White,
                                             style = AmityTheme.typography.bodyLegacy
                                         )
@@ -593,7 +594,7 @@ fun AmityCreateLivestreamPage(
                                             modifier = Modifier.padding(horizontal = 16.dp),
                                             placeHolder = {
                                                 Text(
-                                                    text = stringResource(R.string.amity_v4_create_livestream_title_placeholder),
+                                                    text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_placeholder_create_livestream_title_placeholder"),
                                                     color = Color.White,
                                                     style = AmityTheme.typography.headLine.copy(
                                                         color = Color.White,
@@ -621,7 +622,7 @@ fun AmityCreateLivestreamPage(
                                                 .imePadding(),
                                             placeHolder = {
                                                 Text(
-                                                    text = stringResource(R.string.amity_v4_create_livestream_desc_placeholder),
+                                                    text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_placeholder_create_livestream_desc_placeholder"),
                                                     color = Color.White,
                                                     style = AmityTheme.typography.body.copy(
                                                         color = Color.White,
@@ -641,8 +642,8 @@ fun AmityCreateLivestreamPage(
                                         modifier = Modifier
                                             .weight(1f)
                                             .background(Color.Black.copy(alpha = 0.5f)),
-                                        title = stringResource(R.string.amity_v4_create_livestream_no_camera_permission_title),
-                                        description = stringResource(R.string.amity_v4_create_livestream_no_camera_permission_desc),
+                                        title = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_permission_title_allow_camera_mic_access"),
+                                        description = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_allow_camera_desc"),
                                         onOpenSettingClick = {
                                             val intent =
                                                 Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
@@ -708,7 +709,7 @@ fun AmityCreateLivestreamPage(
                                 )
                                 Spacer(Modifier.height(13.dp))
                                 Text(
-                                    text = stringResource(R.string.amity_v4_create_livestream_connecting_text),
+                                    text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_create_livestream_connecting_text"),
                                     color = Color.White,
                                     style = AmityTheme.typography.titleLegacy.copy(
                                         fontWeight = FontWeight.SemiBold
@@ -952,7 +953,7 @@ fun AmityCreateLivestreamPage(
                                                     )
                                                     Spacer(Modifier.width(4.dp))
                                                     Text(
-                                                        text = getConfig().getText(),
+                                                        text = amitySocialConfigString("amity_social_button_livestream_add_thumbnail"),
                                                         color = if (isCameraAndRecAudioPermissionGranted) Color.White else Color.White.copy(
                                                             alpha = 0.5f
                                                         ),
@@ -996,7 +997,7 @@ fun AmityCreateLivestreamPage(
                                                 modifier = Modifier.align(
                                                     Alignment.Center
                                                 ),
-                                                text = getConfig().getText(),
+                                                text = amitySocialConfigString("amity_social_status_livestream_end_live"),
                                                 style = AmityTheme.typography.bodyLegacy.copy(
                                                     fontWeight = FontWeight.SemiBold
                                                 ),
@@ -1245,7 +1246,7 @@ fun AmityCreateLivestreamPage(
                     if(postLink.isNotEmptyOrBlank()) {
                         AmityBottomSheetActionItem(
                             icon = R.drawable.amity_v4_link_icon,
-                            text = "Copy live stream link",
+                            text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_copy_live_stream_link"),
                             modifier = Modifier
                                 .padding(horizontal = 12.dp),
                             color = Color(0xFFEBECEF)
@@ -1253,12 +1254,12 @@ fun AmityCreateLivestreamPage(
                             showBottomSheet = false
                             // Generate the post link URL (adjust the URL format according to your app's deep linking structure)
                             clipboardManager.setText(AnnotatedString(postLink))
-                            AmityUIKitSnackbar.publishSnackbarMessage("Link copied")
+                            AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_link_copied"))
                         }
 
                         AmityBottomSheetActionItem(
                             icon = R.drawable.amity_v4_share_icon,
-                            text = "Share to",
+                            text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_share_to"),
                             modifier = Modifier
                                 .padding(horizontal = 12.dp),
                             color = Color(0xFFEBECEF)
@@ -1275,9 +1276,9 @@ fun AmityCreateLivestreamPage(
 
         if (showCannotStartLivestreamDialog) {
             AmityAlertDialog(
-                dialogTitle = "Cannot start live stream",
-                dialogText = "Something went wrong while trying to complete your request.\nPlease try again.",
-                dismissText = "OK",
+                dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_title_cannot_start_livestream"),
+                dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_request_failed"),
+                dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_ok"),
                 onDismissRequest = {
                     showCannotStartLivestreamDialog = false
                 },
@@ -1287,20 +1288,20 @@ fun AmityCreateLivestreamPage(
         if (showThumbnailErrorUploadDialog.first) {
             val title =
                 if (showThumbnailErrorUploadDialog.second == AmityError.BUSINESS_ERROR.code) {
-                    "Inappropriate image"
+                    DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_inappropriate_image")
                 } else {
-                    "Upload failed"
+                    DefaultAmitySocialStringProvider.getInstance().getString("amity_social_error_upload_failed")
                 }
             val desc =
                 if (showThumbnailErrorUploadDialog.second == AmityError.BUSINESS_ERROR.code) {
-                    "Please choose a different image to upload."
+                    DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_choose_different_image")
                 } else {
-                    "Please try again."
+                    DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_please_try_again")
                 }
             AmityAlertDialog(
                 dialogTitle = title,
                 dialogText = desc,
-                dismissText = "OK",
+                dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_ok"),
                 onDismissRequest = {
                     showThumbnailErrorUploadDialog = Pair(false, 0)
                 },
@@ -1309,10 +1310,10 @@ fun AmityCreateLivestreamPage(
 
         if (showDiscardPostDialog) {
             AmityAlertDialog(
-                dialogTitle = stringResource(R.string.amity_v4_create_livestream_discard_livestream_dialog_title),
-                dialogText = stringResource(R.string.amity_v4_create_livestream_discard_livestream_dialog_desc),
-                confirmText = stringResource(R.string.amity_v4_create_livestream_discard_livestream_dialog_confirm_text),
-                dismissText = stringResource(R.string.amity_v4_create_livestream_dialog_dismiss_text),
+                dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_create_livestream_discard_livestream_dialog_title"),
+                dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_create_livestream_discard_livestream_dialog_desc"),
+                confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_create_livestream_discard_livestream_dialog_confirm_text"),
+                dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_cancel_button"),
                 confirmTextColor = AmityTheme.colors.alert,
                 dismissTextColor = AmityTheme.colors.highlight,
                 onConfirmation = {
@@ -1326,10 +1327,10 @@ fun AmityCreateLivestreamPage(
 
         if (showEndLivestreamDialog) {
             AmityAlertDialog(
-                dialogTitle = stringResource(R.string.amity_v4_create_livestream_end_livestream_dialog_title),
-                dialogText = stringResource(R.string.amity_v4_create_livestream_end_livestream_dialog_desc),
-                confirmText = stringResource(R.string.amity_v4_create_livestream_end_livestream_dialog_confirm_text),
-                dismissText = stringResource(R.string.amity_v4_create_livestream_dialog_dismiss_text),
+                dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_create_livestream_end_livestream_dialog_title"),
+                dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_create_livestream_end_livestream_dialog_desc"),
+                confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_create_livestream_end_livestream_dialog_confirm_text"),
+                dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_cancel_button"),
                 confirmTextColor = AmityTheme.colors.alert,
                 dismissTextColor = AmityTheme.colors.highlight,
                 onConfirmation = {
@@ -1371,7 +1372,7 @@ fun AmityCreateLivestreamPage(
 
         if (showLivestreamLimitSnackBar) {
             AmityUIKitSnackbar.publishSnackbarErrorMessage(
-                message = stringResource(R.string.amity_v4_create_livestream_duration_exceed_snackbar),
+                message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_create_livestream_duration_exceed_snackbar"),
                 offsetFromBottom = 130
             )
             showLivestreamLimitSnackBar = false

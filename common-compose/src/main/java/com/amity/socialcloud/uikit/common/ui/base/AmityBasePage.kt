@@ -6,6 +6,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -19,6 +20,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
+import com.amity.socialcloud.uikit.common.localization.DefaultAmityCommonStringProvider
+import com.amity.socialcloud.uikit.common.localization.LocalAmityCommonStringProvider
 import com.amity.socialcloud.uikit.common.ui.elements.AmityProgressSnackbar
 import com.amity.socialcloud.uikit.common.ui.elements.AmityProgressSnackbarVisuals
 import com.amity.socialcloud.uikit.common.ui.elements.AmitySnackbar
@@ -64,34 +67,38 @@ fun AmityBasePage(
     }
 
     AmityComposeTheme(pageScope = comp, lastThemeUpdate = lastThemeUpdate) {
-        Scaffold(
-            containerColor = AmityTheme.colors.background,
-            snackbarHost = {
-                SnackbarHost(
-                    hostState = snackbarHostState,
-                    modifier = Modifier
-                        .padding(bottom = keyboardHeight + additionalHeight.dp + 16.dp)
-                        .padding(horizontal = 16.dp),
-                ) {
-                    when (it.visuals) {
-                        is AmitySnackbarVisuals -> {
-                            val data = it.visuals as AmitySnackbarVisuals
-                            additionalHeight = data.additionalHeight
-                            AmitySnackbar(data = data)
-                        }
+        CompositionLocalProvider(
+            LocalAmityCommonStringProvider provides DefaultAmityCommonStringProvider.getInstance()
+        ) {
+            Scaffold(
+                containerColor = AmityTheme.colors.background,
+                snackbarHost = {
+                    SnackbarHost(
+                        hostState = snackbarHostState,
+                        modifier = Modifier
+                            .padding(bottom = keyboardHeight + additionalHeight.dp + 16.dp)
+                            .padding(horizontal = 16.dp),
+                    ) {
+                        when (it.visuals) {
+                            is AmitySnackbarVisuals -> {
+                                val data = it.visuals as AmitySnackbarVisuals
+                                additionalHeight = data.additionalHeight
+                                AmitySnackbar(data = data)
+                            }
 
-                        is AmityProgressSnackbarVisuals -> {
-                            AmityProgressSnackbar(data = it.visuals as AmityProgressSnackbarVisuals)
+                            is AmityProgressSnackbarVisuals -> {
+                                AmityProgressSnackbar(data = it.visuals as AmityProgressSnackbarVisuals)
+                            }
                         }
                     }
+                },
+                modifier = Modifier.semantics {
+                    testTagsAsResourceId = true
                 }
-            },
-            modifier = Modifier.semantics {
-                testTagsAsResourceId = true
-            }
-        ) {
-            if (!comp.isExcluded()) {
-                content(comp)
+            ) {
+                if (!comp.isExcluded()) {
+                    content(comp)
+                }
             }
         }
     }

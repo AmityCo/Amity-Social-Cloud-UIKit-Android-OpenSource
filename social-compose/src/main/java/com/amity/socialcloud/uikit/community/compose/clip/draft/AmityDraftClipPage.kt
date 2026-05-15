@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.clip.draft
 
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import android.app.Activity
 import android.net.Uri
 import androidx.activity.compose.BackHandler
@@ -130,10 +131,10 @@ fun AmityDraftClipPage(
 
     if (openAlertDialog) {
         AmityAlertDialog(
-            dialogTitle = "Discard this clip?",
-            dialogText = "The clip will be permanently discarded. It cannot be undone.",
-            confirmText = "Discard",
-            dismissText = "Keep editing",
+            dialogTitle = amitySocialString("amity_social_modal_dialog_title_discard_clip"),
+            dialogText = amitySocialString("amity_social_modal_dialog_discard_clip"),
+            confirmText = amitySocialString("amity_social_button_discard"),
+            dismissText = amitySocialString("amity_social_button_keep_editing"),
             onConfirmation = { context.closePage() },
             onDismissRequest = { openAlertDialog = false },
             confirmTextColor = AmityTheme.colors.alert,
@@ -319,7 +320,7 @@ fun AmityDraftClipPage(
                                 }
                         ) {
                             Text(
-                                text = "Next",
+                                text = amitySocialString("amity_social_button_next"),
                                 style = AmityTheme.typography.bodyBold
                             )
 
@@ -338,9 +339,9 @@ fun AmityDraftClipPage(
 
             if (clipUploadState is AmityDraftClipViewModel.ClipUploadState.Error) {
                 AmityAlertDialog(
-                    dialogTitle = "Failed to upload",
-                    dialogText = "Please check your connection or choose a different video to upload",
-                    dismissText = "OK",
+                    dialogTitle = amitySocialString("amity_social_toast_failed_to_upload"),
+                    dialogText = amitySocialString("amity_social_modal_dialog_video_upload_error"),
+                    dismissText = amitySocialString("amity_social_button_ok"),
                     onDismissRequest = { context.closePage() }
                 )
             }

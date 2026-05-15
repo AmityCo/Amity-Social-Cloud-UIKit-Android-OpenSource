@@ -30,7 +30,6 @@ import androidx.compose.ui.input.pointer.PointerId
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.testTag
@@ -48,7 +47,7 @@ import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
-import com.amity.socialcloud.uikit.common.common.readableSocialTimeDiff
+import com.amity.socialcloud.uikit.common.utils.readableSocialTimeDiff
 import com.amity.socialcloud.uikit.common.model.AmitySocialReactions
 import com.amity.socialcloud.uikit.common.reaction.picker.AmityReactionPicker
 import com.amity.socialcloud.uikit.common.reaction.picker.getReactionIndexByX
@@ -58,6 +57,8 @@ import com.amity.socialcloud.uikit.common.utils.AmityConstants.POST_REACTION
 import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
+import com.amity.socialcloud.uikit.common.localization.amitySocialReactionDisplayName
 import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentViewModel
 import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentViewModel.CommentBottomSheetState
 import kotlinx.coroutines.TimeoutCancellationException
@@ -78,7 +79,6 @@ fun AmityCommentEngagementBar(
     onReply: (String) -> Unit,
     onEdit: () -> Unit,
 ) {
-    val context = LocalContext.current
     val haptics = LocalHapticFeedback.current
     val behavior by lazy {
         AmitySocialBehaviorHelper.commentTrayComponentBehavior
@@ -136,7 +136,7 @@ fun AmityCommentEngagementBar(
         ) {
             Text(
                 text = comment.getCreatedAt()
-                    .readableSocialTimeDiff() + if (comment.isEdited()) " (edited)" else "",
+                    .readableSocialTimeDiff() + if (comment.isEdited()) amitySocialString("amity_social_button_edited_suffix") else "",
                 style = AmityTheme.typography.captionLegacy.copy(
                     fontWeight = FontWeight.Normal,
                     color = AmityTheme.colors.baseShade2,
@@ -144,14 +144,12 @@ fun AmityCommentEngagementBar(
                 modifier = modifier.testTag("comment_list/comment_bubble_timestamp")
             )
             if (allowInteraction) {
+                val resolvedReactionKey = reacting
+                    .first
+                    .ifEmpty { myReaction }
+                    .ifEmpty { AmitySocialReactions.toReaction(POST_REACTION).name }
                 Text(
-                    text = reacting
-                        .first
-                        .ifEmpty { myReaction }
-                        .ifEmpty { AmitySocialReactions.toReaction(POST_REACTION).name }
-                        .replaceFirstChar {
-                            if (it.isLowerCase()) it.titlecase() else it.toString()
-                        },
+                    text = amitySocialReactionDisplayName(resolvedReactionKey),
                     style = AmityTheme.typography.captionLegacy.copy(
                         color = if (isReacted) AmityTheme.colors.primary
                         else AmityTheme.colors.baseShade2,
@@ -300,7 +298,7 @@ fun AmityCommentEngagementBar(
 
                 if (!fromNonMemberCommunity || comment.getParentId() != null) {
                     Text(
-                        text = context.getString(R.string.amity_reply),
+                        text = amitySocialString("amity_social_button_reply"),
                         style = AmityTheme.typography.captionLegacy.copy(
                             color = AmityTheme.colors.baseShade2,
                         ),

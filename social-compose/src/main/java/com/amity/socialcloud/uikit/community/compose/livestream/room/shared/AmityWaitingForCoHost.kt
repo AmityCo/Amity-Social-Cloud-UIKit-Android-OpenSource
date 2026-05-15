@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.R
 import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import io.livekit.android.compose.types.TrackReference
 import io.livekit.android.compose.ui.ScaleType
@@ -108,9 +109,9 @@ fun AmityWaitingForCoHost(
             // Waiting message
             Text(
                 text = if (isHost) {
-                    "Waiting for co-host\nto get ready..."
+                    amitySocialString("amity_social_label_waiting_for_cohost")
                 } else {
-                    "Waiting for host\nto get resume..."
+                    amitySocialString("amity_social_label_waiting_for_host")
                 },
                 color = Color.White,
                 fontSize = 17.sp,
@@ -157,7 +158,7 @@ fun AmityCoHostOverlay(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = user?.getDisplayName() ?: "Unknown User",
+                            text = user?.getDisplayName() ?: amitySocialString("amity_social_button_unknown_user"),
                             color = Color.White,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Light,

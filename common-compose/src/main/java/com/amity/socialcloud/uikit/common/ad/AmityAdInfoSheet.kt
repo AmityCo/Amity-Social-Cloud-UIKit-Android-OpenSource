@@ -21,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.compose.R
+import com.amity.socialcloud.uikit.common.localization.amityCommonString
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -46,7 +47,7 @@ fun AmityAdInfoSheet(
                 .height(500.dp)
         ) {
             Text(
-                text = "About this advertisement",
+                text = amityCommonString("amity_common_ad_ad_about_title"),
                 style = AmityTheme.typography.titleLegacy,
                 modifier = modifier
                     .fillMaxWidth()
@@ -62,7 +63,7 @@ fun AmityAdInfoSheet(
             Spacer(modifier = modifier.height(24.dp))
 
             Text(
-                text = "Why this advertisement?",
+                text = amityCommonString("amity_common_ad_ad_why_title"),
                 style = AmityTheme.typography.bodyLegacy.copy(
                     fontWeight = FontWeight.SemiBold,
                 ),
@@ -89,7 +90,7 @@ fun AmityAdInfoSheet(
                 )
 
                 Text(
-                    text = "You're seeing this advertisement because it was displayed to all users in the system.",
+                    text = amityCommonString("amity_common_ad_ad_why_description"),
                     style = AmityTheme.typography.bodyLegacy.copy(
                         color = AmityTheme.colors.baseShade3
                     )
@@ -99,7 +100,7 @@ fun AmityAdInfoSheet(
             Spacer(modifier = modifier.height(24.dp))
 
             Text(
-                text = "About this advertiser",
+                text = amityCommonString("amity_common_ad_ad_about_advertiser"),
                 style = AmityTheme.typography.bodyLegacy.copy(
                     fontWeight = FontWeight.SemiBold,
                 ),
@@ -126,7 +127,7 @@ fun AmityAdInfoSheet(
                 )
 
                 Text(
-                    text = "Advertiser name: $name",
+                    text = amityCommonString("amity_common_ad_ad_advertiser_name", name),
                     style = AmityTheme.typography.bodyLegacy.copy(
                         color = AmityTheme.colors.baseShade3
                     )

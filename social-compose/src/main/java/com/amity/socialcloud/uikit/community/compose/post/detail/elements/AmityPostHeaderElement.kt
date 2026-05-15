@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
-import com.amity.socialcloud.uikit.common.common.readableSocialTimeDiff
+import com.amity.socialcloud.uikit.common.utils.readableSocialTimeDiff
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
@@ -46,6 +46,7 @@ import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostCategory
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetailPageViewModel
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponentStyle
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityPostHeaderElement(
@@ -107,7 +108,7 @@ fun AmityPostHeaderElement(
                         .padding(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 4.dp)
                 ) {
                     Text(
-                        text = "Featured",
+                        text = amitySocialString("amity_social_button_featured"),
                         style = TextStyle(
                             fontSize = 13.sp,
                             lineHeight = 18.sp,
@@ -341,7 +342,7 @@ fun AmityPostHeaderElement(
                     ) {
                         Text(
                             text = (post.getCreatedAt()?.readableSocialTimeDiff() ?: "")
-                                    + if (post.isEdited()) " (edited)" else "",
+                                    + if (post.isEdited()) amitySocialString("amity_social_button_edited_suffix") else "",
                             style = AmityTheme.typography.captionLegacy.copy(
                                 fontWeight = FontWeight.Normal,
                                 color = AmityTheme.colors.baseShade2

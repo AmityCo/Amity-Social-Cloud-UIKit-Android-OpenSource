@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import org.joda.time.DateTime
 
 class AmityEventDetailViewModel(
@@ -87,7 +88,7 @@ class AmityEventDetailViewModel(
             .observeOn(AndroidSchedulers.mainThread())
             .asFlow()
             .catch { e ->
-                _eventDetailState.value = EventDetailState.Error(e.message ?: "Unknown error")
+                _eventDetailState.value = EventDetailState.Error(e.message ?: DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_something_went_wrong"))
             }
     }
 

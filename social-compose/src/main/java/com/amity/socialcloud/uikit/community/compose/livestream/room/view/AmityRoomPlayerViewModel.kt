@@ -57,6 +57,7 @@ import kotlin.collections.map
 import kotlin.collections.orEmpty
 import kotlin.collections.plus
 import java.util.Date
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 
 class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel() {
     val disposable = CompositeDisposable()
@@ -195,7 +196,7 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
                     is AmityCoHostEvent.CoHostInviteCancelled,
                     is AmityCoHostEvent.CoHostInviteRejected -> {
                         if (event is AmityCoHostEvent.CoHostLeft) {
-                            AmityUIKitSnackbar.publishSnackbarMessage(message = "Co-host left the live stream.")
+                            AmityUIKitSnackbar.publishSnackbarMessage(message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_cohost_left"))
                         }
                         _uiState.update { currentState ->
                             currentState.copy(
@@ -213,7 +214,7 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
                     is AmityCoHostEvent.CoHostPermissionUpdated -> {
                         if (event.cohostCanManageProduct) {
                             AmityUIKitSnackbar.publishSnackbarMessage(
-                                message = "You can now manage tagged products in this live stream."
+                                message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_product_tagging_enabled")
                             )
                         }
                     }
@@ -282,13 +283,13 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
                             // If navigate from invitation notification and invitation is not pending should show error toast
                             if (wasInvited) {
                                 AmityUIKitSnackbar.publishSnackbarErrorMessage(
-                                    message = "This invitation is no longer available."
+                                    message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_error_community_invitation_unavailable_error")
                                 )
                             }
                         }
                     } ?: if (wasInvited) {
                     AmityUIKitSnackbar.publishSnackbarErrorMessage(
-                        message = "This invitation is no longer available."
+                        message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_error_community_invitation_unavailable_error")
                     )
                 } else {
                 }
@@ -296,7 +297,7 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
             .doOnError {
                 if (wasInvited) {
                     AmityUIKitSnackbar.publishSnackbarErrorMessage(
-                        message = "This invitation is no longer available."
+                        message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_error_community_invitation_unavailable_error")
                     )
                 }
             }
@@ -622,12 +623,12 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
             .observeOn(AndroidSchedulers.mainThread())
             .doOnComplete {
                 AmityUIKitSnackbar.publishSnackbarMessage(
-                    message = "You left the stage and are now watching as a viewer."
+                    message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_left_stage")
                 )
                 onSuccess()
             }
             .doOnError {
-                AmityUIKitSnackbar.publishSnackbarErrorMessage("Something went wrong. Please try again.")
+                AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_something_went_wrong"))
                 onError()
             }
             .subscribe()
@@ -674,6 +675,10 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
             }
             .subscribe()
             .let(::addDisposable)
+    }
+
+    fun setIsLeaving(isLeaving: Boolean) {
+        _uiState.update { it.copy(isLeaving = isLeaving) }
     }
 
     fun setIsStreamerMode(isStreamerMode: Boolean) {
@@ -835,13 +840,13 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
             .doOnError {
                 AmityUIKitSnackbar.publishSnackbarMessage(
                     offsetFromBottom = 50,
-                    message = "Failed to add product tags. Please try again."
+                    message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_product_tag_add_failed")
                 )
             }
             .doOnComplete {
                 AmityUIKitSnackbar.publishSnackbarMessage(
                     offsetFromBottom = 50,
-                    message = "Product tags added."
+                    message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_product_tags_added")
                 )
             }
             .subscribe()
@@ -864,13 +869,13 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
             .doOnError {
                 AmityUIKitSnackbar.publishSnackbarMessage(
                     offsetFromBottom = 50,
-                    message = "Failed to remove product tag. Please try again."
+                    message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_product_tag_remove_failed")
                 )
             }
             .doOnComplete {
                 AmityUIKitSnackbar.publishSnackbarMessage(
                     offsetFromBottom = 50,
-                    message = "Product tag removed."
+                    message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_product_tag_removed")
                 )
             }
             .subscribe()
@@ -896,12 +901,12 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
                 if (productId == null) {
                     AmityUIKitSnackbar.publishSnackbarMessage(
                         offsetFromBottom = 50,
-                        message = "Product tag unpinned."
+                        message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_product_tag_unpinned")
                     )
                 } else {
                     AmityUIKitSnackbar.publishSnackbarMessage(
                         offsetFromBottom = 50,
-                        message = "Product tag pinned."
+                        message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_product_tag_pinned")
                     )
                 }
             }
@@ -909,12 +914,12 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
                 if (productId == null) {
                     AmityUIKitSnackbar.publishSnackbarErrorMessage(
                         offsetFromBottom = 50,
-                        message = "Failed to unpin product tag. Please try again."
+                        message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_unpin_product_tag_failed")
                     )
                 } else {
                     AmityUIKitSnackbar.publishSnackbarErrorMessage(
                         offsetFromBottom = 50,
-                        message = "Failed to pin product tag. Please try again."
+                        message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_pin_product_tag_failed")
                     )
                 }
             }
@@ -1091,6 +1096,7 @@ data class RoomPlayerState(
     val liveKitRoom: Room? = null,
     val roomModeration: AmityRoomModeration? = null,
     val isStreamerMode: Boolean = false,
+    val isLeaving: Boolean = false,
     val hostUserId: String? = null,
     val hostUser: AmityUser? = null,
     val cohostUserId: String? = null,

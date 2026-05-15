@@ -87,6 +87,7 @@ import com.amity.socialcloud.uikit.community.compose.livestream.room.create.Amit
 import kotlinx.coroutines.launch
 import com.amity.socialcloud.uikit.community.compose.event.formatEventTimestamp
 import org.joda.time.DateTime
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 
 private fun android.content.Context.closePage() {
     (this as? Activity)?.finish()
@@ -191,7 +192,7 @@ fun AmityEventDetailPage(
     // Show success toast when coming from event creation
     LaunchedEffect(showSuccessToast) {
         if (showSuccessToast) {
-            AmityUIKitSnackbar.publishSnackbarMessage("Successfully created event.")
+            AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_event_created"))
         }
     }
 
@@ -233,6 +234,8 @@ fun AmityEventDetailPage(
 
     // Get permissions from ViewModel
     val hasDeleteEventPermission by viewModel.hasDeleteEventPermission.collectAsState()
+    val isEventCreator by viewModel.isEventCreator.collectAsState()
+    val showMenu = isEventCreator || hasDeleteEventPermission || isGoing == true
 
     // Setup paging data for discussion feed
     val announcementPosts = remember(communityId) {
@@ -337,7 +340,7 @@ fun AmityEventDetailPage(
                             Spacer(modifier = Modifier.height(16.dp))
 
                             Text(
-                                text = "Something went wrong",
+                                text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_something_went_wrong"),
                                 style = AmityTheme.typography.headLine.copy(
                                     fontWeight = FontWeight.Bold
                                 ),
@@ -347,7 +350,7 @@ fun AmityEventDetailPage(
                             Spacer(modifier = Modifier.height(8.dp))
 
                             Text(
-                                text = "The content you're looking for is unavailable.",
+                                text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_content_unavailable"),
                                 style = AmityTheme.typography.body,
                                 color = AmityTheme.colors.baseShade3,
                                 textAlign = TextAlign.Center
@@ -369,7 +372,7 @@ fun AmityEventDetailPage(
                                 )
                             ) {
                                 Text(
-                                    text = "Go back",
+                                    text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_go_back"),
                                     style = AmityTheme.typography.body.copy(
                                         fontWeight = FontWeight.Bold
                                     ),
@@ -388,8 +391,6 @@ fun AmityEventDetailPage(
                     ) {
                         stickyHeader {
                             if (isHeaderSticky && event != null) {
-                                val showMenu =
-                                    viewModel.shouldShowMenu(isGoing)
                                 Column(
                                     modifier = Modifier.background(AmityTheme.colors.background)
                                 ) {
@@ -410,8 +411,6 @@ fun AmityEventDetailPage(
 
                         item {
                             if (event != null && !isRsvpLoading) {
-                                val showMenu =
-                                    viewModel.shouldShowMenu(isGoing)
                                 EventExpandedHeader(
                                     event = event!!,
                                     onBackClick = onBackClick,
@@ -464,10 +463,10 @@ fun AmityEventDetailPage(
                                             event = event!!,
                                             post = eventPost,
                                             onAddressCopied = {
-                                                AmityUIKitSnackbar.publishSnackbarMessage("Address copied")
+                                                AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_address_copied"))
                                             },
                                             onLinkCopied = {
-                                                AmityUIKitSnackbar.publishSnackbarMessage("Link copied.")
+                                                AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_link_copied"))
                                             }
                                         )
                                     } else {
@@ -637,7 +636,7 @@ fun AmityEventDetailPage(
                             }
                         try {
                             context.startActivity(intent)
-                            AmityUIKitSnackbar.publishSnackbarMessage("Event added to your calendar.")
+                            AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_event_added_to_calendar"))
                         } catch (e: Exception) {
                         }
                     },
@@ -681,7 +680,7 @@ fun AmityEventDetailPage(
 
                             // Title
                             Text(
-                                text = "You're going to this event!",
+                                text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_youre_going_to_this_event"),
                                 style = AmityTheme.typography.headLine.copy(fontWeight = FontWeight.Bold),
                                 color = AmityTheme.colors.base
                             )
@@ -690,7 +689,7 @@ fun AmityEventDetailPage(
 
                             // Description
                             Text(
-                                text = "We'll notify you about the event. Add it to your calendar to track event details.",
+                                text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_add_calendar_sheet_description"),
                                 style = AmityTheme.typography.body,
                                 color = AmityTheme.colors.baseShade1,
                                 textAlign = TextAlign.Center
@@ -748,7 +747,7 @@ fun AmityEventDetailPage(
                                 try {
                                     context.startActivity(intent)
                                     showRsvpBottomSheet = false
-                                    AmityUIKitSnackbar.publishSnackbarMessage("Event added to your calendar.")
+                                    AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_event_added_to_calendar"))
                                 } catch (e: Exception) {
                                     showRsvpBottomSheet = false
                                 }
@@ -764,13 +763,13 @@ fun AmityEventDetailPage(
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.amity_ic_event_add_to_calendar_button),
-                                contentDescription = "Add to calendar",
+                                contentDescription = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_add_to_calendar"),
                                 tint = Color.White,
                                 modifier = Modifier.size(20.dp)
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Add to calendar",
+                                text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_add_to_calendar"),
                                 style = AmityTheme.typography.body.copy(
                                     fontWeight = FontWeight.Bold
                                 ),
@@ -868,7 +867,7 @@ fun AmityEventDetailPage(
 
                         // Title
                         Text(
-                            text = "Join group to continue",
+                            text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_join_community_sheet_title"),
                             style = AmityTheme.typography.headLine.copy(
                                 fontWeight = FontWeight.Bold
                             ),
@@ -880,7 +879,7 @@ fun AmityEventDetailPage(
 
                         // Description
                         Text(
-                            text = "Become a member of ${targetCommunity!!.getDisplayName()} to attend events and join the conversation.",
+                            text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_join_to_attend_events").format(targetCommunity!!.getDisplayName()),
                             style = AmityTheme.typography.body,
                             color = AmityTheme.colors.baseShade1,
                             textAlign = TextAlign.Center
@@ -923,7 +922,7 @@ fun AmityEventDetailPage(
                                     },
                                     onError = {
                                         showJoinCommunityBottomSheet = false
-                                        AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to join the community. Please try again.")
+                                        AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_join_community_failed"))
                                     }
                                 )
                             },
@@ -936,7 +935,7 @@ fun AmityEventDetailPage(
                             shape = RoundedCornerShape(8.dp)
                         ) {
                             Text(
-                                text = if (requiresApproval) "Join group" else "Join group and RSVP",
+                                text = if (requiresApproval) DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_join_community_sheet_join") else DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_join_community_sheet_join_and_rsvp"),
                                 style = AmityTheme.typography.body.copy(
                                     fontWeight = FontWeight.SemiBold
                                 ),
@@ -960,7 +959,7 @@ fun AmityEventDetailPage(
                             shape = RoundedCornerShape(8.dp)
                         ) {
                             Text(
-                                text = "Cancel",
+                                text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_cancel_button"),
                                 style = AmityTheme.typography.body.copy(
                                     fontWeight = FontWeight.SemiBold
                                 ),
@@ -974,9 +973,9 @@ fun AmityEventDetailPage(
             // Pending approval dialog
             if (showPendingApprovalDialog && !hasError) {
                 AmityAlertDialog(
-                    dialogTitle = "You'll be able to RSVP once your join request is accepted",
-                    dialogText = "Requested to join the community. You'll be notified once your request is accepted.",
-                    dismissText = "OK",
+                    dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_rsvp_after_join"),
+                    dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_join_request_sent"),
+                    dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_ok"),
                     onDismissRequest = { showPendingApprovalDialog = false }
                 )
             }
@@ -985,10 +984,10 @@ fun AmityEventDetailPage(
             if (showDeleteConfirmDialog && !hasError) {
                 val context = LocalContext.current
                 AmityAlertDialog(
-                    dialogTitle = "Delete event?",
-                    dialogText = "This event will be permanently deleted. You and others will no longer see and find this event.",
-                    confirmText = "Delete",
-                    dismissText = "Cancel",
+                    dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_event_detail_alert_delete_event_title"),
+                    dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_delete_event_description"),
+                    confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_delete"),
+                    dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel"),
                     confirmTextColor = AmityTheme.colors.alert,
                     onConfirmation = {
                         viewModel.deleteEvent(
@@ -997,12 +996,12 @@ fun AmityEventDetailPage(
                                 context.closePage()
                                 coroutineScope.launch {
                                     kotlinx.coroutines.delay(200)
-                                    AmityUIKitSnackbar.publishSnackbarMessage("Event deleted.")
+                                    AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_event_deleted"))
                                 }
                             },
                             onError = {
                                 showDeleteConfirmDialog = false
-                                AmityUIKitSnackbar.publishSnackbarMessage("Failed to delete event. Please try again.")
+                                AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_delete_event_failed"))
                             }
                         )
                     },
@@ -1013,9 +1012,9 @@ fun AmityEventDetailPage(
             // Editing not possible dialog - shown when trying to edit within 15 minutes of start
             if (showEditingNotPossibleDialog && !hasError) {
                 AmityAlertDialog(
-                    dialogTitle = "Editing is not possible",
-                    dialogText = "You can no longer edit this event. Changes are restricted 15 minutes before the start time.",
-                    dismissText = "OK",
+                    dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_editing_is_not_possible"),
+                    dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_you_can_no_longer_edit_this_event_changes_are_restricte"),
+                    dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_ok"),
                     onDismissRequest = { showEditingNotPossibleDialog = false }
                 )
             }
@@ -1023,9 +1022,9 @@ fun AmityEventDetailPage(
             // Pending join request dialog - shown when user has pending join request and tries to RSVP
             if (showPendingJoinDialog && !hasError) {
                 AmityAlertDialog(
-                    dialogTitle = "You'll be able to RSVP once your join request is accepted",
-                    dialogText = "Requested to join the community. You'll be notified once your request is accepted.",
-                    dismissText = "OK",
+                    dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_rsvp_after_join"),
+                    dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_join_request_sent"),
+                    dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_ok"),
                     onDismissRequest = { showPendingJoinDialog = false }
                 )
             }
@@ -1087,7 +1086,7 @@ private fun EventCollapsedHeader(
             }
 
             Text(
-                text = event.getTitle() ?: "Event",
+                text = event.getTitle() ?: DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_event"),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = AmityTheme.typography.title.copy(
@@ -1221,7 +1220,7 @@ private fun EventTabRow(
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.amity_ic_event_detail_info_tab),
-                        contentDescription = "About",
+                        contentDescription = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_edit_user_about_title"),
                         tint = if (selectedIndex == 0) AmityTheme.colors.base else AmityTheme.colors.secondaryShade3,
                         modifier = Modifier.size(24.dp)
                     )
@@ -1302,9 +1301,9 @@ private fun EventTitleSection(event: AmityEvent) {
         ) {
             // Status text
             val statusText = when {
-                event.getStatus() == AmityEventStatus.LIVE -> "HAPPENING NOW ·"
-                event.getStatus() == AmityEventStatus.SCHEDULED -> "UPCOMING ·"
-                else -> "ENDED ·"
+                event.getStatus() == AmityEventStatus.LIVE -> DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_happening_now") + " ·"
+                event.getStatus() == AmityEventStatus.SCHEDULED -> DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_event_detail_header_status_upcoming") + " ·"
+                else -> DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_event_detail_header_status_ended") + " ·"
             }
 
             Text(
@@ -1468,7 +1467,7 @@ private fun EventDetailsSection(
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "When",
+                    text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_starts"),
                     style = AmityTheme.typography.caption,
                     color = AmityTheme.colors.baseShade2,
                     modifier = Modifier.height(20.dp)
@@ -1523,16 +1522,16 @@ private fun EventDetailsSection(
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Event type",
+                    text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_event_type"),
                     style = AmityTheme.typography.caption,
                     color = AmityTheme.colors.baseShade2,
                     modifier = Modifier.height(20.dp)
                 )
                 Text(
                     text = when (event.getType()) {
-                        AmityEventType.IN_PERSON -> "In-person"
-                        AmityEventType.VIRTUAL -> "Virtual"
-                        else -> "Unknown"
+                        AmityEventType.IN_PERSON -> DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_in_person")
+                        AmityEventType.VIRTUAL -> DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_virtual")
+                        else -> DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_unknown")
                     },
                     style = AmityTheme.typography.body.copy(
                         fontWeight = FontWeight.Bold
@@ -1574,7 +1573,7 @@ private fun EventDetailsSection(
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.amity_ic_event_attendee),
-                        contentDescription = "Attendees",
+                        contentDescription = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_event_attendees_page_title"),
                         tint = AmityTheme.colors.base,
                         modifier = Modifier.size(20.dp)
                     )
@@ -1585,7 +1584,7 @@ private fun EventDetailsSection(
                     verticalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "Attendees",
+                        text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_event_attendees_page_title"),
                         style = AmityTheme.typography.caption,
                         color = AmityTheme.colors.baseShade2,
                         modifier = Modifier.height(20.dp)
@@ -1630,7 +1629,7 @@ private fun EventDetailsSection(
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Hosted by",
+                    text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_hosted_by"),
                     style = AmityTheme.typography.caption,
                     color = AmityTheme.colors.baseShade2,
                     modifier = Modifier.height(20.dp)
@@ -1653,7 +1652,7 @@ private fun EventDetailsSection(
                         }
                 ) {
                     Text(
-                        text = event.getCreator()?.getDisplayName() ?: "Unknown",
+                        text = event.getCreator()?.getDisplayName() ?: DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_unknown"),
                         style = AmityTheme.typography.body.copy(
                             fontWeight = FontWeight.Bold
                         ),
@@ -1717,7 +1716,7 @@ private fun EventDetailsSection(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Set up live stream",
+                        text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_set_up_live_stream"),
                         style = AmityTheme.typography.body.copy(
                             fontWeight = FontWeight.Bold
                         ),
@@ -1735,7 +1734,7 @@ private fun EventDetailsSection(
                         onClick = {
                             // Check if user is a visitor
                             if (AmityCoreClient.isVisitor()) {
-                                AmityUIKitSnackbar.publishSnackbarErrorMessage("Create an account or sign in to continue.")
+                                AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_create_account_or_sign_in"))
                             } else if (!isMember) {
                                 if (hasPendingJoinRequest) {
                                     // User has pending join request - show pending dialog
@@ -1749,7 +1748,7 @@ private fun EventDetailsSection(
                                     null -> {
                                         // No RSVP yet - check if event has started
                                         if (event.getStatus() != AmityEventStatus.SCHEDULED) {
-                                            AmityUIKitSnackbar.publishSnackbarErrorMessage("Your RSVP cannot be changed once the event has started.")
+                                            AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_event_detail_header_attending_status_change_not_allowed"))
                                         } else {
                                             // Create RSVP first, then show add to calendar bottom sheet
                                             viewModel.createRsvp(
@@ -1762,7 +1761,7 @@ private fun EventDetailsSection(
                                                     onRsvpBottomSheetChange(true)
                                                 },
                                                 onError = { error ->
-                                                    AmityUIKitSnackbar.publishSnackbarErrorMessage("Your RSVP could not be updated. Please try again.")
+                                                    AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_update_event_failed"))
                                                 }
                                             )
                                         }
@@ -1814,9 +1813,9 @@ private fun EventDetailsSection(
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = when (isGoing) {
-                            null -> "RSVP"
-                            true -> "Going"
-                            false -> "Not going"
+                            null -> DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_rsvp")
+                            true -> DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_going")
+                            false -> DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_not_going")
                         },
                         style = AmityTheme.typography.body.copy(
                             fontWeight = FontWeight.Bold
@@ -1855,7 +1854,7 @@ private fun EventDetailsSection(
                                 val isNotScheduled = event.getStatus() != AmityEventStatus.SCHEDULED
 
                                 if (hasStarted || isNotScheduled) {
-                                    AmityUIKitSnackbar.publishSnackbarErrorMessage("Your RSVP cannot be changed once the event has started.")
+                                    AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_event_detail_header_attending_status_change_not_allowed"))
                                     onChangeRsvpBottomSheetChange(false)
                                     return@clickableWithoutRipple
                                 }
@@ -1871,11 +1870,11 @@ private fun EventDetailsSection(
                                             // Show RSVP bottom sheet with Add to calendar option
                                             onRsvpBottomSheetChange(true)
                                         } else {
-                                            AmityUIKitSnackbar.publishSnackbarMessage("Successfully updated your attending status.")
+                                            AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_attending_status_updated"))
                                         }
                                     },
                                     onError = { error ->
-                                        AmityUIKitSnackbar.publishSnackbarErrorMessage("Your RSVP could not be updated. Please try again.")
+                                        AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_update_event_failed"))
                                     }
                                 )
                             }
@@ -1883,7 +1882,7 @@ private fun EventDetailsSection(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Going",
+                            text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_going"),
                             style = AmityTheme.typography.body.copy(
                                 fontWeight = FontWeight.Bold
                             ),
@@ -1914,7 +1913,7 @@ private fun EventDetailsSection(
                                 val isNotScheduled = event.getStatus() != AmityEventStatus.SCHEDULED
 
                                 if (hasStarted || isNotScheduled) {
-                                    AmityUIKitSnackbar.publishSnackbarErrorMessage("Your RSVP cannot be changed once the event has started.")
+                                    AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_event_detail_header_attending_status_change_not_allowed"))
                                     onChangeRsvpBottomSheetChange(false)
                                     return@clickableWithoutRipple
                                 }
@@ -1925,10 +1924,10 @@ private fun EventDetailsSection(
                                     onSuccess = {
                                         onIsGoingChange(false)
                                         onChangeRsvpBottomSheetChange(false)
-                                        AmityUIKitSnackbar.publishSnackbarMessage("Successfully updated your attending status.")
+                                        AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_attending_status_updated"))
                                     },
                                     onError = { error ->
-                                        AmityUIKitSnackbar.publishSnackbarErrorMessage("Your RSVP could not be updated. Please try again.")
+                                        AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_update_event_failed"))
                                     }
                                 )
                             }
@@ -1936,7 +1935,7 @@ private fun EventDetailsSection(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Not going",
+                            text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_not_going"),
                             style = AmityTheme.typography.body.copy(
                                 fontWeight = FontWeight.Bold
                             ),

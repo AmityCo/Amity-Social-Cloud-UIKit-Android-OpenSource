@@ -62,6 +62,7 @@ import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.AltTextMedia
 import com.amity.socialcloud.uikit.community.compose.post.composer.poll.model.ImagePollUiState
 import com.amity.socialcloud.uikit.community.compose.post.model.AmityFileUploadState
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityPollTypeImageView(
@@ -87,7 +88,7 @@ fun AmityPollTypeImageView(
         itemsIndexed(sampleItems) { index, item ->
             AmityPollImageTypeItemView(
                 uiState = item,
-                placeHolderText = "Option ${index + 1}",
+                placeHolderText = amitySocialString("amity_social_button_option_number").format(index + 1),
                 onTextChange = { newValue ->
                     sampleItems = sampleItems.map {
                         if (it == item) it.copy(answer = newValue) else it
@@ -122,7 +123,7 @@ fun AmityPollTypeImageView(
 @Composable
 fun AmityPollImageTypeItemView(
     uiState: ImagePollUiState,
-    placeHolderText: String = "Option",
+    placeHolderText: String? = null,
     onTextChange: (TextFieldValue) -> Unit = {},
     maxChar: Int = Int.MAX_VALUE,
     onSelectImageClick: () -> Unit = {},
@@ -133,6 +134,7 @@ fun AmityPollImageTypeItemView(
     isShowDeleteIcon: Boolean = true,
 ) {
     val density = LocalDensity.current
+    val resolvedPlaceholderText = placeHolderText ?: amitySocialString("amity_social_label_poll_option_label")
 
     val painter = rememberAsyncImagePainter(
         model = ImageRequest
@@ -177,7 +179,7 @@ fun AmityPollImageTypeItemView(
                         .clickableWithoutRipple {
                             onSelectImageClick()
                         },
-                    painter = if (uiState.imageUri != null) painter else painterResource(R.drawable.amity_v4_poll_image_placeholder),
+                    painter = if (uiState.imageUri != null) painter else painterResource(R.drawable.amity_v4_poll_image_placeholder_no_text),
                     contentDescription = "",
                     contentScale = ContentScale.Crop
                 )
@@ -241,7 +243,7 @@ fun AmityPollImageTypeItemView(
                                     },
                             ) {
                                 Text(
-                                    text = "ALT",
+                                    text = amitySocialString("amity_social_button_alt"),
                                     style = AmityTheme.typography.captionBold.copy(
                                         color = Color.White,
                                     ),
@@ -265,7 +267,20 @@ fun AmityPollImageTypeItemView(
                     }
 
                     else -> {
-                        // No overlay needed
+                        if (uiState.imageUri == null) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(bottom = 8.dp),
+                                contentAlignment = Alignment.BottomCenter
+                            ) {
+                                Text(
+                                    text = amitySocialString("amity_social_button_poll_upload_image"),
+                                    style = AmityTheme.typography.captionBold,
+                                    color = AmityTheme.colors.baseShade1
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -299,7 +314,7 @@ fun AmityPollImageTypeItemView(
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
                 placeholder = {
                     Text(
-                        text = placeHolderText,
+                        text = resolvedPlaceholderText,
                         style = AmityTheme.typography.bodyLegacy.copy(
                             color = AmityTheme.colors.baseShade2
                         )
@@ -373,7 +388,7 @@ fun AmityPollImageTypeAddItemView(
             )
             Spacer(Modifier.height(2.dp))
             Text(
-                "Add Option",
+                amitySocialString("amity_social_button_add_option"),
                 style = AmityTheme.typography.captionBold,
                 modifier = Modifier.padding(top = 8.dp)
             )

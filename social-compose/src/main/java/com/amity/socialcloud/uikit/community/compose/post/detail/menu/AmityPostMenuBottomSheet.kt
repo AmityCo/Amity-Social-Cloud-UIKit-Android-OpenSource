@@ -56,6 +56,7 @@ import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostCategory
 import com.amity.socialcloud.uikit.community.compose.utils.sharePost
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -162,7 +163,7 @@ fun AmityPostMenuBottomSheet(
                         if (post.getCreatorId() == AmityCoreClient.getUserId() && !isPollPost && !isLiveStreamPost) {
                             AmityBottomSheetActionItem(
                                 icon = R.drawable.amity_ic_edit_profile,
-                                text = "Edit post",
+                                text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_post_composer_edit_title"),
                                 modifier = modifier.testTag("bottom_sheet_edit_button"),
                             ) {
                                 viewModel.updateSheetUIState(AmityPostMenuSheetUIState.CloseSheet)
@@ -195,7 +196,7 @@ fun AmityPostMenuBottomSheet(
                         if (post.getCreatorId() == AmityCoreClient.getUserId() && post.getReviewStatus() != AmityReviewStatus.UNDER_REVIEW && isPollActive) {
                             AmityBottomSheetActionItem(
                                 icon = R.drawable.ic_amity_ic_poll_create,
-                                text = "Close poll",
+                                text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_close_poll"),
                                 modifier = modifier.testTag("bottom_sheet_edit_button"),
                             ) {
                                 viewModel.updateSheetUIState(AmityPostMenuSheetUIState.CloseSheet)
@@ -208,7 +209,7 @@ fun AmityPostMenuBottomSheet(
                         if (post.getCreatorId() != AmityCoreClient.getUserId()) {
                             AmityBottomSheetActionItem(
                                 icon = if (isFlaggedByMe) R.drawable.amity_ic_unreport else R.drawable.amity_ic_report_comment,
-                                text = if (isFlaggedByMe) "Unreport post" else "Report post",
+                                text = if (isFlaggedByMe) DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_unreport_post") else DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_report_post"),
                                 modifier = modifier.testTag("bottom_sheet_report_button"),
                             ) {
                                 val target = post.getTarget()
@@ -222,10 +223,10 @@ fun AmityPostMenuBottomSheet(
                                         viewModel.unflagPost(
                                             postId = post.getPostId(),
                                             onSuccess = {
-                                                AmityUIKitSnackbar.publishSnackbarMessage("Post unreported")
+                                                AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_post_unreported"))
                                             },
                                             onError = {
-                                                AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to unreport post. Please try again.")
+                                                AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_post_unreport_failed"))
                                             }
                                         )
                                     } else {
@@ -241,19 +242,19 @@ fun AmityPostMenuBottomSheet(
                         if (viewModel.isNotMember(post) && AmityUIKitConfigController.getPostLink(post).isNotEmptyOrBlank()) {
                             AmityBottomSheetActionItem(
                                 icon = R.drawable.amity_v4_link_icon,
-                                text = "Copy post link",
+                                text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_copy_post_link"),
                                 modifier = modifier.testTag("bottom_sheet_copy_link_button"),
                             ) {
                                 viewModel.updateSheetUIState(AmityPostMenuSheetUIState.CloseSheet)
                                 // Generate the post link URL (adjust the URL format according to your app's deep linking structure)
                                 // Copy to clipboard
                                 clipboardManager.setText(AnnotatedString(postLink))
-                                AmityUIKitSnackbar.publishSnackbarMessage("Link copied")
+                                AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_link_copied"))
                             }
 
                             AmityBottomSheetActionItem(
                                 icon = R.drawable.amity_v4_share_icon,
-                                text = "Share to",
+                                text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_share_to"),
                                 modifier = modifier.testTag("bottom_sheet_share_to_button"),
                             ) {
                                 viewModel.updateSheetUIState(AmityPostMenuSheetUIState.CloseSheet)
@@ -265,7 +266,7 @@ fun AmityPostMenuBottomSheet(
                         if (shouldShowDeletePostOption) {
                             AmityBottomSheetActionItem(
                                 icon = R.drawable.amity_ic_delete_story,
-                                text = "Delete post",
+                                text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_delete_post"),
                                 color = AmityTheme.colors.alert,
                                 modifier = modifier.testTag("bottom_sheet_delete_button"),
                             ) {
@@ -286,19 +287,19 @@ fun AmityPostMenuBottomSheet(
                     ) {
                         AmityBottomSheetActionItem(
                             icon = R.drawable.amity_v4_link_icon,
-                            text = "Copy post link",
+                            text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_copy_post_link"),
                             modifier = modifier.testTag("bottom_sheet_copy_link_button"),
                         ) {
                             viewModel.updateSheetUIState(AmityPostMenuSheetUIState.CloseSheet)
                             // Generate the post link URL (adjust the URL format according to your app's deep linking structure)
                             // Copy to clipboard
                             clipboardManager.setText(AnnotatedString(postLink))
-                            AmityUIKitSnackbar.publishSnackbarMessage("Link copied")
+                            AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_link_copied"))
                         }
 
                         AmityBottomSheetActionItem(
                             icon = R.drawable.amity_v4_share_icon,
-                            text = "Share to",
+                            text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_share_to"),
                             modifier = modifier.testTag("bottom_sheet_share_to_button"),
                         ) {
                             viewModel.updateSheetUIState(AmityPostMenuSheetUIState.CloseSheet)
@@ -391,7 +392,7 @@ private fun submitReport(
         postId = postId,
         reason = reason,
         onSuccess = {
-            AmityUIKitSnackbar.publishSnackbarMessage("Post reported")
+            AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_post_reported"))
             viewModel.updateSheetUIState(AmityPostMenuSheetUIState.CloseSheet)
         },
         onError = { error ->
@@ -400,10 +401,10 @@ private fun submitReport(
                 if (error.code == AmityError.ITEM_NOT_FOUND.code) {
                     viewModel.updateSheetUIState(AmityPostMenuSheetUIState.OpenErrorSheet(postId))
                 } else {
-                    AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to report post. Please try again.")
+                    AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_post_report_failed"))
                 }
             } else {
-                AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to report post. Please try again.")
+                AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_post_report_failed"))
             }
         }
     )

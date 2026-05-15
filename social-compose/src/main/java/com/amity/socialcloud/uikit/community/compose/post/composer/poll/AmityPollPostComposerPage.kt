@@ -131,6 +131,7 @@ import kotlinx.coroutines.launch
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.joda.time.format.DateTimeFormat
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -158,14 +159,16 @@ fun AmityPollPostComposerPage(
 
     val coroutineScope = rememberCoroutineScope()
 
-    val formatter = DateTimeFormat.forPattern("dd MMM 'at' h:mm a")
+    val dateFormatter = DateTimeFormat.forPattern("dd MMM")
+        .withLocale(context.resources.configuration.locale)
+    val timeFormatter = DateTimeFormat.forPattern("h:mm a")
         .withLocale(context.resources.configuration.locale)
     val durationMap = mapOf(
-        1 to "1 day",
-        3 to "3 days",
-        7 to "7 days",
-        14 to "14 days",
-        30 to "30 days"
+        1 to DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_poll_duration_1_day"),
+        3 to DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_poll_duration_3_days"),
+        7 to DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_poll_duration_7_days"),
+        14 to DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_poll_duration_14_days"),
+        30 to DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_poll_duration_30_days")
     )
     val durationKeys = durationMap.keys.toList()
     val durationOptions = durationMap.values.toList()
@@ -176,7 +179,7 @@ fun AmityPollPostComposerPage(
     val MIN_OPTIONS_REQUIRED = 2
     val maxTitleChar = 150
 
-    val title = targetCommunity?.getDisplayName() ?: "My Timeline"
+    val title = targetCommunity?.getDisplayName() ?: DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_my_timeline")
     var queryToken by remember { mutableStateOf("") }
     var shouldShowSuggestion by remember { mutableStateOf(false) }
     var selectedUserToMention by remember { mutableStateOf<AmityUser?>(null) }
@@ -340,7 +343,7 @@ fun AmityPollPostComposerPage(
                         elementId = "create_new_post_button"
                     ) {
                         Text(
-                            text = "Post",
+                            text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_social_home_create_post_button"),
                             style = AmityTheme.typography.bodyLegacy.copy(
                                 color = if (isEnabled) AmityTheme.colors.primary else AmityTheme.colors.primaryShade2
                             ),
@@ -350,7 +353,7 @@ fun AmityPollPostComposerPage(
                                     if (!isCreating) {
                                         isCreating = true
                                         coroutineScope.launch {
-                                            getPageScope().showProgressSnackbar("Posting...")
+                                            getPageScope().showProgressSnackbar(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_poll_create_posting_toast"))
                                             val durationInput =
                                                 if (selectedPollDurationIndex == -1) {
                                                     selectedDate.millis - DateTime.now().millis
@@ -384,7 +387,7 @@ fun AmityPollPostComposerPage(
                                                 }
                                             } catch (e: Exception) {
                                                 val text =
-                                                    "Failed to create post. Please try again."
+                                                    DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_error_create_post_failed")
                                                 getPageScope().showSnackbar(
                                                     message = text,
                                                     drawableRes = R.drawable.amity_ic_snack_bar_warning,
@@ -453,7 +456,7 @@ fun AmityPollPostComposerPage(
                                     elementId = "post_title_label"
                                 ) {
                                     Text(
-                                        text = "Post title (Optional)",
+                                        text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_title_optional"),
                                         style = AmityTheme.typography.titleLegacy,
                                         modifier = modifier.testTag(getAccessibilityId())
                                     )
@@ -482,7 +485,7 @@ fun AmityPollPostComposerPage(
                                         postTitle = cleanedText
                                     }
                                 },
-                                hintText = "Give your poll a headline",
+                                hintText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_placeholder_hint_poll_headline"),
                                 hintColor = AmityTheme.colors.baseShade3,
                                 textStyle = AmityTheme.typography.titleBold.copy(
                                     color = AmityTheme.colors.base,
@@ -517,7 +520,7 @@ fun AmityPollPostComposerPage(
 
                                 Text(
                                     modifier = Modifier.padding(horizontal = 16.dp),
-                                    text = "Post title cannot exceed ${maxTitleChar} characters.",
+                                    text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_post_title_max_char").format(maxTitleChar),
                                     style = AmityTheme.typography.captionLegacy.copy(
                                         fontWeight = FontWeight.Normal,
                                         color = AmityTheme.colors.alert,
@@ -549,7 +552,7 @@ fun AmityPollPostComposerPage(
                                     elementId = "poll_question_title"
                                 ) {
                                     Text(
-                                        text = "Poll question",
+                                        text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_poll_question"),
                                         style = AmityTheme.typography.titleLegacy,
                                         modifier = modifier.testTag(getAccessibilityId())
                                     )
@@ -581,7 +584,7 @@ fun AmityPollPostComposerPage(
                                     )
                                     .padding(4.dp),
                                 value = question,
-                                hintText = "What's your poll question?",
+                                hintText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_placeholder_hint_poll_question"),
                                 maxLines = 30,
                                 maxChar = QUESTION_MAX_CHAR,
                                 mentionedUser = selectedUserToMention,
@@ -642,7 +645,7 @@ fun AmityPollPostComposerPage(
                                         elementId = "poll_options_title"
                                     ) {
                                         Text(
-                                            text = "Options", //getConfig().getText(),
+                                            text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_options"), //getConfig().getText(),
                                             style = AmityTheme.typography.titleLegacy,
                                             modifier = modifier.testTag(getAccessibilityId())
                                         )
@@ -657,9 +660,9 @@ fun AmityPollPostComposerPage(
                                 elementId = "poll_options_description"
                             ) {
                                 val text = if (type == "text") {
-                                    "Poll must contain at least ${MIN_OPTIONS_REQUIRED} options."
+                                    DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_poll_options_desc")
                                 } else {
-                                    "Poll must contain at least ${MIN_OPTIONS_REQUIRED} options. and an image must be uploaded for every option."
+                                    DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_poll_min_options_with_images")
                                 }
                                 Text(
                                     modifier = Modifier.padding(horizontal = 4.dp),
@@ -731,7 +734,7 @@ fun AmityPollPostComposerPage(
                                             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
                                             placeholder = {
                                                 Text(
-                                                    text = "Option ${index + 1}",
+                                                    text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_option_number").format(index + 1),
                                                     style = AmityTheme.typography.bodyLegacy.copy(
                                                         color = AmityTheme.colors.baseShade2
                                                     )
@@ -815,7 +818,7 @@ fun AmityPollPostComposerPage(
                                             Spacer(modifier = modifier.width(8.dp))
 
                                             Text(
-                                                text = "Add option",
+                                                text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_add_option"),
                                                 style = AmityTheme.typography.captionLegacy.copy(
                                                     color = AmityTheme.colors.secondary,
                                                 ),
@@ -830,7 +833,7 @@ fun AmityPollPostComposerPage(
                         itemsIndexed(textAndImage) { index, data ->
                             AmityPollImageTypeItemView(
                                 uiState = data,
-                                placeHolderText = "Option ${index + 1}",
+                                placeHolderText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_option_number").format(index + 1),
                                 onTextChange = { newValue ->
                                     if (!isCreating) {
                                         val textValue =
@@ -917,7 +920,7 @@ fun AmityPollPostComposerPage(
                                         elementId = "poll_multiple_selection_title"
                                     ) {
                                         Text(
-                                            text = "Multiple selection",
+                                            text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_multiple_selection"),
                                             style = AmityTheme.typography.titleLegacy,
                                             modifier = modifier
                                                 .testTag(getAccessibilityId())
@@ -931,7 +934,7 @@ fun AmityPollPostComposerPage(
                                         elementId = "poll_multiple_selection_description"
                                     ) {
                                         Text(
-                                            text = "Let participants vote more than one option.",
+                                            text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_let_participants_vote_more_than_one_option"),
                                             style = AmityTheme.typography.captionLegacy.copy(
                                                 fontWeight = FontWeight.Normal,
                                                 color = AmityTheme.colors.baseShade1,
@@ -977,7 +980,7 @@ fun AmityPollPostComposerPage(
                                 elementId = "poll_duration_title"
                             ) {
                                 Text(
-                                    text = "Poll duration",
+                                    text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_poll_duration"),
                                     style = AmityTheme.typography.titleLegacy,
                                     modifier = modifier
                                         .padding(horizontal = 4.dp)
@@ -989,7 +992,7 @@ fun AmityPollPostComposerPage(
 
                             Text(
                                 modifier = Modifier.padding(horizontal = 4.dp),
-                                text = "You can always close the poll before the set duration.",
+                                text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_you_can_always_close_the_poll_before_the_set_duration"),
                                 style = AmityTheme.typography.captionLegacy.copy(
                                     fontWeight = FontWeight.Normal,
                                     color = AmityTheme.colors.baseShade1,
@@ -1005,7 +1008,7 @@ fun AmityPollPostComposerPage(
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 Text(
-                                    text = if (selectedPollDurationIndex == -1) "Custom end date" else durationOptions[selectedPollDurationIndex],
+                                    text = if (selectedPollDurationIndex == -1) DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_poll_duration_pick_date_and_time") else durationOptions[selectedPollDurationIndex],
                                     style = AmityTheme.typography.bodyLegacy.copy(
                                         color = AmityTheme.colors.base,
                                     ),
@@ -1049,7 +1052,7 @@ fun AmityPollPostComposerPage(
                                 ) {
                                     Text(
                                         modifier = Modifier.weight(1f),
-                                        text = "Ends on",
+                                        text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_ends_on"),
                                         style = AmityTheme.typography.bodyLegacy.copy(
                                             fontWeight = FontWeight.Normal,
                                             color = AmityTheme.colors.base,
@@ -1098,10 +1101,9 @@ fun AmityPollPostComposerPage(
                                 }
                             } else {
                                 Spacer(modifier = modifier.height(6.dp))
-
-                                val endText = "Ends on " + DateTime.now().plusDays(
-                                    durationKeys[selectedPollDurationIndex]
-                                ).toString(formatter)
+                                val endDateTime = DateTime.now().plusDays(durationKeys[selectedPollDurationIndex])
+                                val endText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_poll_post_composer_page_ends_on").format(
+                                    endDateTime.toString(dateFormatter), endDateTime.toString(timeFormatter))
 
                                 Text(
                                     modifier = Modifier.padding(horizontal = 4.dp),
@@ -1121,10 +1123,10 @@ fun AmityPollPostComposerPage(
 
                 if (showDiscardPostDialog) {
                     AmityAlertDialog(
-                        dialogTitle = "Discard this post?",
-                        dialogText = "The post will be permanently discarded. It cannot be undone.",
-                        confirmText = "Discard",
-                        dismissText = "Keep editing",
+                        dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_title_discard_post"),
+                        dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_discard_post"),
+                        confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_discard"),
+                        dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_keep_editing"),
                         confirmTextColor = AmityTheme.colors.alert,
                         dismissTextColor = AmityTheme.colors.highlight,
                         onConfirmation = {
@@ -1138,9 +1140,9 @@ fun AmityPollPostComposerPage(
 
                 if (showPendingPostDialog) {
                     AmityAlertDialog(
-                        dialogTitle = "Posts sent for review",
-                        dialogText = "Your post has been submitted to the pending list. It will be published once approved by the community moderator.",
-                        dismissText = "OK",
+                        dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_title_posts_sent_for_review"),
+                        dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_post_pending_approval"),
+                        dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_ok"),
                     ) {
                         showPendingPostDialog = false
                         context.closePageWithResult(Activity.RESULT_OK)
@@ -1167,7 +1169,7 @@ fun AmityPollPostComposerPage(
                                     )
                                 }
                             ) {
-                                Text("OK", color = AmityTheme.colors.primary)
+                                Text(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_ok"), color = AmityTheme.colors.primary)
                             }
                         },
                         dismissButton = {
@@ -1176,7 +1178,7 @@ fun AmityPollPostComposerPage(
                                     showDatePicker = false
                                 }
                             ) {
-                                Text("CANCEL", color = AmityTheme.colors.primary)
+                                Text(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel"), color = AmityTheme.colors.primary)
                             }
                         }
                     )
@@ -1201,7 +1203,7 @@ fun AmityPollPostComposerPage(
                                     )
                                 }
                             ) {
-                                Text("OK", color = AmityTheme.colors.primary)
+                                Text(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_ok"), color = AmityTheme.colors.primary)
                             }
                         },
                         dismissButton = {
@@ -1210,7 +1212,7 @@ fun AmityPollPostComposerPage(
                                     showTimePicker = false
                                 }
                             ) {
-                                Text("CANCEL", color = AmityTheme.colors.primary)
+                                Text(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel"), color = AmityTheme.colors.primary)
                             }
                         }
                     )
@@ -1268,7 +1270,7 @@ fun AmityPollPostComposerPage(
                                         horizontalAlignment = Alignment.CenterHorizontally
                                     ) {
                                         Text(
-                                            text = "Your image couldn’t be uploaded",
+                                            text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_your_image_couldn_t_be_uploaded"),
                                             fontSize = 13.sp,
                                             lineHeight = 18.sp,
                                             fontWeight = FontWeight(600),
@@ -1298,7 +1300,7 @@ fun AmityPollPostComposerPage(
                                             modifier = Modifier.fillMaxWidth()
                                         ) {
                                             Text(
-                                                text = "Retry",
+                                                text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_retry"),
                                                 fontSize = 17.sp,
                                                 lineHeight = 22.sp,
                                                 fontWeight = FontWeight(600),
@@ -1320,7 +1322,7 @@ fun AmityPollPostComposerPage(
                                             modifier = Modifier.fillMaxWidth()
                                         ) {
                                             Text(
-                                                text = "Upload new image",
+                                                text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_upload_new_image"),
                                                 fontSize = 17.sp,
                                                 lineHeight = 22.sp,
                                                 fontWeight = FontWeight(600),
@@ -1360,7 +1362,7 @@ fun AmityPollPostComposerPage(
                                             modifier = Modifier.fillMaxWidth()
                                         ) {
                                             Text(
-                                                text = "Cancel",
+                                                text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_cancel_button"),
                                                 fontSize = 17.sp,
                                                 lineHeight = 22.sp,
                                                 fontWeight = FontWeight(600),
@@ -1455,7 +1457,7 @@ fun AmityPollDurationOptionContainer(
             }
 
             AmityPollDurationOptionItem(
-                text = "Custom end date",
+                text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_poll_duration_pick_date_and_time"),
                 isSelected = (-1 == selectedIndex),
                 onSelected = { onSelected(-1) },
             )

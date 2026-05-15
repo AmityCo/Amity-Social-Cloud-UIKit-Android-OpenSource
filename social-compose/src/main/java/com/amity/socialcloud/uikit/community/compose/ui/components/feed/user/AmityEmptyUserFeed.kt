@@ -19,6 +19,7 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getText
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 
 @Composable
@@ -34,6 +35,14 @@ fun AmityEmptyUserFeed(
             AmityUserFeedType.IMAGE -> "empty_user_image_feed"
             AmityUserFeedType.VIDEO -> "empty_user_video_feed"
             AmityUserFeedType.CLIP -> "empty_clip_feed"
+        }
+    }
+    val fallbackKey = remember(feedType) {
+        when (feedType) {
+            AmityUserFeedType.POST -> "amity_social_empty_state_empty_feed_no_posts"
+            AmityUserFeedType.IMAGE -> "amity_social_empty_state_empty_user_image_feed"
+            AmityUserFeedType.VIDEO -> "amity_social_empty_state_empty_user_video_feed"
+            AmityUserFeedType.CLIP -> "amity_social_empty_state_empty_clip_feed"
         }
     }
 
@@ -54,7 +63,7 @@ fun AmityEmptyUserFeed(
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = getConfig().getText(),
+                text = amitySocialString(fallbackKey),
                 style = AmityTheme.typography.titleLegacy.copy(
                     color = AmityTheme.colors.baseShade3,
                 ),

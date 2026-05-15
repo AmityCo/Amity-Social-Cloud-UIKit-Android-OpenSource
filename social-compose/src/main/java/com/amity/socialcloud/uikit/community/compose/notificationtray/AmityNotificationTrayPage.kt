@@ -50,6 +50,7 @@ import com.amity.socialcloud.uikit.community.compose.notificationtray.component.
 import com.amity.socialcloud.uikit.community.compose.notificationtray.component.AmityNotificationTrayEmptyState
 import com.amity.socialcloud.uikit.community.compose.notificationtray.component.AmityNotificationTrayItemView
 import com.amity.socialcloud.uikit.community.compose.notificationtray.component.AmityNotificationTrayShimmer
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -119,7 +120,7 @@ fun AmityNotificationTrayPage(
                     }
 
                     Text(
-                        text = "Notifications",
+                        text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_notification_title_notifications"),
                         style = AmityTheme.typography.titleBold,
                         modifier = modifier
                             .align(Alignment.CenterStart)
@@ -145,7 +146,7 @@ fun AmityNotificationTrayPage(
                 if (visibleInvitationCount > 0) {
                     item {
                         Text(
-                            text = "Requests",
+                            text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_requests"),
                             style = AmityTheme.typography.captionBold,
                             color = AmityTheme.colors.baseShade1,
                             modifier = Modifier.padding(16.dp, 8.dp)
@@ -198,7 +199,7 @@ fun AmityNotificationTrayPage(
 
                         if (!errorSnackbarShown) {
                             showErrorSnackbar(
-                                message = "Oops, something went wrong.",
+                                message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_something_went_wrong"),
                                 additionalHeight = 20
                             )
                             errorSnackbarShown = true

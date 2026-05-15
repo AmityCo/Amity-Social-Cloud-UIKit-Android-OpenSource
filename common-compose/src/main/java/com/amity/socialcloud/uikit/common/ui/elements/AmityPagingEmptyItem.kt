@@ -11,6 +11,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.localization.amityCommonString
 
 
 @Composable
@@ -38,6 +39,6 @@ fun AmityPagingEmptyItem(
 @Composable
 fun AmityPagingEmptyItemPreview() {
     AmityPagingEmptyItem(
-        text = "No comments yet"
+        text = amityCommonString("amity_common_empty_state_no_comments_yet")
     )
 }

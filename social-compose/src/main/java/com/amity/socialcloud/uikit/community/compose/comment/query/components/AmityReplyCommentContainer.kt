@@ -11,7 +11,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
@@ -22,6 +21,7 @@ import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.elements.EXPANDABLE_TEXT_MAX_LINES
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentViewModel
 import com.amity.socialcloud.uikit.community.compose.comment.query.AmityReplyCommentView
 import com.amity.socialcloud.uikit.community.compose.comment.query.elements.AmityCommentItemShimmer
@@ -61,7 +61,6 @@ fun AmityReplyCommentContainer(
     val commentViewModel =
         viewModel<AmityCommentTrayComponentViewModel>(viewModelStoreOwner = viewModelStoreOwner)
 
-    val context = LocalContext.current
     var shouldShowReplies by rememberSaveable { mutableStateOf(isExpanded) }
     var hideAfterError by rememberSaveable { mutableStateOf(false) }
 
@@ -69,7 +68,8 @@ fun AmityReplyCommentContainer(
     LaunchedEffect(replyLoadErrorSet.contains(commentId)) {
         if (replyLoadErrorSet.contains(commentId)) {
             AmityUIKitSnackbar.publishSnackbarErrorMessage(
-                context.getString(R.string.amity_no_internet_error_message),
+                DefaultAmitySocialStringProvider.getInstance()
+                    .getString("amity_social_label_no_internet_connection"),
                 offsetFromBottom = 70
             )
             commentViewModel.clearReplyLoadError(commentId)

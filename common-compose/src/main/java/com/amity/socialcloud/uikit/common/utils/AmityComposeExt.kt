@@ -233,7 +233,7 @@ fun measureTextWidth(text: String, style: TextStyle): Dp {
 @ReadOnlyComposable
 fun amityStringResource(
     configString: String = "",
-    @StringRes id: Int = R.string.empty_string,
+    @StringRes id: Int = R.string.amity_common_empty_state_empty_string,
 ): String {
     LocalConfiguration.current
     val resources = LocalContext.current.resources
@@ -242,7 +242,7 @@ fun amityStringResource(
 
 fun Context.amityStringResource(
     configString: String = "",
-    @StringRes id: Int = R.string.empty_string,
+    @StringRes id: Int = R.string.amity_common_empty_state_empty_string,
 ): String {
     val resources = this.resources
     return configString.ifEmpty { resources.getString(id) }

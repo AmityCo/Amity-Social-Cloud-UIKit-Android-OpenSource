@@ -29,6 +29,7 @@ import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityEventCardShimmer
 import org.joda.time.format.DateTimeFormat
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 fun LazyListScope.amityCommunityEventFeed(
     modifier: Modifier = Modifier,
@@ -62,7 +63,7 @@ fun LazyListScope.amityCommunityEventFeed(
     } else if (happeningNowEvents.isNotEmpty()) {
         item {
             Text(
-                text = "Happening now",
+                text = amitySocialString("amity_social_button_happening_now"),
                 style = AmityTheme.typography.title.copy(fontWeight = FontWeight.Bold),
                 color = AmityTheme.colors.base,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
@@ -116,12 +117,12 @@ fun LazyListScope.amityCommunityEventFeed(
                 .padding(horizontal = 16.dp)
         ) {
             FilterChip(
-                label = "Upcoming",
+                label = amitySocialString("amity_social_status_event_detail_header_status_upcoming"),
                 isSelected = selectedFilter == "Upcoming",
                 onClick = { onFilterChange("Upcoming") }
             )
             FilterChip(
-                label = "Past",
+                label = amitySocialString("amity_social_button_event_feed_past"),
                 isSelected = selectedFilter == "Past",
                 onClick = { onFilterChange("Past") }
             )
@@ -154,7 +155,7 @@ fun LazyListScope.amityCommunityEventFeed(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "No events yet",
+                    text = amitySocialString("amity_social_label_no_events_yet"),
                     style = AmityTheme.typography.title.copy(fontWeight = FontWeight.Bold),
                     color = AmityTheme.colors.baseShade3
                 )

@@ -70,6 +70,8 @@ import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityProductTaggingButton
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
@@ -251,7 +253,7 @@ fun AmityLivestreamMessageComposeBar(
                             text = messageText,
                             textStyle = AmityTheme.typography.body.copy(color = Color(0xFFEBECEF)),
                             maxLines = 1,
-                            hint = "Chat...",
+                            hint = amitySocialString("amity_social_placeholder_chat_hint"),
                             enabled = (isChannelModerator || isCurrentUserStreamHost || (!isUserMuted && !isChannelMuted)) && AmityCoreClient.isSignedIn() && !isNonMember,
                             shape = RoundedCornerShape(20.dp),
                             innerPadding = PaddingValues(horizontal = 12.dp, vertical = 10.dp),
@@ -293,16 +295,17 @@ fun AmityLivestreamMessageComposeBar(
                                 onError = { exception ->
                                     shouldClearText = false
 
+                                    val stringProvider = DefaultAmitySocialStringProvider.getInstance()
                                     val errorMessage: String = if (exception is AmityException) {
                                         when (AmityError.from(exception.code)) {
-                                            AmityError.BAN_WORD_FOUND -> "Your message wasn't sent as it contained a blocked word."
-                                            AmityError.LINK_NOT_ALLOWED -> "Your message wasn't sent as it contained a link that's not allowed."
+                                            AmityError.BAN_WORD_FOUND -> stringProvider.getString("amity_social_label_msg_blocked_word")
+                                            AmityError.LINK_NOT_ALLOWED -> stringProvider.getString("amity_social_label_msg_link_not_allowed")
                                             else -> exception.message
-                                                ?: "This message failed to be sent. Please try again."
+                                                ?: stringProvider.getString("amity_social_toast_message_send_failed")
                                         }
                                     } else {
                                         exception.message
-                                            ?: "This message failed to be sent. Please try again."
+                                            ?: stringProvider.getString("amity_social_toast_message_send_failed")
                                     }
                                     pageScope?.showSnackbar(
                                         message = errorMessage
@@ -454,7 +457,7 @@ fun MessageComposeErrorPopup(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "Unable to send message",
+                            text = amitySocialString("amity_social_label_unable_to_send_message"),
                             fontSize = 17.sp,
                             lineHeight = 22.sp,
                             fontWeight = FontWeight(600),
@@ -463,7 +466,7 @@ fun MessageComposeErrorPopup(
                             color = AmityTheme.colors.baseInverse,
                         )
                         Text(
-                            text = "Your message is too long. Please shorten your message and try again.",
+                            text = amitySocialString("amity_social_label_your_message_is_too_long_please_shorten_your_message_an"),
                             fontSize = 13.sp,
                             lineHeight = 16.sp,
                             fontWeight = FontWeight(400),
@@ -486,7 +489,7 @@ fun MessageComposeErrorPopup(
                             modifier = Modifier.weight(1f)
                         ) {
                             Text(
-                                text = "OK",
+                                text = amitySocialString("amity_social_button_ok"),
                                 fontSize = 17.sp,
                                 lineHeight = 22.sp,
                                 fontWeight = FontWeight(600),
@@ -511,7 +514,7 @@ fun AmityLivestreamNonMemberComposeBar(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "Join community to interact with live stream",
+            text = amitySocialString("amity_social_status_join_community_to_interact_with_live_stream"),
             style = AmityTheme.typography.body,
             color = AmityTheme.colors.secondaryShade2,
             textAlign = TextAlign.Center,
@@ -539,7 +542,7 @@ fun AmityLivestreamReadOnlyComposeBar(
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
-            text = if (isMemberMuted) "You have been muted." else "This live stream is now read-only.",
+            text = if (isMemberMuted) amitySocialString("amity_social_label_you_have_been_muted") else amitySocialString("amity_social_status_livestream_read_only"),
             fontSize = 14.sp,
             lineHeight = 20.sp,
             fontWeight = FontWeight(400),
@@ -563,7 +566,7 @@ fun AmityLivestreamPendingApprovalComposeBar(
             .padding(start = 12.dp)
     ) {
         Text(
-            text = "This live stream has started, but with limited visibility until the post has been approved.",
+            text = amitySocialString("amity_social_status_this_live_stream_has_started_but_with_limited_visibilit"),
             fontSize = 14.sp,
             lineHeight = 20.sp,
             fontWeight = FontWeight(400),

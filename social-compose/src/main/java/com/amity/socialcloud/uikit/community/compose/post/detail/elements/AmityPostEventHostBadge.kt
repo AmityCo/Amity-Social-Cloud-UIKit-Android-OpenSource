@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityPostEventHostBadge(
@@ -49,7 +50,7 @@ fun AmityPostEventHostBadge(
                 modifier = Modifier.size(12.dp)
             )
             Text(
-                text = "Host",
+                text = amitySocialString("amity_social_button_host"),
                 style = TextStyle(
                     fontSize = 10.sp,
                     lineHeight = 18.sp,

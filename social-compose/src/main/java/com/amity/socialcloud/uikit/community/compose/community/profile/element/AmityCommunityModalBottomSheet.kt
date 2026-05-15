@@ -45,6 +45,7 @@ import com.amity.socialcloud.uikit.community.compose.utils.sharePost
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.text.replace
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
@@ -113,7 +114,7 @@ fun AmityCommunityModalBottomSheet(
                         if (isModerator) {
                             AmityBottomSheetActionItem(
                                 icon = R.drawable.amity_v4_setting_icon,
-                                text = "Community settings",
+                                text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_setting_community_settings"),
                                 modifier = modifier,
                             ) {
                                 viewModel.updateSheetUIState(AmityCommunityModalSheetUIState.CloseSheet)
@@ -127,7 +128,7 @@ fun AmityCommunityModalBottomSheet(
                         } else if (community.isJoined()) {
                             AmityBottomSheetActionItem(
                                 icon = R.drawable.amity_v4_community_info,
-                                text = "Community information",
+                                text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_community_information_title"),
                                 modifier = modifier,
                             ) {
                                 viewModel.updateSheetUIState(AmityCommunityModalSheetUIState.CloseSheet)
@@ -147,19 +148,19 @@ fun AmityCommunityModalBottomSheet(
                         if (isSharable) {
                             AmityBottomSheetActionItem(
                                 icon = R.drawable.amity_v4_link_icon,
-                                text = "Copy profile link",
+                                text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_copy_profile_link"),
                                 modifier = modifier.testTag("bottom_sheet_copy_link_button"),
                             ) {
                                 viewModel.updateSheetUIState(AmityCommunityModalSheetUIState.CloseSheet)
                                 // Generate the post link URL (adjust the URL format according to your app's deep linking structure)
                                 // Copy to clipboard
                                 clipboardManager.setText(AnnotatedString(communityLink))
-                                AmityUIKitSnackbar.publishSnackbarMessage("Link copied")
+                                AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_link_copied"))
                             }
 
                             AmityBottomSheetActionItem(
                                 icon = R.drawable.amity_v4_share_icon,
-                                text = "Share to",
+                                text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_share_to"),
                                 modifier = modifier.testTag("bottom_sheet_share_to_button"),
                             ) {
                                 viewModel.updateSheetUIState(AmityCommunityModalSheetUIState.CloseSheet)

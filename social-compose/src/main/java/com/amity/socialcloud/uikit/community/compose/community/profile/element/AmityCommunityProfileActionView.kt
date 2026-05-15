@@ -58,6 +58,7 @@ import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.isSignedIn
 import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageBehavior
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -129,11 +130,30 @@ fun AmityCommunityPendingPost(
             derivedStateOf { joinRequest.itemCount }
         }
 
+        val pendingRequestsStr = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_pending_requests")
+        val communityPostLabelStr = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_post_label_singular")
+        val communityPostsLabelStr = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_community_posts_label")
+        val joinRequestLabelStr = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_community_join_request_label")
+        val joinRequestsLabelStr = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_community_join_requests_label")
+        val approvalLabelStr = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_community_require_approval")
+        val requiresApprovalLabelStr = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_community_requires_approval")
+        val postsPendingReviewStr = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_community_posts_pending_review")
+        val andLabelStr = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_community_and")
+
         val bannerContent by remember(
             pendingPostItemCount,
             joinRequestItemCount,
             isModerator,
-            community
+            community,
+            pendingRequestsStr,
+            communityPostLabelStr,
+            communityPostsLabelStr,
+            joinRequestLabelStr,
+            joinRequestsLabelStr,
+            approvalLabelStr,
+            requiresApprovalLabelStr,
+            postsPendingReviewStr,
+            andLabelStr
         ) {
             derivedStateOf {
                 val communityRequiresJoinApproval = community.requiresJoinApproval()
@@ -149,48 +169,29 @@ fun AmityCommunityPendingPost(
                 val showJoinRequestsInfo =
                     communityRequiresJoinApproval && hasPendingJoinRequests && isModerator
 
-                var title = "Pending requests"
+                var title = pendingRequestsStr
                 var desc = ""
 
-                val postText = "${
-                    if (pendingPostItemCount > 10) {
-                        "10+"
-                    } else {
-                        getNumberAbbreveation(
-                            pendingPostItemCount
-                        )
-                    }
-                } ${
-                    if (pendingPostItemCount == 1) {
-                        "post"
-                    } else {
-                        "posts"
-                    }
-                }"
-                val joinRequestText = "${
-                    if (joinRequestItemCount > 10) {
-                        "10+"
-                    } else {
-                        getNumberAbbreveation(
-                            joinRequestItemCount
-                        )
-                    }
-                } ${
-                    if (joinRequestItemCount == 1) {
-                        "join request"
-                    } else {
-                        "join requests"
-                    }
-                }"
+                val postLabel = if (pendingPostItemCount == 1)
+                    communityPostLabelStr
+                else
+                    communityPostsLabelStr
+                val postText = "${if (pendingPostItemCount > 10) "10+" else getNumberAbbreveation(pendingPostItemCount)} $postLabel"
+                val joinRequestLabel = if (joinRequestItemCount == 1)
+                    joinRequestLabelStr
+                else
+                    joinRequestsLabelStr
+                val joinRequestText = "${if (joinRequestItemCount > 10) "10+" else getNumberAbbreveation(joinRequestItemCount)} $joinRequestLabel"
 
-                val postsNeedApprovalText =
-                    "$postText ${if (pendingPostItemCount == 1) "requires" else "require"} approval"
-                val yourPostsPendingText = "Your posts are pending for review"
-                val joinRequestsText =
-                    "$joinRequestText ${if (joinRequestItemCount == 1) "requires" else "require"} approval"
+                val approvalLabel = approvalLabelStr
+                val requiresApprovalLabel = requiresApprovalLabelStr
+                val postsNeedApprovalText = if (pendingPostItemCount == 1) requiresApprovalLabel.format(postText) else approvalLabel.format(postText)
+                val yourPostsPendingText = postsPendingReviewStr
+                val joinRequestsText = if (joinRequestItemCount == 1) requiresApprovalLabel.format(joinRequestText) else approvalLabel.format(joinRequestText)
 
                 if (showPendingPostsInfo && showJoinRequestsInfo) { // Both moderator-relevant items
-                    desc = "$postText and $joinRequestText require approval"
+                    val andLabel = andLabelStr
+                    desc = approvalLabel.format("$postText $andLabel $joinRequestText")
                 } else if (showPendingPostsInfo) { // Only Posts
                     desc = if (isModerator) postsNeedApprovalText else yourPostsPendingText
                 } else if (showJoinRequestsInfo) { // Only Join Requests (implies isModerator)
@@ -330,7 +331,7 @@ fun AmityCommunityJoinButton(
                                     }
                                     .doOnError {
                                         pageScope?.showSnackbar(
-                                            message = "Failed to cancel your request. Please try again.",
+                                            message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_cancel_request_failed"),
                                             drawableRes = R.drawable.amity_ic_snack_bar_warning,
                                         )
                                     }
@@ -361,7 +362,7 @@ fun AmityCommunityJoinButton(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Cancel request",
+                        text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel_request"),
                         style = AmityTheme.typography.bodyBold
                     )
                 }
@@ -384,7 +385,7 @@ fun AmityCommunityJoinButton(
                                                     // Successfully joined the community
                                                     isPendingJoinRequest = false
                                                     pageScope?.showSnackbar(
-                                                        message = "You joined ${community.getDisplayName()}.",
+                                                        message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_joined_community").format(community.getDisplayName()),
                                                         drawableRes = R.drawable.amity_ic_snack_bar_success,
                                                     )
                                                 }
@@ -394,7 +395,7 @@ fun AmityCommunityJoinButton(
                                                     joinRequest = result.request
                                                     isPendingJoinRequest = true
                                                     pageScope?.showSnackbar(
-                                                        message = "Requested to join. You will be notified once your request is accepted.",
+                                                        message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_join_request_sent"),
                                                         drawableRes = R.drawable.amity_ic_snack_bar_success,
                                                     )
                                                 }
@@ -403,7 +404,7 @@ fun AmityCommunityJoinButton(
                                         .doOnError {
                                             isLoadingStatus = false
                                             pageScope?.showSnackbar(
-                                                message = "Failed to join the community. Please try again.",
+                                                message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_join_community_failed"),
                                                 drawableRes = R.drawable.amity_ic_snack_bar_warning,
                                             )
                                         }
@@ -431,7 +432,7 @@ fun AmityCommunityJoinButton(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Join",
+                                text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_community_invitation_accept_button"),
                                 style = TextStyle(
                                     fontSize = 15.sp,
                                     lineHeight = 20.sp,

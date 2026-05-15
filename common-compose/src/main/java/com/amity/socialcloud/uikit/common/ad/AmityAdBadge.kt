@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.uikit.common.compose.R
+import com.amity.socialcloud.uikit.common.localization.amityCommonString
 
 @Composable
 fun AmityAdBadge(
@@ -40,7 +41,7 @@ fun AmityAdBadge(
             tint = Color.White,
         )
         Text(
-            text = "Sponsored",
+            text = amityCommonString("amity_common_ad_sponsored"),
             style = TextStyle(
                 fontSize = 11.sp,
                 lineHeight = 18.sp,

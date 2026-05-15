@@ -28,6 +28,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.story.target.elements.AmityStoryGradientRingElement
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityLiveRoomTarget(
@@ -94,7 +95,7 @@ fun AmityLiveRoomTarget(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "LIVE",
+                    text = amitySocialString("amity_social_status_live"),
                     color = Color.White,
                     style = AmityTheme.typography.caption.copy(fontWeight = FontWeight.Bold),
                 )

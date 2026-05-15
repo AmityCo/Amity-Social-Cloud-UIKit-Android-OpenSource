@@ -47,6 +47,9 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityTextField
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.AmitySocialStrings
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialConfigString
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @ExperimentalMaterial3Api
 @Composable
@@ -74,25 +77,28 @@ fun AmityStoryHyperlinkComponent(
         }
     }
     var isValidUrlFormat by remember { mutableStateOf(true) }
-    val urlValidationError by remember(isValidUrlFormat, urlValidation) {
+    val enterValidUrlStr = amitySocialString("amity_social_label_enter_valid_url")
+    val enterWhitelistedUrlStr = amitySocialString("amity_social_label_enter_whitelisted_url")
+    val textContainsBlocklistedStr = amitySocialString("amity_social_label_text_contains_blocklisted")
+    val urlValidationError by remember(isValidUrlFormat, urlValidation, enterValidUrlStr, enterWhitelistedUrlStr) {
         derivedStateOf {
             when {
-                !isValidUrlFormat -> "Please enter a valid URL."
+                !isValidUrlFormat -> enterValidUrlStr
 
                 urlValidation is AmityStoryHyperlinkValidationUIState.Invalid &&
                         (urlValidation as AmityStoryHyperlinkValidationUIState.Invalid).data == urlText
-                -> "Please enter a whitelisted URL."
+                -> enterWhitelistedUrlStr
 
                 else -> ""
             }
         }
     }
-    val textValidationError by remember(textValidation) {
+    val textValidationError by remember(textValidation, textContainsBlocklistedStr) {
         derivedStateOf {
             when {
                 textValidation is AmityStoryHyperlinkValidationUIState.Invalid &&
                         (textValidation as AmityStoryHyperlinkValidationUIState.Invalid).data == customText
-                -> "Your text contains a blocklisted word."
+                -> textContainsBlocklistedStr
 
                 else -> ""
             }
@@ -104,20 +110,20 @@ fun AmityStoryHyperlinkComponent(
 
     if (openUnsavedAlertDialog.value) {
         AmityAlertDialog(
-            dialogTitle = "Unsaved changes",
-            dialogText = "Are you sure you want to cancel? Your changes won't be saved.",
-            confirmText = "Yes",
-            dismissText = "No",
+            dialogTitle = amitySocialString("amity_social_modal_dialog_title_unsaved_changes"),
+            dialogText = amitySocialString("amity_social_modal_dialog_cancel_unsaved_changes"),
+            confirmText = amitySocialString("amity_social_button_yes"),
+            dismissText = amitySocialString("amity_social_button_no"),
             onConfirmation = { onClose(defaultUrlText, defaultCustomText) },
             onDismissRequest = { openUnsavedAlertDialog.value = false }
         )
     }
     if (openRemoveLinkAlertDialog.value) {
         AmityAlertDialog(
-            dialogTitle = "Remove link?",
-            dialogText = "This link will be removed from story.",
-            confirmText = "Remove",
-            dismissText = "Cancel",
+            dialogTitle = amitySocialString("amity_social_modal_dialog_title_remove_link"),
+            dialogText = amitySocialString("amity_social_modal_dialog_remove_story_link"),
+            confirmText = amitySocialString("amity_social_button_remove"),
+            dismissText = amitySocialString("amity_social_button_cancel"),
             onConfirmation = {
                 urlText = ""
                 customText = ""
@@ -156,7 +162,7 @@ fun AmityStoryHyperlinkComponent(
                     elementId = "cancel_button"
                 ) {
                     Text(
-                        text = "Cancel",
+                        text = amitySocialString("amity_social_button_cancel"),
                         style = AmityTheme.typography.bodyLegacy,
                         modifier = Modifier
                             .clickableWithoutRipple {
@@ -167,7 +173,7 @@ fun AmityStoryHyperlinkComponent(
                 }
 
                 Text(
-                    text = "Add Link",
+                    text = amitySocialString("amity_social_button_add_link"),
                     style = AmityTheme.typography.titleLegacy,
                     modifier = Modifier.testTag(getAccessibilityId("title_text_view"))
                 )
@@ -176,7 +182,7 @@ fun AmityStoryHyperlinkComponent(
                     elementId = "done_button"
                 ) {
                     Text(
-                        text = "Done",
+                        text = amitySocialString("amity_social_button_done"),
                         style = AmityTheme.typography.bodyLegacy.copy(
                             color = if (isAllFieldsValid) AmityTheme.colors.primary else AmityTheme.colors.primaryShade2
                         ),
@@ -254,7 +260,7 @@ fun AmityStoryHyperlinkComponent(
                     .padding(horizontal = 16.dp)
             ) {
                 Text(
-                    text = "Customize link text",
+                    text = amitySocialString("amity_social_label_customize_link_text"),
                     style = AmityTheme.typography.titleLegacy,
                     modifier = Modifier
                         .align(Alignment.CenterStart)
@@ -275,7 +281,7 @@ fun AmityStoryHyperlinkComponent(
 
             AmityTextField(
                 text = customText,
-                hint = "Name your link",
+                hint = amitySocialString("amity_social_placeholder_hyperlink_name_hint"),
                 innerPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
                 maxCharacters = CustomTextLimit,
                 onValueChange = {
@@ -289,9 +295,9 @@ fun AmityStoryHyperlinkComponent(
                 color = if (textValidationError.isEmpty()) AmityTheme.colors.divider else AmityTheme.colors.alert,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
-
+            val errorString = amitySocialConfigString("amity_social_label_hardcoded_hyperlinkconfig_hyperlinkconfig_ternary_this_text_will_show_on_the_link_instead_")
             Text(
-                text = textValidationError.ifEmpty { "This text will show on the link instead of URL." },
+                text = textValidationError.ifEmpty { errorString },
                 style = AmityTheme.typography.captionLegacy.copy(
                     fontWeight = FontWeight.Normal,
                     color = if (textValidationError.isEmpty()) AmityTheme.colors.baseShade2
@@ -324,7 +330,7 @@ fun AmityStoryHyperlinkComponent(
                     )
 
                     Text(
-                        text = "Remove link",
+                        text = amitySocialString("amity_social_button_remove_link"),
                         style = AmityTheme.typography.bodyLegacy.copy(
                             color = AmityTheme.colors.alert
                         ),

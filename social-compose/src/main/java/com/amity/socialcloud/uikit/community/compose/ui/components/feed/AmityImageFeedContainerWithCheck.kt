@@ -34,6 +34,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityMenuButton
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.R
 import kotlinx.coroutines.delay
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 /**
  * Advanced container that can periodically check if the displayed item still exists
@@ -132,7 +133,7 @@ private fun ImageNotAvailableDialog(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "This image is no longer available and may have been deleted.",
+                    text = amitySocialString("amity_social_button_this_image_is_no_longer_available_and_may_have_been_del"),
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.White.copy(0.8f),
                     textAlign = TextAlign.Center

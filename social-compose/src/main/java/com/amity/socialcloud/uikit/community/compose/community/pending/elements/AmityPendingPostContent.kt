@@ -22,6 +22,7 @@ import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityP
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuDialogUIState
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuSheetUIState
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuViewModel
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 
 @Composable
 fun AmityPendingPostContent(
@@ -47,11 +48,11 @@ fun AmityPendingPostContent(
                 viewModel.deletePost(
                     postId = data.postId,
                     onSuccess = {
-                        AmityUIKitSnackbar.publishSnackbarMessage("Post deleted")
+                        AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_post_deleted"))
                         viewModel.updateDialogUIState(AmityPostMenuDialogUIState.CloseDialog)
                     },
                     onError = {
-                        AmityUIKitSnackbar.publishSnackbarErrorMessage("Failed to delete post")
+                        AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_delete_post_failed"))
                         viewModel.updateDialogUIState(AmityPostMenuDialogUIState.CloseDialog)
                     }
                 )

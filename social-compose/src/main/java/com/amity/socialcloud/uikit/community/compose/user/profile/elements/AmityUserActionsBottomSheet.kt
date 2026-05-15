@@ -27,6 +27,7 @@ import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageBehavior
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostTargetType
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -66,7 +67,7 @@ fun AmityUserActionsBottomSheet(
         ) {
             AmityBottomSheetActionItem(
                 icon = R.drawable.amity_ic_post_create,
-                text = "Post",
+                text = amitySocialString("amity_social_button_social_home_create_post_button"),
                 modifier = modifier,
             ) {
                 onDismiss()
@@ -78,7 +79,7 @@ fun AmityUserActionsBottomSheet(
 
             AmityBottomSheetActionItem(
                 icon = R.drawable.ic_amity_ic_poll_create,
-                text = "Poll",
+                text = amitySocialString("amity_social_button_poll"),
                 modifier = modifier,
             ) {
                 onDismiss()
@@ -91,7 +92,7 @@ fun AmityUserActionsBottomSheet(
 
             AmityBottomSheetActionItem(
                 icon = R.drawable.ic_amity_ic_live_stream_create,
-                text = "Live stream",
+                text = amitySocialString("amity_social_status_live_stream"),
                 modifier = modifier,
             ) {
                 onDismiss()
@@ -105,7 +106,7 @@ fun AmityUserActionsBottomSheet(
 
             AmityBottomSheetActionItem(
                 icon = R.drawable.amity_ic_create_clip,
-                text = "Clip",
+                text = amitySocialString("amity_social_button_clip"),
                 modifier = modifier,
             ) {
                 onDismiss()

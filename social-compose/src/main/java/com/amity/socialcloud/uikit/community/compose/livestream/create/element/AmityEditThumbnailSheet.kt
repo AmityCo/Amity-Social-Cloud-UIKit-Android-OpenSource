@@ -17,6 +17,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getText
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialConfigString
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,7 +46,7 @@ fun AmityEditThumbnailSheet(
                 ) {
                     AmityBottomSheetActionItem(
                         icon = getConfig().getIcon(),
-                        text = getConfig().getText(),
+                        text = amitySocialConfigString("amity_social_button_change_thumbnail"),
                     ) {
                         onSelect(true)
                     }
@@ -56,7 +57,7 @@ fun AmityEditThumbnailSheet(
                 ) {
                     AmityBottomSheetActionItem(
                         icon = getConfig().getIcon(),
-                        text = getConfig().getText(),
+                        text = amitySocialConfigString("amity_social_button_delete_thumbnail"),
                         color = AmityTheme.colors.alert
                     ) {
                         onSelect(false)

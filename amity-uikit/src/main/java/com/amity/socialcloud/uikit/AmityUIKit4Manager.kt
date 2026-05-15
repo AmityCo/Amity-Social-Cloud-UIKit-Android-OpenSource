@@ -12,6 +12,7 @@ import com.amity.socialcloud.uikit.common.eventbus.NetworkConnectionEventPublish
 import com.amity.socialcloud.uikit.common.infra.db.AmityUIKitDB
 import com.amity.socialcloud.uikit.common.infra.initializer.AmityAppContext
 import com.amity.socialcloud.uikit.common.networkconfig.AmityNetworkConfigService
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetailPageBehavior
 import io.reactivex.rxjava3.core.Completable
 
@@ -36,6 +37,7 @@ object AmityUIKit4Manager {
         AmityNetworkConfigService.init(apiKey)
         AmityUIKitConfigController.setup(AmityAppContext.getContext())
         AmityUIKitConfigController.initializeShareableLinkPattern()
+        DefaultAmitySocialStringProvider.initialize(AmityAppContext.getContext())
         NetworkConnectionEventPublisher.initPublisher(context = AmityAppContext.getContext())
     }
 

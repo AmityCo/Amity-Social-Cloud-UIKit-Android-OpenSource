@@ -15,6 +15,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityUserEmptyPendingFollowRequestView(
@@ -33,7 +34,7 @@ fun AmityUserEmptyPendingFollowRequestView(
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "No requests to review",
+            text = amitySocialString("amity_social_label_no_requests_to_review"),
             style = AmityTheme.typography.titleLegacy.copy(
                 color = AmityTheme.colors.baseShade3,
             ),

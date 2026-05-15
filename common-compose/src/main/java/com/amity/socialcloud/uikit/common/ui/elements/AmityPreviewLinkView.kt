@@ -44,6 +44,7 @@ import com.amity.socialcloud.uikit.common.extionsions.parseUrls
 import com.amity.socialcloud.uikit.common.linkpreview.AmityPreviewUrl
 import com.amity.socialcloud.uikit.common.linkpreview.models.AmityPreviewMetadataCacheItem
 import com.amity.socialcloud.uikit.common.linkpreview.models.AmityPreviewNoUrl
+import com.amity.socialcloud.uikit.common.localization.amityCommonString
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.shimmerBackground
@@ -283,7 +284,7 @@ fun AmityPreviewLinkView(
                         .fillMaxWidth()
                         .padding(top = 6.dp),
                 )
-            } else if (previewMetadata.imageUrl == placeHolderUrl) {
+            } else if (previewMetadata?.imageUrl == placeHolderUrl) {
                 Box(
                     modifier = Modifier
                         .padding(top = 6.dp)
@@ -293,6 +294,25 @@ fun AmityPreviewLinkView(
                             color = AmityTheme.colors.baseShade4,
                             shape = RoundedCornerShape(6.dp)
                         )
+                )
+            } else {
+                Text(
+                    modifier = Modifier.padding(top = 6.dp),
+                    text = amityCommonString("amity_common_label_preview_not_available_title"),
+                    lineHeight = 10.sp,
+                    style = AmityTheme.typography.bodyLegacy.copy(
+                        fontWeight = FontWeight.SemiBold,
+                    ),
+                )
+                Text(
+                    modifier = Modifier.padding(top = 6.dp),
+                    text = amityCommonString("amity_common_label_preview_not_available_message"),
+                    maxLines = 2,
+                    lineHeight = 14.sp,
+                    overflow = TextOverflow.Ellipsis,
+                    style = AmityTheme.typography.bodyLegacy.copy(
+                        color = AmityTheme.colors.baseShade1,
+                    ),
                 )
             }
         }
@@ -387,7 +407,7 @@ fun AmityPreviewLinkViewWithMetadata(
             } else {
                 Text(
                     modifier = Modifier.padding(top = 6.dp),
-                    text = context.getString(R.string.amity_preview_not_available_title),
+                    text = amityCommonString("amity_common_label_preview_not_available_title"),
                     lineHeight = 10.sp,
                     style = AmityTheme.typography.bodyLegacy.copy(
                         fontWeight = FontWeight.SemiBold,
@@ -395,7 +415,7 @@ fun AmityPreviewLinkViewWithMetadata(
                 )
                 Text(
                     modifier = Modifier.padding(top = 6.dp),
-                    text = context.getString(R.string.amity_preview_not_available_message),
+                    text = amityCommonString("amity_common_label_preview_not_available_message"),
                     maxLines = 2,
                     lineHeight = 14.sp,
                     overflow = TextOverflow.Ellipsis,

@@ -1,0 +1,416 @@
+tasks.register('checkLocalizationBypass') {
+    group = 'verification'
+    description = 'Detects patterns that bypass the localization provider in social-compose and common-compose modules.'
+
+    doLast {
+        def violations = []
+
+        def moduleConfigs = [
+            [
+                name: 'social-compose',
+                sourceDir: file("${rootDir}/social-compose/src/main/java"),
+                patterns: [
+                    [
+                        regex: /stringResource\(R\.string\.amity/,
+                        suggestion: { String key -> "amitySocialString(\"${key}\")" }
+                    ],
+                    [
+                        regex: /context\.getString\(R\.string\.amity/,
+                        suggestion: { String key -> "DefaultAmitySocialStringProvider.getInstance().getString(\"${key}\")" }
+                    ],
+                    [
+                        regex: /context\.amityStringResource\(id\s*=\s*R\.string\.amity/,
+                        suggestion: { String key -> "Use the localization provider instead" }
+                    ],
+                    [
+                        regex: /resources\.getString\(R\.string\.amity/,
+                        suggestion: { String key -> "Use the localization provider instead" }
+                    ],
+                    [
+                        regex: /getConfig\(\)\.getText\(\)/,
+                        suggestion: { String key -> "amitySocialConfigString(\"fallback_key\")" }
+                    ],
+                    [
+                        regex: /amityStringResource\(\s*$/,
+                        suggestion: { String key -> "amitySocialConfigString(\"fallback_key\") — amityStringResource skips locale bundles" }
+                    ],
+                    [
+                        regex: /text\s*=\s*"[A-Z]/,
+                        suggestion: { String key -> "amitySocialString(\"amity_social_...\") — hardcoded string bypasses localization" }
+                    ],
+                    [
+                        regex: /text\s*=\s*if\s*\(.*\)\s*"[A-Z]/,
+                        suggestion: { String key -> "amitySocialString(\"amity_social_...\") — hardcoded if/else string bypasses localization" }
+                    ],
+                    [
+                        regex: /\)\s*"[A-Z][a-z].*"\s*else\s*"[A-Z]/,
+                        suggestion: { String key -> "amitySocialString(\"amity_social_...\") — hardcoded if/else branch bypasses localization" }
+                    ],
+                    [
+                        regex: /description\s*=\s*"[A-Z]/,
+                        suggestion: { String key -> "amitySocialString(\"amity_social_...\") — hardcoded description bypasses localization" }
+                    ],
+                    [
+                        regex: /buttonText\s*=\s*"[A-Z]/,
+                        suggestion: { String key -> "amitySocialString(\"amity_social_...\") — hardcoded button text bypasses localization" }
+                    ],
+                    [
+                        regex: /\bmessage\s*=\s*"[A-Z]/,
+                        suggestion: { String key -> "amitySocialString(\"amity_social_...\") — hardcoded snackbar/dialog message bypasses localization" }
+                    ],
+                    [
+                        regex: /[Tt]itle\s*=\s*"[A-Z]/,
+                        suggestion: { String key -> "amitySocialString(\"amity_social_...\") — hardcoded title bypasses localization" }
+                    ],
+                    [
+                        regex: /confirmText\s*=\s*"[A-Z]/,
+                        suggestion: { String key -> "amitySocialString(\"amity_social_...\") — hardcoded confirm button text bypasses localization" }
+                    ],
+                    [
+                        regex: /dismissText\s*=\s*"[A-Z]/,
+                        suggestion: { String key -> "amitySocialString(\"amity_social_...\") — hardcoded dismiss button text bypasses localization" }
+                    ],
+                    [
+                        regex: /hintText\s*[=:]\s*"[A-Z]/,
+                        suggestion: { String key -> "amitySocialString(\"amity_social_...\") — hardcoded hint text bypasses localization" }
+                    ],
+                    [
+                        regex: /placeHolderText\s*[=:]\s*"[A-Z]/,
+                        suggestion: { String key -> "amitySocialString(\"amity_social_...\") — hardcoded placeholder text bypasses localization" }
+                    ],
+                    [
+                        regex: /showProgressSnackbar\(\s*"/,
+                        suggestion: { String key -> "amitySocialString(\"amity_social_...\") — hardcoded snackbar message bypasses localization" }
+                    ],
+                    [
+                        regex: /showSnackbar\(\s*"/,
+                        suggestion: { String key -> "amitySocialString(\"amity_social_...\") — hardcoded snackbar message bypasses localization" }
+                    ],
+                    [
+                        regex: /publishSnackbarMessage\(\s*"/,
+                        suggestion: { String key -> "amitySocialString(\"amity_social_...\") — hardcoded snackbar message bypasses localization" }
+                    ],
+                    [
+                        regex: /publishSnackbarErrorMessage\(\s*"/,
+                        suggestion: { String key -> "amitySocialString(\"amity_social_...\") — hardcoded error snackbar message bypasses localization" }
+                    ],
+                    [
+                        regex: /onError\([^)]*"[A-Z]/,
+                        suggestion: { String key -> "amitySocialString(\"amity_social_...\") — hardcoded error message bypasses localization" }
+                    ],
+                    [
+                        regex: /\?\s*:\s*"[A-Z]/,
+                        suggestion: { String key -> "amitySocialString(\"amity_social_...\") — hardcoded fallback string bypasses localization" }
+                    ],
+                    [
+                        regex: /^\s*"[A-Z][a-z]/,
+                        suggestion: { String key -> "amitySocialString(\"amity_social_...\") — standalone hardcoded string bypasses localization" }
+                    ],
+                    [
+                        regex: /listOf\(\s*"[A-Z]/,
+                        suggestion: { String key -> "Use amitySocialString(\"amity_social_...\") for each tab label in the list" }
+                    ],
+                    [
+                        regex: /tabList\.add\("[ A-Z]/,
+                        suggestion: { String key -> "Use amitySocialString(\"amity_social_...\") for tab labels added to list" }
+                    ],
+                    [
+                        regex: /dialogText\s*=\s*"[A-Z]/,
+                        suggestion: { String key -> "amitySocialString(\"amity_social_...\") — hardcoded dialog text bypasses localization" }
+                    ],
+                    [
+                        regex: /Header\(\s*"[A-Z]/,
+                        suggestion: { String key -> "amitySocialString(\"amity_social_...\") — hardcoded header string bypasses localization" }
+                    ],
+                    [
+                        regex: /to\s*"[A-Z0-9][a-z]/,
+                        suggestion: { String key -> "amitySocialString(\"amity_social_...\") — hardcoded map value bypasses localization" }
+                    ],
+                    [
+                        regex: /->\s*"[A-Z]/,
+                        suggestion: { String key -> "amitySocialString(\"amity_social_...\") — hardcoded when-branch result bypasses localization" }
+                    ],
+                ],
+            ],
+            [
+                name: 'common-compose',
+                sourceDir: file("${rootDir}/common-compose/src/main/java"),
+                patterns: [
+                    [
+                        regex: /stringResource\(R\.string\.amity/,
+                        suggestion: { String key -> "amityCommonString(\"${key}\")" }
+                    ],
+                    [
+                        regex: /context\.getString\(R\.string\.amity/,
+                        suggestion: { String key -> "DefaultAmityCommonStringProvider.getInstance().getString(\"${key}\")" }
+                    ],
+                    [
+                        regex: /getConfig\(\)\.getText\(\)/,
+                        suggestion: { String key -> "amityCommonConfigString(\"fallback_key\")" }
+                    ],
+                    [
+                        regex: /text\s*=\s*"[A-Z]/,
+                        suggestion: { String key -> "amityCommonString(\"amity_common_...\") — hardcoded string bypasses localization" }
+                    ],
+                    [
+                        regex: /text\s*=\s*if\s*\(.*\)\s*"[A-Z]/,
+                        suggestion: { String key -> "amityCommonString(\"amity_common_...\") — hardcoded if/else string bypasses localization" }
+                    ],
+                    [
+                        regex: /description\s*=\s*"[A-Z]/,
+                        suggestion: { String key -> "amityCommonString(\"amity_common_...\") — hardcoded description bypasses localization" }
+                    ],
+                    [
+                        regex: /[Tt]itle\s*=\s*"[A-Z]/,
+                        suggestion: { String key -> "amityCommonString(\"amity_common_...\") — hardcoded title bypasses localization" }
+                    ],
+                ],
+            ],
+        ]
+
+        moduleConfigs.each { config ->
+            if (!config.sourceDir.exists()) {
+                return
+            }
+
+            def sourceTree = fileTree(config.sourceDir) {
+                include '**/*.kt'
+                exclude '**/localization/**'
+            }
+
+            sourceTree.each { File file ->
+                def fileName = file.name
+                if (fileName == 'AmitySocialStrings.kt' || fileName == 'AmityCommonStrings.kt') {
+                    return
+                }
+                // Allow the unified config+localization helpers and intentional toolbar pattern
+                if (fileName == 'AmitySocialConfigString.kt' || fileName == 'AmityCommonConfigString.kt' || fileName == 'AmityToolBar.kt') {
+                    return
+                }
+                // Skip usage example files — documentation code, not shipped UI
+                if (fileName.contains('UsageExamples') || fileName.contains('UsageExample')) {
+                    return
+                }
+                // Skip shimmer/skeleton layout files — placeholder structure, not user-facing text
+                if (fileName.contains('Shimmer')) {
+                    return
+                }
+
+                def lines = file.readLines()
+                def relativePath = config.name + file.path.substring(config.sourceDir.path.length())
+
+                boolean inBlockComment = false
+                boolean inPreviewFunction = false
+                int previewBraceDepth = 0
+                boolean inContentDescription = false
+                int contentDescBraceDepth = 0
+
+                lines.eachWithIndex { String line, int index ->
+                    int lineNumber = index + 1
+                    def trimmed = line.trim()
+
+                    // Track block comments
+                    if (trimmed.startsWith('/*')) inBlockComment = true
+                    if (inBlockComment) {
+                        if (trimmed.contains('*/')) inBlockComment = false
+                        return
+                    }
+                    // Skip single-line comments
+                    if (trimmed.startsWith('//')) return
+
+                    // Track @Preview-annotated composables — skip their bodies (dummy/test data)
+                    if (trimmed == '@Preview' || trimmed.startsWith('@Preview(')) {
+                        inPreviewFunction = true
+                        previewBraceDepth = 0
+                    }
+                    if (inPreviewFunction) {
+                        previewBraceDepth += trimmed.count('{') - trimmed.count('}')
+                        // Once we've entered and exited the function body, stop skipping
+                        if (previewBraceDepth < 0) {
+                            inPreviewFunction = false
+                            previewBraceDepth = 0
+                        }
+                        if (previewBraceDepth > 0 || trimmed.startsWith('@Preview') || trimmed.startsWith('fun ') || trimmed.startsWith('internal fun ') || trimmed.startsWith('private fun ')) {
+                            return
+                        }
+                    }
+
+                    // Track multi-line contentDescription blocks — skip their contents (accessibility)
+                    if (trimmed.contains('contentDescription') && (trimmed.contains('when') || trimmed.contains('if '))) {
+                        inContentDescription = true
+                        contentDescBraceDepth = 0
+                    }
+                    if (inContentDescription) {
+                        contentDescBraceDepth += trimmed.count('{') - trimmed.count('}')
+                        if (contentDescBraceDepth <= 0 && !trimmed.contains('contentDescription')) {
+                            inContentDescription = false
+                            contentDescBraceDepth = 0
+                        }
+                        return
+                    }
+                    // Also track contentDescription = if (...) "..." else "..." on the NEXT line
+                    if (trimmed =~ /contentDescription\s*=\s*$/) {
+                        inContentDescription = true
+                        contentDescBraceDepth = 0
+                    }
+
+                    config.patterns.each { pattern ->
+                        def matcher = line =~ pattern.regex
+
+                        if (matcher.find()) {
+                            // Check if match is in an inline comment
+                            int matchStart = matcher.start()
+                            def beforeMatch = line.substring(0, matchStart)
+                            if (beforeMatch.contains('//')) return
+                            // Skip debug/logging calls — not user-facing
+                            if (trimmed.startsWith('println(') || trimmed.startsWith('Log.') ||
+                                trimmed.contains('println(') && !trimmed.contains('message =') && !trimmed.contains('text =')) return
+                            // Skip constant declarations — intent extras, tags, etc.
+                            if (trimmed.contains('const val') || trimmed.contains('private val TAG') ||
+                                trimmed.startsWith('private const') || trimmed.startsWith('internal const')) return
+                            // Skip contentDescription — accessibility strings (managed separately)
+                            if (trimmed.contains('contentDescription')) return
+                            // Skip semantics blocks — accessibility descriptions (may span multiple lines)
+                            if (trimmed.contains('.semantics')) return
+                            // Skip HTTP header/auth token strings — not user-facing
+                            if (trimmed.contains('mapOf("Authorization"') || trimmed.contains('"Bearer ')) return
+                            // Skip LIVE timer format strings — time display with format specifiers
+                            if (trimmed.contains('"LIVE ') && trimmed.contains('format(')) return
+                            // Skip DateTimeFormat patterns — format strings, not user-facing text
+                            if (trimmed.contains('forPattern(') || trimmed.contains('DateTimeFormat') || trimmed.contains('SimpleDateFormat')) return
+                            // Skip require/check/error/throw — developer error messages, not user-facing
+                            if (trimmed.startsWith('require(') || trimmed.startsWith('check(') ||
+                                trimmed.startsWith('error(') || trimmed.startsWith('throw ') ||
+                                trimmed.contains('IllegalArgumentException') || trimmed.contains('IllegalStateException')) return
+                            // Skip checkNotNull / requireNotNull error messages
+                            if (trimmed.contains('ViewModelStoreOwner') || trimmed.contains('ViewModelStore')) return
+                            // Skip string comparisons — not displayed text
+                            if (trimmed =~ /==\s*"/ || trimmed =~ /!=\s*"/) return
+                            // Skip Kotlin when-branch conditions (string before ->)
+                            if (trimmed =~ /^"[^"]*"\s*->/) return
+                            // Skip sealed class/enum type checks in when branches
+                            if (trimmed =~ /^is\s+\w/) return
+                            // Skip import statements
+                            if (trimmed.startsWith('import ')) return
+                            // Skip annotation arguments
+                            if (trimmed.startsWith('@')) return
+                            // Skip intent/extra identifier strings (all-caps values)
+                            if (trimmed.contains('getStringExtra(') || trimmed.contains('putExtra(') || trimmed.contains('EXTRA_')) return
+                            // Skip percentage format strings (not user-facing text)
+                            if (trimmed.contains('%.') && trimmed.contains('format(')) return
+                            // Skip Timber/logging calls
+                            if (trimmed.startsWith('Timber.') || trimmed.startsWith('timber.')) return
+                            // Skip string interpolation format markers (e.g., "${count}k voters")
+                            if (trimmed.contains('readableNumber()') && trimmed.contains('to R.string.')) return
+                            // Check if this is an amityStringResource call with configString (allowed pattern)
+                            if (isAmityStringResourceWithConfigString(line, lines, index)) {
+                                return
+                            }
+
+                            // Extract the string key if possible
+                            def keyMatcher = line =~ /R\.string\.(amity\w+)/
+                            def key = keyMatcher.find() ? keyMatcher.group(1) : 'amity_...'
+                            def suggestion = pattern.suggestion(key)
+
+                            violations << [
+                                file: relativePath,
+                                line: lineNumber,
+                                text: line.trim(),
+                                suggestion: suggestion,
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!violations.isEmpty()) {
+            def report = new StringBuilder()
+            report.append('\nLOCALIZATION BYPASS DETECTED:\n')
+
+            violations.each { v ->
+                report.append("  ${v.file}:${v.line}\n")
+                report.append("    ${v.text}\n")
+                report.append("    → Use ${v.suggestion} instead\n\n")
+            }
+
+            report.append("Found ${violations.size()} localization bypass(es). All user-facing strings in social-compose and common-compose\n")
+            report.append('must go through the localization provider.\n')
+
+            throw new GradleException(report.toString())
+        } else {
+            logger.lifecycle('checkLocalizationBypass: No localization bypasses found. ✓')
+        }
+
+        // ── Thai translation coverage check ─────────────────────────────────
+        def thaiCoverageViolations = []
+
+        [
+            [
+                module: 'social-compose',
+                stringsXml: file("${rootDir}/social-compose/src/main/res/values/strings.xml"),
+                thaiKt: file("${rootDir}/sample/src/main/java/com/amity/socialcloud/uikit/sample/localization/AmitySocialThaiStrings.kt"),
+            ],
+            [
+                module: 'common-compose',
+                stringsXml: file("${rootDir}/common-compose/src/main/res/values/strings.xml"),
+                thaiKt: file("${rootDir}/sample/src/main/java/com/amity/socialcloud/uikit/sample/localization/AmityCommonThaiStrings.kt"),
+            ],
+        ].each { config ->
+            if (!config.stringsXml.exists() || !config.thaiKt.exists()) return
+
+            // Extract all string keys from strings.xml (skip empty_string)
+            def xmlKeys = []
+            config.stringsXml.text.findAll(/name="([^"]+)"/) { match, key ->
+                if (key != 'empty_string') xmlKeys << key
+            }
+
+            // Extract keys present in Thai KT file
+            def thaiKeys = [] as Set
+            config.thaiKt.text.findAll(/"([^"]+)"\s+to\s+"/) { match, key ->
+                thaiKeys << key
+            }
+
+            xmlKeys.each { key ->
+                if (!(key in thaiKeys)) {
+                    thaiCoverageViolations << "[${config.module}] Missing Thai translation: $key"
+                }
+            }
+        }
+
+        if (!thaiCoverageViolations.isEmpty()) {
+            def report = new StringBuilder()
+            report.append('\nMISSING THAI TRANSLATIONS:\n')
+            thaiCoverageViolations.each { v -> report.append("  $v\n") }
+            report.append("\nFound ${thaiCoverageViolations.size()} missing Thai translation(s).\n")
+            throw new GradleException(report.toString())
+        } else {
+            logger.lifecycle('checkLocalizationBypass: Thai translation coverage complete. ✓')
+        }
+    }
+}
+
+/**
+ * Returns true if the matched line is part of an amityStringResource(configString = ..., id = R.string.amity...)
+ * call, which is the allowed config system pattern.
+ */
+static boolean isAmityStringResourceWithConfigString(String currentLine, List<String> lines, int currentIndex) {
+    // Collect a window of lines: up to 5 lines before through 3 lines after
+    int startIdx = Math.max(0, currentIndex - 5)
+    int endIdx = Math.min(lines.size() - 1, currentIndex + 3)
+    def window = lines.subList(startIdx, endIdx + 1).join('\n')
+
+    // Check for amityStringResource with configString in the surrounding context
+    // The pattern is: amityStringResource( ... configString ... id = R.string.amity
+    if (window =~ /amityStringResource\([\s\S]*?configString\s*=/) {
+        // Also verify the current line or nearby lines contain the amityStringResource call
+        int lookbackStart = Math.max(0, currentIndex - 5)
+        for (int i = lookbackStart; i <= currentIndex; i++) {
+            if (lines[i] =~ /amityStringResource\(/) {
+                return true
+            }
+        }
+    }
+
+    return false
+}

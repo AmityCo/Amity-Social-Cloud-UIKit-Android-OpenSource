@@ -21,7 +21,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,6 +39,7 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentViewModel
 import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.AmityMentionSuggestionView
 import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.AmityMentionTextField
@@ -58,8 +58,6 @@ fun AmityCommentComposerBar(
     onError: () -> Unit = {},
     onClose: () -> Unit,
 ) {
-    val context = LocalContext.current
-
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
     }
@@ -172,6 +170,7 @@ fun AmityCommentComposerBar(
                     .background(color = AmityTheme.colors.baseShade4)
                     .testTag("comment_tray_component/comment_composer_text_field"),
                 value = commentText,
+                hintText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_share_to"),
                 mentionedUser = selectedUserToMention,
                 mentionMetadata = mentionedUsers,
                 mentionees = listOf(),
@@ -200,8 +199,15 @@ fun AmityCommentComposerBar(
                 }
             )
 
+            val commentExceedErrorStr = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_error_add_comment_exceed_error_message", COMMENT_MAX_CHAR_LIMIT)
+            val blockedWordsErrorStr = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_add_blocked_words_comment_error_message")
+            val blockedLinksErrorStr = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_add_blocked_links_comment_error_message")
+            val noInternetErrorStr = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_no_internet_connection")
+            val replyNoLongerAvailableStr = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_error_reply_no_longer_available_error_message")
+            val replyParentDeletedStr = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_error_add_reply_parent_deleted_error_message")
+            val addCommentErrorStr = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_error_add_comment_error_message")
             Text(
-                text = "Post",
+                text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_social_home_create_post_button"),
                 style = AmityTheme.typography.bodyLegacy.copy(
                     color = if (shouldAllowToPost) AmityTheme.colors.primary
                     else AmityTheme.colors.primaryShade2,
@@ -214,7 +220,7 @@ fun AmityCommentComposerBar(
                         // Check character limit before proceeding
                         if (commentText.length > COMMENT_MAX_CHAR_LIMIT) {
                             AmityUIKitSnackbar.publishSnackbarErrorMessage(
-                                context.getString(R.string.amity_add_comment_exceed_error_message, COMMENT_MAX_CHAR_LIMIT)
+                                commentExceedErrorStr
                             )
                             return@clickableWithoutRipple
                         }
@@ -241,20 +247,20 @@ fun AmityCommentComposerBar(
                             onError = {
                                 val errorMessage =
                                     if (AmityError.from(it) == AmityError.BAN_WORD_FOUND) {
-                                        context.getString(R.string.amity_add_blocked_words_comment_error_message)
+                                        blockedWordsErrorStr
                                     } else if(AmityError.from(it) == AmityError.LINK_NOT_ALLOWED) {
-                                        context.getString(R.string.amity_add_blocked_links_comment_error_message)
+                                        blockedLinksErrorStr
                                     } else if (AmityError.from(it) == AmityError.CONNECTION_ERROR) {
-                                        context.getString(R.string.amity_no_internet_error_message)
+                                        noInternetErrorStr
                                     } else {
                                         if (AmityError.from(it) == AmityError.ITEM_NOT_FOUND) {
                                             if (isReplyingToComment) {
-                                                context.getString(R.string.amity_reply_no_longer_available_error_message)
+                                                replyNoLongerAvailableStr
                                             } else {
-                                                context.getString(R.string.amity_add_reply_parent_deleted_error_message)
+                                                replyParentDeletedStr
                                             }
                                         } else {
-                                            context.getString(R.string.amity_add_comment_error_message)
+                                            addCommentErrorStr
                                         }
                                     }
                                 AmityUIKitSnackbar.publishSnackbarErrorMessage(

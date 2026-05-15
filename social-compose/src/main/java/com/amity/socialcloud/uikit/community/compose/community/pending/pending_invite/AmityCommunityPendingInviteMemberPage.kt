@@ -61,6 +61,7 @@ import com.amity.socialcloud.uikit.community.compose.community.membership.invite
 import com.amity.socialcloud.uikit.community.compose.search.components.AmityEmptySearchResultComponent
 import com.amity.socialcloud.uikit.community.compose.search.components.AmityEmptyUserListComponent
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityUserListShimmer
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
 fun AmityCommunityPendingInviteMemberPage(
@@ -109,7 +110,7 @@ fun AmityCommunityPendingInviteMemberPage(
                     )
 
                     Text(
-                        text = "Pending invitations",
+                        text = amitySocialString("amity_social_label_community_pending_invitations_title"),
                         style = AmityTheme.typography.titleLegacy,
                         modifier = modifier
                             .padding(vertical = 17.dp)
