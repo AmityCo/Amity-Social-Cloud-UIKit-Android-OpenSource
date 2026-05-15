@@ -78,17 +78,8 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
     private var isReachBottom = true
     private lateinit var imagePickerLauncher: ActivityResultLauncher<PickVisualMediaRequest>
 
-    private val requiredPermissions = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-        arrayOf(
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-        )
-    } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-        arrayOf(
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-        )
+    private val requiredPermissions = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+        arrayOf(Manifest.permission.RECORD_AUDIO)
     } else {
         arrayOf(
             Manifest.permission.RECORD_AUDIO,

@@ -1,9 +1,7 @@
 package com.amity.socialcloud.uikit.logging
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.pm.PackageManager
 import android.os.Environment
 import android.util.Log
 import timber.log.Timber
@@ -81,15 +79,8 @@ class AmityFileLoggingTree(private val context: Context) : Timber.Tree() {
     }
 
     private fun getLogFolder(): File? {
-        return if (isStoragePermissionGranted()) {
-            context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
-        } else {
-            context.cacheDir
-        }
+        return context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
     }
-
-    private fun isStoragePermissionGranted(): Boolean =
-        context.checkCallingOrSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
 
 
     @SuppressLint("LogNotTimber")

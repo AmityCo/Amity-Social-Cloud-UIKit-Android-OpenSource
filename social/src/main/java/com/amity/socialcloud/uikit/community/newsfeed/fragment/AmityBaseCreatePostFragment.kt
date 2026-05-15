@@ -78,7 +78,6 @@ import java.util.concurrent.TimeUnit
 
 
 const val REQUEST_STORAGE_PERMISSION_IMAGE_UPLOAD = 100
-const val REQUEST_STORAGE_PERMISSION_FILE_UPLOAD = 101
 const val REQUEST_STORAGE_PERMISSION_VIDEO_UPLOAD = 102
 const val REQUEST_CAMERA_PERMISSION_IMAGE_UPLOAD = 103
 const val REQUEST_CAMERA_PERMISSION_VIDEO_UPLOAD = 104
@@ -519,7 +518,7 @@ abstract class AmityBaseCreatePostFragment : AmityBaseFragment(),
         if (hasReachedSelectionLimit()) {
             view?.showSnackBar(getString(R.string.amity_create_post_max_image_selected_warning))
         } else {
-            grantStoragePermission(REQUEST_STORAGE_PERMISSION_FILE_UPLOAD) { openFilePicker() }
+            openFilePicker()
         }
     }
 
@@ -547,25 +546,8 @@ abstract class AmityBaseCreatePostFragment : AmityBaseFragment(),
         startActivityForResult(filesIntent, AmityConstants.PICK_FILES)
     }
 
-    private fun grantStoragePermission(requestCode: Int, onPermissionGrant: () -> Unit) {
-        val requiredPermissions = emptyList<String>().toMutableList()
-        requiredPermissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
-
-        val hasRequiredPermission = requiredPermissions.fold(true) { acc, permission ->
-            acc && hasPermission(permission)
-        }
-        if (hasRequiredPermission) {
-            onPermissionGrant()
-        } else {
-            requestPermission(requiredPermissions.toTypedArray(), requestCode)
-        }
-    }
-
     private fun grantCameraPermission(requestCode: Int, onPermissionGrant: () -> Unit) {
         val requiredPermissions = mutableListOf(Manifest.permission.CAMERA)
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-            requiredPermissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
-        }
         val hasRequiredPermission = requiredPermissions.fold(true) { acc, permission ->
             acc && hasPermission(permission)
         }
@@ -790,7 +772,6 @@ abstract class AmityBaseCreatePostFragment : AmityBaseFragment(),
         when (requestCode) {
             REQUEST_STORAGE_PERMISSION_IMAGE_UPLOAD -> openImagePicker()
             REQUEST_STORAGE_PERMISSION_VIDEO_UPLOAD -> openVideoPicker()
-            REQUEST_STORAGE_PERMISSION_FILE_UPLOAD -> openFilePicker()
             REQUEST_CAMERA_PERMISSION_IMAGE_UPLOAD -> takePicture()
             REQUEST_CAMERA_PERMISSION_VIDEO_UPLOAD -> takeVideo()
         }

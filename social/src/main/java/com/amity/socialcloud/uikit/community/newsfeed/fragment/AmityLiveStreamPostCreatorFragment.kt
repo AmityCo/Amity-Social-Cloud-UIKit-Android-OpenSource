@@ -50,9 +50,7 @@ import io.reactivex.rxjava3.internal.operators.flowable.FlowableInterval
 import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
-
 private const val REQUEST_LIVE_STREAM_CAMERA_PERMISSIONS = 20001
-private const val REQUEST_LIVE_STREAM_STORAGE_PERMISSIONS = 20002
 
 
 class AmityLiveStreamPostCreatorFragment : RxFragment() {
@@ -121,14 +119,6 @@ class AmityLiveStreamPostCreatorFragment : RxFragment() {
         }
     }
 
-    private fun grantStoragePermission(requestCode: Int, onPermissionGrant: () -> Unit) {
-        if (hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            onPermissionGrant()
-        } else {
-            requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), requestCode)
-        }
-    }
-
     private fun registerImagePickerResult() {
         imagePickerLauncher =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
@@ -169,13 +159,7 @@ class AmityLiveStreamPostCreatorFragment : RxFragment() {
         binding.iconClose.setOnClickListener { activity?.finish() }
         binding.togglePublish.setOnClickListener { startStreaming() }
         binding.iconAddThumbnail.setOnClickListener {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-                grantStoragePermission(
-                    REQUEST_LIVE_STREAM_STORAGE_PERMISSIONS
-                ) { openImagePicker() }
-            } else {
-                openImagePicker()
-            }
+            openImagePicker()
         }
         binding.thumbnailContainer.setOnClickListener {
             presentEditThumbnailDialog()
@@ -232,9 +216,6 @@ class AmityLiveStreamPostCreatorFragment : RxFragment() {
             REQUEST_LIVE_STREAM_CAMERA_PERMISSIONS -> {
                 setupView()
                 initBroadcaster()
-            }
-            REQUEST_LIVE_STREAM_STORAGE_PERMISSIONS -> {
-                openImagePicker()
             }
         }
     }

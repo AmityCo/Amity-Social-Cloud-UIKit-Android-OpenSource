@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.provider.Settings
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -285,18 +284,6 @@ fun AmityCreateRoomPage(
             ) == PackageManager.PERMISSION_GRANTED
         })
     }
-    val mediaPickerPermissions = Manifest.permission.READ_EXTERNAL_STORAGE
-
-    val isMediaPickerPermissionGranted by remember {
-        mutableStateOf(
-            ContextCompat.checkSelfPermission(
-                context,
-                mediaPickerPermissions
-            )
-                    == PackageManager.PERMISSION_GRANTED
-        )
-    }
-
     val cameraPermissionLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
             isCameraAndRecAudioPermissionGranted = permissions.entries.all { it.value }
@@ -323,22 +310,6 @@ fun AmityCreateRoomPage(
                 )
             }
         }
-
-    val mediaPickerPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            mediaPickerLauncher.launch(
-                PickVisualMediaRequest(
-                    mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
-                )
-            )
-        } else {
-            behavior.goToNoPermissionPage(
-                context = context,
-            )
-        }
-    }
 
     val startStreamButtonEnable =
         isCameraAndRecAudioPermissionGranted && (!uiState.liveTitle.isNullOrBlank() || uiState.room != null) && uiState.thumbnailUploadUiState !is LivestreamThumbnailUploadUiState.Uploading
@@ -1145,32 +1116,18 @@ fun AmityCreateRoomPage(
                                                         color = Color(0xFF40434E),
                                                         shape = RoundedCornerShape(size = 4.dp)
                                                     )
-                                                    .clickableWithoutRipple {
-                                                        if (isCameraAndRecAudioPermissionGranted) {
-                                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                                                mediaPickerLauncher.launch(
-                                                                    PickVisualMediaRequest(
-                                                                        mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
-                                                                    )
-                                                                )
-                                                            } else {
-                                                                if (isMediaPickerPermissionGranted) {
-                                                                    mediaPickerLauncher.launch(
-                                                                        PickVisualMediaRequest(
-                                                                            mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
-                                                                        )
-                                                                    )
-                                                                } else {
-                                                                    mediaPickerPermissionLauncher.launch(
-                                                                        mediaPickerPermissions
-                                                                    )
-                                                                }
-                                                            }
-                                                            haptics.performHapticFeedback(
-                                                                HapticFeedbackType.LongPress
-                                                            )
-                                                        }
-                                                    }
+                                                     .clickableWithoutRipple {
+                                                         if (isCameraAndRecAudioPermissionGranted) {
+                                                             mediaPickerLauncher.launch(
+                                                                 PickVisualMediaRequest(
+                                                                     mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
+                                                                 )
+                                                             )
+                                                             haptics.performHapticFeedback(
+                                                                 HapticFeedbackType.LongPress
+                                                             )
+                                                         }
+                                                     }
                                             ) {
                                                 Image(
                                                     painter = painterResource(R.drawable.amity_ic_create_livestream_add_thumbnail),

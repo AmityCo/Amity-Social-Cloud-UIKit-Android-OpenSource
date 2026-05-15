@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaMetadataRetriever
 import android.net.Uri
-import android.os.Build
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -119,18 +118,6 @@ fun AmityCreateClipPage(
             ) == PackageManager.PERMISSION_GRANTED
         })
     }
-    val mediaPickerPermissions = Manifest.permission.READ_EXTERNAL_STORAGE
-
-    val isMediaPickerPermissionGranted by remember {
-        mutableStateOf(
-            ContextCompat.checkSelfPermission(
-                context,
-                mediaPickerPermissions
-            )
-                    == PackageManager.PERMISSION_GRANTED
-        )
-    }
-
     val cameraPermissionLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
             isCameraPermissionGranted = permissions.entries.all { it.value }
@@ -173,22 +160,6 @@ fun AmityCreateClipPage(
                 }
             }
         }
-
-    val mediaPickerPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            mediaPickerLauncher.launch(
-                PickVisualMediaRequest(
-                    mediaType = ActivityResultContracts.PickVisualMedia.VideoOnly
-                )
-            )
-        } else {
-            behavior.goToNoPermissionPage(
-                context = context,
-            )
-        }
-    }
 
     DisposableEffectWithLifeCycle(
         onResume = {
@@ -393,25 +364,11 @@ fun AmityCreateClipPage(
                     if (isCameraPermissionGranted) {
                         haptics.performHapticFeedback(HapticFeedbackType.LongPress)
 
-                        // On Android 13+ (Tiramisu), no permissions needed for photo picker
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                            mediaPickerLauncher.launch(
+                        mediaPickerLauncher.launch(
                                 PickVisualMediaRequest(
                                     mediaType = ActivityResultContracts.PickVisualMedia.VideoOnly
                                 )
                             )
-                        } else {
-                            // For older versions, check storage permission first
-                            if (isMediaPickerPermissionGranted) {
-                                mediaPickerLauncher.launch(
-                                    PickVisualMediaRequest(
-                                        mediaType = ActivityResultContracts.PickVisualMedia.VideoOnly
-                                    )
-                                )
-                            } else {
-                                mediaPickerPermissionLauncher.launch(mediaPickerPermissions)
-                            }
-                        }
                     }
                 }
             } else {

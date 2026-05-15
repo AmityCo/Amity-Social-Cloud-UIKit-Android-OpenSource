@@ -36,7 +36,7 @@ fun AmityNoPermissionPage() {
         onResume = {
             if (ContextCompat.checkSelfPermission(
                     context,
-                    Manifest.permission.READ_EXTERNAL_STORAGE
+                    Manifest.permission.CAMERA
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
                 context.closePageWithResult(Activity.RESULT_OK)

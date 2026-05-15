@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
-import android.os.Build
 import android.provider.Settings
 import android.util.Log
 import androidx.activity.compose.BackHandler
@@ -239,18 +238,6 @@ fun AmityCreateLivestreamPage(
             ) == PackageManager.PERMISSION_GRANTED
         })
     }
-    val mediaPickerPermissions = Manifest.permission.READ_EXTERNAL_STORAGE
-
-    val isMediaPickerPermissionGranted by remember {
-        mutableStateOf(
-            ContextCompat.checkSelfPermission(
-                context,
-                mediaPickerPermissions
-            )
-                    == PackageManager.PERMISSION_GRANTED
-        )
-    }
-
     val cameraPermissionLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
             isCameraAndRecAudioPermissionGranted = permissions.entries.all { it.value }
@@ -277,22 +264,6 @@ fun AmityCreateLivestreamPage(
                 )
             }
         }
-
-    val mediaPickerPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            mediaPickerLauncher.launch(
-                PickVisualMediaRequest(
-                    mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
-                )
-            )
-        } else {
-            behavior.goToNoPermissionPage(
-                context = context,
-            )
-        }
-    }
 
     val startStreamButtonEnable =
         isCameraAndRecAudioPermissionGranted && !uiState.liveTitle.isNullOrBlank() && uiState.thumbnailUploadUiState !is LivestreamThumbnailUploadUiState.Uploading
@@ -916,25 +887,11 @@ fun AmityCreateLivestreamPage(
                                                         .align(Alignment.CenterStart)
                                                         .clickableWithoutRipple {
                                                             if (isCameraAndRecAudioPermissionGranted) {
-                                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                                                    mediaPickerLauncher.launch(
-                                                                        PickVisualMediaRequest(
-                                                                            mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
-                                                                        )
+                                                                mediaPickerLauncher.launch(
+                                                                    PickVisualMediaRequest(
+                                                                        mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
                                                                     )
-                                                                } else {
-                                                                    if (isMediaPickerPermissionGranted) {
-                                                                        mediaPickerLauncher.launch(
-                                                                            PickVisualMediaRequest(
-                                                                                mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
-                                                                            )
-                                                                        )
-                                                                    } else {
-                                                                        mediaPickerPermissionLauncher.launch(
-                                                                            mediaPickerPermissions
-                                                                        )
-                                                                    }
-                                                                }
+                                                                )
                                                                 haptics.performHapticFeedback(
                                                                     HapticFeedbackType.LongPress
                                                                 )
