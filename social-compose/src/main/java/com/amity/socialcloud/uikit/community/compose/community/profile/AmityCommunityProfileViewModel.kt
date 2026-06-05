@@ -111,6 +111,7 @@ class AmityCommunityProfileViewModel(private val communityId: String) :
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .asFlow()
+            .catch {}
     }
 
     fun getPin(): Flow<PagingData<AmityPinnedPost>> {
@@ -122,6 +123,7 @@ class AmityCommunityProfileViewModel(private val communityId: String) :
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .asFlow()
+            .catch {}
     }
 
     fun getCommunityPosts(): Flow<PagingData<AmityListItem>> {

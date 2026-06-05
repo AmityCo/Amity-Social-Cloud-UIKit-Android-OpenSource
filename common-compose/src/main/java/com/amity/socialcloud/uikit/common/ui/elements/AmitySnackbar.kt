@@ -62,6 +62,7 @@ data class AmitySnackbarVisuals(
     override val duration: SnackbarDuration = if (actionLabel == null) SnackbarDuration.Short else SnackbarDuration.Indefinite,
     override val withDismissAction: Boolean = false,
     var additionalHeight: Int = 0,
+    val dismissable: Boolean = false
 ) : SnackbarVisuals
 
 @Preview(showBackground = true)

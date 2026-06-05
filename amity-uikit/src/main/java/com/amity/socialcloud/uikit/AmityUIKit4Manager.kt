@@ -14,6 +14,7 @@ import com.amity.socialcloud.uikit.common.infra.initializer.AmityAppContext
 import com.amity.socialcloud.uikit.common.networkconfig.AmityNetworkConfigService
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetailPageBehavior
+import com.amity.socialcloud.uikit.community.compose.visitor.AmityVisitorUsageLimitObserver
 import io.reactivex.rxjava3.core.Completable
 
 object AmityUIKit4Manager {
@@ -34,6 +35,7 @@ object AmityUIKit4Manager {
         AmityStreamBroadcasterClient.setup(AmityCoreClient.getConfiguration())
         AmityStreamPlayerClient.setup(AmityCoreClient.getConfiguration())
         AmityAdEngine.init()
+        AmityVisitorUsageLimitObserver.init()
         AmityNetworkConfigService.init(apiKey)
         AmityUIKitConfigController.setup(AmityAppContext.getContext())
         AmityUIKitConfigController.initializeShareableLinkPattern()

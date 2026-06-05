@@ -216,7 +216,7 @@ fun AmityReplyCommentListView(
                     replyCount = 0,
                     isReplyComment = isL2Thread,
                 ) {
-                    if (isL2Thread && !showOtherL2Replies) {
+                    if (isL2Thread && !showOtherL2Replies && replyTargetId != null) {
                         showOtherL2Replies = true
                     } else {
                         commentViewModel.loadMoreReplies(commentId)

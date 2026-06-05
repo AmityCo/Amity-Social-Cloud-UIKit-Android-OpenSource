@@ -229,4 +229,7 @@ object AmityUIKitConfigController {
         return userLink
     }
 
+    fun getClipFeatureFlags() : JsonObject {
+        return config.featureFlags.getAsJsonObject("post")?.getAsJsonObject("clip") ?: JsonObject()
+    }
 }

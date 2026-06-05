@@ -6,6 +6,7 @@ import com.amity.socialcloud.sdk.model.core.product.AmityProduct
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.localization.DefaultAmityCommonStringProvider
+import com.amity.socialcloud.uikit.common.infra.initializer.AmityAppContext
 
 
 
@@ -33,6 +34,20 @@ open class AmityGlobalBehavior : AmityBaseBehavior()  {
         AmityUIKitSnackbar.publishSnackbarMessage(
             DefaultAmityCommonStringProvider.getInstance().getString("amity_common_label_follow_user_to_interact")
         )
+    }
+
+    open fun handleVisitorUsageLimitReached() {
+        val intent = Intent()
+        intent.setClassName(
+            AmityAppContext.getContext(),
+            "com.amity.socialcloud.uikit.community.compose.visitor.AmityVisitorUsageLimitPageActivity"
+        )
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        AmityAppContext.getContext().startActivity(intent)
+    }
+
+    open fun handleVisitorUsageLimitSignIn() {
+        AmityUIKitSnackbar.publishSnackbarMessage("Create an account or sign in to continue.")
     }
 
     open fun onPostProductTagClick(context: AmityGlobalBehavior.Context): Boolean {

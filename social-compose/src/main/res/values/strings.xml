@@ -451,6 +451,7 @@
     <string name="amity_social_button_yes">Yes</string>
     <string name="amity_social_placeholder_clip_caption">Add a caption...</string>
     <string name="amity_social_empty_state_empty_clip_feed">No clips yet</string>
+    <string name="amity_social_empty_state_empty_feed_no_posts">No post yet</string>
     <string name="amity_social_poll_post_composer_page_ends_on">Ends on %s at %s</string>
     <string name="amity_social_empty_state_empty_user_image_feed">No photos yet</string>
     <string name="amity_social_empty_state_empty_user_video_feed">No videos yet</string>
@@ -1186,4 +1187,8 @@
     <string name="amity_social_button_reaction_fire">Fire</string>
     <string name="amity_social_button_reaction_happy">Happy</string>
     <string name="amity_social_button_reaction_sad">Sad</string>
+    <string name="amity_social_visitor_limit_title">You\'ve reached your daily limit.</string>
+    <string name="amity_social_visitor_limit_subtitle">Create an account or sign in to keep exploring the community.</string>
+    <string name="amity_social_visitor_limit_sign_in">Sign in</string>
+    <string name="amity_social_visitor_limit_toast">Create an account or sign in to continue.</string>
 </resources>

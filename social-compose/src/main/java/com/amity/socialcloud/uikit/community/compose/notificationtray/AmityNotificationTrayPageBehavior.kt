@@ -2,9 +2,11 @@ package com.amity.socialcloud.uikit.community.compose.notificationtray
 
 import android.content.Context
 import com.amity.socialcloud.sdk.api.video.AmityVideoClient
+import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageActivity
 import com.amity.socialcloud.uikit.community.compose.event.detail.AmityEventDetailPageActivity
 import com.amity.socialcloud.uikit.community.compose.livestream.room.view.AmityRoomPlayerPageActivity
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostCategory
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetailPageActivity
 import com.amity.socialcloud.uikit.community.compose.user.edit.AmityEditUserProfilePageActivity
@@ -91,17 +93,12 @@ open class AmityNotificationTrayPageBehavior {
             .distinctUntilChanged { old, new -> old.getRoomId() == new.getRoomId() }
             .firstOrError()
             .doOnSuccess { room ->
-                room.getPost()
-                    ?.let {
-                        AmityRoomPlayerPageActivity.newIntent(
-                            context = context,
-                            post = it,
-                            fromInvitation = true,
-                        )
-                    }
-                    ?.let { intent ->
-                        context.startActivity(intent)
-                    }
+                 val intent = AmityRoomPlayerPageActivity.newIntent(
+                     context = context,
+                     post = room.getPost(),
+                     fromInvitation = true,
+                 )
+                context.startActivity(intent)
             }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

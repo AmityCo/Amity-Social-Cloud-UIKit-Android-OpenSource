@@ -22,7 +22,7 @@ class AmityStoryCommentReplyLoader(
     referenceId: String,
     referenceType: AmityCommentReferenceType,
     private val parentCommentId: String,
-    includeDeleted: Boolean = false,
+    private val includeDeleted: Boolean = false,
     isL2Thread: Boolean = false,
     private val replyPageSize: Int = DEFAULT_REPLY_PAGE_SIZE,
 ) {
@@ -44,7 +44,13 @@ class AmityStoryCommentReplyLoader(
                 if (isL2Thread) AmityCommentSortOption.FIRST_CREATED
                 else AmityCommentSortOption.LAST_CREATED
             )
-            .includeDeleted(includeDeleted)
+            // Always request includeDeleted=true at the SDK layer to avoid the SDK's
+            // markDeletedBefore/AfterCommentId side effect (CommentManualFirstPageLoadUseCase).
+            // That update is scoped only by `parentId IS [NOT] NULL` + createdAt, not by
+            // referenceId/parentId, so loading L2 replies for one L1 can mark sibling L1s
+            // as deleted and make them vanish from the parent list. The [includeDeleted]
+            // contract is honored via a client-side filter in getComments().
+            .includeDeleted(true)
             .pageSize(replyPageSize)
             .build()
             .loader()
@@ -110,6 +116,9 @@ class AmityStoryCommentReplyLoader(
             readyDeferred.complete(Unit)
             publishingComments
         }
+            .map { list ->
+                if (includeDeleted) list else list.filterNot { it.isDeleted() }
+            }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }

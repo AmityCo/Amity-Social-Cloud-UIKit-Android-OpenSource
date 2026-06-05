@@ -20,7 +20,6 @@ import com.amity.socialcloud.sdk.model.social.comment.AmityCommentReferenceType
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.elements.EXPANDABLE_TEXT_MAX_LINES
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
-import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentViewModel
 import com.amity.socialcloud.uikit.community.compose.comment.query.AmityReplyCommentView
@@ -61,10 +60,10 @@ fun AmityReplyCommentContainer(
     val commentViewModel =
         viewModel<AmityCommentTrayComponentViewModel>(viewModelStoreOwner = viewModelStoreOwner)
 
+    val replyLoadErrorSet by commentViewModel.replyLoadErrors.collectAsState()
+
     var shouldShowReplies by rememberSaveable { mutableStateOf(isExpanded) }
     var hideAfterError by rememberSaveable { mutableStateOf(false) }
-
-    val replyLoadErrorSet by commentViewModel.replyLoadErrors.collectAsState()
     LaunchedEffect(replyLoadErrorSet.contains(commentId)) {
         if (replyLoadErrorSet.contains(commentId)) {
             AmityUIKitSnackbar.publishSnackbarErrorMessage(
@@ -73,8 +72,10 @@ fun AmityReplyCommentContainer(
                 offsetFromBottom = 70
             )
             commentViewModel.clearReplyLoadError(commentId)
+            // Only collapse if replies are not already visible (error on initial load, not load-more)
             shouldShowReplies = false
             hideAfterError = true
+
         }
     }
 

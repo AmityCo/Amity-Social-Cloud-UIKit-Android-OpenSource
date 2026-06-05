@@ -28,11 +28,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.utils.getText
 import com.amity.socialcloud.uikit.common.utils.isSignedIn
-import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipFeedPage
 import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipFeedPageType
@@ -182,18 +182,21 @@ fun AmitySocialHomePage(
                         }
                     }
                 }
-                item {
-                    AmityBaseElement(
-                        pageScope = getPageScope(),
-                        elementId = "clips_button"
-                    ) {
-                        AmitySocialHomeTabButton(
-                            title = amitySocialConfigString("amity_social_button_social_home_clips_button"),
-                            item = AmitySocialHomePageTab.CLIPS,
-                            isSelected = selectedTab == AmitySocialHomePageTab.CLIPS,
-                            modifier = modifier.testTag(getAccessibilityId()),
+                val isClipEnabledAll = AmityUIKitConfigController.getClipFeatureFlags().get("can_view_tab").asString == "all"
+                if (isClipEnabledAll || AmityCoreClient.isSignedIn()) {
+                    item {
+                        AmityBaseElement(
+                            pageScope = getPageScope(),
+                            elementId = "clips_button"
                         ) {
-                            behavior.goToClipsFeedPage(context)
+                            AmitySocialHomeTabButton(
+                                title = amitySocialConfigString("amity_social_button_social_home_clips_button"),
+                                item = AmitySocialHomePageTab.CLIPS,
+                                isSelected = selectedTab == AmitySocialHomePageTab.CLIPS,
+                                modifier = modifier.testTag(getAccessibilityId()),
+                            ) {
+                                behavior.goToClipsFeedPage(context)
+                            }
                         }
                     }
                 }

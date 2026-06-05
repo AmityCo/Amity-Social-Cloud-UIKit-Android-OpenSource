@@ -83,6 +83,7 @@ import com.amity.socialcloud.uikit.community.compose.post.detail.components.Amit
 import com.google.gson.JsonObject
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
@@ -186,7 +187,12 @@ fun AmityPostPollElement(
     val poll = pollData!!
 
     val currentUser by produceState<AmityUser?>(initialValue = null) {
-        AmityCoreClient.getCurrentUser().asFlow().collect { value = it }
+        val userId = AmityCoreClient.getUserId()
+        if (userId.isNotEmpty()) {
+            AmityCoreClient.getCurrentUser().asFlow()
+                .catch {  }
+                .collect { value = it }
+        }
     }
 
     val textTypePoll = poll.getAnswers().any { it.dataType == "text" }

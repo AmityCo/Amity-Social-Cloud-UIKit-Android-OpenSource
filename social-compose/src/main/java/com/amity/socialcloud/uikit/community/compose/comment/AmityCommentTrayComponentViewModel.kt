@@ -93,6 +93,7 @@ open class AmityCommentTrayComponentViewModel : AmityBaseViewModel() {
     private val _replyLoadErrors = MutableStateFlow<Set<String>>(emptySet())
     val replyLoadErrors: StateFlow<Set<String>> = _replyLoadErrors.asStateFlow()
 
+
     private val _commentTarget = MutableStateFlow<AmityComment?>(null)
     val commentTarget: StateFlow<AmityComment?> = _commentTarget.asStateFlow()
 

@@ -27,8 +27,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.utils.isSignedIn
+import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
@@ -113,15 +116,18 @@ fun AmityEmptyClipFeedScreen(
                     color = Color.White,
                 )
             }
-            Spacer(Modifier.height(16.dp))
-            Text(
-                text = amitySocialString("amity_social_button_social_home_create_community"),
-                style = AmityTheme.typography.bodyBold,
-                color = Color.White,
-                modifier = Modifier.clickableWithoutRipple {
-                    onCreateCommunityClick()
-                }
-            )
+
+            if(AmityCoreClient.isSignedIn()) {
+                Spacer(Modifier.height(16.dp))
+                Text(
+                    text = amitySocialString("amity_social_button_social_home_create_community"),
+                    style = AmityTheme.typography.bodyBold,
+                    color = Color.White,
+                    modifier = Modifier.clickableWithoutRipple {
+                        onCreateCommunityClick()
+                    }
+                )
+            }
 
         }
 

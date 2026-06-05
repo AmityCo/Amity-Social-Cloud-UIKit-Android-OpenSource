@@ -429,6 +429,7 @@ object AmitySocialStrings {
         "amity_social_empty_state_empty_user_image_feed" to R.string.amity_social_empty_state_empty_user_image_feed,
         "amity_social_empty_state_empty_user_video_feed" to R.string.amity_social_empty_state_empty_user_video_feed,
         "amity_social_empty_state_empty_clip_feed" to R.string.amity_social_empty_state_empty_clip_feed,
+        "amity_social_empty_state_empty_feed_no_posts" to R.string.amity_social_empty_state_empty_feed_no_posts,
         "amity_social_button_livestream_terminated_ok" to R.string.amity_social_button_livestream_terminated_ok,
         "amity_social_button_livestream_add_thumbnail" to R.string.amity_social_button_livestream_add_thumbnail,
         "amity_social_status_livestream_end_live" to R.string.amity_social_status_livestream_end_live,

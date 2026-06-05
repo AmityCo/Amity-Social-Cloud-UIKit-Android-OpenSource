@@ -288,6 +288,12 @@
             android:theme="@style/AmitySocialTheme"
             android:windowSoftInputMode="adjustResize" />
         <activity
+            android:name=".visitor.AmityVisitorUsageLimitPageActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AmitySocialTheme"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
             android:name=".post.composer.poll.AmityPollPostComposerPageActivity"
             android:configChanges="uiMode"
             android:screenOrientation="portrait"

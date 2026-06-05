@@ -1028,5 +1028,12 @@
     "select_poll_target_page/*/my_timeline_avatar": {},
     "select_poll_target_page/*/title": {},
     "select_poll_target_page/*/my_timeline_text": {}
+  },
+  "feature_flags": {
+    "post": {
+      "clip": {
+        "can_view_tab": "all"
+      }
+    }
   }
 }

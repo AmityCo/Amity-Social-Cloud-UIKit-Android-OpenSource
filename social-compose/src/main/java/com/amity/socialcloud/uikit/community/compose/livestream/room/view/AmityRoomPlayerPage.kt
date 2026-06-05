@@ -160,8 +160,14 @@ import io.livekit.android.util.flow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import com.amity.socialcloud.sdk.api.social.AmitySocialClient
+import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.withContext
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
@@ -184,6 +190,25 @@ fun AmityRoomPlayerPage(
         viewModelStoreOwner = viewModelStoreOwner
     )
     val uiState by remember { viewModel.roomPlayerState }.collectAsState()
+
+    val eventMainCommunityIsJoined: Boolean? by remember(post.getPostId()) {
+        val eventId = post.getEventId()?.takeIf { it.isNotEmpty() }
+            ?: post.getChildren().firstOrNull()?.getEventId()?.takeIf { it.isNotEmpty() }
+        if (eventId.isNullOrEmpty()) {
+            flowOf<Boolean?>(null)
+        } else {
+            AmitySocialClient.newEventRepository()
+                .getEvent(eventId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .asFlow()
+                .map<com.amity.socialcloud.sdk.model.social.event.AmityEvent, Boolean?> {
+                    it.getTargetCommunity()?.isJoined()
+                }
+                .catch { emit(null) }
+        }
+    }.collectAsState(initial = null)
+
     val isLeaving = uiState.isLeaving
 
     var wasLive by remember { mutableStateOf(false) }
@@ -380,8 +405,8 @@ fun AmityRoomPlayerPage(
 
         return
     }
-    if (fromInvitation && (uiState.room?.getStatus() == AmityRoomStatus.ENDED || uiState.room?.getStatus() == AmityRoomStatus.RECORDED)
-        || uiState.reviewStatus == AmityReviewStatus.DECLINED
+    if ((fromInvitation && (uiState.room?.getStatus() == AmityRoomStatus.ENDED || uiState.room?.getStatus() == AmityRoomStatus.RECORDED)
+        || uiState.reviewStatus == AmityReviewStatus.DECLINED) || uiState.post.isDeleted()
     ) {
         AmityLivestreamDeclinedPage(
             onOkClick = {
@@ -1090,7 +1115,8 @@ fun AmityRoomPlayerPage(
                             onValueChange = {
                                 messageText = it
                             },
-                            isNonMember = (uiState.post.getTarget() as? AmityPost.Target.COMMUNITY)?.getCommunity()?.isJoined() != true,
+                            isNonMember = eventMainCommunityIsJoined?.let { !it }
+                                ?: ((uiState.post.getTarget() as? AmityPost.Target.COMMUNITY)?.getCommunity()?.isJoined() != true),
                             onSend = {
                                 messageText = ""
                             },

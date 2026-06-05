@@ -123,6 +123,15 @@
             app:layout_constraintStart_toStartOf="@id/communityHome"
             app:layout_constraintTop_toBottomOf="@id/liveChat" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/visitorUsageLimitPage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/amity_padding_m1"
+            android:text="Visitor Usage Limit Page"
+            app:layout_constraintStart_toStartOf="@id/communityHome"
+            app:layout_constraintTop_toBottomOf="@id/configSync" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.core.widget.NestedScrollView>

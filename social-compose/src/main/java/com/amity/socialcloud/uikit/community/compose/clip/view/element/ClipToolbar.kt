@@ -107,7 +107,7 @@ fun ClipToolbar(
                         )
                     }
                 }
-            } else if (!isError) {
+            } else if (!isError && AmityCoreClient.isSignedIn()) {
                 Box(
                     Modifier
                         .width(120.dp)

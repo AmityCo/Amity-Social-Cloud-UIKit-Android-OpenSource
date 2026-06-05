@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.livestream.room.view
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -10,6 +11,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.ui.Modifier
 import androidx.media3.common.util.UnstableApi
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
+import com.amity.socialcloud.uikit.common.utils.closePageWithResult
+import com.amity.socialcloud.uikit.community.compose.livestream.view.AmityLivestreamDeclinedPage
 
 class AmityRoomPlayerPageActivity : AppCompatActivity() {
 
@@ -34,6 +37,12 @@ class AmityRoomPlayerPageActivity : AppCompatActivity() {
                     post = post,
                     fromInvitation = fromInvitation,
                 )
+            } else {
+                AmityLivestreamDeclinedPage(
+                    onOkClick = {
+                        closePageWithResult(Activity.RESULT_OK)
+                    }
+                )
             }
         }
     }
@@ -44,7 +53,7 @@ class AmityRoomPlayerPageActivity : AppCompatActivity() {
 
         fun newIntent(
             context: Context,
-            post: AmityPost,
+            post: AmityPost?,
             fromInvitation: Boolean = false,
         ): Intent {
             return Intent(

@@ -16,7 +16,9 @@ data class AmityUIKitConfig(
     @SerializedName("social_reactions")
     val socialReactions: JsonArray,
     @SerializedName("customizations")
-    val customizations: JsonObject
+    val customizations: JsonObject,
+    @SerializedName("feature_flags")
+    val featureFlags: JsonObject
 ) {
     data class GlobalTheme(
         @SerializedName("light")

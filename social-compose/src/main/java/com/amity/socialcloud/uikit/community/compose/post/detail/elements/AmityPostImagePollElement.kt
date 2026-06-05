@@ -76,6 +76,7 @@ import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
@@ -112,7 +113,12 @@ fun AmityPostImagePollElement(
     // Hoist currentUser here so all PollItems share one subscription instead of each creating
     // their own subscription to the same stream.
     val currentUser by produceState<AmityUser?>(initialValue = null) {
-        AmityCoreClient.getCurrentUser().asFlow().collect { value = it }
+        val userId = AmityCoreClient.getUserId()
+        if (userId.isNotEmpty()) {
+            AmityCoreClient.getCurrentUser().asFlow()
+                .catch {  }
+                .collect { value = it }
+        }
     }
 
     // State to store the maximum height

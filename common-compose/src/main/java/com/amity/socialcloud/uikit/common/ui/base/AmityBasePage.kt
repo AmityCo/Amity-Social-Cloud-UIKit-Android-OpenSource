@@ -5,6 +5,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxDefaults
+import androidx.compose.material3.SwipeToDismissBoxValue
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -83,7 +87,19 @@ fun AmityBasePage(
                             is AmitySnackbarVisuals -> {
                                 val data = it.visuals as AmitySnackbarVisuals
                                 additionalHeight = data.additionalHeight
-                                AmitySnackbar(data = data)
+                                if ((it.visuals as AmitySnackbarVisuals).dismissable) {
+                                    SwipeToDismissBox(
+                                        state = rememberSwipeToDismissBoxState(
+                                            SwipeToDismissBoxValue.Settled,
+                                            SwipeToDismissBoxDefaults.positionalThreshold
+                                        ),
+                                        backgroundContent = {}
+                                    ) {
+                                        AmitySnackbar(data = it.visuals as AmitySnackbarVisuals)
+                                    }
+                                } else {
+                                    AmitySnackbar(data = data)
+                                }
                             }
 
                             is AmityProgressSnackbarVisuals -> {

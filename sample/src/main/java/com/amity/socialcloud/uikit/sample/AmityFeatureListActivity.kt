@@ -21,6 +21,7 @@ import com.amity.socialcloud.uikit.chat.home.AmityChatHomePageActivity
 import com.amity.socialcloud.uikit.chat.messages.AmityMessageListActivity
 import com.amity.socialcloud.uikit.community.compose.community.category.AmityAllCategoriesPageActivity
 import com.amity.socialcloud.uikit.community.compose.socialhome.AmitySocialHomePageActivity
+import com.amity.socialcloud.uikit.community.compose.visitor.AmityVisitorUsageLimitPageActivity
 import com.amity.socialcloud.uikit.community.home.activity.AmityCommunityHomePageActivity
 import com.amity.socialcloud.uikit.community.newsfeed.activity.AmityCustomPostRankingFeedActivity
 import com.amity.socialcloud.uikit.community.utils.AmityCommunityNavigation
@@ -148,6 +149,10 @@ class AmityFeatureListActivity : AppCompatActivity() {
                     })
 
                     .subscribe()
+            }
+
+            visitorUsageLimitPage.setOnClickListener {
+                startActivity(AmityVisitorUsageLimitPageActivity.newIntent(this@AmityFeatureListActivity))
             }
         }
     }
