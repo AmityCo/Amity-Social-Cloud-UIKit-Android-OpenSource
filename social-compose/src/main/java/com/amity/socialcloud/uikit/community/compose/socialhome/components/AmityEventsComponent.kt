@@ -17,6 +17,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.social.event.AmityEventOriginType
+import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.isVisitor
@@ -56,36 +57,38 @@ fun AmityEventsComponent(
     Column(modifier = modifier.fillMaxSize()) {
         if (!isVisitor) {
             // Tab Row
-            ScrollableTabRow(
-                selectedTabIndex = selectedTabIndex,
-                containerColor = AmityTheme.colors.background,
-                contentColor = AmityTheme.colors.primary,
-                edgePadding = 0.dp,
-                divider = {},
-                indicator = { tabPositions ->
-                    TabRowDefaults.SecondaryIndicator(
-                        modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                        color = AmityTheme.colors.primary,
-                        height = 2.dp
-                    )
+
+                ScrollableTabRow(
+                    selectedTabIndex = selectedTabIndex,
+                    containerColor = AmityTheme.colors.background,
+                    contentColor = AmityTheme.colors.primary,
+                    edgePadding = 0.dp,
+                    divider = {},
+                    indicator = { tabPositions ->
+                        TabRowDefaults.SecondaryIndicator(
+                            modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
+                            color = AmityTheme.colors.primary,
+                            height = 2.dp
+                        )
+                    }
+                ) {
+                    tabTitles.forEachIndexed { index, title ->
+                        Tab(
+                            selected = selectedTabIndex == index,
+                            onClick = { selectedTabIndex = index },
+                            text = {
+                                Text(
+                                    text = title,
+                                    style = AmityTheme.typography.body.copy(
+                                        fontWeight = FontWeight.Bold
+                                    ),
+                                    color = if (selectedTabIndex == index) AmityTheme.colors.primary else AmityTheme.colors.baseShade1
+                                )
+                            }
+                        )
+                    }
                 }
-            ) {
-                tabTitles.forEachIndexed { index, title ->
-                    Tab(
-                        selected = selectedTabIndex == index,
-                        onClick = { selectedTabIndex = index },
-                        text = {
-                            Text(
-                                text = title,
-                                style = AmityTheme.typography.body.copy(
-                                    fontWeight = FontWeight.Bold
-                                ),
-                                color = if (selectedTabIndex == index) AmityTheme.colors.primary else AmityTheme.colors.baseShade1
-                            )
-                        }
-                    )
-                }
-            }
+
         }
 
         // Content based on selected tab

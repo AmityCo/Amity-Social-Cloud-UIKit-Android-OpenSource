@@ -187,7 +187,7 @@ fun AmitySocialHomePage(
                     item {
                         AmityBaseElement(
                             pageScope = getPageScope(),
-                            elementId = "clips_button"
+                            elementId = "clipsfeed_button"
                         ) {
                             AmitySocialHomeTabButton(
                                 title = amitySocialConfigString("amity_social_button_social_home_clips_button"),

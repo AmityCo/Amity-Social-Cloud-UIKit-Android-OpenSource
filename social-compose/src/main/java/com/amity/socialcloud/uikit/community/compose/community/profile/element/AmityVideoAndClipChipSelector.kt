@@ -17,8 +17,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
+import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -27,6 +30,7 @@ fun AmityVideoAndClipChipSelector(
     selectedTabIndex: Int,
     onTabSelected: (Int) -> Unit,
     modifier: Modifier = Modifier,
+    componentScope: AmityComposeComponentScope? = null,
 ) {
     FlowRow(
         modifier = modifier
@@ -35,22 +39,32 @@ fun AmityVideoAndClipChipSelector(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         tabTitles.forEachIndexed { index, title ->
+            val elementId = when (title) {
+                DefaultAmitySocialStringProvider.getInstance().getString("amity_social_tab_tab_clips") -> "clips_button"
+                DefaultAmitySocialStringProvider.getInstance().getString("amity_social_tab_tab_videos") -> "videos_button"
+                else -> "photos_button"
+            }
             val isSelected = selectedTabIndex == index
-            Surface(
-                shape = RoundedCornerShape(16.dp),
-                color = if (isSelected) Color(0xFF1054DE) else AmityTheme.colors.baseShade4,
-                modifier = Modifier.clickableWithoutRipple {
-                    if (!isSelected) {
-                        onTabSelected(index)
-                    }
-                }
+            AmityBaseElement(
+                elementId = elementId,
+                componentScope = componentScope
             ) {
-                Text(
-                    text = title,
-                    color = if (isSelected) Color.White else AmityTheme.colors.baseShade1,
-                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                    style = if (isSelected) AmityTheme.typography.bodyBold else AmityTheme.typography.body
-                )
+                Surface(
+                    shape = RoundedCornerShape(16.dp),
+                    color = if (isSelected) Color(0xFF1054DE) else AmityTheme.colors.baseShade4,
+                    modifier = Modifier.clickableWithoutRipple {
+                        if (!isSelected) {
+                            onTabSelected(index)
+                        }
+                    }
+                ) {
+                    Text(
+                        text = title,
+                        color = if (isSelected) Color.White else AmityTheme.colors.baseShade1,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                        style = if (isSelected) AmityTheme.typography.bodyBold else AmityTheme.typography.body
+                    )
+                }
             }
         }
     }

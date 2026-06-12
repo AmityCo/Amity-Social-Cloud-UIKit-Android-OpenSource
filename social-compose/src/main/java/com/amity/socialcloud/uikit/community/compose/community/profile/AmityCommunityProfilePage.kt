@@ -51,6 +51,7 @@ import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunityPostSettings
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
+import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
@@ -492,13 +493,19 @@ fun AmityCommunityProfilePage(
 
                                 3 -> {
                                     item {
-                                        AmityVideoAndClipChipSelector(
-                                            tabTitles = mediaTabTitles,
-                                            selectedTabIndex = selectedMediaTabIndex,
-                                            onTabSelected = { index ->
-                                                selectedMediaTabIndex = index
-                                            },
-                                        )
+                                        AmityBaseComponent(
+                                            componentId = "community_video_feed",
+                                            pageScope = getPageScope()
+                                        ) {
+                                            AmityVideoAndClipChipSelector(
+                                                tabTitles = mediaTabTitles,
+                                                selectedTabIndex = selectedMediaTabIndex,
+                                                onTabSelected = { index ->
+                                                    selectedMediaTabIndex = index
+                                                },
+                                                componentScope = getComponentScope()
+                                            )
+                                        }
                                     }
                                     when (selectedMediaTabIndex) {
                                         0 -> {
@@ -629,6 +636,7 @@ fun AmityCommunityProfilePage(
                                 showPollSelectionBottomSheet = true
                             },
                             onDismiss = { expanded = false },
+                            pageScope = getPageScope()
                         )
                     }
                     if (bottomSheetUiState !is AmityCommunityModalSheetUIState.CloseSheet) {

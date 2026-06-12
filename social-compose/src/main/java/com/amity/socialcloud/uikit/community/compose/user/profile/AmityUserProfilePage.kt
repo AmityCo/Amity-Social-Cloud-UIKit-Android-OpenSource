@@ -62,6 +62,7 @@ import com.amity.socialcloud.sdk.api.social.post.query.AmityFeedSource
 import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.core.follow.AmityFollowStatus
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
+import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
@@ -384,13 +385,19 @@ fun AmityUserProfilePage(
 
                     1 -> {
                         item {
-                            AmityVideoAndClipChipSelector(
-                                tabTitles = mediaTabTitles,
-                                selectedTabIndex = selectedMediaTabIndex,
-                                onTabSelected = { index ->
-                                    selectedMediaTabIndex = index
-                                },
-                            )
+                            AmityBaseComponent(
+                                componentId = "user_video_feed",
+                                pageScope = getPageScope()
+                            ) {
+                                AmityVideoAndClipChipSelector(
+                                    tabTitles = mediaTabTitles,
+                                    selectedTabIndex = selectedMediaTabIndex,
+                                    onTabSelected = { index ->
+                                        selectedMediaTabIndex = index
+                                    },
+                                    componentScope = getComponentScope()
+                                )
+                            }
                         }
 
                         when (selectedMediaTabIndex) {
@@ -549,6 +556,7 @@ fun AmityUserProfilePage(
             if (showUserActionSheet && user != null) {
                 AmityUserActionsBottomSheet(
                     user = user!!,
+                    pageScope = getPageScope(),
                     showPollTypeSelectionSheet = {
                         showPollSelectionBottomSheet = true
                     }

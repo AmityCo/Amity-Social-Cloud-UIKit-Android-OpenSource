@@ -511,7 +511,7 @@ fun AmityEventDetailPage(
                         pageScope = pageScope,
                         elementId = "event_discussion_create_post_button",
                     ) {
-                        if (community != null) {
+                        if (community != null && community?.isJoined() == true) {
                             FloatingActionButton(
                                 onClick = {
                                     showCreatePostBottomSheet = true

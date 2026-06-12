@@ -20,7 +20,9 @@ import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
+import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem
+import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
@@ -33,6 +35,7 @@ import com.amity.socialcloud.uikit.community.compose.localization.amitySocialStr
 @Composable
 fun AmityUserActionsBottomSheet(
     modifier: Modifier = Modifier,
+    pageScope: AmityComposePageScope? = null,
     user: AmityUser,
     showPollTypeSelectionSheet: () -> Unit,
     onDismiss: () -> Unit,
@@ -60,62 +63,84 @@ fun AmityUserActionsBottomSheet(
                 testTagsAsResourceId = true
             },
     ) {
+
         Column(
             modifier = modifier
                 .background(AmityTheme.colors.background)
                 .padding(start = 16.dp, end = 16.dp, bottom = 64.dp)
         ) {
-            AmityBottomSheetActionItem(
-                icon = R.drawable.amity_ic_post_create,
-                text = amitySocialString("amity_social_button_social_home_create_post_button"),
-                modifier = modifier,
+            AmityBaseElement(
+                pageScope = pageScope,
+                elementId = "create_post_button"
             ) {
-                onDismiss()
-                behavior.goToPostComposerPage(
-                    context = context,
-                    userId = user.getUserId(),
-                )
+                AmityBottomSheetActionItem(
+                    icon = R.drawable.amity_ic_post_create,
+                    text = amitySocialString("amity_social_button_social_home_create_post_button"),
+                    modifier = modifier,
+                ) {
+                    onDismiss()
+                    behavior.goToPostComposerPage(
+                        context = context,
+                        userId = user.getUserId(),
+                    )
+                }
             }
 
-            AmityBottomSheetActionItem(
-                icon = R.drawable.ic_amity_ic_poll_create,
-                text = amitySocialString("amity_social_button_poll"),
-                modifier = modifier,
+            AmityBaseElement(
+                pageScope = pageScope,
+                elementId = "create_poll_button"
             ) {
-                onDismiss()
-                showPollTypeSelectionSheet()
+                AmityBottomSheetActionItem(
+                    icon = R.drawable.ic_amity_ic_poll_create,
+                    text = amitySocialString("amity_social_button_poll"),
+                    modifier = modifier,
+                ) {
+                    onDismiss()
+                    showPollTypeSelectionSheet()
 //                behavior.goToPollComposerPage(
 //                    context = context,
 //                    userId = user.getUserId(),
 //                )
+                }
             }
 
-            AmityBottomSheetActionItem(
-                icon = R.drawable.ic_amity_ic_live_stream_create,
-                text = amitySocialString("amity_social_status_live_stream"),
-                modifier = modifier,
+
+            AmityBaseElement(
+                pageScope = pageScope,
+                elementId = "create_livestream_button"
             ) {
-                onDismiss()
-                behavior.goToLivestreamPostComposerPage(
-                    context = context,
-                    targetId = user.getUserId(),
-                    targetType = AmityPost.TargetType.USER,
-                    community = null
-                )
+                AmityBottomSheetActionItem(
+                    icon = R.drawable.ic_amity_ic_live_stream_create,
+                    text = amitySocialString("amity_social_status_live_stream"),
+                    modifier = modifier,
+                ) {
+                    onDismiss()
+                    behavior.goToLivestreamPostComposerPage(
+                        context = context,
+                        targetId = user.getUserId(),
+                        targetType = AmityPost.TargetType.USER,
+                        community = null
+                    )
+                }
             }
 
-            AmityBottomSheetActionItem(
-                icon = R.drawable.amity_ic_create_clip,
-                text = amitySocialString("amity_social_button_clip"),
-                modifier = modifier,
+            AmityBaseElement(
+                pageScope = pageScope,
+                elementId = "create_clip_button"
             ) {
-                onDismiss()
-                behavior.goToClipPostComposerPage(
-                    context = context,
-                    targetId = user.getUserId(),
-                    launcher = launcher,
-                    targetType = AmityPostTargetType.USER
-                )
+                AmityBottomSheetActionItem(
+                    icon = R.drawable.amity_ic_create_clip,
+                    text = amitySocialString("amity_social_button_clip"),
+                    modifier = modifier,
+                ) {
+                    onDismiss()
+                    behavior.goToClipPostComposerPage(
+                        context = context,
+                        targetId = user.getUserId(),
+                        launcher = launcher,
+                        targetType = AmityPostTargetType.USER
+                    )
+                }
             }
         }
     }
