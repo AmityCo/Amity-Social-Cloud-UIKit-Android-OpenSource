@@ -26,7 +26,7 @@ fun AmityClipLoadStateError(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(AmityTheme.colors.baseShade1),
+            .background(AmityTheme.colors.secondaryShade1),
     ) {
         Column(
             modifier = Modifier.align(

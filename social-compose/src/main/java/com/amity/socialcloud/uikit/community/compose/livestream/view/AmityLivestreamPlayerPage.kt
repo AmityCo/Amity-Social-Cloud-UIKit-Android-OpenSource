@@ -66,6 +66,7 @@ import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.sdk.model.video.stream.AmityStream
 import com.amity.socialcloud.sdk.video.presentation.AmityVideoPlayer
 import com.amity.socialcloud.uikit.common.common.isNotEmptyOrBlank
+import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
 import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.model.AmityMessageReactions
@@ -574,7 +575,7 @@ fun CommunityLivestreamPlayerHeader(
             val user = (post.getTarget() as? AmityPost.Target.USER)?.getUser()
             Pair(
                 user?.getDisplayName() ?: DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_unknown_user"),
-                user?.getAvatar()?.getUrl(AmityImage.Size.MEDIUM) ?: ""
+                user?.resolvedAvatarUrl() ?: ""
             )
         }
 

@@ -12,8 +12,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
-import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
+import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
 import com.amity.socialcloud.uikit.common.base.AmityPickerFragment
 import com.amity.socialcloud.uikit.common.common.showSnackBar
 import com.amity.socialcloud.uikit.common.common.views.dialog.AmityBottomSheetDialogFragment
@@ -130,7 +130,7 @@ class AmityUserProfileEditorFragment : AmityPickerFragment() {
     private fun setupUserData(user: AmityUser) {
         binding.etDisplayName.setText(user.getDisplayName())
         binding.etAbout.setText(user.getDescription())
-        user.getAvatar()?.getUrl(AmityImage.Size.SMALL)?.apply {
+        user.resolvedAvatarUrl()?.apply {
             setProfilePicture(Uri.parse(this))
         }
     }

@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -29,7 +31,6 @@ import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.common.utils.getKeyboardHeight
 import com.amity.socialcloud.uikit.common.utils.isKeyboardVisible
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerPageViewModel
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.AmityDetailedMediaAttachmentComponent
@@ -43,7 +44,6 @@ fun AmityMediaAttachmentElement(
     val keyboardController = LocalSoftwareKeyboardController.current
 
     val isKeyboardOpen by isKeyboardVisible()
-    val keyboardHeight by getKeyboardHeight()
     var showDetailedView by remember { mutableStateOf(true) }
     var verticalDragAmount by remember { mutableFloatStateOf(0f) }
 
@@ -53,11 +53,16 @@ fun AmityMediaAttachmentElement(
     val viewModel =
         viewModel<AmityPostComposerPageViewModel>(viewModelStoreOwner = viewModelStoreOwner)
 
+    val selectedMediaFiles by viewModel.selectedMediaFiles.collectAsState()
+    val hasMediaAttached by remember {
+        derivedStateOf { selectedMediaFiles.isNotEmpty() }
+    }
 
-    LaunchedEffect(isKeyboardOpen) {
-        if (isKeyboardOpen) {
-            showDetailedView = false
-        }
+    LaunchedEffect(isKeyboardOpen, hasMediaAttached) {
+        // Collapse to the compact attachment row whenever the keyboard is open OR
+        // media is already attached — the detailed picker would otherwise cover
+        // the selected-media preview.
+        showDetailedView = !isKeyboardOpen && !hasMediaAttached
     }
 
     Column(
@@ -68,7 +73,9 @@ fun AmityMediaAttachmentElement(
                     onDragEnd = {
                         val isDragUp = verticalDragAmount < 0
                         if (isDragUp) {
-                            if (!isKeyboardOpen) {
+                            // Don't expand to the detailed picker if media is already
+                            // attached — the compact row is the intended state.
+                            if (!isKeyboardOpen && !hasMediaAttached) {
                                 showDetailedView = true
                             }
                         } else {
@@ -134,13 +141,6 @@ fun AmityMediaAttachmentElement(
                     pageScope = pageScope,
                     viewModel = viewModel,
                 )
-
-                Box(
-                    modifier = modifier.size(
-                        keyboardHeight.minus(if (isKeyboardOpen) 20.dp else 0.dp)
-                    )
-                )
-                Box(modifier = modifier.size(6.dp))
             }
         }
     }

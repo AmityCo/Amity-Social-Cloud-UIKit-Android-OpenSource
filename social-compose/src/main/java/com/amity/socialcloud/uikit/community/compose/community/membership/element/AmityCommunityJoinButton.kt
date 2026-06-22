@@ -183,7 +183,7 @@ fun AmityCommunityJoinButton(
         // Pending button UI
         Row(
             modifier = Modifier
-                .background(Color.White, shape = RoundedCornerShape(6.dp))
+                .background(AmityTheme.colors.background, shape = RoundedCornerShape(6.dp))
                 .border(
                     width = 1.dp,
                     color = AmityTheme.colors.secondaryShade3,
@@ -361,7 +361,7 @@ fun TestPendingButton() {
     // This is for when complete plug with sdk need to find param to check this condition
     Row(
         modifier = Modifier
-            .background(Color.White, shape = RoundedCornerShape(6.dp))
+            .background(AmityTheme.colors.background, shape = RoundedCornerShape(6.dp))
             .border(
                 width = 1.dp,
                 color = AmityTheme.colors.secondaryShade3,

@@ -196,7 +196,7 @@ fun AmityReportOtherReasonScreen(
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = AmityTheme.colors.primary,
-                disabledContainerColor = AmityTheme.colors.primaryShade3
+                disabledContainerColor = AmityTheme.colors.primary.copy(alpha = 0.3f)
             ),
         ) {
             Text(

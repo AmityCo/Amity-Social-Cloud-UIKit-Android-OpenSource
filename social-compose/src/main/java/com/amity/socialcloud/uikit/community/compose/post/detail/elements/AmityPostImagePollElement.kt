@@ -357,7 +357,7 @@ private fun PollItem(
             },
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White,
+            containerColor = AmityTheme.colors.background,
         ),
         border = if (isSelected) {
             BorderStroke(2.dp, AmityTheme.colors.primary)

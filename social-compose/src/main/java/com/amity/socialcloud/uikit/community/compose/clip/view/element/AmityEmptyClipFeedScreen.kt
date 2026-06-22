@@ -44,7 +44,7 @@ fun AmityEmptyClipFeedScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(AmityTheme.colors.baseShade1)
+            .background(AmityTheme.colors.secondaryShade1)
     ) {
         // Top Gradient
         Box(

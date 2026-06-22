@@ -8,8 +8,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.paging.PagingData
 import androidx.paging.map
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.social.member.AmityCommunityMember
+import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
 import com.amity.socialcloud.uikit.common.base.AmityBaseFragment
 import com.amity.socialcloud.uikit.common.common.setShape
 import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
@@ -82,7 +82,7 @@ class AmityModeratorsFragment : AmityBaseFragment(), AmityMemberClickListener {
             if (ekoUser != null) {
                 val selectMemberItem = AmitySelectMemberItem(
                     ekoUser.getUserId(),
-                    ekoUser.getAvatar()?.getUrl(AmityImage.Size.MEDIUM) ?: "",
+                    ekoUser.resolvedAvatarUrl() ?: "",
                     ekoUser.getDisplayName() ?: getString(R.string.amity_anonymous),
                     ekoUser.getDescription(),
                     false

@@ -8,8 +8,8 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.amity.socialcloud.sdk.model.core.error.AmityException
-import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
+import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
 import com.amity.socialcloud.sdk.model.social.member.AmityCommunityMember
 import com.amity.socialcloud.uikit.common.model.AmitySelectMemberItem
 import com.amity.socialcloud.uikit.common.utils.AmityAlertDialogUtil
@@ -80,7 +80,7 @@ abstract class AmityCommunityMembersBaseViewHolder(
                 communityMemberViewModel.updateSelectedMembersList(
                     AmitySelectMemberItem(
                         ekoUser.getUserId(),
-                        ekoUser.getAvatar()?.getUrl(AmityImage.Size.MEDIUM) ?: "",
+                        ekoUser.resolvedAvatarUrl() ?: "",
                         ekoUser.getDisplayName()
                             ?: context.getString(R.string.amity_anonymous),
                         ekoUser.getDescription(),

@@ -329,7 +329,7 @@ fun PendingJoinRequestsContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(AmityTheme.colors.background)
     ) {
 
         if (isModerator && (requestListState == AmityPendingRequestPageViewModel.RequestListState.SUCCESS || requestListState == AmityPendingRequestPageViewModel.RequestListState.EMPTY)) {

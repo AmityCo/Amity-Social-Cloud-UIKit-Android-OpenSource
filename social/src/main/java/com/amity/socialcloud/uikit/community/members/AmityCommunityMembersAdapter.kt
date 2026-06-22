@@ -8,8 +8,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
-import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
+import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
 import com.amity.socialcloud.sdk.model.social.member.AmityCommunityMember
 import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagingDataAdapter
 import com.amity.socialcloud.uikit.common.common.views.bottomsheet.AmityBottomSheetListFragment
@@ -75,7 +75,7 @@ class AmityCommunityMembersAdapter(
                     listener = this@AmityCommunityMembersAdapter.listener
                     isJoined = this@AmityCommunityMembersAdapter.isJoined
                     communityMemberShip = data
-                    avatarUrl = member.getUser()?.getAvatar()?.getUrl(AmityImage.Size.MEDIUM)
+                    avatarUrl = member.getUser()?.resolvedAvatarUrl()
                     isMyUser = data.getUserId() == AmityCoreClient.getUserId()
                     isBanned = isBannedUser(data)
 

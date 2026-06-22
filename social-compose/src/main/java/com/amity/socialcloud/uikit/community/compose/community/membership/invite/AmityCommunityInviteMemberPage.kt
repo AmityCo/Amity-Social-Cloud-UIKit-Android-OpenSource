@@ -98,6 +98,7 @@ fun AmityCommunityInviteMemberPage(
                     Icon(
                         painter = painterResource(R.drawable.amity_ic_close),
                         contentDescription = "Close",
+                        tint = AmityTheme.colors.base,
                         modifier = modifier
                             .size(16.dp)
                             .align(Alignment.CenterStart)

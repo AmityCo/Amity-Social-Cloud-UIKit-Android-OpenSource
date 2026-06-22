@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.amity.socialcloud.sdk.model.core.file.AmityImage
+import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.base.AmityBaseFragment
 import com.amity.socialcloud.uikit.community.R
@@ -117,7 +117,7 @@ class AmityPostTargetPickerFragment : AmityBaseFragment(),
     private fun initProfileImage() {
         viewModel.getUser({
             val user = it
-            val imageURL = user.getAvatar()?.getUrl(AmityImage.Size.SMALL)
+            val imageURL = user.resolvedAvatarUrl()
             Glide.with(this)
                 .load(imageURL)
                 .placeholder(R.drawable.amity_ic_default_profile_large)

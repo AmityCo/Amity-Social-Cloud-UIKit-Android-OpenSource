@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import com.amity.socialcloud.sdk.model.core.product.AmityProduct
 import com.amity.socialcloud.sdk.model.core.product.AmityProductStatus
+import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.common.AmityWebView
 import org.joda.time.DateTime
@@ -77,7 +78,7 @@ fun AmityProductWebViewComponent(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(Color.White)
+            .background(AmityTheme.colors.background)
     ) {
         // Title Section — always visible even on error
         Row(
@@ -143,7 +144,7 @@ fun AmityProductWebViewComponent(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
-                .background(Color.White)
+                .background(AmityTheme.colors.background)
         ) {
             if (isError) {
                 // Error state — header stays visible above; show fallback here
@@ -201,7 +202,7 @@ fun AmityProductWebViewComponent(
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(Color.White),
+                            .background(AmityTheme.colors.background),
                         contentAlignment = Alignment.Center
                     ) {
                         CircularProgressIndicator(

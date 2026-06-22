@@ -301,7 +301,7 @@ fun AmityCommunityProfilePage(
                 PullToRefreshBox(
                     isRefreshing = state.isRefreshing,
                     onRefresh = onRefresh,
-                    modifier = Modifier
+                    modifier = modifier
                         .padding(PaddingValues(bottom = padding.calculateBottomPadding()))
                         .fillMaxSize()
                         .background(AmityTheme.colors.newsfeedDivider),
@@ -386,7 +386,7 @@ fun AmityCommunityProfilePage(
                         } else {
                             if (shouldShowAnnouncement) {
                                 amityCommunityAnnouncementFeedLLS(
-                                    modifier = modifier,
+                                    modifier = Modifier,
                                     pageScope = getPageScope(),
                                     announcementPosts = announcementPosts,
                                     hasAnnouncementPin = hasAnnouncementPin,
@@ -416,7 +416,7 @@ fun AmityCommunityProfilePage(
                                         }
                                     } else {
                                         amityCommunityFeedLLS(
-                                            modifier = modifier,
+                                            modifier = Modifier,
                                             pageScope = getPageScope(),
                                             communityPosts = communityPosts,
                                             pinPosts = pinPosts,
@@ -451,7 +451,7 @@ fun AmityCommunityProfilePage(
 
                                 1 -> {
                                     amityCommunityPinnedFeedLLS(
-                                        modifier = modifier,
+                                        modifier = Modifier,
                                         pageScope = getPageScope(),
                                         pinPosts = pinPosts,
                                         announcementPosts = announcementPosts,
@@ -470,7 +470,7 @@ fun AmityCommunityProfilePage(
 
                                 2 -> {
                                     amityCommunityEventFeed(
-                                        modifier = modifier,
+                                        modifier = Modifier,
                                         pageScope = getPageScope(),
                                         communityId = communityId,
                                         liveEvents = liveEvents,
@@ -510,7 +510,7 @@ fun AmityCommunityProfilePage(
                                     when (selectedMediaTabIndex) {
                                         0 -> {
                                             amityCommunityImageFeedLLS(
-                                                modifier = modifier,
+                                                modifier = Modifier,
                                                 imagePosts = imagePosts,
                                                 onViewPost = { postId, category ->
                                                     behavior.goToPostDetailPage(
@@ -526,7 +526,7 @@ fun AmityCommunityProfilePage(
 
                                         1 -> {
                                             amityCommunityVideoFeedLLS(
-                                                modifier = modifier,
+                                                modifier = Modifier,
                                                 videoPosts = videoPosts,
                                                 onViewPost = { postId, category ->
                                                     behavior.goToPostDetailPage(

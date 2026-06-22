@@ -9,8 +9,8 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import com.amity.socialcloud.sdk.model.core.product.AmityProduct
+import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 
 
 @Composable
@@ -30,7 +30,7 @@ fun AmityProductWebViewBottomSheet(
         sheetState = rememberModalBottomSheetState(
             skipPartiallyExpanded = true
         ),
-        containerColor = Color.White,
+        containerColor = AmityTheme.colors.background,
         contentWindowInsets = { WindowInsets.navigationBars },
         modifier = Modifier
             .statusBarsPadding(),

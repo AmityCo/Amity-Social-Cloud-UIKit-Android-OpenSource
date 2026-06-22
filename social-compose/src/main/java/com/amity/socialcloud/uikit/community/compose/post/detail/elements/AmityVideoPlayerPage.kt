@@ -291,7 +291,6 @@ fun AmityVideoPlayerPage(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(bottom = if (isRecordedRoomPost) 0.dp else 100.dp)
                     .background(Color.Black)
             ) {
                 HorizontalPager(

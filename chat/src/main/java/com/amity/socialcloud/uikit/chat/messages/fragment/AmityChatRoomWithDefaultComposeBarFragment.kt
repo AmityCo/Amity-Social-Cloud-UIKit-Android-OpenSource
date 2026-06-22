@@ -34,6 +34,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.chat.channel.AmityChannel
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
+import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
 import com.amity.socialcloud.uikit.chat.R
 import com.amity.socialcloud.uikit.chat.databinding.AmityFragmentChatWithDefaultComposeBarBinding
 import com.amity.socialcloud.uikit.chat.messages.adapter.AmityMessagePagingAdapter
@@ -324,8 +325,7 @@ class AmityChatRoomWithDefaultComposeBarFragment : AmityPickerFragment(),
                             }.map { channelMember ->
                                 CoroutineScope(Dispatchers.Main).launch {
                                     val title = channelMember.getUser()?.getDisplayName()
-                                    val avatarUrl = channelMember.getUser()?.getAvatar()
-                                        ?.getUrl(AmityImage.Size.SMALL)
+                                    val avatarUrl = channelMember.getUser()?.resolvedAvatarUrl()
 
                                     messageListViewModel.title.set(title)
                                     messageListViewModel.avatarUrl.set(avatarUrl)

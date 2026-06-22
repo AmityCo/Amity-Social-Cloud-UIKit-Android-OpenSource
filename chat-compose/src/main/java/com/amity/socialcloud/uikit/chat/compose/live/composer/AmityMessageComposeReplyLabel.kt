@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
 import com.amity.socialcloud.uikit.chat.compose.R
+import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
 import com.amity.socialcloud.uikit.chat.compose.live.elements.AmityMessageAvatarView
 import com.amity.socialcloud.uikit.common.localization.amityCommonString
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
@@ -51,7 +52,7 @@ fun AmityMessageComposeReplyLabel(
         val parentText = if (data is AmityMessage.Data.TEXT) data.getText() else ""
 
         AmityMessageAvatarView(
-            avatarUrl = creator?.getAvatar()?.getUrl() ?: "",
+            avatarUrl = creator?.resolvedAvatarUrl() ?: "",
             modifier = Modifier.size(32.dp)
         )
 

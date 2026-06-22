@@ -41,7 +41,7 @@ import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionee
 import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
-import com.amity.socialcloud.sdk.model.core.file.AmityImage
+import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
 import com.amity.socialcloud.uikit.chat.compose.R
 import com.amity.socialcloud.uikit.chat.compose.live.AmityLiveChatPageViewModel
 import com.amity.socialcloud.uikit.chat.compose.live.util.getContent
@@ -194,7 +194,7 @@ fun BaseMessageBubble(
         ) {
             AmityMessageAvatarView(
                 pageScope = pageScope,
-                avatarUrl = message.getCreator()?.getAvatar()?.getUrl(AmityImage.Size.SMALL) ?: "",
+                avatarUrl = message.getCreator()?.resolvedAvatarUrl() ?: "",
                 size = 32.dp
             )
             Spacer(modifier = Modifier.width(8.dp))

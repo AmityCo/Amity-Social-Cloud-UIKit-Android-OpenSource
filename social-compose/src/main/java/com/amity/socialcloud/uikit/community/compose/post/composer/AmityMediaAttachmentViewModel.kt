@@ -14,13 +14,13 @@ open class AmityMediaAttachmentViewModel : AmityBaseViewModel() {
     val postAttachmentPickerEvent get() = _postAttachmentPickerEvent
 
     private val _postAttachmentAllowedPickerType by lazy {
-        MutableStateFlow<AmityPostAttachmentAllowedPickerType>(AmityPostAttachmentAllowedPickerType.All)
+        MutableStateFlow<AmityPostAttachmentAllowedPickerType>(AmityPostAttachmentAllowedPickerType.Image(true))
     }
     val postAttachmentAllowedPickerType get() = _postAttachmentAllowedPickerType
 
     fun setPostAttachmentAllowedPickerType(type: AmityPostAttachmentAllowedPickerType) {
         viewModelScope.launch {
-            _postAttachmentAllowedPickerType.value = type
+            _postAttachmentAllowedPickerType.value = AmityPostAttachmentAllowedPickerType.Image(true)
         }
     }
 

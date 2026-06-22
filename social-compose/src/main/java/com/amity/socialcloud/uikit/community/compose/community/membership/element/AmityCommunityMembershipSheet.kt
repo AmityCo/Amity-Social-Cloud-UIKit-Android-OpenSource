@@ -50,6 +50,7 @@ fun AmityCommunityMembershipSheet(
     val unreportFailedStr = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_member_unreport_failed")
     val reportedStr = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_member_reported")
     val reportFailedStr = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_member_report_failed")
+    val removingInProgressStr = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_member_remove_in_progress")
     val removedStr = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_member_removed_toast")
     val removeFailedStr = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_member_remove_failed")
 
@@ -195,15 +196,22 @@ fun AmityCommunityMembershipSheet(
                                 viewModel.updateSheetUIState(AmityCommunityMembershipSheetUIState.CloseSheet)
                                 viewModel.removeMember(
                                     userId = member.getUserId(),
+                                    onRemovingStarted = {
+                                        // Surfaces the "Removing member…" progress snackbar while we
+                                        // wait for the backend to deindex the member.
+                                        pageScope?.showProgressSnackbar(removingInProgressStr)
+                                    },
                                     onSuccess = {
+                                        pageScope?.dismissSnackbar()
                                         pageScope?.showSnackbar(
-                                            message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_member_removed_toast"),
+                                            message = removedStr,
                                             drawableRes = R.drawable.amity_ic_snack_bar_success,
                                         )
                                     },
                                     onError = {
+                                        pageScope?.dismissSnackbar()
                                         pageScope?.showSnackbar(
-                                            message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_member_remove_failed"),
+                                            message = removeFailedStr,
                                             drawableRes = R.drawable.amity_ic_snack_bar_warning,
                                         )
                                     }

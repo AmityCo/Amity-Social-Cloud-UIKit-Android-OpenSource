@@ -63,7 +63,7 @@ fun AmityFloatingMentionSuggestionCard(
                 .fillMaxWidth()
                 .shadow(elevation = 12.dp, shape = cardShape, clip = false)
                 .clip(cardShape)
-                .background(Color.White)
+                .background(AmityTheme.colors.background)
         ) {
             Column(modifier = Modifier.fillMaxWidth()) {
 
@@ -130,7 +130,7 @@ fun AmityFloatingMentionSuggestionCard(
                         modifier = Modifier
                             .fillMaxWidth()
                             .heightIn(max = maxHeight)
-                            .background(Color.White),
+                            .background(AmityTheme.colors.background),
                         onProductSelected = onProductSelected,
                     )
                 } else {
@@ -142,7 +142,7 @@ fun AmityFloatingMentionSuggestionCard(
                         modifier = Modifier
                             .fillMaxWidth()
                             .heightIn(max = maxHeight)
-                            .background(Color.White),
+                            .background(AmityTheme.colors.background),
                         onUserSelected = onUserSelected
                     )
                 }
@@ -157,7 +157,7 @@ fun AmityFloatingMentionSuggestionCard(
                 .size(26.dp)
                 .shadow(elevation = 6.dp, shape = CircleShape, clip = false)
                 .clip(CircleShape)
-                .background(Color.White)
+                .background(AmityTheme.colors.background)
                 .border(width = 1.dp, color = Color(0xFFE5E7EB), shape = CircleShape)
                 .clickableWithoutRipple { onDismiss() },
             contentAlignment = Alignment.Center

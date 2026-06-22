@@ -4,8 +4,8 @@ import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.role.AmityRoles
+import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
 
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
@@ -46,7 +46,7 @@ class AmityPostHeaderViewHolder(
     }
 
     private fun renderAvatar(post: AmityPost) {
-        val avatarURL = post.getCreator()?.getAvatar()?.getUrl(AmityImage.Size.SMALL)
+        val avatarURL = post.getCreator()?.resolvedAvatarUrl()
         setImageUrl(
             binding.avatarView,
             avatarURL,

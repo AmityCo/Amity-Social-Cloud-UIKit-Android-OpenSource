@@ -4,8 +4,8 @@ import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
-import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
+import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
 import com.amity.socialcloud.uikit.common.R
 import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagingDataAdapter
 import com.amity.socialcloud.uikit.common.components.setVisibility
@@ -27,7 +27,7 @@ class AmityMemberListItemViewHolder(
             } else {
                 data.getDisplayName()
             }
-            binding?.avatarUrl = data.getAvatar()?.getUrl(AmityImage.Size.MEDIUM)
+            binding?.avatarUrl = data.resolvedAvatarUrl()
             binding?.smSubTitle?.text = ""
             binding?.ivStatus?.isChecked = membersSet.contains(data.getUserId())
             binding?.ivStatus?.setOnClickListener {

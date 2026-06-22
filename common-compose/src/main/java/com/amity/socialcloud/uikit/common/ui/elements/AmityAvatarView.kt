@@ -34,6 +34,7 @@ import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
+import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
 import com.amity.socialcloud.sdk.model.social.category.AmityCommunityCategory
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.compose.R
@@ -156,7 +157,7 @@ fun AmityUserAvatarView(
     size: Dp = 32.dp,
     user: AmityUser?,
 ) {
-    val url = user?.getAvatar()?.getUrl(AmityImage.Size.MEDIUM)?.ifEmpty { null }
+    val url = user?.resolvedAvatarUrl()?.ifEmpty { null }
 
     val painter = rememberAsyncImagePainter(
         model = ImageRequest

@@ -1,10 +1,10 @@
 package com.amity.socialcloud.uikit.community.compose.ui.components.feed
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,10 +21,12 @@ fun AmityProfileEmptyClipFeed(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 80.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(modifier.height(12.dp))
         Icon(
             painter = painterResource(id = R.drawable.amity_ic_clip_empty),
             tint = AmityTheme.colors.baseShade4,

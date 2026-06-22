@@ -28,16 +28,20 @@ val LocalAmityShapes = staticCompositionLocalOf {
     AmityUIKitShapes
 }
 
-val LocalAmityIsUIKitInDarkTheme = staticCompositionLocalOf {
-    AmityUIKitConfigController.shouldUIKitInDarkTheme()
-}
-
 @Composable
 fun AmityComposeTheme(
     pageScope: AmityComposePageScope? = null,
     componentScope: AmityComposeComponentScope? = null,
     isSystemInDarkTheme: Boolean = isSystemInDarkTheme(),
-    isUIKitInDarkTheme: Boolean = isUIKitInDarkTheme(),
+    // The controller's isSystemInDarkTheme field defaults to false at process start,
+    // so shouldUIKitInDarkTheme() returns false for preferred_theme="default" until
+    // setSystemInDarkTheme(...) is called. Default parameters are evaluated before
+    // the function body, so we have to push the system theme into the controller
+    // here — otherwise the parameter resolves to the stale value.
+    isUIKitInDarkTheme: Boolean = run {
+        AmityUIKitConfigController.setSystemInDarkTheme(isSystemInDarkTheme)
+        AmityUIKitConfigController.shouldUIKitInDarkTheme()
+    },
     lastThemeUpdate: DateTime = DateTime.now(),
     sessionState: SessionState = SessionState.Established,
     content: @Composable () -> Unit
@@ -80,5 +84,9 @@ object AmityTheme {
 @Composable
 @ReadOnlyComposable
 fun isUIKitInDarkTheme(): Boolean {
-    return LocalAmityIsUIKitInDarkTheme.current
+    // Read the controller directly. Don't route through a staticCompositionLocalOf
+    // default — that lambda fires once per process and caches forever (Kotlin lazy),
+    // so the first read at startup (before setSystemInDarkTheme has run) pins the
+    // value as false for the lifetime of the process.
+    return AmityUIKitConfigController.shouldUIKitInDarkTheme()
 }

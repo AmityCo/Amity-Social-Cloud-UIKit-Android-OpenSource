@@ -119,6 +119,7 @@ object AmitySocialStrings {
         "amity_social_toast_member_promote_failed" to R.string.amity_social_toast_member_promote_failed,
         "amity_social_button_member_removed" to R.string.amity_social_button_member_removed,
         "amity_social_toast_member_remove_failed" to R.string.amity_social_toast_member_remove_failed,
+        "amity_social_toast_member_remove_in_progress" to R.string.amity_social_toast_member_remove_in_progress,
         "amity_social_toast_member_ban_failed" to R.string.amity_social_toast_member_ban_failed,
         "amity_social_toast_member_unban_failed" to R.string.amity_social_toast_member_unban_failed,
         "amity_social_button_member_reported" to R.string.amity_social_button_member_reported,
@@ -282,6 +283,7 @@ object AmitySocialStrings {
 
         // Community membership
         "amity_social_toast_community_add_member_failed" to R.string.amity_social_toast_community_add_member_failed,
+        "amity_social_toast_community_add_member_in_progress" to R.string.amity_social_toast_community_add_member_in_progress,
         "amity_social_toast_community_add_member_success" to R.string.amity_social_toast_community_add_member_success,
          "amity_social_modal_community_dialog_leave_description" to R.string.amity_social_modal_community_dialog_leave_description,
          "amity_social_modal_community_dialog_leave_title" to R.string.amity_social_modal_community_dialog_leave_title,

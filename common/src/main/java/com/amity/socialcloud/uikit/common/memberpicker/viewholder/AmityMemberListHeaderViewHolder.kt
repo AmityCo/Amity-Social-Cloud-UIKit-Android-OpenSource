@@ -3,8 +3,8 @@ package com.amity.socialcloud.uikit.common.memberpicker.viewholder
 import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
+import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
 import com.amity.socialcloud.uikit.common.R
 import com.amity.socialcloud.uikit.common.base.AmityBaseRecyclerViewPagingDataAdapter
 import com.amity.socialcloud.uikit.common.databinding.AmityItemHeaderSelectMemberBinding
@@ -32,7 +32,7 @@ class AmityMemberListHeaderViewHolder(
             } else {
                 binding?.layoutMember?.smTitle?.text = data.getDisplayName()
             }
-            binding?.layoutMember?.avatarUrl = data.getAvatar()?.getUrl(AmityImage.Size.MEDIUM)
+            binding?.layoutMember?.avatarUrl = data.resolvedAvatarUrl()
             binding?.layoutMember?.smSubTitle?.text = ""
             binding?.layoutMember?.ivStatus?.isChecked = membersSet.contains(data.getUserId())
             binding?.layoutMember?.ivStatus?.setOnClickListener {

@@ -18,7 +18,7 @@ import androidx.fragment.app.viewModels
 import androidx.paging.ExperimentalPagingApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.amity.socialcloud.sdk.model.core.error.AmityError
-import com.amity.socialcloud.sdk.model.core.file.AmityImage
+import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.sdk.model.social.feed.AmityFeedType
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
@@ -302,7 +302,7 @@ class AmityPostDetailFragment : AmityBaseFragment(),
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext {
-                it.getAvatar()?.getUrl(AmityImage.Size.SMALL)?.let {
+                it.resolvedAvatarUrl()?.let {
                     binding.commentComposeBar.setImageUrl(it)
                 }
             }

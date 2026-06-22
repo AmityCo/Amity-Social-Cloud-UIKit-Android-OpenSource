@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -106,9 +107,7 @@ import com.amity.socialcloud.uikit.common.utils.AmityCameraUtil
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.common.utils.getIcon
-import com.amity.socialcloud.uikit.common.utils.getKeyboardHeight
 import com.amity.socialcloud.uikit.common.utils.getText
-import com.amity.socialcloud.uikit.common.utils.isKeyboardVisible
 import com.amity.socialcloud.uikit.common.utils.shimmerBackground
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.AltTextConfigMode
@@ -295,9 +294,6 @@ fun AmityPostComposerPage(
             ""
         }
     }
-
-    val isKeyboardOpen by isKeyboardVisible()
-    val keyboardHeight by getKeyboardHeight()
 
     var localPostText by remember { mutableStateOf(postBodyText) }
 
@@ -709,7 +705,7 @@ fun AmityPostComposerPage(
         }
 
         // Replaces the old ConstraintLayout structure with Box/Column primitives.
-        Box(modifier = modifier.fillMaxSize()) {
+        Box(modifier = modifier.fillMaxSize().imePadding()) {
             var attachmentHeightPx by remember { mutableStateOf(0) }
             val attachmentHeightDp = with(androidx.compose.ui.platform.LocalDensity.current) {
                 attachmentHeightPx.toDp()

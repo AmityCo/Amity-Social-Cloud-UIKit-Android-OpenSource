@@ -8,6 +8,9 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,18 +36,13 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.RadioButtonDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -68,13 +66,11 @@ import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
-import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.model.chat.settings.AmityMembershipAcceptanceType
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.community.AmityJoinRequestStatus
-import com.amity.socialcloud.uikit.common.common.toDp
 import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
 import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
@@ -85,13 +81,10 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityTextField
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.AmityCameraUtil
-import com.amity.socialcloud.uikit.common.utils.amityStringResource
-import com.amity.socialcloud.uikit.community.compose.localization.amitySocialConfigString
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.closePage
 import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.common.utils.getIcon
-import com.amity.socialcloud.uikit.common.utils.getText
 import com.amity.socialcloud.uikit.common.utils.shade
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
@@ -103,6 +96,8 @@ import com.amity.socialcloud.uikit.community.compose.community.membership.elemen
 import com.amity.socialcloud.uikit.community.compose.community.membership.invite.AmityCommunityInviteMemberPageActivity
 import com.amity.socialcloud.uikit.community.compose.community.setup.elements.AmityMediaImageSelectionSheet
 import com.amity.socialcloud.uikit.community.compose.community.setup.elements.AmityMediaImageSelectionType
+import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialConfigString
 
 @Composable
 fun AmityCommunitySetupPage(
@@ -555,7 +550,7 @@ fun AmityCommunitySetupPage(
                 AmityTextField(
                     maxCharacters = 180,
                     text = description,
-                    hint = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_placeholder_edit_user_about_hint"),
+                    hint = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_community_setup_about_description"),
                     onValueChange = { description = it },
                     innerPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
                 )
@@ -672,9 +667,10 @@ fun AmityCommunitySetupPage(
                                 painter = painterResource(getConfig().getIcon()),
                                 contentDescription = "Public",
                                 modifier = modifier
-                                    .size(16.dp)
+                                    .size(20.dp)
                                     .align(Alignment.Center)
-                                    .testTag(getAccessibilityId())
+                                    .testTag(getAccessibilityId()),
+                                tint = AmityTheme.colors.base
                             )
                         }
                     }
@@ -714,12 +710,8 @@ fun AmityCommunitySetupPage(
                             )
                         }
                     }
-                    RadioButton(
+                    AmityFilledRadioIndicator(
                         selected = privacyMode == AmityCommunitySetupPrivacyMode.PUBLIC,
-                        colors = RadioButtonDefaults.colors(
-                            selectedColor = AmityTheme.colors.highlight,
-                            unselectedColor = AmityTheme.colors.baseShade2,
-                        ),
                         onClick = {
                             privacyMode = AmityCommunitySetupPrivacyMode.PUBLIC
                         }
@@ -746,9 +738,10 @@ fun AmityCommunitySetupPage(
                                 painter = painterResource(getConfig().getIcon()),
                                 contentDescription = "Private and visible",
                                 modifier = modifier
-                                    .size(16.dp)
+                                    .size(20.dp)
                                     .align(Alignment.Center)
-                                    .testTag(getAccessibilityId())
+                                    .testTag(getAccessibilityId()),
+                                tint = AmityTheme.colors.base
                             )
                         }
                     }
@@ -788,12 +781,8 @@ fun AmityCommunitySetupPage(
                             )
                         }
                     }
-                    RadioButton(
+                    AmityFilledRadioIndicator(
                         selected = privacyMode == AmityCommunitySetupPrivacyMode.PRIVATE_VISIBLE,
-                        colors = RadioButtonDefaults.colors(
-                            selectedColor = AmityTheme.colors.highlight,
-                            unselectedColor = AmityTheme.colors.baseShade2,
-                        ),
                         onClick = {
                             privacyMode = AmityCommunitySetupPrivacyMode.PRIVATE_VISIBLE
                         }
@@ -820,9 +809,10 @@ fun AmityCommunitySetupPage(
                                 painter = painterResource(getConfig().getIcon()),
                                 contentDescription = "Private and hidden",
                                 modifier = modifier
-                                    .size(16.dp)
+                                    .size(28.dp)
                                     .align(Alignment.Center)
-                                    .testTag(getAccessibilityId())
+                                    .testTag(getAccessibilityId()),
+                                tint = AmityTheme.colors.base
                             )
                         }
                     }
@@ -862,12 +852,8 @@ fun AmityCommunitySetupPage(
                             )
                         }
                     }
-                    RadioButton(
+                    AmityFilledRadioIndicator(
                         selected = privacyMode == AmityCommunitySetupPrivacyMode.PRIVATE_HIDDEN,
-                        colors = RadioButtonDefaults.colors(
-                            selectedColor = AmityTheme.colors.highlight,
-                            unselectedColor = AmityTheme.colors.baseShade2,
-                        ),
                         onClick = {
                             privacyMode = AmityCommunitySetupPrivacyMode.PRIVATE_HIDDEN
                         }
@@ -1251,7 +1237,44 @@ fun AmityCommunitySetupPage(
         }
     }
 }
-
+@Composable
+private fun AmityFilledRadioIndicator(
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .size(20.dp)
+            .clip(CircleShape)
+            .then(
+                if (selected) {
+                    Modifier.background(AmityTheme.colors.highlight)
+                } else {
+                    Modifier.border(
+                        width = 2.dp,
+                        color = AmityTheme.colors.baseShade2,
+                        shape = CircleShape,
+                    )
+                }
+            )
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = onClick,
+            ),
+        contentAlignment = Alignment.Center,
+    ) {
+        if (selected) {
+            Box(
+                modifier = Modifier
+                    .size(9.dp)
+                    .clip(CircleShape)
+                    .background(AmityTheme.colors.background),
+            )
+        }
+    }
+}
 fun updateCommunity(
     communityId: String,
     avatarUri: Uri,

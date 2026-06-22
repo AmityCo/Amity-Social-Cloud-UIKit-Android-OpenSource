@@ -180,6 +180,7 @@ fun AmityCommunityMembersMembershipComponent(
                                 Icon(
                                     painter = painterResource(R.drawable.amity_ic_more_horiz),
                                     contentDescription = "Action",
+                                    tint = AmityTheme.colors.base,
                                     modifier = modifier
                                         .size(24.dp)
                                         .padding(start = 4.dp)

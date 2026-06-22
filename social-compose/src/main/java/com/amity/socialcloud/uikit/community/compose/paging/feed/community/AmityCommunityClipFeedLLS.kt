@@ -87,9 +87,7 @@ fun LazyListScope.amityCommunityClipFeedLLS(
 
     if (clipPosts.itemCount == 0) {
         item {
-            Box(modifier = Modifier.height(480.dp)) {
-                AmityProfileEmptyClipFeed()
-            }
+            AmityProfileEmptyClipFeed()
         }
     }
 }

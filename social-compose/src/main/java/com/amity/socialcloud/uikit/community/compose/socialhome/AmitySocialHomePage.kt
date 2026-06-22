@@ -95,7 +95,7 @@ fun AmitySocialHomePage(
                 .fillMaxSize()
         ) {
             AmitySocialHomeTopNavigationComponent(
-                modifier = modifier,
+                modifier = Modifier,
                 pageScope = getPageScope(),
                 selectedTab = selectedTab,
                 searchButtonAction = {
@@ -123,7 +123,7 @@ fun AmitySocialHomePage(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
-                modifier = modifier
+                modifier = Modifier
                     .wrapContentHeight()
             ) {
                 if (isSignedInUser) {
@@ -136,7 +136,7 @@ fun AmitySocialHomePage(
                                 title = amitySocialConfigString("amity_social_button_social_home_newsfeed_button"),
                                 item = AmitySocialHomePageTab.NEWSFEED,
                                 isSelected = selectedTab == AmitySocialHomePageTab.NEWSFEED,
-                                modifier = modifier.testTag(getAccessibilityId()),
+                                modifier = Modifier.testTag(getAccessibilityId()),
                             ) {
                                 selectedTab = it
                                 scrollScope.launch {
@@ -155,7 +155,7 @@ fun AmitySocialHomePage(
                             title = amitySocialConfigString("amity_social_button_social_home_communities_button"),
                             item = AmitySocialHomePageTab.COMMUNITIES,
                             isSelected = selectedTab == AmitySocialHomePageTab.COMMUNITIES,
-                            modifier = modifier.testTag(getAccessibilityId()),
+                            modifier = Modifier.testTag(getAccessibilityId()),
                         ) {
                             selectedTab = it
                             scrollScope.launch {
@@ -173,7 +173,7 @@ fun AmitySocialHomePage(
                             title = amitySocialConfigString("amity_social_button_social_home_events_button"),
                             item = AmitySocialHomePageTab.EVENTS,
                             isSelected = selectedTab == AmitySocialHomePageTab.EVENTS,
-                            modifier = modifier.testTag(getAccessibilityId()),
+                            modifier = Modifier.testTag(getAccessibilityId()),
                         ) {
                             selectedTab = it
                             scrollScope.launch {
@@ -193,7 +193,7 @@ fun AmitySocialHomePage(
                                 title = amitySocialConfigString("amity_social_button_social_home_clips_button"),
                                 item = AmitySocialHomePageTab.CLIPS,
                                 isSelected = selectedTab == AmitySocialHomePageTab.CLIPS,
-                                modifier = modifier.testTag(getAccessibilityId()),
+                                modifier = Modifier.testTag(getAccessibilityId()),
                             ) {
                                 behavior.goToClipsFeedPage(context)
                             }
@@ -203,7 +203,7 @@ fun AmitySocialHomePage(
             }
 
             Box(
-                modifier = modifier
+                modifier = Modifier
                     .fillMaxSize()
             ) {
 

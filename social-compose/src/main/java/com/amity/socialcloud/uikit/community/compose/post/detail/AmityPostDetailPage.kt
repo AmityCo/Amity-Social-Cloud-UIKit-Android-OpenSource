@@ -255,7 +255,7 @@ fun AmityPostDetailPage(
                     LazyColumn(
                         state = scrollState,
                         verticalArrangement = Arrangement.Top,
-                        modifier = modifier.weight(1f)
+                        modifier = Modifier.weight(1f)
                     ) {
                         AmityCommentTrayComponentViewModel.CommentListState.from(
                             loadState = comments.loadState.refresh,
@@ -264,7 +264,7 @@ fun AmityPostDetailPage(
 
                         stickyHeader {
                             Box(
-                                modifier = modifier
+                                modifier = Modifier
                                     .height(58.dp)
                                     .fillMaxWidth()
                                     .background(AmityTheme.colors.background)
@@ -281,7 +281,7 @@ fun AmityPostDetailPage(
                                         painter = painterResource(id = getConfig().getIcon()),
                                         contentDescription = null,
                                         tint = AmityTheme.colors.base,
-                                        modifier = modifier
+                                        modifier = Modifier
                                             .size(24.dp)
                                             .align(Alignment.CenterStart)
                                             .clickableWithoutRipple {
@@ -298,7 +298,7 @@ fun AmityPostDetailPage(
                                 Text(
                                     text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_social_home_create_post_button"),
                                     style = AmityTheme.typography.titleLegacy,
-                                    modifier = modifier
+                                    modifier = Modifier
                                         .padding(horizontal = 48.dp)
                                         .align(Alignment.CenterStart)
                                 )
@@ -311,7 +311,7 @@ fun AmityPostDetailPage(
                                         painter = painterResource(id = getConfig().getIcon()),
                                         contentDescription = null,
                                         tint = AmityTheme.colors.base,
-                                        modifier = modifier
+                                        modifier = Modifier
                                             .size(24.dp)
                                             .align(Alignment.CenterEnd)
                                             .clickableWithoutRipple {
@@ -336,7 +336,7 @@ fun AmityPostDetailPage(
                             if (post != null && post?.isDeleted() == false) {
                                 val isEventHost = eventHostId != null && post?.getCreator()?.getUserId() == eventHostId
                                 AmityPostContentComponent(
-                                    modifier = modifier,
+                                    modifier = Modifier,
                                     pageScope = getPageScope(),
                                     post = post ?: return@item,
                                     style = style,
@@ -347,7 +347,7 @@ fun AmityPostDetailPage(
                                 )
                                 HorizontalDivider(
                                     color = AmityTheme.colors.baseShade4,
-                                    modifier = modifier
+                                    modifier = Modifier
                                 )
                             } else {
                                 AmityPostShimmer()
@@ -356,13 +356,13 @@ fun AmityPostDetailPage(
 
                         item(key = "scroll_anchor") {
                             Spacer(
-                                modifier = modifier
+                                modifier = Modifier
                                     .height(8.dp)
                             )
                         }
 
                         amityCommentListLLS(
-                            modifier = modifier,
+                            modifier = Modifier,
                             componentScope = getComponentScope(),
                             comments = comments,
                             commentTarget = commentTarget,
@@ -389,13 +389,13 @@ fun AmityPostDetailPage(
                         )
 
                         item {
-                            Box(modifier.height(commentComposeBarBottomOffset.unaryMinus()))
+                            Box(Modifier.height(commentComposeBarBottomOffset.unaryMinus()))
                         }
                     }
 
                     if (!sheetViewModel.isNotMember(post) && editingCommentId == null && AmityCoreClient.isSignedIn()) {
                         AmityCommentComposerBar(
-                            modifier = modifier.offset(y = commentComposeBarBottomOffset),
+                            modifier = Modifier.offset(y = commentComposeBarBottomOffset),
                             componentScope = getComponentScope(),
                             referenceId = id,
                             referenceType = AmityCommentReferenceType.POST,

@@ -12,8 +12,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
-import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
+import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
 import com.amity.socialcloud.uikit.common.R
 import com.amity.socialcloud.uikit.common.common.setShape
 import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
@@ -192,7 +192,7 @@ class AmityMemberPickerFragment : RxFragment(), AmitySelectMemberListener,
     override fun onMemberClicked(member: AmityUser, position: Int) {
         val selectMemberItem = AmitySelectMemberItem(
             member.getUserId(),
-            member.getAvatar()?.getUrl(AmityImage.Size.MEDIUM) ?: "",
+            member.resolvedAvatarUrl() ?: "",
             member.getDisplayName()
                 ?: getString(R.string.amity_anonymous), member.getDescription(), false
         )

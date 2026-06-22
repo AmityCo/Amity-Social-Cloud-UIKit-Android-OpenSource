@@ -81,7 +81,7 @@ fun AmityPollTypeImageView(
     LazyVerticalGrid(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White),
+            .background(AmityTheme.colors.background),
         columns = GridCells.Fixed(2),
         contentPadding = PaddingValues(12.dp),
     ) {
@@ -151,7 +151,7 @@ fun AmityPollImageTypeItemView(
 
     Box(
         modifier = Modifier
-            .background(Color.White)
+            .background(AmityTheme.colors.background)
             .onGloballyPositioned { coordinates ->
                 onCardHeight(with(density) { coordinates.size.height.toDp() })
             }
@@ -162,7 +162,7 @@ fun AmityPollImageTypeItemView(
                 .padding(4.dp),
             shape = RoundedCornerShape(8.dp),
             colors = CardDefaults.cardColors(
-                containerColor = Color.White,
+                containerColor = AmityTheme.colors.background,
             ),
             border = BorderStroke(1.dp, AmityTheme.colors.baseShade4)
         ) {
@@ -370,7 +370,7 @@ fun AmityPollImageTypeAddItemView(
             },
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White,
+            containerColor = AmityTheme.colors.background,
         ),
         border = BorderStroke(1.dp, AmityTheme.colors.baseShade4)
     ) {

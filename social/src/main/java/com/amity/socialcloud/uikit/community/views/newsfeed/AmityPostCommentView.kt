@@ -11,8 +11,8 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionee
-import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.role.AmityRoles
+import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
@@ -62,7 +62,7 @@ class AmityPostCommentView : ConstraintLayout {
     }
 
     fun setComment(comment: AmityComment, post: AmityPost? = null, isReadOnly: Boolean? = false) {
-        binding.avatarUrl = comment.getCreator()?.getAvatar()?.getUrl(AmityImage.Size.SMALL)
+        binding.avatarUrl = comment.getCreator()?.resolvedAvatarUrl()
         binding.tvUserName.text =
             comment.getCreator()?.getDisplayName() ?: context.getString(R.string.amity_anonymous)
         binding.tvCommentTime.text = comment.getCreatedAt().millis.readableFeedPostTime(context)

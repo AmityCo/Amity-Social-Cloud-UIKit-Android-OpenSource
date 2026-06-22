@@ -111,7 +111,15 @@ data class AmityTypography(
             bodyLegacy = bodyLegacy.copy(color = base),
             captionLegacy = captionLegacy.copy(color = base),
             titleLegacy = titleLegacy.copy(color = base),
+            display = display.copy(color = base),
             headLine = headLine.copy(color = base),
+            titleBold = titleBold.copy(color = base),
+            title = title.copy(color = base),
+            bodyBold = bodyBold.copy(color = base),
+            body = body.copy(color = base),
+            captionBold = captionBold.copy(color = base),
+            caption = caption.copy(color = base),
+            captionSmall = captionSmall.copy(color = base),
         )
     }
 }

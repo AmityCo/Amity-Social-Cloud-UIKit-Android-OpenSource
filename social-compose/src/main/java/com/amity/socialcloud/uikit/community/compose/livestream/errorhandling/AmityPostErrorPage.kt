@@ -43,7 +43,7 @@ fun AmityPostErrorPage(
                 .fillMaxSize()
                 .statusBarsPadding()
                 .systemBarsPadding()
-                .background(color = Color.White)
+                .background(color = AmityTheme.colors.background)
         ) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterVertically),

@@ -33,6 +33,7 @@ import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityTabRow
 import com.amity.socialcloud.uikit.common.ui.elements.AmityTabRowItem
 import com.amity.socialcloud.uikit.common.ui.elements.AmityToolBar
+import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
@@ -77,6 +78,7 @@ fun AmityCommunityMembershipPage(
 
     val hasEditPermission by viewModel.hasEditPermission().subscribeAsState(initial = false)
 
+    val addingInProgressMessage = amitySocialString("amity_social_toast_community_add_member_in_progress")
     val successMessage = amitySocialString("amity_social_toast_community_add_member_success")
     val failedToAddMessage = amitySocialString("amity_social_toast_membership_add_failed")
 
@@ -89,13 +91,20 @@ fun AmityCommunityMembershipPage(
                     val users = it.let(AmityCommunityAddMemberPageActivity::getUsers)
                     viewModel.addMembers(
                         userIds = users.map { user -> user.getUserId() },
+                        onAddingStarted = {
+                            // Surfaces the "Adding member…" progress snackbar while we
+                            // wait for the backend to index the new members.
+                            getPageScope().showProgressSnackbar(addingInProgressMessage)
+                        },
                         onSuccess = {
+                            getPageScope().dismissSnackbar()
                             getPageScope().showSnackbar(
                                 message = successMessage,
                                 drawableRes = R.drawable.amity_ic_snack_bar_success,
                             )
                         },
                         onError = {
+                            getPageScope().dismissSnackbar()
                             getPageScope().showSnackbar(
                                 message = failedToAddMessage,
                                 drawableRes = R.drawable.amity_ic_snack_bar_warning,
@@ -136,6 +145,7 @@ fun AmityCommunityMembershipPage(
                     Icon(
                         painter = painterResource(R.drawable.amity_ic_add),
                         contentDescription = "Close",
+                        tint = AmityTheme.colors.base,
                         modifier = modifier
                             .size(24.dp)
                             .clickableWithoutRipple {

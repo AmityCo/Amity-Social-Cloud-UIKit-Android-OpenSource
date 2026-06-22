@@ -940,6 +940,7 @@
     <string name="amity_social_toast_comment_reported_toast_message">Comment reported.</string>
     <string name="amity_social_toast_comment_unreported_failed_toast_message">Failed to unreport comment. Please try again.</string>
     <string name="amity_social_toast_comment_unreported_toast_message">Comment unreported.</string>
+    <string name="amity_social_toast_community_add_member_in_progress">Adding member…</string>
     <string name="amity_social_toast_community_add_member_success">Successfully added members to this community!</string>
     <string name="amity_social_toast_community_invitation_create_failed">Failed to invite members. Please try again.</string>
     <string name="amity_social_toast_community_invitation_create_success">Successfully invited members to this community.</string>
@@ -973,6 +974,7 @@
     <string name="amity_social_toast_user_promoted_failed">Failed to promote user. Please try again.</string>
     <string name="amity_social_toast_member_promote_success_toast">Successfully promoted to moderator!</string>
     <string name="amity_social_toast_member_remove_failed">Failed to remove member. Please try again.</string>
+    <string name="amity_social_toast_member_remove_in_progress">Removing member…</string>
     <string name="amity_social_toast_user_report_failed">Failed to report user. Please try again.</string>
     <string name="amity_social_toast_member_reported_toast">Member reported.</string>
     <string name="amity_social_toast_member_unban_failed">Failed to unban member. Please try again.</string>

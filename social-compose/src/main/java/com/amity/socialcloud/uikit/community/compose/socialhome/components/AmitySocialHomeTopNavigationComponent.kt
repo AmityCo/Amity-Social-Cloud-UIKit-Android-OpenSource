@@ -75,14 +75,14 @@ fun AmitySocialHomeTopNavigationComponent(
                     style = AmityTheme.typography.captionLegacy.copy(
                         fontSize = 20.sp,
                     ),
-                    modifier = modifier
+                    modifier = Modifier
                         .align(Alignment.CenterStart)
                         .testTag(getAccessibilityId())
                 )
             }
 
             Row(
-                modifier = modifier.align(Alignment.CenterEnd)
+                modifier = Modifier.align(Alignment.CenterEnd)
             ) {
                 if (AmityCoreClient.isSignedIn()) {
                     when (selectedTab) {
@@ -112,7 +112,7 @@ fun AmitySocialHomeTopNavigationComponent(
                                             modifier = Modifier
                                                 .align(Alignment.TopEnd)
                                                 .size(12.dp)
-                                                .background(Color.White, shape = CircleShape)
+                                                .background(AmityTheme.colors.background, shape = CircleShape)
                                                 .padding(2.dp)
                                                 .background(color = AmityTheme.colors.alert, shape = CircleShape)
                                         )
@@ -126,7 +126,7 @@ fun AmitySocialHomeTopNavigationComponent(
                     }
                 }
 
-                Spacer(modifier = modifier.width(10.dp))
+                Spacer(modifier = Modifier.width(10.dp))
 
                 when (selectedTab) {
                     AmitySocialHomePageTab.NEWSFEED,
@@ -144,7 +144,7 @@ fun AmitySocialHomeTopNavigationComponent(
                                 icon = getConfig().getIcon(),
                                 background = AmityTheme.colors.baseShade4,
                                 iconSize = 20.dp,
-                                modifier = modifier
+                                modifier = Modifier
                                     .size(32.dp)
                                     .testTag(getAccessibilityId()),
                                 onClick = searchButtonAction
@@ -154,7 +154,7 @@ fun AmitySocialHomeTopNavigationComponent(
                     else -> {}
                 }
 
-                Spacer(modifier = modifier.width(10.dp))
+                Spacer(modifier = Modifier.width(10.dp))
 
                 var expanded by remember { mutableStateOf(false) }
                 when (selectedTab) {
@@ -172,7 +172,7 @@ fun AmitySocialHomeTopNavigationComponent(
                                 icon = getConfig().getIcon(),
                                 background = AmityTheme.colors.baseShade4,
                                 iconSize = 16.dp,
-                                modifier = modifier
+                                modifier = Modifier
                                     .size(32.dp)
                                     .testTag(getAccessibilityId()),
                                 onClick = {
@@ -185,7 +185,7 @@ fun AmitySocialHomeTopNavigationComponent(
                 }
 
                 AmityCreatePostMenuComponent(
-                    modifier = modifier,
+                    modifier = Modifier,
                     pageScope = pageScope,
                     expanded = expanded,
                     onDismiss = { expanded = false },

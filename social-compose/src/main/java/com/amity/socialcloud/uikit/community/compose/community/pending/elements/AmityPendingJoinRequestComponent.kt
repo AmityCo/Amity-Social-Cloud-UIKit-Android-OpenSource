@@ -63,7 +63,7 @@ fun AmityPendingJoinRequestComponent(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.White)
+                .background(AmityTheme.colors.background)
                 .padding(horizontal = 16.dp, vertical = 12.dp)
         ) {
             joinRequest?.let { request ->

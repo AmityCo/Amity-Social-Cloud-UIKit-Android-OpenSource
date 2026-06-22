@@ -234,7 +234,7 @@ fun AmityClipFeedPage(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(AmityTheme.colors.baseShade1),
+                        .background(AmityTheme.colors.secondaryShade1),
                 ) {
                     AmityClipProfileShimmer(
                         modifier = Modifier
@@ -264,7 +264,7 @@ fun AmityClipFeedPage(
                     state = pagerState,
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(Color.Black)
+                        .background(AmityTheme.colors.secondaryShade1)
                         .pointerInput(Unit) {
                             if (type !is AmityClipFeedPageType.NewsFeed) {
                                 detectVerticalDragGestures(

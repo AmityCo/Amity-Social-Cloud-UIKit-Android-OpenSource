@@ -19,6 +19,7 @@ import com.amity.socialcloud.sdk.model.social.member.AmityCommunityMembership
 import com.amity.socialcloud.sdk.model.video.stream.AmityStream
 import com.amity.socialcloud.sdk.video.model.AmityBroadcastResolution
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
+import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
 import com.amity.socialcloud.uikit.common.service.AmityFileService
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
@@ -103,7 +104,7 @@ class AmityLiveStreamPostCreatorViewModel :
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSuccess {
-                onProfileLoaded(it.getDisplayName(), it.getAvatar()?.getUrl(AmityImage.Size.SMALL))
+                onProfileLoaded(it.getDisplayName(), it.resolvedAvatarUrl())
             }
             .ignoreElement()
     }

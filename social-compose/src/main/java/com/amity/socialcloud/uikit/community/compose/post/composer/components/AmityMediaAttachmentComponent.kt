@@ -29,7 +29,7 @@ fun AmityMediaAttachmentComponent(
         componentId = "media_attachment"
     ) {
         Row(
-            horizontalArrangement = Arrangement.SpaceAround,
+            horizontalArrangement = Arrangement.spacedBy(72.dp, Alignment.CenterHorizontally),
             verticalAlignment = Alignment.CenterVertically,
             modifier = modifier
                 .fillMaxWidth()

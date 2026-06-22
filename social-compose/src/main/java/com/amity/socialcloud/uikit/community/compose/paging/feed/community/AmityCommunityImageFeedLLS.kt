@@ -309,9 +309,7 @@ private fun AmityCommunityImageFeedContent(
         }
 
         if (imagePosts.itemCount == 0) {
-            Box(modifier = Modifier.height(480.dp)) {
-                AmityProfileEmptyImageFeed()
-            }
+            AmityProfileEmptyImageFeed()
         }
     }
 }

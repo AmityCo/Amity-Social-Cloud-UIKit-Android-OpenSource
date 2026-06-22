@@ -47,7 +47,7 @@ fun AmityPollPostTypeSelectionBottomSheet(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(Color.White)
+            .background(AmityTheme.colors.background)
     ) {
         Text(
             text = amitySocialString("amity_social_label_choose_poll_type"),
@@ -140,7 +140,7 @@ fun AmityPollSelectionItem(
         modifier = finalModifier
             .aspectRatio(5f / 7f)
             .clip(RoundedCornerShape(8.dp))
-            .background(Color.White, shape = RoundedCornerShape(8.dp))
+            .background(AmityTheme.colors.background, shape = RoundedCornerShape(8.dp))
             .clickableWithoutRipple { onItemClick() },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -167,7 +167,7 @@ fun AmityPollSelectionItem(
             text = if (type == "text") amitySocialString("amity_social_button_text_only_poll") else amitySocialString("amity_social_button_image_poll"),
             modifier = Modifier,
             style = AmityTheme.typography.bodyBold,
-            color = if (isSelected) Color(0xFF292B32) else AmityTheme.colors.baseShade1,
+            color = if (isSelected) AmityTheme.colors.base else AmityTheme.colors.baseShade1,
             textAlign = TextAlign.Center
         )
 

@@ -192,8 +192,9 @@ class AmityCommunityMembershipPageViewModel(val communityId: String) : AmityBase
 
     fun removeMember(
         userId: String,
+        onRemovingStarted: () -> Unit = {},
         onSuccess: () -> Unit,
-        onError: (AmityError) -> Unit
+        onError: (AmityError) -> Unit,
     ) {
         AmitySocialClient.newCommunityRepository()
             .membership(communityId)
@@ -201,8 +202,17 @@ class AmityCommunityMembershipPageViewModel(val communityId: String) : AmityBase
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnComplete {
-                onSuccess()
-                triggerPagingRefresh()
+                // Match iOS: show "Removing member…" immediately, wait for the
+                // backend to deindex, then refresh the paged list and surface the
+                // success toast.
+                onRemovingStarted()
+                viewModelScope.launch {
+                    delay(MEMBER_MUTATION_REFRESH_DELAY_MS)
+                    _triggerPagingRefresh.value = true
+                    delay(200)
+                    _triggerPagingRefresh.value = false
+                    onSuccess()
+                }
             }
             .doOnError {
                 onError(AmityError.from(it))
@@ -212,8 +222,9 @@ class AmityCommunityMembershipPageViewModel(val communityId: String) : AmityBase
 
     fun addMembers(
         userIds: List<String>,
+        onAddingStarted: () -> Unit = {},
         onSuccess: () -> Unit,
-        onError: (AmityError) -> Unit
+        onError: (AmityError) -> Unit,
     ) {
         AmitySocialClient.newCommunityRepository()
             .membership(communityId)
@@ -221,8 +232,17 @@ class AmityCommunityMembershipPageViewModel(val communityId: String) : AmityBase
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnComplete {
-                onSuccess()
-                triggerPagingRefresh()
+                // Match iOS: show "Adding member…" immediately, wait for the backend
+                // to index the new members, then refresh the paged list and surface
+                // the success toast.
+                onAddingStarted()
+                viewModelScope.launch {
+                    delay(MEMBER_MUTATION_REFRESH_DELAY_MS)
+                    _triggerPagingRefresh.value = true
+                    delay(200)
+                    _triggerPagingRefresh.value = false
+                    onSuccess()
+                }
             }
             .doOnError {
                 onError(AmityError.from(it))
@@ -264,6 +284,12 @@ class AmityCommunityMembershipPageViewModel(val communityId: String) : AmityBase
             delay(200)
             _triggerPagingRefresh.value = false
         }
+    }
+
+    companion object {
+        // Backend takes a moment to (de)index members after add/remove. iOS waits
+        // ~2s before refetching to avoid the live collection returning a stale list.
+        private const val MEMBER_MUTATION_REFRESH_DELAY_MS = 2_000L
     }
 
     sealed class MembershipListState {

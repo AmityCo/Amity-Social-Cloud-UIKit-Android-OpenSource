@@ -209,7 +209,7 @@ fun AmityUserProfilePage(
         PullToRefreshBox(
             isRefreshing = state.isRefreshing,
             onRefresh = onRefresh,
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .background(AmityTheme.colors.background)
                 .windowInsetsPadding(WindowInsets.safeDrawing),
@@ -244,7 +244,7 @@ fun AmityUserProfilePage(
                                 painter = painterResource(R.drawable.amity_ic_back),
                                 contentDescription = "Back",
                                 tint = AmityTheme.colors.base,
-                                modifier = modifier
+                                modifier = Modifier
                                     .size(24.dp)
                                     .align(Alignment.CenterStart)
                                     .clickableWithoutRipple {
@@ -280,7 +280,7 @@ fun AmityUserProfilePage(
                                 painter = painterResource(R.drawable.amity_ic_more_horiz),
                                 contentDescription = "Menu",
                                 tint = AmityTheme.colors.base,
-                                modifier = modifier
+                                modifier = Modifier
                                     .size(24.dp)
                                     .align(Alignment.CenterEnd)
                                     .clickableWithoutRipple {
@@ -313,7 +313,7 @@ fun AmityUserProfilePage(
                                 painter = painterResource(R.drawable.amity_ic_more_horiz),
                                 contentDescription = "Close",
                                 tint = AmityTheme.colors.base,
-                                modifier = modifier
+                                modifier = Modifier
                                     .size(24.dp)
                                     .clickableWithoutRipple {
                                         showMenuSheet = true
@@ -367,7 +367,7 @@ fun AmityUserProfilePage(
                         ).let(viewModel::setPostListState)
 
                         amityUserFeedLLS(
-                            modifier = modifier,
+                            modifier = Modifier,
                             context = context,
                             pageScope = getPageScope(),
                             userPosts = userPosts,
@@ -408,7 +408,7 @@ fun AmityUserProfilePage(
                                 ).let(viewModel::setImagePostListState)
 
                                 amityUserImageFeedLLS(
-                                    modifier = modifier,
+                                    modifier = Modifier,
                                     pageScope = getPageScope(),
                                     imagePosts = imagePosts,
                                     postListState = imagePostListState,
@@ -429,7 +429,7 @@ fun AmityUserProfilePage(
                                 ).let(viewModel::setVideoPostListState)
 
                                 amityUserVideoFeedLLS(
-                                    modifier = modifier,
+                                    modifier = Modifier,
                                     pageScope = getPageScope(),
                                     videoPosts = videoPosts,
                                     postListState = videoPostListState,
@@ -444,7 +444,7 @@ fun AmityUserProfilePage(
                                 ).let(viewModel::setClipPostListState)
 
                                 amityUserClipFeedLLS(
-                                    modifier = modifier,
+                                    modifier = Modifier,
                                     pageScope = getPageScope(),
                                     clipPosts = clipPosts,
                                     postListState = clipPostListState,

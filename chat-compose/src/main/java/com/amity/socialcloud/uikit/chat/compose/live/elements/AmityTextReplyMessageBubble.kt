@@ -45,6 +45,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityAnnotatedText
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
 import com.amity.socialcloud.uikit.common.utils.shimmerBackground
 import com.google.gson.JsonObject
 import kotlinx.coroutines.CoroutineScope
@@ -115,7 +116,7 @@ fun BaseReplyMessage(
 	) {
 		AmityMessageAvatarView(
 			pageScope = pageScope,
-			avatarUrl = message.getCreator()?.getAvatar()?.getUrl() ?: "",
+			avatarUrl = message.getCreator()?.resolvedAvatarUrl() ?: "",
 			size = 32.dp
 		)
 		Spacer(modifier = Modifier.width(8.dp))
@@ -253,7 +254,7 @@ fun BaseReplyMessage(
 					}
 					
 					// Determine the height of the item
-					val height = placeables.sumOf { it.height } - (8.dp.roundToPx())
+					val height = Math.max(placeables.sumOf { it.height } - (8.dp.roundToPx()), 0)
 					
 					// Set the size of the item
 					layout(height = height, width = placeables.maxOfOrNull { it.width } ?: 0) {

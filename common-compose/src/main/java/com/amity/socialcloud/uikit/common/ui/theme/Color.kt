@@ -116,12 +116,6 @@ data class AmityColors(
             baseShade4
         }
 
-        val sheetBackground = if (isUIKitInDarkTheme) {
-            baseShade4
-        } else {
-            background
-        }
-
         return AmityUIKitColors.copy(
             primary = primary,
             primaryShade1 = primary.shade(AmityColorShade.SHADE1),
@@ -142,7 +136,7 @@ data class AmityColors(
             alert = alert,
             background = background,
             backgroundShade1 = backgroundShade1,
-            sheetBackground = sheetBackground,
+            sheetBackground = background,
             divider = divider,
             newsfeedDivider = newsfeedDivider,
         )

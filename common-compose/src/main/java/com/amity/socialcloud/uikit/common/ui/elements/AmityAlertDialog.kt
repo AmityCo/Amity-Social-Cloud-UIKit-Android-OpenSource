@@ -53,7 +53,7 @@ fun AmityAlertDialog(
     confirmText: String,
     dismissText: String,
     confirmTextColor: Color = AmityTheme.colors.highlight,
-    dismissTextColor: Color = AmityTheme.colors.baseShade1,
+    dismissTextColor: Color = AmityTheme.colors.secondaryShade2,
     onConfirmation: () -> Unit,
     onDismissRequest: () -> Unit = {},
 ) {

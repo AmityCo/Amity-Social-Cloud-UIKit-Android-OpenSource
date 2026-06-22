@@ -93,7 +93,7 @@ fun AmityNotificationTrayPage(
 
             stickyHeader {
                 Box(
-                    modifier = modifier
+                    modifier = Modifier
                         .height(58.dp)
                         .fillMaxWidth()
                         .background(AmityTheme.colors.background)
@@ -110,7 +110,7 @@ fun AmityNotificationTrayPage(
                             painter = painterResource(getConfig().getIcon()),
                             contentDescription = null,
                             tint = AmityTheme.colors.base,
-                            modifier = modifier
+                            modifier = Modifier
                                 .size(20.dp)
                                 .align(Alignment.CenterStart)
                                 .clickableWithoutRipple {
@@ -122,7 +122,7 @@ fun AmityNotificationTrayPage(
                     Text(
                         text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_notification_title_notifications"),
                         style = AmityTheme.typography.titleBold,
-                        modifier = modifier
+                        modifier = Modifier
                             .align(Alignment.CenterStart)
                             .padding(start = 36.dp)
                     )

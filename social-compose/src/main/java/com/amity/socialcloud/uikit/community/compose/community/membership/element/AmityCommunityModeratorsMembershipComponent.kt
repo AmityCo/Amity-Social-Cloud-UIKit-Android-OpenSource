@@ -141,7 +141,7 @@ fun AmityCommunityModeratorsMembershipComponent(
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(4.dp),
-                                modifier = modifier.weight(1f, fill = false)
+                                modifier = modifier.weight(1f)
                             ) {
                                 Text(
                                     text = member.getUser()?.getDisplayName() ?: "",
@@ -163,6 +163,7 @@ fun AmityCommunityModeratorsMembershipComponent(
                                 Icon(
                                     painter = painterResource(R.drawable.amity_ic_more_horiz),
                                     contentDescription = "Action",
+                                    tint = AmityTheme.colors.base,
                                     modifier = modifier
                                         .size(24.dp)
                                         .clickableWithoutRipple {

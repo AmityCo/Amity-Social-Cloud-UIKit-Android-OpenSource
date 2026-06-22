@@ -8,6 +8,7 @@ import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.file.upload.AmityUploadResult
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
+import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
 import com.amity.socialcloud.uikit.common.model.AmityEventIdentifier
 import com.amity.socialcloud.uikit.common.service.AmityFileService
 import io.reactivex.rxjava3.core.Flowable
@@ -84,8 +85,7 @@ class AmityEditUserProfileViewModel : AmityBaseViewModel() {
     }
 
     private fun getCurrentProfileUrl(): String {
-        return user!!.getAvatar()
-            ?.getUrl(AmityImage.Size.SMALL) ?: ""
+        return user!!.resolvedAvatarUrl() ?: ""
     }
 
     fun checkProfileUpdate() {

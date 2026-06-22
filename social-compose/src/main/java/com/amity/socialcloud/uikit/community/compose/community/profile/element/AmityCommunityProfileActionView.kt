@@ -349,7 +349,7 @@ fun AmityCommunityJoinButton(
                     shape = RoundedCornerShape(8.dp),
                     border = BorderStroke(width = 1.dp, color = AmityTheme.colors.secondaryShade3),
                     colors = ButtonDefaults.outlinedButtonColors(
-                        containerColor = Color.White,
+                        containerColor = AmityTheme.colors.background,
                     ),
                     contentPadding = ButtonDefaults.ContentPadding
                 ) {
@@ -358,7 +358,7 @@ fun AmityCommunityJoinButton(
                         contentDescription = "Join community icon",
                         modifier = Modifier
                             .size(20.dp),
-                        tint = Color.Black
+                        tint = AmityTheme.colors.base
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
