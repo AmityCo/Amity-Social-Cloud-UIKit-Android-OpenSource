@@ -16,7 +16,7 @@ include ':chat-compose'
 include ':common-compose'
 
 // Include Amity Social Cloud SDK modules
-includeBuild('../Amity-Social-Cloud-SDK-Android') {
+//includeBuild('../Amity-Social-Cloud-SDK-Android') {
 //    dependencySubstitution {
 //        substitute module('co.amity.android:amity-stream-api') using project(':amity-stream-api')
 //        substitute module('co.amity.android:amity-video-player') using project(':amity-video-player')
@@ -33,5 +33,5 @@ includeBuild('../Amity-Social-Cloud-SDK-Android') {
 //        substitute module('co.amity.android:amity-rxremotemediator') using project(':amity-rxremotemediator')
 //        substitute module('co.amity.android:amity-rxupload') using project(':amity-rxupload')
 //    }
-}
+//}
 
