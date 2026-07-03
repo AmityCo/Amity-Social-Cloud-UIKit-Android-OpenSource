@@ -55,6 +55,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.common.localization.amityCommonString
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
 
 @Composable
@@ -168,13 +169,13 @@ fun AmityCommunityJoinButton(
                 modifier = Modifier
                     .size(22.dp)
                     .padding(start = 8.dp),
-                tint = Color.White
+                tint = amityColorWhite
             )
             Text(
                 modifier = Modifier.padding(end = 12.dp),
                 text = amityCommonString("amity_common_button_join"),
                 style = AmityTheme.typography.captionLegacy.copy(
-                    color = Color.White,
+                    color = amityColorWhite,
                 ),
             )
         }

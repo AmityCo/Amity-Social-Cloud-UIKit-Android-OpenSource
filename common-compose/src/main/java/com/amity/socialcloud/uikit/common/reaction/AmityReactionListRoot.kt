@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -31,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
@@ -82,8 +84,14 @@ fun AmityReactionRoot(
             onAction(AmityReactionListPageAction.GoToTab(pagerState.currentPage))
     }
 
+    val isEmpty = state.tabItems.firstOrNull()?.count == 0
+
     Column(
-        modifier = modifier.fillMaxSize()
+        modifier = if (isEmpty) {
+            modifier.fillMaxWidth()
+        } else {
+            modifier.fillMaxSize()
+        }
     ) {
         AmityReactionTab(
             state = state,
@@ -97,9 +105,11 @@ fun AmityReactionRoot(
         )
         HorizontalPager(
             state = pagerState,
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
+            modifier = if (isEmpty) {
+                Modifier.fillMaxWidth()
+            } else {
+                Modifier.fillMaxWidth().weight(1f)
+            }
         ) { index ->
             val tab = state.tabItems[index]
             val reactionName = if (tab.isAllTab) null else tab.title
@@ -111,6 +121,7 @@ fun AmityReactionRoot(
                 reactions = reactions,
                 referenceType = referenceType,
                 state = state,
+                isAllTab = tab.isAllTab,
                 action = { action ->
                     onAction(action)
                 },
@@ -132,7 +143,8 @@ fun AmityReactionTab(
         modifier = modifier
             .height(48.dp)
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         itemsIndexed(state.tabItems) { index: Int, tab: ReactionTab ->
             val isSelected = tab == state.tabItems[state.currentIndex]
@@ -143,15 +155,19 @@ fun AmityReactionTab(
                     }
                 }
             ) {
-                val title = if (tab.title == "All") amityCommonString("amity_common_button_all") else ""
-                val count = if (tab.count == 0) "0" else tab.count.readableNumber()
+                val count = tab.count.readableNumber()
+                val displayText = if (tab.isAllTab) {
+                    "${amityCommonString("amity_common_button_all")} $count"
+                } else {
+                    "$count"
+                }
                 val highlightColor = AmityTheme.colors.highlight
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
                     modifier = Modifier
-                        .width(75.dp)
+                        .widthIn(min = 38.dp)
                         .height(48.dp)
-                        .padding(end = 16.dp)
                         .drawBehind {
                             val strokeWidth = 4f
                             val x = size.width - strokeWidth
@@ -164,7 +180,7 @@ fun AmityReactionTab(
                             )
                         }
                 ) {
-                    if (title.isEmpty()) {
+                    if (!tab.isAllTab) {
                         val iconId = when (referenceType) {
                             AmityReactionReferenceType.MESSAGE -> AmityMessageReactions.getList()
                             else -> AmitySocialReactions.getList()
@@ -179,11 +195,12 @@ fun AmityReactionTab(
                             modifier = Modifier
                                 .size(20.dp)
                         )
+                        Spacer(Modifier.width(4.dp))
                     }
                     Text(
-                        text = "$title $count",
+                        text = displayText,
                         style = AmityTheme.typography.titleLegacy.copy(
-                            color = if (isSelected) AmityTheme.colors.highlight else AmityTheme.colors.base
+                            color = if (isSelected) AmityTheme.colors.highlight else AmityTheme.colors.baseShade2
                         ),
                         modifier = modifier.padding(vertical = 12.dp)
                     )
@@ -200,6 +217,7 @@ fun AmityReactionItems(
     reactions: LazyPagingItems<AmityReaction>,
     referenceType: AmityReactionReferenceType,
     state: AmityReactionListPageState,
+    isAllTab: Boolean = false,
     action: (AmityReactionListPageAction) -> Unit = {},
     onUserClick: (String) -> Unit = {},
 ) {
@@ -208,20 +226,21 @@ fun AmityReactionItems(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
             modifier = modifier
-                .fillMaxSize()
-                .padding(16.dp)
+                .fillMaxWidth()
+                .padding(top = 40.dp, start = 16.dp, end = 16.dp, bottom = 60.dp)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.amity_ic_add_reaction),
                 contentDescription = "no content found",
                 modifier = Modifier
-                    .size(32.dp)
+                    .size(60.dp),
+                colorFilter = ColorFilter.tint(AmityTheme.colors.secondaryShade4)
             )
 
             Text(
                 modifier = Modifier.padding(top = 16.dp),
-                text = amityCommonString("amity_common_button_no_reactions_yet"),
-                style = AmityTheme.typography.bodyLegacy.copy(
+                text = amityCommonString("common.button.no.reactions.yet"),
+                style = AmityTheme.typography.titleBold.copy(
                     color = AmityTheme.colors.baseShade2,
                 ),
             )
@@ -230,30 +249,51 @@ fun AmityReactionItems(
             Text(
                 modifier = Modifier.padding(top = 4.dp),
                 text = text,
-                style = AmityTheme.typography.captionLegacy.copy(
-                    color = AmityTheme.colors.baseShade2,
+                style = AmityTheme.typography.caption.copy(
+                    color = AmityTheme.colors.baseShade3,
                 ),
             )
         }
+        return
     }
 
     LazyColumn(
         modifier = modifier.fillMaxSize()
     ) {
-        items(
-            count = reactions.itemCount,
-            key = { index -> reactions[index]?.getReactionId() ?: index },
-        ) { index ->
-            val reaction = reactions[index] ?: return@items
-            AmityReactionListItem(
-                modifier = modifier,
-                reaction = reaction,
-                referenceType = referenceType,
-                onRemoveReaction = {
-                    action(AmityReactionListPageAction.RemoveReaction(reaction.getReactionName()))
-                },
-                onUserClick = onUserClick,
-            )
+        if (isAllTab) {
+            val sortedItems = reactions.itemSnapshotList.items
+                .sortedBy { it.getCreator()?.getDisplayName()?.lowercase() ?: "" }
+            items(
+                count = sortedItems.size,
+                key = { i -> sortedItems[i].getReactionId() },
+            ) { i ->
+                val reaction = sortedItems[i]
+                AmityReactionListItem(
+                    modifier = modifier,
+                    reaction = reaction,
+                    referenceType = referenceType,
+                    onRemoveReaction = {
+                        action(AmityReactionListPageAction.RemoveReaction(reaction.getReactionName()))
+                    },
+                    onUserClick = onUserClick,
+                )
+            }
+        } else {
+            items(
+                count = reactions.itemCount,
+                key = { index -> reactions[index]?.getReactionId() ?: index },
+            ) { index ->
+                val reaction = reactions[index] ?: return@items
+                AmityReactionListItem(
+                    modifier = modifier,
+                    reaction = reaction,
+                    referenceType = referenceType,
+                    onRemoveReaction = {
+                        action(AmityReactionListPageAction.RemoveReaction(reaction.getReactionName()))
+                    },
+                    onUserClick = onUserClick,
+                )
+            }
         }
 
         pagingLoadStateItem(
@@ -373,4 +413,3 @@ data class ReactionTab(
     val count: Int,
     val isAllTab: Boolean = false
 )
-

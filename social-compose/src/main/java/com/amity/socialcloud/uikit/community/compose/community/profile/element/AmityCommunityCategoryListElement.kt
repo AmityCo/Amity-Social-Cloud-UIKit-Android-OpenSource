@@ -35,7 +35,9 @@ fun AmityCommunityCategoryListElement(
 		componentScope = componentScope,
 		elementId = "community_categories"
 	) {
-		Box {
+		Box(
+			modifier = Modifier.padding(vertical = 8.dp)
+		) {
 			LazyRow(
 				horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.Start),
 				verticalAlignment = Alignment.CenterVertically,

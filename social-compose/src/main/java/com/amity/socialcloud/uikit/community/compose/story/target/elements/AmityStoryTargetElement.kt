@@ -1,6 +1,7 @@
 package com.amity.socialcloud.uikit.community.compose.story.target.elements
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -54,9 +56,12 @@ fun AmityStoryTargetElement(
         componentScope = componentScope,
         elementId = "story_ring"
     ) {
+        val showRing = ringUiState != AmityStoryTargetRingUiState.NO_STORY
+
         val colors = when (ringUiState) {
+            AmityStoryTargetRingUiState.NO_STORY,
             AmityStoryTargetRingUiState.SEEN -> {
-                getConfig().getValueAsList("background_color").asColorList()
+                listOf(AmityTheme.colors.baseShade4)
             }
 
             AmityStoryTargetRingUiState.SYNCING,
@@ -97,13 +102,15 @@ fun AmityStoryTargetElement(
                         .align(Alignment.Center)
                 )
 
-                AmityStoryGradientRingElement(
-                    colors = colors,
-                    isIndeterminate = ringUiState == AmityStoryTargetRingUiState.SYNCING,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .testTag("story_target_list/target_ring_view"),
-                )
+                if (showRing) {
+                    AmityStoryGradientRingElement(
+                        colors = colors,
+                        isIndeterminate = ringUiState == AmityStoryTargetRingUiState.SYNCING,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .testTag("story_target_list/target_ring_view"),
+                    )
+                }
 
                 val badge = when {
                     ringUiState == AmityStoryTargetRingUiState.FAILED -> R.drawable.amity_ic_error_circle
@@ -118,6 +125,14 @@ fun AmityStoryTargetElement(
                         contentDescription = "",
                         modifier = Modifier
                             .size(if (isCommunityTarget) 16.dp else 24.dp)
+                            .then(
+                                if (!isOfficialCommunity) Modifier
+                                    .border(
+                                        width = 1.5.dp,
+                                        color = AmityTheme.colors.background,
+                                        shape = CircleShape
+                                    ) else Modifier
+                            )
                             .align(Alignment.BottomEnd)
                             .testTag("story_target_list/target_create_story_icon")
                     )

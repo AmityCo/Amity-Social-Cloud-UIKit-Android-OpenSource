@@ -58,6 +58,9 @@ import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostVideoP
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostMediaVideoPlayer
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityProductTagBadge
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
+import com.amity.socialcloud.uikit.common.ui.theme.amityMediaSurface
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -141,13 +144,13 @@ fun AmityProfileVideoFeedItem(
         Text(
             text = videoDuration.formatVideoDuration(),
             style = AmityTheme.typography.caption.copy(
-                color = Color.White,
+                color = amityColorWhite,
             ),
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .offset(8.dp, (-8).dp)
                 .background(
-                    color = Color.Black.copy(alpha = 0.7f),
+                    color = amityColorBlack.copy(alpha = 0.7f),
                     shape = RoundedCornerShape(4.dp)
                 )
                 .padding(horizontal = 4.dp, vertical = 1.dp)
@@ -245,13 +248,13 @@ fun AmityProfileVideoFeedItemPreviewDialog(
                     .height(32.dp)
                     .offset(y = (-32).dp)
                     .fillMaxWidth()
-                    .background(Color.Black)
+                    .background(amityMediaSurface)
             )
 
             Box(
                 modifier = modifier
                     .fillMaxSize()
-                    .background(Color.Black)
+                    .background(amityMediaSurface)
             ) {
                 AmityPostMediaVideoPlayer(
                     exoPlayer = exoPlayer,
@@ -262,7 +265,7 @@ fun AmityProfileVideoFeedItemPreviewDialog(
                     modifier = modifier
                         .fillMaxWidth()
                         .height(64.dp)
-                        .background(Color.Black.copy(alpha = 0.5f)),
+                        .background(amityColorBlack.copy(alpha = 0.5f)),
                 ) {
                     val (closeBtn, menuBtn) = createRefs()
 

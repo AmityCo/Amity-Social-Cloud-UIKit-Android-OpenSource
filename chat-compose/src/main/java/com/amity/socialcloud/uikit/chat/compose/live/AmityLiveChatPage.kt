@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.amity.socialcloud.uikit.chat.compose.localization.amityChatString
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -147,9 +148,9 @@ fun AmityLiveChatPage(
                         tint = AmityTheme.colors.baseShade1,
                     )
                     val message = if (isChannelMuted) {
-                        "This channel has been set to read-only by the channel moderator"
+                        amityChatString("chat.group.permission.only.moderators.banner")
                     } else {
-                        "You’ve been muted by the channel moderator"
+                        amityChatString("chat.user.is.muted")
                     }
                     Text(
                         modifier = Modifier.padding(start = 16.dp, end = 16.dp),
@@ -223,7 +224,7 @@ fun LoadingToast() {
                                 )
                                 Spacer(modifier = Modifier.width(12.dp))
                                 Text(
-                                    text = "Loading chat...",
+                                    text = amityChatString("chat.loading.label"),
                                     style = TextStyle(
                                         fontSize = 14.sp,
                                         lineHeight = 20.sp,

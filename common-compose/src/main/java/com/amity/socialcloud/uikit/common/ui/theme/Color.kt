@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.common.ui.theme
 
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
@@ -34,6 +35,11 @@ val amityColorBaseShade2 = Color(0xFF898E9E)
 val amityColorBaseShade3 = Color(0xFFA5A9B5)
 val amityColorBaseShade4 = Color(0xFFEBECEF)
 
+val amityColorToastBackground = Color(0xFF292B32)
+val amityColorToastBackgroundDark = Color(0xFF40434E)
+
+val amityColorHighlightDark = Color(0xFF4A82F2)
+
 val AmityUIKitColors = AmityColors(
     primary = amityColorPrimary,
     secondary = amityColorSecondary,
@@ -49,6 +55,7 @@ val AmityUIKitColors = AmityColors(
     background = amityColorBackground,
     backgroundShade1 = amityColorBackgroundShade1,
     sheetBackground = amityColorBaseShade4,
+    toastBackground = amityColorToastBackground,
     primaryShade1 = amityColorPrimaryShade1,
     primaryShade2 = amityColorPrimaryShade2,
     primaryShade3 = amityColorPrimaryShade3,
@@ -79,6 +86,7 @@ data class AmityColors(
     val background: Color,
     val backgroundShade1: Color,
     val sheetBackground: Color,
+    val toastBackground: Color,
     val primaryShade1: Color,
     val primaryShade2: Color,
     val primaryShade3: Color,
@@ -105,13 +113,20 @@ data class AmityColors(
         val baseShade3 = theme.baseShade3Color?.asColor() ?: amityColorBaseShade3
         val baseShade4 = theme.baseShade4Color?.asColor() ?: amityColorBaseShade4
         val baseInverse = theme.baseInverseColor?.asColor() ?: amityColorBaseInverse
+        val secondaryShade2 = theme.secondaryShade2?.asColor() ?: amityColorSecondary.shade(AmityColorShade.SHADE2)
+        val secondaryShade3 = theme.secondaryShade3?.asColor() ?: amityColorSecondary.shade(AmityColorShade.SHADE3)
+        val secondaryShade4 = theme.secondaryShade4?.asColor() ?: amityColorSecondary.shade(AmityColorShade.SHADE4)
         val alert = theme.alertColor?.asColor() ?: amityColorAlert
         val divider = theme.baseShade4Color?.asColor() ?: amityColorBaseShade4
         val background = theme.backgroundColor?.asColor() ?: amityColorBackground
         val backgroundShade1 = theme.backgroundShade1Color?.asColor() ?: amityColorBackgroundShade1
+        val toastBackground = theme.toastBackgroundColor?.asColor()
+            ?: if (isUIKitInDarkTheme) amityColorToastBackgroundDark else amityColorToastBackground
+        val highlight = theme.highlightColor?.asColor()
+            ?: if (isUIKitInDarkTheme) amityColorHighlightDark else amityColorHighlight
 
         val newsfeedDivider = if (isUIKitInDarkTheme) {
-            Color.Black
+            amityColorBlack
         } else {
             baseShade4
         }
@@ -120,13 +135,13 @@ data class AmityColors(
             primary = primary,
             primaryShade1 = primary.shade(AmityColorShade.SHADE1),
             primaryShade2 = primary.shade(AmityColorShade.SHADE2),
-            primaryShade3 = primary.shade(AmityColorShade.SHADE3),
+            primaryShade3 = amityColorPrimaryShade3,
             primaryShade4 = primary.shade(AmityColorShade.SHADE4),
             secondary = secondary,
-            secondaryShade1 = secondary.shade(AmityColorShade.SHADE1),
-            secondaryShade2 = secondary.shade(AmityColorShade.SHADE2),
-            secondaryShade3 = secondary.shade(AmityColorShade.SHADE3),
-            secondaryShade4 = secondary.shade(AmityColorShade.SHADE4),
+            secondaryShade1 = secondaryShade1,
+            secondaryShade2 = secondaryShade2,
+            secondaryShade3 = secondaryShade3,
+            secondaryShade4 = secondaryShade4,
             base = base,
             baseShade1 = baseShade1,
             baseShade2 = baseShade2,
@@ -134,9 +149,11 @@ data class AmityColors(
             baseShade4 = baseShade4,
             baseInverse = baseInverse,
             alert = alert,
+            highlight = highlight,
             background = background,
             backgroundShade1 = backgroundShade1,
             sheetBackground = background,
+            toastBackground = toastBackground,
             divider = divider,
             newsfeedDivider = newsfeedDivider,
         )

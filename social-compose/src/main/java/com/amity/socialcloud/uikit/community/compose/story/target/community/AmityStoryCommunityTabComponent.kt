@@ -68,9 +68,13 @@ fun AmityStoryCommunityTabComponent(
         viewModel.getLives(communityId)
     }.collectAsState(initial = emptyList())
 
-    val storyTargetRingUiState by remember(target) {
+    val storyTargetRingUiState by remember(target, stories.itemCount) {
         derivedStateOf {
-            target?.toRingUiState() ?: AmityStoryTargetRingUiState.SEEN
+            if (stories.itemCount == 0) {
+                AmityStoryTargetRingUiState.NO_STORY
+            } else {
+                target?.toRingUiState() ?: AmityStoryTargetRingUiState.SEEN
+            }
         }
     }
 

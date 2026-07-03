@@ -10,6 +10,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import com.amity.socialcloud.uikit.common.ui.theme.amityStoryRingGradientEnd
+import com.amity.socialcloud.uikit.common.ui.theme.amityStoryRingGradientStart
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
@@ -59,8 +61,8 @@ fun AmityStoryGradientRingElement(
 fun AmityStoryGradientRingElementPreview() {
     AmityStoryGradientRingElement(
         colors = listOf(
-            Color(0xFF339AF9),
-            Color(0xFF78FA58)
+            amityStoryRingGradientStart,
+            amityStoryRingGradientEnd
         ),
         isIndeterminate = true,
         modifier = Modifier.size(64.dp)

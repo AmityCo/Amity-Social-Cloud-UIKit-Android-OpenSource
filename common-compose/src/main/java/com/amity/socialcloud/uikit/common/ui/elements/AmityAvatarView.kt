@@ -39,6 +39,11 @@ import com.amity.socialcloud.sdk.model.social.category.AmityCommunityCategory
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.compose.R
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.theme.amityAvatarPlaceholderBackground
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
+import com.amity.socialcloud.uikit.common.ui.theme.amityDeletedAvatarPlaceholderBackground
+import com.amity.socialcloud.uikit.common.ui.theme.amityEventAvatarPlaceholderBackground
 
 @Composable
 fun AmityCommunityAvatarView(
@@ -93,7 +98,7 @@ fun AmityCommunityAvatarWithRoundedCornerView(
                 Icon(
                     painter = painterResource(id = R.drawable.amity_ic_community_placeholder),
                     contentDescription = null,
-                    tint = Color.White,
+                    tint = amityColorWhite,
                     modifier = Modifier
                         .align(Alignment.Center)
                         .size(40.dp)
@@ -130,7 +135,7 @@ fun AmityCommunityAvatarWithLabelView(
                         brush = Brush.verticalGradient(
                             colors = listOf(
                                 Color.Transparent,
-                                Color(0x66000000)
+                                amityColorBlack.copy(alpha = 0.4f)
                             )
                         )
                     )
@@ -138,7 +143,7 @@ fun AmityCommunityAvatarWithLabelView(
                 Text(
                     text = label,
                     style = AmityTheme.typography.bodyLegacy.copy(
-                        color = Color.White
+                        color = amityColorWhite
                     ),
                     modifier = Modifier
                         .align(Alignment.BottomStart)
@@ -151,80 +156,150 @@ fun AmityCommunityAvatarWithLabelView(
 
 }
 
+/**
+ * Base avatar composable for displaying a user avatar with:
+ *  - a remote image loaded from [avatarUrl]
+ *  - a text-initial fallback using the first non-space character of [displayName] (trimmed)
+ *  - a placeholder icon fallback for deleted users or when [displayName] is blank
+ *
+ * All higher-level avatar components (chat, social, etc.) should delegate to this function
+ * so that avatar rendering logic is centralised in one place.
+ */
+@Composable
+fun AmityAvatarView(
+    modifier: Modifier = Modifier,
+    avatarUrl: String?,
+    displayName: String?,
+    isDeleted: Boolean = false,
+    size: Dp = 40.dp,
+    placeholderRes: Int = R.drawable.amity_ic_default_profile1,
+) {
+    // Trim early — ensures leading/trailing spaces in display names never produce a blank initial
+    val trimmedName = displayName?.trim().orEmpty()
+    val initial = trimmedName.firstOrNull()?.uppercase() ?: ""
+    // val url = user?.resolvedAvatarUrl()?.ifEmpty { null }
+    val url = avatarUrl?.ifEmpty { null }
+
+    val fontSize = when {
+        size >= 120.dp -> 64.sp
+        size >= 64.dp -> 32.sp
+        size >= 56.dp -> 32.sp
+        size >= 40.dp -> 20.sp
+        size >= 32.dp -> 17.sp
+        size >= 28.dp -> 15.sp
+        else -> 10.sp
+    }
+
+    val lineHeight = when {
+        size >= 120.dp -> 56.sp
+        size >= 64.dp -> 40.sp
+        size >= 56.dp -> 40.sp
+        size >= 40.dp -> 24.sp
+        size >= 32.dp -> 20.sp
+        size >= 28.dp -> 20.sp
+        else -> 13.sp
+    }
+
+    Box(modifier = modifier) {
+        if (!avatarUrl.isNullOrEmpty()) {
+            val painter = rememberAsyncImagePainter(
+                model = ImageRequest
+                    .Builder(LocalContext.current)
+                    .data(avatarUrl)
+                    .diskCachePolicy(CachePolicy.ENABLED)
+                    .memoryCachePolicy(CachePolicy.ENABLED)
+                    .build()
+            )
+            val painterState by painter.state.collectAsState()
+
+            Image(
+                painter = painter,
+                contentScale = ContentScale.Crop,
+                contentDescription = "Avatar Image",
+                modifier = Modifier
+                    .size(size)
+                    .clip(CircleShape),
+            )
+
+            if (painterState !is AsyncImagePainter.State.Success) {
+                AvatarFallback(
+                    size = size,
+                    initial = initial,
+                    fontSize = fontSize,
+                    lineHeight = lineHeight,
+                    isDeleted = isDeleted,
+                    placeholderRes = placeholderRes,
+                )
+            }
+        } else {
+            AvatarFallback(
+                size = size,
+                initial = initial,
+                fontSize = fontSize,
+                lineHeight = lineHeight,
+                isDeleted = isDeleted,
+                placeholderRes = placeholderRes,
+            )
+        }
+    }
+}
+
+@Composable
+private fun AvatarFallback(
+    size: Dp,
+    initial: String,
+    fontSize: androidx.compose.ui.unit.TextUnit,
+    lineHeight: androidx.compose.ui.unit.TextUnit,
+    isDeleted: Boolean,
+    placeholderRes: Int,
+) {
+    Box(
+        modifier = Modifier
+            .size(size)
+            .clip(CircleShape)
+            .background(
+                if (isDeleted) amityDeletedAvatarPlaceholderBackground()
+                else amityAvatarPlaceholderBackground(),
+            ),
+        contentAlignment = Alignment.Center,
+    ) {
+        if (!isDeleted && initial.isNotEmpty()) {
+            Text(
+                text = initial,
+                style = TextStyle(
+                    fontSize = fontSize,
+                    lineHeight = lineHeight,
+                    fontWeight = FontWeight.Normal,
+                    color = Color.White,
+                ),
+            )
+        } else {
+            Image(
+                painter = painterResource(id = placeholderRes),
+                contentDescription = null,
+                contentScale = ContentScale.Fit,
+                colorFilter = ColorFilter.tint(Color.White),
+                modifier = Modifier
+                    .size(16.dp)
+                    .align(Alignment.Center),
+            )
+        }
+    }
+}
+
+/** Convenience overload that accepts an [AmityUser] directly. */
 @Composable
 fun AmityUserAvatarView(
     modifier: Modifier = Modifier,
     size: Dp = 32.dp,
     user: AmityUser?,
 ) {
-    val url = user?.resolvedAvatarUrl()?.ifEmpty { null }
-
-    val painter = rememberAsyncImagePainter(
-        model = ImageRequest
-            .Builder(LocalContext.current)
-            .data(url)
-            .diskCachePolicy(CachePolicy.ENABLED)
-            .memoryCachePolicy(CachePolicy.ENABLED)
-            .build()
+    AmityAvatarView(
+        modifier = modifier,
+        avatarUrl = user?.resolvedAvatarUrl()?.ifEmpty { null },
+        displayName = user?.getDisplayName(),
+        size = size,
     )
-
-    val painterState by painter.state.collectAsState()
-
-    Box(modifier = modifier) {
-        Image(
-            painter = painter,
-            contentScale = ContentScale.Crop,
-            contentDescription = "Avatar Image",
-            modifier = Modifier
-                .size(size)
-                .clip(CircleShape)
-        )
-        if (painterState !is AsyncImagePainter.State.Success) {
-            val displayNameFirstCharacter =
-                (user?.getDisplayName()?.trim() ?: "").firstOrNull()?.uppercase() ?: ""
-
-            val fontSize = when (size) {
-                120.dp -> 64.sp
-                64.dp -> 32.sp
-                56.dp -> 32.sp
-                40.dp -> 20.sp
-                32.dp -> 17.sp
-                28.dp -> 15.sp
-                16.dp -> 10.sp
-                else -> 10.sp
-            }
-
-            val lineHeight = when (size) {
-                120.dp -> 56.sp
-                64.dp -> 40.sp
-                56.dp -> 40.sp
-                40.dp -> 24.sp
-                32.dp -> 20.sp
-                28.dp -> 20.sp
-                16.dp -> 13.sp
-                else -> 13.sp
-            }
-
-            Box(
-                modifier = Modifier
-                    .size(size)
-                    .clip(CircleShape)
-                    .background(AmityTheme.colors.primaryShade2)
-            ) {
-                Text(
-                    text = displayNameFirstCharacter,
-                    style = TextStyle(
-                        fontSize = fontSize,
-                        lineHeight = lineHeight,
-                        fontWeight = FontWeight.Normal,
-                        color = Color.White,
-                    ),
-                    modifier = Modifier.align(Alignment.Center),
-                )
-
-            }
-        }
-    }
 }
 
 @Composable
@@ -260,6 +335,7 @@ fun AmityCategoryAvatarView(
                 contentDescription = null,
                 modifier = Modifier
                     .size(size)
+                    .background(amityAvatarPlaceholderBackground(), CircleShape)
                     .clip(roundedCornerShape)
             )
         }
@@ -299,7 +375,7 @@ fun AmityEventAvatarView(
                 modifier = Modifier
                     .size(size)
                     .clip(roundedCornerShape)
-                    .background(Color(0xFFDBCABD))
+                    .background(amityEventAvatarPlaceholderBackground)
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.amity_ic_event_list_placeholder),
@@ -322,8 +398,8 @@ fun AmityAvatarView(
     image: AmityImage?,
     roundedCornerShape: RoundedCornerShape = CircleShape,
     placeholder: Int = R.drawable.amity_ic_default_profile1,
-    placeholderTint: Color = Color.White,
-    placeholderBackground: Color = AmityTheme.colors.primaryShade3,
+    placeholderTint: Color = amityColorWhite,
+    placeholderBackground: Color = amityAvatarPlaceholderBackground(),
 ) {
     val url = image?.getUrl(AmityImage.Size.MEDIUM)?.ifEmpty { null }
 

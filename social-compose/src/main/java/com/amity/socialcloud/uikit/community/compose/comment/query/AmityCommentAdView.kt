@@ -53,6 +53,7 @@ import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.isVisible
 import com.amity.socialcloud.uikit.community.compose.R
 import com.google.gson.JsonObject
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
 
 @Composable
@@ -248,7 +249,7 @@ fun AmityCommentAdView(
                                         overflow = TextOverflow.Ellipsis,
                                         style = AmityTheme.typography.bodyLegacy.copy(
                                             fontWeight = FontWeight.SemiBold,
-                                            color = Color.White
+                                            color = amityColorWhite
                                         ),
                                         modifier = Modifier
                                             .testTag("comment_list/comment_bubble_ad_headline")

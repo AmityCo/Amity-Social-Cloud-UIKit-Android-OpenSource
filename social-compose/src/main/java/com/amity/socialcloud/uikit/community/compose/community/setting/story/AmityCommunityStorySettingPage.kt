@@ -84,7 +84,7 @@ fun AmityCommunityStorySettingPage(
                     colors = SwitchDefaults.colors(
                         checkedTrackColor = AmityTheme.colors.highlight,
                         uncheckedBorderColor = AmityTheme.colors.baseShade3,
-                        uncheckedThumbColor = Color.White,
+                        uncheckedThumbColor = AmityTheme.colors.baseInverse,
                         uncheckedTrackColor = AmityTheme.colors.baseShade3,
                     ),
                     onCheckedChange = {
@@ -93,10 +93,12 @@ fun AmityCommunityStorySettingPage(
                         viewModel.updateStorySetting(
                             setting = AmityCommunityStorySettings(allowComment = isChecked),
                             onSuccess = {
-                                context.closePageWithResult(Activity.RESULT_OK)
-                                AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_community_profile_updated"))
+                                // PDT-2700: a silent toggle must not surface a toast and must not
+                                // navigate away — stay on the page so the user can keep toggling.
                             },
                             onError = {
+                                // Revert the optimistic toggle since the update failed.
+                                isChecked = !isChecked
                                 AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_community_profile_update_failed"))
                             }
                         )

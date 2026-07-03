@@ -47,6 +47,8 @@ import com.amity.socialcloud.sdk.model.core.error.AmityException
 import com.amity.socialcloud.uikit.chat.compose.R
 import com.amity.socialcloud.uikit.chat.compose.live.AmityLiveChatPageViewModel
 import com.amity.socialcloud.uikit.chat.compose.live.mention.AmityMentionSuggestion
+import com.amity.socialcloud.uikit.chat.compose.localization.DefaultAmityChatStringProvider
+import com.amity.socialcloud.uikit.chat.compose.localization.amityChatString
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
@@ -104,10 +106,24 @@ fun AmityLiveChatMessageComposeBar(
     val messageListState by remember { viewModel.messageListState }
 
     var showComposeErrorDialog = remember { mutableStateOf(false) }
+    var showMentionLimitErrorDialog = remember { mutableStateOf(false) }
 
 
     LaunchedEffect(parentMessage) {
         isReplyingToMessage = parentMessage != null
+    }
+
+    // Observe reply parent message for deletion (PDT-2888 Case 2)
+    val parentMessageId = parentMessage?.getMessageId()
+    LaunchedEffect(parentMessageId) {
+        if (parentMessageId != null) {
+            viewModel.getMessage(parentMessageId).collect { observedMessage ->
+                if (observedMessage.isDeleted()) {
+                    isReplyingToMessage = false
+                    viewModel.dismissReplyMessage()
+                }
+            }
+        }
     }
 
     if (messageListState == AmityLiveChatPageViewModel.MessageListState.SUCCESS) {
@@ -122,7 +138,17 @@ fun AmityLiveChatMessageComposeBar(
 
                 if (showComposeErrorDialog.value) {
                     MessageComposeErrorPopup(
-                        onDismiss = { showComposeErrorDialog.value = false }
+                        onDismiss = { showComposeErrorDialog.value = false },
+                        confirmText = amityChatString("amity_chat_button_ok")
+                    )
+                }
+
+                if (showMentionLimitErrorDialog.value) {
+                    MessageComposeErrorPopup(
+                        title = amityChatString("chat.reach.mention.limit.title"),
+                        message = amityChatString("chat.reach.mention.limit.message"),
+                        confirmText = amityChatString("amity_chat_button_ok"),
+                        onDismiss = { showMentionLimitErrorDialog.value = false },
                     )
                 }
 
@@ -164,7 +190,7 @@ fun AmityLiveChatMessageComposeBar(
                         val hint: String = try {
                             getComponentScope().getConfig().getValue("placeholder_text")
                         } catch (e: Exception) {
-                            "Write a message"
+                            amityChatString("chat.compose.placeholder")
                         }
                         AmityMessageMentionTextField(
                             modifier = Modifier
@@ -187,6 +213,9 @@ fun AmityLiveChatMessageComposeBar(
                             },
                             onMention = {
                                 mentionedUsers = it
+                            },
+                            onMentionLimitReached = {
+                                showMentionLimitErrorDialog.value = true
                             }
                         )
                     }
@@ -195,6 +224,9 @@ fun AmityLiveChatMessageComposeBar(
                     } catch (e: Exception) {
                         10000
                     }
+                    val bannedWordErrorMessage = amityChatString("chat.toast.banned.word")
+                    val linkNotAllowedErrorMessage = amityChatString("chat.toast.link.not.allow")
+                    val generalErrorMessage = amityChatString("chat.message.failed.to.send")
                     Button(
                         onClick = {
                             if (messageText.isBlank()) {
@@ -227,12 +259,12 @@ fun AmityLiveChatMessageComposeBar(
 
                                     val errorMessage: String = if (exception is AmityException) {
                                         when (AmityError.from(exception.code)) {
-                                            AmityError.BAN_WORD_FOUND -> "Your message wasn't sent as it contained a blocked word."
-                                            AmityError.LINK_NOT_ALLOWED -> "Your message wasn't sent as it contained a link that's not allowed."
-                                            else -> exception.message ?: "This message failed to be sent. Please try again."
+                                            AmityError.BAN_WORD_FOUND -> bannedWordErrorMessage
+                                            AmityError.LINK_NOT_ALLOWED -> linkNotAllowedErrorMessage
+                                            else -> exception.message ?: generalErrorMessage
                                         }
                                     } else {
-                                        exception.message ?: "This message failed to be sent. Please try again."
+                                        exception.message ?: DefaultAmityChatStringProvider.getInstance().getString("chat.message.failed.to.send")
                                     }
                                     getComponentScope().showSnackbar(
                                         message = errorMessage
@@ -267,6 +299,9 @@ fun AmityLiveChatMessageComposeBar(
 
 @Composable
 fun MessageComposeErrorPopup(
+    confirmText: String,
+    title: String = amityChatString("chat.char.limit.alert.title"),
+    message: String = amityChatString("chat.char.limit.alert.message"),
     onDismiss: () -> Unit,
 ) {
 
@@ -293,7 +328,7 @@ fun MessageComposeErrorPopup(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "Unable to send message",
+                            text = title,
                             fontSize = 17.sp,
                             lineHeight = 22.sp,
                             fontWeight = FontWeight(600),
@@ -302,7 +337,7 @@ fun MessageComposeErrorPopup(
                             color = AmityTheme.colors.baseInverse,
                         )
                         Text(
-                            text = "Your message is too long. Please shorten your message and try again.",
+                            text = message,
                             fontSize = 13.sp,
                             lineHeight = 16.sp,
                             fontWeight = FontWeight(400),
@@ -325,7 +360,7 @@ fun MessageComposeErrorPopup(
                             modifier = Modifier.weight(1f)
                         ) {
                             Text(
-                                text = "OK",
+                                text = confirmText,
                                 fontSize = 17.sp,
                                 lineHeight = 22.sp,
                                 fontWeight = FontWeight(600),

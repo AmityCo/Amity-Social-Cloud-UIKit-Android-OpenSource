@@ -22,8 +22,12 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.common.readableNumber
+import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.amityStoryEngagementBackground
+import com.amity.socialcloud.uikit.common.ui.theme.amityStoryEngagementIcon
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 
 @Composable
@@ -34,34 +38,36 @@ fun AmityStoryCommentCountElement(
 ) {
     val haptics = LocalHapticFeedback.current
 
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-            .height(40.dp)
-            .clip(MaterialTheme.shapes.extraLarge)
-            .background(AmityTheme.colors.secondary)
-            .padding(horizontal = 10.dp, vertical = 8.dp)
-            .clickableWithoutRipple {
-                haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                onClick()
-            }
-            .testTag("comment_button")
-    ) {
-        Icon(
-            imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_story_comment_count),
-            contentDescription = "Story Comment Count",
-            modifier = Modifier.size(20.dp),
-            tint = AmityTheme.colors.secondaryShade3,
-        )
-        Text(
-            text = count.readableNumber(),
-            color = Color.White,
+    AmityBaseElement(elementId = "story_comment_count") {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
             modifier = modifier
-                .height(20.dp)
-                .padding(start = 4.dp)
-                .widthIn(min = 16.dp)
-                .testTag("comment_button_text_view")
-        )
+                .height(40.dp)
+                .clip(MaterialTheme.shapes.extraLarge)
+                .background(amityStoryEngagementBackground)
+                .padding(horizontal = 10.dp, vertical = 8.dp)
+                .clickableWithoutRipple {
+                    haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                    onClick()
+                }
+                .testTag("comment_button")
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_story_comment_count),
+                contentDescription = "Story Comment Count",
+                modifier = Modifier.size(20.dp),
+                tint = amityStoryEngagementIcon,
+            )
+            Text(
+                text = count.readableNumber(),
+                color = amityColorWhite,
+                modifier = modifier
+                    .height(20.dp)
+                    .padding(start = 4.dp)
+                    .widthIn(min = 16.dp)
+                    .testTag("comment_button_text_view")
+            )
+        }
     }
 }
 

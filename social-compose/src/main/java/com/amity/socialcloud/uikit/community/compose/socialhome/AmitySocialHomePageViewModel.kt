@@ -4,11 +4,11 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import androidx.paging.LoadState
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import androidx.paging.map
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.sdk.api.social.community.query.AmityCommunitySortOption
-import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.model.core.ad.AmityAdPlacement
 import com.amity.socialcloud.sdk.model.core.invitation.AmityInvitation
 import com.amity.socialcloud.sdk.model.core.notificationtray.AmityNotificationTraySeen
@@ -20,6 +20,8 @@ import com.amity.socialcloud.uikit.common.ad.AmityAdInjector
 import com.amity.socialcloud.uikit.common.ad.AmityListItem
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
+import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
+import com.amity.socialcloud.sdk.model.core.user.AmityUserType
 import com.amity.socialcloud.uikit.community.compose.story.target.global.AmityStoryGlobalTabViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -28,8 +30,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
@@ -51,6 +58,40 @@ class AmitySocialHomePageViewModel : AmityBaseViewModel() {
     }
 
     val isGlobalFeedRefreshing get() = _isGlobalFeedRefreshing
+
+    private val _isForYouEnabledFromSettings = MutableStateFlow<Boolean?>(null)
+    private val _isForYouEnabledFromFeed = MutableStateFlow(true)
+
+    val isForYouEnabled: StateFlow<Boolean?> = combine(
+        _isForYouEnabledFromSettings,
+        _isForYouEnabledFromFeed,
+    ) { fromSettings, fromFeed ->
+        if (fromSettings == null) null else fromSettings && fromFeed
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
+
+    init {
+        fetchForYouFeedSetting()
+    }
+
+    private fun fetchForYouFeedSetting() {
+        if (AmityCoreClient.getCurrentUserType() != AmityUserType.SIGNED_IN) {
+            _isForYouEnabledFromSettings.value = false
+            return
+        }
+        addDisposable(
+            AmityCoreClient.getForYouFeedSetting()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { setting -> _isForYouEnabledFromSettings.value = setting.enabled },
+                    { _isForYouEnabledFromSettings.value = false }
+                )
+        )
+    }
+
+    fun onForYouFeatureDisabled() {
+        _isForYouEnabledFromFeed.value = false
+    }
 
     private val _notificationTraySeen = MutableStateFlow<AmityNotificationTraySeen?>(null)
     val notificationTraySeen: StateFlow<AmityNotificationTraySeen?> get() = _notificationTraySeen.asStateFlow()
@@ -133,6 +174,22 @@ class AmitySocialHomePageViewModel : AmityBaseViewModel() {
             .observeOn(AndroidSchedulers.mainThread())
             .asFlow()
             .catch {}
+    }
+
+    fun getForYouFeed(): Flow<PagingData<AmityListItem>> {
+        val injector = AmityAdInjector<AmityPost>(
+            placement = AmityAdPlacement.FEED,
+            communityId = null,
+        )
+        return AmitySocialClient.newFeedRepository()
+            .getForYouFeed()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .onBackpressureBuffer()
+            .map { injector.inject(it) }
+            .asFlow()
+            .catch {}
+            .cachedIn(viewModelScope)
     }
 
     fun getGlobalFeed(): Flow<PagingData<AmityListItem>> {

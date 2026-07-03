@@ -44,6 +44,7 @@ import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.search.global.AmityGlobalSearchType
 import com.amity.socialcloud.uikit.community.compose.search.global.AmityGlobalSearchViewModel
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
 @Composable
 fun AmityTopSearchBarComponent(
@@ -175,7 +176,7 @@ fun AmityTopSearchBarComponent(
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.amity_ic_close),
-                                tint = Color.White,
+                                tint = amityColorWhite,
                                 contentDescription = null,
                                 modifier = modifier
                                     .align(Alignment.Center)

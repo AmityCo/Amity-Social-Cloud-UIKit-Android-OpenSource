@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import com.amity.socialcloud.uikit.chat.compose.localization.amityChatString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -75,6 +76,7 @@ fun AmityMentionSuggestionView(
             ) {
                 AmityMessageAvatarView(
                     avatarUrl = avatarUrl,
+                    displayName = text,
                     avatarType = if(suggestion is AmityMentionSuggestion.USER) AmityAvatarType.USER else AmityAvatarType.MENTION_ALL,
                     size = 32.dp,
                 )
@@ -105,7 +107,7 @@ fun AmityMentionSuggestionView(
 
                 if(suggestion is AmityMentionSuggestion.CHANNEL){
                     Text(
-                        text = "Notify everyone",
+                        text = amityChatString("chat.mention.everyone"),
                         overflow = TextOverflow.Ellipsis,
                         fontSize = 13.sp,
                         lineHeight = 18.sp,

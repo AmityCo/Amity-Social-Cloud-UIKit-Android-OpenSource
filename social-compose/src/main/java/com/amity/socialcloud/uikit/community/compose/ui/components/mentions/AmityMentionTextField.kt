@@ -144,7 +144,7 @@ fun AmityMentionTextField(
     var mentionDismissed by remember { mutableStateOf(false) }
 
     // Convert external mentions to our internal format
-    val initialMentions by remember(mentionMetadata, mentionees) {
+    val initialMentions by remember(mentionMetadata, mentionees, value) {
         derivedStateOf {
             mentionMetadata.mapNotNull { metadata ->
                 val user = mentionees.filterIsInstance<AmityMentionee.USER>()
@@ -158,7 +158,22 @@ fun AmityMentionTextField(
                         startPosition = metadata.getIndex(),
                         length = (user.getDisplayName() ?: "").length
                     )
-                } else null
+                } else {
+                    // Fallback: extract the display name from the current text when no mentionee
+                    // object is available (e.g. pre-filled reply mention in comment composer).
+                    val idx = metadata.getIndex()
+                    val len = metadata.getLength()
+                    val textStart = idx + 1  // +1 to skip '@'
+                    val textEnd = (textStart + len).coerceAtMost(value.length)
+                    if (len > 0 && textStart < value.length && textEnd > textStart) {
+                        MentionData(
+                            userId = metadata.getUserId(),
+                            displayName = value.substring(textStart, textEnd),
+                            startPosition = idx,
+                            length = len
+                        )
+                    } else null
+                }
             }
         }
     }
@@ -408,6 +423,7 @@ fun AmityMentionTextField(
             onUserMentions(emptyList()) // Clear mentions in parent
             onProductMentions(emptyList())
             onHashtags(emptyList()) // Clear hashtags in parent
+            onQueryToken(null) // Dismiss any active mention/suggestion on clear
         }
     }
 

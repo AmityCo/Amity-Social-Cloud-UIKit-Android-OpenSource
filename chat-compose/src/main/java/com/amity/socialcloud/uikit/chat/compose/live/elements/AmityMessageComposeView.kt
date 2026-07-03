@@ -12,7 +12,7 @@ import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.uikit.chat.compose.R
 import com.amity.socialcloud.uikit.common.common.views.AmityColorPaletteUtil
 import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
-import com.amity.socialcloud.uikit.common.utils.AmityAlertDialogUtil
+import com.amity.socialcloud.uikit.common.localization.DefaultAmityCommonStringProvider
 import com.linkedin.android.spyglass.mentions.MentionSpan
 import com.linkedin.android.spyglass.mentions.MentionSpanConfig
 import com.linkedin.android.spyglass.mentions.Mentionable
@@ -26,12 +26,12 @@ class AmityMessageComposeView(context: Context) : MentionsEditText(context) {
     }
 
     private var maxChars: Int = CHARACTERS_LIMIT
+    var onMentionLimitReached: (() -> Unit)? = null
+    var isApplyingMentionMetadata: Boolean = false
+
     override fun insertMention(mention: Mentionable) {
         if (getMentions().size >= MENTIONS_LIMIT) {
-            showErrorDialog(
-                "Unable to mention user",
-                "You have reached maximum 30 mentioned users in a post."
-            )
+            onMentionLimitReached?.invoke()
         } else {
             super.insertMention(mention)
             append(" ")
@@ -50,22 +50,7 @@ class AmityMessageComposeView(context: Context) : MentionsEditText(context) {
         setMentionConfig()
 
         this.doAfterTextChanged { text ->
-            if (!text.isNullOrEmpty() && text.length > maxChars) {
-                getText().delete(maxChars, getText().length)
-            }
-        }
-    }
-
-    private fun showErrorDialog(title: String, message: String) {
-        AmityAlertDialogUtil.showDialog(
-            context, title, message,
-            "DONE",
-            null
-        ) { dialog, which ->
-            AmityAlertDialogUtil.checkConfirmDialog(
-                isPositive = which,
-                confirmed = dialog::cancel
-            )
+            // Character limit is enforced by the compose bar's error dialog
         }
     }
 
@@ -89,13 +74,22 @@ class AmityMessageComposeView(context: Context) : MentionsEditText(context) {
         mentionMetadata: List<AmityMentionMetadata>,
         mentionees: List<AmityMentionee>
     ) {
-        mentionMetadata.forEach { mentionItem ->
+        // Process mentions in reverse order (by index) to avoid index shifting
+        val sortedMetadata = mentionMetadata.sortedByDescending { mention ->
+            when (mention) {
+                is AmityMentionMetadata.USER -> mention.getIndex()
+                is AmityMentionMetadata.CHANNEL -> mention.getIndex()
+                else -> 0
+            }
+        }
+        sortedMetadata.forEach { mentionItem ->
             val mentionStart: Int
             val mentionEnd: Int
             if (mentionItem is AmityMentionMetadata.USER) {
                 mentionStart = mentionItem.getIndex()
                 mentionEnd = mentionItem.getIndex().plus(mentionItem.getLength()).inc()
 
+                if (mentionEnd > text.length || mentionStart < 0) return@forEach
                 text.delete(mentionStart, mentionEnd)
                 setSelection(mentionStart)
                 getMentionedUser(mentionItem.getUserId(), mentionees)?.let {
@@ -107,6 +101,7 @@ class AmityMessageComposeView(context: Context) : MentionsEditText(context) {
                 mentionStart = mentionItem.getIndex()
                 mentionEnd = mentionItem.getIndex().plus(mentionItem.getLength()).inc()
 
+                if (mentionEnd > text.length || mentionStart < 0) return@forEach
                 text.delete(mentionStart, mentionEnd)
                 setSelection(mentionStart)
                 insertMentionWithoutToken(AmityChannelMention())
@@ -135,7 +130,7 @@ class AmityMessageComposeView(context: Context) : MentionsEditText(context) {
                 (mentionSpanItem.mention as? AmityChannelMention?)?.let { channel ->
                     mentions.add(
                         AmityMentionMetadata.CHANNEL(
-                            index, "All".length
+                            index, DefaultAmityCommonStringProvider.getInstance().getString("amity_common_button_all").length
                         )
                     )
                 }

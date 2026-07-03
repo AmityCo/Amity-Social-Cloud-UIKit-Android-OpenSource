@@ -44,6 +44,7 @@ import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.common.utils.formatCurrencyForLocale
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
 enum class RenderModeEnum {
     POST, IMAGE , VIDEO, LIVESTREAM
@@ -187,7 +188,7 @@ private fun AmityProductTagElement(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(Color(0xCCFFFFFF))
+                        .background(amityColorWhite.copy(alpha = 0.8f))
                 )
             }
         }
@@ -249,7 +250,7 @@ private fun AmityProductTagElement(
                             Text(
                                 text = amitySocialString("amity_social_button_view"),
                                 style = AmityTheme.typography.captionBold.copy(
-                                    color = Color.White
+                                    color = amityColorWhite
                                 )
                             )
                         }

@@ -70,4 +70,11 @@
     <string name="amity_social_button_delete_story">Delete story</string>
     <string name="amity_social_toast_message_unreport_failed">This message failed to be unreported. Please try again.</string>
     <string name="amity_social_modal_dialog_delete_message_title">Delete this message?</string>
+    <string name="amity_chat_delete_alert_message">This message will also be removed from your friend’s devices.</string>
+    <string name="amity_common_mention_error_title">Unable to mention user</string>
+    <string name="amity_common_mention_error_msg">You have reached maximum 30 mentioned users in a post.</string>
+    <string name="amity_common_modal_dialog_done_button">Done</string>
+    <string name="amity_common_button_inappropriate_image">Inappropriate image</string>
+    <string name="amity_common_label_choose_different_image">Please choose a different image to upload.</string>
+
 </resources>

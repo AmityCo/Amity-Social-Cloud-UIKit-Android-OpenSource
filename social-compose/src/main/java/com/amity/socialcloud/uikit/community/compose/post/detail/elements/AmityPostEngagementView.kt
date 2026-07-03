@@ -67,6 +67,8 @@ import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.isUIKitInDarkTheme
 import com.amity.socialcloud.uikit.common.utils.AmityConstants.POST_REACTION
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.getIcon
@@ -449,7 +451,10 @@ fun AmityPostEngagementView(
                             text = amitySocialReactionDisplayName(resolvedReactionKey),
                             style = AmityTheme.typography.bodyLegacy.copy(
                                 fontWeight = FontWeight.SemiBold,
-                                color = if (isReacted) AmityTheme.colors.primary
+                                color = if (isReacted) {
+                                    if (isUIKitInDarkTheme()) amityColorWhite
+                                    else AmityTheme.colors.primary
+                                }
                                 else AmityTheme.colors.baseShade2
                             ),
                         )

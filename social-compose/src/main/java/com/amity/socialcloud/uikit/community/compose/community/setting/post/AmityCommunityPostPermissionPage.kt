@@ -110,8 +110,8 @@ fun AmityCommunityPostPermissionPage(
                 Text(
                     text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_edit_user_save_button"),
                     style = AmityTheme.typography.bodyLegacy.copy(
-                        color = if (shouldAllowToSave) AmityTheme.colors.highlight
-                        else AmityTheme.colors.highlight.shade(AmityColorShade.SHADE2),
+                        color = if (shouldAllowToSave) AmityTheme.colors.primary
+                        else AmityTheme.colors.primary.copy(alpha = 0.3f),
                     ),
                     modifier = modifier.clickableWithoutRipple(shouldAllowToSave) {
                         selectedSetting?.setting?.let {
@@ -150,7 +150,7 @@ fun AmityCommunityPostPermissionPage(
                 modifier = modifier.padding(horizontal = 16.dp)
             )
 
-            Spacer(modifier.height(8.dp))
+            Spacer(modifier.height(16.dp))
             AmityCommunitySettingRadioGroup(
                 items = settingItems,
                 selectedKey = selectedSetting ?: settingItems.first(),

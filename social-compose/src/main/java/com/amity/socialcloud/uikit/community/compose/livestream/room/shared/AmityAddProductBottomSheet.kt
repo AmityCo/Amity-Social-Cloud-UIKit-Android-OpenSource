@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import com.amity.socialcloud.sdk.model.core.product.AmityProduct
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
+import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.product.AmityProductTagSelectionComponent
 
@@ -42,7 +43,7 @@ fun AmityAddProductBottomSheet(
             onDismiss.invoke()
         },
         sheetState = bottomSheetState,
-        containerColor = Color(0xFF191919),
+        containerColor = AmityTheme.colors.background,
         contentWindowInsets = { WindowInsets.navigationBars },
         modifier = Modifier
             .statusBarsPadding(),
@@ -81,6 +82,7 @@ fun AmityAddProductBottomSheet(
             dialogTitle = amitySocialString("amity_social_modal_dialog_title_discard_product_selection"),
             dialogText = amitySocialString("amity_social_modal_dialog_unsaved_products"),
             confirmText = amitySocialString("amity_social_button_discard"),
+            confirmTextColor = AmityTheme.colors.alert,
             dismissText = amitySocialString("amity_social_button_keep_editing"),
             onDismissRequest = {
                 showDiscardConfirmationDialog = false

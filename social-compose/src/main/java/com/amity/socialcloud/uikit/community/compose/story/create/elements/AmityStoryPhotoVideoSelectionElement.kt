@@ -24,6 +24,10 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.theme.amityCreateStorySelectionSelectedBackground
+import com.amity.socialcloud.uikit.common.ui.theme.amityCreateStorySelectionSelectedText
+import com.amity.socialcloud.uikit.common.ui.theme.amityCreateStorySelectionUnselectedBackground
+import com.amity.socialcloud.uikit.common.ui.theme.amityCreateStorySelectionUnselectedText
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
@@ -43,14 +47,14 @@ fun AmityStoryPhotoVideoSelectionElement(
             .fillMaxWidth()
             .height(44.dp)
             .clip(CircleShape)
-            .background(AmityTheme.colors.secondary)
+            .background(amityCreateStorySelectionUnselectedBackground)
     ) {
         Box(
             modifier = Modifier
                 .height(44.dp)
                 .weight(1f)
                 .clip(CircleShape)
-                .background(if (isPhotoSelected) Color.White else Color.Transparent)
+                .background(if (isPhotoSelected) AmityTheme.colors.baseInverse else Color.Transparent)
                 .clickable {
                     isPhotoSelected = true
                     haptics.performHapticFeedback(HapticFeedbackType.LongPress)
@@ -59,8 +63,8 @@ fun AmityStoryPhotoVideoSelectionElement(
             Text(
                 text = amitySocialString("amity_social_button_community_setup_image_button"),
                 style = AmityTheme.typography.bodyLegacy.copy(
-                    color = if (isPhotoSelected) AmityTheme.colors.secondaryShade1
-                    else AmityTheme.colors.secondaryShade2,
+                    color = if (isPhotoSelected) amityCreateStorySelectionSelectedText
+                    else amityCreateStorySelectionUnselectedText
                 ),
                 modifier = Modifier
                     .align(Alignment.Center)
@@ -72,7 +76,7 @@ fun AmityStoryPhotoVideoSelectionElement(
                 .height(44.dp)
                 .weight(1f)
                 .clip(CircleShape)
-                .background(if (isPhotoSelected) Color.Transparent else Color.White)
+                .background(if (isPhotoSelected) Color.Transparent else AmityTheme.colors.baseInverse)
                 .clickable {
                     isPhotoSelected = false
                     haptics.performHapticFeedback(HapticFeedbackType.LongPress)
@@ -81,8 +85,8 @@ fun AmityStoryPhotoVideoSelectionElement(
             Text(
                 text = amitySocialString("amity_social_button_post_composer_video_button"),
                 style = AmityTheme.typography.bodyLegacy.copy(
-                    color = if (isPhotoSelected) AmityTheme.colors.secondaryShade2
-                    else AmityTheme.colors.secondaryShade1,
+                    color = if (isPhotoSelected) amityCreateStorySelectionUnselectedText
+                    else amityCreateStorySelectionSelectedText,
                 ),
                 modifier = Modifier
                     .align(Alignment.Center)

@@ -92,6 +92,7 @@ import com.amity.socialcloud.uikit.community.compose.user.profile.elements.Amity
 import com.amity.socialcloud.uikit.community.compose.user.profile.elements.AmityUserUnfollowBottomSheet
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
 @OptIn(
     ExperimentalFoundationApi::class,
@@ -516,7 +517,7 @@ fun AmityUserProfilePage(
                         Icon(
                             painter = painterResource(id = R.drawable.amity_ic_plus),
                             contentDescription = "create post",
-                            tint = Color.White,
+                            tint = amityColorWhite,
                             modifier = Modifier
                                 .size(32.dp)
                                 .padding(4.dp)

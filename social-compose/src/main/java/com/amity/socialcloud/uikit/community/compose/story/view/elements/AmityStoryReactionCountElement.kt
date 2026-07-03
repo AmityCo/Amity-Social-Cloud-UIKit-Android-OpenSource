@@ -1,11 +1,13 @@
 package com.amity.socialcloud.uikit.community.compose.story.view.elements
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -32,6 +34,10 @@ import com.amity.socialcloud.uikit.common.common.readableNumber
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.amityStoryEngagementBackground
+import com.amity.socialcloud.uikit.common.ui.theme.amityStoryEngagementIcon
+import com.amity.socialcloud.uikit.common.ui.theme.isUIKitInDarkTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.isSignedIn
 import com.amity.socialcloud.uikit.common.utils.isVisitor
@@ -60,7 +66,7 @@ fun AmityStoryReactionCountElement(
         modifier = modifier
             .height(40.dp)
             .clip(MaterialTheme.shapes.extraLarge)
-            .background(AmityTheme.colors.secondary)
+            .background(amityStoryEngagementBackground)
             .clickableWithoutRipple {
                 haptics.performHapticFeedback(HapticFeedbackType.LongPress)
                 if (isCommunityJoined) {
@@ -80,12 +86,21 @@ fun AmityStoryReactionCountElement(
             imageVector = if (isReacted) ImageVector.vectorResource(id = R.drawable.amity_ic_story_liked_pressed)
             else ImageVector.vectorResource(id = R.drawable.amity_ic_story_like_normal),
             contentDescription = "Story Reaction Count",
-            modifier = Modifier.size(20.dp),
-            tint = Color.Unspecified,
+            modifier = Modifier.size(20.dp)
+                .then(if (isReacted && isUIKitInDarkTheme()){
+                    Modifier.border(
+                        width = 1.dp,
+                        color = amityColorWhite,
+                        shape = CircleShape
+                    )
+                } else {
+                    Modifier
+                }),
+            tint = if (isReacted) Color.Unspecified else amityStoryEngagementIcon,
         )
         Text(
             text = reactionCount.readableNumber(),
-            color = Color.White,
+            color = amityColorWhite,
             modifier = modifier
                 .height(20.dp)
                 .padding(start = 4.dp)

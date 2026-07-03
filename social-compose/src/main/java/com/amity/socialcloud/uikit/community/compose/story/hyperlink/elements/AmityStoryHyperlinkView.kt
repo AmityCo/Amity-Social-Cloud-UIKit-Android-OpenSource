@@ -21,6 +21,8 @@ import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.amityStoryEngagementBackground
 
 @Composable
 fun AmityStoryHyperlinkView(
@@ -34,7 +36,7 @@ fun AmityStoryHyperlinkView(
         modifier = modifier
             .widthIn(min = 0.dp, max = 300.dp)
             .background(
-                color = Color(0xCCFFFFFF),
+                color = amityColorWhite.copy(alpha = 0.8f),
                 shape = RoundedCornerShape(size = 24.dp)
             )
             .clickableWithoutRipple { onClick() }
@@ -73,7 +75,7 @@ fun AmityStoryAdHyperlinkView(
         modifier = modifier
             .widthIn(min = 0.dp, max = 300.dp)
             .background(
-                color = Color(0xCCFFFFFF),
+                color = amityColorWhite.copy(alpha = 0.8f),
                 shape = RoundedCornerShape(size = 24.dp)
             )
             .clickableWithoutRipple { onClick() }
@@ -83,7 +85,7 @@ fun AmityStoryAdHyperlinkView(
         Text(
             text = text,
             style = AmityTheme.typography.bodyLegacy.copy(
-                color = AmityTheme.colors.secondary,
+                color = amityStoryEngagementBackground,
                 fontWeight = FontWeight.SemiBold,
             ),
             maxLines = 1,

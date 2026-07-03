@@ -14,7 +14,7 @@ class AmitySocialHomeTopNavigationComponent {
     @Composable
     fun composeSocialHomeTopNavigationComponent() {
         AmitySocialHomeTopNavigationComponent(
-            selectedTab = AmitySocialHomePageTab.NEWSFEED,
+            selectedTab = AmitySocialHomePageTab.FOR_YOU,
             searchButtonAction = {},
             notificationButton = {}
         )

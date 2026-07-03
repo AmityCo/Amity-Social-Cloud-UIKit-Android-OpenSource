@@ -106,6 +106,7 @@ fun AmityStoryModalBottomSheet(
                             icon = R.drawable.amity_ic_delete_story,
                             text = amityCommonString("amity_common_button_delete_story"),
                             modifier = modifier.testTag("bottom_sheet_delete_button"),
+                            color = AmityTheme.colors.alert
                         ) {
                             viewModel.updateSheetUIState(AmityStoryModalSheetUIState.CloseSheet)
                             viewModel.updateDialogUIState(

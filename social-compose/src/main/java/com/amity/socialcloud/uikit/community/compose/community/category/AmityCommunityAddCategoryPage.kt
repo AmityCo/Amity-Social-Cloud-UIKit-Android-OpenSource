@@ -49,6 +49,7 @@ import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.community.category.element.AmityCommunityCategoryItem
 import com.amity.socialcloud.uikit.community.compose.community.category.element.AmityCommunityCategoryList
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
 @Composable
 fun AmityCommunityAddCategoryPage(
@@ -196,8 +197,8 @@ fun AmityCommunityAddCategoryPage(
                 Spacer(modifier = modifier.height(16.dp))
                 Button(
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = AmityTheme.colors.highlight,
-                        disabledContainerColor = AmityTheme.colors.highlight.shade(AmityColorShade.SHADE2),
+                        containerColor = AmityTheme.colors.primary,
+                        disabledContainerColor = AmityTheme.colors.primary.copy(alpha = 0.3f),
                     ),
                     shape = RoundedCornerShape(4.dp),
                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
@@ -213,7 +214,7 @@ fun AmityCommunityAddCategoryPage(
                     Text(
                         text = amitySocialString("amity_social_button_add_category"),
                         style = AmityTheme.typography.captionLegacy.copy(
-                            color = Color.White,
+                            color = amityColorWhite,
                         ),
                     )
                 }

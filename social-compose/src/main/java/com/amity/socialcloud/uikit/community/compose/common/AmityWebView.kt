@@ -58,16 +58,17 @@ fun AmityWebView(
                     onLoadingChanged?.invoke(false)
                 }
 
-                @SuppressLint("WebViewClientOnReceivedSslError")
                 override fun onReceivedSslError(
                     view: WebView?,
                     handler: SslErrorHandler?,
                     error: SslError?
                 ) {
-                    // Proceed past SSL errors (e.g. ERR_CERT_AUTHORITY_INVALID / net_error -202)
-                    // so the page still loads inside the in-app browser instead of triggering
-                    // the error state. The user can always choose to open in the native browser.
-                    handler?.proceed()
+                    // Block the load on SSL certificate errors (invalid/expired/self-signed).
+                    // Proceeding here is a MITM risk and violates Google Play's Device and
+                    // Network Abuse policy. Surface the existing error UI instead.
+                    handler?.cancel()
+                    onLoadingChanged?.invoke(false)
+                    onError?.invoke()
                 }
 
                 override fun onReceivedError(

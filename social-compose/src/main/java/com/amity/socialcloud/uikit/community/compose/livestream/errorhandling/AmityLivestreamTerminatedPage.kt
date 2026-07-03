@@ -209,7 +209,7 @@ fun AmityLivestreamTerminatedPage(
                         style = AmityTheme.typography.bodyLegacy.copy(
                             fontWeight = FontWeight.SemiBold,
                             textAlign = TextAlign.Center,
-                            color = Color.White
+                            color = AmityTheme.colors.baseInverse
                         )
                     )
                 }

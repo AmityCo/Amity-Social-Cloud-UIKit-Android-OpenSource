@@ -91,6 +91,9 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.delay
 import java.util.Locale
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
+import com.amity.socialcloud.uikit.common.ui.theme.amityMediaSurface
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
@@ -291,7 +294,7 @@ fun AmityVideoPlayerPage(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.Black)
+                    .background(amityMediaSurface)
             ) {
                 HorizontalPager(
                     state = pagerState,
@@ -366,7 +369,7 @@ fun AmityVideoPlayerPage(
                             start.linkTo(parent.start)
                         },
                         background = if (isRecordedRoomPost) Color.Transparent
-                        else Color.Black.copy(alpha = 0.5f)
+                        else amityColorBlack.copy(alpha = 0.5f)
                     ) {
                         onDismiss()
                     }
@@ -599,12 +602,12 @@ fun VideoSeekBar(
         ) {
             Text(
                 text = formatVideoDuration(currentPosition),
-                color = Color.White,
+                color = amityColorWhite,
                 style = AmityTheme.typography.body
             )
             Text(
                 text = formatVideoDuration(duration),
-                color = Color.White,
+                color = amityColorWhite,
                 style = AmityTheme.typography.body
             )
         }
@@ -649,7 +652,7 @@ fun VideoSeekBar(
                     .fillMaxWidth()
                     .height(4.dp)
                     .background(
-                        color = Color.White.copy(alpha = 0.3f),
+                        color = amityColorWhite.copy(alpha = 0.3f),
                         shape = RoundedCornerShape(2.dp)
                     )
             ) {
@@ -659,7 +662,7 @@ fun VideoSeekBar(
                         .fillMaxWidth(progress)
                         .height(4.dp)
                         .background(
-                            color = Color.White,
+                            color = amityColorWhite,
                             shape = RoundedCornerShape(2.dp)
                         )
                 )
@@ -675,7 +678,7 @@ fun VideoSeekBar(
                     modifier = Modifier
                         .align(Alignment.CenterEnd)
                         .size(12.dp)
-                        .background(Color.White, RoundedCornerShape(6.dp))
+                        .background(amityColorWhite, RoundedCornerShape(6.dp))
                 )
             }
         }

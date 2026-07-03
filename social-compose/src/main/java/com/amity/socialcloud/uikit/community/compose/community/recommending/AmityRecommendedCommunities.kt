@@ -59,6 +59,7 @@ import com.amity.socialcloud.uikit.community.compose.community.membership.elemen
 import com.amity.socialcloud.uikit.community.compose.socialhome.elements.AmityCommunityCategoryView
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityRecommendedCommunityShimmer
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
 
 @Composable
@@ -237,7 +238,7 @@ fun AmityRecommendedCommunityAvatarView(
                 Icon(
                     painter = painterResource(id = placeholder),
                     contentDescription = null,
-                    tint = Color.White,
+                    tint = amityColorWhite,
                     modifier = Modifier
                         .align(Alignment.Center)
                         .size(60.dp)

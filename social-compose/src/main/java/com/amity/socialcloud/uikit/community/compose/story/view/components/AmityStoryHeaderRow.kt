@@ -65,6 +65,8 @@ import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmitySt
 import com.amity.socialcloud.uikit.community.compose.utils.AmityStoryVideoPlayerHelper
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
 @Composable
 fun AmityStoryHeaderRow(
@@ -152,7 +154,7 @@ fun AmityStoryHeaderRow(
             .background(
                 brush = Brush.verticalGradient(
                     listOf(
-                        Color.Black.copy(alpha = 0.5f),
+                        amityColorBlack.copy(alpha = 0.5f),
                         Color.Transparent
                     )
                 )
@@ -239,7 +241,7 @@ fun AmityStoryHeaderRow(
                         Text(
                             text = displayName,
                             style = AmityTheme.typography.bodyLegacy.copy(
-                                color = Color.White,
+                                color = amityColorWhite,
                                 fontWeight = FontWeight.SemiBold
                             ),
                             modifier = Modifier
@@ -264,9 +266,8 @@ fun AmityStoryHeaderRow(
                         }
                         if (isOfficialCommunity) {
                             Spacer(modifier.width(2.dp))
-                            Icon(
+                            Image(
                                 painter = painterResource(R.drawable.amity_ic_verified_community),
-                                tint = Color.White,
                                 contentDescription = "Community Official Icon",
                                 modifier = modifier.size(20.dp)
                             )
@@ -283,18 +284,18 @@ fun AmityStoryHeaderRow(
                         ) {
                             Text(
                                 text = story?.getCreatedAt()?.readableTimeDiff() ?: "",
-                                color = Color.White,
+                                color = amityColorWhite,
                                 fontSize = 13.sp,
                                 modifier = modifier.testTag("created_at")
                             )
                             Text(
                                 text = "• By",
-                                color = Color.White,
+                                color = amityColorWhite,
                                 fontSize = 13.sp,
                             )
                             Text(
                                 text = story?.getCreator()?.getDisplayName() ?: "",
-                                color = Color.White,
+                                color = amityColorWhite,
                                 fontSize = 13.sp,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
@@ -328,7 +329,7 @@ fun AmityStoryHeaderRow(
                                 id = getConfig().getValue("overflow_menu_icon").asDrawableRes()
                             ),
                             contentDescription = "More",
-                            tint = Color.White,
+                            tint = amityColorWhite,
                             modifier = Modifier
                                 .size(24.dp)
                                 .align(Alignment.CenterVertically)
@@ -354,7 +355,7 @@ fun AmityStoryHeaderRow(
                             id = getConfig().getValue("close_icon").asDrawableRes()
                         ),
                         contentDescription = "Close",
-                        tint = Color.White,
+                        tint = amityColorWhite,
                         modifier = Modifier
                             .size(24.dp)
                             .align(Alignment.CenterVertically)

@@ -3,6 +3,7 @@ package com.amity.socialcloud.uikit.community.compose.story.target.utils
 import com.amity.socialcloud.sdk.model.social.story.AmityStoryTarget
 
 enum class AmityStoryTargetRingUiState {
+    NO_STORY,
     SEEN,
     HAS_UNSEEN,
     SYNCING,

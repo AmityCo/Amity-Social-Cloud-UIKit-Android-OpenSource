@@ -63,6 +63,7 @@ import com.amity.socialcloud.uikit.community.compose.story.draft.AmityStoryMedia
 import com.amity.socialcloud.uikit.community.compose.utils.AmityStoryCameraHelper
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
+import com.amity.socialcloud.uikit.common.ui.theme.amityMediaSurface
 
 
 @Composable
@@ -200,7 +201,7 @@ fun AmityCreateStoryPage(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black)
+                .background(amityMediaSurface)
         ) {
             ConstraintLayout(
                 modifier = Modifier.aspectRatio(9f / 16f)
@@ -211,7 +212,7 @@ fun AmityCreateStoryPage(
                     modifier = modifier
                         .fillMaxSize()
                         .clip(RoundedCornerShape(12.dp))
-                        .background(Color.Black)
+                        .background(amityMediaSurface)
                         .testTag("camera_view")
                         .constrainAs(cameraPreview) {
                             top.linkTo(parent.top)
@@ -311,7 +312,7 @@ fun AmityCreateStoryPage(
                     ) {
                         Text(
                             text = videoRecordDuration.readableMinuteSeconds(),
-                            color = Color.White,
+                            color = AmityTheme.colors.baseInverse,
                             modifier = modifier.align(Alignment.Center)
                         )
                     }

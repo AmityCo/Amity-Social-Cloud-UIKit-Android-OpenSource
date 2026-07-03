@@ -29,7 +29,6 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
@@ -70,28 +69,33 @@ class AmityCommunityProfileViewModel(private val communityId: String) :
                 .check().timeout (1, TimeUnit.SECONDS).onErrorReturn { communityProfileState.value.isModerator }
         ) { community, hasPermission -> Pair(community, hasPermission) }
             .doOnNext { (community, isModerator) ->
-                val isMember = community.isJoined()
+                // Update state immediately so community.isJoined() reflects reality at
+                // once. The previous delay(1000) left the community stale for ~1s after
+                // accepting an invitation, which briefly showed the "Join" button in the
+                // header before the joined UI settled (PDT-1754).
+                _communityProfileState.value = _communityProfileState.value.copy(
+                    communityId = communityId,
+                    community = community,
+                    isRefreshing = false,
+                    isMember = community.isJoined(),
+                    isModerator = isModerator
+                )
                 viewModelScope.launch {
                     community.subscription(AmityCommunityEvents.POSTS)
                         .subscribeTopic()
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe()
-                    delay(1000)
-                    _communityProfileState.value = _communityProfileState.value.copy(
-                        communityId = communityId,
-                        community = community,
-                        isRefreshing = false,
-                        isMember = isMember,
-                        isModerator = isModerator
-                    )
                 }
             }
             .doOnError { error ->
                 if (error is AmityException) {
                     _communityProfileState.update {
+                        // Store the thrown error (not it.error, which was a no-op) so the
+                        // error page shows instead of an infinite shimmer on load failure.
                         it.copy(
-                            error = it.error,
+                            error = AmityError.from(error),
+                            isRefreshing = false,
                         )
                     }
                 }
@@ -258,9 +262,14 @@ class AmityCommunityProfileViewModel(private val communityId: String) :
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnComplete {
-                    // Clear invitation from state after successful acceptance
+                    // Clear the invitation and optimistically mark the user a member so the
+                    // header shows the joined UI immediately - no stale "Join" button blip
+                    // while we wait for the live community to re-emit (PDT-1754). We don't
+                    // set isRefreshing here (no shimmer, no spinner); the now-accessible
+                    // posts are reloaded when isJoined() flips (see the profile page's
+                    // join-transition effect), which also covers the join-request path.
                     _communityProfileState.update { currentState ->
-                        currentState.copy(invitation = null, isRefreshing = true)
+                        currentState.copy(invitation = null, isMember = true)
                     }
                     onSuccess()
                 }

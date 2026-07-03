@@ -100,3 +100,5 @@ captures/
 *~
 *.swp
 .check_hardcoded_kt_files.tmp
+.kotlin/
+.worktrees/

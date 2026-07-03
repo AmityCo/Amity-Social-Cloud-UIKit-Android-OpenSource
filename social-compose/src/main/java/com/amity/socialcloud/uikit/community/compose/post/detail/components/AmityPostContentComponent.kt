@@ -115,6 +115,7 @@ fun AmityPostContentComponent(
                     dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_delete_post_warning_message_2"),
                     confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_delete"),
                     dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel"),
+                    confirmTextColor = AmityTheme.colors.alert,
                     onConfirmation = {
                         AmityPostComposerHelper.deletePost(data.postId)
                         viewModel.deletePost(

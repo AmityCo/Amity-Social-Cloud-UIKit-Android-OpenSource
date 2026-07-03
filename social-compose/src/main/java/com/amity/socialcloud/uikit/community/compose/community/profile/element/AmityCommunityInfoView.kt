@@ -48,7 +48,7 @@ fun AmityCommunityInfoView(
 		val context = LocalContext.current
 		Row(
 			modifier = Modifier
-				.padding(top = 8.dp, bottom = 16.dp, start = 16.dp, end = 16.dp),
+				.padding(horizontal = 16.dp, vertical = 4.dp),
 			verticalAlignment = Alignment.CenterVertically,
 		) {
 			Text(

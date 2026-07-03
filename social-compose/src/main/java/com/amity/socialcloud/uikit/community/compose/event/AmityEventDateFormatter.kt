@@ -19,7 +19,7 @@ fun formatEventTimestamp(startTime: DateTime, endTime: DateTime?): String {
     val startDate = startTime.toLocalDate()
 
     val timeFormatter = DateTimeFormat.forPattern("h:mm aa")
-    val dateTimeFormatter = DateTimeFormat.forPattern("MMM dd yyyy, h:mm aa")
+    val dateTimeFormatter = DateTimeFormat.forPattern("dd MMM yyyy, h:mm aa")
 
     // If no endTime provided, default to 12 hours after startTime
     val finalEndTime = endTime ?: startTime.plusHours(12)

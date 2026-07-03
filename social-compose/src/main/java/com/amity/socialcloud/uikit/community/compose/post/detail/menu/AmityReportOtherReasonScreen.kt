@@ -39,6 +39,8 @@ import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.livestream.create.element.AmityNoOutlineTextField
 import kotlinx.coroutines.delay
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.amityDisabledColor
 
 @Composable
 fun AmityReportOtherReasonScreen(
@@ -196,13 +198,13 @@ fun AmityReportOtherReasonScreen(
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = AmityTheme.colors.primary,
-                disabledContainerColor = AmityTheme.colors.primary.copy(alpha = 0.3f)
+                disabledContainerColor = AmityTheme.colors.primary.copy(alpha = 0.3f),
             ),
         ) {
             Text(
                 text = amitySocialString("amity_social_button_report_submit_button"),
                 style = AmityTheme.typography.bodyBold,
-                color = Color.White
+                color = if (isButtonEnabled) amityColorWhite else amityDisabledColor(amityColorWhite),
             )
         }
     }

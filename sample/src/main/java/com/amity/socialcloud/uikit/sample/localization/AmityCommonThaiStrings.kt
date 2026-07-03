@@ -83,10 +83,20 @@ object AmityCommonThaiStrings {
         "amity_social_button_replying_to" to "ตอบกลับ",
 
         // Reactions
-        "amity_social_button_reaction_like" to "ถูกใจ",
-        "amity_social_button_reaction_love" to "รัก",
-        "amity_social_button_reaction_fire" to "เจ๋ง",
-        "amity_social_button_reaction_happy" to "ฮา",
-        "amity_social_button_reaction_sad" to "เศร้า",
+        "social.button.reaction.like" to "ถูกใจ",
+        "social.button.reaction.love" to "รัก",
+        "social.button.reaction.fire" to "เจ๋ง",
+        "social.button.reaction.happy" to "ฮา",
+        "social.button.reaction.sad" to "เศร้า",
+
+        "common.modal.dialog.done.button" to "เสร็จแล้ว",
+
+        "chat.delete.alert.message" to "ข้อความนี้จะถูกลบออกจากอุปกรณ์ของเพื่อนคุณด้วย",
+        "common.button.inappropriate.image" to "รูปภาพไม่เหมาะสม",
+        "common.label.choose.different.image" to "กรุณาเลือกรูปภาพอื่นเพื่ออัปโหลด",
+        "common.mention.error.msg" to "คุณกล่าวถึงผู้ใช้ครบ 30 คนแล้วในโพสต์นี้",
+        "common.mention.error.title" to "ไม่สามารถกล่าวถึงผู้ใช้ได้",
+        "social.modal.dialog.delete.message.title" to "ลบข้อความนี้?",
+        "social.toast.message.unreport.failed" to "ไม่สามารถยกเลิกการรายงานข้อความนี้ได้ กรุณาลองอีกครั้ง"
     )
 }

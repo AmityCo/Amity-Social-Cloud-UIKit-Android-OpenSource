@@ -52,6 +52,7 @@ import com.amity.socialcloud.uikit.common.utils.formatCurrencyForLocale
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.AmityProductTagListComponent
 import com.amity.socialcloud.sdk.api.social.post.review.AmityReviewStatus
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
 private const val MAX_VISIBLE_PRODUCTS = 5
 
@@ -251,7 +252,7 @@ private fun ProductCarouselCard(
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(Color(0xCCFFFFFF))
+                            .background(amityColorWhite.copy(alpha = 0.8f))
                     )
                 }
             }

@@ -23,13 +23,14 @@ import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 
 @Composable
 fun AmityCreateLivestreamPendingApprovalView() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color.Black.copy(alpha = 0.5f)),
+            .background(color = amityColorBlack.copy(alpha = 0.5f)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(Modifier.weight(1f))
@@ -39,12 +40,12 @@ fun AmityCreateLivestreamPendingApprovalView() {
             modifier = Modifier
                 .width(48.dp)
                 .height(48.dp),
-            tint = Color.White
+            tint = AmityTheme.colors.baseInverse
         )
         Spacer(Modifier.height(12.dp))
         Text(
             text = amitySocialString("amity_social_label_waiting_for_approval"),
-            color = Color.White,
+            color = AmityTheme.colors.baseInverse,
             style = AmityTheme.typography.titleLegacy.copy(
                 fontWeight = FontWeight.SemiBold
             )
@@ -52,7 +53,7 @@ fun AmityCreateLivestreamPendingApprovalView() {
         Spacer(Modifier.height(4.dp))
         Text(
             text = amitySocialString("amity_social_status_this_live_stream_has_started_however_it_will_have_limit"),
-            color = Color.White,
+            color = AmityTheme.colors.baseInverse,
             modifier = Modifier.padding(horizontal = 16.dp),
             style = AmityTheme.typography.captionLegacy.copy(
                 fontWeight = FontWeight.Normal,

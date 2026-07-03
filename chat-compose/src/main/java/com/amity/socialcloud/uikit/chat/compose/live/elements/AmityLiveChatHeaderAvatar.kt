@@ -1,7 +1,6 @@
 package com.amity.socialcloud.uikit.chat.compose.live.elements
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.sdk.model.chat.channel.AmityChannel
 import com.amity.socialcloud.uikit.chat.compose.R
@@ -20,9 +19,8 @@ fun AmityLiveChatHeaderAvatar(
 			pageScope = pageScope,
 			componentScope = componentScope,
 			avatarUrl = channel?.getAvatar()?.getUrl() ?: "",
+			displayName = channel?.getDisplayName(),
 			size = 40.dp,
-			placeholder = painterResource(id = R.drawable.amity_ic_chat_placeholder),
-			placeHolderTint = null,
 		)
 	}
 }

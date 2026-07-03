@@ -126,7 +126,7 @@ fun AmityBaseWarningPage(
                         Text(
                             text = buttonText,
                             style = AmityTheme.typography.bodyBold,
-                            color = Color.White
+                            color = AmityTheme.colors.baseInverse
                         )
                     }
                 }

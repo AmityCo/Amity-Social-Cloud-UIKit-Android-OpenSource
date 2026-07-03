@@ -42,6 +42,7 @@ import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.story.hyperlink.elements.AmityStoryAdHyperlinkView
 import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmityStoryBodyGestureBox
 import kotlinx.coroutines.Dispatchers
+import com.amity.socialcloud.uikit.common.ui.theme.amityMediaSurface
 
 @Composable
 fun AmityStoryAdView(
@@ -81,7 +82,7 @@ fun AmityStoryAdView(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.Black)
+            .background(amityMediaSurface)
             .isVisible { isVisible = it }
     ) {
 

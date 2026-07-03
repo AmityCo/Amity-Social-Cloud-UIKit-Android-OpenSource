@@ -65,6 +65,8 @@ import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmitySt
 import com.amity.socialcloud.uikit.community.compose.utils.AmityStoryVideoPlayerHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import com.amity.socialcloud.uikit.common.ui.theme.amityMediaSurface
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -329,10 +331,10 @@ fun AmityViewCommunityStoryPage(
         Box(
             modifier = modifier
                 .fillMaxSize()
-                .background(Color.Black) // the color for the status bar background
+                .background(amityMediaSurface) // the color for the status bar background
                 .statusBarsPadding()
                 .navigationBarsPadding()
-                .background(Color.Black)
+                .background(amityMediaSurface)
         ) {
             HorizontalPager(
                 state = storyPagerState,
@@ -513,7 +515,7 @@ fun AmityViewCommunityStoryPage(
                 Box(
                     modifier = modifier
                         .fillMaxSize()
-                        .background(Color.Black.copy(alpha = if (isMovedToUnseenStory) 0.5f else 1f))
+                        .background(amityColorBlack.copy(alpha = if (isMovedToUnseenStory) 0.5f else 1f))
                 ) {
                     CircularProgressIndicator(
                         modifier = Modifier.align(Alignment.Center),
@@ -540,6 +542,7 @@ fun AmityViewCommunityStoryPage(
                         dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_discard_story_body"),
                         confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_delete"),
                         dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel"),
+                        confirmTextColor = AmityTheme.colors.alert,
                         onConfirmation = {
                             shouldShowLoading = true
                             viewModel.deleteStory(

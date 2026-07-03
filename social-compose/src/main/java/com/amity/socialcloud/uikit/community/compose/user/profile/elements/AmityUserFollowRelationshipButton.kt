@@ -28,6 +28,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getText
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
 @Composable
 fun AmityUserFollowRelationshipButton(
@@ -125,7 +126,7 @@ fun AmityUserFollowRelationshipButton(
                     Text(
                         text = amitySocialString(fallbackKey),
                         style = AmityTheme.typography.bodyLegacy.copy(
-                            color = Color.White,
+                            color = amityColorWhite,
                             fontWeight = FontWeight.SemiBold
                         ),
                     )

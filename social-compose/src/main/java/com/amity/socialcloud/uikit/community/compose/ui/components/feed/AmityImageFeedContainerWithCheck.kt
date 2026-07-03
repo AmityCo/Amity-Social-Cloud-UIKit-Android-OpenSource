@@ -35,6 +35,9 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.R
 import kotlinx.coroutines.delay
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
+import com.amity.socialcloud.uikit.common.ui.theme.amityMediaSurface
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 
 /**
  * Advanced container that can periodically check if the displayed item still exists
@@ -117,7 +120,7 @@ private fun ImageNotAvailableDialog(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black)
+                .background(amityMediaSurface)
         ) {
             Column(
                 modifier = Modifier
@@ -128,14 +131,14 @@ private fun ImageNotAvailableDialog(
                 Icon(
                     painter = painterResource(id = R.drawable.amity_ic_image_not_available),
                     contentDescription = "Image Not Available",
-                    tint = Color.White,
+                    tint = amityColorWhite,
                     modifier = Modifier.size(60.dp)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = amitySocialString("amity_social_button_this_image_is_no_longer_available_and_may_have_been_del"),
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color.White.copy(0.8f),
+                    color = amityColorWhite.copy(0.8f),
                     textAlign = TextAlign.Center
                 )
             }
@@ -144,8 +147,8 @@ private fun ImageNotAvailableDialog(
                 icon = R.drawable.amity_ic_close2,
                 size = 32.dp,
                 iconPadding = 10.dp,
-                tint = Color.Black.copy(0.5f),
-                background = Color.White.copy(0.8f),
+                tint = amityColorBlack.copy(0.5f),
+                background = amityColorWhite.copy(0.8f),
                 modifier = Modifier
                     .align(Alignment.TopStart)
                     .padding(16.dp),

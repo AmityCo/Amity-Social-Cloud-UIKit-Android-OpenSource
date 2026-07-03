@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import com.amity.socialcloud.uikit.common.ui.theme.amityCoHostWaitingBackground
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -34,6 +35,8 @@ import io.livekit.android.compose.types.TrackReference
 import io.livekit.android.compose.ui.ScaleType
 import io.livekit.android.compose.ui.VideoTrackView
 import io.livekit.android.room.Room
+import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 
 
 @Composable
@@ -80,7 +83,7 @@ fun AmityWaitingForCoHost(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFF4A5568))
+            .background(amityCoHostWaitingBackground)
     ) {
         if (onMenuClick != null) {
             AmityCoHostOverlay(
@@ -113,7 +116,7 @@ fun AmityWaitingForCoHost(
                 } else {
                     amitySocialString("amity_social_label_waiting_for_host")
                 },
-                color = Color.White,
+                color = AmityTheme.colors.baseInverse,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.Medium,
                 textAlign = TextAlign.Center,
@@ -150,7 +153,7 @@ fun AmityCoHostOverlay(
                     Row(
                         modifier = Modifier
                             .background(
-                                color = Color(0x33000000),
+                                color = amityColorBlack.copy(alpha = 0.2f),
                                 shape = RoundedCornerShape(20.dp)
                             )
                             .padding(horizontal = 12.dp, vertical = 8.dp),
@@ -159,7 +162,7 @@ fun AmityCoHostOverlay(
                     ) {
                         Text(
                             text = user?.getDisplayName() ?: amitySocialString("amity_social_button_unknown_user"),
-                            color = Color.White,
+                            color = AmityTheme.colors.baseInverse,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Light,
                             maxLines = 1,
@@ -189,7 +192,7 @@ fun AmityCoHostOverlay(
                     modifier = Modifier
                         .size(32.dp)
                         .background(
-                            color = Color(0x80000000),
+                            color = amityColorBlack.copy(alpha = 0.5f),
                             shape = CircleShape
                         )
                         .clickableWithoutRipple {
@@ -199,7 +202,7 @@ fun AmityCoHostOverlay(
                     Icon(
                         painter = painterResource(R.drawable.amity_ic_more_vertical),
                         contentDescription = "Menu",
-                        tint = Color.White,
+                        tint = AmityTheme.colors.baseInverse,
                         modifier = Modifier
                             .size(24.dp)
                             .align(Alignment.Center)
@@ -213,14 +216,14 @@ fun AmityCoHostOverlay(
                     .padding(top = 48.dp, start = 16.dp)
                     .size(32.dp)
                     .background(
-                        color = Color(0x33000000),
+                        color = amityColorBlack.copy(alpha = 0.2f),
                         shape = CircleShape
                     )
             ) {
                 Icon(
                     painter = painterResource(R.drawable.amity_ic_room_mute_state),
                     contentDescription = "host mute state icon",
-                    tint = Color.White,
+                    tint = AmityTheme.colors.baseInverse,
                     modifier = Modifier
                         .size(24.dp)
                         .align(Alignment.Center)

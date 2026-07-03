@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
 @Composable
 fun AmityPagingLoadingItem(
@@ -24,7 +25,7 @@ fun AmityPagingLoadingItem(
     ) {
         CircularProgressIndicator(
             color = AmityTheme.colors.primary,
-            trackColor = Color.White,
+            trackColor = amityColorWhite,
             strokeWidth = 3.dp,
             modifier = modifier
                 .size(30.dp)

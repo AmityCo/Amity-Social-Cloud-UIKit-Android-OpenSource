@@ -78,5 +78,13 @@ object AmityCommonStrings {
         // Chat compose strings
         "amity_social_toast_message_unreport_failed" to R.string.amity_social_toast_message_unreport_failed,
         "amity_social_modal_dialog_delete_message_title" to R.string.amity_social_modal_dialog_delete_message_title,
+        "chat.delete.alert.message" to R.string.amity_chat_delete_alert_message,
+
+        "common.mention.error.title" to R.string.amity_common_mention_error_title,
+        "common.mention.error.msg" to R.string.amity_common_mention_error_msg,
+        "common.modal.dialog.done.button" to R.string.amity_common_modal_dialog_done_button,
+
+        "common.button.inappropriate.image" to R.string.amity_common_button_inappropriate_image,
+        "common.label.choose.different.image" to R.string.amity_common_label_choose_different_image
     )
 }

@@ -41,6 +41,7 @@ import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
 import com.amity.socialcloud.uikit.chat.compose.R
 import com.amity.socialcloud.uikit.chat.compose.live.AmityLiveChatPageViewModel
 import com.amity.socialcloud.uikit.chat.compose.live.util.getContent
+import com.amity.socialcloud.uikit.chat.compose.localization.amityChatString
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAnnotatedText
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
@@ -108,6 +109,7 @@ fun BaseReplyMessage(
 	val parentMessage by viewModel.getMessage(parentId).collectAsState(initial = null)
 	var reactionExpanded by remember { mutableStateOf(false) }
 	var menuExpanded by remember { mutableStateOf(false) }
+	val defaultUser = amityChatString("chat.unknown.user")
 	Row(
 		modifier = modifier
 			.fillMaxWidth()
@@ -134,7 +136,7 @@ fun BaseReplyMessage(
 			horizontalAlignment = Alignment.Start
 		) {
 			Text(
-				text = message.getCreator()?.getDisplayName() ?: "Unknown",
+				text = message.getCreator()?.getDisplayName() ?: defaultUser,
 				fontSize = 13.sp,
 				lineHeight = 18.sp,
 				fontWeight = FontWeight(600),
@@ -291,9 +293,10 @@ fun ParentTextMessage(
 	modifier: Modifier = Modifier,
 	pageScope: AmityComposePageScope? = null,
 ) {
+	val defaultUser = amityChatString("chat.unknown.user")
 	Column {
 		Text(
-			text = message.getCreator()?.getDisplayName() ?: "Unknown",
+			text = message.getCreator()?.getDisplayName() ?: defaultUser,
 			fontSize = 13.sp,
 			lineHeight = 18.sp,
 			fontWeight = FontWeight(600),

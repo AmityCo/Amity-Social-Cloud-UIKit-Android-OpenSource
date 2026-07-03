@@ -26,7 +26,7 @@ fun AmitySocialHomeNavigationButton(
     icon: Int = R.drawable.amity_ic_plus,
     iconSize: Dp = 20.dp,
     tint: Color = AmityTheme.colors.base,
-    background: Color = Color(0xFFEBECEF),
+    background: Color = AmityTheme.colors.baseShade4,
     onClick: () -> Unit = {},
 ) {
     Box(

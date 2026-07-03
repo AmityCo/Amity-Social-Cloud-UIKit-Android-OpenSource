@@ -60,12 +60,18 @@ import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityP
 import com.amity.socialcloud.uikit.community.compose.post.model.AmityFileUploadState
 import com.amity.socialcloud.uikit.community.compose.post.model.AmityPostMedia
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AmitySelectedMediaComponent(
     modifier: Modifier = Modifier,
     isProductCatalogueEnabled: Boolean = false,
+    // Gates the media-error banner in addition to shouldShowMediaError.
+    // Defaults to false so the error section is hidden at all times unless a
+    // caller explicitly opts back in with showMediaError = true.
+    showMediaError: Boolean = false,
     onTagProductClick: (AmityPostMedia) -> Unit = {},
 ) {
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
@@ -151,7 +157,7 @@ fun AmitySelectedMediaComponent(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
         ) {
-            if (shouldShowMediaError) {
+            if (shouldShowMediaError && showMediaError) {
                 val borderColor = AmityTheme.colors.alert
                 Row(modifier = Modifier
                     .fillMaxWidth()
@@ -356,14 +362,14 @@ fun AmitySelectedMediaElement(
                         .align(Alignment.Center)
                         .size(24.dp)
                         .background(
-                            color = Color(0x88000000),
+                            color = amityColorBlack.copy(alpha = 0.53f),
                             shape = CircleShape
                         )
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.amity_ic_play_v4),
                         contentDescription = null,
-                        tint = Color.White,
+                        tint = amityColorWhite,
                         modifier = Modifier
                             .align(Alignment.Center)
                             .size(24.dp)
@@ -379,7 +385,7 @@ fun AmitySelectedMediaElement(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color(0x80000000)) // Black overlay with 50% opacity
+                    .background(amityColorBlack.copy(alpha = 0.5f)) // Black overlay with 50% opacity
             )
 
             if (media.uploadState == AmityFileUploadState.FAILED) {
@@ -399,7 +405,7 @@ fun AmitySelectedMediaElement(
                     modifier = Modifier
                         .align(Alignment.Center)
                         .size(24.dp),
-                    color = Color.White, // Track color
+                    color = amityColorWhite, // Track color
                     progress = 1.0f, // Full circle
                     strokeWidth = 3.dp
                 )
@@ -423,7 +429,7 @@ fun AmitySelectedMediaElement(
                 .padding(8.dp)
                 .size(20.dp)
                 .background(
-                    color = Color(0x88000000),
+                    color = amityColorBlack.copy(alpha = 0.53f),
                     shape = CircleShape
                 )
                 .clickableWithoutRipple {
@@ -433,7 +439,7 @@ fun AmitySelectedMediaElement(
             Icon(
                 painter = painterResource(id = R.drawable.amity_ic_close),
                 contentDescription = null,
-                tint = Color.White,
+                tint = amityColorWhite,
                 modifier = Modifier
                     .size(8.dp)
                     .align(Alignment.Center),
@@ -447,7 +453,7 @@ fun AmitySelectedMediaElement(
                     .padding(8.dp)
                     .height(24.dp)
                     .background(
-                        color = Color(0x88000000),
+                        color = amityColorBlack.copy(alpha = 0.53f),
                         shape = RoundedCornerShape(size = 9999.dp)
                     )
                     .padding(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 4.dp)
@@ -465,7 +471,7 @@ fun AmitySelectedMediaElement(
                 Text(
                     text = amitySocialString("amity_social_button_alt"),
                     style = AmityTheme.typography.captionBold.copy(
-                        color = Color.White,
+                        color = amityColorWhite,
                     ),
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
@@ -479,7 +485,7 @@ fun AmitySelectedMediaElement(
                             Icon(
                                 painter = painterResource(id = R.drawable.amity_ic_alt_check),
                                 contentDescription = "Check Icon",
-                                tint = Color.White,
+                                tint = amityColorWhite,
                             )
                         }
                     }
@@ -508,7 +514,7 @@ fun AmitySelectedMediaElement(
 //                    .padding(8.dp)
 //                    .size(24.dp)
 //                    .background(
-//                        color = Color(0x88000000),
+//                        color = amityColorBlack.copy(alpha = 0.53f),
 //                        shape = CircleShape
 //                    )
 //                    .clickableWithoutRipple {
@@ -519,7 +525,7 @@ fun AmitySelectedMediaElement(
 //                Icon(
 //                    painter = painterResource(id = R.drawable.amity_ic_product_tag),
 //                    contentDescription = "Tag products",
-//                    tint = Color.White,
+//                    tint = amityColorWhite,
 //                    modifier = Modifier
 //                        .size(14.dp)
 //                        .align(Alignment.Center),

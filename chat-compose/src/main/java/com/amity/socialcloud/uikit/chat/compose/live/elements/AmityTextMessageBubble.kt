@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import com.amity.socialcloud.uikit.chat.compose.localization.amityChatString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
@@ -181,6 +182,7 @@ fun BaseMessageBubble(
 ) {
     var reactionExpanded by remember { mutableStateOf(false) }
     var menuExpanded by remember { mutableStateOf(false) }
+    val defaultUser = amityChatString("chat.unknown.user")
     AmityBaseElement(
         pageScope = pageScope,
         componentScope = componentScope,
@@ -208,7 +210,10 @@ fun BaseMessageBubble(
                     modifier = Modifier.align(Alignment.Start)
                 ) {
                     Text(
-                        text = message.getCreator()?.getDisplayName() ?: "Unknown",
+                        text = amityChatString(
+                                "chat.replying.to",
+                                message.getCreator()?.getDisplayName() ?: defaultUser
+                        ),
                         fontSize = 13.sp,
                         lineHeight = 18.sp,
                         fontWeight = FontWeight(600),

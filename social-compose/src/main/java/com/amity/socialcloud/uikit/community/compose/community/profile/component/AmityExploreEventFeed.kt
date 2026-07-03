@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -143,7 +144,8 @@ fun AmityExploreEventFeedComponent(
                     Image(
                         painter = painterResource(id = com.amity.socialcloud.uikit.common.R.drawable.amity_ic_event_empty),
                         contentDescription = null,
-                        modifier = Modifier.size(80.dp)
+                        modifier = Modifier.size(80.dp),
+                        colorFilter = ColorFilter.tint(AmityTheme.colors.baseShade4)
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(

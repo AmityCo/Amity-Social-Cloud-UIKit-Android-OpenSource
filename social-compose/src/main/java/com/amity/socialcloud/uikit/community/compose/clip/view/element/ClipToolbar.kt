@@ -58,7 +58,7 @@ fun ClipToolbar(
             Icon(
                 painter = painterResource(R.drawable.amity_ic_back),
                 contentDescription = "Back",
-                tint = Color.White,
+                tint = AmityTheme.colors.baseInverse,
                 modifier = Modifier
                     .size(24.dp)
                     .clickableWithoutRipple {
@@ -82,7 +82,7 @@ fun ClipToolbar(
                         Icon(
                             painter = painterResource(id = drawable.amity_ic_lock1),
                             contentDescription = "Private community icon",
-                            tint = Color.White,
+                            tint = AmityTheme.colors.baseInverse,
                             modifier = Modifier.size(12.dp)
                         )
                         Spacer(Modifier.width(4.dp))
@@ -93,7 +93,7 @@ fun ClipToolbar(
                         style = AmityTheme.typography.titleBold,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        color = Color.White,
+                        color = AmityTheme.colors.baseInverse,
                         modifier = Modifier.weight(1f, fill = false)
                     )
 
@@ -125,7 +125,7 @@ fun ClipToolbar(
                 Icon(
                     painter = painterResource(R.drawable.amity_v4_ic_camera),
                     contentDescription = "Create Clip",
-                    tint = Color.White,
+                    tint = AmityTheme.colors.baseInverse,
                     modifier = Modifier
                         .size(24.dp)
                         .clickableWithoutRipple {

@@ -3,7 +3,9 @@ package com.amity.socialcloud.uikit.community.compose.community.profile.componen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -94,10 +96,12 @@ fun AmityCommunityHeaderComponent(
 					}
 
                     if (community.getDescription().isNotEmptyOrBlank()) {
-						Row(modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)) {
+						Row(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
 							AmityExpandableText(
 								text = community.getDescription(),
 								previewLines = 4,
+								readMoreUnderlined = false,
+								readMoreInline = true,
 								modifier = modifier.padding(vertical = 8.dp)
 							)
 						}
@@ -109,11 +113,11 @@ fun AmityCommunityHeaderComponent(
 						community = community
 					)
 
-                    if (state.invitation != null && !community.isJoined()) {
+                    if (state.invitation != null && !community.isJoined() && !state.isMember) {
                         AmityCommunityInvitationBanner(
                             invitation = state.invitation!!
                         )
-                    } else if (!community.isJoined()) {
+                    } else if (!community.isJoined() && !state.isMember) {
                         AmityCommunityJoinButton(
                             pageScope = pageScope,
                             componentScope = getComponentScope(),
@@ -153,7 +157,7 @@ fun AmityCommunityHeaderComponent(
 					viewModel = viewModel
 				)
 				community.let {
-					if (!community.isJoined()) {
+					if (!community.isJoined() && !state.isMember) {
 						AmityCommunityJoinButton(
 							modifier = Modifier.background(AmityTheme.colors.background),
 							pageScope = pageScope,

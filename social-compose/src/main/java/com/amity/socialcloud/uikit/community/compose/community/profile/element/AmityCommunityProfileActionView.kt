@@ -63,6 +63,8 @@ import com.amity.socialcloud.uikit.community.compose.community.profile.AmityComm
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 
 //@Composable
 //fun AmityCommunityProfileActionView(
@@ -437,7 +439,7 @@ fun AmityCommunityJoinButton(
                                     fontSize = 15.sp,
                                     lineHeight = 20.sp,
                                     fontWeight = FontWeight(600),
-                                    color = Color.White,
+                                    color = amityColorWhite,
                                 )
                             )
                         }

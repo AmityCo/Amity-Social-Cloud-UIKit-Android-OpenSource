@@ -111,8 +111,8 @@ fun AmityCommunityStoriesNotificationSettingPage(
                 Text(
                     text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_edit_user_save_button"),
                     style = AmityTheme.typography.bodyLegacy.copy(
-                        color = if (shouldAllowToSave) AmityTheme.colors.highlight
-                        else AmityTheme.colors.highlight.shade(AmityColorShade.SHADE2),
+                        color = if (shouldAllowToSave) AmityTheme.colors.primary
+                        else AmityTheme.colors.primary.copy(alpha = 0.3f),
                     ),
                     modifier = modifier.clickableWithoutRipple(shouldAllowToSave) {
                         viewModel.updateStoryNotificationSettings(

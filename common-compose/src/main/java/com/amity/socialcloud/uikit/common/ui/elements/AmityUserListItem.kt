@@ -1,10 +1,11 @@
 package com.amity.socialcloud.uikit.common.ui.elements
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -36,15 +37,13 @@ fun AmityUserListItem(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         modifier = modifier
-            .fillMaxSize()
+            .fillMaxWidth()
+            .clickable { onUserClick(user) }
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
         AmityUserAvatarView(
             user = user,
             size = 40.dp,
-            modifier = modifier.clickableWithoutRipple {
-                onUserClick(user)
-            }
         )
 
         Row(modifier = modifier.weight(1f)) {
@@ -62,9 +61,6 @@ fun AmityUserListItem(
                     ),
                     modifier = modifier
                         .weight(1f)
-                        .clickableWithoutRipple {
-                            onUserClick(user)
-                        }
                 )
 
                 if (user.isBrand()) {
@@ -89,7 +85,8 @@ fun AmityUserListItem(
                         .padding(start = 4.dp)
                         .clickableWithoutRipple {
                             onRightMenuClick(user)
-                        }
+                        },
+                    tint = AmityTheme.colors.base,
                 )
             } else {
                 rightMenuContent()

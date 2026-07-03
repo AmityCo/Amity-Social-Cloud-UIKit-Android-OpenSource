@@ -38,6 +38,7 @@ import com.amity.socialcloud.uikit.common.utils.shade
 import com.amity.socialcloud.uikit.community.compose.R
 import kotlinx.coroutines.launch
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
 enum class EventPlatform {
     LIVE_STREAM,
@@ -211,7 +212,9 @@ fun AmityLocationBottomSheet(
                         Text(
                             text = amitySocialString("amity_social_modal_dialog_done_button"),
                             style = AmityTheme.typography.body,
-                            color = if (isDoneEnabled) AmityTheme.colors.primary else AmityTheme.colors.primary.shade(AmityColorShade.SHADE2),
+                            color = AmityTheme.colors.primary.copy(
+                                alpha = if (isDoneEnabled) 1f else 0.3f
+                            ),
                             modifier = Modifier.clickableWithoutRipple {
                                 if (isDoneEnabled) {
                                     // Clear irrelevant fields based on event type and platform
@@ -338,13 +341,28 @@ fun AmityLocationBottomSheet(
                         Column(
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(
-                                text = amitySocialString("amity_social_button_address"),
-                                style = AmityTheme.typography.body,
-                                color = AmityTheme.colors.base,
-                            )
+                            Row(
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = modifier
+                                    .fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = amitySocialString("amity_social_button_address"),
+                                    style = AmityTheme.typography.titleBold,
+                                    color = AmityTheme.colors.base,
+                                )
 
-                            Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "${address.length}/180",
+                                    style = AmityTheme.typography.caption.copy(
+                                        fontWeight = FontWeight.Normal,
+                                        color = AmityTheme.colors.baseShade1,
+                                    )
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(8.dp))
 
                             var isAddressFocused by remember { mutableStateOf(false) }
                             var addressFieldValue by remember { mutableStateOf(TextFieldValue(initialData.address)) }
@@ -353,10 +371,9 @@ fun AmityLocationBottomSheet(
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .heightIn(min = 112.dp)
                                     .background(
-                                        AmityTheme.colors.baseShade4,
-                                        RoundedCornerShape(8.dp)
+                                        color = Color.Transparent,
+                                        shape = RoundedCornerShape(4.dp)
                                     )
                                     .padding(vertical = 4.dp)
                             ) {
@@ -371,20 +388,19 @@ fun AmityLocationBottomSheet(
                                             address = newValue.text
                                         }
                                     },
-                                    textStyle = AmityTheme.typography.bodyLegacy.copy(
+                                    textStyle = AmityTheme.typography.body.copy(
                                         color = AmityTheme.colors.base
                                     ),
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(horizontal = 12.dp)
                                         .onFocusChanged { focus ->
                                             isAddressFocused = focus.isFocused
                                         },
                                     placeholder = {
                                         Text(
                                             text = amitySocialString("amity_social_label_enter_address_of_where_this_event_will_be_happening"),
-                                            style = AmityTheme.typography.bodyLegacy,
-                                            color = Color(0xFF6E6E6E)
+                                            style = AmityTheme.typography.body,
+                                            color = AmityTheme.colors.baseShade1
                                         )
                                     },
                                     colors = TextFieldDefaults.colors(
@@ -398,21 +414,15 @@ fun AmityLocationBottomSheet(
                                     contentPadding = PaddingValues(
                                         start = 0.dp,
                                         end = 0.dp,
-                                        top = 12.dp,
-                                        bottom = 12.dp
+                                        top = 4.dp,
+                                        bottom = 4.dp
                                     ),
                                     maxLines = 10,
                                 )
                             }
 
-                            Spacer(modifier = Modifier.height(8.dp))
-
-                            Text(
-                                text = "${address.length}/180",
-                                style = AmityTheme.typography.caption.copy(
-                                    fontWeight = FontWeight.Normal,
-                                    color = AmityTheme.colors.baseShade1,
-                                )
+                            HorizontalDivider(
+                                color = AmityTheme.colors.divider,
                             )
                         }
 
@@ -495,7 +505,7 @@ fun AmityLocationBottomSheet(
                                     Box(
                                         modifier = Modifier
                                             .size(8.dp)
-                                            .background(Color.White, CircleShape)
+                                            .background(amityColorWhite, CircleShape)
                                     )
                                 } else {
                                     androidx.compose.foundation.Canvas(
@@ -580,7 +590,7 @@ fun AmityLocationBottomSheet(
                                     Box(
                                         modifier = Modifier
                                             .size(8.dp)
-                                            .background(Color.White, CircleShape)
+                                            .background(amityColorWhite, CircleShape)
                                     )
                                 } else {
                                     androidx.compose.foundation.Canvas(

@@ -32,6 +32,9 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityMenuButton
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityVideoPlayerPage
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
+import com.amity.socialcloud.uikit.common.ui.theme.amityMediaSurface
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 
 @Composable
 fun AmityVideoFeedContainer(
@@ -87,7 +90,7 @@ private fun VideoNotAvailableDialog(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black)
+                .background(amityMediaSurface)
         ) {
             Column(
                 modifier = Modifier
@@ -98,7 +101,7 @@ private fun VideoNotAvailableDialog(
                 Icon(
                     painter = painterResource(id = R.drawable.amity_ic_video_not_available),
                     contentDescription = "Video Not Available",
-                    tint = Color.White,
+                    tint = amityColorWhite,
                     modifier = Modifier.size(60.dp)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
@@ -108,7 +111,7 @@ private fun VideoNotAvailableDialog(
                         fontSize = 15.sp,
                         lineHeight = 20.sp,
                         fontWeight = FontWeight(400),
-                        color = Color.White,
+                        color = amityColorWhite,
                         textAlign = TextAlign.Center,
                     )
                 )
@@ -118,8 +121,8 @@ private fun VideoNotAvailableDialog(
                 icon = R.drawable.amity_ic_close2,
                 size = 32.dp,
                 iconPadding = 10.dp,
-                tint = Color.Black.copy(0.5f),
-                background = Color.White.copy(0.8f),
+                tint = amityColorBlack.copy(0.5f),
+                background = amityColorWhite.copy(0.8f),
                 modifier = Modifier
                     .align(Alignment.TopStart)
                     .padding(16.dp),

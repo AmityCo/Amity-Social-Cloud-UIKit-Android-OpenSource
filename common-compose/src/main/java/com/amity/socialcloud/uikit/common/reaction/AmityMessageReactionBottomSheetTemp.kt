@@ -2,7 +2,7 @@ package com.amity.socialcloud.uikit.common.reaction
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.waterfall
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -38,7 +38,7 @@ fun AmityMessageReactionBottomSheetTemp(
     val viewModel =
         viewModel<AmityMessageReactionListViewModel>(viewModelStoreOwner = viewModelStoreOwner)
 
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
     val sheetUIState by viewModel.sheetUIState.collectAsState()
 
     val showSheet by remember(viewModel) {
@@ -62,7 +62,7 @@ fun AmityMessageReactionBottomSheetTemp(
             },
             sheetState = sheetState,
             containerColor = AmityTheme.colors.background,
-            contentWindowInsets = { WindowInsets.waterfall },
+            contentWindowInsets = { WindowInsets.navigationBars },
             modifier = modifier
                 .semantics {
                     testTagsAsResourceId = true

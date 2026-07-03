@@ -28,6 +28,8 @@ import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 
 @Composable
 fun AmityEditUserAvatar(
@@ -69,13 +71,13 @@ fun AmityEditUserAvatar(
         Box(
             modifier = modifier
                 .fillMaxSize()
-                .background(Color.Black.copy(0.5f))
+                .background(amityColorBlack.copy(0.5f))
         )
 
         Icon(
             painter = painterResource(R.drawable.amity_ic_camera),
             contentDescription = null,
-            tint = Color.White,
+            tint = amityColorWhite,
             modifier = modifier.align(Alignment.Center)
         )
     }

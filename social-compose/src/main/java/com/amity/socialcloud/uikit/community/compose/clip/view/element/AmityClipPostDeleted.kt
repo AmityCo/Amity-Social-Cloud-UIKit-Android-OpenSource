@@ -53,7 +53,7 @@ fun AmityClipPostDeleted(
             Text(
                 text = amitySocialString("amity_social_label_this_clip_is_no_longer_available"),
                 style = AmityTheme.typography.body,
-                color = Color.White,
+                color = AmityTheme.colors.baseInverse,
                 modifier = Modifier.padding(16.dp)
             )
             OutlinedButton(
@@ -61,19 +61,19 @@ fun AmityClipPostDeleted(
                     .align(Alignment.CenterHorizontally),
                 colors = ButtonDefaults.outlinedButtonColors(
                     containerColor = Color.Transparent,
-                    contentColor = Color.White,
+                    contentColor = AmityTheme.colors.baseInverse,
                 ),
                 shape = RoundedCornerShape(8.dp),
                 border = BorderStroke(
                     width = 1.dp,
-                    color = Color.White
+                    color = AmityTheme.colors.baseInverse
                 ),
                 onClick = onNextClipClick,
             ) {
                 Text(
                     text = amitySocialString("amity_social_label_watch_next_clip"),
                     style = AmityTheme.typography.bodyBold,
-                    color = Color.White,
+                    color = AmityTheme.colors.baseInverse,
                 )
             }
         }

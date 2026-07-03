@@ -35,6 +35,7 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.AmityNumberUtil
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
 @Composable
 fun AmityMessageReactionPreview(
@@ -42,17 +43,23 @@ fun AmityMessageReactionPreview(
 	pageScope: AmityComposePageScope? = null,
 	componentScope: AmityComposeComponentScope? = null,
 	message: AmityMessage,
+	// Optimistic display overrides — all null means "use live message data".
+	overrideReactionMap: Map<String, Int>? = null,
+	overrideReactionCount: Int? = null,
+	overrideHasMyReaction: Boolean? = null,
 ) {
 	AmityBaseElement(
 		pageScope = pageScope,
 		componentScope = componentScope,
 		elementId = "message_reaction_preview"
 	) {
+		val reactionMap = overrideReactionMap ?: message.getReactionMap()
+		val reactionCount = overrideReactionCount ?: message.getReactionCount()
+		val hasMyReaction = overrideHasMyReaction ?: message.getMyReactions().isNotEmpty()
 		if (!message.isDeleted()
 			&& message.getState() == AmityMessage.State.SYNCED
-			&& message.getReactionCount() > 0) {
+			&& reactionCount > 0) {
 			var countOffset = 0
-			val hasMyReaction = message.getMyReactions().isNotEmpty()
 			Box(
 				modifier = modifier
 					.wrapContentWidth()
@@ -73,7 +80,7 @@ fun AmityMessageReactionPreview(
 						Row(
 							verticalAlignment = Alignment.CenterVertically,
 						) {
-							message.getReactionMap()
+							reactionMap
 								.entries
 								.toList()
 								.filter { it.value > 0 }
@@ -98,14 +105,12 @@ fun AmityMessageReactionPreview(
 								}
 							Spacer(modifier = Modifier.width(2.dp))
 							Text(
-								text = message
-									.getReactionCount()
-									.let(AmityNumberUtil::getNumberAbbreveation),
+								text = reactionCount.let(AmityNumberUtil::getNumberAbbreveation),
 								style = TextStyle(
 									fontSize = 11.sp,
 									lineHeight = 16.sp,
 									fontWeight = FontWeight(500),
-									color = if(message.getMyReactions().isEmpty()) AmityTheme.colors.baseInverse else Color.White,
+									color = if (!hasMyReaction) AmityTheme.colors.baseInverse else amityColorWhite,
 									textAlign = TextAlign.Center,
 								),
 								modifier = Modifier
@@ -150,7 +155,7 @@ fun AmityMessageReactionPreviewIcon(
 	modifier: Modifier = Modifier,
 	reaction: String
 ) {
-	AmityMessageReactions.getList().firstOrNull { it.name == reaction }?.let {
+	AmityMessageReactions.getList().firstOrNull { it.name.equals(reaction, ignoreCase = true) }?.let {
 		Image(
 			imageVector = ImageVector.vectorResource(id = it.icon),
 			contentDescription = reaction,

@@ -46,7 +46,7 @@ fun AmityClipLoadStateError(
             Text(
                 text = amitySocialString("amity_social_label_unable_to_load_clip"),
                 style = AmityTheme.typography.body,
-                color = Color.White,
+                color = AmityTheme.colors.baseInverse,
                 modifier = Modifier.padding(16.dp)
             )
 

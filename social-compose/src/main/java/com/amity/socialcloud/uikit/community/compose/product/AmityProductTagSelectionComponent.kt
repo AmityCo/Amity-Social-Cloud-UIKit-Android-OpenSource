@@ -82,6 +82,8 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.utils.asColor
 import com.amity.socialcloud.uikit.community.compose.product.AmityProductSelectionViewModel.Companion.MIN_KEYWORD_LENGTH
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 
 /**
  * Contract (page-level):
@@ -229,7 +231,7 @@ fun AmityProductTagSelectionComponent(
                     clearIconContainerColor = theme?.baseShade3Color?.asColor() ?: AmityTheme.colors.baseShade3,
                     clearIconPadding = 6.dp,
                     containerColor = theme?.baseShade4Color?.asColor() ?: AmityTheme.colors.baseShade4,
-                    clearIconTint = theme?.baseShade4Color?.asColor() ?: Color.White
+                    clearIconTint = theme?.baseShade4Color?.asColor() ?: amityColorWhite
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -487,13 +489,13 @@ private fun AmityProductTagSelectedItemElement(
                     .zIndex(1f)
                     .size(24.dp)
                     .clip(CircleShape)
-                    .background(Color(0x80000000))
+                    .background(amityColorBlack.copy(alpha = 0.5f))
                     .clickableWithoutRipple { onRemove() },
             ) {
                 Icon(
                     painter = painterResource(R.drawable.amity_ic_close),
                     contentDescription = amitySocialString("amity_social_modal_alert_remove_button"),
-                    tint = Color.White,
+                    tint = amityColorWhite,
                     modifier = Modifier
                         .size(10.dp)
                         .align(Alignment.Center)
@@ -734,7 +736,7 @@ private fun AmityCircleCheckIndicator(
     if (isChecked && !enabled) {
         Icon(
             painter = painterResource(R.drawable.amity_ic_check_disabled),
-            tint = Color.White,
+            tint = amityColorWhite,
             contentDescription = "Selected already",
         )
     } else {
@@ -760,7 +762,7 @@ private fun AmityCircleCheckIndicator(
                 Icon(
                     painter = painterResource(R.drawable.amity_ic_check),
                     contentDescription = "Selected",
-                    tint = Color.White,
+                    tint = amityColorWhite,
                     modifier = Modifier.size(16.dp)
                 )
             }
@@ -803,8 +805,8 @@ private fun AmityProductSelectionBottomBar(
             Text(
                 text = buttonText,
                 style = AmityTheme.typography.captionLegacy.copy(
-                    if (enabled) Color.White
-                    else Color.White.copy(alpha = 0.3f)
+                    if (enabled) amityColorWhite
+                    else amityColorWhite.copy(alpha = 0.3f)
                 ),
             )
         }

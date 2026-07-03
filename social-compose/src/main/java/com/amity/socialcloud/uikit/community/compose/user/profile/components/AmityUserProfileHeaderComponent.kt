@@ -185,6 +185,8 @@ fun AmityUserProfileHeaderComponent(
                     AmityExpandableText(
                         text = user.getDescription(),
                         previewLines = 4,
+                        readMoreUnderlined = false,
+                        readMoreInline = true,
                         modifier = modifier.padding(vertical = 8.dp)
                     )
                 }

@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
 
 @Composable
@@ -25,7 +26,7 @@ fun AmityProgressSnackbar(
     data: AmityProgressSnackbarVisuals,
 ) {
     Snackbar(
-        containerColor = AmityTheme.colors.secondary,
+        containerColor = AmityTheme.colors.toastBackground,
         modifier = modifier
             .fillMaxWidth()
     ) {
@@ -37,14 +38,14 @@ fun AmityProgressSnackbar(
 
             CircularProgressIndicator(
                 color = AmityTheme.colors.highlight,
-                trackColor = Color.White,
+                trackColor = amityColorWhite,
                 strokeWidth = 2.dp,
                 modifier = modifier.size(24.dp),
             )
 
             Text(
                 text = data.message,
-                color = Color.White,
+                color = amityColorWhite,
                 modifier = modifier
                     .fillMaxWidth()
                     .padding(top = 2.dp),

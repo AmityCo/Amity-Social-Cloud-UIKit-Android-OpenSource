@@ -48,6 +48,8 @@ import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.Amit
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.AmityProductTagListComponent
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.RenderModeEnum
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 
 @Composable
 fun AmityPostMediaElement(
@@ -660,14 +662,14 @@ fun AmityPostMediaImageChildrenFour(
                     Box(
                         modifier = modifier
                             .fillMaxSize()
-                            .background(Color.Black.copy(0.5f))
+                            .background(amityColorBlack.copy(0.5f))
                     ) {
                         Text(
                             text = "+${postChildren.size - 3}",
                             style = AmityTheme.typography.titleLegacy.copy(
                                 fontSize = 20.sp,
                                 lineHeight = 24.sp,
-                                color = Color.White
+                                color = amityColorWhite
                             ),
                             modifier = Modifier.align(Alignment.Center)
                         )
@@ -738,7 +740,7 @@ fun AmityProductTagBadge(
                 }
             )
             .background(
-                color = Color(0x80000000),
+                color = amityColorBlack.copy(alpha = 0.5f),
                 shape = RoundedCornerShape(999.dp)
             )
             .padding(horizontal = 6.dp, vertical = 4.dp),
@@ -748,14 +750,14 @@ fun AmityProductTagBadge(
         Icon(
             painter = painterResource(id = R.drawable.amity_ic_product_tag_filled),
             contentDescription = "Product tags",
-            tint = Color.White,
+            tint = amityColorWhite,
             modifier = Modifier.size(16.dp)
         )
         if (count > 0) {
             Text(
                 text = count.toString(),
                 style = AmityTheme.typography.caption.copy(
-                    color = Color.White
+                    color = amityColorWhite
                 )
             )
         }

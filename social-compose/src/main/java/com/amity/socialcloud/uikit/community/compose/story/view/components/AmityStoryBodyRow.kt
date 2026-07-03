@@ -42,6 +42,8 @@ import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmitySt
 import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmityStoryVideoPlayer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import com.amity.socialcloud.uikit.common.ui.theme.amityMediaSurface
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 
 @Composable
 fun AmityStoryBodyRow(
@@ -62,7 +64,7 @@ fun AmityStoryBodyRow(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.Black)
+            .background(amityMediaSurface)
     ) {
         when (dataType) {
             AmityStory.DataType.IMAGE -> {
@@ -110,7 +112,7 @@ fun AmityStoryBodyRow(
             Box(
                 modifier = modifier
                     .fillMaxSize()
-                    .background(Color.Black.copy(0.5f))
+                    .background(amityColorBlack.copy(0.5f))
             )
         }
     }
@@ -169,8 +171,8 @@ fun AmityStoryBodyImageView(
             .background(
                 brush = Brush.verticalGradient(
                     colors = listOf(
-                        (palette?.mutedSwatch?.toComposeColor() ?: Color.Black),
-                        (palette?.darkMutedSwatch?.toComposeColor() ?: Color.Black)
+                        (palette?.mutedSwatch?.toComposeColor() ?: amityColorBlack),
+                        (palette?.darkMutedSwatch?.toComposeColor() ?: amityColorBlack)
                     )
                 )
             )

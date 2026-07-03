@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,6 +35,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
@@ -45,6 +47,8 @@ import com.amity.socialcloud.uikit.common.utils.getText
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.community.membership.add.AmityCommunityAddMemberPageViewModel
 import com.amity.socialcloud.uikit.community.compose.community.membership.invite.AmityCommunityInviteMemberPageViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -55,20 +59,51 @@ fun AmityCommunityInviteMemberList(
     onAddAction: () -> Unit,
     onRemoveAction: (AmityUser) -> Unit,
 ) {
-    FlowRow(
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
+    val currentUser by produceState<AmityUser?>(initialValue = null) {
+        value = withContext(Dispatchers.IO) {
+            try { AmityCoreClient.getCurrentUser().blockingFirst() } catch (e: Exception) { null }
+        }
+    }
+    val memberItems = buildList {
+        add(null) // placeholder for AddMemberChip
+        currentUser?.let { add(it) }
+        addAll(users)
+    }
+    Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = modifier
     ) {
-        AmityCommunityAddMemberButton(
-            pageScope = pageScope,
-            onClick = onAddAction,
-        )
-        users.forEach { user ->
-            AmityCommunityAddMemberElement(
-                user = user,
-                onRemoveAction = onRemoveAction,
-            )
+        memberItems.chunked(4).forEach { rowItems ->
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(19.dp),
+            ) {
+                rowItems.forEachIndexed { index, item ->
+                    val globalIndex = memberItems.indexOf(item)
+                    Box(modifier = Modifier.weight(1f)) {
+                        if (item == null) {
+                            AmityCommunityAddMemberButton(
+                                pageScope = pageScope,
+                                onClick = onAddAction,
+                            )
+                        } else {
+                            val isCurrentUser = currentUser != null && globalIndex == 1
+                            AmityCommunityAddMemberElement(
+                                isCurrentUser = isCurrentUser,
+                                user = item,
+                                onRemoveAction = {
+                                    if (!isCurrentUser) {
+                                        onRemoveAction.invoke(it)
+                                    }
+                                }
+                            )
+                        }
+                    }
+                }
+                // Fill remaining slots in last row
+                repeat(4 - rowItems.size) {
+                    Spacer(modifier = Modifier.weight(1f))
+                }
+            }
         }
     }
 }

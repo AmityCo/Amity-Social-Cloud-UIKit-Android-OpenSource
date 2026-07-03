@@ -23,17 +23,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
@@ -45,6 +50,9 @@ import com.amity.socialcloud.uikit.common.utils.getText
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.community.membership.add.AmityCommunityAddMemberPageViewModel
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialConfigString
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -55,21 +63,52 @@ fun AmityCommunityAddMemberList(
     onAddAction: () -> Unit,
     onRemoveAction: (AmityUser) -> Unit,
 ) {
-    FlowRow(
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
+    val currentUser by produceState<AmityUser?>(initialValue = null) {
+        value = withContext(Dispatchers.IO) {
+            try { AmityCoreClient.getCurrentUser().blockingFirst() } catch (e: Exception) { null }
+        }
+    }
+    val memberItems = buildList {
+        add(null) // placeholder for AddMemberChip
+        currentUser?.let { add(it) }
+        addAll(users)
+    }
+    Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = modifier
     ) {
-        users.forEach { user ->
-            AmityCommunityAddMemberElement(
-                user = user,
-                onRemoveAction = onRemoveAction,
-            )
+        memberItems.chunked(4).forEach { rowItems ->
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(19.dp),
+            ) {
+                rowItems.forEachIndexed { index, item ->
+                    val globalIndex = memberItems.indexOf(item)
+                    Box(modifier = Modifier.weight(1f)) {
+                        if (item == null) {
+                            AmityCommunityAddMemberButton(
+                                pageScope = pageScope,
+                                onClick = onAddAction,
+                            )
+                        } else {
+                            val isCurrentUser = currentUser != null && globalIndex == 1
+                            AmityCommunityAddMemberElement(
+                                isCurrentUser = isCurrentUser,
+                                user = item,
+                                onRemoveAction = {
+                                    if (!isCurrentUser) {
+                                        onRemoveAction.invoke(it)
+                                    }
+                                }
+                            )
+                        }
+                    }
+                }
+                // Fill remaining slots in last row
+                repeat(4 - rowItems.size) {
+                    Spacer(modifier = Modifier.weight(1f))
+                }
+            }
         }
-        AmityCommunityAddMemberButton(
-            pageScope = pageScope,
-            onClick = onAddAction,
-        )
     }
 }
 
@@ -101,6 +140,7 @@ fun AmityCommunityAddMemberRowList(
 fun AmityCommunityAddMemberElement(
     modifier: Modifier = Modifier,
     user: AmityUser,
+    isCurrentUser: Boolean = false,
     onRemoveAction: (AmityUser) -> Unit,
 ) {
     Column(
@@ -115,23 +155,42 @@ fun AmityCommunityAddMemberElement(
                 size = 40.dp,
                 modifier = modifier,
             )
-
-            Box(
-                modifier = modifier
-                    .offset(x = 2.dp)
-                    .clip(CircleShape)
-                    .background(Color(0).copy(alpha = 0.3f))
-                    .align(Alignment.TopEnd)
-                    .size(16.dp)
-                    .padding(5.dp)
-                    .clickableWithoutRipple { onRemoveAction(user) }
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.amity_ic_close2),
-                    contentDescription = null,
-                    tint = Color.White,
-                    modifier = Modifier.align(Alignment.Center)
-                )
+            if (isCurrentUser) {
+                Box(
+                    modifier = Modifier
+                        .size(16.dp)
+                        .align(Alignment.BottomEnd)
+                        .offset(x = 2.dp, y = 2.dp)
+                        .clip(CircleShape),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Image(
+                        imageVector = ImageVector.vectorResource(
+                            R.drawable.amity_ic_social_community_moderator,
+                        ),
+                        contentDescription = "Moderator",
+                        modifier = Modifier.size(16.dp),
+                    )
+                }
+            }
+            if (!isCurrentUser) {
+                Box(
+                    modifier = modifier
+                        .offset(x = 2.dp)
+                        .clip(CircleShape)
+                        .background(Color(0).copy(alpha = 0.3f))
+                        .align(Alignment.TopEnd)
+                        .size(16.dp)
+                        .padding(5.dp)
+                        .clickableWithoutRipple { onRemoveAction(user) }
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.amity_ic_close2),
+                        contentDescription = null,
+                        tint = amityColorWhite,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
             }
         }
         Spacer(modifier.height(4.dp))
@@ -142,7 +201,7 @@ fun AmityCommunityAddMemberElement(
         ) {
             Text(
                 text = user.getDisplayName() ?: "",
-                style = AmityTheme.typography.bodyLegacy,
+                style = AmityTheme.typography.caption,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
                 modifier = Modifier.weight(1f, fill = false)
@@ -187,13 +246,14 @@ fun AmityCommunityAddMemberButton(
                         .size(40.dp)
                         .clip(CircleShape)
                         .background(AmityTheme.colors.baseShade4)
-                        .padding(6.dp)
+                        .padding(6.dp),
+                    colorFilter = ColorFilter.tint(AmityTheme.colors.base)
                 )
             }
             Spacer(modifier.height(4.dp))
             Text(
-                text = amitySocialConfigString("amity_social_button_invite"),
-                style = AmityTheme.typography.bodyLegacy,
+                text = amitySocialConfigString("amity_social_button_setup_add_member_button"),
+                style = AmityTheme.typography.caption,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
             )

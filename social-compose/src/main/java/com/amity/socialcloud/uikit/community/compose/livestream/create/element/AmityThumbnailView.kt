@@ -21,6 +21,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorGray
 
 @Composable
 fun AmityThumbnailView(
@@ -36,7 +39,7 @@ fun AmityThumbnailView(
             .clip(RoundedCornerShape(size = 4.dp))
             .border(
                 width = 1.dp,
-                color = Color.White,
+                color = AmityTheme.colors.baseInverse,
                 shape = RoundedCornerShape(size = 4.dp)
             )
             .clickableWithoutRipple {
@@ -57,7 +60,7 @@ fun AmityThumbnailView(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(
-                        color = Color.Black.copy(alpha = 0.5f),
+                        color = amityColorBlack.copy(alpha = 0.5f),
                         shape = RoundedCornerShape(size = 4.dp)
                     )
             ) {
@@ -65,8 +68,8 @@ fun AmityThumbnailView(
                     modifier = Modifier
                         .width(24.dp)
                         .height(24.dp),
-                    color = Color.White,
-                    trackColor = Color.Gray,
+                    color = AmityTheme.colors.baseInverse,
+                    trackColor = amityColorGray,
                     strokeWidth = 2.dp,
                     strokeCap = StrokeCap.Round
                 )

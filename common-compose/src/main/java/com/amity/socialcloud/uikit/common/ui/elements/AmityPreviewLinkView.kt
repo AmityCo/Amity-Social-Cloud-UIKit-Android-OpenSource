@@ -57,33 +57,46 @@ fun AmityPostPreviewLinkView(
 ) {
     val isAllowedPostDataType by remember(post.getPostId(), post.getUpdatedAt()) {
         derivedStateOf {
-            post.getType() == AmityPost.DataType.TEXT && post.getChildren().isEmpty()
+            post.getType() == AmityPost.DataType.TEXT
         }
     }
 
-    val postId by remember(post.getPostId()) {
-        derivedStateOf {
-            post.getPostId()
-        }
+    if (!isAllowedPostDataType) return
+
+    val sdkLinks = post.getLinks()
+    val postText = (post.getData() as? AmityPost.Data.TEXT)?.getText() ?: ""
+
+    val firstLink = if (!sdkLinks.isNullOrEmpty()) {
+        val link = sdkLinks.first()
+        if (link.getRenderPreview() && postText.extractUrls().isNotEmpty()) link else null
+    } else {
+        null
     }
 
-    val postEditedAt by remember(post.getUpdatedAt()) {
-        derivedStateOf {
-            post.getUpdatedAt()
-        }
+    val hasServerMetadata = firstLink != null
+            && (!firstLink.getDomain().isNullOrEmpty()
+            || !firstLink.getTitle().isNullOrEmpty()
+            || !firstLink.getImageUrl().isNullOrEmpty())
+
+    if (hasServerMetadata) {
+        AmityPreviewLinkViewWithMetadata(
+            modifier = Modifier.padding(12.dp),
+            url = firstLink!!.getUrl(),
+            domain = firstLink.getDomain(),
+            title = firstLink.getTitle(),
+            imageUrl = firstLink.getImageUrl(),
+        )
+        return
     }
+
+    // Fallback: extract URL from text and fetch metadata client-side
+    val postId = post.getPostId()
+    val postEditedAt = post.getUpdatedAt()
 
     val previewUrlCache by remember(postId, postEditedAt) {
         derivedStateOf {
-            val sdkLinks = post.getLinks()
-            val postText = (post.getData() as? AmityPost.Data.TEXT)?.getText() ?: ""
-            val url = if (!sdkLinks.isNullOrEmpty()) {
-                val firstLink = sdkLinks.first()
-                val linkUrl = if (firstLink.getRenderPreview()) firstLink.getUrl() else null
-                // Cross-validate against post text: SDK may truncate URLs (e.g. "path(1" → "path"),
-                // so we must also confirm our regex finds a URL in the original text.
-                // If extractUrls() returns empty, the original URL was malformed → don't preview.
-                if (linkUrl != null && postText.extractUrls().isNotEmpty()) linkUrl else null
+            val url = if (firstLink != null) {
+                firstLink.getUrl()
             } else {
                 postText.extractUrls().firstOrNull()?.url
             }
@@ -91,10 +104,7 @@ fun AmityPostPreviewLinkView(
         }
     }
 
-    if (!isAllowedPostDataType
-        || previewUrlCache == null
-        || previewUrlCache is AmityPreviewNoUrl
-    ) return
+    if (previewUrlCache == null || previewUrlCache is AmityPreviewNoUrl) return
 
     AmityPreviewLinkView(
         modifier = Modifier.padding(12.dp),

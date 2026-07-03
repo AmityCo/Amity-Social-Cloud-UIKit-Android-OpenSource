@@ -5,6 +5,10 @@ import android.util.Log
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.material3.Text
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,6 +30,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.sdk.helper.core.hashtag.AmityHashtag
 import com.amity.socialcloud.sdk.helper.core.hashtag.AmityHashtagMetadataGetter
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
@@ -55,6 +60,8 @@ fun AmityExpandableText(
     previewLines: Int = EXPANDABLE_TEXT_MAX_LINES,
     intialExpand: Boolean = false,
     readMoreText: String = amityCommonString("amity_common_button_see_more"),
+    readMoreUnderlined: Boolean = true,
+    readMoreInline: Boolean = false,
     onClick: () -> Unit = {},
     onMentionedUserClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
@@ -82,6 +89,7 @@ fun AmityExpandableText(
                     textLayoutResult = textLayoutResult,
                     visiblePreviewLines = previewLines,
                     readMoreLength = readMoreText.length,
+                    inlineReadMore = readMoreInline,
                 )
             )
         }
@@ -198,9 +206,6 @@ fun AmityExpandableText(
                 addStyle(
                     style = SpanStyle(
                         fontWeight = FontWeight.SemiBold,
-                        background = AmityTheme.colors.highlight.copy(
-                            alpha = 0.1f
-                        )
                     ),
                     start = match.first,
                     end = match.second,
@@ -216,7 +221,7 @@ fun AmityExpandableText(
             if (!isReadMoreClicked) {
                 withStyle(style = SpanStyle(
                     color = AmityTheme.colors.primary,
-                    textDecoration = TextDecoration.Underline
+                    textDecoration = if (readMoreUnderlined) TextDecoration.Underline else TextDecoration.None
                 )) {
                     pushStringAnnotation(tag = readMoreText, annotation = readMoreText)
                     append(readMoreText)
@@ -224,6 +229,7 @@ fun AmityExpandableText(
             }
         }
 
+        val boldHighlightColor = AmityTheme.colors.primary.copy(alpha = 0.1f)
         val layoutResult = remember { mutableStateOf<TextLayoutResult?>(null) }
         val pressIndicator = Modifier.pointerInput(annotatedString, productTags) {
             detectTapGestures(
@@ -300,7 +306,41 @@ fun AmityExpandableText(
         Text(
             text = annotatedString,
             style = style,
-            modifier = modifier.then(pressIndicator),
+            modifier = modifier
+                .drawBehind {
+                    layoutResult.value?.let { textLayout ->
+                        val hPadding = 5.dp.toPx()
+                        val vPadding = 3.dp.toPx()
+                        annotatedString
+                            .getStringAnnotations("BOLDED", 0, annotatedString.length)
+                            .forEach { annotation ->
+                                val startLine = textLayout.getLineForOffset(annotation.start)
+                                val endLine = textLayout.getLineForOffset(maxOf(annotation.end - 1, 0))
+
+                                for (line in startLine..endLine) {
+                                    val lineStart = if (line == startLine) annotation.start else textLayout.getLineStart(line)
+                                    val lineEnd = if (line == endLine) annotation.end else textLayout.getLineEnd(line)
+
+                                    val left = textLayout.getHorizontalPosition(lineStart, true)
+                                    val right = textLayout.getHorizontalPosition(lineEnd, true)
+                                    val top = textLayout.getLineTop(line)
+                                    val bottom = textLayout.getLineBottom(line)
+
+                                    val rectLeft = minOf(left, right) - hPadding
+                                    val rectTop = top - vPadding
+                                    val rectWidth = maxOf(left, right) - minOf(left, right) + hPadding * 2
+                                    val rectHeight = bottom - top + vPadding * 2
+
+                                    drawRoundRect(
+                                        color = boldHighlightColor,
+                                        topLeft = Offset(rectLeft, rectTop),
+                                        size = Size(rectWidth, rectHeight),
+                                    )
+                                }
+                            }
+                    }
+                }
+                .then(pressIndicator),
             onTextLayout = {
                 layoutResult.value = it
             }
@@ -345,6 +385,7 @@ private fun getTrimmedText(
     textLayoutResult: TextLayoutResult,
     visiblePreviewLines: Int,
     readMoreLength: Int = 8,
+    inlineReadMore: Boolean = false,
 ): String {
     return if (textLayoutResult.lineCount >= visiblePreviewLines) {
         val startIndex = textLayoutResult.getLineStart(visiblePreviewLines - 1)
@@ -358,7 +399,10 @@ private fun getTrimmedText(
             text.substring(0, endIndex)
         }
 
-        if (newText.endsWith("\n")) {
+        if (inlineReadMore) {
+            val trimmed = newText.trimEnd()
+            if (trimmed.endsWith("…") || trimmed.endsWith("...")) "$trimmed " else "$trimmed… "
+        } else if (newText.endsWith("\n")) {
             newText
         } else {
             newText + "\n"

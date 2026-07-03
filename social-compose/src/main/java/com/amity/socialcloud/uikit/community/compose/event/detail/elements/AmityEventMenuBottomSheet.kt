@@ -23,11 +23,14 @@ fun AmityEventMenuBottomSheet(
     onEditClick: () -> Unit,
     onDeleteClick: () -> Unit,
     onAddToCalendarClick: () -> Unit = {},
+    onCopyLinkClick: () -> Unit = {},
+    onShareClick: () -> Unit = {},
     eventStartTime: org.joda.time.DateTime? = null,
     eventEndTime: org.joda.time.DateTime? = null,
     isEventCreator: Boolean = false,
     hasDeletePermission: Boolean = false,
-    hasRsvpd: Boolean = false
+    hasRsvpd: Boolean = false,
+    showShareActions: Boolean = false
 ) {
     var showEditingNotPossibleDialog by remember { mutableStateOf(false) }
 
@@ -125,6 +128,66 @@ fun AmityEventMenuBottomSheet(
                         Spacer(modifier = Modifier.width(16.dp))
                         Text(
                             text = amitySocialString("amity_social_label_add_to_calendar"),
+                            style = AmityTheme.typography.body.copy(
+                                fontWeight = FontWeight.Medium,
+                                fontSize = 15.sp
+                            ),
+                            color = AmityTheme.colors.base
+                        )
+                    }
+                }
+
+                // Copy event link option - shown when the network deep-link config, community
+                // type and event status allow sharing (see AmityEventDetailViewModel.eventShareUrl).
+                // Appears after Add to calendar per design.
+                if (showShareActions) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                onCopyLinkClick()
+                                onDismiss()
+                            }
+                            .padding(horizontal = 16.dp, vertical = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.amity_v4_link_icon),
+                            contentDescription = amitySocialString("amity_social_button_copy_event_link"),
+                            tint = AmityTheme.colors.base,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Text(
+                            text = amitySocialString("amity_social_button_copy_event_link"),
+                            style = AmityTheme.typography.body.copy(
+                                fontWeight = FontWeight.Medium,
+                                fontSize = 15.sp
+                            ),
+                            color = AmityTheme.colors.base
+                        )
+                    }
+
+                    // Share to option - native OS share sheet (mobile only). Appears after Copy event link.
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                onShareClick()
+                                onDismiss()
+                            }
+                            .padding(horizontal = 16.dp, vertical = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.amity_v4_share_icon),
+                            contentDescription = amitySocialString("amity_social_button_share_to"),
+                            tint = AmityTheme.colors.base,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Text(
+                            text = amitySocialString("amity_social_button_share_to"),
                             style = AmityTheme.typography.body.copy(
                                 fontWeight = FontWeight.Medium,
                                 fontSize = 15.sp

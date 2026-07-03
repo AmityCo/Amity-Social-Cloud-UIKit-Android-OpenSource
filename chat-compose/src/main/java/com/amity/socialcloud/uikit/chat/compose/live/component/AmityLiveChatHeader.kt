@@ -22,6 +22,7 @@ import com.amity.socialcloud.sdk.core.session.model.NetworkConnectionEvent
 import com.amity.socialcloud.uikit.chat.compose.R
 import com.amity.socialcloud.uikit.chat.compose.live.AmityLiveChatPageViewModel
 import com.amity.socialcloud.uikit.chat.compose.live.elements.AmityLiveChatHeaderAvatar
+import com.amity.socialcloud.uikit.chat.compose.localization.amityChatString
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
@@ -140,7 +141,7 @@ fun ChatHeaderWaitingForNetwork(
 			)
 			Spacer(modifier = Modifier.width(4.dp))
 			Text(
-				text = "Waiting for network...",
+				text = amityChatString("chat.waiting.for.network"),
 				fontSize = 13.sp,
 				lineHeight = 18.sp,
 				fontWeight = FontWeight(400),

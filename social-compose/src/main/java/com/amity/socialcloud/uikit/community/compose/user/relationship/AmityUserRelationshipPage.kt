@@ -132,7 +132,7 @@ fun AmityUserRelationshipPage(
         if (showUserActionSheet && targetUser != null) {
             AmityUserRelationshipActionsBottomSheet(
                 user = targetUser!!,
-                allowToBlock = userId == AmityCoreClient.getUserId(),
+                allowToBlock = targetUser!!.getUserId() != AmityCoreClient.getUserId(),
                 onDismiss = {
                     showUserActionSheet = false
                     targetUser = null

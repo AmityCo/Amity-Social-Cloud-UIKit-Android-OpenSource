@@ -35,6 +35,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
 @Composable
 fun AmityPollPostTypeSelectionBottomSheet(
@@ -99,13 +100,13 @@ fun AmityPollPostTypeSelectionBottomSheet(
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = AmityTheme.colors.primary,
-                contentColor = Color.White
+                contentColor = amityColorWhite
             )
         ) {
             Text(
                 text = amitySocialString("amity_social_button_next"),
                 style = AmityTheme.typography.bodyBold,
-                color = Color.White,
+                color = amityColorWhite,
                 textAlign = TextAlign.Center
             )
         }

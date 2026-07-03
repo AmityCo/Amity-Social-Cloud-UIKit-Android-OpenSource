@@ -31,6 +31,7 @@ import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getText
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
 @Composable
 fun AmityEmptyNewsFeedComponent(
@@ -118,7 +119,7 @@ fun AmityEmptyNewsFeedComponent(
                         Icon(
                             painter = painterResource(id = getConfig().getIcon()),
                             contentDescription = null,
-                            tint = Color.White
+                            tint = amityColorWhite
                         )
 
                         Spacer(modifier = modifier.width(8.dp))
@@ -126,7 +127,7 @@ fun AmityEmptyNewsFeedComponent(
                         Text(
                             text = amitySocialConfigString("amity_social_button_explore_community_button"),
                             style = AmityTheme.typography.bodyLegacy.copy(
-                                color = Color.White
+                                color = amityColorWhite
                             ),
                         )
                     }

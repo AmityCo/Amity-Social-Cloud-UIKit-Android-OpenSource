@@ -104,7 +104,6 @@ fun AmityCommentComposerBar(
                                 authorName.length
                             )
                         )
-                        selectedUserToMention = replyComment.getCreator()
                         shouldClearText = false
                     }
                 }
@@ -209,8 +208,9 @@ fun AmityCommentComposerBar(
             Text(
                 text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_social_home_create_post_button"),
                 style = AmityTheme.typography.bodyLegacy.copy(
-                    color = if (shouldAllowToPost) AmityTheme.colors.primary
-                    else AmityTheme.colors.primaryShade2,
+                    color = AmityTheme.colors.primary.copy(
+                        alpha = if (shouldAllowToPost) 1f else 0.3f
+                    )
                 ),
                 modifier = Modifier
                     .align(Alignment.Bottom)

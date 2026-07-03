@@ -67,6 +67,8 @@ class AmityReactionListPageViewModel(
                         referenceType = referenceType,
                         referenceId = referenceId,
                         tabItems = tabs,
+                        // Reset to "All" tab on first load; preserve selected tab on reactive updates
+                        currentIndex = if (state.referenceId != referenceId) 0 else state.currentIndex,
                     )
                 }
         }
@@ -141,7 +143,12 @@ class AmityReactionListPageViewModel(
             .getComment(commentId)
     }
 
-    private fun generateReactionTabs(reactionCount: Int, reactionMap: AmityReactionMap): List<ReactionTab> {
+    private fun generateReactionTabs(
+        reactionCount: Int,
+        reactionMap: AmityReactionMap,
+        myReactions: List<String> = emptyList()
+    ): List<ReactionTab> {
+        val myReactionNames = myReactions.toSet()
         val tabs: MutableList<ReactionTab> = reactionMap
             .map {
                 ReactionTab(
@@ -150,9 +157,11 @@ class AmityReactionListPageViewModel(
                 )
             }
             .filter { it.count > 0 }
-            .sortedByDescending {
-                it.count
-            }
+            .sortedWith(
+                compareByDescending<ReactionTab> { it.title in myReactionNames }
+                    .thenByDescending { it.count }
+                    .thenBy { it.title }
+            )
             .toMutableList()
 
         if (tabs.size > 1) {
@@ -169,7 +178,7 @@ class AmityReactionListPageViewModel(
             AmityReactionReferenceType.COMMENT -> {
                 getComment(referenceId)
                     .map {
-                        generateReactionTabs(it.getReactionCount(), it.getReactionMap())
+                        generateReactionTabs(it.getReactionCount(), it.getReactionMap(), it.getMyReactions())
                     }
                     .asFlow()
             }
@@ -177,7 +186,7 @@ class AmityReactionListPageViewModel(
             AmityReactionReferenceType.POST -> {
                 getPost(referenceId)
                     .map {
-                        generateReactionTabs(it.getReactionCount(), it.getReactionMap())
+                        generateReactionTabs(it.getReactionCount(), it.getReactionMap(), it.getMyReactions())
                     }
                     .asFlow()
             }
@@ -185,7 +194,7 @@ class AmityReactionListPageViewModel(
             AmityReactionReferenceType.STORY -> {
                 getStory(referenceId)
                     .map {
-                        generateReactionTabs(it.getReactionCount(), it.getReactions())
+                        generateReactionTabs(it.getReactionCount(), it.getReactions(), it.getMyReactions())
                     }
                     .asFlow()
             }
@@ -193,7 +202,11 @@ class AmityReactionListPageViewModel(
             AmityReactionReferenceType.MESSAGE -> {
                 getMessage(referenceId)
                     .map {
-                        generateReactionTabs(it.getReactionCount(), it.getReactionMap())
+                        if (it.isDeleted()) {
+                            listOf(ReactionTab("All", 0, isAllTab = true))
+                        } else {
+                            generateReactionTabs(it.getReactionCount(), it.getReactionMap(), it.getMyReactions())
+                        }
                     }
                     .asFlow()
             }

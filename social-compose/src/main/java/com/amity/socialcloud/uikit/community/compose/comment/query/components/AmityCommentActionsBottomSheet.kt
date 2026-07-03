@@ -137,7 +137,8 @@ fun AmityCommentActionsBottomSheet(
                     }
                 )
             },
-            onDismissRequest = { openDeleteAlertDialog.value = false }
+            onDismissRequest = { openDeleteAlertDialog.value = false },
+            confirmTextColor = AmityTheme.colors.alert
         )
     }
 

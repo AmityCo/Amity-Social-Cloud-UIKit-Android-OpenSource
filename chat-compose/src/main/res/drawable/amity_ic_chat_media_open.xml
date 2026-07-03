@@ -1,0 +1,14 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="32dp"
+    android:height="32dp"
+    android:viewportWidth="32"
+    android:viewportHeight="32">
+    <!-- Circle background -->
+    <path
+        android:pathData="M16,0C24.836,0 32,7.164 32,16C32,24.836 24.836,32 16,32C7.164,32 0,24.836 0,16C0,7.164 7.164,0 16,0Z"
+        android:fillColor="#EBECEF"/>
+    <!-- Plus icon -->
+    <path
+        android:pathData="M22.188,15.125C22.469,15.125 22.75,15.406 22.75,15.688V16.813C22.75,17.129 22.469,17.375 22.188,17.375H17.125V22.438C17.125,22.754 16.844,23 16.563,23H15.438C15.121,23 14.875,22.754 14.875,22.438V17.375H9.813C9.496,17.375 9.25,17.129 9.25,16.813V15.688C9.25,15.406 9.496,15.125 9.813,15.125H14.875V10.063C14.875,9.781 15.121,9.5 15.438,9.5H16.563C16.844,9.5 17.125,9.781 17.125,10.063V15.125H22.188Z"
+        android:fillColor="#636878"/>
+</vector>

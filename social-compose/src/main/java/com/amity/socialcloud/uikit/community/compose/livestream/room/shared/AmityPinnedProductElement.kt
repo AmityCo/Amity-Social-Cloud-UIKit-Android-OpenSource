@@ -43,6 +43,8 @@ import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.common.utils.formatCurrencyForLocale
 import org.joda.time.DateTime
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 
 
 @Composable
@@ -101,7 +103,7 @@ fun LivestreamPinnedProductElement(
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .background(Color.White.copy(alpha = 0.5f)),
+                                .background(amityColorWhite.copy(alpha = 0.5f)),
                             contentAlignment = Alignment.Center
                         ) {}
                     }
@@ -224,7 +226,7 @@ fun LivestreamPinnedProductElement(
                                 Text(
                                     text = amitySocialString("amity_social_button_view"),
                                     style = AmityTheme.typography.captionBold.copy(
-                                        color = Color.White
+                                        color = AmityTheme.colors.baseInverse
                                     )
                                 )
                             }
@@ -237,7 +239,7 @@ fun LivestreamPinnedProductElement(
                     modifier = Modifier
                         .size(20.dp)
                         .background(
-                            color = Color.Black.copy(alpha = 0.5f),
+                            color = amityColorBlack.copy(alpha = 0.5f),
                             shape = RoundedCornerShape(50)
                         )
                         .clickable { onCloseClick() }
@@ -248,7 +250,7 @@ fun LivestreamPinnedProductElement(
                         painter = painterResource(id = R.drawable.amity_ic_close),
                         contentDescription = "Close",
                         modifier = Modifier.size(12.dp),
-                        tint = Color.White
+                        tint = AmityTheme.colors.baseInverse
                     )
                 }
             }

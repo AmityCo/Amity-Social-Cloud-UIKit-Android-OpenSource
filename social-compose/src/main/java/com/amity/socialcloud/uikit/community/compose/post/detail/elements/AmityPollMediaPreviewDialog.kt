@@ -53,6 +53,8 @@ import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySo
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerPageViewModel
 import com.amity.socialcloud.uikit.community.compose.post.composer.RenderAltTextConfigSheet
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.AltTextMedia
+import com.amity.socialcloud.uikit.common.ui.theme.amityMediaSurface
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -93,7 +95,7 @@ fun AmityPollMediaPreviewDialog(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.Black),
+                    .background(amityMediaSurface),
                 contentAlignment = Alignment.Center
             ) {
                 if (imageRequest.error() == null) {
@@ -135,7 +137,7 @@ fun AmityPollMediaPreviewDialog(
                         Icon(
                             painter = painterResource(R.drawable.amity_ic_more_horiz),
                             contentDescription = "Close",
-                            tint = Color.White,
+                            tint = amityColorWhite,
                             modifier = Modifier
                                 .statusBarsPadding()
                                 .size(28.dp)

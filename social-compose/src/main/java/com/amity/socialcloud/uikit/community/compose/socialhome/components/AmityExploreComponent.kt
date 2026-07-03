@@ -49,6 +49,7 @@ import com.amity.socialcloud.uikit.community.compose.community.trending.AmityTre
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityExploreCategoryShimmer
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityRecommendedCommunityShimmer
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityTrendingCommunityShimmer
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
 @Composable
 fun AmityExploreComponent(
@@ -187,14 +188,14 @@ fun AmityExploreComponent(
                                 modifier = Modifier
                                     .size(25.dp)
                                     .padding(start = 12.dp),
-                                tint = Color.White
+                                tint = amityColorWhite
                             )
                             Text(
                                 modifier = Modifier.padding(end = 16.dp),
                                 text = amitySocialString("amity_social_button_social_home_create_community"),
                                 style = AmityTheme.typography.bodyLegacy.copy(
                                     fontWeight = FontWeight.SemiBold,
-                                    color = Color.White,
+                                    color = amityColorWhite,
                                 ),
                             )
                         }

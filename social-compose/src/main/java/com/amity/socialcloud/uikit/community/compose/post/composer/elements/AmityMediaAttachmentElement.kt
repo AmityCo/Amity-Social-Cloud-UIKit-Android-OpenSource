@@ -35,6 +35,7 @@ import com.amity.socialcloud.uikit.common.utils.isKeyboardVisible
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerPageViewModel
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.AmityDetailedMediaAttachmentComponent
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.AmityMediaAttachmentComponent
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 
 @Composable
 fun AmityMediaAttachmentElement(
@@ -102,7 +103,7 @@ fun AmityMediaAttachmentElement(
                     brush = Brush.verticalGradient(
                         colors = listOf(
                             Color.Transparent,
-                            Color.Black.copy(alpha = 0.08f),
+                            amityColorBlack.copy(alpha = 0.08f),
                         )
                     )
                 )

@@ -37,6 +37,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 import kotlin.math.min
+import com.amity.socialcloud.uikit.common.ui.theme.amityMediaSurface
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -88,7 +89,7 @@ fun AmityViewGlobalStoryPage(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.Black)
+            .background(amityMediaSurface)
     ) {
         if (selectedTarget.first >= 0) {
             HorizontalPager(
@@ -99,7 +100,7 @@ fun AmityViewGlobalStoryPage(
                 },
                 modifier = modifier
                     .fillMaxSize()
-                    .background(Color.Black)
+                    .background(amityMediaSurface)
             ) { index ->
                 val target = targets[index]
 

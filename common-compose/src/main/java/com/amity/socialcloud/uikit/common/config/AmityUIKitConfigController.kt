@@ -59,8 +59,9 @@ object AmityUIKitConfigController {
     }
 
     private fun fetchShareableLinkConfig() {
+        // SDK 7.23.0-alpha03: getShareableLinkConfiguration() returns the configuration
+        // Single directly (the AmityShareableLink intermediate step is deprecated).
         AmityCoreClient.getShareableLinkConfiguration()
-            .getShareableLink()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnError { error ->
@@ -132,6 +133,44 @@ object AmityUIKitConfigController {
 
     fun isExcluded(configId: String): Boolean {
         return config.excludes.find { it.asString == configId } != null
+    }
+
+    fun isConversationUserActionEnabled(actionName: String): Boolean {
+        if (!::config.isInitialized) return true
+         val actions = config.featureFlags.chat.conversationChatUserActions
+        for (i in 0 until actions.size()) {
+            val action = actions[i] as? JsonObject ?: continue
+            val name = action.get("name")?.asString ?: continue
+            if (name == actionName) {
+                return action.get("enabled")?.asBoolean ?: true
+            }
+        }
+        return true // default: enabled if not listed
+    }
+
+    fun hasAnyEnabledChatUserAction(): Boolean {
+        return listOf("mute", "report", "block").any { isConversationUserActionEnabled(it) }
+    }
+
+    fun getEnabledChannelTypes(): List<String> {
+        if (!::config.isInitialized) return listOf("conversation", "community")
+        val known = setOf("conversation", "community")
+        val types = config.featureFlags.chat.enabledChannelTypes
+            .filter { it in known }
+        return types.ifEmpty { listOf("conversation", "community") }
+    }
+
+    fun getConversationChatUserActions(): List<Pair<String, Boolean>> {
+        if (!::config.isInitialized) return emptyList()
+        val result = mutableListOf<Pair<String, Boolean>>()
+        val actions = config.featureFlags.chat.conversationChatUserActions
+        for (i in 0 until actions.size()) {
+            val action = actions[i] as? JsonObject ?: continue
+            val name = action.get("name")?.asString ?: continue
+            val enabled = action.get("enabled")?.asBoolean ?: true
+            result.add(name to enabled)
+        }
+        return result
     }
 
     private fun parseConfig(context: Context) {
@@ -230,6 +269,6 @@ object AmityUIKitConfigController {
     }
 
     fun getClipFeatureFlags() : JsonObject {
-        return config.featureFlags.getAsJsonObject("post")?.getAsJsonObject("clip") ?: JsonObject()
+        return config.featureFlags.post.clip
     }
 }

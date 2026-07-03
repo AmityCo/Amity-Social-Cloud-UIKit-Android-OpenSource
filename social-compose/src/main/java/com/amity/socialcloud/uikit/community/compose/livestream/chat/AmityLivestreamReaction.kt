@@ -51,6 +51,8 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import kotlinx.coroutines.delay
 import kotlin.random.Random
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 
 @Composable
 fun ReactionPicker(
@@ -76,21 +78,21 @@ fun ReactionPicker(
                     .align(Alignment.BottomEnd)
                     .shadow(
                         elevation = 6.dp,
-                        spotColor = Color(0x0A000000),
-                        ambientColor = Color(0x0A000000)
+                        spotColor = amityColorBlack.copy(alpha = 0.04f),
+                        ambientColor = amityColorBlack.copy(alpha = 0.04f)
                     )
                     .shadow(
                         elevation = 64.dp,
-                        spotColor = Color(0x14000000),
-                        ambientColor = Color(0x14000000)
+                        spotColor = amityColorBlack.copy(alpha = 0.08f),
+                        ambientColor = amityColorBlack.copy(alpha = 0.08f)
                     )
                     .shadow(
                         elevation = 24.dp,
-                        spotColor = Color(0x1A000000),
-                        ambientColor = Color(0x1A000000)
+                        spotColor = amityColorBlack.copy(alpha = 0.1f),
+                        ambientColor = amityColorBlack.copy(alpha = 0.1f)
                     )
                     .background(
-                        color = Color(0x66FFFFFF),
+                        color = amityColorWhite.copy(alpha = 0.4f),
                         shape = RoundedCornerShape(size = 9999.dp)
                     )
                     .clickable(enabled = false) { }, // Prevent dismiss when clicking card

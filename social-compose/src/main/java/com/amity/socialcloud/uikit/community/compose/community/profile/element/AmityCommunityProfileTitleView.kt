@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -37,13 +38,12 @@ fun AmityCommunityProfileTitleView(
 		elementId = "community_title",
 	) {
 		Row(modifier = modifier
-			.padding(bottom = 10.dp, start = 16.dp, end = 16.dp)
+			.padding(start = 16.dp, end = 16.dp, bottom = 12.dp)
 			.wrapContentWidth()
 		) {
 			if (!community.isPublic()) {
 				Box(modifier = Modifier
 					.size(24.dp)
-					.padding(top = 4.dp, end = 8.dp)
 				) {
 					AmityBaseElement(
 						elementId = "community_private_badge"
@@ -52,8 +52,9 @@ fun AmityCommunityProfileTitleView(
 							painter = painterResource(id = getConfig().getIcon()),
 							contentDescription = "Private community icon",
 							modifier = Modifier
-								.width(20.dp)
-								.height(16.dp)
+								.width(24.dp)
+								.height(24.dp),
+							colorFilter = ColorFilter.tint(AmityTheme.colors.base)
 						)
 					}
 				}
@@ -66,13 +67,8 @@ fun AmityCommunityProfileTitleView(
 				) {
 					Text(
 						text = community.getDisplayName(),
-						style = TextStyle(
-							fontSize = 20.sp,
-							lineHeight = 24.sp,
-							fontWeight = FontWeight(700),
-							color = AmityTheme.colors.base,
-						),
-						maxLines = 2,
+						style = AmityTheme.typography.headLine,
+						maxLines = 1,
 						overflow = TextOverflow.Ellipsis,
 					)
 				}

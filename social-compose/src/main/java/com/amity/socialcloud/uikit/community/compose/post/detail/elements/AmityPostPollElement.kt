@@ -109,6 +109,8 @@ import kotlin.math.pow
 import kotlin.text.format
 import kotlin.text.isNotEmpty
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.amityDisabledColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -484,14 +486,16 @@ fun AmityPostPollElement(
 
             Spacer(modifier = Modifier.height(12.dp))
 
+            val isVoteEnabled = canVote && selectedIndices.isNotEmpty() || pollStateUiState.find { it.postId == post.getPostId() }?.selectedOption?.isNotEmpty() == true
             Button(
                 colors = ButtonDefaults.buttonColors(
                     containerColor = AmityTheme.colors.primary,
-                    disabledContainerColor = AmityTheme.colors.primaryShade2,
+                    disabledContainerColor = AmityTheme.colors.primary.copy(alpha = 0.3f),
+                    disabledContentColor = amityDisabledColor(amityColorWhite),
                 ),
                 shape = RoundedCornerShape(8.dp),
                 contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
-                enabled = canVote && selectedIndices.isNotEmpty() || pollStateUiState.find { it.postId == post.getPostId() }?.selectedOption?.isNotEmpty() == true,
+                enabled = isVoteEnabled,
                 modifier = Modifier
                     .height(40.dp)
                     .fillMaxWidth(),
@@ -543,9 +547,8 @@ fun AmityPostPollElement(
             ) {
                 Text(
                     text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_vote"),
-                    style = AmityTheme.typography.captionLegacy.copy(
-                        color = Color.White,
-                    ),
+                    style = AmityTheme.typography.captionLegacy,
+                    color = if (isVoteEnabled) amityColorWhite else amityDisabledColor(amityColorWhite),
                     textAlign = TextAlign.Center,
                 )
             }

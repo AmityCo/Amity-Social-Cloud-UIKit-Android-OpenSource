@@ -33,6 +33,9 @@ import com.amity.socialcloud.uikit.common.ui.image.zoomable
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.ui.theme.amityMediaSurface
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 
 @Composable
 fun AmityCommunityImageFeedItem(
@@ -90,7 +93,7 @@ fun AmityCommunityImagePreviewDialog(
         Box(
             modifier = modifier
                 .fillMaxSize()
-                .background(Color.Black)
+                .background(amityMediaSurface)
         ) {
             AsyncImage(
                 model = ImageRequest
@@ -111,8 +114,8 @@ fun AmityCommunityImagePreviewDialog(
                 icon = R.drawable.amity_ic_close2,
                 size = 32.dp,
                 iconPadding = 10.dp,
-                tint = Color.Black.copy(0.5f),
-                background = Color.White.copy(0.8f),
+                tint = amityColorBlack.copy(0.5f),
+                background = amityColorWhite.copy(0.8f),
                 modifier = modifier
                     .align(Alignment.TopStart)
                     .offset(16.dp, 32.dp),

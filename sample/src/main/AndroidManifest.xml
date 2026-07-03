@@ -38,19 +38,15 @@
         android:label="@string/amity_app_name"
         android:supportsRtl="true"
         android:theme="@style/MyTheme">
-        <activity android:name=".TestActivity" />
-        <activity android:name=".AmityRecentMessageListActivity" />
-        <activity android:name=".AmityMessageListWithCustomUi" />
         <activity android:name=".AmitySettingActivity" />
         <activity android:name=".AmityFeatureListActivity" />
-        <activity android:name=".AmityPostCreatorWithOptionsActivity" />
-        <activity android:name=".AmityPostCreatorSettingsActivity" />
         <activity android:name=".liveChat.AmityLiveChatActivity"
             android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".liveChat.AmityLiveChatListActivity" />
         <activity android:name=".env.EnvironmentActivity" />
+        <activity android:name=".MainActivity" />
         <activity
-            android:name=".MainActivity"
+            android:name=".login.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

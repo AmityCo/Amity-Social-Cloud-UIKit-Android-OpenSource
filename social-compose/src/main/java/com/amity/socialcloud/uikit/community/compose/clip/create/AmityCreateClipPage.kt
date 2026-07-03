@@ -56,10 +56,12 @@ import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.common.readableMinuteSeconds
+import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
 import com.amity.socialcloud.uikit.common.ui.elements.AmityMenuButton
 import com.amity.socialcloud.uikit.common.ui.elements.DisposableEffectWithLifeCycle
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.theme.amityLiveBadgeRed
 import com.amity.socialcloud.uikit.common.utils.closePage
 import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
@@ -71,6 +73,7 @@ import com.amity.socialcloud.uikit.community.compose.story.create.elements.Amity
 import com.amity.socialcloud.uikit.community.compose.utils.AmityStoryCameraHelper
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
+import com.amity.socialcloud.uikit.common.ui.theme.amityMediaSurface
 
 private const val FILE_SIZE_LIMIT = 2L * 1024 * 1024 * 1024 // 2 GB
 
@@ -242,10 +245,11 @@ fun AmityCreateClipPage(
         }
     }
 
+    AmityBasePage(pageId = "create_clip_post_page") {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black)
+            .background(amityMediaSurface)
             .statusBarsPadding()
             .navigationBarsPadding()
     ) {
@@ -259,7 +263,7 @@ fun AmityCreateClipPage(
                 modifier = Modifier
                     .fillMaxSize()
                     .clip(RoundedCornerShape(12.dp))
-                    .background(Color.Black)
+                    .background(amityMediaSurface)
                     .testTag("camera_view")
             )
 
@@ -313,11 +317,11 @@ fun AmityCreateClipPage(
                         .padding(top = 16.dp)
                         .size(60.dp, 26.dp)
                         .clip(RoundedCornerShape(4.dp))
-                        .background(Color(0xFFFF305A))
+                        .background(amityLiveBadgeRed)
                 ) {
                     Text(
                         text = videoRecordDuration.readableMinuteSeconds(),
-                        color = Color.White,
+                        color = AmityTheme.colors.baseInverse,
                         modifier = Modifier.align(Alignment.Center),
                         style = AmityTheme.typography.bodyBold,
                     )
@@ -464,6 +468,7 @@ fun AmityCreateClipPage(
                 dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_ok"),
             )
         }
+    }
     }
 }
 

@@ -21,7 +21,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -169,7 +168,7 @@ fun Modifier.highlightEffect(
     }
 
     return this.then(
-        Modifier.background(Color(0xFFD9E5FC).copy(alpha = alpha), shape = RoundedCornerShape(
+        Modifier.background(AmityTheme.colors.primaryShade3.copy(alpha = alpha), shape = RoundedCornerShape(
             topEnd = 12.dp,
             bottomStart = 12.dp,
             bottomEnd = 12.dp,

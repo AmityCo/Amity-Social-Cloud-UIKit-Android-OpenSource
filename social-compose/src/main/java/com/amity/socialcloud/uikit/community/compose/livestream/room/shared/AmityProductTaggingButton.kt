@@ -44,7 +44,7 @@ fun AmityProductTaggingButton(
             if (taggedProductsCount > 0) {
                 Text(
                     text = "$taggedProductsCount",
-                    style = AmityTheme.typography.body.copy(color = Color.White),
+                    style = AmityTheme.typography.body.copy(color = AmityTheme.colors.baseInverse),
                     modifier = Modifier
                         .background(AmityTheme.colors.alert, RoundedCornerShape(20.dp))
                         .padding(horizontal = 6.dp, vertical = 2.dp)

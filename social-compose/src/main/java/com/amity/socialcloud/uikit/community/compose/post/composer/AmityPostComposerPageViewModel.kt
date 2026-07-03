@@ -1,6 +1,7 @@
 package com.amity.socialcloud.uikit.community.compose.post.composer
 
 import android.net.Uri
+import android.provider.OpenableColumns
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
@@ -64,6 +65,9 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
     private val MAX_CHAR_LIMIT = 50000
     private val MAX_ATTACHMENTS = 10
     private val MAX_PRODUCT_TAGS_PER_MEDIA = 5
+    // Media files must be under 1 GB (PDT-2327). Oversized files are marked FAILED
+    // (warning icon) instead of being uploaded.
+    private val MAX_UPLOAD_FILE_SIZE_BYTES = 1024L * 1024L * 1024L
 
     companion object {
         const val MAX_TOTAL_PRODUCT_TAGS = 20
@@ -1277,9 +1281,25 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
         medias.filter {
             !mediaMap.containsKey(it.toString())
         }.map { uri ->
-            val postMedia = AmityPostMedia(UUID.randomUUID().toString(), uri, mediaType)
-            mediaMap[uri.toString()] = postMedia
-            uploadMedia(postMedia)
+            if (getMediaFileSize(uri) > MAX_UPLOAD_FILE_SIZE_BYTES) {
+                // Over the 1 GB limit: mark as failed so the warning icon shows and
+                // the file is never uploaded (PDT-2327).
+                val failedMedia = AmityPostMedia(
+                    id = null,
+                    uploadId = null,
+                    url = uri,
+                    uploadState = AmityFileUploadState.FAILED,
+                    currentProgress = 0,
+                    type = mediaType,
+                )
+                mediaMap[uri.toString()] = failedMedia
+                uploadFailedMediaMap[uri.toString()] = true
+                updateList(failedMedia)
+            } else {
+                val postMedia = AmityPostMedia(UUID.randomUUID().toString(), uri, mediaType)
+                mediaMap[uri.toString()] = postMedia
+                uploadMedia(postMedia)
+            }
         }
 
         if (medias.isNotEmpty()) {
@@ -1457,6 +1477,36 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
         }
     }
 
+
+    // Returns the media file size in bytes, or 0 if it can't be determined
+    // (in which case we don't block the upload).
+    private fun getMediaFileSize(uri: Uri): Long {
+        val resolver = AmityAppContext.getContext().contentResolver
+        // Prefer the provider-reported size (OpenableColumns.SIZE): it is populated
+        // for many cloud/streaming providers (e.g. Google Drive/Photos) where the
+        // file descriptor's statSize is -1 for a non-seekable/pipe-backed stream.
+        try {
+            resolver.query(uri, arrayOf(OpenableColumns.SIZE), null, null, null)?.use { cursor ->
+                if (cursor.moveToFirst()) {
+                    val sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE)
+                    if (sizeIndex >= 0 && !cursor.isNull(sizeIndex)) {
+                        val size = cursor.getLong(sizeIndex)
+                        if (size >= 0) return size
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            // fall through to statSize
+        }
+        // Fallback: the file descriptor's stat size (reliable for local MediaStore/SAF).
+        return try {
+            resolver.openFileDescriptor(uri, "r")
+                ?.use { it.statSize }
+                ?.takeIf { it >= 0 } ?: 0L
+        } catch (e: Exception) {
+            0L
+        }
+    }
 
     private fun uploadMedia(postMedia: AmityPostMedia) {
         updateMediaTransCodingStatus(postMedia)

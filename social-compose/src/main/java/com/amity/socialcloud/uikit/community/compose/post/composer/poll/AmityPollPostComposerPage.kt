@@ -132,6 +132,7 @@ import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.joda.time.format.DateTimeFormat
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -949,7 +950,7 @@ fun AmityPollPostComposerPage(
                                     colors = SwitchDefaults.colors(
                                         checkedTrackColor = AmityTheme.colors.primary,
                                         uncheckedBorderColor = AmityTheme.colors.baseShade3,
-                                        uncheckedThumbColor = Color.White,
+                                        uncheckedThumbColor = amityColorWhite,
                                         uncheckedTrackColor = AmityTheme.colors.baseShade3,
                                     ),
                                     onCheckedChange = {
@@ -1304,7 +1305,7 @@ fun AmityPollPostComposerPage(
                                                 fontSize = 17.sp,
                                                 lineHeight = 22.sp,
                                                 fontWeight = FontWeight(600),
-                                                color = Color(0xFF007AFF),
+                                                color = AmityTheme.colors.highlight,
                                             )
                                         }
                                     }
@@ -1326,7 +1327,7 @@ fun AmityPollPostComposerPage(
                                                 fontSize = 17.sp,
                                                 lineHeight = 22.sp,
                                                 fontWeight = FontWeight(600),
-                                                color = Color(0xFF007AFF),
+                                                color = AmityTheme.colors.highlight,
                                             )
                                         }
                                     }

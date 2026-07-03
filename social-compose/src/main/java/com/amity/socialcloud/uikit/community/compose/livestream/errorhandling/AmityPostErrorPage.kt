@@ -27,6 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
@@ -87,7 +88,7 @@ fun AmityPostErrorPage(
                         style = AmityTheme.typography.bodyLegacy.copy(
                             fontWeight = FontWeight.SemiBold,
                             textAlign = TextAlign.Center,
-                            color = Color.White
+                            color = amityColorWhite
                         )
                     )
                 }

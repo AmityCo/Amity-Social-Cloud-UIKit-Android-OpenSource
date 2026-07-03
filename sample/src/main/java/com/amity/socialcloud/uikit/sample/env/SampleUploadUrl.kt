@@ -22,6 +22,12 @@ object SampleUploadUrl {
             SampleEnv.PRODUCTION_SG -> {
                 return AmityEndpoint.SG.uploadEndpoint
             }
+            SampleEnv.PRODUCTION_EU -> {
+                return AmityEndpoint.EU.uploadEndpoint
+            }
+            SampleEnv.PRODUCTION_US -> {
+                return AmityEndpoint.US.uploadEndpoint
+            }
             else -> {
                 return environment
             }

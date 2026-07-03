@@ -42,6 +42,8 @@ import androidx.compose.ui.window.Popup
 import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
 import com.amity.socialcloud.uikit.chat.compose.R
 import com.amity.socialcloud.uikit.chat.compose.live.AmityLiveChatPageViewModel
+import com.amity.socialcloud.uikit.chat.compose.localization.DefaultAmityChatStringProvider
+import com.amity.socialcloud.uikit.chat.compose.localization.amityChatString
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.elements.BottomConfirmDeletePopup
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
@@ -89,7 +91,7 @@ fun AmityMessageOption(
 					Column {
 						if (onReply != null) {
 							AmityMessageOptionItem(
-								option = "Reply",
+								option = amityChatString("chat.option.reply"),
 								icon = ImageVector.vectorResource(id = R.drawable.amity_ic_reply_message),
 								tint = AmityTheme.colors.baseInverse,
 								onDismiss = onDismiss,
@@ -98,7 +100,7 @@ fun AmityMessageOption(
 							HorizontalDivider(color = AmityTheme.colors.secondaryShade1)
 						}
 						AmityMessageOptionItem(
-							option = "Copy",
+							option = amityChatString("chat.option.copy"),
 							icon = ImageVector.vectorResource(id = R.drawable.amity_ic_copy_message),
 							tint = AmityTheme.colors.baseInverse,
 							onDismiss = onDismiss,
@@ -109,7 +111,7 @@ fun AmityMessageOption(
 						if (onFlag != null) {
 							HorizontalDivider(color = AmityTheme.colors.secondaryShade1)
 							AmityMessageOptionItem(
-								option = "Report",
+								option = amityChatString("chat.option.report"),
 								icon = ImageVector.vectorResource(id = R.drawable.amity_ic_flag_message),
 								tint = AmityTheme.colors.alert,
 								onDismiss = onDismiss,
@@ -119,8 +121,8 @@ fun AmityMessageOption(
 						if (onUnFlag != null) {
 							HorizontalDivider(color = AmityTheme.colors.secondaryShade1)
 							AmityMessageOptionItem(
-								option = "Unreport",
-								icon = ImageVector.vectorResource(id = R.drawable.amity_ic_flag_message),
+								option = amityChatString("chat.option.unreport"),
+								icon = ImageVector.vectorResource(id = R.drawable.amity_ic_unreport),
 								tint = AmityTheme.colors.alert,
 								onDismiss = onDismiss,
 								action = onUnFlag
@@ -129,7 +131,7 @@ fun AmityMessageOption(
 						if (onDelete != null) {
 							HorizontalDivider(color = AmityTheme.colors.secondaryShade1)
 							AmityMessageOptionItem(
-								option = "Delete",
+								option = amityChatString("chat.option.delete"),
 								icon = ImageVector.vectorResource(id = R.drawable.amity_ic_delete_message),
 								tint = AmityTheme.colors.alert,
 								onDismiss = onDismiss,
@@ -159,12 +161,10 @@ fun AmityMessageOptionItem(
 				action()
 
 			}
-			.padding(24.dp, 13.dp)
+			.padding(24.dp, 12.dp)
 	) {
 		Text(text = option,
-			fontSize = 17.sp,
-			lineHeight = 22.sp,
-			fontWeight = FontWeight(400),
+			style = AmityTheme.typography.body,
 			color = tint,
 			modifier = Modifier.wrapContentWidth()
 		)
@@ -195,7 +195,18 @@ fun ConfirmDeletePopup(
 				CenterConfirmDeletePopup(
 					pageScope = pageScope,
 					componentScope = componentScope,
-					viewModel = viewModel
+					onCancel = {
+						viewModel.dismissDeleteConfirmation()
+					},
+					onDelete = {
+						viewModel.deleteMessage(
+							onError = {
+								pageScope?.showSnackbar(
+									message = DefaultAmityChatStringProvider.getInstance().getString("chat.toast.delete.error")
+								)
+							}
+						)
+					}
 				)
 			} else {
 				BottomConfirmDeletePopup(
@@ -205,7 +216,7 @@ fun ConfirmDeletePopup(
 						viewModel.deleteMessage(
 							onError = {
 								pageScope?.showSnackbar(
-									message = "Unable to delete message. Please try again."
+									message = DefaultAmityChatStringProvider.getInstance().getString("chat.toast.delete.error")
 								)
 							}
 						)
@@ -223,7 +234,8 @@ fun ConfirmDeletePopup(
 fun CenterConfirmDeletePopup(
 	pageScope: AmityComposePageScope? = null,
 	componentScope: AmityComposeComponentScope? = null,
-	viewModel: AmityLiveChatPageViewModel,
+	onCancel: (() -> Unit)? = null,
+	onDelete: (() -> Unit)? = null
 ) {
 	Dialog(
 		onDismissRequest = {},
@@ -248,7 +260,7 @@ fun CenterConfirmDeletePopup(
 						horizontalAlignment = Alignment.CenterHorizontally
 					) {
 						Text(
-							text = amityCommonString("amity_social_modal_dialog_delete_message_title"),
+							text = amityChatString("chat.delete.alert.title"),
 							fontSize = 17.sp,
 							lineHeight = 22.sp,
 							fontWeight = FontWeight(600),
@@ -257,7 +269,7 @@ fun CenterConfirmDeletePopup(
 							color = AmityTheme.colors.baseInverse,
 						)
 						Text(
-							text = "This message will also be removed from your friend’s devices.",
+							text = amityChatString("chat.delete.alert.message"),
 							fontSize = 13.sp,
 							lineHeight = 16.sp,
 							fontWeight = FontWeight(400),
@@ -273,11 +285,11 @@ fun CenterConfirmDeletePopup(
 							.fillMaxWidth()
 					) {
 						TextButton(
-							onClick = { viewModel.dismissDeleteConfirmation() },
+							onClick = { onCancel?.invoke() },
 							modifier = Modifier.weight(0.5f)
 						) {
 							Text(
-								text = "Cancel",
+								text = amityCommonString("amity_common_button_cancel"),
 								fontSize = 17.sp,
 								lineHeight = 22.sp,
 								fontWeight = FontWeight(600),
@@ -287,18 +299,12 @@ fun CenterConfirmDeletePopup(
 						VerticalDivider(thickness = 1.dp, color = AmityTheme.colors.secondaryShade1)
 						TextButton(
 							onClick = {
-								viewModel.deleteMessage(
-									onError = {
-										pageScope?.showSnackbar(
-											message = "Unable to delete message. Please try again."
-										)
-									}
-								)
+								onDelete?.invoke()
 							},
 							modifier = Modifier.weight(0.5f)
 						) {
 							Text(
-								text = "Delete",
+								text = amityCommonString("amity_common_button_delete"),
 								fontSize = 17.sp,
 								lineHeight = 22.sp,
 								fontWeight = FontWeight(600),

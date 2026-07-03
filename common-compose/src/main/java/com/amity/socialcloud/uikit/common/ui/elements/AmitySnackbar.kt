@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.amity.socialcloud.uikit.common.compose.R
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
 
 @Composable
@@ -29,7 +30,7 @@ fun AmitySnackbar(
     data: AmitySnackbarVisuals,
 ) {
     Snackbar(
-        containerColor = AmityTheme.colors.secondary,
+        containerColor = AmityTheme.colors.toastBackground,
         modifier = modifier
             .fillMaxWidth()
             .zIndex(100f)
@@ -46,7 +47,7 @@ fun AmitySnackbar(
             )
             Text(
                 text = data.message,
-                color = Color.White,
+                color = amityColorWhite,
                 modifier = modifier
                     .fillMaxWidth()
                     .padding(top = 2.dp),

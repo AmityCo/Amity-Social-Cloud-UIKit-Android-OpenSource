@@ -169,7 +169,6 @@ fun AmityJoinCommunityView(
     community: AmityCommunity,
     joinRequest: AmityJoinRequest? = null,
     label: String? = null,
-    showLabelOnAvatar: Boolean = true,
     onClick: (AmityCommunity) -> Unit,
 ) {
     Row(
@@ -190,7 +189,7 @@ fun AmityJoinCommunityView(
             AmityCommunityAvatarWithLabelView(
                 community = community,
                 modifier = modifier.testTag(getAccessibilityId()),
-                label = if (showLabelOnAvatar) label else null
+                label = label
             )
         }
 

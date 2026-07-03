@@ -42,6 +42,9 @@ import com.amity.socialcloud.uikit.common.utils.NoRippleInteractionSource
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.R.*
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.amityDisabledColor
+import com.amity.socialcloud.uikit.community.compose.ui.components.radio.AmityFilledRadioIndicator
 
 private fun AmityContentFlagReason.toLocalizationKey(): String = when (this) {
     is AmityContentFlagReason.CommunityGuidelines -> "amity_social_label_report_reason_community_guidelines"
@@ -188,13 +191,13 @@ fun AmityReportReasonListScreen(
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = AmityTheme.colors.primary,
-                disabledContainerColor = AmityTheme.colors.primary.copy(alpha = 0.3f)
+                disabledContainerColor = AmityTheme.colors.primary.copy(alpha = 0.3f),
             ),
         ) {
             Text(
                 text = amitySocialString("amity_social_button_report_submit_button"),
                 style = AmityTheme.typography.bodyBold,
-                color = Color.White
+                color = if (selectedReason != null && isButtonEnabled) amityColorWhite else amityDisabledColor(amityColorWhite),
             )
         }
 
@@ -237,14 +240,10 @@ fun AmityReportReasonSelection(
                     color = AmityTheme.colors.base
                 )
 
-                RadioButton(
-                    selected = (reportReason == selectedReason),
-                    onClick = null, // null recommended for accessibility with screen readers,
+                AmityFilledRadioIndicator(
                     enabled = radioButtonEnable,
-                    colors = RadioButtonDefaults.colors(
-                        selectedColor = AmityTheme.colors.primary,
-                        unselectedColor = AmityTheme.colors.baseShade3
-                    )
+                    selected = (reportReason == selectedReason),
+                    onClick = { onReasonSelected(reportReason) },
                 )
             }
         }

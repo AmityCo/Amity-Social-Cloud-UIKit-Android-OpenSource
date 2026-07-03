@@ -35,6 +35,8 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.amityNotificationTrayHighlightBackground
 
 @Composable
 fun AmityNotificationTrayItemView(
@@ -46,9 +48,8 @@ fun AmityNotificationTrayItemView(
         modifier = modifier
             .fillMaxWidth()
             .background(
-                if (isSeen) AmityTheme.colors.background else AmityTheme.colors.primaryShade3.copy(
-                    alpha = 0.3f
-                )
+                if (isSeen) AmityTheme.colors.background
+                else amityNotificationTrayHighlightBackground().copy(alpha = 0.3f)
             )
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -58,8 +59,9 @@ fun AmityNotificationTrayItemView(
             AmityAvatarView(
                 image = null,
                 size = 32.dp,
+                iconPadding = 8.dp,
                 placeholder = CommonComposeR.drawable.amity_ic_default_profile1,
-                placeholderTint = Color.White,
+                placeholderTint = amityColorWhite,
                 placeholderBackground = AmityTheme.colors.primaryShade2,
             )
         } else if (data?.getActionType() == "event") {

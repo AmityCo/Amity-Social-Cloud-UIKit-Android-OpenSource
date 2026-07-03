@@ -40,6 +40,9 @@ import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.ui.elements.AmityCommunityAvatarView
 import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.amityLiveBadgeGradientEnd
+import com.amity.socialcloud.uikit.common.ui.theme.amityLiveBadgeRed
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.story.target.elements.AmityStoryGradientRingElement
@@ -125,7 +128,7 @@ fun AmityLiveRoomTarget(
             }
 
             AmityStoryGradientRingElement(
-                colors = listOf(Color(0xFFFF305A), Color(0xFFFF0000)),
+                colors = listOf(amityLiveBadgeRed, amityLiveBadgeGradientEnd),
                 isIndeterminate = false,
                 modifier = Modifier
                     .fillMaxSize(),
@@ -136,7 +139,7 @@ fun AmityLiveRoomTarget(
                     .align(Alignment.BottomEnd)
                     .size(28.dp)
                     .clip(CircleShape)
-                    .background(Color.White)
+                    .background(AmityTheme.colors.baseInverse)
                     .padding(2.dp)
             ) {
                 AmityUserAvatarView(
@@ -149,9 +152,9 @@ fun AmityLiveRoomTarget(
             Row(
                 modifier = Modifier
                     .align(Alignment.TopCenter)
-                    .border(1.5.dp, Color.White, RoundedCornerShape(6.dp))
+                    .border(1.5.dp, AmityTheme.colors.baseInverse, RoundedCornerShape(6.dp))
                     .background(
-                        color = Color(0xFFFF305A),
+                        color = amityLiveBadgeRed,
                         shape = RoundedCornerShape(6.dp)
                     )
                     .padding(horizontal = 6.dp, vertical = 2.dp),
@@ -159,7 +162,7 @@ fun AmityLiveRoomTarget(
             ) {
                 Text(
                     text = amitySocialString("amity_social_status_live"),
-                    color = Color.White,
+                    color = amityColorWhite,
                     style = AmityTheme.typography.caption.copy(fontWeight = FontWeight.Bold),
                 )
             }

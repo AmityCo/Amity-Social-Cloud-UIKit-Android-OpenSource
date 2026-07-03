@@ -383,7 +383,8 @@ object AmitySocialThaiStrings {
         "amity_social_status_pinned_product_badge_label" to "ปักหมุด",
         // Config-driven element texts
         "amity_social_label_social_home_header_label" to "ชุมชน",
-        "amity_social_button_social_home_newsfeed_button" to "ฟีดข่าว",
+        "amity_social_button_social_home_for_you_button" to "สำหรับคุณ",
+        "amity_social_button_social_home_following_button" to "กำลังติดตาม",
         "amity_social_button_social_home_communities_button" to "ชุมชน",
         "amity_social_button_social_home_events_button" to "กิจกรรม",
         "amity_social_button_social_home_clips_button" to "คลิป",
@@ -1360,7 +1361,8 @@ object AmitySocialThaiStrings {
         "amity_social_status_pinned_product_badge_label" to "ปักหมุด",
         // Config-driven element texts
         "amity_social_label_social_home_header_label" to "ชุมชน",
-        "amity_social_button_social_home_newsfeed_button" to "ฟีดข่าว",
+        "amity_social_button_social_home_for_you_button" to "สำหรับคุณ",
+        "amity_social_button_social_home_following_button" to "กำลังติดตาม",
         "amity_social_button_social_home_communities_button" to "ชุมชน",
         "amity_social_button_social_home_events_button" to "กิจกรรม",
         "amity_social_button_social_home_clips_button" to "คลิป",

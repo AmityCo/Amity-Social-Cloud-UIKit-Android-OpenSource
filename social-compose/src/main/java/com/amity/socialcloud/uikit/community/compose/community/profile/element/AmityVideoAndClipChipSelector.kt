@@ -22,6 +22,7 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -51,7 +52,7 @@ fun AmityVideoAndClipChipSelector(
             ) {
                 Surface(
                     shape = RoundedCornerShape(16.dp),
-                    color = if (isSelected) Color(0xFF1054DE) else AmityTheme.colors.baseShade4,
+                    color = if (isSelected) AmityTheme.colors.highlight else AmityTheme.colors.baseShade4,
                     modifier = Modifier.clickableWithoutRipple {
                         if (!isSelected) {
                             onTabSelected(index)
@@ -60,7 +61,7 @@ fun AmityVideoAndClipChipSelector(
                 ) {
                     Text(
                         text = title,
-                        color = if (isSelected) Color.White else AmityTheme.colors.baseShade1,
+                        color = if (isSelected) amityColorWhite else AmityTheme.colors.baseShade1,
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
                         style = if (isSelected) AmityTheme.typography.bodyBold else AmityTheme.typography.body
                     )

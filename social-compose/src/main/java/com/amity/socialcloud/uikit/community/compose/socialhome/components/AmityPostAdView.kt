@@ -48,6 +48,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.isVisible
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
 @Composable
 fun AmityPostAdView(
@@ -174,7 +175,7 @@ fun AmityPostAdView(
             if (ad.getCallToAction().isNotEmptyOrBlank()) {
                 Button(
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = AmityTheme.colors.highlight,
+                        containerColor = AmityTheme.colors.primary,
                     ),
                     shape = RoundedCornerShape(4.dp),
                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
@@ -191,7 +192,7 @@ fun AmityPostAdView(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         style = AmityTheme.typography.captionLegacy.copy(
-                            color = Color.White,
+                            color = amityColorWhite,
                         ),
                         modifier = modifier
                     )

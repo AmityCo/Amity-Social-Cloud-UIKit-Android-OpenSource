@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.comment.query.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -51,6 +52,8 @@ import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.Amit
 import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.UrlHighlight
 import com.google.gson.JsonObject
 import kotlin.collections.emptyList
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.amityDisabledColor
 
 @Composable
 fun AmityEditCommentContainer(
@@ -187,13 +190,14 @@ fun AmityEditCommentContainer(
                     elementId = "cancel_button"
                 ) {
                     OutlinedButton(
-                        colors = ButtonDefaults.buttonColors(
+                        colors = ButtonDefaults.outlinedButtonColors(
                             containerColor = Color.Transparent,
                             disabledContainerColor = AmityTheme.colors.primaryShade2,
                         ),
                         shape = RoundedCornerShape(4.dp),
                         contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
                         modifier = modifier.height(30.dp),
+                        border = BorderStroke(width = 1.dp, color = AmityTheme.colors.secondaryShade3),
                         onClick = {
                             onEditFinished()
                         }
@@ -219,9 +223,8 @@ fun AmityEditCommentContainer(
                 ) {
                     Button(
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = getElementScope().getConfig().getBackgroundColor(),
-                            disabledContainerColor = getElementScope().getConfig()
-                                .getBackgroundColor().shade(AmityColorShade.SHADE2),
+                            containerColor = AmityTheme.colors.primary,
+                            disabledContainerColor = AmityTheme.colors.primary.copy(alpha = 0.3f),
                         ),
                         shape = RoundedCornerShape(4.dp),
                         contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
@@ -266,7 +269,7 @@ fun AmityEditCommentContainer(
                                     amitySocialString("amity_social_modal_dialog_save_button")
                                 ),
                             style = AmityTheme.typography.captionLegacy.copy(
-                                color = Color.White,
+                                if (isAllowedToSave) amityColorWhite else amityDisabledColor(amityColorWhite),
                             ),
                             modifier = modifier.testTag(getAccessibilityId())
                         )

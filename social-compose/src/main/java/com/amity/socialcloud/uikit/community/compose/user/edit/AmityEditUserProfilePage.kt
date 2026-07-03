@@ -59,6 +59,8 @@ import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySo
 import com.amity.socialcloud.uikit.community.compose.user.edit.elements.AmityEditUserAvatar
 import kotlinx.coroutines.flow.catch
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialConfigString
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.amityDisabledColor
 
 @Composable
 fun AmityEditUserProfilePage(
@@ -282,8 +284,8 @@ fun AmityEditUserProfilePage(
                 ) {
                     Button(
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = AmityTheme.colors.highlight,
-                            disabledContainerColor = AmityTheme.colors.baseShade4,
+                            containerColor = AmityTheme.colors.primary,
+                            disabledContainerColor = AmityTheme.colors.primary.copy(alpha = 0.3f)
                         ),
                         shape = RoundedCornerShape(4.dp),
                         contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
@@ -321,7 +323,7 @@ fun AmityEditUserProfilePage(
                         Text(
                             text = amitySocialConfigString("amity_social_button_edit_user_save_button"),
                             style = AmityTheme.typography.bodyLegacy.copy(
-                                color = if (isSaveButtonEnabled) Color.White else AmityTheme.colors.baseShade3,
+                            if (isSaveButtonEnabled) amityColorWhite else amityDisabledColor(amityColorWhite)
                             ),
                         )
                     }

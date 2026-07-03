@@ -39,6 +39,8 @@ import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityC
 import org.joda.time.DateTime
 import org.joda.time.Minutes
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 
 @Composable
 private fun CopyButton(
@@ -127,7 +129,7 @@ fun AmityEventInfoComponent(
         // Event address section (only for in-person events)
         if (event.getType() == AmityEventType.IN_PERSON) {
             Text(
-                text = amitySocialString("amity_social_button_location"),
+                text = amitySocialString("amity_social_button_event_info_event_address"),
                 style = AmityTheme.typography.title.copy(
                     fontWeight = FontWeight.Bold,
                     fontSize = 17.sp
@@ -265,7 +267,7 @@ fun AmityEventInfoComponent(
                                 .align(Alignment.TopEnd)
                                 .padding(top = 12.dp, end = 12.dp)
                                 .background(
-                                    color = androidx.compose.ui.graphics.Color.Black.copy(alpha = 0.5f),
+                                    color = amityColorBlack.copy(alpha = 0.5f),
                                     shape = RoundedCornerShape(4.dp)
                                 )
                                 .padding(horizontal = 8.dp, vertical = 4.dp)
@@ -276,7 +278,7 @@ fun AmityEventInfoComponent(
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 11.sp
                                 ),
-                                color = androidx.compose.ui.graphics.Color.White
+                                color = amityColorWhite
                             )
                         }
                     }

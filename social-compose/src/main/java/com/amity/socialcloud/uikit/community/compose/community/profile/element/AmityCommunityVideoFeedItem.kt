@@ -41,6 +41,9 @@ import com.amity.socialcloud.uikit.common.utils.formatVideoDuration
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostVideoPlayerHelper
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostMediaVideoPlayer
+import com.amity.socialcloud.uikit.common.ui.theme.amityMediaSurface
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 
 @Composable
 fun AmityCommunityVideoFeedItem(
@@ -95,13 +98,13 @@ fun AmityCommunityVideoFeedItem(
         Text(
             text = videoDuration.formatVideoDuration(),
             style = AmityTheme.typography.bodyLegacy.copy(
-                color = Color.White,
+                color = amityColorWhite,
             ),
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .offset(8.dp, (-8).dp)
                 .background(
-                    color = Color.Black.copy(alpha = 0.7f),
+                    color = amityColorBlack.copy(alpha = 0.7f),
                     shape = RoundedCornerShape(4.dp)
                 )
                 .padding(horizontal = 4.dp, vertical = 1.dp)
@@ -163,7 +166,7 @@ fun AmityCommunityVideoPreviewDialog(
         Box(
             modifier = modifier
                 .fillMaxSize()
-                .background(Color.Black)
+                .background(amityMediaSurface)
         ) {
             AmityPostMediaVideoPlayer(
                 exoPlayer = exoPlayer,
@@ -174,8 +177,8 @@ fun AmityCommunityVideoPreviewDialog(
                 icon = R.drawable.amity_ic_close2,
                 size = 32.dp,
                 iconPadding = 10.dp,
-                tint = Color.Black.copy(0.5f),
-                background = Color.White.copy(0.8f),
+                tint = amityColorBlack.copy(0.5f),
+                background = amityColorWhite.copy(0.8f),
                 modifier = modifier
                     .align(Alignment.TopStart)
                     .offset(16.dp, 32.dp),

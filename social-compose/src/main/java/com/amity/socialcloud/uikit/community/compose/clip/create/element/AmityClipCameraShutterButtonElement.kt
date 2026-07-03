@@ -21,10 +21,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import com.amity.socialcloud.uikit.common.ui.theme.amityCameraShutterIdleRing
+import com.amity.socialcloud.uikit.common.ui.theme.amityCameraShutterRecordFill
+import com.amity.socialcloud.uikit.common.ui.theme.amityLiveBadgeRed
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
 @Composable
 fun AmityClipCameraShutterButtonElement(
@@ -101,13 +106,13 @@ fun AmityClipCameraShutterButtonElement(
 
             drawIntoCanvas {
                 drawCircle(
-                    color = Color(0xFF606170).copy(alpha = 0.16f),
+                    color = amityCameraShutterIdleRing.copy(alpha = 0.16f),
                     radius = size.minDimension / 2,
                     center = center,
                 )
 
                 drawArc(
-                    color = Color(0xFFFF305A),
+                    color = amityLiveBadgeRed,
                     startAngle = 270f,
                     sweepAngle = 360f * animateFloat.value,
                     useCenter = false,
@@ -120,13 +125,13 @@ fun AmityClipCameraShutterButtonElement(
                 )
 
                 drawCircle(
-                    color = Color.White,
+                    color = amityColorWhite,
                     radius = innerCircleRadius,
                     center = center,
                 )
 
                 drawRoundRect(
-                    color = Color(0xFFF72C40),
+                    color = amityCameraShutterRecordFill,
                     topLeft = Offset(center.x - 12.dp.toPx(), center.y - 12.dp.toPx()),
                     size = size.copy(width = 24.dp.toPx(), height = 24.dp.toPx()),
                     cornerRadius = CornerRadius(8f, 8f)
@@ -140,14 +145,14 @@ fun AmityClipCameraShutterButtonElement(
 
             drawIntoCanvas {
                 drawCircle(
-                    color = Color.White,
+                    color = amityColorWhite,
                     radius = outerCircleRadius,
                     center = center,
                     style = Stroke(outerCircleStrokeWidth)
                 )
 
                 drawCircle(
-                    color = if (isImageCaptureMode) Color.White else Color(0xFFF72C40),
+                    color = if (isImageCaptureMode) amityColorWhite else amityCameraShutterRecordFill,
                     radius = innerCircleRadius,
                     center = center,
                 )

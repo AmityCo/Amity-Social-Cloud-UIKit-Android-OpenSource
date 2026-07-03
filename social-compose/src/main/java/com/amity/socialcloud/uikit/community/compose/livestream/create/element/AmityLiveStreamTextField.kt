@@ -29,7 +29,7 @@ fun AmityNoOutlineTextField(
     value: String,
     onValueChange: (String) -> Unit = {},
     placeHolder: (@Composable () -> Unit)? = null,
-    cursorBrushColor: Color = Color.White,
+    cursorBrushColor: Color = AmityTheme.colors.baseInverse,
     singleLine: Boolean = false,
     enable: Boolean = true,
     maxCharLength: Int = Int.MAX_VALUE,
@@ -108,7 +108,7 @@ private fun DefaultAmityLivestreamTextFieldPreview() {
             singleLine = false,
             maxCharLength = 30,
             textStyle = AmityTheme.typography.titleLegacy.copy(
-                color = Color.White,
+                color = AmityTheme.colors.baseInverse,
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
                 textAlign = TextAlign.Start,

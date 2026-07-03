@@ -67,6 +67,8 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityMenuButton
 import com.amity.socialcloud.uikit.common.ui.image.rememberZoomState
 import com.amity.socialcloud.uikit.common.ui.image.zoomable
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorBase
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorBaseShade4
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
@@ -78,6 +80,9 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.delay
+import com.amity.socialcloud.uikit.common.ui.theme.amityMediaSurface
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -175,7 +180,7 @@ fun AmityPostMediaPreviewDialog(
                     key = { it },
                     modifier = modifier
                         .fillMaxSize()
-                        .background(Color.Black)
+                        .background(amityMediaSurface)
                         .pointerInput(Unit) {
                             detectVerticalDragGestures(
                                 onDragEnd = {
@@ -305,13 +310,15 @@ fun AmityPostMediaPreviewDialog(
                     modifier = modifier
                         .fillMaxWidth()
                         .height(64.dp)
-                        .background(Color.Black.copy(alpha = 0.5f)),
+                        .background(amityColorBlack.copy(alpha = 0.5f)),
                 ) {
                     val (closeBtn, muteBtn, counter, menuBtn) = createRefs()
 
                     AmityMenuButton(
                         size = 32.dp,
                         iconPadding = 8.dp,
+                        background = amityColorBaseShade4,
+                        tint = amityColorBase,
                         modifier = Modifier
                             .zIndex(Float.MAX_VALUE).constrainAs(closeBtn) {
                             top.linkTo(parent.top, margin = 16.dp)
@@ -345,7 +352,7 @@ fun AmityPostMediaPreviewDialog(
                         text = "${pagerState.currentPage + 1} / ${childPosts.size + 1}",
                         style = AmityTheme.typography.titleLegacy.copy(
                             fontWeight = FontWeight.Normal,
-                            color = Color.White
+                            color = amityColorWhite
                         ),
                         modifier = modifier
                             .semantics {

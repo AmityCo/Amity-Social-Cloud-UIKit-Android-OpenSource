@@ -93,6 +93,7 @@ import kotlin.compareTo
 import kotlin.div
 import kotlin.text.compareTo
 import kotlin.text.get
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
 @OptIn(
     ExperimentalFoundationApi::class,
@@ -280,6 +281,25 @@ fun AmityCommunityProfilePage(
         }
     }
 
+    // Reload the feeds when the user transitions to a member (invitation accepted OR
+    // join request approved). Private-community posts are inaccessible before joining,
+    // so the paging sources must re-query once membership flips true. Covers both join
+    // paths without relying on isRefreshing (which the approval path never sets).
+    var previouslyJoined by remember { mutableStateOf<Boolean?>(null) }
+    LaunchedEffect(community?.getCommunityId(), community?.isJoined()) {
+        val joined = community?.isJoined()
+        if (joined != null) {
+            if (previouslyJoined == false && joined) {
+                announcementPosts.refresh()
+                communityPosts.refresh()
+                pinPosts.refresh()
+                imagePosts.refresh()
+                videoPosts.refresh()
+            }
+            previouslyJoined = joined
+        }
+    }
+
     var isShowCompleteCreatedCommunity by remember { mutableStateOf(false) }
     LaunchedEffect(isCommunityJustCreated) {
         isShowCompleteCreatedCommunity = isCommunityJustCreated
@@ -323,7 +343,12 @@ fun AmityCommunityProfilePage(
                             .fillMaxSize()
                             .background(AmityTheme.colors.background),
                     ) {
-                        if (community == null || state.isRefreshing) {
+                        // Only show the full-page shimmer during the genuine initial load
+                        // (no community data yet). Gating it on isRefreshing too made the
+                        // whole page flash to shimmer on every state change / refresh
+                        // (e.g. accepting an invitation). Refreshes keep the content and
+                        // use the pull-to-refresh spinner instead.
+                        if (community == null) {
                             item {
                                 AmityCommunityProfileShimmer()
                             }
@@ -374,7 +399,11 @@ fun AmityCommunityProfilePage(
                             } ?: false
                         val shouldShowAnnouncement = announcementPosts.itemCount > 0
                                 && (selectedTabIndex == 0 || (selectedTabIndex == 1 && hasAnnouncementPin))
-                        if (!state.isRefreshing && community?.isJoined() == false && community?.isPublic() == false) {
+                        // Gate on !state.isMember (genuine membership), not isRefreshing.
+                        // Keying on isRefreshing made the private view blink out during any
+                        // refresh; isMember is set true optimistically on accept, so the
+                        // private view disappears immediately on join without a flash.
+                        if (!state.isMember && community?.isJoined() == false && community?.isPublic() == false) {
                             item {
                                 Box(
                                     modifier = Modifier
@@ -618,7 +647,7 @@ fun AmityCommunityProfilePage(
                                 Icon(
                                     painter = painterResource(id = getConfig().getIcon()),
                                     contentDescription = "create post",
-                                    tint = Color.White,
+                                    tint = amityColorWhite,
                                     modifier = Modifier.size(32.dp)
                                 )
                             }

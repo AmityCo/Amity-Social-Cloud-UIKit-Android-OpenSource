@@ -114,6 +114,8 @@ import com.amity.socialcloud.uikit.common.ui.elements.DisposableEffectWithLifeCy
 import com.amity.socialcloud.uikit.common.ui.elements.drawVerticalScrollbar
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.theme.amityLivestreamSurfaceDivider
+import com.amity.socialcloud.uikit.common.ui.theme.amityLivestreamSurfaceElevated
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.common.utils.getBackgroundColor
@@ -170,6 +172,10 @@ import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
 import kotlin.collections.orEmpty
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
+import com.amity.socialcloud.uikit.common.ui.theme.amityMediaSurface
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorGray
 
 private const val LIVESTREAM_DURATION_SNACK_BAR = 14220
 private const val LIVESTREAM_COUNTDOWN_DURATION = 10
@@ -614,7 +620,7 @@ fun AmityCreateRoomPage(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.Black)
+                    .background(amityMediaSurface)
                     .pointerInput(Unit) {
                         detectTapGestures(onTap = {
                             focusManager.clearFocus()
@@ -625,7 +631,7 @@ fun AmityCreateRoomPage(
                     modifier = modifier
                         .aspectRatio(9f / 16f)
                         .clip(RoundedCornerShape(12.dp))
-                        .background(Color.Black)
+                        .background(amityMediaSurface)
                 ) {
                     if (isCameraAndRecAudioPermissionGranted) {
                         AmityStreamerView(
@@ -657,7 +663,7 @@ fun AmityCreateRoomPage(
                                 if (liveKitRoomState == Room.State.CONNECTED) {
                                     Color.Transparent
                                 } else {
-                                    Color.Black.copy(
+                                    amityColorBlack.copy(
                                         alpha = 0.5f
                                     )
                                 }
@@ -693,7 +699,7 @@ fun AmityCreateRoomPage(
                                                         if (isTargetCommunity) {
                                                             Modifier
                                                                 .background(
-                                                                    color = Color.Black.copy(alpha = 0.5f),
+                                                                    color = amityColorBlack.copy(alpha = 0.5f),
                                                                     shape = CircleShape
                                                                 )
                                                                 .padding(4.dp)
@@ -723,13 +729,13 @@ fun AmityCreateRoomPage(
                                         ) {
                                             Text(
                                                 text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_create_livestream_target_title"),
-                                                color = Color.White,
+                                                color = AmityTheme.colors.baseInverse,
                                                 style = AmityTheme.typography.bodyLegacy
                                             )
                                             Spacer(modifier = Modifier.width(4.dp))
                                             Text(
                                                 text = uiState.targetName ?: "",
-                                                color = Color.White,
+                                                color = AmityTheme.colors.baseInverse,
                                                 maxLines = 1,
                                                 overflow = TextOverflow.Ellipsis,
                                                 style = AmityTheme.typography.bodyLegacy.copy(
@@ -772,8 +778,8 @@ fun AmityCreateRoomPage(
                                                 modifier = Modifier
                                                     .width(40.dp)
                                                     .height(40.dp),
-                                                color = Color.White,
-                                                trackColor = Color.Gray,
+                                                color = AmityTheme.colors.baseInverse,
+                                                trackColor = amityColorGray,
                                                 strokeWidth = 2.dp,
                                                 strokeCap = StrokeCap.Round
                                             )
@@ -798,9 +804,9 @@ fun AmityCreateRoomPage(
                                                 placeHolder = {
                                                     Text(
                                                         text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_placeholder_create_livestream_title_placeholder"),
-                                                        color = Color.White.copy(alpha = 0.8f),
+                                                        color = amityColorWhite.copy(alpha = 0.8f),
                                                         style = AmityTheme.typography.headLine.copy(
-                                                            color = Color.White,
+                                                            color = AmityTheme.colors.baseInverse,
                                                             textAlign = TextAlign.Start,
                                                         )
                                                     )
@@ -808,7 +814,7 @@ fun AmityCreateRoomPage(
                                                 singleLine = true,
                                                 maxCharLength = 30,
                                                 textStyle = AmityTheme.typography.headLine.copy(
-                                                    color = Color.White,
+                                                    color = AmityTheme.colors.baseInverse,
                                                     textAlign = TextAlign.Start,
                                                 ),
                                             )
@@ -826,16 +832,16 @@ fun AmityCreateRoomPage(
                                                 placeHolder = {
                                                     Text(
                                                         text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_placeholder_create_livestream_desc_placeholder"),
-                                                        color = Color.White.copy(alpha = 0.8f),
+                                                        color = amityColorWhite.copy(alpha = 0.8f),
                                                         style = AmityTheme.typography.body.copy(
-                                                            color = Color.White,
+                                                            color = AmityTheme.colors.baseInverse,
                                                             textAlign = TextAlign.Start,
                                                         )
                                                     )
                                                 },
                                                 singleLine = false,
                                                 textStyle = AmityTheme.typography.body.copy(
-                                                    color = Color.White,
+                                                    color = AmityTheme.colors.baseInverse,
                                                     textAlign = TextAlign.Start,
                                                 ),
                                             )
@@ -852,7 +858,7 @@ fun AmityCreateRoomPage(
                                     AmityMediaAndCameraNoPermissionView(
                                         modifier = Modifier
                                             .weight(1f)
-                                            .background(Color.Black.copy(alpha = 0.5f)),
+                                            .background(amityColorBlack.copy(alpha = 0.5f)),
                                         title = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_permission_title_allow_camera_mic_access"),
                                         description = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_allow_camera_desc"),
                                         onOpenSettingClick = {
@@ -922,7 +928,7 @@ fun AmityCreateRoomPage(
                                             .background(
                                                 brush = Brush.verticalGradient(
                                                     colors = listOf(
-                                                        Color.Black.copy(alpha = 0.6f),
+                                                        amityColorBlack.copy(alpha = 0.6f),
                                                         Color.Transparent
                                                     )
                                                 )
@@ -997,7 +1003,7 @@ fun AmityCreateRoomPage(
                                                                 liveMin,
                                                                 liveSecond
                                                             ),
-                                                            color = Color.White,
+                                                            color = AmityTheme.colors.baseInverse,
                                                             style = AmityTheme.typography.captionBold.copy(
                                                                 fontSize = 13.sp,
                                                                 lineHeight = 18.sp
@@ -1027,7 +1033,7 @@ fun AmityCreateRoomPage(
                                                                     .testTag(getAccessibilityId()),
                                                                 painter = painterResource(id = R.drawable.amity_ic_more_vertical),
                                                                 contentDescription = "create_livestream_option_button",
-                                                                tint = Color.White
+                                                                tint = AmityTheme.colors.baseInverse
                                                             )
                                                         }
                                                     }
@@ -1076,15 +1082,15 @@ fun AmityCreateRoomPage(
                                     modifier = Modifier
                                         .width(40.dp)
                                         .height(40.dp),
-                                    color = Color.White,
-                                    trackColor = Color.Gray,
+                                    color = AmityTheme.colors.baseInverse,
+                                    trackColor = amityColorGray,
                                     strokeWidth = 2.dp,
                                     strokeCap = StrokeCap.Round
                                 )
                                 Spacer(Modifier.height(13.dp))
                                 Text(
                                     text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_create_livestream_connecting_text"),
-                                    color = Color.White,
+                                    color = AmityTheme.colors.baseInverse,
                                     style = AmityTheme.typography.titleLegacy.copy(
                                         fontWeight = FontWeight.SemiBold
                                     )
@@ -1103,7 +1109,7 @@ fun AmityCreateRoomPage(
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .background(Color.Black)
+                                .background(amityMediaSurface)
                                 .padding(horizontal = 16.dp),
                         ) {
                             if (uiState.room == null) {
@@ -1140,10 +1146,10 @@ fun AmityCreateRoomPage(
                                                     .width(70.dp)
                                                     .height(40.dp)
                                                     .clip(RoundedCornerShape(size = 4.dp))
-                                                    .background(Color(0xFF292B32))
+                                                    .background(AmityTheme.colors.baseShade4)
                                                     .border(
                                                         width = 1.dp,
-                                                        color = Color(0xFF40434E),
+                                                        color = AmityTheme.colors.baseShade3,
                                                         shape = RoundedCornerShape(size = 4.dp)
                                                     )
                                                     .clickableWithoutRipple {
@@ -1271,7 +1277,7 @@ fun AmityCreateRoomPage(
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .background(Color.Black)
+                                .background(amityMediaSurface)
                                 .padding(horizontal = 16.dp),
                         ) {
                             Row(
@@ -1343,10 +1349,10 @@ fun AmityCreateRoomPage(
                             brush = Brush.verticalGradient(
                                 colorStops = arrayOf(
                                     0.0f to Color.Transparent,
-                                    0.3f to Color.Black.copy(alpha = 0.1f),
-                                    0.6f to Color.Black.copy(alpha = 0.4f),
-                                    0.8f to Color.Black.copy(alpha = 0.7f),
-                                    1.0f to Color.Black
+                                    0.3f to amityMediaSurface.copy(alpha = 0.1f),
+                                    0.6f to amityMediaSurface.copy(alpha = 0.4f),
+                                    0.8f to amityMediaSurface.copy(alpha = 0.7f),
+                                    1.0f to amityMediaSurface
                                 )
                             )
                         )
@@ -1542,8 +1548,8 @@ fun AmityCreateRoomPage(
                     showCreateRoomBottomSheet = false
                 },
                 sheetState = bottomSheetState,
-                containerColor = Color(0xFF191919),
-                contentColor = Color.White,
+                containerColor = AmityTheme.colors.background,
+                contentColor = AmityTheme.colors.baseInverse,
                 dragHandle = {
                     Box(
                         modifier = Modifier
@@ -1551,7 +1557,7 @@ fun AmityCreateRoomPage(
                             .width(36.dp)
                             .height(4.dp)
                             .background(
-                                Color.Gray,
+                                amityColorGray,
                                 RoundedCornerShape(2.dp)
                             )
                     )
@@ -1577,7 +1583,7 @@ fun AmityCreateRoomPage(
                             text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_copy_live_stream_link"),
                             modifier = Modifier
                                 .padding(horizontal = 12.dp),
-                            color = Color(0xFFEBECEF)
+                            color = AmityTheme.colors.base
                         ) {
                             showCreateRoomBottomSheet = false
                             // Generate the post link URL (adjust the URL format according to your app's deep linking structure)
@@ -1590,7 +1596,7 @@ fun AmityCreateRoomPage(
                             text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_share_to"),
                             modifier = Modifier
                                 .padding(horizontal = 12.dp),
-                            color = Color(0xFFEBECEF)
+                            color = AmityTheme.colors.base
                         ) {
                             showCreateRoomBottomSheet = false
                             // Open native Android share sheet
@@ -1775,8 +1781,8 @@ fun AmityCreateRoomPage(
                     showRemoveCoHost = false
                 },
                 sheetState = removeCoHostSheetState,
-                containerColor = Color(0xFF191919),
-                contentColor = Color.White,
+                containerColor = AmityTheme.colors.background,
+                contentColor = AmityTheme.colors.baseInverse,
                 dragHandle = {
                     Box(
                         modifier = Modifier
@@ -1784,7 +1790,7 @@ fun AmityCreateRoomPage(
                             .width(36.dp)
                             .height(4.dp)
                             .background(
-                                Color.Gray,
+                                amityColorGray,
                                 RoundedCornerShape(2.dp)
                             )
                     )
@@ -1798,7 +1804,7 @@ fun AmityCreateRoomPage(
                     Text(
                         text = uiState.cohostUser?.getDisplayName() ?: DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_unknown_user"),
                         style = AmityTheme.typography.titleBold.copy(
-                            color = Color(0xFFEBECEF)
+                            color = AmityTheme.colors.base
                         ),
                         modifier = Modifier
                             .padding(horizontal = 16.dp, vertical = 12.dp)
@@ -1817,7 +1823,7 @@ fun AmityCreateRoomPage(
                         .padding(top = 12.dp)
                         .fillMaxWidth()
                         .height(1.dp)
-                        .background(Color(0xFF292B32))
+                        .background(AmityTheme.colors.baseShade4)
                     )
                     if (uiState.isProductCatalogueEnabled) {
                         AmityCoHostManageProductPermission(
@@ -2064,7 +2070,7 @@ fun EventRoomPlayerHeader(
             Column {
                 Text(
                     text = room.getTitle() ?: "",
-                    color = Color.White,
+                    color = AmityTheme.colors.baseInverse,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                     maxLines = 1,
@@ -2076,7 +2082,7 @@ fun EventRoomPlayerHeader(
                 ) {
                     Text(
                         text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_by_creator").format(creator?.getDisplayName() ?: DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_unknown_user")),
-                        color = Color.White.copy(alpha = 0.8f),
+                        color = amityColorWhite.copy(alpha = 0.8f),
                         fontSize = 16.sp,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -2111,7 +2117,7 @@ fun AmityInviteCoHostHeader(
             text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_invite_co_host"),
             style = AmityTheme.typography.titleBold.copy(
                 fontWeight = FontWeight.SemiBold,
-                color = Color.White
+                color = AmityTheme.colors.baseInverse
             ),
             modifier = Modifier.align(Alignment.Center)
         )
@@ -2127,7 +2133,7 @@ fun AmityInviteCoHostHeader(
             Icon(
                 painter = painterResource(id = R.drawable.amity_ic_dismiss_preview),
                 contentDescription = "Close",
-                tint = Color.White,
+                tint = AmityTheme.colors.baseInverse,
             )
         }
     }
@@ -2151,7 +2157,7 @@ fun AmityViewerListItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(Color(0xFF1C1C1E))
+            .background(amityLivestreamSurfaceElevated)
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -2172,7 +2178,7 @@ fun AmityViewerListItem(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = AmityTheme.typography.bodyBold.copy(
-                    color = Color.White
+                    color = AmityTheme.colors.baseInverse
                 ),
                 modifier = Modifier.weight(1f, false)
             )
@@ -2192,7 +2198,7 @@ fun AmityViewerListItem(
         Box(
             modifier = Modifier
                 .alpha( if (onInviteClick == null && onRemoveClick == null && onCancelClick == null) 0.3f else 1f)
-                .background( if (isCancel) { Color(0xFF40434E) } else { AmityTheme.colors.highlight}, RoundedCornerShape(8.dp))
+                .background( if (isCancel) { AmityTheme.colors.baseShade3 } else { AmityTheme.colors.highlight}, RoundedCornerShape(8.dp))
                 .padding(horizontal = 20.dp, vertical = 8.dp)
                 .clickableWithoutRipple{
                     if (isCancel) {
@@ -2207,7 +2213,7 @@ fun AmityViewerListItem(
             Text(
                 text = buttonText,
                 style = AmityTheme.typography.captionBold.copy(
-                    color = Color.White
+                    color = AmityTheme.colors.baseInverse
                 )
             )
         }
@@ -2235,7 +2241,7 @@ fun AmityInviteCoHostBottomSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = Color(0xFF1C1C1E),
+        containerColor = amityLivestreamSurfaceElevated,
         dragHandle = {
             Box(
                 modifier = Modifier
@@ -2243,7 +2249,7 @@ fun AmityInviteCoHostBottomSheet(
                     .width(36.dp)
                     .height(5.dp)
                     .clip(RoundedCornerShape(2.5.dp))
-                    .background(Color(0xFF48484A))
+                    .background(amityLivestreamSurfaceDivider)
             )
         },
         modifier = modifier
@@ -2257,14 +2263,14 @@ fun AmityInviteCoHostBottomSheet(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(1.dp)
-                    .background(Color(0xFF292B32))
+                    .background(AmityTheme.colors.baseShade4)
             )
             if (coHostUser != null) {
                 Text(
                     text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_co_hosting"),
                     style = AmityTheme.typography.titleBold.copy(
                         fontWeight = FontWeight.SemiBold,
-                        color = Color.White
+                        color = AmityTheme.colors.baseInverse
                     ),
                     modifier = Modifier.padding(16.dp)
                 )
@@ -2279,7 +2285,7 @@ fun AmityInviteCoHostBottomSheet(
                     text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_pending_invitation"),
                     style = AmityTheme.typography.titleBold.copy(
                         fontWeight = FontWeight.SemiBold,
-                        color = Color.White
+                        color = AmityTheme.colors.baseInverse
                     ),
                     modifier = Modifier.padding(16.dp)
                 )
@@ -2295,7 +2301,7 @@ fun AmityInviteCoHostBottomSheet(
                     text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_whos_watching"),
                     style = AmityTheme.typography.titleBold.copy(
                         fontWeight = FontWeight.SemiBold,
-                        color = Color.White
+                        color = AmityTheme.colors.baseInverse
                     ),
                     modifier = Modifier.padding(16.dp)
                 )
@@ -2336,7 +2342,7 @@ fun EmptyViewerList() {
     ) {
         Icon(
             painter = painterResource(R.drawable.amity_ic_invite_cohost_in_chat),
-            tint = Color(0xFF40434E),
+            tint = AmityTheme.colors.baseShade3,
             contentDescription = "empty invitation icon",
             modifier = Modifier.size(64.dp)
         )
@@ -2344,14 +2350,14 @@ fun EmptyViewerList() {
         Text(
             text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_no_viewers_title"),
             style = AmityTheme.typography.titleBold.copy(
-                color = Color(0xFF898E9E),
+                color = AmityTheme.colors.baseShade1,
                 textAlign = TextAlign.Center,
             )
         )
         Text(
             text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_no_viewers_message"),
             style = AmityTheme.typography.caption.copy(
-                color = Color(0xFF898E9E),
+                color = AmityTheme.colors.baseShade1,
                 textAlign = TextAlign.Center,
             )
         )
@@ -2396,10 +2402,10 @@ fun AmityCoHostManageProductPermission(
             checked = isEnabled,
             onCheckedChange = onToggle,
             colors = SwitchDefaults.colors(
-                checkedThumbColor = Color.White,
+                checkedThumbColor = AmityTheme.colors.baseInverse,
                 checkedTrackColor = AmityTheme.colors.primary,
-                uncheckedThumbColor = Color.White,
-                uncheckedTrackColor = Color.Gray
+                uncheckedThumbColor = AmityTheme.colors.baseInverse,
+                uncheckedTrackColor = amityColorGray
             ),
             modifier = Modifier.align(Alignment.Top)
         )

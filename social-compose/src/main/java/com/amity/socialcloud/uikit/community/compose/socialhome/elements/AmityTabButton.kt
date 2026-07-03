@@ -15,6 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
 @Composable
 fun <T> AmityTabButton(
@@ -45,7 +46,7 @@ fun <T> AmityTabButton(
             modifier = Modifier.padding(horizontal = 2.dp, vertical = 6.dp),
             text = title,
             style = AmityTheme.typography.titleLegacy.copy(
-                color = if (isSelected) Color.White else AmityTheme.colors.secondaryShade1,
+                color = if (isSelected) amityColorWhite else AmityTheme.colors.secondaryShade1,
                 fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
             )
         )

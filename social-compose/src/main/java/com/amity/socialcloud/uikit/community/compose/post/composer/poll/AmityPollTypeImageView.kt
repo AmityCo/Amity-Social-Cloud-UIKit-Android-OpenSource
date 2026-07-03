@@ -63,6 +63,8 @@ import com.amity.socialcloud.uikit.community.compose.post.composer.components.Al
 import com.amity.socialcloud.uikit.community.compose.post.composer.poll.model.ImagePollUiState
 import com.amity.socialcloud.uikit.community.compose.post.model.AmityFileUploadState
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 
 @Composable
 fun AmityPollTypeImageView(
@@ -189,7 +191,7 @@ fun AmityPollImageTypeItemView(
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .background(Color.Black.copy(alpha = 0.5f)),
+                                .background(amityColorBlack.copy(alpha = 0.5f)),
                             contentAlignment = Alignment.Center
                         ) {
                             CircularProgressIndicator(
@@ -197,7 +199,7 @@ fun AmityPollImageTypeItemView(
                                     uiState.uploadProgress.toFloat() / 100f
                                 },
                                 color = AmityTheme.colors.primary,
-                                trackColor = Color.White,
+                                trackColor = amityColorWhite,
                                 strokeWidth = 2.dp,
                                 modifier = Modifier.size(28.dp),
                                 strokeCap = StrokeCap.Round,
@@ -209,7 +211,7 @@ fun AmityPollImageTypeItemView(
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .background(Color.Black.copy(alpha = 0.5f))
+                                .background(amityColorBlack.copy(alpha = 0.5f))
                                 .clickableWithoutRipple {
                                     onErrorUploadImageClick()
                                 },
@@ -219,7 +221,7 @@ fun AmityPollImageTypeItemView(
                                 modifier = Modifier.size(28.dp),
                                 painter = painterResource(R.drawable.amity_ic_snack_bar_warning),
                                 contentDescription = "Upload Failed",
-                                tint = Color.White
+                                tint = amityColorWhite
                             )
                         }
                     }
@@ -232,7 +234,7 @@ fun AmityPollImageTypeItemView(
                                     .padding(8.dp)
                                     .height(24.dp)
                                     .background(
-                                        color = Color.Black.copy(alpha = 0.5f),
+                                        color = amityColorBlack.copy(alpha = 0.5f),
                                         shape = RoundedCornerShape(size = 9999.dp)
                                     )
                                     .padding(horizontal = 8.dp, vertical = 4.dp)
@@ -245,7 +247,7 @@ fun AmityPollImageTypeItemView(
                                 Text(
                                     text = amitySocialString("amity_social_button_alt"),
                                     style = AmityTheme.typography.captionBold.copy(
-                                        color = Color.White,
+                                        color = amityColorWhite,
                                     ),
                                     modifier = Modifier
                                         .align(Alignment.CenterVertically)
@@ -258,7 +260,7 @@ fun AmityPollImageTypeItemView(
                                         Icon(
                                             painter = painterResource(id = R.drawable.amity_ic_alt_check),
                                             contentDescription = "Check Icon",
-                                            tint = Color.White,
+                                            tint = amityColorWhite,
                                         )
                                     }
                                 }
@@ -271,8 +273,8 @@ fun AmityPollImageTypeItemView(
                             Box(
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .padding(bottom = 8.dp),
-                                contentAlignment = Alignment.BottomCenter
+                                    .padding(bottom = 8.dp, top = 32.dp),
+                                contentAlignment = Alignment.Center
                             ) {
                                 Text(
                                     text = amitySocialString("amity_social_button_poll_upload_image"),

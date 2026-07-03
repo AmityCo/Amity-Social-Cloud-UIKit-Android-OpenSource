@@ -59,6 +59,8 @@ import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import com.amity.socialcloud.uikit.common.localization.amitySocialReactionDisplayName
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.isUIKitInDarkTheme
 import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentViewModel
 import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentViewModel.CommentBottomSheetState
 import kotlinx.coroutines.TimeoutCancellationException
@@ -151,7 +153,10 @@ fun AmityCommentEngagementBar(
                 Text(
                     text = amitySocialReactionDisplayName(resolvedReactionKey),
                     style = AmityTheme.typography.captionLegacy.copy(
-                        color = if (isReacted) AmityTheme.colors.primary
+                        color = if (isReacted) {
+                            if (isUIKitInDarkTheme()) amityColorWhite
+                            else AmityTheme.colors.primary
+                        }
                         else AmityTheme.colors.baseShade2,
                     ),
                     modifier = modifier

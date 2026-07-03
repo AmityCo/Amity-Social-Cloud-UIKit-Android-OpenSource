@@ -43,7 +43,7 @@ fun AmityLivestreamDeletedPage(
                 .fillMaxSize()
                 .statusBarsPadding()
                 .systemBarsPadding()
-                .background(color = Color.White)
+                .background(color = AmityTheme.colors.baseInverse)
         ) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterVertically),
@@ -87,7 +87,7 @@ fun AmityLivestreamDeletedPage(
                         style = AmityTheme.typography.bodyLegacy.copy(
                             fontWeight = FontWeight.SemiBold,
                             textAlign = TextAlign.Center,
-                            color = Color.White
+                            color = AmityTheme.colors.baseInverse
                         )
                     )
                 }

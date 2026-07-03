@@ -6,11 +6,12 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
+import com.amity.socialcloud.uikit.chat.compose.localization.DefaultAmityChatStringProvider
 
 fun getContent(message: AmityMessage): String {
 	return if (message.isDeleted()) {
-		"This message was deleted"
+		DefaultAmityChatStringProvider.getInstance().getString("chat.message.deleted")
 	} else {
-		(message.getData() as? AmityMessage.Data.TEXT)?.getText() ?: "Unsupport message type"
+		(message.getData() as? AmityMessage.Data.TEXT)?.getText() ?: DefaultAmityChatStringProvider.getInstance().getString("chat.message.deleted")
 	}
 }

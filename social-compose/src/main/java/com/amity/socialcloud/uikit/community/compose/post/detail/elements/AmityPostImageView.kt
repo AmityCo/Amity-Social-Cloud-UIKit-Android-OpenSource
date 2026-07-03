@@ -29,6 +29,7 @@ import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
+import com.amity.socialcloud.uikit.common.ui.theme.amityMediaSurface
 
 @Composable
 fun AmityPostImageView(
@@ -126,7 +127,7 @@ fun AmityPostImageView(
             contentScale = if (aspectRatio == AmityClip.DisplayMode.FILL) ContentScale.Crop else ContentScale.Fit,
             modifier = modifier
                 .fillMaxSize()
-                .background(Color.Black)
+                .background(amityMediaSurface)
                 .clickableWithoutRipple { onClick() }
                 .semantics {
                     role = Role.Image

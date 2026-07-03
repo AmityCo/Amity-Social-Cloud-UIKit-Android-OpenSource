@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.theme.amityStoryEngagementIcon
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 
 @Composable
@@ -38,11 +39,11 @@ fun AmityStoryViewCountElement(
             imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_story_view_count),
             contentDescription = "Story View Count",
             modifier = Modifier.size(20.dp),
-            tint = AmityTheme.colors.secondaryShade3,
+            tint = amityStoryEngagementIcon,
         )
         Text(
             text = count,
-            color = Color.White,
+            color = AmityTheme.colors.baseInverse,
             modifier = modifier.testTag("reach_button_text_view")
         )
     }

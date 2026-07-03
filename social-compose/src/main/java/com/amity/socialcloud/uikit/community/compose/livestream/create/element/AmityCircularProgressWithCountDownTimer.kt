@@ -27,6 +27,8 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.R
 import kotlinx.coroutines.delay
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 
 @Composable
 fun AmityCircularProgressWithCountDownTimer(totalTime: Int, onTimeUp: () -> Unit) {
@@ -45,7 +47,7 @@ fun AmityCircularProgressWithCountDownTimer(totalTime: Int, onTimeUp: () -> Unit
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color.Black.copy(alpha = 0.5f))
+            .background(color = amityColorBlack.copy(alpha = 0.5f))
     ) {
         Column(
             modifier = Modifier.align(Alignment.Center),
@@ -53,7 +55,7 @@ fun AmityCircularProgressWithCountDownTimer(totalTime: Int, onTimeUp: () -> Unit
         ) {
             Text(
                 text = amitySocialString("amity_social_status_create_livestream_count_down_title"),
-                color = Color.White,
+                color = AmityTheme.colors.baseInverse,
                 style = AmityTheme.typography.titleLegacy.copy(
                     fontWeight = FontWeight.SemiBold
                 ),
@@ -67,15 +69,15 @@ fun AmityCircularProgressWithCountDownTimer(totalTime: Int, onTimeUp: () -> Unit
                         .align(Alignment.Center)
                         .width(72.dp)
                         .height(72.dp),
-                    color = Color.White,
+                    color = AmityTheme.colors.baseInverse,
                     strokeWidth = 2.dp,
-                    trackColor = Color.White.copy(0.2f),
+                    trackColor = amityColorWhite.copy(0.2f),
                     strokeCap = StrokeCap.Round,
                 )
                 Text(
                     modifier = Modifier.align(Alignment.Center),
                     text = timeLeft.toString(),
-                    color = Color.White,
+                    color = AmityTheme.colors.baseInverse,
                     style = AmityTheme.typography.display
                 )
             }

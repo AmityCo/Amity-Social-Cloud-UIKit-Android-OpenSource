@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import com.amity.socialcloud.sdk.model.core.product.AmityProduct
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
+import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.livestream.room.create.ManageProductTagListComponent
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 
@@ -45,8 +46,8 @@ fun AmityProductTaggingBottomSheet(
         modifier = Modifier.statusBarsPadding(),
         onDismissRequest = onDismiss,
         sheetState = productTaggingSheetState,
-        containerColor = Color(0xFF191919),
-        contentColor = Color.White,
+        containerColor = AmityTheme.colors.background,
+        contentColor = AmityTheme.colors.baseInverse,
         contentWindowInsets = { WindowInsets.navigationBars }
     ) {
         Column(

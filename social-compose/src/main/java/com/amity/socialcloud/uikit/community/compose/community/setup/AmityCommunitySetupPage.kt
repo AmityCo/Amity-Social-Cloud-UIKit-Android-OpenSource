@@ -98,6 +98,11 @@ import com.amity.socialcloud.uikit.community.compose.community.setup.elements.Am
 import com.amity.socialcloud.uikit.community.compose.community.setup.elements.AmityMediaImageSelectionType
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialConfigString
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorPrimaryShade3
+import com.amity.socialcloud.uikit.common.ui.theme.amityDisabledColor
+import com.amity.socialcloud.uikit.community.compose.ui.components.radio.AmityFilledRadioIndicator
 
 @Composable
 fun AmityCommunitySetupPage(
@@ -433,8 +438,8 @@ fun AmityCommunitySetupPage(
                 Box(
                     modifier = modifier
                         .aspectRatio(2f)
-                        .background(AmityTheme.colors.baseShade3)
-                        .background(Color.Black.copy(alpha = 0.5f))
+                        .background(amityColorPrimaryShade3)
+                        .background(amityColorBlack.copy(alpha = 0.5f))
                         .clickableWithoutRipple {
                             showMediaCameraSelectionSheet = true
                         }
@@ -454,12 +459,12 @@ fun AmityCommunitySetupPage(
                     Box(
                         modifier = modifier
                             .fillMaxSize()
-                            .background(Color.Black.copy(alpha = 0.4f))
+                            .background(amityColorBlack.copy(alpha = 0.4f))
                     )
                     Icon(
                         painter = painterResource(R.drawable.amity_ic_camera2),
                         contentDescription = "Upload avatar",
-                        tint = Color.White,
+                        tint = amityColorWhite,
                         modifier = modifier
                             .size(28.dp)
                             .align(Alignment.Center)
@@ -873,7 +878,7 @@ fun AmityCommunitySetupPage(
                     elementId = "community_membership_title"
                 ) {
                     Text(
-                        text = amitySocialConfigString("amity_social_label_community_setup_privacy_title"),
+                        text = amitySocialConfigString("amity_social_label_community_setup_membership_title"),
                         style = AmityTheme.typography.titleLegacy,
                         modifier = modifier
                             .padding(horizontal = 16.dp)
@@ -927,12 +932,12 @@ fun AmityCommunitySetupPage(
                             isMembershipEnabled = it
                         },
                         colors = SwitchDefaults.colors(
-                            checkedThumbColor = Color.White,
-                            uncheckedThumbColor = Color.White,
+                            checkedThumbColor = amityColorWhite,
+                            uncheckedThumbColor = amityColorWhite,
                             uncheckedBorderColor = AmityTheme.colors.baseShade3,
                             checkedTrackColor = AmityTheme.colors.primary,
                             uncheckedTrackColor = AmityTheme.colors.baseShade3,
-                            disabledCheckedThumbColor = Color.White,
+                            disabledCheckedThumbColor = amityColorWhite,
                             disabledCheckedTrackColor = AmityTheme.colors.primaryShade3,
                         ),
                         modifier = Modifier
@@ -999,7 +1004,7 @@ fun AmityCommunitySetupPage(
                             elementId = "community_add_member_title"
                         ) {
                             Text(
-                                text = amitySocialConfigString("amity_social_button_setup_create_button"),
+                                text = amitySocialConfigString("amity_social_label_member_label_singular"),
                                 style = AmityTheme.typography.titleLegacy,
                                 modifier = modifier
                                     .padding(horizontal = 16.dp)
@@ -1045,10 +1050,11 @@ fun AmityCommunitySetupPage(
                 Spacer(modifier = modifier.height(16.dp))
                 Button(
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = AmityTheme.colors.highlight,
-                        disabledContainerColor = AmityTheme.colors.highlight.shade(AmityColorShade.SHADE2),
+                        containerColor = AmityTheme.colors.primary,
+                        disabledContainerColor = AmityTheme.colors.primary.copy(alpha = 0.3f),
+                        disabledContentColor = amityDisabledColor(amityColorWhite),
                     ),
-                    shape = RoundedCornerShape(4.dp),
+                    shape = RoundedCornerShape(8.dp),
                     contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
                     enabled = shouldActionButtonEnable,
                     modifier = Modifier
@@ -1121,7 +1127,7 @@ fun AmityCommunitySetupPage(
                                 Icon(
                                     painter = painterResource(getConfig().getIcon()),
                                     contentDescription = "Create",
-                                    tint = Color.White,
+                                    tint = if (shouldActionButtonEnable) amityColorWhite else amityDisabledColor(amityColorWhite),
                                     modifier = modifier.size(16.dp)
                                 )
                                 Spacer(modifier = modifier.width(8.dp))
@@ -1129,7 +1135,7 @@ fun AmityCommunitySetupPage(
                             Text(
                                 text = amitySocialConfigString(if (isInEditMode) "amity_social_button_community_setup_edit_button" else "amity_social_button_community_setup_create_button"),
                                 style = AmityTheme.typography.captionLegacy.copy(
-                                    color = Color.White,
+                                    color = if (shouldActionButtonEnable) amityColorWhite else amityDisabledColor(amityColorWhite),
                                 ),
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier
@@ -1233,44 +1239,6 @@ fun AmityCommunitySetupPage(
                 dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_pending_requests_warning"),
                 dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_ok"),
                 onDismissRequest = { showJoinRequestNotEmptyDialog = false },
-            )
-        }
-    }
-}
-@Composable
-private fun AmityFilledRadioIndicator(
-    selected: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier = modifier
-            .size(20.dp)
-            .clip(CircleShape)
-            .then(
-                if (selected) {
-                    Modifier.background(AmityTheme.colors.highlight)
-                } else {
-                    Modifier.border(
-                        width = 2.dp,
-                        color = AmityTheme.colors.baseShade2,
-                        shape = CircleShape,
-                    )
-                }
-            )
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-                onClick = onClick,
-            ),
-        contentAlignment = Alignment.Center,
-    ) {
-        if (selected) {
-            Box(
-                modifier = Modifier
-                    .size(9.dp)
-                    .clip(CircleShape)
-                    .background(AmityTheme.colors.background),
             )
         }
     }

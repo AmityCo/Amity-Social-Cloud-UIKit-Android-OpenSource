@@ -44,6 +44,7 @@ import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.community.setting.elements.AmityCommunitySettingItem
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
 @Composable
 fun AmityCommunityNotificationSettingPage(
@@ -123,7 +124,7 @@ fun AmityCommunityNotificationSettingPage(
                     colors = SwitchDefaults.colors(
                         checkedTrackColor = AmityTheme.colors.highlight,
                         uncheckedBorderColor = AmityTheme.colors.baseShade3,
-                        uncheckedThumbColor = Color.White,
+                        uncheckedThumbColor = amityColorWhite,
                         uncheckedTrackColor = AmityTheme.colors.baseShade3,
                     ),
                     onCheckedChange = {

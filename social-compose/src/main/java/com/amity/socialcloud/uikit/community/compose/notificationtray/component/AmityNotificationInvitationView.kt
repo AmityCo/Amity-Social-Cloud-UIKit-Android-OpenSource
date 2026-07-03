@@ -35,6 +35,7 @@ import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.common.DeclineInvitationDialog
 import com.amity.socialcloud.uikit.community.compose.notificationtray.NotificationTrayViewModel
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
 @Composable
 fun AmityNotificationInvitationView(
@@ -171,7 +172,7 @@ fun AmityNotificationInvitationView(
                 Text(
                     text = amitySocialString("amity_social_button_community_invitation_accept_button"),
                     style = AmityTheme.typography.bodyBold,
-                    color = Color.White,
+                    color = amityColorWhite,
                 )
             }
             Spacer(Modifier.width(8.dp))

@@ -28,6 +28,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import kotlinx.coroutines.delay
 import java.util.Locale
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
 @Composable
 fun ClipSeekBar(
@@ -108,7 +109,7 @@ fun ClipSeekBar(
                     .height(4.dp)
                     .padding(horizontal = 12.dp)
                     .background(
-                        color = Color.White.copy(alpha = 0.3f),
+                        color = amityColorWhite.copy(alpha = 0.3f),
                         shape = RoundedCornerShape(2.dp)
                     )
             ) {
@@ -117,7 +118,7 @@ fun ClipSeekBar(
                         .fillMaxWidth(progress)
                         .height(4.dp)
                         .background(
-                            color = Color.White,
+                            color = AmityTheme.colors.baseInverse,
                             shape = RoundedCornerShape(2.dp)
                         )
                 )
@@ -142,12 +143,12 @@ fun ClipDurationDisplay(
         ) {
             Text(
                 text = formatDuration(currentPosition),
-                color = Color.White,
+                color = AmityTheme.colors.baseInverse,
                 style = AmityTheme.typography.body
             )
             Text(
                 text = formatDuration(duration),
-                color = Color.White,
+                color = AmityTheme.colors.baseInverse,
                 style = AmityTheme.typography.body
             )
         }

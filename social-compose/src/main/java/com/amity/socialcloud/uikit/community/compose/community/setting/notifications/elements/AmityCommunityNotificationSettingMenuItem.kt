@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.community.setting.notifications.elements
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -43,6 +44,7 @@ fun AmityCommunityNotificationSettingMenuItem(
             modifier = modifier.padding(horizontal = 16.dp)
         )
 
+        Spacer(modifier.height(16.dp))
         AmityCommunitySettingRadioGroupItem(
             text = amitySocialString(AmityCommunityNotificationSettingDataType.EVERYONE.title),
             isSelected = selectedSetting == AmityCommunityNotificationSettingDataType.EVERYONE,
@@ -50,12 +52,14 @@ fun AmityCommunityNotificationSettingMenuItem(
             onSelected(AmityCommunityNotificationSettingDataType.EVERYONE)
         }
 
+        Spacer(modifier.height(20.dp))
         AmityCommunitySettingRadioGroupItem(
             text = amitySocialString(AmityCommunityNotificationSettingDataType.ONLY_MODERATOR.title),
             isSelected = selectedSetting == AmityCommunityNotificationSettingDataType.ONLY_MODERATOR,
         ) {
             onSelected(AmityCommunityNotificationSettingDataType.ONLY_MODERATOR)
         }
+        Spacer(modifier.height(20.dp))
 
         AmityCommunitySettingRadioGroupItem(
             text = amitySocialString(AmityCommunityNotificationSettingDataType.OFF.title),
@@ -63,6 +67,7 @@ fun AmityCommunityNotificationSettingMenuItem(
         ) {
             onSelected(AmityCommunityNotificationSettingDataType.OFF)
         }
+        Spacer(modifier.height(16.dp))
     }
 }
 

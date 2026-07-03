@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.model.AmitySocialReactions
 import com.amity.socialcloud.uikit.common.localization.amitySocialReactionDisplayName
@@ -34,6 +35,8 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.amityReactionTooltipBase
 
 @Composable
 fun AmityReactionPicker(
@@ -98,7 +101,7 @@ fun AmityReactionPicker(
                                         translationY = with(density) { yOffset.toPx() - 40.dp.toPx() } // Adjusted to position above the icon
                                     }
                                     .background(
-                                        color = Color(0xAA333333), // semi-transparent dark background
+                                        color = amityReactionTooltipBase.copy(alpha = 0.67f), // semi-transparent dark background
                                         shape = RoundedCornerShape(16.dp)
                                     )
                                     .padding(vertical = 4.dp, horizontal = 8.dp)
@@ -106,8 +109,10 @@ fun AmityReactionPicker(
                             ) {
                                 Text(
                                     text = amitySocialReactionDisplayName(reaction.name),
-                                    color = Color.White,
-                                    style = AmityTheme.typography.caption,
+                                    color = amityColorWhite,
+                                    style = AmityTheme.typography.captionSmall,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                             }
                         }

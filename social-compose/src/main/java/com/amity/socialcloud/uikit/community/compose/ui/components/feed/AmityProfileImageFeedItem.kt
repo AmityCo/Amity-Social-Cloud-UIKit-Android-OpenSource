@@ -56,6 +56,8 @@ import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComp
 import com.amity.socialcloud.uikit.community.compose.post.composer.RenderAltTextConfigSheet
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.AltTextMedia
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityProductTagBadge
+import com.amity.socialcloud.uikit.common.ui.theme.amityMediaSurface
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -222,7 +224,7 @@ fun AmityProfileImageFeedItemPreviewDialog(
             Box(
                 modifier = modifier
                     .fillMaxSize()
-                    .background(Color.Black)
+                    .background(amityMediaSurface)
             ) {
                 Image(
                     painter = painter,
@@ -236,7 +238,7 @@ fun AmityProfileImageFeedItemPreviewDialog(
                     modifier = modifier
                         .fillMaxWidth()
                         .height(64.dp)
-                        .background(Color.Black.copy(alpha = 0.5f)),
+                        .background(amityColorBlack.copy(alpha = 0.5f)),
                 ) {
                     val (closeBtn, menuBtn) = createRefs()
 
@@ -285,7 +287,7 @@ fun AmityProfileImageFeedItemPreviewDialog(
                     .height(32.dp)
                     .offset(y = (-32).dp)
                     .fillMaxWidth()
-                    .background(Color.Black)
+                    .background(amityMediaSurface)
             )
 
             // Product Tag Badge at bottom-right of screen (outside inner boxes)

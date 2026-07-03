@@ -338,7 +338,7 @@
     <string name="amity_social_button_option_number">Option %d</string>
     <string name="amity_social_button_options">Options</string>
     <string name="amity_social_button_others">Others</string>
-    <string name="amity_social_button_past_events">Past events</string>
+    <string name="amity_social_button_past_events">Past</string>
     <string name="amity_social_button_pending">Pending</string>
     <string name="amity_social_button_pending_invitation">Pending invitation</string>
     <string name="amity_social_button_pending_posts">Pending posts</string>
@@ -378,7 +378,7 @@
     <string name="amity_social_button_reply">Reply</string>
     <string name="amity_social_button_reply_deleted_message">This reply has been deleted</string>
     <string name="amity_social_button_replying_to">Replying to</string>
-    <string name="amity_social_button_report_comment">Report comment.</string>
+    <string name="amity_social_button_report_comment">Report comment</string>
     <string name="amity_social_button_report_message">Report message</string>
     <string name="amity_social_button_report_other_reason_optional">(Optional)</string>
     <string name="amity_social_button_report_post">Report post</string>
@@ -407,7 +407,11 @@
     <string name="amity_social_button_setup_create_button">Create community</string>
     <string name="amity_social_button_post_composer_create_button">Post</string>
     <string name="amity_social_button_social_home_events_button">Events</string>
-    <string name="amity_social_button_social_home_newsfeed_button">Newsfeed</string>
+    <string name="amity_social_button_social_home_for_you_button">For You</string>
+    <string name="amity_social_button_social_home_following_button">Following</string>
+    <string name="amity_social_feed_caught_up_title">You\'re all caught up</string>
+    <string name="amity_social_feed_caught_up_body">Check out what\'s new from people you follow.</string>
+    <string name="amity_social_feed_caught_up_cta">View Following</string>
     <string name="amity_social_button_starts">Starts</string>
     <string name="amity_social_button_social_home_create_story_button">Story</string>
     <string name="amity_social_button_tag_products">Tag products</string>
@@ -425,7 +429,7 @@
     <string name="amity_social_button_unmute">Unmute</string>
     <string name="amity_social_button_unmute_user">Unmute user</string>
     <string name="amity_social_button_unpin">Unpin</string>
-    <string name="amity_social_button_unreport_comment">Unreport comment.</string>
+    <string name="amity_social_button_unreport_comment">Unreport comment</string>
     <string name="amity_social_button_unreport_message">Unreport message</string>
     <string name="amity_social_button_unreport_post">Unreport post</string>
     <string name="amity_social_button_unreport_reply">Unreport reply.</string>
@@ -449,7 +453,7 @@
     <string name="amity_social_button_vote_removed">Vote removed.</string>
     <string name="amity_social_button_whos_watching">Who\'s watching</string>
     <string name="amity_social_button_yes">Yes</string>
-    <string name="amity_social_placeholder_clip_caption">Add a caption...</string>
+    <string name="amity_social_placeholder_clip_caption">What\'s going on? (optional)</string>
     <string name="amity_social_empty_state_empty_clip_feed">No clips yet</string>
     <string name="amity_social_empty_state_empty_feed_no_posts">No post yet</string>
     <string name="amity_social_poll_post_composer_page_ends_on">Ends on %s at %s</string>
@@ -457,7 +461,7 @@
     <string name="amity_social_empty_state_empty_user_video_feed">No videos yet</string>
     <string name="amity_social_empty_state_explore_empty">Your explore is empty</string>
     <string name="amity_social_empty_state_no_comments_yet">No comments yet</string>
-    <string name="amity_social_empty_state_social_home_empty_title">Your Feed is empty</string>
+    <string name="amity_social_empty_state_social_home_empty_title">Your feed is empty</string>
     <string name="amity_social_empty_state_tagged_products_empty_desc">You can add or remove products anytime and pin them to control what viewers see while you\'re live.</string>
     <string name="amity_social_empty_state_tagged_products_empty_title">No products tagged yet</string>
     <string name="amity_social_error_add_blocked_links_post_error_message">Your post wasn\'t posted because it contains a link that is not allowed.</string>
@@ -536,6 +540,8 @@
     <string name="amity_social_modal_dialog_cohost_invitation_description">If they accept your invitation, they\'ll join as a co-host with moderator access. They can turn on their camera and mic, appear on stage, and help manage chat.</string>
     <string name="amity_social_label_copy_clip_link">Copy clip link</string>
     <string name="amity_social_label_copy_post_link">Copy post link</string>
+    <string name="amity_social_button_copy_event_link">Copy event link</string>
+    <string name="amity_social_toast_failed_to_copy_link">Failed to copy link</string>
     <string name="amity_social_label_copy_profile_link">Copy profile link</string>
     <string name="amity_social_label_create_account_or_sign_in">Create an account or sign in to continue.</string>
     <string name="amity_social_label_create_livestream_no_internet_view_title">Reconnecting</string>
@@ -548,6 +554,7 @@
     <string name="amity_social_label_declining_a_join_request_is_irreversible_the_user_must_">Declining a join request is irreversible. The user must send a new request if declined.</string>
     <string name="amity_social_label_demote_to_member">Demote to member</string>
     <string name="amity_social_label_edit_user_about_title">About</string>
+    <string name="amity_social_placeholder_edit_user_about_hint">Enter description</string>
     <string name="amity_social_label_community_setup_about_title">About</string>
     <string name="amity_social_label_edit_user_display_name_title">Display name</string>
     <string name="amity_social_label_enter_address_of_where_this_event_will_be_happening">Enter address of where this event will be happening</string>
@@ -590,7 +597,7 @@
     <string name="amity_social_label_livestream_read_only_description">Members who are not streamer can read messages but cannot send any messages.</string>
     <string name="amity_social_label_manage_blocked_users">Manage blocked users</string>
     <string name="amity_social_label_max_upload_limit_message">You\'ve reached the upload limit of 10 %s. Any additional %s will not be saved.</string>
-    <string name="amity_social_label_member_label_singular">member</string>
+    <string name="amity_social_label_member_label_singular">Member</string>
     <string name="amity_social_label_msg_blocked_word">Your message wasn\'t sent as it contained a blocked word.</string>
     <string name="amity_social_label_msg_link_not_allowed">Your message wasn\'t sent as it contained a link that\'s not allowed.</string>
     <string name="amity_social_label_name_your_event">Name your event</string>
@@ -905,7 +912,7 @@
     <string name="amity_social_status_set_up_your_camera_mic_and_lighting_before_the_livestre">Set up your camera, mic, and lighting before the livestream begins.</string>
     <string name="amity_social_status_this_live_stream_has_started_but_with_limited_visibilit">This live stream has started, but with limited visibility until the post has been approved.</string>
     <string name="amity_social_status_this_live_stream_has_started_however_it_will_have_limit">This live stream has started. However, it will have limited visibility until your post has been approved.</string>
-    <string name="amity_social_status_upcoming_events">Upcoming events</string>
+    <string name="amity_social_status_upcoming_events">Upcoming</string>
     <string name="amity_social_status_event_info_stream_status_upcoming_live">UPCOMING LIVE</string>
     <string name="amity_social_status_when_enabled_co_host_can_add_or_remove_tagged_products_">When enabled, co-host can add or remove tagged products and pin or unpin a product during the live stream.</string>
     <string name="amity_social_status_you_can_start_setting_up_live_15_minutes_before_the_eve">You can start setting up live 15 minutes before the event starts.</string>
@@ -1033,7 +1040,6 @@
     <string name="amity_social_toast_snackbar_address_copied">Address copied</string>
     <string name="amity_social_toast_snackbar_link_copied">Link copied.</string>
     <string name="amity_chat_label_banned_from_chat">You are banned from chat</string>
-    <string name="amity_chat_label_loading_chat">Loading chat...</string>
     <string name="amity_chat_toast_message_reported">Message reported.</string>
     <string name="amity_social_cancel_unsaved_changes">Are you sure you want to cancel? Your changes won\'t be saved.</string>
     <string name="amity_social_couldnt_load_chat">Couldn\'t Load Chat</string>

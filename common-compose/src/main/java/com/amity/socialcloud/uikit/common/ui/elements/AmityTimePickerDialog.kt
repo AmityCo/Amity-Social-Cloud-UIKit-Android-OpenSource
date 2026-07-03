@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.amity.socialcloud.uikit.common.localization.amityCommonString
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
 @ExperimentalMaterial3Api
 @Composable
@@ -57,13 +58,16 @@ fun AmityTimePickerDialog(
                 state = timePickerState,
                 colors = TimePickerDefaults.colors(
                     clockDialColor = baseShade4Color,
-                    clockDialSelectedContentColor = Color.White,
+                    clockDialSelectedContentColor = backgroundColor,
                     selectorColor = primaryColor,
                     periodSelectorSelectedContainerColor = primaryShade3Color,
                     periodSelectorSelectedContentColor = primaryColor,
                     timeSelectorSelectedContainerColor = primaryShade3Color,
                     timeSelectorUnselectedContainerColor = baseShade4Color,
                     timeSelectorSelectedContentColor = primaryColor,
+                    timeSelectorUnselectedContentColor = baseColor,
+                    clockDialUnselectedContentColor = baseColor,
+                    periodSelectorUnselectedContentColor = baseColor
                 )
             )
         }

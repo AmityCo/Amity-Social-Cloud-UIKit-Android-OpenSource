@@ -130,6 +130,9 @@ import com.google.gson.JsonObject
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialConfigString
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
+import com.amity.socialcloud.uikit.common.ui.theme.amityProductTagBadgeCountBackground
 
 @OptIn(UnstableApi::class)
 @UnstableApi
@@ -825,7 +828,9 @@ fun AmityPostComposerPage(
                     Text(
                         text = if (isInEditMode || isEditClipMode) amitySocialConfigString("amity_social_button_post_composer_edit_button") else amitySocialConfigString("amity_social_button_post_composer_create_button"),
                         style = AmityTheme.typography.body.copy(
-                            color = if (shouldAllowToPost) AmityTheme.colors.primary else AmityTheme.colors.primaryShade2
+                            color =  AmityTheme.colors.primary.copy(
+                                alpha = if (shouldAllowToPost) 1f else 0.3f
+                            )
                         ),
                         modifier = modifier
                             .align(Alignment.CenterEnd)
@@ -1010,7 +1015,7 @@ fun AmityPostComposerPage(
                             .width(80.dp)
                             .clip(RoundedCornerShape(4.dp))
                             .background(
-                                color = Color.Black,
+                                color = amityColorBlack,
                                 shape = RoundedCornerShape(4.dp)
                             )
                     ) {
@@ -1029,7 +1034,7 @@ fun AmityPostComposerPage(
                                 .align(Alignment.Center)
                                 .size(24.dp)
                                 .background(
-                                    color = Color(0x88000000),
+                                    color = amityColorBlack.copy(alpha = 0.53f),
                                     shape = CircleShape
                                 )
                         ) {
@@ -1380,7 +1385,7 @@ fun AmityPostComposerPage(
                                 .offset(x = 8.dp, y = -8.dp)
                                 .size(32.dp)
                                 .background(
-                                    color = Color.Black.copy(alpha = 0.5f),
+                                    color = amityColorBlack.copy(alpha = 0.5f),
                                     shape = CircleShape
                                 )
                                 .clickableWithoutRipple {
@@ -1391,7 +1396,7 @@ fun AmityPostComposerPage(
                             Icon(
                                 painter = painterResource(id = R.drawable.amity_ic_dismiss_preview),
                                 contentDescription = "Remove link preview",
-                                tint = Color.White,
+                                tint = amityColorWhite,
                                 modifier = Modifier.size(24.dp)
                             )
                         }
@@ -1438,7 +1443,7 @@ fun AmityPostComposerPage(
                 modifier = Modifier
                     .size(40.dp)
                     .background(
-                        color = AmityTheme.colors.baseShade4,
+                        color = AmityTheme.colors.backgroundShade1,
                         shape = CircleShape
                     ),
                 contentAlignment = Alignment.Center
@@ -1446,7 +1451,7 @@ fun AmityPostComposerPage(
                 Icon(
                     painter = painterResource(id = R.drawable.amity_ic_product_tag),
                     contentDescription = "Product tags",
-                    tint = Color(0xFF636878),
+                    tint = AmityTheme.colors.base,
                     modifier = Modifier.size(32.dp)
                 )
                 Box(
@@ -1455,20 +1460,20 @@ fun AmityPostComposerPage(
                     .offset(x = 4.dp, y = (-4).dp)
                     .size(20.dp)
                     .background(
-                        color = AmityTheme.colors.base,
+                        color = amityProductTagBadgeCountBackground(),
                         shape = CircleShape
                     ),
                 contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = allDistinctTags.size.toString(),
-                    style = AmityTheme.typography.captionBold.copy(
-                        color = Color.White,
-                        fontSize = 10.sp
-                    ),
-                )
+                ) {
+                    Text(
+                        text = allDistinctTags.size.toString(),
+                        style = AmityTheme.typography.captionBold.copy(
+                            color = AmityTheme.colors.background,
+                            fontSize = 10.sp
+                        ),
+                    )
+                }
             }
-        }
         }
     }
 }

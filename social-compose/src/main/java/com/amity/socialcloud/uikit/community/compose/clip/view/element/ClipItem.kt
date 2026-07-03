@@ -89,6 +89,8 @@ import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmitySt
 import com.google.gson.JsonObject
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlin.math.roundToInt
+import com.amity.socialcloud.uikit.common.ui.theme.amityMediaSurface
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 
 @OptIn(UnstableApi::class)
 @Composable
@@ -249,7 +251,7 @@ fun ClipItem(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.Black)
+            .background(amityMediaSurface)
     ) {
         // Video Player component
         Box(modifier = Modifier.fillMaxSize()) {
@@ -276,7 +278,7 @@ fun ClipItem(
                 .height(102.dp) // adjust as needed
                 .background(
                     brush = Brush.verticalGradient(
-                        colors = listOf(Color.Black.copy(alpha = 0.5f), Color.Transparent)
+                        colors = listOf(amityColorBlack.copy(alpha = 0.5f), Color.Transparent)
                     )
                 )
         )
@@ -289,7 +291,7 @@ fun ClipItem(
                 .height(168.dp)
                 .background(
                     brush = Brush.verticalGradient(
-                        colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.5f))
+                        colors = listOf(Color.Transparent, amityColorBlack.copy(alpha = 0.5f))
                     )
                 )
         )
@@ -351,7 +353,7 @@ fun ClipItem(
                                     Text(
                                         text = firstText,
                                         style = AmityTheme.typography.bodyBold,
-                                        color = Color.White,
+                                        color = AmityTheme.colors.baseInverse,
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis,
                                         onTextLayout = {
@@ -386,7 +388,7 @@ fun ClipItem(
                                         text = " • ",
                                         style = AmityTheme.typography.captionLegacy.copy(
                                             fontWeight = FontWeight.Normal,
-                                            color = Color.White
+                                            color = AmityTheme.colors.baseInverse
                                         )
                                     )
 
@@ -395,7 +397,7 @@ fun ClipItem(
                                             ?: post.getCreatedAt()?.readableSocialTimeDiff() ?: "")
                                                 + if (post.isEdited()) DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_edited_suffix") else "",
                                         style = AmityTheme.typography.caption,
-                                        color = Color.White,
+                                        color = AmityTheme.colors.baseInverse,
                                         modifier = Modifier,
                                     )
                                 }

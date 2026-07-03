@@ -6,6 +6,7 @@ import com.amity.socialcloud.sdk.api.core.encryption.AmityDBEncryption
 import com.amity.socialcloud.sdk.api.core.endpoint.AmityEndpoint
 import com.amity.socialcloud.sdk.video.AmityStreamBroadcasterClient
 import com.amity.socialcloud.sdk.video.AmityStreamPlayerClient
+import com.amity.socialcloud.uikit.chat.compose.localization.DefaultAmityChatStringProvider
 import com.amity.socialcloud.uikit.common.ad.AmityAdEngine
 import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import com.amity.socialcloud.uikit.common.eventbus.NetworkConnectionEventPublisher
@@ -32,6 +33,7 @@ object AmityUIKit4Manager {
             endpoint = endpoint,
             dbEncryption = dbEncryption
         )
+        AmityCoreClient.enableUnreadCount()
         AmityStreamBroadcasterClient.setup(AmityCoreClient.getConfiguration())
         AmityStreamPlayerClient.setup(AmityCoreClient.getConfiguration())
         AmityAdEngine.init()
@@ -40,6 +42,7 @@ object AmityUIKit4Manager {
         AmityUIKitConfigController.setup(AmityAppContext.getContext())
         AmityUIKitConfigController.initializeShareableLinkPattern()
         DefaultAmitySocialStringProvider.initialize(AmityAppContext.getContext())
+        DefaultAmityChatStringProvider.initialize(AmityAppContext.getContext())
         NetworkConnectionEventPublisher.initPublisher(context = AmityAppContext.getContext())
     }
 

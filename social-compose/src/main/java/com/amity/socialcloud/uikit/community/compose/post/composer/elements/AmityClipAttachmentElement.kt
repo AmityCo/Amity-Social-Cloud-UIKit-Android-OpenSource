@@ -27,6 +27,8 @@ import coil3.video.VideoFrameDecoder
 import com.amity.socialcloud.sdk.model.core.file.AmityClip
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 
 @Composable
 fun AmityClipAttachmentElement(
@@ -68,7 +70,7 @@ fun AmityClipAttachmentElement(
                 .width(80.dp)
                 .clip(RoundedCornerShape(4.dp))
                 .background(
-                    color = Color.Black,
+                    color = amityColorBlack,
                     shape = RoundedCornerShape(4.dp)
                 )
         ) {
@@ -91,14 +93,14 @@ fun AmityClipAttachmentElement(
                     .align(Alignment.Center)
                     .size(24.dp)
                     .background(
-                        color = Color(0x88000000),
+                        color = amityColorBlack.copy(alpha = 0.53f),
                         shape = CircleShape
                     )
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.amity_ic_play_v4),
                     contentDescription = null,
-                    tint = Color.White,
+                    tint = amityColorWhite,
                     modifier = Modifier
                         .align(Alignment.Center)
                 )

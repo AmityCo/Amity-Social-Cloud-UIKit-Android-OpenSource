@@ -161,7 +161,7 @@ fun AmityLivestreamMessageComposeBar(
             modifier = modifier
                 .fillMaxWidth()
                 .background(
-                    if (isFocused) Color(0xFF191919)
+                    if (isFocused) AmityTheme.colors.background
                     else Color.Transparent
                 )
         ) {
@@ -181,7 +181,7 @@ fun AmityLivestreamMessageComposeBar(
 
             if (shouldShowComposeBar) {
                 HorizontalDivider(
-                    color = Color(0xFF292B32),
+                    color = AmityTheme.colors.baseShade4,
                 )
             }
 
@@ -201,13 +201,15 @@ fun AmityLivestreamMessageComposeBar(
                 }
                 if (isPendingApproval) {
                     AmityLivestreamPendingApprovalComposeBar()
+                } else if (isChannelMuted && !isCurrentUserStreamHost) {
+                    // Read-only mode applies to everyone (members, non-members, visitors):
+                    // show "This live stream is now read-only." before the non-member message.
+                    AmityLivestreamReadOnlyComposeBar(
+                        modifier = Modifier.weight(1f),
+                    )
                 } else if (isNonMember) {
                     AmityLivestreamNonMemberComposeBar(
                         modifier = Modifier.weight(1f)
-                    )
-                } else if (isChannelMuted && !isCurrentUserStreamHost) {
-                    AmityLivestreamReadOnlyComposeBar(
-                        modifier = Modifier.weight(1f),
                     )
                 } else if (isUserMuted && !isCurrentUserStreamHost) {
                     AmityLivestreamReadOnlyComposeBar(
@@ -224,12 +226,12 @@ fun AmityLivestreamMessageComposeBar(
                                 .weight(1f)
                                 .clip(RoundedCornerShape(20.dp))
                                 .background(
-                                    if (isFocused) Color(0xFF292B32)
+                                    if (isFocused) AmityTheme.colors.baseShade4
                                     else Color.Transparent
                                 )
                                 .border(
                                     width = if (isFocused) 0.dp else 1.dp,
-                                    color = Color(0xFFA5A9B5),
+                                    color = AmityTheme.colors.secondaryShade1,
                                     shape = RoundedCornerShape(20.dp)
                                 )
                                 .focusRequester(focusRequester)
@@ -251,7 +253,7 @@ fun AmityLivestreamMessageComposeBar(
                                 }
                                 .testTag("message_composer_text_field"),
                             text = messageText,
-                            textStyle = AmityTheme.typography.body.copy(color = Color(0xFFEBECEF)),
+                            textStyle = AmityTheme.typography.body.copy(color = AmityTheme.colors.base),
                             maxLines = 1,
                             hint = amitySocialString("amity_social_placeholder_chat_hint"),
                             enabled = (isChannelModerator || isCurrentUserStreamHost || (!isUserMuted && !isChannelMuted)) && AmityCoreClient.isSignedIn() && !isNonMember,
@@ -538,7 +540,7 @@ fun AmityLivestreamReadOnlyComposeBar(
             modifier = Modifier
                 .size(20.dp)
                 .align(Alignment.CenterVertically),
-            tint = Color(0xFF898E9E),
+            tint = AmityTheme.colors.baseShade1,
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
@@ -546,7 +548,7 @@ fun AmityLivestreamReadOnlyComposeBar(
             fontSize = 14.sp,
             lineHeight = 20.sp,
             fontWeight = FontWeight(400),
-            color = Color(0xFF898E9E),
+            color = AmityTheme.colors.baseShade1,
             modifier = Modifier
                 .align(Alignment.CenterVertically)
                 .weight(1f)
@@ -570,7 +572,7 @@ fun AmityLivestreamPendingApprovalComposeBar(
             fontSize = 14.sp,
             lineHeight = 20.sp,
             fontWeight = FontWeight(400),
-            color = Color(0xFF898E9E),
+            color = AmityTheme.colors.baseShade1,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .align(Alignment.CenterVertically)

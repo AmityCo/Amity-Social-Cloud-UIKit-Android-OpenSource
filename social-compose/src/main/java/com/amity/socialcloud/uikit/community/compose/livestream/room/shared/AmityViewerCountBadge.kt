@@ -21,6 +21,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.AmityNumberUtil.getNumberAbbreveation
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 
 @Composable
 fun AmityRoomViewerCountBadge(
@@ -32,7 +33,7 @@ fun AmityRoomViewerCountBadge(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .background(
-                Color(0x80000000), // Pink/Red color for LIVE badge
+                amityColorBlack.copy(alpha = 0.5f), // Pink/Red color for LIVE badge
                 RoundedCornerShape(4.dp)
             )
             .padding(start = 4.dp, top = 4.dp, end = 6.dp, bottom = 4.dp)
@@ -57,7 +58,7 @@ fun AmityRoomViewerCountBadge(
                     lineHeight = 18.sp,
                     letterSpacing = 0.5.sp,
                 ),
-                color = Color.White,
+                color = AmityTheme.colors.baseInverse,
             )
         } else {
             Spacer(modifier = Modifier.width(2.dp))
@@ -68,7 +69,7 @@ fun AmityRoomViewerCountBadge(
                     lineHeight = 18.sp,
                     letterSpacing = 0.5.sp,
                 ),
-                color = Color.White,
+                color = AmityTheme.colors.baseInverse,
             )
         }
     }

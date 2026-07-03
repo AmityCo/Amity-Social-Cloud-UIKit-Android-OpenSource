@@ -116,7 +116,7 @@ fun AmityFloatingMentionSuggestionCard(
                     HorizontalDivider(
                         modifier = Modifier.fillMaxWidth(),
                         thickness = 1.dp,
-                        color = Color(0xFFE5E7EB)
+                        color = AmityTheme.colors.divider
                     )
                 }
 
@@ -158,14 +158,14 @@ fun AmityFloatingMentionSuggestionCard(
                 .shadow(elevation = 6.dp, shape = CircleShape, clip = false)
                 .clip(CircleShape)
                 .background(AmityTheme.colors.background)
-                .border(width = 1.dp, color = Color(0xFFE5E7EB), shape = CircleShape)
+                .border(width = 1.dp, color = AmityTheme.colors.divider, shape = CircleShape)
                 .clickableWithoutRipple { onDismiss() },
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.amity_ic_close),
                 contentDescription = "Close",
-                tint = Color(0xFF9CA3AF),
+                tint = AmityTheme.colors.baseShade3,
                 modifier = Modifier.size(12.dp)
             )
         }

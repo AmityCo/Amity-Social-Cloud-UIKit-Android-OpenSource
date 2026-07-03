@@ -57,6 +57,7 @@ import com.amity.socialcloud.sdk.model.video.stream.AmityStream
 import com.amity.socialcloud.uikit.common.behavior.AmityGlobalBehavior
 import com.amity.socialcloud.uikit.common.ui.elements.AmityExpandableText
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.theme.amityLiveBadgeRed
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityProductWebViewBottomSheet
@@ -68,6 +69,8 @@ import com.amity.socialcloud.uikit.community.compose.post.composer.components.Re
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetailPageActivity.Companion.REQUEST_CODE_VIEW_LIVESTREAM
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 
 @Composable
 fun AmityPostLivestreamElement(
@@ -277,13 +280,13 @@ fun AmityLivestreamPostIdleOrRecordedLabel(
     Box(
         modifier = modifier
             .wrapContentSize()
-            .background(color = Color.Black.copy(0.5f), shape = RoundedCornerShape(size = 4.dp))
+            .background(color = amityColorBlack.copy(0.5f), shape = RoundedCornerShape(size = 4.dp))
             .padding(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 4.dp)
     ) {
         Text(
             text = text,
             style = AmityTheme.typography.captionBold.copy(
-                color = Color.White,
+                color = amityColorWhite,
             ),
         )
     }
@@ -296,13 +299,13 @@ fun AmityLivestreamPostLiveLabel(
     Box(
         modifier = modifier
             .wrapContentSize()
-            .background(color = Color(0xFFFF305A), shape = RoundedCornerShape(size = 4.dp))
+            .background(color = amityLiveBadgeRed, shape = RoundedCornerShape(size = 4.dp))
             .padding(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 4.dp)
     ) {
         Text(
             text = amitySocialString("amity_social_status_live"),
             style = AmityTheme.typography.captionBold.copy(
-                color = AmityTheme.colors.background,
+                color = amityColorWhite,
             ),
         )
     }
@@ -362,7 +365,7 @@ fun AmityLivestreamDisconnectedView(modifier: Modifier = Modifier) {
         title = amitySocialString("amity_social_button_reconnecting"),
         description = amitySocialString("amity_social_status_live_stream_reconnecting_state_message"),
         shouldShowLoading = true,
-        background = Color.Black.copy(alpha = 0.5f)
+        background = amityColorBlack.copy(alpha = 0.5f)
     )
 }
 
@@ -383,7 +386,7 @@ fun AmityLivestreamNoticeView(
     title: String,
     description: String? = null,
     shouldShowLoading: Boolean = false,
-    background: Color = Color.Black,
+    background: Color = amityColorBlack,
 ) {
     Box(
         contentAlignment = Alignment.Center,
@@ -400,7 +403,7 @@ fun AmityLivestreamNoticeView(
                     Icon(
                         painter = painterResource(id = it),
                         contentDescription = null,
-                        tint = Color.White,
+                        tint = amityColorWhite,
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.height(12.dp))
@@ -421,7 +424,7 @@ fun AmityLivestreamNoticeView(
                 Text(
                     text = title,
                     style = AmityTheme.typography.titleBold.copy(
-                        color = Color.White,
+                        color = amityColorWhite,
                     ),
                 )
             }
@@ -436,7 +439,7 @@ fun AmityLivestreamNoticeView(
                     Text(
                         text = description,
                         style = AmityTheme.typography.caption.copy(
-                            color = Color.White,
+                            color = amityColorWhite,
                             textAlign = TextAlign.Center,
                         ),
                     )
@@ -463,13 +466,13 @@ fun LivestreamLoadingIndicator() {
         modifier = Modifier.size(40.dp)
     ) {
         drawCircle(
-            color = Color.White.copy(alpha = 0.5f),
+            color = amityColorWhite.copy(alpha = 0.5f),
             radius = size.width / 2,
             style = Stroke(width = 8.dp.value)
         )
 
         drawArc(
-            color = Color.White,
+            color = amityColorWhite,
             startAngle = currentAngle.toFloat(),
             sweepAngle = 90f,
             useCenter = false,

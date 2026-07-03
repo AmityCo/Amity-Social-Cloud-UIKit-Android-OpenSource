@@ -1,6 +1,7 @@
 package com.amity.socialcloud.uikit.sample.localization
 
 import android.content.Context
+import com.amity.socialcloud.uikit.chat.compose.localization.DefaultAmityChatStringProvider
 import com.amity.socialcloud.uikit.common.localization.DefaultAmityCommonStringProvider
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import java.util.Locale
@@ -34,5 +35,6 @@ object AmityLocaleHelper {
     private fun applyThai() {
         DefaultAmityCommonStringProvider.setLocale("th", AmityCommonThaiStrings.strings)
         DefaultAmitySocialStringProvider.setLocale("th", AmitySocialThaiStrings.strings)
+        DefaultAmityChatStringProvider.setLocale("th", AmityChatThaiStrings.strings)
     }
 }

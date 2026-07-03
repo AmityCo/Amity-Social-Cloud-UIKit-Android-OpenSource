@@ -88,6 +88,8 @@ import kotlin.math.floor
 import kotlin.math.log
 import kotlin.math.pow
 import kotlin.text.chunked
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 
 @Composable
 fun AmityPostImagePollElement(
@@ -421,7 +423,7 @@ private fun PollItem(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(
-                            if (isSelected) AmityTheme.colors.primary.copy(alpha = 0.3f) else Color.Black.copy(
+                            if (isSelected) AmityTheme.colors.primary.copy(alpha = 0.3f) else amityColorBlack.copy(
                                 alpha = 0.3f
                             )
                         )
@@ -429,7 +431,7 @@ private fun PollItem(
                     Text(
                         text = formattedPercentage,
                         style = AmityTheme.typography.headLine,
-                        color = Color.White,
+                        color = amityColorWhite,
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }

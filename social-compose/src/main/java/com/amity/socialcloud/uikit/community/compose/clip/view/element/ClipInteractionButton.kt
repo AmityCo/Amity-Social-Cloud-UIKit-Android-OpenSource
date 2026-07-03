@@ -50,7 +50,7 @@ fun InteractionButton(
         if (count != null) {
             Text(
                 text = count,
-                color = Color.White,
+                color = AmityTheme.colors.baseInverse,
                 style = AmityTheme.typography.captionBold,
             )
         }

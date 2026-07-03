@@ -69,6 +69,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlin.math.abs
+import com.amity.socialcloud.uikit.common.ui.theme.amityMediaSurface
 
 // Add this constant at the top of the file
 private const val ENDLESS_LOOP_MULTIPLIER = 1000
@@ -213,7 +214,7 @@ fun AmityClipFeedPage(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black)
+                .background(amityMediaSurface)
                 .pointerInput(Unit) {
                     detectTapGestures {
                         val currentTime = System.currentTimeMillis()

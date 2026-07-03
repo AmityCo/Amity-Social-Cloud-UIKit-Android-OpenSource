@@ -36,6 +36,7 @@ import com.amity.socialcloud.uikit.common.R
 import com.amity.socialcloud.uikit.common.localization.amityCommonString
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
 
 @Composable
@@ -54,7 +55,7 @@ fun AmitySearchBarView(
     clearIconContainerSize: Dp = 20.dp,
     clearIconContainerColor: Color = AmityTheme.colors.baseShade3,
     clearIconPadding: Dp = 5.dp,
-    clearIconTint: Color = Color.White,
+    clearIconTint: Color = amityColorWhite,
     requestFocus: Boolean = false,
     onSearch: (String) -> Unit,
 ) {

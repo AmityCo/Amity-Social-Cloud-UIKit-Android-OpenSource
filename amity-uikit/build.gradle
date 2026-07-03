@@ -25,8 +25,11 @@ android {
 }
 
 dependencies {
-    api project(path: ':social')
-    api project(path: ':chat')
+    api project(path: ':social-compose')
+    api project(path: ':chat-compose')
 
     api "$amitySDKDependency:amity-sdk:$amityMessagingSdkVersion"
+    // Previously reached transitively via the v3 :social module's api deps.
+    api "$amitySDKDependency:amity-video-publisher:$amityMessagingSdkVersion"
+    api "$amitySDKDependency:amity-video-player:$amityMessagingSdkVersion"
 }

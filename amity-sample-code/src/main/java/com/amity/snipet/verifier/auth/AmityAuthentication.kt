@@ -6,8 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.core.session.AccessTokenRenewal
 import com.amity.socialcloud.sdk.model.core.session.SessionHandler
-import com.amity.socialcloud.uikit.community.detailpage.AmityCommunityPageActivity
-import com.amity.socialcloud.uikit.community.detailpage.AmityCommunityPageFragment
 import io.reactivex.rxjava3.schedulers.Schedulers
 
 

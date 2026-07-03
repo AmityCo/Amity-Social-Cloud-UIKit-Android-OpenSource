@@ -36,7 +36,7 @@ fun AmityClipExpandableText(
     mentionGetter: AmityMentionMetadataGetter = AmityMentionMetadataGetter(JsonObject()),
     mentionees: List<AmityMentionee> = emptyList(),
     boldWhenMatches: List<String> = emptyList(),
-    style: TextStyle = AmityTheme.typography.body.copy(color = Color.White),
+    style: TextStyle = AmityTheme.typography.body.copy(color = AmityTheme.colors.baseInverse),
     previewLines: Int = 8,
     intialExpand: Boolean = false,
     readMoreText: String = amitySocialString("amity_social_button_see_more"),
@@ -80,7 +80,7 @@ fun AmityClipExpandableText(
                     val start = mentionItem.getIndex()
                     val end = mentionItem.getIndex().plus(mentionItem.getLength()).inc()
                     addStyle(
-                        style = SpanStyle(Color.White),
+                        style = SpanStyle(AmityTheme.colors.baseInverse),
                         start = start,
                         end = end,
                     )
@@ -96,7 +96,7 @@ fun AmityClipExpandableText(
                 val start = mentionItem.getIndex()
                 val end = mentionItem.getIndex().plus(mentionItem.getLength()).inc()
                 addStyle(
-                    style = SpanStyle(Color.White),
+                    style = SpanStyle(AmityTheme.colors.baseInverse),
                     start = start,
                     end = end,
                 )
@@ -110,7 +110,7 @@ fun AmityClipExpandableText(
             text.extractUrls().forEach {
                 addStyle(
                     style = SpanStyle(
-                        color = Color.White
+                        color = AmityTheme.colors.baseInverse
                     ),
                     start = it.start,
                     end = it.end,
@@ -129,7 +129,7 @@ fun AmityClipExpandableText(
                     addStyle(
                         style = SpanStyle(
                             fontWeight = FontWeight.SemiBold,
-                            color = Color.White
+                            color = AmityTheme.colors.baseInverse
                         ),
                         start = match.first,
                         end = match.second,
@@ -146,7 +146,7 @@ fun AmityClipExpandableText(
             if (shouldShowSeeMore) {
                 append("...")
                 withStyle(style = SpanStyle(
-                    color = Color.White,
+                    color = AmityTheme.colors.baseInverse,
                     fontWeight = FontWeight.SemiBold
                 )) {
                     pushStringAnnotation(tag = readMoreText, annotation = readMoreText)
@@ -253,7 +253,7 @@ fun AmityExpandableTextPreview() {
         text = "www.google.com Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur neque urna, malesuada sit amet mattis sit amet, fringilla vitae eros. Phasellus tristique dolor ut nulla tincidunt sollicitudin. Sed eu bibendum nibh. Cras sed ligula nunc. Fusce mollis hendrerit erat, in tempus nisl rhoncus nec. Vivamus vel dictum lectus. Sed suscipit ante sit amet nulla hendrerit, at tincidunt odio suscipit. Nam cursus malesuada eros, et aliquet sem. Quisque ligula nunc, aliquet sit amet scelerisque eleifend, cursus ut nisl. Sed condimentum eleifend sollicitudin. Nam nec magna egestas, ullamcorper diam in, eleifend justo. Quisque aliquam elit sollicitudin, viverra ex non, ultrices erat. Morbi fermentum, turpis et accumsan ultrices, felis metus posuere sem, at feugiat mi velit quis risus.",
         mentionGetter = AmityMentionMetadataGetter(JsonObject()),
         mentionees = emptyList(),
-        style = AmityTheme.typography.body.copy(color = Color.White),
+        style = AmityTheme.typography.body.copy(color = AmityTheme.colors.baseInverse),
         onClick = {},
         seeMoreClick = {
             // Handle see more click in parent

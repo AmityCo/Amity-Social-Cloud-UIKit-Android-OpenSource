@@ -30,7 +30,7 @@ object AmityNotificationUtil {
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setStyle(
                 NotificationCompat.BigTextStyle()
-                    .bigText(data)
+                    .bigText(description)
             )
             .setAutoCancel(true)
 

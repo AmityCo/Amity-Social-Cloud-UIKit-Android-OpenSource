@@ -19,6 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import com.amity.socialcloud.uikit.common.ui.theme.amityLiveBadgeGradientEnd
+import com.amity.socialcloud.uikit.common.ui.theme.amityLiveBadgeRed
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -60,7 +62,7 @@ fun AmityCommunityLiveRoomTarget(
             )
 
             AmityStoryGradientRingElement(
-                colors = listOf(Color(0xFFFF305A), Color(0xFFFF0000)),
+                colors = listOf(amityLiveBadgeRed, amityLiveBadgeGradientEnd),
                 isIndeterminate = false,
                 modifier = Modifier
                     .fillMaxSize(),
@@ -71,7 +73,7 @@ fun AmityCommunityLiveRoomTarget(
                     .align(Alignment.BottomEnd)
                     .size(24.dp) // Total size of the badge including white border
                     .clip(CircleShape) // Clip the outer box to a circle
-                    .background(Color.White) // This provides the white border
+                    .background(AmityTheme.colors.background) // This provides the white border
                     .padding(2.dp) // Inner padding to create the white border thickness
             ) {
 
@@ -79,14 +81,14 @@ fun AmityCommunityLiveRoomTarget(
                     modifier = Modifier
                         .fillMaxSize()
                         .clip(CircleShape)
-                        .background(Color(0xFFFF305A)),
+                        .background(amityLiveBadgeRed),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.amity_ic_live_badge),
                         contentDescription = "Live Icon",
                         modifier = Modifier.size(12.dp),
-                        tint = Color.White
+                        tint = AmityTheme.colors.baseInverse
                     )
                 }
             }

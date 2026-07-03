@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.community.setting.elements
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -14,6 +15,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.community.compose.ui.components.radio.AmityFilledRadioIndicator
 
 @Composable
 fun AmityCommunitySettingRadioGroup(
@@ -22,7 +24,7 @@ fun AmityCommunitySettingRadioGroup(
     selectedKey: AmityCommunitySettingRadioDataItem,
     setSelectedKey: (AmityCommunitySettingRadioDataItem) -> Unit,
 ) {
-    LazyColumn(modifier.fillMaxWidth()) {
+    LazyColumn(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(20.dp)) {
         items(count = items.size) {
             val data = items[it]
             AmityCommunitySettingRadioGroupItem(
@@ -56,14 +58,11 @@ fun AmityCommunitySettingRadioGroupItem(
                 .padding(start = 16.dp)
                 .testTag(text)
         )
-        RadioButton(
+
+        AmityFilledRadioIndicator(
             modifier = modifier.testTag(text),
             selected = isSelected,
-            colors = RadioButtonDefaults.colors(
-                selectedColor = AmityTheme.colors.highlight,
-                unselectedColor = AmityTheme.colors.baseShade2,
-            ),
-            onClick = onSelected,
+            onClick = onSelected
         )
     }
 }

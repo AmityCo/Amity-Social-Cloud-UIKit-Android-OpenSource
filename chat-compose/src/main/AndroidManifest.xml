@@ -2,4 +2,125 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.amity.socialcloud.uikit.chat.compose">
 
+    <application>
+        <activity
+            android:name=".home.AmityChatHomePageActivity"
+            android:configChanges="uiMode"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+
+        <activity
+            android:name=".conversation.AmityChatPageActivity"
+            android:configChanges="uiMode"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+
+        <activity
+            android:name=".group.AmityGroupChatPageActivity"
+            android:configChanges="uiMode"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+
+        <activity
+            android:name=".create.AmityChannelCreateConversationPageActivity"
+            android:configChanges="uiMode"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+
+        <activity
+            android:name=".create.AmityCreateGroupChatPageActivity"
+            android:configChanges="uiMode"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+
+        <activity
+            android:name=".setting.AmityGroupSettingPageActivity"
+            android:configChanges="uiMode"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+
+        <activity
+            android:name=".setting.AmityGroupMemberListPageActivity"
+            android:configChanges="uiMode"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+
+        <activity
+            android:name=".setting.AmityAddGroupMemberPageActivity"
+            android:configChanges="uiMode"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+
+        <activity
+            android:name=".setting.AmityEditGroupProfilePageActivity"
+            android:configChanges="uiMode"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+
+        <activity
+            android:name=".search.AmitySearchChannelPageActivity"
+            android:configChanges="uiMode"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+
+        <activity
+            android:name=".archive.AmityArchivedChatPageActivity"
+            android:configChanges="uiMode"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+
+        <activity
+            android:name=".report.AmityMessageReportPageActivity"
+            android:configChanges="uiMode"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+
+        <activity
+            android:name=".notification.AmityGroupNotificationPreferencePageActivity"
+            android:configChanges="uiMode"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+
+        <activity
+            android:name=".notification.AmityEditGroupNotificationPageActivity"
+            android:configChanges="uiMode"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+
+        <activity
+            android:name=".setting.AmityBannedGroupMemberListPageActivity"
+            android:configChanges="uiMode"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+
+        <activity
+            android:name=".setting.AmityEditGroupMemberPermissionsPageActivity"
+            android:configChanges="uiMode"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+
+        <activity
+            android:name=".message.fulltext.AmityChatMessageFullTextPageActivity"
+            android:configChanges="uiMode"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
+    </application>
+
 </manifest>

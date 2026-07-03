@@ -21,6 +21,7 @@ import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.common.utils.getBackgroundColor
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 
 @Composable
 fun AmityThumbnailPreviewPage(
@@ -46,7 +47,7 @@ fun AmityThumbnailPreviewPage(
                         context.closePageWithResult(Activity.RESULT_CANCELED)
                     },
                     painter = painterResource(R.drawable.amity_ic_back),
-                    tint = Color.White,
+                    tint = AmityTheme.colors.baseInverse,
                     contentDescription = "back"
                 )
             }

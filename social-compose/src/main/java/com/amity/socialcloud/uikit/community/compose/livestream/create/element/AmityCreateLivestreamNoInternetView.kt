@@ -21,13 +21,15 @@ import com.amity.socialcloud.uikit.community.compose.R
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorGray
 
 @Composable
 fun AmityCreateLivestreamNoInternetView() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color.Black.copy(alpha = 0.5f)),
+            .background(color = amityColorBlack.copy(alpha = 0.5f)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(Modifier.weight(1f))
@@ -35,15 +37,15 @@ fun AmityCreateLivestreamNoInternetView() {
             modifier = Modifier
                 .width(40.dp)
                 .height(40.dp),
-            color = Color.White,
-            trackColor = Color.Gray,
+            color = AmityTheme.colors.baseInverse,
+            trackColor = amityColorGray,
             strokeWidth = 2.dp,
             strokeCap = StrokeCap.Round
         )
         Spacer(Modifier.height(12.dp))
         Text(
             text = amitySocialString("amity_social_label_create_livestream_no_internet_view_title"),
-            color = Color.White,
+            color = AmityTheme.colors.baseInverse,
             style = AmityTheme.typography.titleLegacy.copy(
                 fontWeight = FontWeight.SemiBold
             )
@@ -51,7 +53,7 @@ fun AmityCreateLivestreamNoInternetView() {
         Spacer(Modifier.height(4.dp))
         Text(
             text = amitySocialString("amity_social_status_create_livestream_no_internet_view_desc"),
-            color = Color.White,
+            color = AmityTheme.colors.baseInverse,
             style = AmityTheme.typography.captionLegacy.copy(
                 fontWeight = FontWeight.Normal,
                 textAlign = TextAlign.Center

@@ -1,5 +1,7 @@
 package com.amity.socialcloud.uikit.community.compose.comment.query
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -37,6 +40,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
 import com.amity.socialcloud.uikit.common.ui.elements.EXPANDABLE_TEXT_MAX_LINES
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
@@ -164,9 +168,8 @@ fun AmitySingleCommentView(
                     )
 
                     if (comment.getState() == AmityComment.State.FAILED) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.amity_ic_error),
-                            tint = AmityTheme.colors.baseShade2,
+                        Image(
+                            painter = painterResource(id = R.drawable.amity_ic_error_comment),
                             contentDescription = null,
                             modifier = Modifier
                                 .padding(8.dp)

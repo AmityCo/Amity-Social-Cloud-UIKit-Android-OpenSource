@@ -19,6 +19,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.uikit.common.compose.R
 import com.amity.socialcloud.uikit.common.localization.amityCommonString
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 
 @Composable
 fun AmityAdBadge(
@@ -29,7 +31,7 @@ fun AmityAdBadge(
         horizontalArrangement = Arrangement.spacedBy(2.dp),
         modifier = modifier
             .background(
-                color = Color(0x80636878),
+                color = AmityTheme.colors.baseShade1.copy(alpha = 0.5f),
                 shape = RoundedCornerShape(size = 20.dp)
             )
             .height(18.dp)
@@ -38,14 +40,14 @@ fun AmityAdBadge(
         Icon(
             painter = painterResource(id = R.drawable.amity_ic_sponsor_badge),
             contentDescription = null,
-            tint = Color.White,
+            tint = amityColorWhite,
         )
         Text(
             text = amityCommonString("amity_common_ad_sponsored"),
             style = TextStyle(
                 fontSize = 11.sp,
                 lineHeight = 18.sp,
-                color = Color.White,
+                color = amityColorWhite,
             )
         )
     }

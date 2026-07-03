@@ -17,6 +17,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.compose.R
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 
 @Composable
 fun AmityMenuButton(
@@ -24,8 +26,8 @@ fun AmityMenuButton(
     icon: Int = R.drawable.amity_ic_close,
     size: Dp = 20.dp,
     iconPadding: Dp = 0.dp,
-    tint: Color = Color.White,
-    background: Color = Color.Black.copy(alpha = 0.5f),
+    tint: Color = amityColorWhite,
+    background: Color = amityColorBlack.copy(alpha = 0.5f),
     onClick: () -> Unit = {}
 ) {
     Box(

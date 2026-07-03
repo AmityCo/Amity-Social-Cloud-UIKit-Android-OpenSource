@@ -8,17 +8,15 @@ pluginManagement {
 
 include ':amity-uikit'
 rootProject.name = 'SocialPlusUIKit'
-include ':chat'
 include ':sample'
 include ':common'
-include ':social'
 include ':social-compose'
 include ':amity-sample-code'
 include ':chat-compose'
 include ':common-compose'
 
 // Include Amity Social Cloud SDK modules
-//includeBuild('../Amity-Social-Cloud-SDK-Android') {
+includeBuild('../Amity-Social-Cloud-SDK-Android') {
 //    dependencySubstitution {
 //        substitute module('co.amity.android:amity-stream-api') using project(':amity-stream-api')
 //        substitute module('co.amity.android:amity-video-player') using project(':amity-video-player')
@@ -35,5 +33,5 @@ include ':common-compose'
 //        substitute module('co.amity.android:amity-rxremotemediator') using project(':amity-rxremotemediator')
 //        substitute module('co.amity.android:amity-rxupload') using project(':amity-rxupload')
 //    }
-//}
+}
 

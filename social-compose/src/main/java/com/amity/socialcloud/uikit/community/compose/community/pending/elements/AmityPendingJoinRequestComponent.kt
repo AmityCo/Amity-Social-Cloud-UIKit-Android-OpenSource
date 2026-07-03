@@ -43,6 +43,7 @@ import com.amity.socialcloud.uikit.common.utils.shimmerBackground
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialConfigString
 import com.amity.socialcloud.uikit.common.compose.R
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
 @Composable
 fun AmityPendingJoinRequestComponent(
@@ -139,7 +140,7 @@ fun AmityPendingJoinRequestComponent(
                         ) {
                             Button(
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = AmityTheme.colors.highlight,
+                                    containerColor = AmityTheme.colors.primary,
                                 ),
                                 shape = RoundedCornerShape(8.dp),
                                 contentPadding = PaddingValues(
@@ -156,7 +157,7 @@ fun AmityPendingJoinRequestComponent(
                                 Text(
                                     text = amitySocialConfigString("amity_social_button_accept_button"),
                                     style = AmityTheme.typography.captionLegacy.copy(
-                                        color = AmityTheme.colors.background,
+                                        color = amityColorWhite,
                                     ),
                                 )
                             }

@@ -179,7 +179,7 @@ fun AmityProductWebViewComponent(
                             containerColor = Color(0xFF1054DE)
                         )
                     ) {
-                        Text(text = amitySocialString("amity_social_label_open_in_browser"), color = Color.White)
+                        Text(text = amitySocialString("amity_social_label_open_in_browser"), color = AmityTheme.colors.baseInverse)
                     }
                 }
             }
