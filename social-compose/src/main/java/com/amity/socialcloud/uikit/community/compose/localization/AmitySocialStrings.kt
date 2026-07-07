@@ -120,6 +120,8 @@ object AmitySocialStrings {
         "amity_social_button_member_removed" to R.string.amity_social_button_member_removed,
         "amity_social_toast_member_remove_failed" to R.string.amity_social_toast_member_remove_failed,
         "amity_social_toast_member_remove_in_progress" to R.string.amity_social_toast_member_remove_in_progress,
+        "amity_social_toast_member_promote_in_progress" to R.string.amity_social_toast_member_promote_in_progress,
+        "amity_social_toast_member_demote_in_progress" to R.string.amity_social_toast_member_demote_in_progress,
         "amity_social_toast_member_ban_failed" to R.string.amity_social_toast_member_ban_failed,
         "amity_social_toast_member_unban_failed" to R.string.amity_social_toast_member_unban_failed,
         "amity_social_button_member_reported" to R.string.amity_social_button_member_reported,

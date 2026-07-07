@@ -349,7 +349,7 @@ fun AmityPostMediaPreviewDialog(
                     }
 
                     Text(
-                        text = "${pagerState.currentPage + 1} / ${childPosts.size + 1}",
+                        text = "${pagerState.currentPage + 1} / ${childPosts.size}",
                         style = AmityTheme.typography.titleLegacy.copy(
                             fontWeight = FontWeight.Normal,
                             color = amityColorWhite

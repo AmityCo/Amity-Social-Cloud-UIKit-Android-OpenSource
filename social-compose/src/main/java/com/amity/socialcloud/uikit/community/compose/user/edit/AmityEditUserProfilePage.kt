@@ -8,14 +8,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -38,7 +37,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.coerceAtMost
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
@@ -51,9 +49,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityTextField
 import com.amity.socialcloud.uikit.common.ui.elements.AmityToolBar
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.closePage
-import com.amity.socialcloud.uikit.common.utils.getKeyboardHeight
 import com.amity.socialcloud.uikit.common.utils.getText
-import com.amity.socialcloud.uikit.common.utils.isKeyboardVisible
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.community.compose.user.edit.elements.AmityEditUserAvatar
@@ -94,10 +90,6 @@ fun AmityEditUserProfilePage(
         }
     }
 
-    val isKeyboardOpen by isKeyboardVisible()
-    val keyboardHeight by getKeyboardHeight()
-    val systemBarPadding = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()
-
     val shouldAllowDisplayNameEditing by remember {
         AmityCoreClient.getCoreUserSettings()
             .map {
@@ -108,16 +100,6 @@ fun AmityEditUserProfilePage(
                 emit(false)
             }
     }.collectAsState(false)
-
-    val saveButtonBarBottomOffset by remember(systemBarPadding) {
-        derivedStateOf {
-            if (isKeyboardOpen) {
-                2.dp.minus(keyboardHeight).plus(systemBarPadding).coerceAtMost(0.dp)
-            } else {
-                0.dp
-            }
-        }
-    }
 
     var shouldDisabledClicking by remember { mutableStateOf(false) }
     var showUnsavedDialog by remember { mutableStateOf(false) }
@@ -270,7 +252,8 @@ fun AmityEditUserProfilePage(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .background(AmityTheme.colors.background)
-                    .offset(y = saveButtonBarBottomOffset)
+                    .navigationBarsPadding()
+                    .imePadding()
             ) {
                 HorizontalDivider(
                     color = AmityTheme.colors.divider,

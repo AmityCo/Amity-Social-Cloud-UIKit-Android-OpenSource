@@ -53,7 +53,7 @@ class AmityCommunityMembershipPageViewModel(val communityId: String) : AmityBase
     }
 
     fun setModeratorListState(state: MembershipListState) {
-        _memberListState.value = state
+        _moderatorListState.value = state
     }
 
     fun searchMembers(keyword: String): Flow<PagingData<AmityCommunityMember>> {
@@ -142,6 +142,7 @@ class AmityCommunityMembershipPageViewModel(val communityId: String) : AmityBase
 
     fun promoteModerator(
         userId: String,
+        onPromotingStarted: () -> Unit = {},
         onSuccess: () -> Unit,
         onError: (AmityError) -> Unit
     ) {
@@ -157,7 +158,17 @@ class AmityCommunityMembershipPageViewModel(val communityId: String) : AmityBase
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnComplete {
-                onSuccess()
+                // Match add/remove member: show "Promoting…" immediately, wait for the
+                // backend to reindex the role change, then refresh the paged member and
+                // moderator lists and surface the success toast.
+                onPromotingStarted()
+                viewModelScope.launch {
+                    delay(MEMBER_MUTATION_REFRESH_DELAY_MS)
+                    _triggerPagingRefresh.value = true
+                    delay(200)
+                    _triggerPagingRefresh.value = false
+                    onSuccess()
+                }
             }
             .doOnError {
                 onError(AmityError.from(it))
@@ -167,6 +178,7 @@ class AmityCommunityMembershipPageViewModel(val communityId: String) : AmityBase
 
     fun demoteModerator(
         userId: String,
+        onDemotingStarted: () -> Unit = {},
         onSuccess: () -> Unit,
         onError: (AmityError) -> Unit
     ) {
@@ -182,7 +194,17 @@ class AmityCommunityMembershipPageViewModel(val communityId: String) : AmityBase
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnComplete {
-                onSuccess()
+                // Match add/remove member: show "Demoting…" immediately, wait for the
+                // backend to reindex the role change, then refresh the paged member and
+                // moderator lists and surface the success toast.
+                onDemotingStarted()
+                viewModelScope.launch {
+                    delay(MEMBER_MUTATION_REFRESH_DELAY_MS)
+                    _triggerPagingRefresh.value = true
+                    delay(200)
+                    _triggerPagingRefresh.value = false
+                    onSuccess()
+                }
             }
             .doOnError {
                 onError(AmityError.from(it))

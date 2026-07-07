@@ -446,7 +446,8 @@ fun AmitySelectedMediaElement(
             )
         }
         val isExistingMedia = isEditMode && media.id != null && media.id == media.uploadId
-        if (!isExistingMedia && media.uploadState == AmityFileUploadState.COMPLETE && media.uploadId != null) {
+        // Alt text is only supported for image attachments, not videos or clips.
+        if (media.type == AmityPostMedia.Type.IMAGE && !isExistingMedia && media.uploadState == AmityFileUploadState.COMPLETE && media.uploadId != null) {
             Row(
                 modifier = Modifier
                     .align(Alignment.BottomStart)

@@ -42,8 +42,10 @@ fun AmityCommunityMembershipSheet(
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val sheetUIState by viewModel.sheetUIState.collectAsState()
 
+    val demoteInProgressStr = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_member_demote_in_progress")
     val demoteSuccessStr = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_member_demote_success_toast")
     val demoteFailedStr = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_user_demoted_failed")
+    val promoteInProgressStr = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_member_promote_in_progress")
     val promoteSuccessStr = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_member_promoted")
     val promoteFailedStr = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_member_promote_failed")
     val unreportedStr = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_member_unreported")
@@ -95,13 +97,20 @@ fun AmityCommunityMembershipSheet(
 
                                     viewModel.demoteModerator(
                                         userId = member.getUserId(),
+                                        onDemotingStarted = {
+                                            // Surfaces the "Demoting…" progress snackbar while we
+                                            // wait for the backend to reindex the role change.
+                                            pageScope?.showProgressSnackbar(demoteInProgressStr)
+                                        },
                                         onSuccess = {
+                                            pageScope?.dismissSnackbar()
                                             pageScope?.showSnackbar(
                                                 message = demoteSuccessStr,
                                                 drawableRes = R.drawable.amity_ic_snack_bar_success,
                                             )
                                         },
                                         onError = {
+                                            pageScope?.dismissSnackbar()
                                             pageScope?.showSnackbar(
                                                 message = demoteFailedStr,
                                                 drawableRes = R.drawable.amity_ic_snack_bar_warning,
@@ -121,13 +130,20 @@ fun AmityCommunityMembershipSheet(
 
                                     viewModel.promoteModerator(
                                         userId = member.getUserId(),
+                                        onPromotingStarted = {
+                                            // Surfaces the "Promoting…" progress snackbar while we
+                                            // wait for the backend to reindex the role change.
+                                            pageScope?.showProgressSnackbar(promoteInProgressStr)
+                                        },
                                         onSuccess = {
+                                            pageScope?.dismissSnackbar()
                                             pageScope?.showSnackbar(
                                                 message = promoteSuccessStr,
                                                 drawableRes = R.drawable.amity_ic_snack_bar_success,
                                             )
                                         },
                                         onError = {
+                                            pageScope?.dismissSnackbar()
                                             pageScope?.showSnackbar(
                                                 message = promoteFailedStr,
                                                 drawableRes = R.drawable.amity_ic_snack_bar_warning,

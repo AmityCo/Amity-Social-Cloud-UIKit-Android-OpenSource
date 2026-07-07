@@ -982,6 +982,8 @@
     <string name="amity_social_toast_member_promote_success_toast">Successfully promoted to moderator!</string>
     <string name="amity_social_toast_member_remove_failed">Failed to remove member. Please try again.</string>
     <string name="amity_social_toast_member_remove_in_progress">Removing member…</string>
+    <string name="amity_social_toast_member_promote_in_progress">Promoting to moderator…</string>
+    <string name="amity_social_toast_member_demote_in_progress">Demoting to member…</string>
     <string name="amity_social_toast_user_report_failed">Failed to report user. Please try again.</string>
     <string name="amity_social_toast_member_reported_toast">Member reported.</string>
     <string name="amity_social_toast_member_unban_failed">Failed to unban member. Please try again.</string>
