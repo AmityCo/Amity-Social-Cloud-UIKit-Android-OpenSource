@@ -233,7 +233,6 @@ fun LoadingToast() {
                                     )
                                 )
                             }
-
                         }
                     }
                 }
