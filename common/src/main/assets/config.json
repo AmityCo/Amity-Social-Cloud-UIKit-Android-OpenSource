@@ -701,6 +701,8 @@
         "light": {
           "primary_color": "#1054DE",
           "secondary_color": "#292B32",
+          "secondary_shade3_color": "#40434E",
+          "secondary_shade4_color": "#292B32",
           "base_color": "#EBECEF",
           "base_shade1_color": "#A5A9B5",
           "base_shade2_color": "#6E7487",
@@ -714,6 +716,8 @@
         "dark": {
           "primary_color": "#1054DE",
           "secondary_color": "#292B32",
+          "secondary_shade3_color": "#40434E",
+          "secondary_shade4_color": "#292B32",
           "base_color": "#EBECEF",
           "base_shade1_color": "#A5A9B5",
           "base_shade2_color": "#6E7487",
@@ -731,6 +735,8 @@
         "light": {
           "primary_color": "#1054DE",
           "base_color": "#ebecef",
+          "secondary_shade3_color": "#40434E",
+          "secondary_shade4_color": "#292B32",
           "base_shade1_color": "#a5a9b5",
           "base_shade2_color": "#6e7487",
           "base_shade3_color": "#40434E",
@@ -743,6 +749,8 @@
         "dark": {
           "primary_color": "#1054DE",
           "base_color": "#EBECEF",
+          "secondary_shade3_color": "#40434E",
+          "secondary_shade4_color": "#292B32",
           "base_shade1_color": "#A5A9B5",
           "base_shade2_color": "#6E7487",
           "base_shade3_color": "#40434E",
@@ -759,6 +767,8 @@
         "light": {
           "primary_color": "#1054DE",
           "base_color": "#ebecef",
+          "secondary_shade3_color": "#40434E",
+          "secondary_shade4_color": "#292B32",
           "base_shade1_color": "#a5a9b5",
           "base_shade2_color": "#6e7487",
           "base_shade3_color": "#40434E",
@@ -771,6 +781,8 @@
         "dark": {
           "primary_color": "#1054DE",
           "base_color": "#EBECEF",
+          "secondary_shade3_color": "#40434E",
+          "secondary_shade4_color": "#292B32",
           "base_shade1_color": "#A5A9B5",
           "base_shade2_color": "#6E7487",
           "base_shade3_color": "#40434E",
@@ -784,22 +796,72 @@
     },
     "live_stream_page/*/livestream_pinned_product": {
       "image": "closeCircleButton",
-      "secondary_color": "#292B32",
-      "base_shade1_color": "#a5a9b5",
-      "base_shade2_color": "#6e7487",
-      "base_shade4_color": "#292b32"
+      "theme": {
+        "light": {
+          "primary_color": "#1054DE",
+          "base_color": "#ebecef",
+          "secondary_shade2_color": "#898E9E",
+          "secondary_shade3_color": "#40434E",
+          "base_shade1_color": "#a5a9b5",
+          "base_shade2_color": "#6e7487",
+          "base_shade4_color": "#292b32",
+          "background_color": "#ffffff",
+          "base_inverse_color": "#ffffff",
+          "background_shade1_color": "#40434E"
+        },
+        "dark": {
+          "primary_color": "#1054DE",
+          "base_color": "#EBECEF",
+          "secondary_shade2_color": "#898E9E",
+          "secondary_shade3_color": "#40434E",
+          "base_shade1_color": "#A5A9B5",
+          "base_shade2_color": "#6E7487",
+          "base_shade4_color": "#292B32",
+          "background_color": "#ffffff",
+          "base_inverse_color": "#FFFFFF",
+          "background_shade1_color": "#40434E"
+        }
+      }
     },
     "create_livestream_page/*/livestream_pinned_product": {
       "image": "closeCircleButton",
-      "secondary_color": "#292B32",
-      "base_shade1_color": "#a5a9b5",
-      "base_shade2_color": "#6e7487",
-      "base_shade4_color": "#292b32"
+      "theme": {
+        "light": {
+          "primary_color": "#1054DE",
+          "base_color": "#ebecef",
+          "secondary_color": "#292B32",
+          "secondary_shade2_color": "#898E9E",
+          "secondary_shade3_color": "#40434E",
+          "secondary_shade4_color": "#292B32",
+          "base_shade1_color": "#a5a9b5",
+          "base_shade2_color": "#6e7487",
+          "base_shade4_color": "#292b32",
+          "background_color": "#ffffff",
+          "base_inverse_color": "#ffffff",
+          "background_shade1_color": "#40434E"
+        },
+        "dark": {
+          "primary_color": "#1054DE",
+          "base_color": "#EBECEF",
+          "secondary_color": "#292B32",
+          "secondary_shade2_color": "#898E9E",
+          "secondary_shade3_color": "#40434E",
+          "secondary_shade4_color": "#292B32",
+          "base_shade1_color": "#A5A9B5",
+          "base_shade2_color": "#6E7487",
+          "base_shade4_color": "#292B32",
+          "background_color": "#ffffff",
+          "base_inverse_color": "#FFFFFF",
+          "background_shade1_color": "#40434E"
+        }
+      }
     },
     "create_livestream_page/manage_product_tag_list/*": {
       "theme": {
         "light": {
           "primary_color": "#1054DE",
+          "secondary_shade3_color": "#40434E",
+          "secondary_shade4_color": "#292B32",
           "base_color": "#ebecef",
           "base_shade1_color": "#a5a9b5",
           "base_shade2_color": "#6e7487",
@@ -812,6 +874,8 @@
         },
         "dark": {
           "primary_color": "#1054DE",
+          "secondary_shade3_color": "#40434E",
+          "secondary_shade4_color": "#292B32",
           "base_color": "#EBECEF",
           "base_shade1_color": "#A5A9B5",
           "base_shade2_color": "#6E7487",
@@ -828,6 +892,8 @@
       "theme": {
         "light": {
           "primary_color": "#1054DE",
+          "secondary_shade3_color": "#40434E",
+          "secondary_shade4_color": "#292B32",
           "base_color": "#ebecef",
           "base_shade1_color": "#a5a9b5",
           "base_shade2_color": "#6e7487",
@@ -840,6 +906,8 @@
         },
         "dark": {
           "primary_color": "#1054DE",
+          "secondary_shade3_color": "#40434E",
+          "secondary_shade4_color": "#292B32",
           "base_color": "#EBECEF",
           "base_shade1_color": "#A5A9B5",
           "base_shade2_color": "#6E7487",
@@ -856,6 +924,8 @@
       "theme": {
         "light": {
           "primary_color": "#1054DE",
+          "secondary_shade3_color": "#40434E",
+          "secondary_shade4_color": "#292B32",
           "base_color": "#ebecef",
           "base_shade1_color": "#a5a9b5",
           "base_shade2_color": "#6e7487",
@@ -868,6 +938,8 @@
         },
         "dark": {
           "primary_color": "#1054DE",
+          "secondary_shade3_color": "#40434E",
+          "secondary_shade4_color": "#292B32",
           "base_color": "#EBECEF",
           "base_shade1_color": "#A5A9B5",
           "base_shade2_color": "#6E7487",
@@ -884,6 +956,8 @@
       "theme": {
         "light": {
           "primary_color": "#1054DE",
+          "secondary_shade3_color": "#40434E",
+          "secondary_shade4_color": "#292B32",
           "base_color": "#ebecef",
           "base_shade1_color": "#a5a9b5",
           "base_shade2_color": "#6e7487",
@@ -896,6 +970,8 @@
         },
         "dark": {
           "primary_color": "#1054DE",
+          "secondary_shade3_color": "#40434E",
+          "secondary_shade4_color": "#292B32",
           "base_color": "#EBECEF",
           "base_shade1_color": "#A5A9B5",
           "base_shade2_color": "#6E7487",

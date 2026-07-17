@@ -276,9 +276,32 @@ fun AmityCreateRoomPage(
     var showProductWebViewBottomSheet by remember { mutableStateOf<AmityProduct?>(null) }
     var isReadOnly by remember { mutableStateOf(false) }
     var isStarting by remember { mutableStateOf(false) }
-    val pinnedProduct = uiState.getRoomPost()?.getPinnedProduct()
-    val pinnedProductId = uiState.getRoomPost()?.getPinnedProductId() ?: uiState.pinnedProductId
-    val taggedProducts = uiState.getRoomPost()?.getProducts() ?: uiState.taggedProducts.orEmpty()
+    // Product management uses the server post as source of truth only once the
+    // room is live; before that (fresh create OR an existing post opened from an
+    // event page) products are staged in local state. Keying reads on isLive keeps
+    // them consistent with the write path in the view model, which branches the
+    // same way. Reading getRoomPost() unconditionally hid staged products whenever
+    // a post already existed (the from-event case).
+    val taggedProducts = if (uiState.isLive) {
+        uiState.getRoomPost()?.getProducts().orEmpty()
+    } else {
+        uiState.taggedProducts.orEmpty()
+    }
+    val pinnedProductId = if (uiState.isLive) {
+        uiState.getRoomPost()?.getPinnedProductId() ?: uiState.pinnedProductId
+    } else {
+        uiState.pinnedProductId
+    }
+    val pinnedProduct = if (uiState.isLive) {
+        uiState.getRoomPost()?.getPinnedProduct()
+    } else {
+        pinnedProductId?.let { id -> taggedProducts.firstOrNull { it.getProductId() == id } }
+    }
+    val taggedProductsCount = if (uiState.isLive) {
+        uiState.getRoomPost()?.getProductTags()?.size ?: 0
+    } else {
+        uiState.taggedProducts?.size ?: 0
+    }
 
     val cameraAndAudioPermissions = arrayOf(
         Manifest.permission.CAMERA,
@@ -1201,7 +1224,7 @@ fun AmityCreateRoomPage(
                                 if (targetType == AmityPost.TargetType.COMMUNITY) {
                                     if (uiState.isProductCatalogueEnabled) {
                                         AmityProductTaggingButton(
-                                            taggedProductsCount = uiState.getRoomPost()?.getProductTags()?.size ?: uiState.taggedProducts?.size ?: 0,
+                                            taggedProductsCount = taggedProductsCount,
                                             onClick = { showManageProductTagBottomSheet = true },
                                             componentScope = getComponentScope()
                                         )
@@ -1287,7 +1310,7 @@ fun AmityCreateRoomPage(
                             ) {
                                 if (targetType == AmityPost.TargetType.COMMUNITY && uiState.isProductCatalogueEnabled) {
                                     AmityProductTaggingButton(
-                                        taggedProductsCount = uiState.getRoomPost()?.getProductTags()?.size ?: uiState.taggedProducts?.size ?: 0,
+                                        taggedProductsCount = taggedProductsCount,
                                         onClick = { showManageProductTagBottomSheet = true },
                                         componentScope = getComponentScope()
                                     )
@@ -1478,7 +1501,7 @@ fun AmityCreateRoomPage(
                                     }
                                 } else { null },
                                 canManageProducts = isTargetCommunity,
-                                taggedProductsCount = (uiState.getRoomPost()?.getProductTags()?.size)  ?: uiState.taggedProducts?.size ?: 0,
+                                taggedProductsCount = taggedProductsCount,
                                 onTaggedProductClick = {
                                     viewModel.fetchProductCatalogueSettings(
                                         onEnabledAction = {
@@ -1908,8 +1931,6 @@ fun AmityCreateRoomPage(
         }
 
         if (showAddProductBottomSheet) {
-            val roomTaggedProduct = uiState.getRoomPost()?.getProducts()
-            val taggedProduct = roomTaggedProduct ?: (uiState.taggedProducts)
             AmityAddProductBottomSheet(
                 pageScope = getPageScope(),
                 onDismiss = {
@@ -1919,7 +1940,7 @@ fun AmityCreateRoomPage(
                     showAddProductBottomSheet = false
                     viewModel.addTaggedProducts(it)
                 },
-                taggedProduct = taggedProduct.orEmpty(),
+                taggedProduct = taggedProducts,
                 isNetworkConnected = uiState.networkConnection is NetworkConnectionEvent.Connected,
                 requestFocus = true,
             )

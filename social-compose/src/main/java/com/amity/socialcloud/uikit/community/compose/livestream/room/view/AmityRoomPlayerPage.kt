@@ -36,6 +36,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -128,6 +131,7 @@ import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.post.detail.elements.VideoSeekBar
 import com.amity.socialcloud.uikit.community.compose.livestream.chat.AmityLivestreamMessageComposeBar
 import com.amity.socialcloud.uikit.community.compose.livestream.chat.ChatOverlay
 import com.amity.socialcloud.uikit.community.compose.livestream.chat.FloatingReaction
@@ -256,6 +260,25 @@ fun AmityRoomPlayerPage(
     var showPinnedProductOverlay by remember { mutableStateOf(false) }
     var showAddProductBottomSheet by remember { mutableStateOf(false) }
     var isVideoReady by remember { mutableStateOf(false) }
+    // Playback controls, shown on tap. Live shows only play/pause; recorded shows
+    // the same controls as a video post (play/pause, ±10s skip, seek bar).
+    var isLivePlaying by remember { mutableStateOf(true) }
+    // True while the player is (re)buffering — e.g. catching up to the live edge
+    // after a resume — so we can show a loading spinner instead of the play button.
+    var isLiveBuffering by remember { mutableStateOf(false) }
+    var showLiveControls by remember { mutableStateOf(false) }
+    var livePlayer by remember { mutableStateOf<ExoPlayer?>(null) }
+    // Bumped on every control interaction to restart the auto-hide countdown.
+    var controlsInteraction by remember { mutableStateOf(0) }
+
+    // Auto-hide the controls after 1s of no interaction while playing. When paused
+    // the play button stays visible (it can still be dismissed by tapping the video).
+    LaunchedEffect(showLiveControls, isLivePlaying, controlsInteraction) {
+        if (showLiveControls && isLivePlaying) {
+            delay(1_000)
+            showLiveControls = false
+        }
+    }
     var showProductTaggingDisabledDialog by remember { mutableStateOf(false) } // during live
     val liveKitRoomState by remember(uiState.liveKitRoom) {
         uiState.liveKitRoom?.let {
@@ -408,6 +431,37 @@ fun AmityRoomPlayerPage(
         }
     )
 
+    // Returning from background recreates the player's surface, which otherwise
+    // leaves a black frame (a paused player pushes no new frame, and a live
+    // stream's buffered position has expired). Re-sync on resume so the video
+    // comes back, preserving the play/pause state via playWhenReady.
+    DisposableEffectWithLifeCycle(
+        onResume = {
+            livePlayer?.let { player ->
+                if (uiState.room?.getStatus() == AmityRoomStatus.LIVE) {
+                    // While backgrounded the buffered live window expires and the surface
+                    // is recreated. Reload the live source with a position reset so it
+                    // always starts fresh at the current live edge — seeking the stale
+                    // timeline instead would hit a behind-live-window error (black frame,
+                    // dead play button). Works the same whether paused or playing; the
+                    // loading spinner shows briefly, then playWhenReady resumes/holds.
+                    val liveUrl = uiState.room?.getLivePlaybackUrl()
+                    if (!liveUrl.isNullOrBlank()) {
+                        player.setMediaSource(getMediaSource(listOf(liveUrl)), true)
+                        player.prepare()
+                    }
+                } else {
+                    // Recorded: position is still valid — re-render the current frame on
+                    // the recreated surface (re-prepare only if it errored / went idle).
+                    if (player.playbackState == Player.STATE_IDLE) {
+                        player.prepare()
+                    }
+                    player.seekTo(player.currentPosition)
+                }
+            }
+        }
+    )
+
     val connection by viewModel
         .getNetworkConnectionStateFlow()
         .collectAsState(initial = NetworkConnectionEvent.Connected)
@@ -557,6 +611,7 @@ fun AmityRoomPlayerPage(
                                     emptyList()
                                 }
                             val mediaSource = getMediaSource(urls)
+                            val isRecorded = uiState.room?.getStatus() == AmityRoomStatus.RECORDED
                             AndroidView(
                                 modifier = Modifier
                                     .fillMaxSize()
@@ -564,6 +619,8 @@ fun AmityRoomPlayerPage(
                                 factory = { context: Context ->
                                     val exoPlayer = ExoPlayer
                                         .Builder(context)
+                                        .setSeekBackIncrementMs(10_000)
+                                        .setSeekForwardIncrementMs(10_000)
                                         .build()
                                         .apply {
                                             setMediaSource(mediaSource)
@@ -573,6 +630,7 @@ fun AmityRoomPlayerPage(
                                             // Add listener to track play/pause state for watch minutes
                                             addListener(object : Player.Listener {
                                                 override fun onIsPlayingChanged(isPlaying: Boolean) {
+                                                    isLivePlaying = isPlaying
                                                     if (isPlaying) {
                                                         isVideoReady = true
                                                         viewModel.resumeWatchTracking()
@@ -580,17 +638,133 @@ fun AmityRoomPlayerPage(
                                                         viewModel.pauseWatchTracking()
                                                     }
                                                 }
+
+                                                override fun onPlaybackStateChanged(playbackState: Int) {
+                                                    isLiveBuffering = playbackState == Player.STATE_BUFFERING
+                                                }
                                             })
                                         }
                                     PlayerView(context).apply {
                                         player = exoPlayer
-                                        useController = true
+                                        // Both live and recorded use custom overlays
+                                        // instead of the default player controls.
+                                        useController = false
                                     }
+                                },
+                                update = { view ->
+                                    view.useController = false
+                                    livePlayer = view.player as? ExoPlayer
                                 },
                                 onRelease = { view ->
                                     (view.player as? ExoPlayer)?.release()
+                                    livePlayer = null
                                 }
                             )
+
+                            // Playback controls, revealed by tapping the video and
+                            // toggled off by tapping again. Live shows only a play/pause
+                            // button (resume seeks to the live edge). Recorded shows the
+                            // same controls as a video post: ±10s skip, play/pause, and a
+                            // seek bar with elapsed / total time.
+                            Box(
+                                modifier = Modifier
+                                    .matchParentSize()
+                                    .clickableWithoutRipple {
+                                        showLiveControls = !showLiveControls
+                                    },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                if (isLiveBuffering && !isRecorded) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(48.dp),
+                                        color = amityColorWhite,
+                                        strokeWidth = 3.dp,
+                                    )
+                                } else if (showLiveControls) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(32.dp)
+                                    ) {
+                                        if (isRecorded) {
+                                            Image(
+                                                painter = painterResource(R.drawable.amity_ic_exo_rew_10),
+                                                contentDescription = "Rewind 10 seconds",
+                                                modifier = Modifier
+                                                    .size(40.dp)
+                                                    .clickableWithoutRipple {
+                                                        livePlayer?.seekBack()
+                                                        controlsInteraction++
+                                                    }
+                                            )
+                                        }
+
+                                        Box(
+                                            modifier = Modifier.size(64.dp),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            // Spinner during the brief buffer after a skip,
+                                            // instead of the play/pause glyph. Fixed-size box
+                                            // keeps the skip buttons from shifting.
+                                            if (isLiveBuffering) {
+                                                CircularProgressIndicator(
+                                                    modifier = Modifier.size(32.dp),
+                                                    color = amityColorWhite,
+                                                    strokeWidth = 3.dp,
+                                                )
+                                            } else {
+                                                Image(
+                                                    painter = painterResource(
+                                                        if (isLivePlaying) R.drawable.amity_ic_pause
+                                                        else R.drawable.amity_ic_play_v4
+                                                    ),
+                                                    contentDescription = if (isLivePlaying) "Pause" else "Play",
+                                                    modifier = Modifier
+                                                        .fillMaxSize()
+                                                        .clickableWithoutRipple {
+                                                            val player = livePlayer
+                                                                ?: return@clickableWithoutRipple
+                                                            if (isLivePlaying) {
+                                                                player.pause()
+                                                            } else {
+                                                                // Live catches up to the edge on resume;
+                                                                // recorded resumes from its position.
+                                                                if (!isRecorded) player.seekToDefaultPosition()
+                                                                player.play()
+                                                            }
+                                                            controlsInteraction++
+                                                        },
+                                                )
+                                            }
+                                        }
+
+                                        if (isRecorded) {
+                                            Image(
+                                                painter = painterResource(R.drawable.amity_ic_exo_ffwd_10),
+                                                contentDescription = "Forward 10 seconds",
+                                                modifier = Modifier
+                                                    .size(40.dp)
+                                                    .clickableWithoutRipple {
+                                                        livePlayer?.seekForward()
+                                                        controlsInteraction++
+                                                    }
+                                            )
+                                        }
+                                    }
+
+                                    if (isRecorded) {
+                                        livePlayer?.let { player ->
+                                            VideoSeekBar(
+                                                exoPlayer = player,
+                                                modifier = Modifier
+                                                    .align(Alignment.BottomCenter)
+                                                    .fillMaxWidth()
+                                                    .navigationBarsPadding()
+                                                    .padding(horizontal = 16.dp, vertical = 16.dp)
+                                            )
+                                        }
+                                    }
+                                }
+                            }
 
                             Box(
                                 modifier = Modifier
@@ -1108,17 +1282,22 @@ fun AmityRoomPlayerPage(
                                 .width(120.dp),
                         )
                         Spacer(modifier = Modifier.height(12.dp))
-                        // Chat overlay
-                        ChatOverlay(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .fillMaxHeight(0.2f),
-                            pageScope = getPageScope(),
-                            channelId = uiState.room?.getChannelId() ?: "",
-                            streamHostUserId = uiState.hostUserId,
-                            coHostUserId = uiState.cohostUserId,
-                            onReactionClick = { showReactionPicker = true }
-                        )
+                        // Chat overlay — only render when the room has a chat channel.
+                        // Rooms without one (e.g. some event-linked rooms) would otherwise
+                        // drive joinChannel("")/getChannel("") and crash the paging collector.
+                        val chatChannelId = uiState.room?.getChannelId().orEmpty()
+                        if (chatChannelId.isNotBlank()) {
+                            ChatOverlay(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .fillMaxHeight(0.5f),
+                                pageScope = getPageScope(),
+                                channelId = chatChannelId,
+                                streamHostUserId = uiState.hostUserId,
+                                coHostUserId = uiState.cohostUserId,
+                                onReactionClick = { showReactionPicker = true }
+                            )
+                        }
 
                         val pinnedProduct = uiState.getRoomPost()?.getPinnedProduct()
                         val canManageProducts = remember(uiState.cohostUserId, uiState.room) {
@@ -1176,7 +1355,7 @@ fun AmityRoomPlayerPage(
                                 messageText = ""
                             },
                             onReactionClick = {
-                                (AmityMessageReactions.getList().getOrNull(1)
+                                (AmityMessageReactions.getList().getOrNull(0)
                                     ?: AmityMessageReactions.getList().firstOrNull())
                                     ?.let { defaultReaction ->
                                         floatingReactions.add(
@@ -1743,19 +1922,19 @@ fun CommunityRoomPlayerHeader(
                 is AmityPost.Target.COMMUNITY -> {
                     AmityCommunityAvatarView(
                         community = target.getCommunity(),
-                        size = 32.dp,
+                        size = 40.dp,
                     )
                 }
                 is AmityPost.Target.USER -> {
                     AmityUserAvatarView(
                         user = target.getUser(),
-                        size = 32.dp,
+                        size = 40.dp,
                     )
                 }
                 else -> {
                     AmityAvatarView(
                         image = null,
-                        size = 32.dp,
+                        size = 40.dp,
                         iconPadding = 24.dp,
                         placeholder = R.drawable.amity_ic_community_placeholder,
                     )
@@ -1779,7 +1958,7 @@ fun CommunityRoomPlayerHeader(
                                     tint = AmityTheme.colors.baseShade2,
                                     contentDescription = "Private Community",
                                     modifier = Modifier
-                                        .size(12.dp)
+                                        .size(16.dp)
                                         .testTag(getAccessibilityId()),
                                 )
                             }
@@ -1787,10 +1966,8 @@ fun CommunityRoomPlayerHeader(
                         Text(
                             modifier = Modifier.weight(1f, fill = false),
                             text = target.getCommunity()?.getDisplayName() ?: DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_unknown_community"),
-                            style = AmityTheme.typography.body.copy(
-                                fontSize = 16.sp,
+                            style = AmityTheme.typography.bodyBold.copy(
                                 color = AmityTheme.colors.baseInverse,
-                                fontWeight = FontWeight.SemiBold,
                             ),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
@@ -1801,7 +1978,7 @@ fun CommunityRoomPlayerHeader(
                                     painter = painterResource(id = getConfig().getIcon()),
                                     contentDescription = "Verified Community",
                                     modifier = Modifier
-                                        .size(12.dp)
+                                        .size(16.dp)
                                         .testTag(getAccessibilityId()),
                                 )
                             }
@@ -1828,7 +2005,7 @@ fun CommunityRoomPlayerHeader(
                             Image(
                                 painter = painterResource(id = R.drawable.amity_ic_brand_badge),
                                 contentDescription = "Brand badge",
-                                modifier = Modifier.size(12.dp)
+                                modifier = Modifier.size(16.dp)
                             )
                         }
                     }
@@ -1840,7 +2017,7 @@ fun CommunityRoomPlayerHeader(
                         Text(
                             modifier = Modifier.weight(1f, fill = false),
                             text = target.getUser()?.getDisplayName() ?: DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_unknown_user"),
-                            style = AmityTheme.typography.body.copy(
+                            style = AmityTheme.typography.bodyBold.copy(
                                 color = AmityTheme.colors.baseInverse,
                                 fontWeight = FontWeight.SemiBold,
                             ),
@@ -1853,7 +2030,7 @@ fun CommunityRoomPlayerHeader(
                             Image(
                                 painter = painterResource(id = R.drawable.amity_ic_brand_badge),
                                 contentDescription = "Brand badge",
-                                modifier = Modifier.size(12.dp)
+                                modifier = Modifier.size(16.dp)
                             )
                         }
                     }
@@ -1889,7 +2066,20 @@ fun CommunityRoomPlayerHeader(
 private fun getMediaSource(urls: List<String>): ConcatenatingMediaSource {
     val concatenatedSource = ConcatenatingMediaSource()
     urls.map { url ->
-        val mediaItem = MediaItem.fromUri(url.toUri())
+        val mediaItem = MediaItem.Builder()
+            .setUri(url.toUri())
+            // Keep live playback a few seconds behind the true edge so there is
+            // always a forward buffer. Without this the "default position" is the
+            // bleeding edge, and resuming there causes constant rebuffering/freezes.
+            // maxPlaybackSpeed lets the player gently catch up to the target offset
+            // after a pause instead of hard-seeking/stalling. (Ignored for VOD.)
+            .setLiveConfiguration(
+                MediaItem.LiveConfiguration.Builder()
+                    .setTargetOffsetMs(6_000)
+                    .setMaxPlaybackSpeed(1.04f)
+                    .build()
+            )
+            .build()
         val videoSource: MediaSource =
             HlsMediaSource.Factory(getDataSource())
                 .createMediaSource(mediaItem)

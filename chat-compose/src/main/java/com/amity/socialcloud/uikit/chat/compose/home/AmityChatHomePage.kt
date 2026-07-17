@@ -69,6 +69,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 @Composable
 fun AmityChatHomePage(
     modifier: Modifier = Modifier,
+    onBackClick: (() -> Unit)? = null,
 ) {
     val context = LocalContext.current
     val behavior = remember { AmityChatBehaviorHelper.chatHomePageBehavior }
@@ -166,6 +167,7 @@ fun AmityChatHomePage(
                 // Top navigation bar
                 AmityChatHomeTopNavigationBar(
                     isConnected = isConnected,
+                    onBackClick = onBackClick,
                     onSearchClick = { behavior.goToSearchPage(context) },
                     onCreateDirectChatClick = { behavior.goToCreateConversationPage(context) },
                     onCreateGroupChatClick = { behavior.goToCreateGroupPage(context) },
@@ -270,6 +272,7 @@ fun AmityChatHomePage(
 private fun AmityChatHomeTopNavigationBar(
     modifier: Modifier = Modifier,
     isConnected: Boolean = true,
+    onBackClick: (() -> Unit)? = null,
     onSearchClick: () -> Unit = {},
     onCreateDirectChatClick: () -> Unit = {},
     onCreateGroupChatClick: () -> Unit = {},
@@ -283,6 +286,21 @@ private fun AmityChatHomeTopNavigationBar(
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        // Optional leading back affordance so integrators hosting this page as a
+        // sub-page can navigate back without overlaying their own control on the
+        // leading-pinned title.
+        if (onBackClick != null) {
+            Icon(
+                imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_chat_back),
+                contentDescription = "Back",
+                modifier = Modifier
+                    .size(24.dp)
+                    .clickableWithoutRipple { onBackClick() },
+                tint = AmityTheme.colors.base,
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+        }
+
         if (isConnected) {
             Text(
                 text = amityChatString("chat.home.title"),

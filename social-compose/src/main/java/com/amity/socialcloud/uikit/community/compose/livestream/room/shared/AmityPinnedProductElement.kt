@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.livestream.room.shared
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -23,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -103,7 +105,7 @@ fun LivestreamPinnedProductElement(
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .background(amityColorWhite.copy(alpha = 0.5f)),
+                                .background(AmityTheme.colors.background.copy(alpha = 0.5f)),
                             contentAlignment = Alignment.Center
                         ) {}
                     }
@@ -120,9 +122,9 @@ fun LivestreamPinnedProductElement(
                         text = product.getProductName(),
                         style = AmityTheme.typography.captionBold.copy(
                             color = if (product.isDeleted()) {
-                                getConfig().getValue("base_shade1_color").asColor(AmityTheme.colors.baseShade1)
+                                AmityTheme.colors.baseShade1
                             } else {
-                                getConfig().getValue("base_shade4_color").asColor(AmityTheme.colors.baseShade4)
+                                AmityTheme.colors.baseShade4
                             },
                         ),
                         maxLines = 1,
@@ -137,8 +139,7 @@ fun LivestreamPinnedProductElement(
                             Text(
                                 text = amitySocialString("amity_social_button_unlisted"),
                                 style = AmityTheme.typography.caption.copy(
-                                    color = getConfig().getValue("base_shade2_color").asColor(AmityTheme.colors.baseShade2
-                                    )
+                                    color = AmityTheme.colors.baseShade2
                                 ),
                                 maxLines = 1
                             )
@@ -151,8 +152,7 @@ fun LivestreamPinnedProductElement(
                             Text(
                                 text = formattedPrice,
                                 style = AmityTheme.typography.caption.copy(
-                                    color = getConfig().getValue("base_shade2_color").asColor(AmityTheme.colors.baseShade2
-                                    )
+                                    color = AmityTheme.colors.baseShade2
                                 ),
                                 maxLines = 1
                             )
@@ -171,11 +171,11 @@ fun LivestreamPinnedProductElement(
                                         .clickable { onRemoveClick() },
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    Icon(
-                                        imageVector = Icons.Outlined.Delete,
+                                    Image(
+                                        painter = painterResource(R.drawable.amity_ic_delete1),
                                         contentDescription = "Delete",
                                         modifier = Modifier.size(18.dp),
-                                        tint = getConfig().getValue("secondary_color").asColor( AmityTheme.colors.secondary)
+                                        colorFilter = ColorFilter.tint(AmityTheme.colors.secondary)
                                     )
                                 }
                             } else {
@@ -184,7 +184,7 @@ fun LivestreamPinnedProductElement(
                                         .height(28.dp)
                                         .border(
                                             width = 1.dp,
-                                            color = AmityTheme.colors.secondaryShade3,
+                                            color = AmityTheme.colors.secondaryShade2,
                                             shape = RoundedCornerShape(6.dp)
                                         )
                                         .clickable { onUnpinClick() }
@@ -199,12 +199,12 @@ fun LivestreamPinnedProductElement(
                                             painter = painterResource(id = R.drawable.amity_ic_product_tagging_pin_outlined),
                                             contentDescription = "Unpin",
                                             modifier = Modifier.size(20.dp),
-                                            tint = AmityTheme.colors.base
+                                            tint = AmityTheme.colors.secondaryShade4
                                         )
                                         Text(
                                             text = amitySocialString("amity_social_button_unpin"),
                                             style = AmityTheme.typography.captionBold.copy(
-                                                color = AmityTheme.colors.base
+                                                color = AmityTheme.colors.secondaryShade4
                                             )
                                         )
                                     }

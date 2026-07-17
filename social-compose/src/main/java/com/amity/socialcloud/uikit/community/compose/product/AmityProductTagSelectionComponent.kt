@@ -564,7 +564,6 @@ private fun AmityProductSelectionPagingList(
                 enabled = itemEnabled,
                 isSavedProduct = isSaved,
                 savedProductsLabel = savedProductsLabel,
-                theme = theme,
                 placeholder = placeholder,
                 onClick = { onToggle(product) }
             )
@@ -627,7 +626,6 @@ private fun AmityProductTagSelectionElement(
     enabled: Boolean = true,
     isSavedProduct: Boolean = false,
     savedProductsLabel: String? = null,
-    theme: AmityUIKitConfig.UIKitTheme? = null,
     @DrawableRes placeholder: Int? = null,
     onClick: () -> Unit,
 ) {
@@ -637,7 +635,7 @@ private fun AmityProductTagSelectionElement(
             .fillMaxWidth()
             .alpha(if (isSavedProduct) 0.4f else 1f)
             .clip(RoundedCornerShape(12.dp))
-            .border(1.dp, theme?.baseShade4Color?.asColor() ?: AmityTheme.colors.baseShade4, RoundedCornerShape(12.dp))
+            .border(1.dp, AmityTheme.colors.baseShade4, RoundedCornerShape(12.dp))
             .clickableWithoutRipple(enabled = enabled) { onClick() }
             .padding(end = 16.dp),
     ) {
@@ -648,7 +646,7 @@ private fun AmityProductTagSelectionElement(
             modifier = Modifier
                 .size(80.dp)
                 .clip(RoundedCornerShape(topStart = 10.dp, bottomStart = 10.dp))
-                .background(theme?.baseShade4Color?.asColor() ?: AmityTheme.colors.baseShade4)
+                .background(AmityTheme.colors.baseShade4)
         ) {
             Image(
                 painter = painter,
@@ -661,7 +659,7 @@ private fun AmityProductTagSelectionElement(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(theme?.baseShade4Color?.asColor() ?: AmityTheme.colors.baseShade4)
+                        .background(AmityTheme.colors.baseShade4)
                 ) {
                     placeholder?.let {
                         Image(
@@ -688,7 +686,7 @@ private fun AmityProductTagSelectionElement(
             Text(
                 text = product.getProductName(),
                 style = AmityTheme.typography.bodyLegacy.copy(
-                    color = theme?.baseColor?.asColor() ?: AmityTheme.colors.base
+                    color = AmityTheme.colors.base
                 ),
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
@@ -697,7 +695,7 @@ private fun AmityProductTagSelectionElement(
                 Text(
                     text = savedProductsLabel,
                     style = AmityTheme.typography.caption,
-                    color = theme?.baseShade2Color?.asColor() ?: AmityTheme.colors.baseShade2,
+                    color = AmityTheme.colors.baseShade2,
                 )
             }
         }
@@ -707,7 +705,6 @@ private fun AmityProductTagSelectionElement(
         AmityCircleCheckIndicator(
             isChecked = isSelected,
             enabled = enabled,
-            theme = theme,
             onClick = onClick
         )
     }
@@ -718,14 +715,13 @@ private fun AmityCircleCheckIndicator(
     modifier: Modifier = Modifier,
     isChecked: Boolean,
     enabled: Boolean = true,
-    theme: AmityUIKitConfig.UIKitTheme? = null,
     onClick: () -> Unit,
 ) {
     val indicatorSize = 20.dp
     val strokeWidth = 4.dp
-    val checkedColor = theme?.primaryColor?.asColor() ?: AmityTheme.colors.primary
-    val uncheckedColor = theme?.baseShade3Color?.asColor() ?: AmityTheme.colors.baseShade3
-    val disabledUncheckedColor = theme?.baseShade4Color?.asColor() ?: AmityTheme.colors.baseShade4
+    val checkedColor = amityColorWhite
+    val uncheckedColor = AmityTheme.colors.baseShade3
+    val disabledUncheckedColor = AmityTheme.colors.baseShade4
 
     val ringColor = when {
         isChecked -> checkedColor
@@ -736,7 +732,7 @@ private fun AmityCircleCheckIndicator(
     if (isChecked && !enabled) {
         Icon(
             painter = painterResource(R.drawable.amity_ic_check_disabled),
-            tint = amityColorWhite,
+            tint = AmityTheme.colors.primary.copy(alpha = 0.8f),
             contentDescription = "Selected already",
         )
     } else {
@@ -748,9 +744,7 @@ private fun AmityCircleCheckIndicator(
             contentAlignment = Alignment.Center
         ) {
             Canvas(modifier = Modifier.fillMaxSize()) {
-                if (isChecked) {
-                    drawCircle(color = ringColor)
-                } else {
+                if (!isChecked) {
                     drawCircle(
                         color = ringColor,
                         style = Stroke(width = strokeWidth.toPx())
@@ -759,11 +753,18 @@ private fun AmityCircleCheckIndicator(
             }
 
             if (isChecked) {
+                Box(
+                    modifier = modifier
+                        .size(16.dp)
+                        .background(amityColorWhite, CircleShape)
+                        .clip(CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {}
                 Icon(
                     painter = painterResource(R.drawable.amity_ic_check),
                     contentDescription = "Selected",
-                    tint = amityColorWhite,
-                    modifier = Modifier.size(16.dp)
+                    tint = AmityTheme.colors.primary,
+                    modifier = Modifier.fillMaxSize()
                 )
             }
         }

@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxDefaults
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
@@ -261,19 +262,16 @@ private fun SwipeToDismissListItem(
     onSwipe: () -> Unit,
 ) {
     val dismissState = rememberSwipeToDismissBoxState(
-        confirmValueChange = { value ->
-            if (value == SwipeToDismissBoxValue.EndToStart) {
-                onSwipe()
-                false // Don't auto-remove the item; let the data refresh handle it
-            } else {
-                false
-            }
-        },
-        positionalThreshold = { totalDistance -> totalDistance * 0.4f },
+        positionalThreshold = SwipeToDismissBoxDefaults.positionalThreshold
     )
 
     SwipeToDismissBox(
         state = dismissState,
+        onDismiss = { value ->
+            if (value == SwipeToDismissBoxValue.EndToStart) {
+                onSwipe()
+            }
+        },
         enableDismissFromStartToEnd = false,
         enableDismissFromEndToStart = true,
         backgroundContent = {

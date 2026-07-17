@@ -8,6 +8,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -45,16 +49,40 @@ fun AmityAvatarFullScreenDialog(
                 .clickableWithoutRipple { onDismiss() },
             contentAlignment = Alignment.Center,
         ) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(avatarUrl)
-                    .diskCachePolicy(CachePolicy.ENABLED)
-                    .memoryCachePolicy(CachePolicy.ENABLED)
-                    .build(),
-                contentDescription = "Avatar",
-                contentScale = ContentScale.Fit,
-                modifier = Modifier.fillMaxSize(),
-            )
+            if (!avatarUrl.isNullOrBlank()) {
+                var loadFailed by remember(avatarUrl) { mutableStateOf(false) }
+                if (!loadFailed) {
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(avatarUrl)
+                            .diskCachePolicy(CachePolicy.ENABLED)
+                            .memoryCachePolicy(CachePolicy.ENABLED)
+                            .listener(onError = { _, _ -> loadFailed = true })
+                            .build(),
+                        contentDescription = "Avatar",
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                } else {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(
+                            id = R.drawable.amity_ic_chat_avatar_placeholder
+                        ),
+                        contentDescription = "Avatar",
+                        tint = Color.Unspecified,
+                        modifier = Modifier.size(120.dp),
+                    )
+                }
+            } else {
+                Icon(
+                    imageVector = ImageVector.vectorResource(
+                        id = R.drawable.amity_ic_chat_avatar_placeholder
+                    ),
+                    contentDescription = "Avatar",
+                    tint = Color.Unspecified,
+                    modifier = Modifier.size(120.dp),
+                )
+            }
 
             // Close button — top-left
             Box(

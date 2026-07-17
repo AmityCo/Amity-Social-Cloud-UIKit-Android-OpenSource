@@ -1137,7 +1137,7 @@ fun AmityCreateLivestreamPage(
                                         } else {
                                             AmityMessageReactions
                                                 .getList()
-                                                .getOrNull(1)
+                                                .getOrNull(0)
                                                 ?: AmityMessageReactions
                                                     .getList()
                                                     .firstOrNull()

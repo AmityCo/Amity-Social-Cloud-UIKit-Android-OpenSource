@@ -20,7 +20,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
@@ -42,6 +47,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -123,8 +129,8 @@ fun AmityVideoPlayerPage(
 
     val exoPlayer = remember {
         ExoPlayer.Builder(context)
-            .setSeekBackIncrementMs(15_000)
-            .setSeekForwardIncrementMs(15_000)
+            .setSeekBackIncrementMs(10_000)
+            .setSeekForwardIncrementMs(10_000)
             .setPauseAtEndOfMediaItems(true)
             .build()
     }
@@ -132,6 +138,10 @@ fun AmityVideoPlayerPage(
     var isAudioMuted by remember { mutableStateOf(false) }
     var isPlaying by remember { mutableStateOf(true) }
     var playerState by remember { mutableIntStateOf(ExoPlayer.STATE_IDLE) }
+    // Media controls are revealed by tapping the video and auto-hide while playing.
+    var showControls by remember { mutableStateOf(false) }
+    // Bumped on every control interaction to restart the auto-hide countdown.
+    var controlsInteraction by remember { mutableIntStateOf(0) }
 
     var verticalDragAmount by remember { mutableFloatStateOf(0f) }
 
@@ -231,6 +241,16 @@ fun AmityVideoPlayerPage(
         }
     }
 
+    // Auto-hide the controls after 1s of no interaction, but only while playing —
+    // when paused the controls (and play button) stay visible. Each control
+    // interaction bumps controlsInteraction, which restarts this countdown.
+    LaunchedEffect(showControls, isPlaying, controlsInteraction) {
+        if (showControls && isPlaying) {
+            delay(1_000)
+            showControls = false
+        }
+    }
+
     // Setup player listener
     DisposableEffect(exoPlayer) {
         val listener = object : Player.Listener {
@@ -316,11 +336,7 @@ fun AmityVideoPlayerPage(
                         }
                         .pointerInput(Unit) {
                             detectTapGestures {
-                                if (isPlaying) {
-                                    exoPlayer.pause()
-                                } else {
-                                    exoPlayer.play()
-                                }
+                                showControls = !showControls
                             }
                         }
                 ) { index ->
@@ -336,22 +352,78 @@ fun AmityVideoPlayerPage(
                     }
                 }
 
-                // Play/Pause button overlay
-                if (!isPlaying && playerState == ExoPlayer.STATE_READY) {
-                    Image(
-                        painter = painterResource(R.drawable.amity_ic_play_v4),
-                        contentDescription = "Play",
+                // Dim scrim behind the controls for readability.
+                if (showControls) {
+                    Box(
                         modifier = Modifier
-                            .size(56.dp)
-                            .align(Alignment.Center)
-                            .clickableWithoutRipple {
-                                exoPlayer.play()
-                            }
+                            .matchParentSize()
+                            .background(amityColorBlack.copy(alpha = 0.4f))
                     )
                 }
 
-                // Toolbar (top)
-                ConstraintLayout(
+                // Center transport controls: rewind 10s, play/pause, forward 10s.
+                // Not gated on playback state, so seeking (which briefly buffers)
+                // doesn't make the controls flicker away and back.
+                if (showControls) {
+                    Row(
+                        modifier = Modifier.align(Alignment.Center),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(32.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(R.drawable.amity_ic_exo_rew_10),
+                            contentDescription = "Rewind 10 seconds",
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clickableWithoutRipple {
+                                    exoPlayer.seekBack()
+                                    controlsInteraction++
+                                }
+                        )
+
+                        Box(
+                            modifier = Modifier.size(56.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            // Show a spinner while (re)buffering — e.g. the brief buffer
+                            // after a skip — instead of the play/pause glyph. The box keeps
+                            // a fixed size so the skip buttons don't shift.
+                            if (playerState == ExoPlayer.STATE_BUFFERING) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(28.dp),
+                                    color = amityColorWhite,
+                                    strokeWidth = 2.dp,
+                                )
+                            } else {
+                                Image(
+                                    painter = painterResource(
+                                        if (isPlaying) R.drawable.amity_ic_pause
+                                        else R.drawable.amity_ic_play_v4
+                                    ),
+                                    contentDescription = if (isPlaying) "Pause" else "Play",
+                                    modifier = Modifier.fillMaxSize().clickableWithoutRipple {
+                                        if (isPlaying) exoPlayer.pause() else exoPlayer.play()
+                                        controlsInteraction++
+                                    },
+                                )
+                            }
+                        }
+
+                        Image(
+                            painter = painterResource(R.drawable.amity_ic_exo_ffwd_10),
+                            contentDescription = "Forward 10 seconds",
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clickableWithoutRipple {
+                                    exoPlayer.seekForward()
+                                    controlsInteraction++
+                                }
+                        )
+                    }
+                }
+
+                // Toolbar (top) — shown together with the media controls.
+                if (showControls) ConstraintLayout(
                     modifier = Modifier
                         .fillMaxWidth()
                         .statusBarsPadding()
@@ -377,8 +449,8 @@ fun AmityVideoPlayerPage(
                     // Mute/Unmute button
                     Image(
                         painter = painterResource(
-                            id = if (isAudioMuted) R.drawable.amity_ic_audio_mute_outline
-                            else R.drawable.amity_ic_audio_unmute_outline
+                            id = if (isAudioMuted) R.drawable.amity_ic_audio_mute_filled
+                            else R.drawable.amity_ic_audio_unmute_filled
                         ),
                         contentDescription = "Audio Toggle",
                         modifier = Modifier
@@ -390,7 +462,9 @@ fun AmityVideoPlayerPage(
                             .clickableWithoutRipple {
                                 isAudioMuted = !isAudioMuted
                                 exoPlayer.volume = if (isAudioMuted) 0f else 1f
+                                controlsInteraction++
                             },
+                        colorFilter = ColorFilter.tint(amityColorWhite)
                     )
 
                     // Menu button (3 dots)
@@ -409,8 +483,8 @@ fun AmityVideoPlayerPage(
                     }
                 }
 
-                // Bottom section: Product tag + SeekBar
-                Column(
+                // Bottom section: Product tag + SeekBar — shown with the media controls.
+                if (showControls) Column(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .fillMaxWidth()

@@ -42,45 +42,54 @@ fun AmityProductTaggingBottomSheet(
     val productTaggingSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = skipPartiallyExpanded
     )
-    ModalBottomSheet(
-        modifier = Modifier.statusBarsPadding(),
-        onDismissRequest = onDismiss,
-        sheetState = productTaggingSheetState,
-        containerColor = AmityTheme.colors.background,
-        contentColor = AmityTheme.colors.baseInverse,
-        contentWindowInsets = { WindowInsets.navigationBars }
+    // Establish the manage_product_tag_list component theme around the sheet itself so that
+    // the ModalBottomSheet's containerColor (which paints behind the drag handle) resolves to
+    // the same background as the content. Without this the container color falls back to the
+    // caller's theme, showing a white drag-handle strip over the dark sheet.
+    AmityBaseComponent(
+        pageScope = pageScope,
+        componentId = "manage_product_tag_list",
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxHeight()
+        ModalBottomSheet(
+            modifier = Modifier.statusBarsPadding(),
+            onDismissRequest = onDismiss,
+            sheetState = productTaggingSheetState,
+            containerColor = AmityTheme.colors.background,
+            contentColor = AmityTheme.colors.baseInverse,
+            contentWindowInsets = { WindowInsets.navigationBars }
         ) {
-            AmityBaseComponent(
-                modifier = Modifier,
-                pageScope = pageScope,
-                componentId = "manage_product_tag_list",
-                needScaffold = true
+            Column(
+                modifier = Modifier
+                    .fillMaxHeight()
             ) {
-                ManageProductTagListComponent(
-                    taggedProducts = taggedProducts,
-                    pinnedProductId = pinnedProductId,
-                    onDismiss = onDismiss,
-                    onRemoveProduct = onRemoveProduct,
-                    onPinProduct = onPinProduct,
-                    componentScope = getComponentScope(),
-                    onAddProducts = onAddProducts,
-                    modifier = Modifier.fillMaxWidth(),
-                    onProductClick = onProductClick,
-                    canManageProducts = canManageProducts,
-                    isPostLive = isPostLive,
-                    onProductViewed = onProductViewed,
-                    isHost = isHost
-                )
+                AmityBaseComponent(
+                    modifier = Modifier,
+                    pageScope = pageScope,
+                    componentId = "manage_product_tag_list",
+                    needScaffold = true
+                ) {
+                    ManageProductTagListComponent(
+                        taggedProducts = taggedProducts,
+                        pinnedProductId = pinnedProductId,
+                        onDismiss = onDismiss,
+                        onRemoveProduct = onRemoveProduct,
+                        onPinProduct = onPinProduct,
+                        componentScope = getComponentScope(),
+                        onAddProducts = onAddProducts,
+                        modifier = Modifier.fillMaxWidth(),
+                        onProductClick = onProductClick,
+                        canManageProducts = canManageProducts,
+                        isPostLive = isPostLive,
+                        onProductViewed = onProductViewed,
+                        isHost = isHost
+                    )
 
-                LaunchedEffect(isNetworkConnected) {
-                    if (!isNetworkConnected) {
-                        getComponentScope().showProgressSnackbar(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_waiting_network_toast"))
-                    } else {
-                        getComponentScope().dismissSnackbar()
+                    LaunchedEffect(isNetworkConnected) {
+                        if (!isNetworkConnected) {
+                            getComponentScope().showProgressSnackbar(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_waiting_network_toast"))
+                        } else {
+                            getComponentScope().dismissSnackbar()
+                        }
                     }
                 }
             }

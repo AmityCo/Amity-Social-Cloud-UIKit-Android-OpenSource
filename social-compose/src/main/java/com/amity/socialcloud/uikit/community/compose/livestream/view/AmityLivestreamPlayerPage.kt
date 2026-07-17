@@ -433,7 +433,7 @@ fun AmityLivestreamPlayerPage(
                                     ) {
                                         behavior.handleNonMemberAction()
                                     } else {
-                                        (AmityMessageReactions.getList().getOrNull(1)
+                                        (AmityMessageReactions.getList().getOrNull(0)
                                             ?: AmityMessageReactions.getList().firstOrNull())
                                             ?.let { defaultReaction ->
                                                 floatingReactions.add(

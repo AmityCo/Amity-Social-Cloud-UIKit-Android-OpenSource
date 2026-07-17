@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.story.target.elements.AmityStoryGradientRingElement
@@ -88,7 +89,7 @@ fun AmityCommunityLiveRoomTarget(
                         painter = painterResource(id = R.drawable.amity_ic_live_badge),
                         contentDescription = "Live Icon",
                         modifier = Modifier.size(12.dp),
-                        tint = AmityTheme.colors.baseInverse
+                        tint = amityColorWhite
                     )
                 }
             }

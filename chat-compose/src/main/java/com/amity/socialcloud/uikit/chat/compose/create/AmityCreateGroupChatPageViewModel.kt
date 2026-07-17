@@ -3,7 +3,6 @@ package com.amity.socialcloud.uikit.chat.compose.create
 import android.net.Uri
 import com.amity.socialcloud.sdk.api.chat.AmityChatClient
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
-import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.file.upload.AmityUploadResult
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
@@ -58,16 +57,25 @@ class AmityCreateGroupChatPageViewModel : AmityBaseViewModel() {
 
     fun createGroup(
         displayName: String,
-        userIds: List<String>,
+        members: List<AmityUser>,
         isPublic: Boolean,
         onSuccess: (String) -> Unit,
         onError: (Throwable) -> Unit = {},
     ) {
-        if (displayName.isBlank() && userIds.isEmpty()) return
+        if (displayName.isBlank() && members.isEmpty()) return
 
         _creationState.value = CreationState.Loading
-        val name = displayName.ifBlank { userIds.joinToString() }
 
+        val name = displayName.ifBlank {
+            members.joinToString { member ->
+                member.getDisplayName()
+                    .orEmpty()
+                    .ifBlank {
+                        member.getUserId()
+                    }
+            }
+        }
+        val userIds = members.map { it.getUserId() }
         doCreateGroup(
             name = name,
             userIds = userIds,

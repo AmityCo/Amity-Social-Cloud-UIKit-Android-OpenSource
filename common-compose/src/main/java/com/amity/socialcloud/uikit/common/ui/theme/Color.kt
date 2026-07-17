@@ -159,4 +159,42 @@ data class AmityColors(
         )
     }
 
+    /**
+     * Merges an element-level [theme] on top of the currently resolved colors.
+     *
+     * Unlike [applyConfiguration], which resets every unspecified color to the
+     * global default, this keeps the inherited (page/component/global) value for
+     * any color the element theme doesn't define. That way an element that only
+     * overrides a few colors still inherits the rest, and an element with an empty
+     * theme block leaves the inherited theme untouched.
+     */
+    fun applyElementConfiguration(
+        theme: AmityUIKitConfig.UIKitTheme,
+    ): AmityColors {
+        val primary = theme.primaryColor?.asColor()
+        return copy(
+            primary = primary ?: this.primary,
+            primaryShade1 = primary?.shade(AmityColorShade.SHADE1) ?: this.primaryShade1,
+            primaryShade2 = primary?.shade(AmityColorShade.SHADE2) ?: this.primaryShade2,
+            primaryShade4 = primary?.shade(AmityColorShade.SHADE4) ?: this.primaryShade4,
+            secondary = theme.secondaryColor?.asColor() ?: this.secondary,
+            secondaryShade2 = theme.secondaryShade2?.asColor() ?: this.secondaryShade2,
+            secondaryShade3 = theme.secondaryShade3?.asColor() ?: this.secondaryShade3,
+            secondaryShade4 = theme.secondaryShade4?.asColor() ?: this.secondaryShade4,
+            base = theme.baseColor?.asColor() ?: this.base,
+            baseShade1 = theme.baseShade1Color?.asColor() ?: this.baseShade1,
+            baseShade2 = theme.baseShade2Color?.asColor() ?: this.baseShade2,
+            baseShade3 = theme.baseShade3Color?.asColor() ?: this.baseShade3,
+            baseShade4 = theme.baseShade4Color?.asColor() ?: this.baseShade4,
+            baseInverse = theme.baseInverseColor?.asColor() ?: this.baseInverse,
+            alert = theme.alertColor?.asColor() ?: this.alert,
+            highlight = theme.highlightColor?.asColor() ?: this.highlight,
+            background = theme.backgroundColor?.asColor() ?: this.background,
+            backgroundShade1 = theme.backgroundShade1Color?.asColor() ?: this.backgroundShade1,
+            sheetBackground = theme.backgroundColor?.asColor() ?: this.sheetBackground,
+            toastBackground = theme.toastBackgroundColor?.asColor() ?: this.toastBackground,
+            divider = theme.baseShade4Color?.asColor() ?: this.divider,
+        )
+    }
+
 }

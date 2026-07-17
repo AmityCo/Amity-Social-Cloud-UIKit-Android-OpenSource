@@ -53,5 +53,7 @@ interface AmityComposeElementScope : AmityComposeScope {
     }
 
     fun getAccessibilityId(viewId: String = ""): String
+
+    fun getElementTheme(): AmityUIKitConfig.UIKitTheme?
 }
 

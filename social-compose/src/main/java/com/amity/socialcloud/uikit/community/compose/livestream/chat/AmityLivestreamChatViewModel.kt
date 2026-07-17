@@ -89,6 +89,14 @@ class AmityLivestreamChatViewModel constructor(private val channelId: String) : 
                 onError(it)
             }
             .asFlow()
+            .catch { error ->
+                // joinChannel/getChannel can error (e.g. empty or inaccessible channelId for
+                // event/recorded rooms). Without this catch, the error propagates out of the
+                // collecting coroutine (collectAsLazyPagingItems) and crashes the app. Degrade
+                // to an empty message list instead.
+                Log.d("AmityErrorTrace", "ChatVM.getMessageList error (channelId='$channelId'): ${error.message}", error)
+                emit(PagingData.empty())
+            }
     }
 
     fun getChannelFlow(): Flow<AmityChannel> {

@@ -99,7 +99,7 @@ fun AmityTopSearchBarComponent(
                 elementId = "back_button"
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.amity_ic_arrow_back),
+                    painter = painterResource(R.drawable.amity_ic_back),
                     contentDescription = "Back",
                     tint = AmityTheme.colors.base,
                     modifier = modifier

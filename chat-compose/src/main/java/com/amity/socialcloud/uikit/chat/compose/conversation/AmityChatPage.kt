@@ -54,6 +54,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.chat.compose.message.element.LocalSentVideoUris
 import androidx.compose.runtime.CompositionLocalProvider
 import com.amity.socialcloud.uikit.chat.compose.live.elements.AmityAvatarFullScreenDialog
+import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
 
 @Composable
 fun AmityChatPage(
@@ -76,7 +77,7 @@ fun AmityChatPage(
     var showBlockConfirm by remember { mutableStateOf(false) }
     var showUnblockConfirm by remember { mutableStateOf(false) }
     var showAvatarFullScreen by remember { mutableStateOf(false) }
-    val headerAvatarUrl = otherMembers.firstOrNull()?.getUser()?.getAvatar()?.getUrl(AmityImage.Size.LARGE)
+    val headerAvatarUrl = otherMembers.firstOrNull()?.getUser()?.resolvedAvatarUrl(AmityImage.Size.LARGE)
         ?: channel?.getAvatar()?.getUrl(AmityImage.Size.LARGE)
 
     // Fetch follow/block info when other member is known

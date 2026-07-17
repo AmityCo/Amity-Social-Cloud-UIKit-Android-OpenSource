@@ -110,6 +110,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityColors
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 import com.amity.socialcloud.uikit.common.ui.theme.amityChatErrorRed
+import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -245,7 +246,7 @@ fun AmityMessageBubble(
             ) {
                 AmityMessageAvatarView(
                     pageScope = pageScope,
-                    avatarUrl = message.getCreator()?.getAvatar()?.getUrl(AmityImage.Size.SMALL) ?: "",
+                    avatarUrl = message.getCreator()?.resolvedAvatarUrl(AmityImage.Size.SMALL) ?: "",
                     size = if (isSenderModerator) 36.dp else 32.dp,
                     displayName = message.getCreator()?.getDisplayName().orEmpty()
                 )
@@ -535,7 +536,7 @@ fun AmityMessageBubble(
     // Full-screen avatar viewer
     if (showAvatarFullScreen) {
         AmityAvatarFullScreenDialog(
-            avatarUrl = message.getCreator()?.getAvatar()?.getUrl(AmityImage.Size.LARGE),
+            avatarUrl = message.getCreator()?.resolvedAvatarUrl(AmityImage.Size.LARGE),
             onDismiss = { showAvatarFullScreen = false },
         )
     }
@@ -1537,7 +1538,7 @@ fun DeletedMessageBubble(
     ) {
         if (!isCurrentUser) {
             AmityMessageAvatarView(
-                avatarUrl = message.getCreator()?.getAvatar()?.getUrl(AmityImage.Size.SMALL) ?: "",
+                avatarUrl = message.getCreator()?.resolvedAvatarUrl(AmityImage.Size.SMALL) ?: "",
                 size = if (isSenderModerator) 36.dp else 32.dp,
             )
             Spacer(modifier = Modifier.width(8.dp))

@@ -182,9 +182,9 @@ private fun TaggedProductsEmpty(
         verticalArrangement = Arrangement.Center,
         modifier = modifier.fillMaxSize()
     ) {
-        Icon(
+        Image(
             painter = painterResource(id = R.drawable.amity_ic_no_tagged_product),
-            contentDescription = null,
+            contentDescription = "Empty tagged products",
         )
 
         Spacer(modifier = modifier.size(8.dp))
@@ -208,7 +208,6 @@ private fun TaggedProductsEmpty(
 
         AddProductsButton(
             onAddProducts = onAddProducts,
-            componentTheme = componentTheme,
         )
     }
 }
@@ -330,7 +329,6 @@ fun TaggedProductsFilled(
         if (canManageProducts) {
             AddProductsButton(
                 onAddProducts = onAddProducts,
-                componentTheme = componentTheme,
                 isEnabled = taggedProducts.size < maxProductCount,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -541,7 +539,7 @@ private fun DeleteProductButton(onRemoveClick: () -> Unit) {
             .size(28.dp)
             .border(
                 width = 1.dp,
-                color = AmityTheme.colors.secondaryShade3,
+                color = AmityTheme.colors.secondaryShade2,
                 shape = RoundedCornerShape(6.dp)
             )
             .padding(horizontal = 8.dp, vertical = 6.dp)
@@ -595,24 +593,26 @@ private fun ProductActionButton(
 @Composable
 private fun AddProductsButton(
     modifier: Modifier = Modifier,
+    isEmpty: Boolean = false,
     isEnabled: Boolean = true,
     onAddProducts: () -> Unit,
-    componentTheme: AmityUIKitConfig.UIKitTheme?
 ) {
-    val borderColor = if (isEnabled) {
-        componentTheme?.baseInverseColor?.asColor() ?: AmityTheme.colors.baseInverse
+    val borderColor = if (isEmpty) {
+        AmityTheme.colors.base
+    } else if (isEnabled) {
+        AmityTheme.colors.secondaryShade3
     } else {
-        componentTheme?.baseShade4Color?.asColor() ?: AmityTheme.colors.baseShade4
+        AmityTheme.colors.secondaryShade4
     }
     val textColor = if (isEnabled) {
-        componentTheme?.baseInverseColor?.asColor() ?: AmityTheme.colors.baseInverse
+        AmityTheme.colors.base
     } else {
-        componentTheme?.baseShade3Color?.asColor() ?: AmityTheme.colors.baseShade3
+        AmityTheme.colors.secondaryShade3
     }
     OutlinedButton(
         modifier = modifier,
         onClick = onAddProducts,
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(8.dp),
         border = BorderStroke(
             1.dp,
           borderColor

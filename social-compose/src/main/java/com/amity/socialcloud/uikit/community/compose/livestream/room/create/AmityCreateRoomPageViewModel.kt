@@ -38,6 +38,7 @@ import com.google.gson.JsonObject
 import io.livekit.android.room.Room
 import io.livekit.android.room.track.CameraPosition
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
@@ -206,13 +207,10 @@ class AmityCreateRoomPageViewModel constructor(val postId: String? = null) : Ami
                 old.getPostId() == new.getPostId()
             }
             .doOnNext { post ->
-                post.getChildren()
-                    .firstOrNull {
-                        it.getData() is AmityPost.Data.ROOM
-                    }
-                    ?.let {
-                        it.getData() as AmityPost.Data.ROOM
-                    }
+                val roomChildPost = post.getChildren()
+                    .firstOrNull { it.getData() is AmityPost.Data.ROOM }
+                roomChildPost
+                    ?.let { it.getData() as AmityPost.Data.ROOM }
                     ?.getRoom()
                     ?.let { room ->
                         _uiState.update { currentState ->
@@ -220,6 +218,14 @@ class AmityCreateRoomPageViewModel constructor(val postId: String? = null) : Ami
                                 room = room,
                                 post = post,
                                 isPreparingInitialData = false,
+                                // Seed the local staging state from the existing post so
+                                // products already tagged on an event's post are shown and
+                                // editable before going live. Only seed when unset so we
+                                // don't clobber the host's in-session edits.
+                                taggedProducts = currentState.taggedProducts
+                                    ?: roomChildPost.getProducts(),
+                                pinnedProductId = currentState.pinnedProductId
+                                    ?: roomChildPost.getPinnedProductId(),
                             )
                         }
                     }
@@ -240,11 +246,17 @@ class AmityCreateRoomPageViewModel constructor(val postId: String? = null) : Ami
         onCreateCompleted: (AmityRoomBroadcastData, CoroutineScope) -> Unit,
         onCreateFailed: (String) -> Unit,
     ) {
-        onRoomPostReady(
-            room = room,
-            post = post,
-            isReadOnly = isReadOnly,
-        )
+        // When going live from an existing post (event page), products were staged
+        // locally instead of hitting the API, so apply them to the post before the
+        // room goes live — mirroring how createPost submits them in the fresh flow.
+        applyStagedProductsToPost()
+            .andThen(
+                onRoomPostReady(
+                    room = room,
+                    post = post,
+                    isReadOnly = isReadOnly,
+                )
+            )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
@@ -256,6 +268,41 @@ class AmityCreateRoomPageViewModel constructor(val postId: String? = null) : Ami
                 onCreateFailed(error.message ?: "")
             })
             .let(::addDisposable)
+    }
+
+    /**
+     * Pushes the locally staged product tags / pinned product onto the existing
+     * room post. Returns a completed [Completable] when there's nothing to sync
+     * (catalogue disabled, no post, or the staged set already matches the post) so
+     * go-live isn't gated on a redundant network call.
+     */
+    private fun applyStagedProductsToPost(): Completable {
+        if (!_uiState.value.isProductCatalogueEnabled) return Completable.complete()
+        val roomPostId = _uiState.value.getRoomPost()?.getPostId() ?: return Completable.complete()
+
+        val staged = _uiState.value.taggedProducts.orEmpty()
+        val existingIds = _uiState.value.getRoomPost()?.getProducts().orEmpty()
+            .map { it.getProductId() }.toSet()
+        val stagedIds = staged.map { it.getProductId() }
+
+        val editTags = if (stagedIds.toSet() != existingIds) {
+            AmitySocialClient.newPostRepository()
+                .editPost(postId = roomPostId)
+                .taggedProducts(productTags = staged.map { AmityProductTag.Media(it.getProductId()) })
+                .build()
+                .apply()
+        } else {
+            Completable.complete()
+        }
+
+        val pinnedId = _uiState.value.pinnedProductId
+        val pin = if (pinnedId != null && pinnedId != _uiState.value.getRoomPost()?.getPinnedProductId()) {
+            AmitySocialClient.newPostRepository().pinProduct(productId = pinnedId, postId = roomPostId)
+        } else {
+            Completable.complete()
+        }
+
+        return editTags.andThen(pin)
     }
 
     private fun onRoomPostReady(

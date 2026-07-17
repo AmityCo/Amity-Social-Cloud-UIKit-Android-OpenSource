@@ -142,6 +142,15 @@ internal class AmityComposeElementScopeImpl(
         }
         return sb.toString()
     }
+
+    override fun getElementTheme(): AmityUIKitConfig.UIKitTheme? {
+        return try {
+            AmityUIKitConfigController.getTheme(getConfigId())
+        } catch (e: Exception) {
+            null
+        }
+    }
+
 }
 
 interface SnackbarScope {

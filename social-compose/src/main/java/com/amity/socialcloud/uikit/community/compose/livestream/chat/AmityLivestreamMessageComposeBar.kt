@@ -256,6 +256,7 @@ fun AmityLivestreamMessageComposeBar(
                             textStyle = AmityTheme.typography.body.copy(color = AmityTheme.colors.base),
                             maxLines = 1,
                             hint = amitySocialString("amity_social_placeholder_chat_hint"),
+                            hintColor = AmityTheme.colors.secondaryShade2,
                             enabled = (isChannelModerator || isCurrentUserStreamHost || (!isUserMuted && !isChannelMuted)) && AmityCoreClient.isSignedIn() && !isNonMember,
                             shape = RoundedCornerShape(20.dp),
                             innerPadding = PaddingValues(horizontal = 12.dp, vertical = 10.dp),
@@ -268,7 +269,7 @@ fun AmityLivestreamMessageComposeBar(
                 }
                 val maxChar: Int = 200
                 val defaultReaction =
-                    AmityMessageReactions.getList().getOrNull(1) ?: AmityMessageReactions.getList()
+                    AmityMessageReactions.getList().getOrNull(0) ?: AmityMessageReactions.getList()
                         .firstOrNull()
                 if (isPendingApproval || isNonMember) {
                     Box {}

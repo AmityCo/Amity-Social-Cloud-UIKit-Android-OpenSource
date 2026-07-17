@@ -139,7 +139,7 @@ fun AmityLiveRoomTarget(
                     .align(Alignment.BottomEnd)
                     .size(28.dp)
                     .clip(CircleShape)
-                    .background(AmityTheme.colors.baseInverse)
+                    .background(AmityTheme.colors.background)
                     .padding(2.dp)
             ) {
                 AmityUserAvatarView(
@@ -152,7 +152,7 @@ fun AmityLiveRoomTarget(
             Row(
                 modifier = Modifier
                     .align(Alignment.TopCenter)
-                    .border(1.5.dp, AmityTheme.colors.baseInverse, RoundedCornerShape(6.dp))
+                    .border(1.5.dp, AmityTheme.colors.background, RoundedCornerShape(6.dp))
                     .background(
                         color = amityLiveBadgeRed,
                         shape = RoundedCornerShape(6.dp)
