@@ -3,6 +3,7 @@ package com.amity.socialcloud.uikit.community.compose.livestream.room.create
 import android.Manifest
 import android.app.Activity
 import android.content.Context
+import android.util.Log
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri

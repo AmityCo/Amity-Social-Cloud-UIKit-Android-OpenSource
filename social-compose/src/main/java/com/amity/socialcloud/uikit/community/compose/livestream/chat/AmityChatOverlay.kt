@@ -24,6 +24,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -107,6 +108,25 @@ fun ChatOverlay(
     val isCurrentUserModerator by viewModel.isUserModerator(AmityCoreClient.getUserId())
         .collectAsState(initial = false)
 
+    // A streamer (host or co-host) can moderate chat regardless of the channel-moderator
+    // metadata flag — matching iOS UIKit, which gates moderation on `isStreamer || isModerator`
+    // (AmityLiveStreamChatFeed). Without this, a co-host is blocked until the promotion metadata
+    // propagates (or if it never does), so they cannot open the user actions sheet.
+    val currentUserId = AmityCoreClient.getUserId()
+    val isCurrentUserStreamer = currentUserId == streamHostUserId ||
+            (coHostUserId != null && currentUserId == coHostUserId)
+    val canModerate = isCurrentUserModerator || isCurrentUserStreamer
+
+    // Keep the channel "moderators" metadata in sync with the co-host,
+    // refreshHostAndCoHostId: only the host promotes the accepted co-host to channel moderator
+    // (and demotes them when the co-host slot clears). Driven off co-host changes, which the
+    // page derives from room participant updates.
+    LaunchedEffect(coHostUserId, streamHostUserId) {
+        val isHost = !streamHostUserId.isNullOrBlank() &&
+                streamHostUserId == AmityCoreClient.getUserId()
+        viewModel.syncCoHostModeratorRole(coHostUserId = coHostUserId, isHost = isHost)
+    }
+
     val hostUserId = streamHostUserId
 
     var messageText by remember { mutableStateOf("") }
@@ -146,14 +166,14 @@ fun ChatOverlay(
 
                     ChatMessageItem(
                         message = message,
-                        isChannelModerator = (isCurrentUserModerator && message.getCreatorId() != streamHostUserId),
+                        isChannelModerator = (canModerate && message.getCreatorId() != streamHostUserId),
                         hostUserId = hostUserId,
                         coHostUserId = coHostUserId,
                         isMessageCreatorModerator = viewModel.isUserModerator(userId),
                         isMessageCreatorMuted = viewModel.isUserMuted(userId),
                         onOpenAction = {
                             viewModel.updateSheetUIState(
-                                AmityLiveStreamSheetUIState.OpenSheet(message, (isCurrentUserModerator && message.getCreatorId() != streamHostUserId))
+                                AmityLiveStreamSheetUIState.OpenSheet(message, (canModerate && message.getCreatorId() != streamHostUserId))
                             )
                             viewModel.setTargetDeletedMessage(message)
                         },
@@ -170,7 +190,7 @@ fun ChatOverlay(
                                 // non-host pages, so no empty sheet appears there.
                                 onCohostBadgeClick()
                             } else if (userId != AmityCoreClient.getUserId()
-                                && isCurrentUserModerator
+                                && canModerate
                                 && userId != hostUserId) {
                                 val displayName = message.getCreator()?.getDisplayName() ?: DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_unknown_user_lowercase")
                                 viewModel.updateSheetUIState(
@@ -208,7 +228,7 @@ fun ChatOverlay(
                         val message = (sheetUIState as AmityLiveStreamSheetUIState.OpenSheet).message
                         AmityLivestreamMessageActionsContainer(
                             message = message,
-                            isChannelModerator = isCurrentUserModerator,
+                            isChannelModerator = canModerate,
                             onReport = { messageId ->
                                 if (AmityCoreClient.isVisitor()) {
                                     behavior.handleVisitorUserAction()

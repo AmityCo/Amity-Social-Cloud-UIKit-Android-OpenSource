@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.livestream.room.view
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -198,16 +199,25 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
                         if (event is AmityCoHostEvent.CoHostLeft) {
                             AmityUIKitSnackbar.publishSnackbarMessage(message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_cohost_left"))
                         }
+                        val wasRemoved = event is AmityCoHostEvent.CoHostRemoved
+                        if (wasRemoved) {
+                            Log.d(TAG, "CoHostRemoved: dropping stale room + token")
+                        }
                         _uiState.update { currentState ->
                             currentState.copy(
                                 invitation = null,
                                 cohostUserId = null,
                                 cohostUser = null,
-                                isStreamerMode = if (event is AmityCoHostEvent.CoHostRemoved) {
+                                isStreamerMode = if (wasRemoved) {
                                     false
                                 } else {
                                     currentState.isStreamerMode
-                                }
+                                },
+                                // Being force-removed ends the local streaming session the same way
+                                // leaving does; drop the released room + stale token so a re-invite
+                                // and re-join start clean.
+                                liveKitRoom = if (wasRemoved) null else currentState.liveKitRoom,
+                                broadcasterData = if (wasRemoved) null else currentState.broadcasterData,
                             )
                         }
                     }
@@ -583,10 +593,24 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
         onJoinedFailed: (String) -> Unit,
         //descriptionUserMentions: List<AmityMentionMetadata.USER>,
     ) {
+        Log.d(TAG, "joinRoom: fetching broadcaster data for roomId=${room.getRoomId()}")
         getRoomBroadcasterData(room.getRoomId())
             .doOnSuccess { broadcastData ->
 
                 val coHostData = broadcastData as? AmityRoomBroadcastData.CoHosts
+                // Log token presence/length only (never the raw token) to diagnose a stale or
+                // empty co-host token on the second join without leaking credentials.
+                Log.d(
+                    TAG,
+                    "joinRoom: broadcaster data received roomId=${room.getRoomId()} " +
+                            "isCoHosts=${coHostData != null} " +
+                            "tokenLength=${coHostData?.getCoHostToken()?.length ?: 0} " +
+                            "url=${coHostData?.getCoHostUrl()}"
+                )
+                // Decode the LiveKit JWT payload (signature omitted) so join-1 vs join-2 tokens
+                // can be compared claim-by-claim — iat/exp/nbf/jti reveal whether the backend is
+                // re-issuing a fresh grant or returning a stale/revoked token that LiveKit 401s.
+                coHostData?.getCoHostToken()?.let { logTokenClaims(token = it) }
                 viewModelScope.launch {
                     _uiState.update { currentState ->
                         currentState.copy(
@@ -599,8 +623,10 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
+                Log.d(TAG, "joinRoom: broadcaster data ready, invoking onJoinedCompleted roomId=${room.getRoomId()}")
                 onJoinedCompleted.invoke(it, viewModelScope)
             }, { error ->
+                Log.e(TAG, "joinRoom: failed to fetch broadcaster data roomId=${room.getRoomId()}", error)
                 onJoinedFailed(error.message ?: "")
             })
             .let(::addDisposable)
@@ -617,17 +643,20 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
         onSuccess: () -> Unit = {},
         onError: () -> Unit = {},
     ) {
+        Log.d(TAG, "leaveRoom: leaving roomId=$roomId")
         AmityVideoClient.newRoomRepository()
             .leaveRoom(roomId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnComplete {
+                Log.d(TAG, "leaveRoom: completed roomId=$roomId")
                 AmityUIKitSnackbar.publishSnackbarMessage(
                     message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_left_stage")
                 )
                 onSuccess()
             }
             .doOnError {
+                Log.e(TAG, "leaveRoom: failed roomId=$roomId", it)
                 AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_something_went_wrong"))
                 onError()
             }
@@ -635,13 +664,76 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
             .let(::addDisposable)
     }
 
+    /**
+     * Decodes and logs the payload (claims) of a LiveKit JWT co-host token for debugging.
+     *
+     * Only the middle (payload) segment is base64url-decoded — the signature is never
+     * touched and no verification is performed. Compare the emitted `iat`/`exp`/`nbf`/`jti`
+     * across the first (working) and second (401) join: identical `iat`/`jti` means the
+     * backend is handing back a stale/cached token, differing claims point at a grant or
+     * session that LiveKit has already revoked.
+     */
+    private fun logTokenClaims(token: String) {
+        try {
+            val parts = token.split(".")
+            if (parts.size < 2) {
+                Log.w(TAG, "logTokenClaims: token is not a JWT (segments=${parts.size})")
+                return
+            }
+            val payload = String(
+                android.util.Base64.decode(
+                    parts[1],
+                    android.util.Base64.URL_SAFE or android.util.Base64.NO_PADDING or android.util.Base64.NO_WRAP
+                )
+            )
+            Log.d(TAG, "logTokenClaims: JWT payload = $payload")
+
+            // Compute time-to-expiry against the device clock so the token TTL can be read
+            // directly, without depending on the device's timezone offset. A value at or
+            // below zero (or only a few seconds) means the LiveKit region-settings validation
+            // can land after expiry on a slightly slower join -> the 401 seen on rejoin.
+            val exp = org.json.JSONObject(payload).optLong("exp", 0L)
+            if (exp > 0L) {
+                val nowSeconds = System.currentTimeMillis() / 1000L
+                Log.d(
+                    TAG,
+                    "logTokenClaims: exp=$exp nowEpoch=$nowSeconds secondsUntilExpiry=${exp - nowSeconds}"
+                )
+            }
+        } catch (e: Throwable) {
+            Log.w(TAG, "logTokenClaims: failed to decode token payload", e)
+        }
+    }
+
     fun onLiveKitRoomChange(room: Room? = null) {
+        Log.d(TAG, "onLiveKitRoomChange: room=${if (room == null) "null" else "instance@${System.identityHashCode(room)} state=${room.state}"}")
         viewModelScope.launch {
             _uiState.update { currentState ->
                 currentState.copy(
                     liveKitRoom = room
                 )
             }
+        }
+    }
+
+    /**
+     * Clears the LiveKit room reference and broadcaster credentials.
+     *
+     * Called when the local user leaves the stage (or is removed). LiveKit's [RoomScope]
+     * disconnects and releases the underlying [Room] when [AmityStreamerView] leaves
+     * composition, but the previously reported instance and the stale co-host token stay
+     * in [RoomPlayerState] otherwise. Reusing them on a subsequent join makes
+     * [Room.connect] target a released room / rejected token, which surfaces as the
+     * LiveKit "Could not fetch region settings: 401" crash. Resetting here forces the next
+     * join to use the freshly created room and a freshly fetched token.
+     */
+    fun resetLiveKitState() {
+        Log.d(TAG, "resetLiveKitState: clearing stale liveKitRoom and broadcasterData")
+        _uiState.update { currentState ->
+            currentState.copy(
+                liveKitRoom = null,
+                broadcasterData = null,
+            )
         }
     }
 
@@ -684,7 +776,9 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
     fun setIsStreamerMode(isStreamerMode: Boolean) {
         viewModelScope.launch {
             _uiState.update { currentState ->
-                if (currentState.isStreamerMode && !isStreamerMode) {
+                val leavingStreamerMode = currentState.isStreamerMode && !isStreamerMode
+                if (leavingStreamerMode) {
+                    Log.d(TAG, "setIsStreamerMode: leaving streamer mode, dropping stale room + token")
                     // If switching from streamer to viewer, change observing online user count interval to 20s
                     currentState
                         .room
@@ -696,7 +790,11 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
                         }
                 }
                 currentState.copy(
-                    isStreamerMode = isStreamerMode
+                    isStreamerMode = isStreamerMode,
+                    // Drop the released LiveKit room and stale co-host token when leaving the
+                    // stage so the next join starts from a freshly created room + fresh token.
+                    liveKitRoom = if (leavingStreamerMode) null else currentState.liveKitRoom,
+                    broadcasterData = if (leavingStreamerMode) null else currentState.broadcasterData,
                 )
             }
         }
@@ -1067,6 +1165,10 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
     }
 
     companion object {
+        // Shared tag with the SDK (AmityCohostTrace) so the whole co-host join/leave
+        // flow can be filtered end-to-end in logcat.
+        private const val TAG = "AmityCohostTrace"
+
         fun create(post: AmityPost): ViewModelProvider.Factory {
             return object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")

@@ -1047,14 +1047,60 @@ fun AmityRoomPlayerPage(
                                                                     onJoinedCompleted = { broadcastData, scope ->
                                                                         (broadcastData as? AmityRoomBroadcastData.CoHosts)?.let { data ->
                                                                             scope.launch {
-                                                                                uiState.liveKitRoom?.connect(
-                                                                                    url = data.getCoHostUrl(),
-                                                                                    token = data.getCoHostToken()
+                                                                                // Read the current LiveKit room lazily: on a rejoin the room is
+                                                                                // re-created by RoomScope and reported asynchronously, so the state
+                                                                                // may still hold the previous (released) instance for a beat.
+                                                                                val liveKitRoom = uiState.liveKitRoom
+                                                                                Log.d(
+                                                                                    "AmityCohostTrace",
+                                                                                    "connect: attempting cohost connect " +
+                                                                                            "room=${if (liveKitRoom == null) "null" else "instance@${System.identityHashCode(liveKitRoom)} state=${liveKitRoom.state}"} " +
+                                                                                            "url=${data.getCoHostUrl()} tokenLength=${data.getCoHostToken().length}"
                                                                                 )
+                                                                                if (liveKitRoom == null) {
+                                                                                    Log.e("AmityCohostTrace", "connect: liveKitRoom is null, cannot connect")
+                                                                                    isStarting = false
+                                                                                    showCannotStartLivestreamDialog = true
+                                                                                    return@launch
+                                                                                }
+                                                                                // Only connect a fresh/disconnected room. Connecting an already
+                                                                                // connected/connecting/released room is what triggered the LiveKit
+                                                                                // "region settings 401" crash on the second join.
+                                                                                if (liveKitRoom.state != Room.State.DISCONNECTED) {
+                                                                                    Log.w(
+                                                                                        "AmityCohostTrace",
+                                                                                        "connect: skipping, room not disconnected (state=${liveKitRoom.state})"
+                                                                                    )
+                                                                                    return@launch
+                                                                                }
+                                                                                try {
+                                                                                    liveKitRoom.connect(
+                                                                                        url = data.getCoHostUrl(),
+                                                                                        token = data.getCoHostToken()
+                                                                                    )
+                                                                                    Log.d("AmityCohostTrace", "connect: cohost connect succeeded")
+                                                                                } catch (e: Throwable) {
+                                                                                    // Guard against LiveKit RoomException (e.g. 401 fetching region
+                                                                                    // settings) so a failed connect surfaces a dialog instead of
+                                                                                    // crashing the app with an uncaught coroutine exception.
+                                                                                    Log.e("AmityCohostTrace", "connect: cohost connect failed", e)
+                                                                                    // A failed connect leaves the room stuck in CONNECTING, which blocks
+                                                                                    // all interaction on the page. Force it back to DISCONNECTED and drop
+                                                                                    // the rejected token so the user can retry (or fall back to viewer).
+                                                                                    try {
+                                                                                        liveKitRoom.disconnect()
+                                                                                    } catch (disconnectError: Throwable) {
+                                                                                        Log.w("AmityCohostTrace", "connect: disconnect after failure errored", disconnectError)
+                                                                                    }
+                                                                                    isStarting = false
+                                                                                    viewModel.setIsStreamerMode(false)
+                                                                                    showCannotStartLivestreamDialog = true
+                                                                                }
                                                                             }
                                                                         }
                                                                     },
                                                                     onJoinedFailed = {
+                                                                        isStarting = false
                                                                         showCannotStartLivestreamDialog =
                                                                             true
                                                                     },

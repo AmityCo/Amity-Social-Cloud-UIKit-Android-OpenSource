@@ -275,10 +275,8 @@ class AmityLivestreamChatViewModel constructor(private val channelId: String) : 
     fun isUserModerator(userId: String): Flow<Boolean> {
         return getChannelFlow()
             .map { channel ->
-                Log.d("--F", "isUserModerator from channel flow ${channel.getMetadata()}")
-                val metadata = channel.getMetadata()
-                val moderators = metadata?.getAsJsonArray("moderators")
-                moderators?.any { it.asString == userId } ?: false
+                val moderators = channel.getMetadata()?.getAsJsonArray("moderators")?.mapNotNull { it.asString }
+                moderators?.contains(userId) ?: false
             }
             .distinctUntilChanged()
             .catch {
@@ -358,6 +356,60 @@ class AmityLivestreamChatViewModel constructor(private val channelId: String) : 
             .doOnError {
                 onError(it)
             }
+            .subscribe()
+            .let(::addDisposable)
+    }
+
+    // Tracks the co-host currently reflected in the channel's moderator metadata, so that when
+    // the co-host slot clears we know whom to demote.
+    // AmityLiveStreamChatViewModel.coHostUserId used by refreshHostAndCoHostId.
+    private var trackedCoHostUserId: String? = null
+
+    /**
+     * Keeps the channel "moderators" metadata (and the channel-moderator role) in sync with the
+     * current co-host
+     *
+     * Only the host mutates roles. When a co-host is present and not yet a moderator they are
+     * promoted; when the co-host slot clears, the previous co-host is demoted. Both branches are
+     * idempotent (guarded against the current metadata), so re-accepting as co-host in the same
+     * session re-promotes cleanly.
+     */
+    fun syncCoHostModeratorRole(coHostUserId: String?, isHost: Boolean) {
+        val newCoHostUserId = coHostUserId?.takeIf { it.isNotBlank() }
+        if (!isHost) {
+            // Non-host clients only track the latest co-host; they never mutate roles.
+            trackedCoHostUserId = newCoHostUserId
+            return
+        }
+        val previousCoHostUserId = trackedCoHostUserId
+        trackedCoHostUserId = newCoHostUserId
+
+        if (newCoHostUserId == null && previousCoHostUserId == null) {
+            return
+        }
+
+        AmityChatClient.newChannelRepository()
+            .getChannel(channelId)
+            .firstOrError()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSuccess { channel ->
+                val moderators = channel.getMetadata()
+                    ?.getAsJsonArray("moderators")
+                    ?.mapNotNull { it.asString }
+                    ?: emptyList()
+                when {
+                    newCoHostUserId != null && !moderators.contains(newCoHostUserId) -> {
+                        promoteToModerator(newCoHostUserId)
+                    }
+                    newCoHostUserId == null &&
+                            previousCoHostUserId != null &&
+                            moderators.contains(previousCoHostUserId) -> {
+                        demoteToMember(previousCoHostUserId)
+                    }
+                }
+            }
+            .doOnError { }
             .subscribe()
             .let(::addDisposable)
     }
