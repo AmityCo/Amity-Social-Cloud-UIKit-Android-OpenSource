@@ -33,17 +33,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.R
-import com.amity.socialcloud.uikit.common.localization.amityCommonString
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 
 
 @Composable
 fun AmitySearchBarView(
     modifier: Modifier = Modifier,
     hint: String,
-    // Styling
     height: Dp? = null,
     cornerRadius: Dp = 8.dp,
     outerPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 9.dp),
@@ -51,16 +49,25 @@ fun AmitySearchBarView(
     textVerticalPadding: Dp = 10.dp,
     containerColor: Color = AmityTheme.colors.baseShade4,
     searchIconTint: Color = AmityTheme.colors.baseShade2,
-    // Trailing clear icon
     clearIconContainerSize: Dp = 20.dp,
     clearIconContainerColor: Color = AmityTheme.colors.baseShade3,
     clearIconPadding: Dp = 5.dp,
     clearIconTint: Color = amityColorWhite,
+    searchIconRes: Int? = null,
     requestFocus: Boolean = false,
     onSearch: (String) -> Unit,
 ) {
     var keyword by remember { mutableStateOf(TextFieldValue("")) }
     val focusRequester = remember { FocusRequester() }
+
+    // Pure legacy colors (AmityTheme.colors.*). Features on the design-token system render the
+    // separate AmitySearchBar atom instead.
+    val resolvedContainerColor = containerColor
+    val iconTint = searchIconTint
+    val textColor = AmityTheme.colors.base
+    val hintColor = AmityTheme.colors.baseShade2
+    val cursorColor = AmityTheme.colors.highlight
+    val searchIcon = searchIconRes ?: R.drawable.amity_ic_search
 
     LaunchedEffect(requestFocus) {
         if (requestFocus) {
@@ -81,14 +88,14 @@ fun AmitySearchBarView(
                 .weight(1f)
                 .then(if (height != null) Modifier.heightIn(min = height) else Modifier)
                 .background(
-                    color = containerColor,
+                    color = resolvedContainerColor,
                     shape = RoundedCornerShape(cornerRadius)
                 )
                 .padding(horizontal = innerHorizontalPadding)
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.amity_ic_search),
-                tint = searchIconTint,
+                painter = painterResource(id = searchIcon),
+                tint = iconTint,
                 contentDescription = null,
             )
 
@@ -100,9 +107,9 @@ fun AmitySearchBarView(
                 },
                 singleLine = true,
                 textStyle = AmityTheme.typography.bodyLegacy.copy(
-                    color = AmityTheme.colors.base,
+                    color = textColor,
                 ),
-                cursorBrush = SolidColor(AmityTheme.colors.highlight),
+                cursorBrush = SolidColor(cursorColor),
                 modifier = Modifier
                     .weight(1f)
                     .focusRequester(focusRequester)
@@ -112,7 +119,7 @@ fun AmitySearchBarView(
                         Text(
                             text = hint,
                             style = AmityTheme.typography.bodyLegacy.copy(
-                                color = AmityTheme.colors.baseShade2
+                                color = hintColor
                             ),
                         )
                     }

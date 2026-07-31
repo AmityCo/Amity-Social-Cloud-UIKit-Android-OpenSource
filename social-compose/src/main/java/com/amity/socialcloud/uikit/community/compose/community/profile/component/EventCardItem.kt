@@ -189,12 +189,13 @@ private fun EventCardLarge(
                 .background(color = AmityTheme.colors.background)
                 .padding(16.dp)
         ) {
+            val context = LocalContext.current
             val startTime = event?.getStartTime()
             val endTime = event?.getEndTime()
 
             startTime?.let {
                 Text(
-                    text = formatEventTimestamp(it, endTime),
+                    text = formatEventTimestamp(it, endTime, context),
                     style = AmityTheme.typography.caption,
                     color = AmityTheme.colors.baseShade1
                 )
@@ -329,13 +330,14 @@ private fun EventCardMedium(
                 )
                 .padding(16.dp)
         ) {
+            val context = LocalContext.current
             val startTime = event?.getStartTime()
             val endTime = event?.getEndTime()
 
             // Time text
             startTime?.let {
                 Text(
-                    text = formatEventTimestamp(it, endTime),
+                    text = formatEventTimestamp(it, endTime, context),
                     style = AmityTheme.typography.caption,
                     color = AmityTheme.colors.baseShade1,
                     minLines = 2
@@ -465,12 +467,13 @@ private fun EventCardList(
             verticalArrangement = Arrangement.Center
         ) {
             // Event Time
+            val context = LocalContext.current
             val startTime = event?.getStartTime()
             val endTime = event?.getEndTime()
 
             startTime?.let {
                 Text(
-                    text = formatEventTimestamp(it, endTime),
+                    text = formatEventTimestamp(it, endTime, context),
                     style = AmityTheme.typography.captionBold,
                     color = AmityTheme.colors.base,
                     maxLines = 2

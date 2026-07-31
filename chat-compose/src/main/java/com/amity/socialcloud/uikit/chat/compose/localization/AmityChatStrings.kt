@@ -12,6 +12,7 @@ object AmityChatStrings {
         "chat.tab.groups" to R.string.amity_chat_tab_groups,
         "chat.home.empty.title" to R.string.amity_chat_home_empty_title,
         "chat.home.empty.description" to R.string.amity_chat_home_empty_description,
+        "chat.list.timestamp.now" to R.string.amity_chat_list_timestamp_now,
         "chat.create.direct" to R.string.amity_chat_create_direct,
         "chat.create.group" to R.string.amity_chat_create_group,
         "chat.archived.navbar.title" to R.string.amity_chat_archived_navbar_title,
@@ -33,6 +34,8 @@ object AmityChatStrings {
         "chat.action.unmute.failed" to R.string.amity_chat_action_unmute_failed,
         "chat.action.report.user" to R.string.amity_chat_action_report_user,
         "chat.action.unreport.user" to R.string.amity_chat_action_unreport_user,
+        "chat.dm.action.report.user" to R.string.amity_chat_dm_action_report_user,
+        "chat.dm.action.unreport.user" to R.string.amity_chat_dm_action_unreport_user,
         "chat.action.block.user" to R.string.amity_chat_action_block_user,
         "chat.action.unblock.user" to R.string.amity_chat_action_unblock_user,
         "chat.action.turn.off.notification" to R.string.amity_chat_action_turn_off_notification,
@@ -89,6 +92,7 @@ object AmityChatStrings {
         // Group settings
         "chat.group.settings.section" to R.string.amity_chat_group_settings_section,
         "chat.group.notifications" to R.string.amity_chat_group_notifications,
+        "chat.group.notifications.title" to R.string.amity_chat_group_notifications_title,
         "chat.your.preferences.section" to R.string.amity_chat_your_preferences_section,
         "chat.edit.group.profile.navbar.title" to R.string.amity_chat_edit_group_profile_navbar_title,
         "chat.group.members" to R.string.amity_chat_group_members,
@@ -96,6 +100,7 @@ object AmityChatStrings {
         "chat.group.leave.confirm.title" to R.string.amity_chat_group_leave_confirm_title,
         "chat.group.leave.confirm.message" to R.string.amity_chat_group_leave_confirm_message,
         "chat.group.leave.confirm.label" to R.string.amity_chat_group_leave_confirm_label,
+        "chat.group.leave.toast" to R.string.amity_chat_group_leave_toast,
         "chat.group.leave.last.mod.title" to R.string.amity_chat_group_leave_last_mod_title,
         "chat.group.leave.last.mod.message" to R.string.amity_chat_group_leave_last_mod_message,
         "chat.group.promote.member" to R.string.amity_chat_group_promote_member,
@@ -131,6 +136,7 @@ object AmityChatStrings {
 
         // Search
         "chat.search.placeholder" to R.string.amity_chat_search_placeholder,
+        "chat.group.member.list.search.placeholder" to R.string.amity_chat_group_member_list_search_placeholder,
         "chat.search.min.chars" to R.string.amity_chat_search_min_chars,
         "chat.search.no.results" to R.string.amity_chat_search_no_results,
         "chat.search.tab.chats" to R.string.amity_chat_search_tab_chats,
@@ -287,6 +293,7 @@ object AmityChatStrings {
         "chat.toast.delete.error" to R.string.amity_chat_toast_delete_error,
         "chat.unknown.user" to R.string.amity_chat_unknown_user,
         "chat.label.banned.from.chat" to R.string.amity_chat_label_banned_from_chat,
+        "chat.label.banned.from.chat.description" to R.string.amity_chat_label_banned_from_chat_description,
         "chat.leave.without.finishing.title" to R.string.amity_chat_leave_without_finishing_title,
         "chat.leave.without.finishing.message" to R.string.amity_chat_leave_without_finishing_message,
         "chat.leave.without.finishing.label" to R.string.amity_chat_leave_without_finishing_label,

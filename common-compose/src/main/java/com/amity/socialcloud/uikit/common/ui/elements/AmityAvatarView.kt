@@ -39,10 +39,8 @@ import com.amity.socialcloud.sdk.model.social.category.AmityCommunityCategory
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.compose.R
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.common.ui.theme.amityAvatarPlaceholderBackground
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
-import com.amity.socialcloud.uikit.common.ui.theme.amityDeletedAvatarPlaceholderBackground
 import com.amity.socialcloud.uikit.common.ui.theme.amityEventAvatarPlaceholderBackground
 
 @Composable
@@ -177,8 +175,6 @@ fun AmityAvatarView(
     // Trim early — ensures leading/trailing spaces in display names never produce a blank initial
     val trimmedName = displayName?.trim().orEmpty()
     val initial = trimmedName.firstOrNull()?.uppercase() ?: ""
-    // val url = user?.resolvedAvatarUrl()?.ifEmpty { null }
-    val url = avatarUrl?.ifEmpty { null }
 
     val fontSize = when {
         size >= 120.dp -> 64.sp
@@ -258,8 +254,8 @@ private fun AvatarFallback(
             .size(size)
             .clip(CircleShape)
             .background(
-                if (isDeleted) amityDeletedAvatarPlaceholderBackground()
-                else amityAvatarPlaceholderBackground(),
+                if (isDeleted) AmityTheme.colors.secondaryShade2
+                else AmityTheme.colors.primaryShade1,
             ),
         contentAlignment = Alignment.Center,
     ) {
@@ -335,7 +331,7 @@ fun AmityCategoryAvatarView(
                 contentDescription = null,
                 modifier = Modifier
                     .size(size)
-                    .background(amityAvatarPlaceholderBackground(), CircleShape)
+                    .background(AmityTheme.colors.primaryShade1, CircleShape)
                     .clip(roundedCornerShape)
             )
         }
@@ -399,7 +395,7 @@ fun AmityAvatarView(
     roundedCornerShape: RoundedCornerShape = CircleShape,
     placeholder: Int = R.drawable.amity_ic_default_profile1,
     placeholderTint: Color = amityColorWhite,
-    placeholderBackground: Color = amityAvatarPlaceholderBackground(),
+    placeholderBackground: Color = AmityTheme.colors.primaryShade1,
 ) {
     val url = image?.getUrl(AmityImage.Size.MEDIUM)?.ifEmpty { null }
 

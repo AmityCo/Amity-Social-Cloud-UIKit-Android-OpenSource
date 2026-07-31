@@ -7,6 +7,9 @@ import com.amity.socialcloud.sdk.core.session.model.SessionState
 import com.amity.socialcloud.sdk.model.core.notificationtray.AmityNotificationTrayItem
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.core.user.AmityUserType
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.event.AmityEvent
+import com.amity.socialcloud.sdk.model.social.event.AmityEventType
 import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import com.amity.socialcloud.uikit.community.compose.notificationtray.component.AmityNotificationTrayItemView
 import com.amity.socialcloud.uikit.community.compose.screenshot.base.BaseScreenshotTest
@@ -102,6 +105,32 @@ class AmityNotificationTrayItemViewScreenshotTest : BaseScreenshotTest() {
         }
     }
 
+    private fun fakeEventCreationItem(eventType: AmityEventType): AmityNotificationTrayItem {
+        val fakeCommunity = mockk<AmityCommunity>(relaxed = true) {
+            every { getCommunityId() } returns "community-001"
+            every { getDisplayName() } returns "Runners Club"
+            every { getAvatar() } returns null
+        }
+        val fakeEvent = mockk<AmityEvent>(relaxed = true) {
+            every { getType() } returns eventType
+            every { getTitle() } returns "Morning 5K"
+            every { getStartTime() } returns DateTime(2026, 7, 12, 15, 0, 0)
+            every { getTargetCommunity() } returns fakeCommunity
+        }
+        return mockk<AmityNotificationTrayItem>(relaxed = true) {
+            every { getTrayItemCategory() } returns "event_created"
+            every { getActionType() } returns "event"
+            every { getActionReferenceId() } returns "event-001"
+            every { getText() } returns "Runners Club has event Morning 5K"
+            every { getTemplatedText() } returns "{{communityId: Runners Club}} has event {{eventId: Morning 5K}}"
+            every { getLastOccurredAt() } returns DateTime(2025, 1, 1, 0, 0, 0)
+            every { getEvent() } returns fakeEvent
+            every { getUsers() } returns emptyList()
+            every { isSeen() } returns false
+            every { uniqueId() } returns "item-event-001"
+        }
+    }
+
     // ── Tests ─────────────────────────────────────────────────────────────────
 
     /**
@@ -171,6 +200,49 @@ class AmityNotificationTrayItemViewScreenshotTest : BaseScreenshotTest() {
         composeTestRule.onRoot()
             .captureRoboImage(
                 "src/test/golden/notification_tray_item_regular_reaction.png",
+                roborazziOptions = screenshotOptions,
+            )
+    }
+
+    /**
+     * Event creation notification — in-person (PDT-3724):
+     *   - Community avatar (not user avatar / event cover)
+     *   - Primary line: "Runners Club has event Morning 5K" (bold community + event name)
+     *   - Secondary line: "In-person" chip + event start date and start time
+     */
+    @Test
+    fun notification_tray_item_event_creation_in_person() {
+        composeTestRule.setContent {
+            AmityNotificationTrayItemView(
+                isSeen = false,
+                data = fakeEventCreationItem(AmityEventType.IN_PERSON),
+            )
+        }
+
+        composeTestRule.onRoot()
+            .captureRoboImage(
+                "src/test/golden/notification_tray_item_event_creation_in_person.png",
+                roborazziOptions = screenshotOptions,
+            )
+    }
+
+    /**
+     * Event creation notification — virtual (PDT-3724):
+     *   - Community avatar
+     *   - Secondary line: "Virtual" chip + event start date and start time
+     */
+    @Test
+    fun notification_tray_item_event_creation_virtual() {
+        composeTestRule.setContent {
+            AmityNotificationTrayItemView(
+                isSeen = false,
+                data = fakeEventCreationItem(AmityEventType.VIRTUAL),
+            )
+        }
+
+        composeTestRule.onRoot()
+            .captureRoboImage(
+                "src/test/golden/notification_tray_item_event_creation_virtual.png",
                 roborazziOptions = screenshotOptions,
             )
     }

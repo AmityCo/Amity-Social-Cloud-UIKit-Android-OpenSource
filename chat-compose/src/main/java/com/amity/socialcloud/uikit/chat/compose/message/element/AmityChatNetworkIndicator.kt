@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -16,12 +15,15 @@ import com.amity.socialcloud.uikit.chat.compose.localization.amityChatString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.uikit.chat.compose.R
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityLoader
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityLoaderSize
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityLoaderVariant
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 
 /**
  * Shared "Waiting for network…" row used as a header subtitle whenever
- * the SDK socket connection drops. Mirrors Flutter `_buildWaitingForNetwork`
- * in `lib/v4/chat/home/chat_home_page.dart` and `lib/v4/chat/message/chat_page.dart`.
+ * the SDK socket connection drops.
  */
 @Composable
 fun AmityChatWaitingForNetworkRow(
@@ -32,17 +34,18 @@ fun AmityChatWaitingForNetworkRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
-        CircularProgressIndicator(
+        AmityLoader(
+            variant = AmityLoaderVariant.Spinner,
+            size = AmityLoaderSize.Sm,
             modifier = Modifier
                 .size(16.dp)
                 .padding(top = 0.dp, bottom = 2.dp),
-            color = AmityTheme.colors.baseShade1,
         )
         Spacer(modifier = Modifier.width(4.dp))
         Text(
             text = amityChatString("chat.waiting.for.network"),
             style = AmityTheme.typography.caption.copy(
-                color = AmityTheme.colors.baseShade1,
+                color = AmityTheme.token(AmityColorToken.TextTopNavigationFeedback),
             ),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis

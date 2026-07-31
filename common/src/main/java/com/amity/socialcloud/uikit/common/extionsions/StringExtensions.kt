@@ -4,12 +4,7 @@ import android.util.Log
 import java.util.regex.Pattern
 
 private val urlPattern: Pattern = Pattern.compile(
-    // Negative lookbehind prevents matching mid-word, after "://" (invalid protocol),
-    // "///" (too many slashes), "mailto:" (colon prefix), or "@" (email addresses).
-    // Domain must start with a letter (blocks "1.bar").
-    // TLD must be 2+ letters only (no digit-only suffixes).
-    // Path captures everything including unbalanced parens — filtering happens in code.
-    """(?<![a-zA-Z0-9/:.@])((?:https?://|www\.)?(?:[a-zA-Z][-a-zA-Z0-9]*\.)+[a-zA-Z]{2,}(?:/[^?\s]*)?(?:\?[^\s]*)?)""",
+    """(?<![\w])(?:(?:https?|ftp):\/\/(?:[a-zA-Z0-9.-]+|[\d.]+)(?::\d{1,5})?(?:\/(?:[^\s<>|()]*(?:\([^\s<>|()]*\)[^\s<>|()]*)*)*)?|mailto:[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}|www\.(?:[a-zA-Z0-9.-]+)(?:\/(?:[^\s<>|()]*(?:\([^\s<>|()]*\)[^\s<>|()]*)*)*)?)?(?=[.,;]?\s|[.,;]?$|$)""",
     Pattern.CASE_INSENSITIVE or Pattern.MULTILINE
 )
 
@@ -34,6 +29,10 @@ fun String.extractUrls(): List<UrlPosition> {
         matchEnd = matcher.end()
 
         val matchedText = this.substring(matchStart, matchEnd)
+
+        // The outer scheme/mailto/www alternation is optional, so the pattern can produce
+        // empty matches at sentence boundaries (only the trailing lookahead is satisfied).
+        if (matchedText.isBlank()) continue
 
         // Skip URLs with unbalanced parentheses (spec: "path(1" → not matched)
         if (!matchedText.hasBalancedParens()) continue

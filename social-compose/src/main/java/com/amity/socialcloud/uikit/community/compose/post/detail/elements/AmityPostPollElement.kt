@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.post.detail.elements
 
+import android.text.format.DateFormat
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -795,7 +796,9 @@ fun AmityPostPollElement(
         // footer
         Row {
             val endText = if (post.getReviewStatus() == AmityReviewStatus.UNDER_REVIEW) {
-                val formatter = DateTimeFormat.forPattern("dd MMM 'at' h:mm a")
+                val formatter = DateTimeFormat.forPattern(
+                    if (DateFormat.is24HourFormat(context)) "dd MMM 'at' HH:mm" else "dd MMM 'at' h:mm a"
+                )
                     .withLocale(context.resources.configuration.locale)
                 DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_poll_ends_on").format(poll.getClosedAt().toString(formatter))
             } else if (poll.getClosedAt()

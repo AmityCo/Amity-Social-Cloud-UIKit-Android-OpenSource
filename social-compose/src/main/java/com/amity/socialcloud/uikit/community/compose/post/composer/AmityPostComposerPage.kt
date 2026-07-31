@@ -132,7 +132,6 @@ import com.amity.socialcloud.uikit.community.compose.localization.amitySocialCon
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
-import com.amity.socialcloud.uikit.common.ui.theme.amityProductTagBadgeCountBackground
 
 @OptIn(UnstableApi::class)
 @UnstableApi
@@ -1460,7 +1459,7 @@ fun AmityPostComposerPage(
                     .offset(x = 4.dp, y = (-4).dp)
                     .size(20.dp)
                     .background(
-                        color = amityProductTagBadgeCountBackground(),
+                        color = AmityTheme.colors.base,
                         shape = CircleShape
                     ),
                 contentAlignment = Alignment.Center

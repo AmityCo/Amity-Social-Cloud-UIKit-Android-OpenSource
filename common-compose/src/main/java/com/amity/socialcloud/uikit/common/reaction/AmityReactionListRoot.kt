@@ -50,6 +50,8 @@ import com.amity.socialcloud.uikit.common.localization.amityCommonString
 import com.amity.socialcloud.uikit.common.model.AmityMessageReactions
 import com.amity.socialcloud.uikit.common.model.AmitySocialReactions
 import com.amity.socialcloud.uikit.common.reaction.elements.AmityReactionListItem
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityEmptyState
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityEmptyStateVariant
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.pagingLoadStateItem
@@ -105,11 +107,9 @@ fun AmityReactionRoot(
         )
         HorizontalPager(
             state = pagerState,
-            modifier = if (isEmpty) {
-                Modifier.fillMaxWidth()
-            } else {
-                Modifier.fillMaxWidth().weight(1f)
-            }
+            // Fills the content area in BOTH states — the empty state centers within it, and the
+            // sheet keeps its height when the last reaction is removed while open.
+            modifier = Modifier.fillMaxWidth().weight(1f)
         ) { index ->
             val tab = state.tabItems[index]
             val reactionName = if (tab.isAllTab) null else tab.title
@@ -222,36 +222,19 @@ fun AmityReactionItems(
     onUserClick: (String) -> Unit = {},
 ) {
     if (state.tabItems.first().count == 0) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
+        // Empty state renders via the EmptyState atom: smile-plus-r glyph + Title/Description
+        // bound to the atom's token trio.
+        Box(
             modifier = modifier
-                .fillMaxWidth()
-                .padding(top = 40.dp, start = 16.dp, end = 16.dp, bottom = 60.dp)
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
+            contentAlignment = Alignment.Center,
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.amity_ic_add_reaction),
-                contentDescription = "no content found",
-                modifier = Modifier
-                    .size(60.dp),
-                colorFilter = ColorFilter.tint(AmityTheme.colors.secondaryShade4)
-            )
-
-            Text(
-                modifier = Modifier.padding(top = 16.dp),
-                text = amityCommonString("common.button.no.reactions.yet"),
-                style = AmityTheme.typography.titleBold.copy(
-                    color = AmityTheme.colors.baseShade2,
-                ),
-            )
-            val type = state.referenceType.value
-            val text = amityCommonString("amity_common_label_be_first_to_react", type)
-            Text(
-                modifier = Modifier.padding(top = 4.dp),
-                text = text,
-                style = AmityTheme.typography.caption.copy(
-                    color = AmityTheme.colors.baseShade3,
-                ),
+            AmityEmptyState(
+                variant = AmityEmptyStateVariant.ICON,
+                icon = R.drawable.amity_ic_smile_plus_r,
+                title = amityCommonString("amity_common_button_no_reactions_yet"),
+                description = amityCommonString("amity_common_label_be_first_to_react", state.referenceType.value),
             )
         }
         return

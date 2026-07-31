@@ -11,13 +11,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -26,19 +21,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import com.amity.socialcloud.uikit.chat.compose.localization.amityChatString
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.amity.socialcloud.uikit.chat.compose.R
 import com.amity.socialcloud.uikit.chat.compose.localization.DefaultAmityChatStringProvider
+import com.amity.socialcloud.uikit.common.compose.R as CommonR
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButton
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonHierarchy
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonVariant
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonStyle
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityIconButtonSize
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityMainButtonSize
+import com.amity.socialcloud.uikit.common.ui.atoms.AmitySelection
+import com.amity.socialcloud.uikit.common.ui.atoms.AmitySelectionVariant
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 
 private enum class MessagingPermission {
     EVERYONE,
@@ -62,11 +63,11 @@ fun AmityEditGroupMemberPermissionsPage(
     var selectedPermission by remember(initialPermission) { mutableStateOf(initialPermission) }
     val hasChanges = selectedPermission != initialPermission
 
-    AmityBasePage(pageId = "edit_group_member_permission_page") {
+    AmityBasePage(pageId = "edit_group_member_permission_page", useAmityToast = true) {
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .background(AmityTheme.colors.background),
+                .background(AmityTheme.token(AmityColorToken.SurfaceListDefaultDefault)),
         ) {
             // Header
             Box(
@@ -74,16 +75,14 @@ fun AmityEditGroupMemberPermissionsPage(
                     .fillMaxWidth()
                     .padding(horizontal = 12.dp),
             ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_chat_back),
-                    contentDescription = "Back",
-                    modifier = Modifier
-                        .size(24.dp)
-                        .align(Alignment.CenterStart)
-                        .clickableWithoutRipple {
-                            (context as? Activity)?.finish()
-                        },
-                    tint = AmityTheme.colors.base,
+                AmityButton(
+                    variant = AmityButtonVariant.ICON,
+                    style = AmityButtonStyle.GHOST,
+                    hierarchy = AmityButtonHierarchy.SECONDARY,
+                    iconSize = AmityIconButtonSize.SIZE32,
+                    icon = CommonR.drawable.amity_ic_chevron_left,
+                    onClick = { (context as? Activity)?.finish() },
+                    modifier = Modifier.align(Alignment.CenterStart),
                 )
 
                 Text(
@@ -94,7 +93,13 @@ fun AmityEditGroupMemberPermissionsPage(
                         .align(Alignment.Center),
                 )
 
-                TextButton(
+                AmityButton(
+                    variant = AmityButtonVariant.MAIN,
+                    style = AmityButtonStyle.GHOST,
+                    hierarchy = AmityButtonHierarchy.PRIMARY,
+                    mainSize = AmityMainButtonSize.SM,
+                    label = amityChatString("chat.group.edit.permission.save"),
+                    enabled = hasChanges,
                     onClick = {
                         if (selectedPermission == MessagingPermission.MODERATORS_ONLY) {
                             viewModel.muteChannel(
@@ -125,15 +130,8 @@ fun AmityEditGroupMemberPermissionsPage(
                             )
                         }
                     },
-                    enabled = hasChanges,
                     modifier = Modifier.align(Alignment.CenterEnd),
-                ) {
-                    Text(
-                        text = amityChatString("chat.group.edit.permission.save"),
-                        color = if (hasChanges) AmityTheme.colors.primary
-                        else AmityTheme.colors.primary.copy(alpha = 0.4f),
-                    )
-                }
+                )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -141,8 +139,9 @@ fun AmityEditGroupMemberPermissionsPage(
             Text(
                 text = amityChatString("chat.group.edit.permissions.messaging.title"),
                 style = AmityTheme.typography.bodyLegacy.copy(
-                    fontSize = 18.sp,
+                    fontSize = 17.sp,
                     fontWeight = FontWeight.Bold,
+                    color = AmityTheme.token(AmityColorToken.TextListHeaderDefaultDefault),
                 ),
                 modifier = Modifier.padding(horizontal = 16.dp),
             )
@@ -179,31 +178,30 @@ private fun PermissionOption(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(horizontal = 16.dp, vertical = 16.dp),
         verticalAlignment = Alignment.Top,
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = title,
                 style = AmityTheme.typography.bodyLegacy.copy(
-                    fontSize = 16.sp,
+                    fontSize = 15.sp,
                     fontWeight = FontWeight.SemiBold,
+                    color = AmityTheme.token(AmityColorToken.TextListHeaderDefaultDefault),
                 ),
             )
             Text(
                 text = description,
                 style = AmityTheme.typography.bodyLegacy.copy(
-                    fontSize = 14.sp,
-                    color = AmityTheme.colors.baseShade1,
+                    fontSize = 13.sp,
+                    color = AmityTheme.token(AmityColorToken.TextListTextDescriptionDefaultDefault),
                 ),
             )
         }
-        RadioButton(
-            selected = selected,
-            onClick = onClick,
-            colors = RadioButtonDefaults.colors(
-                selectedColor = AmityTheme.colors.primary,
-            ),
+        AmitySelection(
+            variant = AmitySelectionVariant.RADIO,
+            isSelected = selected,
+            onChange = { _, _ -> onClick() },
         )
     }
 }

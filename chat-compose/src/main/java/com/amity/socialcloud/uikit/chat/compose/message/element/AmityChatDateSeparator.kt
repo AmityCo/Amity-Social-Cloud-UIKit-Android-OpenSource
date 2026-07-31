@@ -1,19 +1,10 @@
 package com.amity.socialcloud.uikit.chat.compose.message.element
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityDateSeparator
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 
@@ -22,31 +13,13 @@ fun AmityChatDateSeparator(
     dateTime: DateTime,
     modifier: Modifier = Modifier,
 ) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(
-            text = formatDateSeparator(dateTime),
-            modifier = Modifier
-                .shadow(
-                    elevation = 2.dp,
-                    shape = RoundedCornerShape(16.dp),
-                )
-                .background(
-                    color = AmityTheme.colors.background,
-                    shape = RoundedCornerShape(16.dp),
-                )
-                .padding(horizontal = 8.dp, vertical = 4.dp),
-            style = AmityTheme.typography.captionLegacy.copy(
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Normal,
-                color = AmityTheme.colors.baseShade1,
-            ),
-        )
-    }
+    // The 8dp vertical margin is this message list's own spacing around the separator, not part of
+    // the atom's pill geometry (see AmityDateSeparator's Design Tokens/Geometry — pill padding is
+    // 4/8 vert/horiz only), so it stays here rather than baked into the shared atom.
+    AmityDateSeparator(
+        label = formatDateSeparator(dateTime),
+        modifier = modifier.padding(vertical = 8.dp),
+    )
 }
 
 private fun formatDateSeparator(dateTime: DateTime): String {

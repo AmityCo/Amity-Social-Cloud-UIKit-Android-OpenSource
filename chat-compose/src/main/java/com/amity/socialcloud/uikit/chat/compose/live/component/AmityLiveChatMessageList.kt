@@ -53,8 +53,11 @@ import com.amity.socialcloud.uikit.common.reaction.AmityMessageReactionBottomShe
 import com.amity.socialcloud.uikit.common.reaction.AmityMessageReactionListViewModel
 import com.amity.socialcloud.uikit.chat.compose.live.util.getContent
 import com.amity.socialcloud.uikit.chat.compose.localization.amityChatString
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityEmptyState
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityEmptyStateVariant
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
+import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.copyText
 import com.amity.socialcloud.uikit.common.localization.DefaultAmityCommonStringProvider
@@ -181,52 +184,20 @@ fun AmityLiveChatMessageList(
                             fontSize = 15.sp,
                             lineHeight = 20.sp,
                             fontWeight = FontWeight(400),
-                            color = AmityTheme.colors.secondaryShade2,
+                            color = AmityTheme.token(AmityColorToken.TextEmptyStateTitleDefault),
                             textAlign = TextAlign.Center,
                         )
                     )
                 }
             }
         } else if (messageListState == AmityLiveChatPageViewModel.MessageListState.BANNED || isGlobalBanned) {
-            Row(
+            AmityEmptyState(
                 modifier = Modifier.fillMaxSize(),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.amity_ic_chat_banned),
-                        contentDescription = "Banned from channel",
-                        modifier = Modifier
-                            .width(48.dp)
-                            .height(36.dp)
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = amityChatString("chat.label.banned.from.chat"),
-                        style = TextStyle(
-                            fontSize = 17.sp,
-                            lineHeight = 24.sp,
-                            fontWeight = FontWeight(600),
-                            color = AmityTheme.colors.secondaryShade2,
-                            textAlign = TextAlign.Center,
-                        )
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "You won’t be able to participate in this chat until you’ve been unbanned.",
-                        style = TextStyle(
-                            fontSize = 15.sp,
-                            lineHeight = 20.sp,
-                            fontWeight = FontWeight(400),
-                            color = AmityTheme.colors.secondaryShade2,
-                            textAlign = TextAlign.Center,
-                        )
-                    )
-                }
-            }
+                variant = AmityEmptyStateVariant.ICON,
+                icon = R.drawable.amity_ic_chat_banned,
+                title = amityChatString("chat.label.banned.from.chat"),
+                description = amityChatString("chat.label.banned.from.chat.description"),
+            )
         } else if (messageListState == AmityLiveChatPageViewModel.MessageListState.LOADING) {
             LazyColumn(
                 horizontalAlignment = Alignment.CenterHorizontally,

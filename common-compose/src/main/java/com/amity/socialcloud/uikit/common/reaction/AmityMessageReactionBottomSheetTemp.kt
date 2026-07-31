@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -16,14 +15,13 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.sdk.model.core.reaction.AmityReactionReferenceType
 import com.amity.socialcloud.uikit.common.reaction.AmityMessageReactionListViewModel.AmityMessageReactionListSheetUIState
-import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.atoms.AmitySheet
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -56,12 +54,11 @@ fun AmityMessageReactionBottomSheetTemp(
     )
 
     if (showSheet) {
-        ModalBottomSheet(
+        AmitySheet(
             onDismissRequest = {
                 viewModel.updateSheetUIState(AmityMessageReactionListSheetUIState.CloseSheet)
             },
             sheetState = sheetState,
-            containerColor = AmityTheme.colors.background,
             contentWindowInsets = { WindowInsets.navigationBars },
             modifier = modifier
                 .semantics {

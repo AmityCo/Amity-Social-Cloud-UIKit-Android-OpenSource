@@ -13,7 +13,6 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -37,10 +36,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -64,7 +60,6 @@ import androidx.compose.ui.res.painterResource
 import com.amity.socialcloud.uikit.chat.compose.localization.amityChatString
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -80,6 +75,8 @@ import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadata
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionee
 import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
+import com.amity.socialcloud.sdk.model.core.error.AmityError
+import com.amity.socialcloud.sdk.model.core.error.AmityException
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.uikit.chat.compose.R
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -91,15 +88,28 @@ import com.amity.socialcloud.uikit.chat.compose.live.elements.AmityAvatarType
 import com.amity.socialcloud.uikit.chat.compose.live.elements.AmityMessageAvatarView
 import com.amity.socialcloud.uikit.chat.compose.live.mention.AmityMentionSuggestion
 import com.amity.socialcloud.uikit.chat.compose.localization.DefaultAmityChatStringProvider
+import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.localization.amityCommonString
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityBanner
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityBannerHierarchy
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButton
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonHierarchy
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonVariant
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonStyle
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityDivider
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityDividerVariant
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityIconButtonSize
+import com.amity.socialcloud.uikit.common.ui.atoms.AmitySheet
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
-import com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem
+import com.amity.socialcloud.uikit.chat.compose.common.AmityChatSheetActionItem
+import com.amity.socialcloud.uikit.common.ui.elements.AmityPopover
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import java.io.File
 import kotlinx.coroutines.delay
-import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
 @Composable
 fun AmityGroupChatMessageComposer(
@@ -131,7 +141,7 @@ fun AmityGroupChatMessageComposer(
                 .imePadding()
                 .navigationBarsPadding(),
         ) {
-            HorizontalDivider(color = AmityTheme.colors.baseShade4)
+            AmityDivider(variant = AmityDividerVariant.Post)
 
             if (shouldShowComposer) {
                 ComposerContent(
@@ -170,6 +180,10 @@ private fun ComposerContent(
 
     var shouldRequestFocus by remember { mutableStateOf(false) }
 
+    val bannedWordErrorMessage = amityChatString("chat.toast.banned.word")
+    val linkNotAllowedErrorMessage = amityChatString("chat.toast.link.not.allow")
+    val generalErrorMessage = amityChatString("chat.message.failed.to.send")
+
     // Observe reply parent message for live updates (e.g., deletion)
     val replyMessageId = replyMessage?.getMessageId()
     LaunchedEffect(replyMessageId) {
@@ -197,7 +211,6 @@ private fun ComposerContent(
         }
     }
 
-    // Mention state
     var shouldShowSuggestion by remember { mutableStateOf(false) }
     var queryToken by remember { mutableStateOf("") }
     var selectedUserToMention by remember { mutableStateOf<AmityMentionSuggestion?>(null) }
@@ -236,7 +249,6 @@ private fun ComposerContent(
         }
     }
 
-    // When page-level mention suggestion is selected, apply it to the text field
     LaunchedEffect(mentionSuggestionSelected) {
         if (mentionSuggestionSelected != null) {
             selectedUserToMention = mentionSuggestionSelected
@@ -246,7 +258,6 @@ private fun ComposerContent(
     }
     val context = LocalContext.current
 
-    // Image/Video picker launcher
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
     ) { uri: Uri? ->
@@ -263,7 +274,6 @@ private fun ComposerContent(
         }
     }
 
-    // Camera photo launcher
     var cameraPhotoUri by remember { mutableStateOf<Uri?>(null) }
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture(),
@@ -278,7 +288,6 @@ private fun ComposerContent(
         }
     }
 
-    // Camera video launcher
     var cameraVideoUri by remember { mutableStateOf<Uri?>(null) }
     val cameraVideoLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CaptureVideo(),
@@ -293,11 +302,9 @@ private fun ComposerContent(
         }
     }
 
-    // Camera type chooser state
     var showCameraChooser by remember { mutableStateOf(false) }
     val cameraChooserSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-    // Camera permission launcher
     val cameraPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
     ) { granted: Boolean ->
@@ -306,12 +313,10 @@ private fun ComposerContent(
         }
     }
 
-    // Camera type chooser bottom sheet
     if (showCameraChooser) {
-        ModalBottomSheet(
+        AmitySheet(
             onDismissRequest = { showCameraChooser = false },
             sheetState = cameraChooserSheetState,
-            containerColor = AmityTheme.colors.background,
             contentWindowInsets = { WindowInsets.waterfall },
         ) {
             Column(
@@ -320,7 +325,7 @@ private fun ComposerContent(
                     .padding(horizontal = 8.dp)
                     .navigationBarsPadding()
             ) {
-                AmityBottomSheetActionItem(
+                AmityChatSheetActionItem(
                     icon = null,
                     text = amityChatString("chat.reply.photo.label"),
                 ) {
@@ -339,7 +344,7 @@ private fun ComposerContent(
                     cameraLauncher.launch(uri)
                 }
 
-                AmityBottomSheetActionItem(
+                AmityChatSheetActionItem(
                     icon = null,
                     text = amityChatString("chat.reply.video.label"),
                 ) {
@@ -379,34 +384,29 @@ private fun ComposerContent(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 12.dp, vertical = 8.dp),
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        // Bottom-align with an 8dp inset: the +/send buttons ride the input as it grows
+        // multi-line, and sit centered against the idle single-line input.
         verticalAlignment = Alignment.Bottom,
     ) {
-        // Media toggle button — hidden when editing a message
         if (editingMessage == null) {
-            Box(
-                modifier = Modifier
-                    .padding(bottom = 4.dp, end = 8.dp)
-                    .size(32.dp)
-                    .clickable {
-                        showMediaSection = !showMediaSection
-                    },
-                contentAlignment = Alignment.Center,
-            ) {
-                Image(
-                    painter = painterResource(
-                        id = if (showMediaSection)
-                            R.drawable.amity_ic_chat_media_close
-                        else
-                            R.drawable.amity_ic_chat_media_open
-                    ),
-                    contentDescription = "Toggle media",
-                    modifier = Modifier.size(32.dp),
-                )
-            }
+            AmityButton(
+                modifier = Modifier.padding(end = 12.dp, bottom = 8.dp),
+                variant = AmityButtonVariant.ICON,
+                style = AmityButtonStyle.FILLED,
+                hierarchy = AmityButtonHierarchy.SECONDARY,
+                iconSize = AmityIconButtonSize.SIZE32,
+                icon = if (showMediaSection)
+                    CommonR.drawable.amity_ic_cross_r
+                else
+                    CommonR.drawable.amity_ic_plus_r,
+                onClick = {
+                    showMediaSection = !showMediaSection
+                },
+            )
         }
 
-        // Mention-enabled text field (reuses live chat component)
+        // Reuses live chat's mention text field rather than a separate implementation.
         AmityMessageMentionTextField(
             modifier = Modifier
                 .weight(1f)
@@ -439,25 +439,24 @@ private fun ComposerContent(
             },
         )
 
-        // Send button — hidden when media section is open
         if (!showMediaSection) {
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(12.dp))
 
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .background(
-                        if (isSendButtonEnabled) AmityTheme.colors.primary
-                        else AmityTheme.colors.baseShade3
-                    )
-                    .clickable(enabled = isSendButtonEnabled) {
-                        val text = messageText.trim()
-                        if (text.length > 10000) {
+            AmityButton(
+                modifier = Modifier.padding(bottom = 8.dp),
+                variant = AmityButtonVariant.ICON,
+                style = AmityButtonStyle.FILLED,
+                hierarchy = if (isSendButtonEnabled) AmityButtonHierarchy.PRIMARY else AmityButtonHierarchy.SECONDARY,
+                iconSize = AmityIconButtonSize.SIZE32,
+                icon = CommonR.drawable.amity_ic_arrow_up_r,
+                enabled = isSendButtonEnabled,
+                onClick = {
+                    val text = messageText.trim()
+                    when {
+                        text.length > 10000 -> {
                             showComposeErrorDialog = true
-                            return@clickable
                         }
-                        if (text.isNotEmpty()) {
+                        text.isNotEmpty() -> {
                             val currentEditingMessage = editingMessage
                             if (currentEditingMessage != null) {
                                 shouldClearText = true
@@ -484,8 +483,18 @@ private fun ComposerContent(
                                     onSuccess = {
                                         shouldClearText = false
                                     },
-                                    onError = {
+                                    onError = { exception ->
                                         shouldClearText = false
+                                        val errorMessage = if (exception is AmityException) {
+                                            when (AmityError.from(exception.code)) {
+                                                AmityError.BAN_WORD_FOUND -> bannedWordErrorMessage
+                                                AmityError.LINK_NOT_ALLOWED -> linkNotAllowedErrorMessage
+                                                else -> exception.message ?: generalErrorMessage
+                                            }
+                                        } else {
+                                            exception.message ?: generalErrorMessage
+                                        }
+                                        AmityUIKitSnackbar.publishSnackbarErrorMessage(errorMessage)
                                     },
                                 )
                                 messageText = ""
@@ -494,20 +503,12 @@ private fun ComposerContent(
                                 viewModel.dismissReplyMessage()
                             }
                         }
-                    },
-                contentAlignment = Alignment.Center,
-            ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.amity_arrow_upward),
-                    contentDescription = "Send",
-                    modifier = Modifier.size(20.dp),
-                    tint = amityColorWhite,
-                )
-            }
+                    }
+                },
+            )
         }
     }
 
-    // Expandable media section
     AnimatedVisibility(
         visible = showMediaSection,
         enter = expandVertically(),
@@ -516,12 +517,13 @@ private fun ComposerContent(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(24.dp),
-            horizontalArrangement = Arrangement.Center,
+                .height(106.dp)
+                .background(AmityTheme.token(AmityColorToken.SurfaceSheetsBackgroundGeneral))
+                .padding(top = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(56.dp, Alignment.CenterHorizontally),
         ) {
-            // Camera button
             MediaButton(
-                iconResId = R.drawable.amity_ic_chat_camera_button,
+                iconResId = CommonR.drawable.amity_ic_camera_r,
                 label = amityChatString("chat.media.camera"),
                 onClick = {
                     val hasCameraPermission = ContextCompat.checkSelfPermission(
@@ -536,11 +538,8 @@ private fun ComposerContent(
                 },
             )
 
-            Spacer(modifier = Modifier.width(72.dp))
-
-            // Photo/Gallery button
             MediaButton(
-                iconResId = R.drawable.amity_ic_chat_image_button,
+                iconResId = CommonR.drawable.amity_ic_image_r,
                 label = amityChatString("chat.media.photo"),
                 onClick = {
                     imagePickerLauncher.launch(
@@ -553,7 +552,6 @@ private fun ComposerContent(
         }
     }
 
-    // Message length error dialog
     if (showComposeErrorDialog) {
         MessageComposeErrorPopup(
             confirmText = amityCommonString("amity_common_modal_dialog_done_button"),
@@ -563,7 +561,6 @@ private fun ComposerContent(
         )
     }
 
-    // Mention limit error dialog
     if (showMentionLimitErrorDialog) {
         MessageComposeErrorPopup(
             title = amityChatString("chat.reach.mention.limit.title"),
@@ -584,19 +581,22 @@ private fun MediaButton(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.clickable(onClick = onClick),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        Image(
-            painter = painterResource(id = iconResId),
-            contentDescription = label,
-            modifier = Modifier.size(40.dp),
+        AmityButton(
+            variant = AmityButtonVariant.ICON,
+            style = AmityButtonStyle.FILLED,
+            hierarchy = AmityButtonHierarchy.SECONDARY,
+            iconSize = AmityIconButtonSize.SIZE40,
+            icon = iconResId,
+            onClick = onClick,
         )
         Text(
             text = label,
             style = AmityTheme.typography.bodyLegacy.copy(
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Normal,
-                color = AmityTheme.colors.baseShade1,
+                color = AmityTheme.token(AmityColorToken.TextIconButtonLabelGeneral),
             ),
         )
     }
@@ -607,29 +607,15 @@ private fun MutedBanner(
     isUserMuted: Boolean,
     isUserBanned: Boolean = false,
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(AmityTheme.colors.backgroundShade1)
-            .height(72.dp)
-            .padding(horizontal = 16.dp)
-    ) {
-        Text(
-            text = when {
-                isUserBanned -> amityChatString("chat.group.user.banned")
-                isUserMuted -> amityChatString("chat.group.user.muted")
-                else -> amityChatString("chat.group.permission.only.moderators.banner")
-            },
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-            style = AmityTheme.typography.caption.copy(
-                color = AmityTheme.colors.baseShade1,
-            ),
-            textAlign = TextAlign.Center
-        )
-    }
+    AmityBanner(
+        hierarchy = AmityBannerHierarchy.SUBDUE,
+        centered = true,
+        description = when {
+            isUserBanned -> amityChatString("chat.group.user.banned")
+            isUserMuted -> amityChatString("chat.group.user.muted")
+            else -> amityChatString("chat.group.permission.only.moderators.banner")
+        },
+    )
 }
 
 @Composable
@@ -640,23 +626,27 @@ private fun EditPreview(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(AmityTheme.colors.baseShade4)
-            .padding(start = 16.dp, end = 8.dp),
+            .background(AmityTheme.token(AmityColorToken.SurfaceBannerSubdueGeneral))
+            .padding(horizontal = 12.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(
+            modifier = Modifier.weight(1f),
             text = amityChatString("chat.editing.message"),
-            style = AmityTheme.typography.captionBold,
+            style = AmityTheme.typography.captionBold.copy(
+                color = AmityTheme.token(AmityColorToken.TextBannerSubdueOverlineGeneral),
+            ),
         )
-        IconButton(onClick = onDismiss) {
-            Icon(
-                imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_close_reply),
-                contentDescription = null,
-                tint = AmityTheme.colors.baseShade2,
-                modifier = Modifier.size(20.dp),
-            )
-        }
+
+        AmityButton(
+            variant = AmityButtonVariant.ICON,
+            style = AmityButtonStyle.GHOST,
+            hierarchy = AmityButtonHierarchy.SECONDARY,
+            iconSize = AmityIconButtonSize.SIZE32,
+            icon = CommonR.drawable.amity_ic_cross_r,
+            onClick = onDismiss,
+        )
     }
 }
 
@@ -670,7 +660,7 @@ private fun ReplyPreview(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(AmityTheme.colors.baseShade4)
+            .background(AmityTheme.token(AmityColorToken.SurfaceBannerSubdueGeneral))
             .padding(horizontal = 12.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -688,21 +678,20 @@ private fun ReplyPreview(
                         amityChatString("chat.replying.to", message.getCreator()?.getDisplayName() ?: defaultUser)
                     },
                     style = AmityTheme.typography.captionBold.copy(
-                        color = AmityTheme.colors.base,
+                        color = AmityTheme.token(AmityColorToken.TextBannerSubdueOverlineGeneral),
                     ),
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = getReplyPreviewText(message, context),
                     style = AmityTheme.typography.caption.copy(
-                        color = AmityTheme.colors.baseShade1,
+                        color = AmityTheme.token(AmityColorToken.TextBannerSubdueTextDescriptionGeneral),
                     ),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
             }
 
-            // Thumbnail for image/video replies
             val data = message.getData()
             if (data is AmityMessage.Data.IMAGE) {
                 val imageUrl = data.getImage()?.getUrl(AmityImage.Size.SMALL)
@@ -721,9 +710,9 @@ private fun ReplyPreview(
                 val thumbnailUrl = data.getThumbnailImage()?.getUrl(AmityImage.Size.SMALL)
                 Box(
                     modifier = Modifier
-                        .size(40.dp)
+                        .size(32.dp)
                         .clip(RoundedCornerShape(4.dp))
-                        .background(AmityTheme.colors.baseShade3),
+                        .background(AmityTheme.token(AmityColorToken.SurfaceMediaVideoLoading)),
                     contentAlignment = Alignment.Center,
                 ) {
                     if (!thumbnailUrl.isNullOrEmpty()) {
@@ -733,27 +722,37 @@ private fun ReplyPreview(
                                 .memoryCachePolicy(CachePolicy.ENABLED).build(),
                             contentDescription = "Video thumbnail",
                             contentScale = ContentScale.Crop,
-                            modifier = Modifier.size(40.dp),
+                            modifier = Modifier.size(32.dp),
                         )
                     }
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_chat_video_play),
-                        contentDescription = "Video",
-                        modifier = Modifier.size(24.dp),
-                        tint = amityColorWhite,
-                    )
+                    Box(
+                        modifier = Modifier
+                            .size(24.dp)
+                            .background(
+                                AmityTheme.token(AmityColorToken.SurfaceMediaOverlayTransparentBlack),
+                                CircleShape,
+                            ),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_video_play_s),
+                            contentDescription = "Video",
+                            modifier = Modifier.size(16.dp),
+                            tint = AmityTheme.token(AmityColorToken.IconIconButtonTransparentPrimaryDefault),
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.width(8.dp))
             }
         }
 
-        Icon(
-            imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_close_reply),
-            contentDescription = "Close reply",
-            modifier = Modifier
-                .size(20.dp)
-                .clickable(onClick = onDismiss),
-            tint = AmityTheme.colors.baseShade2,
+        AmityButton(
+            variant = AmityButtonVariant.ICON,
+            style = AmityButtonStyle.GHOST,
+            hierarchy = AmityButtonHierarchy.SECONDARY,
+            iconSize = AmityIconButtonSize.SIZE32,
+            icon = CommonR.drawable.amity_ic_cross_r,
+            onClick = onDismiss,
         )
     }
 }
@@ -788,24 +787,21 @@ internal fun GroupMentionSuggestionView(
         }
     }.collectAsLazyPagingItems()
 
-    // Don't render if there are no suggestions at all
     if (suggestions.itemCount == 0) return
-
-    val cardShape = RoundedCornerShape(12.dp)
 
     Box(
         modifier = modifier
             .padding(horizontal = 12.dp)
             .fillMaxWidth()
     ) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .shadow(elevation = 12.dp, shape = cardShape, clip = false)
-                .clip(cardShape)
-                .background(color = amityColorWhite)
-                .requiredHeightIn(0.dp, 120.dp)
-        ) {
+        // `Modifier.fillMaxWidth()` overrides AmityPopover's default fixed width so the suggestion
+        // card spans this composer's full width.
+        AmityPopover(modifier = Modifier.fillMaxWidth()) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .requiredHeightIn(0.dp, 120.dp)
+            ) {
         items(
             count = suggestions.itemCount,
             key = { index -> index }
@@ -828,32 +824,46 @@ internal fun GroupMentionSuggestionView(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp)
+                    .background(color = AmityTheme.token(AmityColorToken.SurfacePopoverListsDefault))
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = ripple(
                             bounded = true,
-                            color = AmityTheme.colors.baseShade1,
+                            color = AmityTheme.token(AmityColorToken.SurfacePopoverListsHover),
                         ),
                         onClick = { onClick(suggestion) },
                     )
                     .padding(horizontal = 16.dp, vertical = 0.dp)
             ) {
-                AmityMessageAvatarView(
-                    avatarUrl = avatarUrl,
-                    displayName = text,
-                    avatarType = if (suggestion is AmityMentionSuggestion.USER) {
-                        AmityAvatarType.USER
-                    } else {
-                        AmityAvatarType.MENTION_ALL
-                    },
-                    size = 32.dp,
-                )
+                if (suggestion is AmityMentionSuggestion.CHANNEL) {
+                    Box(
+                        modifier = Modifier
+                            .size(32.dp)
+                            .clip(CircleShape)
+                            .background(AmityTheme.token(AmityColorToken.SurfaceFeaturedIconSolid)),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_at_s),
+                            contentDescription = null,
+                            tint = AmityTheme.token(AmityColorToken.IconFeaturedIconSolid),
+                            modifier = Modifier.size(24.dp),
+                        )
+                    }
+                } else {
+                    AmityMessageAvatarView(
+                        avatarUrl = avatarUrl,
+                        displayName = text,
+                        avatarType = AmityAvatarType.USER,
+                        size = 32.dp,
+                    )
+                }
                 Text(
                     text = text,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     style = AmityTheme.typography.captionBold.copy(
-                        color = AmityTheme.colors.base,
+                        color = AmityTheme.token(AmityColorToken.TextListHeaderDefaultDefault),
                     ),
                     modifier = Modifier.padding(start = 12.dp)
                 )
@@ -875,33 +885,28 @@ internal fun GroupMentionSuggestionView(
                         text = amityChatString("chat.mention.everyone"),
                         overflow = TextOverflow.Ellipsis,
                         style = AmityTheme.typography.caption,
-                        color = AmityTheme.colors.baseShade3,
+                        color = AmityTheme.token(AmityColorToken.TextListTrailingTextGeneral),
                     )
                 }
             }
         }
+            }
         }
 
         if (onClose != null) {
-            Box(
+            AmityButton(
+                variant = AmityButtonVariant.ICON,
+                style = AmityButtonStyle.FILLED,
+                hierarchy = AmityButtonHierarchy.SECONDARY,
+                iconSize = AmityIconButtonSize.SIZE24,
+                icon = CommonR.drawable.amity_ic_cross_r,
+                contentDescription = "Close",
+                onClick = onClose,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .offset(8.dp, (-8).dp)
-                    .shadow(elevation = 4.dp, shape = CircleShape)
-                    .size(24.dp)
-                    .clip(CircleShape)
-                    .background(amityColorWhite)
-                    .border(1.dp, AmityTheme.colors.divider)
-                    .clickable { onClose() },
-                contentAlignment = Alignment.Center,
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.amity_ic_close_reply),
-                    contentDescription = "Close",
-                    modifier = Modifier.size(16.dp),
-                    tint = AmityTheme.colors.baseShade2,
-                )
-            }
+                    .shadow(elevation = 4.dp, shape = CircleShape),
+            )
         }
     }
 }

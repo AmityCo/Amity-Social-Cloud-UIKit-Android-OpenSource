@@ -22,8 +22,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -37,23 +35,30 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import com.amity.socialcloud.uikit.chat.compose.localization.amityChatString
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntRect
+import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupPositionProvider
+import androidx.compose.ui.window.PopupProperties
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.sdk.model.chat.channel.AmityChannel
 import com.amity.socialcloud.sdk.core.session.model.NetworkConnectionEvent
 import com.amity.socialcloud.uikit.chat.compose.AmityChatBehaviorHelper
-import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import com.amity.socialcloud.uikit.chat.compose.R
+import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import com.amity.socialcloud.uikit.chat.compose.home.component.AmityChatListComponent
 import com.amity.socialcloud.uikit.chat.compose.home.component.SwipeAction
 import com.amity.socialcloud.uikit.chat.compose.localization.DefaultAmityChatStringProvider
@@ -61,9 +66,19 @@ import com.amity.socialcloud.uikit.chat.compose.message.element.AmityChatWaiting
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButton
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonVariant
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonStyle
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonHierarchy
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityIconButtonSize
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityTab
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityTabVariant
+import com.amity.socialcloud.uikit.common.ui.elements.AmityPopover
+import com.amity.socialcloud.uikit.common.ui.elements.AmityPopoverRow
+import com.amity.socialcloud.uikit.common.compose.R as CommonR
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import kotlinx.coroutines.launch
-import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -83,13 +98,11 @@ fun AmityChatHomePage(
 
     var selectedTab by remember { mutableStateOf(AmityChatHomePageTab.ALL) }
 
-    // Resolve enabled channel types from config, then derive which tabs to show.
     val enabledTypes = remember { AmityUIKitConfigController.getEnabledChannelTypes() }
     val showConversation = "conversation" in enabledTypes
     val showCommunity = "community" in enabledTypes
     val showBothTypes = showConversation && showCommunity
 
-    // Build ordered tab list. When both are enabled: All first, then Direct/Groups in config order.
     val tabs: List<AmityChatHomePageTab> = remember(enabledTypes) {
         if (showBothTypes) {
             val ordered = mutableListOf(AmityChatHomePageTab.ALL)
@@ -107,7 +120,6 @@ fun AmityChatHomePage(
         }
     }
 
-    // Keep selectedTab valid when tabs list changes.
     if (selectedTab !in tabs) selectedTab = tabs.first()
 
     val pagerState = rememberPagerState(
@@ -125,10 +137,12 @@ fun AmityChatHomePage(
         .collectAsState(initial = NetworkConnectionEvent.Connected)
     val isConnected = connection is NetworkConnectionEvent.Connected
 
-    // Archive limit error dialog
     if (showArchiveLimitDialog) {
         AlertDialog(
             onDismissRequest = { showArchiveLimitDialog = false },
+            containerColor = AmityTheme.token(AmityColorToken.SurfaceAlertDialogBackgroundDefault),
+            titleContentColor = AmityTheme.token(AmityColorToken.TextAlertDialogHeaderTitleDefault),
+            textContentColor = AmityTheme.token(AmityColorToken.TextAlertDialogBodyDefault),
             title = { Text(text = archiveLimitTitle) },
             text = { Text(text = archiveLimitMessage) },
             confirmButton = {
@@ -155,19 +169,17 @@ fun AmityChatHomePage(
         )
     }
 
-    AmityBasePage(pageId = "chat_home_page") {
+    AmityBasePage(pageId = "chat_home_page", useAmityToast = true) {
         Box(
             modifier = modifier
                 .fillMaxSize()
-                .background(AmityTheme.colors.background),
+                .background(AmityTheme.token(AmityColorToken.SurfacePageBackgroundDefault)),
         ) {
             Column(
                 modifier = Modifier.fillMaxSize(),
             ) {
-                // Top navigation bar
                 AmityChatHomeTopNavigationBar(
                     isConnected = isConnected,
-                    onBackClick = onBackClick,
                     onSearchClick = { behavior.goToSearchPage(context) },
                     onCreateDirectChatClick = { behavior.goToCreateConversationPage(context) },
                     onCreateGroupChatClick = { behavior.goToCreateGroupPage(context) },
@@ -176,7 +188,6 @@ fun AmityChatHomePage(
                     showCommunityType = showCommunity,
                 )
 
-                // Tab row — only show tabs for enabled channel types
                 LazyRow(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -202,7 +213,6 @@ fun AmityChatHomePage(
                 }
             }
 
-            // Pager content
             Box(
                 modifier = Modifier.fillMaxSize(),
             ) {
@@ -286,17 +296,16 @@ private fun AmityChatHomeTopNavigationBar(
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        // Optional leading back affordance so integrators hosting this page as a
-        // sub-page can navigate back without overlaying their own control on the
-        // leading-pinned title.
+        // Optional leading back affordance for integrators hosting this page as a sub-page, so they
+        // don't have to overlay their own back control on the leading-pinned title.
         if (onBackClick != null) {
             Icon(
-                imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_chat_back),
+                imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_chevron_left),
                 contentDescription = "Back",
                 modifier = Modifier
                     .size(24.dp)
                     .clickableWithoutRipple { onBackClick() },
-                tint = AmityTheme.colors.base,
+                tint = AmityTheme.token(AmityColorToken.IconIconButtonGhostSecondaryDefault),
             )
             Spacer(modifier = Modifier.width(8.dp))
         }
@@ -304,14 +313,18 @@ private fun AmityChatHomeTopNavigationBar(
         if (isConnected) {
             Text(
                 text = amityChatString("chat.home.title"),
-                style = AmityTheme.typography.headLine,
+                style = AmityTheme.typography.headLine.copy(
+                    color = AmityTheme.token(AmityColorToken.TextListHeaderDefaultDefault),
+                ),
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Start
             )
         } else {
             Text(
                 text = amityChatString("chat.home.title"),
-                style = AmityTheme.typography.headLine,
+                style = AmityTheme.typography.headLine.copy(
+                    color = AmityTheme.token(AmityColorToken.TextListHeaderDefaultDefault),
+                ),
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Start
             )
@@ -320,26 +333,17 @@ private fun AmityChatHomeTopNavigationBar(
             )
         }
 
-        // Search button
-        Box(
-            modifier = Modifier
-                .size(32.dp)
-                .clip(CircleShape)
-                .background(color = AmityTheme.colors.baseShade4)
-                .clickableWithoutRipple { onSearchClick() },
-            contentAlignment = Alignment.Center,
-        ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_chat_home_search),
-                contentDescription = "Search",
-                modifier = Modifier.size(20.dp),
-                tint = AmityTheme.colors.base,
-            )
-        }
+        AmityButton(
+            variant = AmityButtonVariant.ICON,
+            style = AmityButtonStyle.FILLED,
+            hierarchy = AmityButtonHierarchy.SECONDARY,
+            iconSize = AmityIconButtonSize.SIZE32,
+            icon = CommonR.drawable.amity_ic_search_r,
+            onClick = onSearchClick,
+        )
 
-        Spacer(modifier = Modifier.width(10.dp))
+        Spacer(modifier = Modifier.width(12.dp))
 
-        // Create chat button with dropdown
         AmityCreateChatButton(
             onCreateDirectChatClick = onCreateDirectChatClick,
             onCreateGroupChatClick = onCreateGroupChatClick,
@@ -347,12 +351,54 @@ private fun AmityChatHomeTopNavigationBar(
             showCommunityType = showCommunityType,
         )
 
-        Spacer(modifier = Modifier.width(10.dp))
+        Spacer(modifier = Modifier.width(12.dp))
 
-        // More menu (archived)
         AmityChatMoreMenuButton(
             onArchivedClick = onArchivedClick,
         )
+    }
+}
+
+/**
+ * Transparent gutter placed around the popover inside its `Popup` window so the AmityPopover
+ * two-layer drop shadow has room to render. A `Popup` window is sized tightly to its content, so a
+ * shadow drawn at the surface's own edge bleeds outside the window and gets clipped away (the
+ * popover then looks flat/elevation-less). The gutter enlarges the window by this much on every
+ * side; the position provider compensates so the visible surface stays anchored where it was.
+ */
+private val AmityPopoverShadowGutter = 16.dp
+
+/**
+ * Anchors a popover directly below its trigger button, right-aligned to the button's end edge,
+ * since these top-bar icon buttons sit close to the screen's trailing edge. The offset is not
+ * part of the shared AmityPopover component — it is this page's own placement, the same pattern
+ * as `AmityMessageActionMenuPopup`'s bubble-relative provider.
+ */
+@Composable
+private fun rememberBelowAnchorEndAlignedPositionProvider(
+    gap: Dp = 4.dp,
+    shadowGutter: Dp = AmityPopoverShadowGutter,
+): PopupPositionProvider {
+    val density = LocalDensity.current
+    val gapPx = with(density) { gap.roundToPx() }
+    val gutterPx = with(density) { shadowGutter.roundToPx() }
+    return remember(gapPx, gutterPx) {
+        object : PopupPositionProvider {
+            override fun calculatePosition(
+                anchorBounds: IntRect,
+                windowSize: IntSize,
+                layoutDirection: LayoutDirection,
+                popupContentSize: IntSize,
+            ): IntOffset {
+                // popupContentSize includes the transparent shadow gutter on every side, so offset
+                // by // +gutter (x) / −gutter (y) to keep the visible surface end-aligned to the
+                // anchor and `gap` below it.
+                val x = (anchorBounds.right - popupContentSize.width + gutterPx).coerceAtLeast(0)
+                val maxY = (windowSize.height - popupContentSize.height).coerceAtLeast(0)
+                val y = (anchorBounds.bottom + gapPx - gutterPx).coerceAtLeast(0).coerceAtMost(maxY)
+                return IntOffset(x, y)
+            }
+        }
     }
 }
 
@@ -368,100 +414,58 @@ private fun AmityCreateChatButton(
     val onlyCommunity = showCommunityType && !showConversationType
 
     var expanded by remember { mutableStateOf(false) }
+    val positionProvider = rememberBelowAnchorEndAlignedPositionProvider()
 
     Box {
-        Box(
-            modifier = Modifier
-                .size(32.dp)
-                .clip(CircleShape)
-                .background(color = AmityTheme.colors.baseShade4)
-                .clickableWithoutRipple {
-                    when {
-                        onlyConversation -> onCreateDirectChatClick()
-                        onlyCommunity -> onCreateGroupChatClick()
-                        else -> expanded = true
-                    }
-                },
-            contentAlignment = Alignment.Center,
-        ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_chat_home_create),
-                contentDescription = "Create Chat",
-                modifier = Modifier.size(20.dp),
-                tint = AmityTheme.colors.base,
-            )
-        }
+        AmityButton(
+            variant = AmityButtonVariant.ICON,
+            style = AmityButtonStyle.FILLED,
+            hierarchy = AmityButtonHierarchy.SECONDARY,
+            iconSize = AmityIconButtonSize.SIZE32,
+            icon = CommonR.drawable.amity_ic_plus_r,
+            onClick = {
+                when {
+                    onlyConversation -> onCreateDirectChatClick()
+                    onlyCommunity -> onCreateGroupChatClick()
+                    else -> expanded = true
+                }
+            },
+        )
 
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier.width(200.dp),
-            containerColor = AmityTheme.colors.background
-        ) {
-            if (showConversationType) {
-                DropdownMenuItem(
-                    contentPadding = PaddingValues(0.dp),
-                    text = {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 12.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Icon(
-                                imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_chat_home_create_direct),
-                                contentDescription = null,
-                                modifier = Modifier.size(20.dp),
-                                tint = AmityTheme.colors.base,
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = amityChatString("chat.create.direct"),
-                                style = AmityTheme.typography.bodyLegacy.copy(
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = AmityTheme.colors.base,
-                                ),
+        if (expanded) {
+            Popup(
+                popupPositionProvider = positionProvider,
+                onDismissRequest = { expanded = false },
+                properties = PopupProperties(focusable = true),
+            ) {
+                // The gutter Box gives the popover's drop shadow room inside the Popup window; the
+                // position // provider compensates so the surface stays anchored (see the provider
+                // above).
+                Box(modifier = Modifier.padding(AmityPopoverShadowGutter)) {
+                    AmityPopover {
+                        if (showConversationType) {
+                            AmityPopoverRow(
+                                icon = CommonR.drawable.amity_ic_user_plus_r,
+                                label = amityChatString("chat.create.direct"),
+                                onSelect = {
+                                    expanded = false
+                                    onCreateDirectChatClick()
+                                },
                             )
                         }
-                    },
-                    onClick = {
-                        expanded = false
-                        onCreateDirectChatClick()
-                    },
-                )
-            }
-            if (showCommunityType) {
-                DropdownMenuItem(
-                contentPadding = PaddingValues(0.dp),
-                text = {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 12.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_chat_home_create_group),
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp),
-                            tint = AmityTheme.colors.base,
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = amityChatString("chat.create.group"),
-                            style = AmityTheme.typography.bodyLegacy.copy(
-                                fontWeight = FontWeight.SemiBold,
-                                color = AmityTheme.colors.base,
-                            ),
-                        )
+                        if (showCommunityType) {
+                            AmityPopoverRow(
+                                icon = CommonR.drawable.amity_ic_user_group_r,
+                                label = amityChatString("chat.create.group"),
+                                onSelect = {
+                                    expanded = false
+                                    onCreateGroupChatClick()
+                                },
+                            )
+                        }
                     }
-                },
-                onClick = {
-                    expanded = false
-                    onCreateGroupChatClick()
-                },
-            )
-            } // end if (showCommunityType)
+                }
+            }
         }
     }
 }
@@ -471,60 +475,37 @@ private fun AmityChatMoreMenuButton(
     onArchivedClick: () -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
+    val positionProvider = rememberBelowAnchorEndAlignedPositionProvider()
 
     Box {
-        Box(
-            modifier = Modifier
-                .size(32.dp)
-                .clip(CircleShape)
-                .background(color = AmityTheme.colors.baseShade4)
-                .clickableWithoutRipple { expanded = true },
-            contentAlignment = Alignment.Center,
-        ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_chat_home_more),
-                contentDescription = "More",
-                modifier = Modifier.size(20.dp),
-                tint = AmityTheme.colors.base,
-            )
-        }
+        AmityButton(
+            variant = AmityButtonVariant.ICON,
+            style = AmityButtonStyle.FILLED,
+            hierarchy = AmityButtonHierarchy.SECONDARY,
+            iconSize = AmityIconButtonSize.SIZE32,
+            icon = CommonR.drawable.amity_ic_ellipsis_v_r,
+            onClick = { expanded = true },
+        )
 
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier.width(200.dp),
-            containerColor = AmityTheme.colors.background
-        ) {
-            DropdownMenuItem(
-                contentPadding = PaddingValues(0.dp),
-                text = {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 12.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_chat_home_archive),
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp),
-                            tint = AmityTheme.colors.base,
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = amityChatString("chat.archived"),
-                            style = AmityTheme.typography.bodyLegacy.copy(
-                                fontWeight = FontWeight.SemiBold,
-                                color = AmityTheme.colors.base,
-                            ),
+        if (expanded) {
+            Popup(
+                popupPositionProvider = positionProvider,
+                onDismissRequest = { expanded = false },
+                properties = PopupProperties(focusable = true),
+            ) {
+                Box(modifier = Modifier.padding(AmityPopoverShadowGutter)) {
+                    AmityPopover {
+                        AmityPopoverRow(
+                            icon = CommonR.drawable.amity_ic_archive_r,
+                            label = amityChatString("chat.archived"),
+                            onSelect = {
+                                expanded = false
+                                onArchivedClick()
+                            },
                         )
                     }
-                },
-                onClick = {
-                    expanded = false
-                    onArchivedClick()
-                },
-            )
+                }
+            }
         }
     }
 }
@@ -536,29 +517,11 @@ private fun AmityChatHomeTabButton(
     isSelected: Boolean,
     onClick: () -> Unit,
 ) {
-    Box(
-        modifier = modifier
-            .border(
-                border = BorderStroke(
-                    width = if (isSelected) 0.dp else 1.dp,
-                    color = if (isSelected) Color.Transparent else AmityTheme.colors.baseShade4,
-                ),
-                shape = RoundedCornerShape(size = 24.dp)
-            )
-            .background(
-                color = if (isSelected) AmityTheme.colors.primary else Color.Transparent,
-                shape = RoundedCornerShape(size = 24.dp)
-            )
-            .padding(horizontal = 16.dp, vertical = 6.dp)
-            .clickableWithoutRipple { onClick() }
-    ) {
-        Text(
-            modifier = Modifier.padding(horizontal = 2.dp, vertical = 6.dp),
-            text = title,
-            style = AmityTheme.typography.titleLegacy.copy(
-                color = if (isSelected) amityColorWhite else AmityTheme.colors.secondaryShade1,
-                fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
-            )
-        )
-    }
+    AmityTab(
+        variant = AmityTabVariant.Pill,
+        modifier = modifier,
+        label = title,
+        selected = isSelected,
+        onPress = onClick,
+    )
 }

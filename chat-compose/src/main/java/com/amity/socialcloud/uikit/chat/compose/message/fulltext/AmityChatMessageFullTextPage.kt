@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,15 +31,14 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.amity.socialcloud.uikit.chat.compose.R
+import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.extionsions.extractUrls
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityDivider
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityDividerVariant
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
+import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
-
-private val URL_REGEX_FULL = Regex(
-    """https?://[^\s<>"{}|\\^`\[\]]+""",
-    RegexOption.IGNORE_CASE,
-)
 
 @Composable
 fun AmityChatMessageFullTextPage(
@@ -50,25 +48,25 @@ fun AmityChatMessageFullTextPage(
     onBack: () -> Unit,
 ) {
     val context = LocalContext.current
-    val linkColor = AmityTheme.colors.highlight
+    val linkColor = AmityTheme.token(AmityColorToken.TextChatBubbleInboundLinkDefault)
 
     val annotatedString = remember(text, linkColor) {
         buildAnnotatedString {
             append(text)
-            URL_REGEX_FULL.findAll(text).forEach { match ->
+            text.extractUrls().forEach { pos ->
                 addStyle(
                     style = SpanStyle(
                         color = linkColor,
                         textDecoration = TextDecoration.Underline,
                     ),
-                    start = match.range.first,
-                    end = match.range.last + 1,
+                    start = pos.start,
+                    end = pos.end,
                 )
                 addStringAnnotation(
                     tag = "URL",
-                    annotation = match.value,
-                    start = match.range.first,
-                    end = match.range.last + 1,
+                    annotation = pos.url,
+                    start = pos.start,
+                    end = pos.end,
                 )
             }
         }
@@ -76,32 +74,34 @@ fun AmityChatMessageFullTextPage(
 
     val textLayoutResult = remember { mutableStateOf<TextLayoutResult?>(null) }
 
-    AmityBasePage("chat_full_text_page") {
+    AmityBasePage("chat_full_text_page", useAmityToast = true) {
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .background(AmityTheme.colors.background),
+                .background(AmityTheme.token(AmityColorToken.SurfacePageBackgroundDefault)),
         ) {
             // Header
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .background(AmityTheme.token(AmityColorToken.SurfaceSheetsBackgroundGeneral))
                     .padding(horizontal = 12.dp),
             ) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_chat_back),
+                    imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_chevron_left),
                     contentDescription = "Back",
                     modifier = Modifier
                         .size(24.dp)
                         .align(Alignment.CenterStart)
                         .clickableWithoutRipple { onBack() },
-                    tint = AmityTheme.colors.base,
+                    tint = AmityTheme.token(AmityColorToken.IconIconButtonGhostSecondaryDefault),
                 )
                 Text(
                     text = displayName,
                     style = AmityTheme.typography.titleLegacy.copy(
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 17.sp,
+                        color = AmityTheme.token(AmityColorToken.TextSheetsHeaderTitleDefault),
                     ),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -112,14 +112,14 @@ fun AmityChatMessageFullTextPage(
                 )
             }
 
-            HorizontalDivider(color = AmityTheme.colors.baseShade4)
+            AmityDivider(variant = AmityDividerVariant.Post)
 
             // Full scrollable text body with tappable links
             Text(
                 text = annotatedString,
                 style = AmityTheme.typography.bodyLegacy.copy(
                     fontSize = 17.sp,
-                    color = AmityTheme.colors.base,
+                    color = AmityTheme.token(AmityColorToken.TextChatBubbleInboundMessagesDefault),
                 ),
                 modifier = Modifier
                     .fillMaxSize()

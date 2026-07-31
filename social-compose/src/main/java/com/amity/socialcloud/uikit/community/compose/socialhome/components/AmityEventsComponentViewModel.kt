@@ -23,18 +23,21 @@ class AmityEventsComponentViewModel : ViewModel() {
      * Get live events (happening now)
      * @param originType Filter by origin type (COMMUNITY or USER) - required
      * @param originId Filter by specific origin ID (null for all)
+     * @param excludeOwnEvents Exclude events created by the current user
      */
     fun getLiveEvents(
         originType: AmityEventOriginType,
-        originId: String? = null
+        originId: String? = null,
+        excludeOwnEvents: Boolean = false
     ): Flow<PagingData<AmityEvent>> {
         val query = AmitySocialClient.newEventRepository()
             .getEvents()
             .status(AmityEventStatus.LIVE)
             .originType(originType)
-        
+
         originId?.let { query.originId(it) }
-        
+        if (excludeOwnEvents) query.excludeOwnEvents(true)
+
         return query.build()
             .query()
             .subscribeOn(Schedulers.io())
@@ -46,11 +49,13 @@ class AmityEventsComponentViewModel : ViewModel() {
     /**
      * Get upcoming events
      * @param originType Filter by origin type (COMMUNITY or USER) - required
-     * @param originId Filter by specific origin ID (null for all)
+     * @param userId Filter by user ID to get events created by specific user
+     * @param excludeOwnEvents Exclude events created by the current user
      */
     fun getUpcomingEvents(
         originType: AmityEventOriginType,
-        userId: String? = null
+        userId: String? = null,
+        excludeOwnEvents: Boolean = false
     ): Flow<PagingData<AmityEvent>> {
         val query = AmitySocialClient.newEventRepository()
             .getEvents()
@@ -60,7 +65,8 @@ class AmityEventsComponentViewModel : ViewModel() {
             .orderBy(AmityEventOrderOption.ASCENDING)
 
         userId?.let { query.userId(it) }
-        
+        if (excludeOwnEvents) query.excludeOwnEvents(true)
+
         return query.build()
             .query()
             .subscribeOn(Schedulers.io())

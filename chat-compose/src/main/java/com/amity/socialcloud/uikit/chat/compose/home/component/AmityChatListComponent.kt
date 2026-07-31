@@ -5,18 +5,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxDefaults
 import androidx.compose.material3.SwipeToDismissBoxValue
@@ -32,25 +28,26 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import com.amity.socialcloud.uikit.chat.compose.localization.amityChatString
-import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.amity.socialcloud.sdk.model.chat.channel.AmityChannel
 import com.amity.socialcloud.sdk.model.chat.member.AmityChannelMember
-import com.amity.socialcloud.uikit.chat.compose.R
 import com.amity.socialcloud.uikit.chat.compose.home.AmityChatHomePageViewModel
 import com.amity.socialcloud.uikit.chat.compose.home.element.AmityChatListEmptyState
 import com.amity.socialcloud.uikit.chat.compose.home.element.AmityChatListItem
 import com.amity.socialcloud.uikit.chat.compose.home.element.AmityChatListSkeleton
 import com.amity.socialcloud.uikit.chat.compose.localization.DefaultAmityChatStringProvider
+import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityBanner
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityBannerHierarchy
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButton
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonColor
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonHierarchy
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonVariant
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
@@ -58,7 +55,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 
 enum class SwipeAction {
     ARCHIVE,
@@ -89,11 +86,9 @@ fun AmityChatListComponent(
         val channels = channelsFlow.collectAsLazyPagingItems()
         val lazyListState = rememberLazyListState()
 
-        // mediatorRefreshing is true while the RemoteMediator's HTTP call is in-flight.
-        // During that window the paging source can briefly report 0 items (because the
-        // mediator clears the paging-ID join table before inserting the new rows), so we
-        // must not interpret itemCount==0 as a genuine empty state.
-        // null means the mediator hasn't reported yet (T0 on fresh install) — treat as Loading.
+        // True while the mediator's HTTP fetch is in-flight, or null before it has reported at all
+        // (e.g. fresh install). // The paging source can briefly read itemCount==0 mid-refresh
+        // (mediator clears the join table before inserting), so treat both as Loading, not Empty.
         val mediatorRefreshing = channels.loadState.mediator?.refresh.let {
             it == null || it is LoadState.Loading
         }
@@ -153,14 +148,12 @@ fun AmityChatListComponent(
 
         val listState = debouncedState
 
-        // Keep list pinned to top when initial data arrives
         LaunchedEffect(listState) {
             if (listState == AmityChatHomePageViewModel.ChannelListState.SUCCESS) {
                 lazyListState.scrollToItem(0)
             }
         }
 
-        // Auto-scroll to top when a new channel appears at position 0
         val firstChannelId = if (channels.itemCount > 0) channels.peek(0)?.getChannelId() else null
         LaunchedEffect(firstChannelId) {
             if (firstChannelId != null && lazyListState.firstVisibleItemIndex <= 1) {
@@ -170,7 +163,7 @@ fun AmityChatListComponent(
 
         when (listState) {
             AmityChatHomePageViewModel.ChannelListState.LOADING -> {
-                AmityChatListSkeleton(modifier = modifier)
+                AmityChatListSkeleton(modifier = modifier, itemCount = 9)
                 // Pre-render hidden LazyColumn so it's in the composition tree
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
@@ -190,10 +183,8 @@ fun AmityChatListComponent(
             }
 
             AmityChatHomePageViewModel.ChannelListState.ERROR -> {
-//                AmityChatListEmptyState(
-//                    modifier = modifier,
-//                    onCreateChatClick = onCreateChatClick,
-//                )
+                // Renders nothing by design: the empty state's "create a chat" call to action
+                // would be misleading when the list merely failed to load.
             }
 
             AmityChatHomePageViewModel.ChannelListState.SUCCESS -> {
@@ -215,7 +206,6 @@ fun AmityChatListComponent(
                     ) { index ->
                         val channel = channels[index]
                         if (channel != null) {
-                            // Fetch other member for conversation channels
                             if (channel.getChannelType() == AmityChannel.Type.CONVERSATION) {
                                 LaunchedEffect(channel.getChannelId()) {
                                     onFetchOtherMember(channel.getChannelId())
@@ -276,38 +266,30 @@ private fun SwipeToDismissListItem(
         enableDismissFromEndToStart = true,
         backgroundContent = {
             val iconResId = when (swipeAction) {
-                SwipeAction.ARCHIVE -> R.drawable.amity_ic_chat_home_archive
-                SwipeAction.UNARCHIVE -> R.drawable.amity_ic_chat_unarchive
+                SwipeAction.ARCHIVE -> CommonR.drawable.amity_ic_archive_r
+                SwipeAction.UNARCHIVE -> CommonR.drawable.amity_ic_unarchive_r
             }
             val label = when (swipeAction) {
                 SwipeAction.ARCHIVE -> DefaultAmityChatStringProvider.getInstance().getString("chat.archive")
                 SwipeAction.UNARCHIVE -> DefaultAmityChatStringProvider.getInstance().getString("chat.unarchive")
             }
 
+            // Full-width reveal keeps the SquareButton surface behind the whole row
+            // while it slides; the atom sits flush at the trailing edge.
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(AmityTheme.colors.baseShade2)
-                    .padding(horizontal = 24.dp),
+                    .background(AmityTheme.token(AmityColorToken.SurfaceSquareButtonDefaultSecondaryDefault)),
                 contentAlignment = Alignment.CenterEnd,
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = iconResId),
-                        contentDescription = null,
-                        modifier = Modifier.size(24.dp),
-                        tint = amityColorWhite,
-                    )
-                    Text(
-                        text = label,
-                        color = amityColorWhite,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Medium,
-                    )
-                }
+                AmityButton(
+                    variant = AmityButtonVariant.SQUARE,
+                    color = AmityButtonColor.DEFAULT,
+                    hierarchy = AmityButtonHierarchy.SECONDARY,
+                    label = label,
+                    icon = iconResId,
+                    onClick = onSwipe,
+                )
             }
         },
         content = {
@@ -322,28 +304,10 @@ private fun SwipeToDismissListItem(
 
 @Composable
 private fun NotificationsDisabledBanner() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(AmityTheme.colors.baseShade4)
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
-    ) {
-        Icon(
-            imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_chat_notification_off),
-            contentDescription = null,
-            modifier = Modifier.size(20.dp),
-            tint = AmityTheme.colors.baseShade1,
-        )
-        Spacer(Modifier.width(8.dp))
-        Text(
-            text = amityChatString("chat.notifications.disabled"),
-            style = AmityTheme.typography.bodyLegacy.copy(
-                color = AmityTheme.colors.baseShade1,
-                fontSize = 14.sp,
-            ),
-            textAlign = TextAlign.Center,
-        )
-    }
+    AmityBanner(
+        hierarchy = AmityBannerHierarchy.SUBDUE,
+        centered = true,   // full-width system notice: icon + text are centred
+        description = amityChatString("chat.notifications.disabled"),
+        descriptionIcon = CommonR.drawable.amity_ic_bell_slash_r,
+    )
 }

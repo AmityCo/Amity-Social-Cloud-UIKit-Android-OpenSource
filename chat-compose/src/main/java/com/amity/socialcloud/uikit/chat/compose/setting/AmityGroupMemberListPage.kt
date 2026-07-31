@@ -27,14 +27,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material3.Tab
-import androidx.compose.material3.ScrollableTabRow
-import androidx.compose.material3.TabRowDefaults
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -59,7 +52,6 @@ import androidx.compose.ui.res.painterResource
 import com.amity.socialcloud.uikit.chat.compose.localization.amityChatString
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.LoadState
@@ -69,10 +61,39 @@ import com.amity.socialcloud.sdk.model.chat.member.AmityChannelMember
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.uikit.chat.compose.R
 import com.amity.socialcloud.uikit.chat.compose.common.AmityChatConfirmDialog
-import com.amity.socialcloud.uikit.chat.compose.live.elements.AmityMessageAvatarView
+import com.amity.socialcloud.uikit.common.compose.R as CommonR
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityAvatarSize
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityBadge
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityBadgeFamily
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityBadgePreset
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityBadgeShape
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityBadgeSize
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityBadgeVariant
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButton
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonHierarchy
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonVariant
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonStyle
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityBoxedInputStyle
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityDivider
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityDividerVariant
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityIconButtonSize
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityInput
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityInputSize
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityInputVariant
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityListItem
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityListItemVariant
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityListLeadingContent
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityListLeadingType
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityListTrailingContent
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityListTrailingType
+import com.amity.socialcloud.uikit.common.ui.atoms.AmitySheet
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityTab
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityTabVariant
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
+import com.amity.socialcloud.uikit.chat.compose.common.toChatAvatarInitial
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 import com.amity.socialcloud.uikit.common.utils.AmityConstants
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import kotlinx.coroutines.launch
@@ -135,11 +156,11 @@ fun AmityGroupMemberListPage(
     val successMemberBanned = amityChatString("chat.group.member.list.toast.banned")
     val errorBanMember = amityChatString("chat.action.ban.member.failed")
 
-    AmityBasePage(pageId = "group_member_list_page") {
+    AmityBasePage(pageId = "group_member_list_page", useAmityToast = true) {
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .background(AmityTheme.colors.background),
+                .background(AmityTheme.token(AmityColorToken.SurfaceListDefaultDefault)),
         ) {
             // Header with add button
             Box(
@@ -147,83 +168,64 @@ fun AmityGroupMemberListPage(
                     .fillMaxWidth()
                     .padding(horizontal = 12.dp),
             ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_chat_back),
-                    contentDescription = "Back",
-                    modifier = Modifier
-                        .size(24.dp)
-                        .align(Alignment.CenterStart)
-                        .clickableWithoutRipple {
-                            (context as? Activity)?.finish()
-                        },
-                    tint = AmityTheme.colors.base,
+                AmityButton(
+                    variant = AmityButtonVariant.ICON,
+                    style = AmityButtonStyle.GHOST,
+                    hierarchy = AmityButtonHierarchy.SECONDARY,
+                    iconSize = AmityIconButtonSize.SIZE32,
+                    icon = CommonR.drawable.amity_ic_chevron_left,
+                    onClick = { (context as? Activity)?.finish() },
+                    modifier = Modifier.align(Alignment.CenterStart),
                 )
 
                 Text(
                     text = amityChatString("chat.member.list.title"),
                     style = AmityTheme.typography.titleLegacy,
+                    color = AmityTheme.token(AmityColorToken.TextSheetsHeaderTitleDefault),
                     modifier = Modifier
                         .padding(vertical = 17.dp)
                         .align(Alignment.Center),
                 )
 
                 if (isModerator) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(
-                            id = com.amity.socialcloud.uikit.common.R.drawable.amity_ic_add,
-                        ),
-                        contentDescription = "Add member",
-                        modifier = Modifier
-                            .size(24.dp)
-                            .align(Alignment.CenterEnd)
-                            .clickableWithoutRipple {
-                                context.startActivity(
-                                    AmityAddGroupMemberPageActivity.newIntent(context, channelId)
-                                )
-                            },
-                        tint = AmityTheme.colors.base,
+                    AmityButton(
+                        variant = AmityButtonVariant.ICON,
+                        style = AmityButtonStyle.GHOST,
+                        hierarchy = AmityButtonHierarchy.SECONDARY,
+                        iconSize = AmityIconButtonSize.SIZE32,
+                        icon = CommonR.drawable.amity_ic_plus_r,
+                        onClick = {
+                            context.startActivity(
+                                AmityAddGroupMemberPageActivity.newIntent(context, channelId)
+                            )
+                        },
+                        modifier = Modifier.align(Alignment.CenterEnd),
                     )
                 }
             }
 
             // Tabs
-            ScrollableTabRow(
-                selectedTabIndex = selectedTabIndex,
-                containerColor = AmityTheme.colors.background,
-                contentColor = AmityTheme.colors.primary,
-                edgePadding = 16.dp,
-                divider = {
-                    HorizontalDivider(
-                        color = AmityTheme.colors.baseShade4,
-                        thickness = 1.dp,
-                    )
-                },
-                indicator = { tabPositions ->
-                    if (selectedTabIndex < tabPositions.size) {
-                        Box(
-                            modifier = Modifier
-                                .tabIndicatorOffset(tabPositions[selectedTabIndex])
-                                .height(2.dp)
-                                .background(AmityTheme.colors.primary),
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(AmityTheme.token(AmityColorToken.SurfaceListDefaultDefault)),
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(20.dp),
+                ) {
+                    tabs.forEachIndexed { index, title ->
+                        AmityTab(
+                            variant = AmityTabVariant.Underlined,
+                            label = title,
+                            selected = selectedTabIndex == index,
+                            onPress = { selectedTabIndex = index },
                         )
                     }
-                },
-            ) {
-                tabs.forEachIndexed { index, title ->
-                    Tab(
-                        selected = selectedTabIndex == index,
-                        onClick = { selectedTabIndex = index },
-                        selectedContentColor = AmityTheme.colors.primary,
-                        unselectedContentColor = AmityTheme.colors.baseShade2,
-                        text = {
-                            Text(
-                                text = title,
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 17.sp,
-                            )
-                        },
-                    )
                 }
+                AmityDivider(variant = AmityDividerVariant.Post)
             }
 
             // Member list
@@ -236,50 +238,41 @@ fun AmityGroupMemberListPage(
             }.collectAsState(initial = null)
 
             // Search bar
-            Row(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-                    .background(AmityTheme.colors.baseShade4, RoundedCornerShape(8.dp))
-                    .padding(horizontal = 12.dp, vertical = 10.dp),
-                verticalAlignment = Alignment.CenterVertically,
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
             ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(
-                        id = com.amity.socialcloud.uikit.common.R.drawable.amity_ic_search,
-                    ),
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp),
-                    tint = AmityTheme.colors.baseShade3,
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                BasicTextField(
+                AmityInput(
+                    variant = AmityInputVariant.BOXED,
+                    modifier = Modifier.fillMaxWidth(),
                     value = searchText,
-                    onValueChange = {
+                    placeholder = amityChatString("chat.group.member.list.search.placeholder"),
+                    leadingIcon = CommonR.drawable.amity_ic_search_r,
+                    trailingIcon = if (searchText.isNotEmpty()) CommonR.drawable.amity_ic_clear_r else null,
+                    size = AmityInputSize.M,
+                    boxedStyle = AmityBoxedInputStyle.SQUARE,
+                    onChangeText = {
                         searchText = it
                         viewModel.onSearchKeywordChanged(it)
                     },
-                    modifier = Modifier.weight(1f),
-                    singleLine = true,
-                    textStyle = AmityTheme.typography.bodyLegacy.copy(
-                        fontSize = 15.sp,
-                        color = AmityTheme.colors.base,
-                    ),
-                    decorationBox = { innerTextField ->
-                        Box {
-                            if (searchText.isEmpty()) {
-                                Text(
-                                    text = amityChatString("chat.search.placeholder"),
-                                    style = AmityTheme.typography.bodyLegacy.copy(
-                                        fontSize = 15.sp,
-                                        color = AmityTheme.colors.baseShade3,
-                                    ),
-                                )
-                            }
-                            innerTextField()
-                        }
-                    },
                 )
+
+                if (searchText.isNotEmpty()) {
+                    // Transparent tap target over the atom's own trailing clear glyph — AmityInput
+                    // renders the icon but exposes no click callback for it. Height matches the
+                    // AmityInputSize.M Boxed Input row height (48.dp) selected above.
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.CenterEnd)
+                            .height(48.dp)
+                            .width(32.dp)
+                            .clickableWithoutRipple {
+                                searchText = ""
+                                viewModel.onSearchKeywordChanged("")
+                            },
+                    )
+                }
             }
 
             if (selectedTabIndex == 0) {
@@ -298,7 +291,7 @@ fun AmityGroupMemberListPage(
                         Text(
                             text = amityChatString("chat.search.no.results"),
                             style = AmityTheme.typography.bodyLegacy.copy(
-                                color = AmityTheme.colors.baseShade2,
+                                color = AmityTheme.token(AmityColorToken.TextEmptyStateDescriptionDefault),
                             ),
                         )
                     }
@@ -353,7 +346,7 @@ fun AmityGroupMemberListPage(
                         Text(
                             text = amityChatString("chat.search.no.results"),
                             style = AmityTheme.typography.bodyLegacy.copy(
-                                color = AmityTheme.colors.baseShade2,
+                                color = AmityTheme.token(AmityColorToken.TextEmptyStateDescriptionDefault),
                             ),
                         )
                     }
@@ -397,14 +390,13 @@ fun AmityGroupMemberListPage(
 
         // Action bottom sheet
         if (selectedMember != null) {
-            ModalBottomSheet(
+            AmitySheet(
                 onDismissRequest = {
                     selectedMember = null
                 },
                 sheetState = sheetState,
-                containerColor = AmityTheme.colors.background,
             ) {
-                val member = selectedMember ?: return@ModalBottomSheet
+                val member = selectedMember ?: return@AmitySheet
                 val memberRoles = member.getRoles()
                 val isMemberModerator = memberRoles.contains(AmityConstants.CHANNEL_MODERATOR_ROLE)
 
@@ -418,7 +410,7 @@ fun AmityGroupMemberListPage(
                         if (isMemberModerator) {
                             MemberActionItem(
                                 text = amityChatString("chat.member.action.demote"),
-                                iconResId = R.drawable.amity_ic_promote_moderator,
+                                iconResId = CommonR.drawable.amity_ic_user_shield_r,
                                 onClick = {
                                     pendingDemoteUserId = member.getUserId()
                                     selectedMember = null
@@ -428,7 +420,7 @@ fun AmityGroupMemberListPage(
                         } else {
                             MemberActionItem(
                                 text = amityChatString("chat.member.action.promote"),
-                                iconResId = R.drawable.amity_ic_promote_moderator,
+                                iconResId = CommonR.drawable.amity_ic_user_shield_r,
                                 onClick = {
                                     pendingPromoteUserId = member.getUserId()
                                     selectedMember = null
@@ -445,8 +437,8 @@ fun AmityGroupMemberListPage(
                                     if (isMuted) "chat.group.member.action.unmute"
                                     else "chat.group.member.action.mute"
                                 ),
-                                iconResId = if (isMuted) com.amity.socialcloud.uikit.common.R.drawable.amity_ic_unmute_user
-                                else com.amity.socialcloud.uikit.common.R.drawable.amity_ic_mute_user,
+                                iconResId = if (isMuted) CommonR.drawable.amity_ic_volume_r
+                                else CommonR.drawable.amity_ic_volume_slash_r,
                                 onClick = {
                                     pendingMuteUserId = member.getUserId()
                                     pendingMuteIsMuted = isMuted
@@ -464,8 +456,8 @@ fun AmityGroupMemberListPage(
                             if (isFlagged) "chat.action.unreport.user"
                             else "chat.action.report.user"
                         ),
-                        iconResId = if (isFlagged) R.drawable.amity_ic_flag_message
-                        else R.drawable.amity_ic_unreport,
+                        iconResId = if (isFlagged) CommonR.drawable.amity_ic_flag_slash_r
+                        else CommonR.drawable.amity_ic_flag_r,
                         onClick = {
                             if (isFlagged) {
                                 viewModel.unreportUser(
@@ -500,7 +492,7 @@ fun AmityGroupMemberListPage(
                         // Ban
                         MemberActionItem(
                             text = amityChatString("chat.user.action.ban"),
-                            iconResId = R.drawable.amity_ic_ban_member,
+                            iconResId = CommonR.drawable.amity_ic_ban_r,
                             onClick = {
                                 pendingBanUserId = member.getUserId()
                                 selectedMember = null
@@ -508,11 +500,12 @@ fun AmityGroupMemberListPage(
                             },
                         )
 
-                        // Remove (alert color)
+                        // Remove (destructive)
                         MemberActionItem(
                             text = amityChatString("chat.member.action.remove"),
-                            iconResId = R.drawable.amity_ic_delete_message,
-                            textColor = AmityTheme.colors.alert,
+                            iconResId = CommonR.drawable.amity_ic_trash_r,
+                            textColor = AmityTheme.token(AmityColorToken.TextListHeaderDestructiveDefault),
+                            iconTint = AmityTheme.token(AmityColorToken.IconListLeadingDestructiveDefault),
                             onClick = {
                                 pendingRemoveUserId = member.getUserId()
                                 selectedMember = null
@@ -601,7 +594,7 @@ fun AmityGroupMemberListPage(
                     title = amityChatString("chat.group.member.list.promote.title"),
                     message = amityChatString("chat.group.member.list.promote.message"),
                     confirmLabel = amityChatString("chat.group.member.list.promote.confirm"),
-                    confirmColor = AmityTheme.colors.primary,
+                    confirmColor = AmityTheme.token(AmityColorToken.TextBaseHighlight),
                     onConfirm = {
                         showPromoteConfirmDialog = false
                         pendingPromoteUserId?.let { userId ->
@@ -693,100 +686,68 @@ private fun MemberListItem(
     val isModerator = member.getRoles().contains(AmityConstants.CHANNEL_MODERATOR_ROLE)
     val isMuted = member.isMuted()
 
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp)
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        // Avatar with moderator badge
-        Box(modifier = Modifier.size(40.dp)) {
-            AmityMessageAvatarView(
-                avatarUrl = user?.getAvatar()?.getUrl(AmityImage.Size.SMALL) ?: "",
-                displayName = user?.getDisplayName(),
-                size = 40.dp,
-            )
-            if (isModerator) {
-                Box(
+    AmityListItem(
+        variant = AmityListItemVariant.DEFAULT,
+        title = buildString {
+            append(user?.getDisplayName() ?: member.getUserId())
+            if (isCurrentUser) {
+                append(" ")
+                append(amityChatString("chat.member.you.suffix"))
+            }
+        },
+        titleAccessory = if (user?.isBrand() == true) {
+            {
+                Image(
+                    painter = painterResource(id = R.drawable.amity_ic_brand_badge),
+                    contentDescription = "",
                     modifier = Modifier
                         .size(20.dp)
-                        .align(Alignment.BottomEnd)
-                        .clip(CircleShape),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Image(
-                        imageVector = ImageVector.vectorResource(
-                            R.drawable.amity_ic_chat_group_moderator,
-                        ),
-                        contentDescription = "Moderator",
-                        modifier = Modifier.size(20.dp),
-                    )
-                }
-            }
-        }
-        Spacer(modifier = Modifier.width(12.dp))
-        Column(modifier = Modifier.weight(1f)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = buildString {
-                        append(user?.getDisplayName() ?: member.getUserId())
-                        if (isCurrentUser) {
-                            append(" ")
-                            append(amityChatString("chat.member.you.suffix"))
-                        }
-                    },
-                    style = AmityTheme.typography.bodyLegacy.copy(
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.SemiBold,
-                    ),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f, fill = false),
+                        .testTag("user_view/brand_user_icon"),
                 )
-                if(user?.isBrand() == true) {
-                    val badge = R.drawable.amity_ic_brand_badge
-                    Image(
-                        painter = painterResource(id = badge),
-                        contentDescription = "",
-                        modifier = Modifier
-                            .size(20.dp)
-                            .padding(start = 4.dp)
-                            .testTag("user_view/brand_user_icon")
-                    )
-                }
-                if (showMuteIcon && isMuted) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(
-                            id = com.amity.socialcloud.uikit.common.R.drawable.amity_ic_mute_user,
-                        ),
-                        contentDescription = "Muted",
-                        modifier = Modifier
-                            .padding(start = 4.dp)
-                            .size(16.dp),
-                        tint = AmityTheme.colors.baseShade2,
-                    )
-                }
             }
-        }
-        if (showMoreAction) {
-            Icon(
-                imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_more_horiz),
-                contentDescription = "More",
-                modifier = Modifier
-                    .size(24.dp)
-                    .clickableWithoutRipple { onMoreClick() },
-                tint = AmityTheme.colors.base,
+        } else null,
+        headerIcon = if (showMuteIcon && isMuted) CommonR.drawable.amity_ic_volume_slash_r else null,
+        leadingType = AmityListLeadingType.AVATAR,
+        leading = AmityListLeadingContent(
+            type = AmityListLeadingType.AVATAR,
+            avatarUrl = user?.getAvatar()?.getUrl(AmityImage.Size.SMALL),
+            avatarInitials = user?.getDisplayName().toChatAvatarInitial(),
+            icon = CommonR.drawable.amity_ic_user_r,
+            avatarSize = AmityAvatarSize.Size40,
+            avatarBorderWidth = 2,
+            indicator = if (isModerator) {
+                {
+                    AmityBadge(
+                        variant = AmityBadgeVariant.ICON,
+                        icon = CommonR.drawable.amity_ic_shield_check_s,
+                        shape = AmityBadgeShape.ROUND,
+                        size = AmityBadgeSize.SIZE_16,
+                        preset = AmityBadgePreset(
+                            family = AmityBadgeFamily.USER_STATUS,
+                            case = "Moderator",
+                        ),
+                    )
+                }
+            } else null,
+        ),
+        trailing = if (showMoreAction) {
+            listOf(
+                AmityListTrailingContent(
+                    type = AmityListTrailingType.ICON,
+                    icon = CommonR.drawable.amity_ic_ellipsis_r,
+                )
             )
-        }
-    }
+        } else emptyList(),
+        onTrailingPress = { onMoreClick() },
+    )
 }
 
 @Composable
 internal fun MemberActionItem(
     text: String,
     iconResId: Int? = null,
-    textColor: androidx.compose.ui.graphics.Color = AmityTheme.colors.base,
+    textColor: androidx.compose.ui.graphics.Color = AmityTheme.token(AmityColorToken.TextListHeaderDefaultDefault),
+    iconTint: androidx.compose.ui.graphics.Color = AmityTheme.token(AmityColorToken.IconListLeadingDefaultDefault),
     onClick: () -> Unit,
 ) {
     Row(
@@ -801,7 +762,7 @@ internal fun MemberActionItem(
                 imageVector = ImageVector.vectorResource(id = iconResId),
                 contentDescription = null,
                 modifier = Modifier.size(24.dp),
-                tint = textColor,
+                tint = iconTint,
             )
             Spacer(modifier = Modifier.width(12.dp))
         }
@@ -829,7 +790,7 @@ private fun MemberListSkeleton() {
         label = "shimmer",
     )
 
-    val baseColor = AmityTheme.colors.baseShade4
+    val baseColor = AmityTheme.token(AmityColorToken.SurfaceSkeletonEffectDefault)
     val shimmerBrush = Brush.linearGradient(
         colors = listOf(
             baseColor,

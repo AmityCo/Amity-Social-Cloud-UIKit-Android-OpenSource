@@ -13,6 +13,7 @@ import com.amity.socialcloud.uikit.common.model.AmityMessageReactions
 import com.amity.socialcloud.uikit.common.model.AmityReactionType
 import com.amity.socialcloud.uikit.common.model.AmitySocialReactions
 import com.amity.socialcloud.uikit.common.networkconfig.AmityNetworkConfigService
+import com.amity.socialcloud.uikit.common.ui.theme.AmityTokenResolver
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
@@ -29,6 +30,14 @@ object AmityUIKitConfigController {
     }
 
     private var isSystemInDarkTheme = false
+
+    // New design-token system: SDK-vendored token table + the effective (backfilled) theme
+    // config to resolve semantic tokens against. Built once at setup(); null until then.
+    @Volatile
+    private var tokenTable: AmityTokenResolver.Table? = null
+
+    @Volatile
+    private var effectiveTokenConfig: AmityTokenResolver.Config? = null
 
     private var callbacks = mutableMapOf<String,() -> Unit>()
 
@@ -177,9 +186,16 @@ object AmityUIKitConfigController {
         val configStr = readConfigFromAssets(context)
         val type = object : TypeToken<AmityUIKitConfig>() {}.type
         config = GSON.fromJson(configStr, type)
+        var networkJson: JsonObject? = null
         try {
             val cachedConfig = AmityNetworkConfigService.getNetworkConfig()?.config
             if (cachedConfig != null) {
+                networkJson = when (cachedConfig) {
+                    is JsonObject -> cachedConfig
+                    else -> runCatching {
+                        GSON.fromJson(cachedConfig.toString(), JsonObject::class.java)
+                    }.getOrNull()
+                }
                 val networkConfigString = cachedConfig.toString()
                 val networkConfig: AmityUIKitConfig? = GSON.fromJson(networkConfigString, type)
                 config.preferredTheme = networkConfig?.preferredTheme ?: config.preferredTheme
@@ -194,6 +210,102 @@ object AmityUIKitConfigController {
             }
         } catch (e: Exception) {
             Log.d("UIKitConfig", "Error parsing network config: ${e.message}")
+        }
+        try {
+            buildTokenSystem(context, configStr, networkJson)
+        } catch (e: Exception) {
+            Log.d("UIKitConfig", "Error building token system: ${e.message}")
+        }
+    }
+
+    /**
+     * Build the design-token system: load the SDK-vendored token table, then layer the runtime
+     * config on top — the bundled config.json theme, then the network config theme (network wins
+     * per key). config.json ships the complete colors-v2 palette and is the single source of theme
+     * values; a customer that wholesale-replaces it owns supplying the full palette.
+     */
+    private fun buildTokenSystem(context: Context, localConfigStr: String, networkJson: JsonObject?) {
+        val tableJson = GSON.fromJson(readAsset(context, "amity-uikit-design-tokens.json"), JsonObject::class.java)
+        tokenTable = parseTokenTable(tableJson)
+
+        val localCfg = extractTokenConfig(GSON.fromJson(localConfigStr, JsonObject::class.java))
+        val networkCfg = networkJson?.let { extractTokenConfig(it) }
+
+        val customerTheme = HashMap<String, Map<String, String>>()
+        for (mode in listOf("light", "dark")) {
+            val merged = LinkedHashMap<String, String>()
+            localCfg.theme[mode]?.let { merged.putAll(it) }
+            networkCfg?.theme?.get(mode)?.let { merged.putAll(it) } // network wins
+            if (merged.isNotEmpty()) customerTheme[mode] = merged
+        }
+        val customerCustomizations = HashMap<String, Map<String, Map<String, String>>>()
+        customerCustomizations.putAll(localCfg.customizations)
+        networkCfg?.customizations?.let { customerCustomizations.putAll(it) }
+
+        effectiveTokenConfig = AmityTokenResolver.Config(customerTheme, customerCustomizations)
+    }
+
+    private fun parseTokenTable(root: JsonObject): AmityTokenResolver.Table {
+        val alias = LinkedHashMap<String, String>()
+        root.getAsJsonObject("alias")?.entrySet()?.forEach { (k, el) ->
+            if (el.isJsonPrimitive) alias[k] = el.asString
+        }
+        val semantic = LinkedHashMap<String, Map<String, String>>()
+        root.getAsJsonObject("semantic")?.entrySet()?.forEach { (path, el) ->
+            (el as? JsonObject)?.let { semantic[path] = jsonObjectToStringMap(it) }
+        }
+        return AmityTokenResolver.Table(alias, semantic)
+    }
+
+    private fun extractTokenConfig(root: JsonObject): AmityTokenResolver.Config {
+        val theme = LinkedHashMap<String, Map<String, String>>()
+        root.getAsJsonObject("theme")?.let { themeObj ->
+            for (mode in listOf("light", "dark")) {
+                themeObj.getAsJsonObject(mode)?.let { theme[mode] = jsonObjectToStringMap(it) }
+            }
+        }
+        val customizations = LinkedHashMap<String, Map<String, Map<String, String>>>()
+        root.getAsJsonObject("customizations")?.entrySet()?.forEach { (scopeId, el) ->
+            val themeBlock = (el as? JsonObject)?.getAsJsonObject("theme") ?: return@forEach
+            val modeMap = LinkedHashMap<String, Map<String, String>>()
+            for (mode in listOf("light", "dark")) {
+                themeBlock.getAsJsonObject(mode)?.let { modeMap[mode] = jsonObjectToStringMap(it) }
+            }
+            if (modeMap.isNotEmpty()) customizations[scopeId] = modeMap
+        }
+        return AmityTokenResolver.Config(theme, customizations)
+    }
+
+    private fun jsonObjectToStringMap(obj: JsonObject): Map<String, String> {
+        val map = LinkedHashMap<String, String>()
+        obj.entrySet().forEach { (k, el) ->
+            if (el.isJsonPrimitive && el.asJsonPrimitive.isString) map[k] = el.asString
+        }
+        return map
+    }
+
+    /**
+     * Resolve a semantic token path to a hex string against the effective theme + vendored table.
+     * Returns [AmityTokenResolver.MISSING_COLOR] if the token is unknown or the system is not yet
+     * initialized. scopeId is "page/component/element"; mode is "light" | "dark".
+     */
+    fun resolveToken(scopeId: String, mode: String, tokenPath: String): AmityTokenResolver.Resolved {
+        val table = tokenTable
+        val cfg = effectiveTokenConfig
+        if (table == null || cfg == null) {
+            return AmityTokenResolver.Resolved(AmityTokenResolver.MISSING_COLOR, "missing")
+        }
+        return AmityTokenResolver.resolveToken(cfg, table, scopeId, mode, tokenPath)
+    }
+
+    private fun readAsset(context: Context, name: String): String {
+        return try {
+            context.assets.open(name).use { input ->
+                input.readBytes().toString(Charsets.UTF_8)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            ""
         }
     }
 

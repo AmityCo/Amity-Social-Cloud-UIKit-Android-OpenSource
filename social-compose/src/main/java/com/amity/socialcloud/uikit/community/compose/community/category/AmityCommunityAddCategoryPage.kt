@@ -202,7 +202,7 @@ fun AmityCommunityAddCategoryPage(
                     ),
                     shape = RoundedCornerShape(4.dp),
                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
-                    enabled = true,
+                    enabled = selectedCategories.isNotEmpty(),
                     modifier = modifier
                         .height(40.dp)
                         .fillMaxWidth()

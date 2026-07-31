@@ -1,10 +1,5 @@
 package com.amity.socialcloud.uikit.chat.compose.home.element
 
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,53 +15,31 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
+import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.utils.shimmerBackground
 
 @Composable
 fun AmityChatListSkeleton(
     modifier: Modifier = Modifier,
     itemCount: Int = 8,
 ) {
-    val transition = rememberInfiniteTransition(label = "shimmer")
-    val shimmerTranslate = transition.animateFloat(
-        initialValue = 0f,
-        targetValue = 1000f,
-        animationSpec = androidx.compose.animation.core.infiniteRepeatable(
-            animation = tween(durationMillis = 1200, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart,
-        ),
-        label = "shimmer_translate",
-    )
-
-    val shimmerBrush = Brush.linearGradient(
-        colors = listOf(
-            AmityTheme.colors.baseShade4,
-            AmityTheme.colors.baseShade4.copy(alpha = 0.4f),
-            AmityTheme.colors.baseShade4,
-        ),
-        start = Offset(shimmerTranslate.value - 200f, 0f),
-        end = Offset(shimmerTranslate.value, 0f),
-    )
-
     Column(modifier = modifier) {
         repeat(itemCount) {
-            SkeletonItem(shimmerBrush = shimmerBrush)
+            SkeletonItem()
         }
     }
 }
 
 @Composable
-private fun SkeletonItem(
-    shimmerBrush: Brush,
-) {
+private fun SkeletonItem() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            // Matches the populated row so the list does not shift when loading ends.
             .height(82.dp)
+            .background(AmityTheme.token(AmityColorToken.SurfaceListSkeletonSkeleton))
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -74,8 +47,10 @@ private fun SkeletonItem(
         Box(
             modifier = Modifier
                 .size(40.dp)
-                .clip(CircleShape)
-                .background(shimmerBrush),
+                .shimmerBackground(
+                    shape = CircleShape,
+                    color = AmityTheme.token(AmityColorToken.SurfaceSkeletonEffectDefault),
+                ),
         )
 
         Spacer(modifier = Modifier.width(12.dp))
@@ -85,9 +60,11 @@ private fun SkeletonItem(
             Box(
                 modifier = Modifier
                     .fillMaxWidth(0.5f)
-                    .height(14.dp)
-                    .clip(RoundedCornerShape(4.dp))
-                    .background(shimmerBrush),
+                    .height(10.dp)
+                    .shimmerBackground(
+                        shape = RoundedCornerShape(4.dp),
+                        color = AmityTheme.token(AmityColorToken.SurfaceSkeletonEffectDefault),
+                    ),
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -96,21 +73,12 @@ private fun SkeletonItem(
             Box(
                 modifier = Modifier
                     .fillMaxWidth(0.7f)
-                    .height(12.dp)
-                    .clip(RoundedCornerShape(4.dp))
-                    .background(shimmerBrush),
+                    .height(10.dp)
+                    .shimmerBackground(
+                        shape = RoundedCornerShape(4.dp),
+                        color = AmityTheme.token(AmityColorToken.SurfaceSkeletonEffectDefault),
+                    ),
             )
         }
-
-        Spacer(modifier = Modifier.width(12.dp))
-
-        // Timestamp skeleton
-        Box(
-            modifier = Modifier
-                .width(40.dp)
-                .height(12.dp)
-                .clip(RoundedCornerShape(4.dp))
-                .background(shimmerBrush),
-        )
     }
 }

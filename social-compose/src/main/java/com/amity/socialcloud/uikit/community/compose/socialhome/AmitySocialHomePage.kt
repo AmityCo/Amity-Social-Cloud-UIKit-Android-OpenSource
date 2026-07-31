@@ -18,6 +18,8 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -28,8 +30,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -52,13 +56,16 @@ import com.amity.socialcloud.uikit.community.compose.socialhome.components.Amity
 import com.amity.socialcloud.uikit.community.compose.socialhome.elements.AmitySocialHomeTabButton
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostShimmer
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.shimmerBackground
+import com.amity.socialcloud.uikit.community.compose.R
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AmitySocialHomePage(
     modifier: Modifier = Modifier,
+    onBackClick: (() -> Unit)? = null,
 ) {
     val context = LocalContext.current
     val behavior = remember {
@@ -123,6 +130,17 @@ fun AmitySocialHomePage(
             modifier = modifier
                 .fillMaxSize()
         ) {
+            if (onBackClick != null) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_back),
+                    contentDescription = "Back",
+                    modifier = Modifier
+                        .padding(start = 16.dp, top = 12.dp)
+                        .size(24.dp)
+                        .clickableWithoutRipple { onBackClick() },
+                    tint = AmityTheme.colors.base,
+                )
+            }
             AmitySocialHomeTopNavigationComponent(
                 modifier = Modifier,
                 pageScope = getPageScope(),

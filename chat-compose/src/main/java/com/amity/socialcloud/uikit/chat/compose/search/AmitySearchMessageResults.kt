@@ -4,10 +4,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -20,7 +18,9 @@ import com.amity.socialcloud.sdk.model.chat.channel.AmityChannel
 import com.amity.socialcloud.sdk.model.chat.member.AmityChannelMember
 import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
 import com.amity.socialcloud.uikit.chat.compose.home.element.AmityChatListItem
-import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityLoader
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityLoaderSize
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityLoaderVariant
 
 /**
  * Public thin wrapper for message search results list.
@@ -81,6 +81,7 @@ fun AmitySearchMessageResults(
                 searchMessage = message,
                 searchQuery = query,
                 isArchived = archivedChannelIds.contains(channel.getChannelId()),
+                isCompact = true,
                 onClick = { onSelectMessage(channel, message) },
             )
         }
@@ -93,10 +94,9 @@ fun AmitySearchMessageResults(
                         .padding(16.dp),
                     contentAlignment = Alignment.Center,
                 ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        color = AmityTheme.colors.primary,
-                        strokeWidth = 2.dp,
+                    AmityLoader(
+                        variant = AmityLoaderVariant.Spinner,
+                        size = AmityLoaderSize.Sm,
                     )
                 }
             }

@@ -1,26 +1,17 @@
 package com.amity.socialcloud.uikit.chat.compose.search
 
 import android.app.Activity
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -30,34 +21,37 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.ImeAction
 import com.amity.socialcloud.uikit.chat.compose.localization.amityChatString
-import androidx.compose.ui.res.vectorResource
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.sdk.model.chat.channel.AmityChannel
-import com.amity.socialcloud.uikit.chat.compose.R
 import com.amity.socialcloud.uikit.chat.compose.home.AmityChatHomePageBehavior
 import com.amity.socialcloud.uikit.chat.compose.home.element.AmityChatListSkeleton
+import com.amity.socialcloud.uikit.common.compose.R as CommonR
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
-import com.amity.socialcloud.uikit.common.R as CommonR
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButton
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonHierarchy
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonVariant
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonStyle
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityDivider
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityDividerVariant
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityBoxedInputStyle
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityEmptyState
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityEmptyStateVariant
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityInput
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityInputSize
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityInputVariant
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityTab
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityTabVariant
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
-import com.amity.socialcloud.uikit.common.ui.elements.AmityTabRow
-import com.amity.socialcloud.uikit.common.ui.elements.AmityTabRowItem
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
-import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
 @Composable
 fun AmitySearchChannelPage(
@@ -82,12 +76,6 @@ fun AmitySearchChannelPage(
 
     val tabChats = amityChatString("chat.search.tab.chats")
     val tabMessages = amityChatString("chat.search.tab.messages")
-    val tabs = remember(tabChats, tabMessages) {
-        listOf(
-            AmityTabRowItem(title = tabChats),
-            AmityTabRowItem(title = tabMessages),
-        )
-    }
     var selectedTabIndex by remember { mutableIntStateOf(0) }
 
     // Keep selectedTabIndex in sync with ViewModel tab state
@@ -95,134 +83,106 @@ fun AmitySearchChannelPage(
         selectedTabIndex = if (searchState.activeTab == SearchTab.CHATS) 0 else 1
     }
 
-    AmityBasePage(pageId = "search_channel_page") {
+    AmityBasePage(pageId = "search_channel_page", useAmityToast = true) {
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .background(AmityTheme.colors.background),
+                .background(AmityTheme.token(AmityColorToken.SurfacePageBackgroundDefault)),
         ) {
             // Search header — matches AmityTopSearchBarComponent visual style
             Row(
-                horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp),
+                horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(0.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 10.dp),
+                    .padding(horizontal = 16.dp, vertical = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp),
-                    modifier = Modifier
-                        .weight(1f)
-                        .background(
-                            color = AmityTheme.colors.baseShade4,
-                            shape = RoundedCornerShape(8.dp),
-                        )
-                        .padding(horizontal = 12.dp),
+                Box(
+                    modifier = Modifier.weight(1f),
                 ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_chat_home_search),
-                        tint = AmityTheme.colors.baseShade2,
-                        contentDescription = null,
-                        modifier = Modifier.size(20.dp),
-                    )
-
-                    BasicTextField(
-                        value = searchKeyword,
-                        onValueChange = { viewModel.onSearchKeywordChanged(it) },
-                        singleLine = true,
-                        textStyle = AmityTheme.typography.bodyLegacy.copy(
-                            color = AmityTheme.colors.base,
-                        ),
-                        cursorBrush = SolidColor(AmityTheme.colors.highlight),
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                        keyboardActions = KeyboardActions(
-                            onSearch = { keyboardController?.hide() }
-                        ),
+                    AmityInput(
+                        variant = AmityInputVariant.BOXED,
                         modifier = Modifier
-                            .weight(1f)
-                            .padding(vertical = 14.dp)
+                            .fillMaxWidth()
                             .focusRequester(focusRequester),
-                        decorationBox = { innerTextField ->
-                            if (searchKeyword.isEmpty()) {
-                                Text(
-                                    text = amityChatString("chat.search.placeholder"),
-                                    style = AmityTheme.typography.bodyLegacy.copy(
-                                        color = AmityTheme.colors.baseShade2,
-                                    ),
-                                )
-                            }
-                            innerTextField()
-                        },
+                        value = searchKeyword,
+                        placeholder = amityChatString("chat.search.placeholder"),
+                        leadingIcon = CommonR.drawable.amity_ic_search_r,
+                        trailingIcon = if (searchKeyword.isNotEmpty()) CommonR.drawable.amity_ic_clear_r else null,
+                        size = AmityInputSize.M,
+                        boxedStyle = AmityBoxedInputStyle.SQUARE,
+                        onChangeText = { viewModel.onSearchKeywordChanged(it) },
+                        onSubmit = { keyboardController?.hide() },
                     )
 
                     if (searchKeyword.isNotEmpty()) {
+                        // Transparent tap target over the atom's own trailing clear glyph — AmityInput
+                        // renders the icon but exposes no click callback for it. Height matches the
+                        // AmityInputSize.M Boxed Input row height (48.dp) selected above.
                         Box(
                             modifier = Modifier
-                                .size(20.dp)
-                                .clip(CircleShape)
-                                .background(AmityTheme.colors.baseShade3)
+                                .align(Alignment.CenterEnd)
+                                .height(48.dp)
+                                .width(32.dp)
                                 .clickableWithoutRipple {
                                     viewModel.onSearchKeywordChanged("")
                                 },
-                        ) {
-                            Icon(
-                                painter = painterResource(id = CommonR.drawable.amity_ic_close),
-                                tint = amityColorWhite,
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .align(Alignment.Center)
-                                    .padding(5.dp),
-                            )
-                        }
+                        )
                     }
                 }
 
-                Text(
-                    text = amityChatString("chat.cancel"),
-                    style = AmityTheme.typography.bodyBold,
-                    color = AmityTheme.colors.primary,
-                    modifier = Modifier.clickableWithoutRipple {
+                AmityButton(
+                    variant = AmityButtonVariant.MAIN,
+                    style = AmityButtonStyle.GHOST,
+                    hierarchy = AmityButtonHierarchy.PRIMARY,
+                    label = amityChatString("chat.cancel"),
+                    onClick = {
                         (context as? Activity)?.finish()
                     },
                 )
             }
 
-            // Tabs — AmityTabRow includes its own bottom divider
-            AmityTabRow(
-                tabs = tabs,
-                selectedIndex = selectedTabIndex,
-            ) { index ->
-                viewModel.changeTab(if (index == 0) SearchTab.CHATS else SearchTab.MESSAGES)
+            // Tabs — Underlined (Tab atom) over a Post hairline (Divider atom)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(AmityTheme.token(AmityColorToken.SurfaceListDefaultDefault))
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(20.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                AmityTab(
+                    variant = AmityTabVariant.Underlined,
+                    label = tabChats,
+                    selected = selectedTabIndex == 0,
+                    onPress = {
+                        if (selectedTabIndex != 0) viewModel.changeTab(SearchTab.CHATS)
+                    },
+                )
+                AmityTab(
+                    variant = AmityTabVariant.Underlined,
+                    label = tabMessages,
+                    selected = selectedTabIndex == 1,
+                    onPress = {
+                        if (selectedTabIndex != 1) viewModel.changeTab(SearchTab.MESSAGES)
+                    },
+                )
             }
+            AmityDivider(variant = AmityDividerVariant.Post)
 
             // Content
             when {
                 // Not enough characters yet
                 searchKeyword.trim().length < 3 -> {
-                    Column(
+                    AmityEmptyState(
                         modifier = Modifier
                             .fillMaxSize()
                             .imePadding()
                             .padding(32.dp),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.amity_ic_empty_search),
-                            contentDescription = "Search",
-                            modifier = Modifier.size(60.dp),
-                            alpha = 0.5f,
-                        )
-                        Spacer(Modifier.height(8.dp))
-                        Text(
-                            text = amityChatString("chat.search.min.chars"),
-                            style = AmityTheme.typography.titleBold.copy(
-                                textAlign = TextAlign.Center,
-                                color = AmityTheme.colors.baseShade3,
-                            ),
-                        )
-                    }
+                        variant = AmityEmptyStateVariant.ICON,
+                        icon = CommonR.drawable.amity_ic_search_l,
+                        title = amityChatString("chat.search.min.chars"),
+                    )
                 }
 
                 // Initial loading — show skeleton
@@ -232,21 +192,15 @@ fun AmitySearchChannelPage(
 
                 // No results
                 !searchState.isLoading && searchState.channels.isEmpty() -> {
-                    Column(
+                    AmityEmptyState(
                         modifier = Modifier
                             .fillMaxSize()
                             .imePadding()
                             .padding(32.dp),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        Text(
-                            text = amityChatString("chat.search.no.results"),
-                            style = AmityTheme.typography.bodyLegacy.copy(
-                                color = AmityTheme.colors.baseShade2,
-                            ),
-                        )
-                    }
+                        variant = AmityEmptyStateVariant.ICON,
+                        icon = CommonR.drawable.amity_ic_search_cross_l,
+                        title = amityChatString("chat.search.no.results"),
+                    )
                 }
 
                 // Results list

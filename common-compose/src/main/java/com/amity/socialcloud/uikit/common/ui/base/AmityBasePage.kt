@@ -23,18 +23,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
+import com.amity.socialcloud.uikit.common.compose.R
 import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import com.amity.socialcloud.uikit.common.localization.DefaultAmityCommonStringProvider
 import com.amity.socialcloud.uikit.common.localization.LocalAmityCommonStringProvider
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityToast
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityToastVariant
 import com.amity.socialcloud.uikit.common.ui.elements.AmityProgressSnackbar
 import com.amity.socialcloud.uikit.common.ui.elements.AmityProgressSnackbarVisuals
 import com.amity.socialcloud.uikit.common.ui.elements.AmitySnackbar
 import com.amity.socialcloud.uikit.common.ui.elements.AmitySnackbarVisuals
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.scope.rememberAmityComposeScopeProvider
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.ui.platform.LocalDensity
 import com.amity.socialcloud.uikit.common.ui.theme.AmityComposeTheme
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.common.utils.getKeyboardHeight
 import org.joda.time.DateTime
 import java.util.UUID
 
@@ -44,6 +50,7 @@ import java.util.UUID
 @Composable
 fun AmityBasePage(
     pageId: String,
+    useAmityToast: Boolean = false,
     content: @Composable AmityComposePageScope.() -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -54,7 +61,17 @@ fun AmityBasePage(
         snackbarHostState = snackbarHostState,
         coroutineScope = coroutineScope,
     )
-    val keyboardHeight by getKeyboardHeight()
+    // Keyboard lift for the toast: the ime inset is measured from the PHYSICAL screen bottom and
+    // therefore includes the navigation-bar region — but the Scaffold already pads the snackbar
+    // slot by systemBars, so adding the raw ime height double-counts the nav bar and floats the
+    // toast too high while typing. Chat (useAmityToast) lifts only by the keyboard's excess over
+    // the nav bar; the legacy snackbar path keeps the raw value it always used.
+    val density = LocalDensity.current
+    val imeBottom = WindowInsets.ime.getBottom(density)
+    val navBottom = WindowInsets.navigationBars.getBottom(density)
+    val keyboardHeight = with(density) {
+        (if (useAmityToast) (imeBottom - navBottom).coerceAtLeast(0) else imeBottom).toDp()
+    }
     var additionalHeight by remember { mutableIntStateOf(0) }
 
     var lastThemeUpdate by remember { mutableStateOf( DateTime.now() ) }
@@ -80,14 +97,47 @@ fun AmityBasePage(
                     SnackbarHost(
                         hostState = snackbarHostState,
                         modifier = Modifier
-                            .padding(bottom = keyboardHeight + additionalHeight.dp + 16.dp)
+                            // Chat toasts (useAmityToast) sit ABOVE the compose bar: the idle composer
+                            // is ~56dp and the offset already accounts for keyboardHeight, so with the
+                            // keyboard down a bottom-16 toast overlaps the composer. Lift the chat base
+                            // by ~composer(56)+gap(16)=72dp so a toast never hides the composer
+                            // and all chat toasts read higher . Social
+                            // (legacy snackbar, useAmityToast=false) keeps the original 16dp — unchanged.
+                            // Value is approximate pending on-device/design confirmation (QA toast-position
+                            // node is stale post-rebaseline).
+                            .padding(bottom = keyboardHeight + additionalHeight.dp + if (useAmityToast) 72.dp else 16.dp)
                             .padding(horizontal = 16.dp),
                     ) {
                         when (it.visuals) {
                             is AmitySnackbarVisuals -> {
                                 val data = it.visuals as AmitySnackbarVisuals
                                 additionalHeight = data.additionalHeight
-                                if ((it.visuals as AmitySnackbarVisuals).dismissable) {
+                                if (useAmityToast) {
+                                    // Chat opt-in: render the AmityToast atom instead of the legacy
+                                    // AmitySnackbar visual. Dismiss timing stays owned by
+                                    // snackbarHostState (data.duration), so the atom's own
+                                    // auto-dismiss timer is disabled here.
+                                    val isError =
+                                        data.drawableRes == R.drawable.amity_ic_snack_bar_warning
+                                    AmityToast(
+                                        message = data.message,
+                                        variant = if (isError) {
+                                            AmityToastVariant.ERROR
+                                        } else {
+                                            AmityToastVariant.INFORMATIVE
+                                        },
+                                        // The legacy warning drawable still selects the variant, but
+                                        // it is a different glyph from the design's exclamation
+                                        // circle (25x24, tapered stem). Swap it here rather than
+                                        // editing the shared drawable, which social also renders.
+                                        icon = if (isError) {
+                                            R.drawable.amity_ic_exclamation_circle_r
+                                        } else {
+                                            data.drawableRes
+                                        },
+                                        duration = null,
+                                    )
+                                } else if ((it.visuals as AmitySnackbarVisuals).dismissable) {
                                     SwipeToDismissBox(
                                         state = rememberSwipeToDismissBoxState(
                                             SwipeToDismissBoxValue.Settled,
@@ -103,7 +153,15 @@ fun AmityBasePage(
                             }
 
                             is AmityProgressSnackbarVisuals -> {
-                                AmityProgressSnackbar(data = it.visuals as AmityProgressSnackbarVisuals)
+                                if (useAmityToast) {
+                                    AmityToast(
+                                        message = (it.visuals as AmityProgressSnackbarVisuals).message,
+                                        variant = AmityToastVariant.LOADING,
+                                        duration = null,
+                                    )
+                                } else {
+                                    AmityProgressSnackbar(data = it.visuals as AmityProgressSnackbarVisuals)
+                                }
                             }
                         }
                     }

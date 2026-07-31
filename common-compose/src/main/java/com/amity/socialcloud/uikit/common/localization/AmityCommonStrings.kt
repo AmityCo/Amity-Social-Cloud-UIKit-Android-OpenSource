@@ -47,6 +47,7 @@ object AmityCommonStrings {
         "amity_common_time_time_minutes_suffix" to R.string.amity_common_time_time_minutes_suffix,
         "amity_common_time_time_seconds_suffix" to R.string.amity_common_time_time_seconds_suffix,
         "amity_common_time_just_now" to R.string.amity_common_time_just_now,
+        "amity_common_time_edited_suffix" to R.string.amity_common_time_edited_suffix,
 
         // Reaction display names
         "amity_social_button_reaction_like" to R.string.amity_social_button_reaction_like,

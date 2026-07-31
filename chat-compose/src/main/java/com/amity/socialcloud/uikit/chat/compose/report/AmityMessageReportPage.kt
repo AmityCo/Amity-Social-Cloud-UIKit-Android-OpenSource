@@ -1,7 +1,6 @@
 package com.amity.socialcloud.uikit.chat.compose.report
 
 import android.app.Activity
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,20 +13,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import com.amity.socialcloud.uikit.chat.compose.localization.amityChatString
@@ -37,12 +29,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.sdk.model.core.flag.AmityContentFlagReason
-import com.amity.socialcloud.uikit.chat.compose.R
+import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityBanner
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityBannerHierarchy
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButton
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonVariant
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityDivider
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityDividerVariant
+import com.amity.socialcloud.uikit.common.ui.atoms.AmitySelection
+import com.amity.socialcloud.uikit.common.ui.atoms.AmitySelectionVariant
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
+import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
-import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
-import com.amity.socialcloud.uikit.common.ui.theme.amityDisabledColor
 
 @Composable
 fun AmityMessageReportPage(
@@ -57,11 +57,11 @@ fun AmityMessageReportPage(
     val (selectedReason, onReasonSelected) = remember { mutableStateOf<AmityContentFlagReason?>(null) }
     val (isSubmitting, setSubmitting) = remember { mutableStateOf(false) }
 
-    AmityBasePage(pageId = "message_report_page") {
+    AmityBasePage(pageId = "message_report_page", useAmityToast = true) {
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .background(AmityTheme.colors.background),
+                .background(AmityTheme.token(AmityColorToken.SurfacePageBackgroundDefault)),
         ) {
             // Header
             Box(
@@ -70,7 +70,7 @@ fun AmityMessageReportPage(
                     .padding(horizontal = 12.dp),
             ) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_chat_back),
+                    imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_chevron_left),
                     contentDescription = "Back",
                     modifier = Modifier
                         .size(24.dp)
@@ -78,7 +78,7 @@ fun AmityMessageReportPage(
                         .clickableWithoutRipple {
                             (context as? Activity)?.finish()
                         },
-                    tint = AmityTheme.colors.base,
+                    tint = AmityTheme.token(AmityColorToken.IconIconButtonGhostSecondaryDefault),
                 )
 
                 Text(
@@ -90,18 +90,12 @@ fun AmityMessageReportPage(
                 )
             }
 
-            HorizontalDivider(color = AmityTheme.colors.baseShade4)
+            AmityDivider(variant = AmityDividerVariant.Post)
 
             // Description
-            Text(
-                text = amityChatString("chat.report.description"),
-                style = AmityTheme.typography.bodyLegacy.copy(
-                    fontSize = 13.sp,
-                    color = AmityTheme.colors.baseShade1,
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
+            AmityBanner(
+                hierarchy = AmityBannerHierarchy.DEFAULT,
+                description = amityChatString("chat.report.description"),
             )
 
             // Reason list
@@ -123,13 +117,11 @@ fun AmityMessageReportPage(
                             .padding(horizontal = 16.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        RadioButton(
-                            selected = selectedReason == reason,
-                            onClick = null,
-                            colors = RadioButtonDefaults.colors(
-                                selectedColor = AmityTheme.colors.primary,
-                            ),
-                            enabled = !isSubmitting,
+                        AmitySelection(
+                            variant = AmitySelectionVariant.RADIO,
+                            isSelected = selectedReason == reason,
+                            isDisabled = isSubmitting,
+                            onChange = null,
                         )
                         Text(
                             text = reason.reason,
@@ -144,9 +136,11 @@ fun AmityMessageReportPage(
             }
 
             // Submit button
-            HorizontalDivider(color = AmityTheme.colors.baseShade4)
+            AmityDivider(variant = AmityDividerVariant.Post)
 
-            Button(
+            AmityButton(
+                variant = AmityButtonVariant.MAIN,
+                label = amityChatString("chat.report.submit"),
                 onClick = {
                     selectedReason?.let { reason ->
                         setSubmitting(true)
@@ -154,11 +148,7 @@ fun AmityMessageReportPage(
                             messageId = messageId,
                             reason = reason,
                             onSuccess = {
-                                Toast.makeText(
-                                    context,
-                                    reportSuccessMsg,
-                                    Toast.LENGTH_SHORT,
-                                ).show()
+                                AmityUIKitSnackbar.publishSnackbarMessage(reportSuccessMsg)
                                 (context as? Activity)?.finish()
                             },
                             onError = {
@@ -170,23 +160,8 @@ fun AmityMessageReportPage(
                 enabled = selectedReason != null && !isSubmitting,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
-                    .height(40.dp),
-                shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = AmityTheme.colors.primary,
-                    disabledContainerColor = AmityTheme.colors.primary.copy(alpha = 0.3f),
-                    disabledContentColor = amityDisabledColor(amityColorWhite),
-                ),
-            ) {
-                Text(
-                    text = amityChatString("chat.report.submit"),
-                    style = AmityTheme.typography.bodyLegacy.copy(
-                        fontWeight = FontWeight.SemiBold,
-                        color = if (selectedReason != null && !isSubmitting) amityColorWhite else amityDisabledColor(amityColorWhite),
-                    ),
-                )
-            }
+                    .padding(16.dp),
+            )
         }
     }
 }

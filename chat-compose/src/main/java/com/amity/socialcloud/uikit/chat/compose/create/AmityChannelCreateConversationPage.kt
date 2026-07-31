@@ -22,9 +22,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -38,26 +35,37 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import com.amity.socialcloud.uikit.chat.compose.localization.amityChatString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
-import android.widget.Toast
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import com.amity.socialcloud.uikit.chat.compose.R
 import com.amity.socialcloud.uikit.chat.compose.conversation.AmityChatPageActivity
+import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButton
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonHierarchy
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonVariant
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonStyle
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityDivider
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityDividerVariant
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityEmptyState
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityEmptyStateVariant
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityIconButtonSize
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
-import com.amity.socialcloud.uikit.common.ui.elements.AmitySearchBarView
-import com.amity.socialcloud.uikit.common.ui.elements.AmityUserListItem
+import com.amity.socialcloud.uikit.common.ui.atoms.AmitySearchBar
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityAvatarSize
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityListItem
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityListItemVariant
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityListLeadingContent
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityListLeadingType
+import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
+import com.amity.socialcloud.uikit.chat.compose.common.toChatAvatarInitial
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 
 @Composable
 fun AmityChannelCreateConversationPage(
@@ -66,7 +74,6 @@ fun AmityChannelCreateConversationPage(
     val context = LocalContext.current
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current)
     val viewModel = viewModel<AmityChannelCreateConversationPageViewModel>(viewModelStoreOwner = viewModelStoreOwner)
-    val creationState by viewModel.creationState.collectAsState()
 
     var keyword by remember { mutableStateOf("") }
 
@@ -74,7 +81,7 @@ fun AmityChannelCreateConversationPage(
         viewModel.searchUsers(keyword)
     }.collectAsLazyPagingItems()
 
-    AmityBasePage(pageId = "create_conversation_page") {
+    AmityBasePage(pageId = "create_conversation_page", useAmityToast = true) {
         Column(
             modifier = modifier.fillMaxSize(),
         ) {
@@ -84,32 +91,33 @@ fun AmityChannelCreateConversationPage(
                     .fillMaxWidth()
                     .padding(horizontal = 12.dp),
             ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.amity_ic_close3),
-                    contentDescription = "Close",
-                    modifier = Modifier
-                        .size(16.dp)
-                        .align(Alignment.CenterStart)
-                        .clickableWithoutRipple {
-                            (context as? Activity)?.finish()
-                        },
-                    tint = AmityTheme.colors.base,
+                AmityButton(
+                    variant = AmityButtonVariant.ICON,
+                    onClick = {
+                        (context as? Activity)?.finish()
+                    },
+                    hierarchy = AmityButtonHierarchy.SECONDARY,
+                    style = AmityButtonStyle.GHOST,
+                    iconSize = AmityIconButtonSize.SIZE32,
+                    icon = CommonR.drawable.amity_ic_cross_r,
+                    modifier = Modifier.align(Alignment.CenterStart),
                 )
 
                 Text(
                     text = amityChatString("chat.create.conversation.title"),
                     style = AmityTheme.typography.titleLegacy,
+                    color = AmityTheme.token(AmityColorToken.TextSheetsHeaderTitleDefault),
                     modifier = Modifier
                         .padding(vertical = 17.dp)
                         .align(Alignment.Center),
                 )
             }
 
-            HorizontalDivider(color = AmityTheme.colors.baseShade4)
+            AmityDivider(variant = AmityDividerVariant.Content, inset = false)
             Spacer(modifier = Modifier.height(4.dp))
 
             // Search bar
-            AmitySearchBarView(
+            AmitySearchBar(
                 hint = amityChatString("chat.search.placeholder"),
             ) {
                 keyword = it
@@ -117,102 +125,81 @@ fun AmityChannelCreateConversationPage(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Loading overlay when creating conversation
-            if (creationState is AmityChannelCreateConversationPageViewModel.CreationState.Loading) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        color = AmityTheme.colors.primary,
+            // No creation overlay by design: picking a user creates the 1-1 conversation and
+            // navigates straight into the chat (onSuccess below).
+            val loadState = AmityChannelCreateConversationPageViewModel.UserListState.from(
+                loadState = lazyPagingItems.loadState.refresh,
+                itemCount = lazyPagingItems.itemCount,
+                keywordLength = keyword.length,
+                minKeywordLength = viewModel.minKeywordLength,
+            )
+
+            when (loadState) {
+                AmityChannelCreateConversationPageViewModel.UserListState.LOADING -> {
+                    UserListSkeleton()
+                }
+                AmityChannelCreateConversationPageViewModel.UserListState.SHORT_INPUT -> {
+                    AmityEmptyState(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .imePadding()
+                            .padding(32.dp),
+                        variant = AmityEmptyStateVariant.ICON,
+                        icon = CommonR.drawable.amity_ic_search_l,
+                        title = amityChatString("chat.search.min.chars"),
                     )
                 }
-            } else {
-                // User list
-                val loadState = AmityChannelCreateConversationPageViewModel.UserListState.from(
-                    loadState = lazyPagingItems.loadState.refresh,
-                    itemCount = lazyPagingItems.itemCount,
-                    keywordLength = keyword.length,
-                    minKeywordLength = viewModel.minKeywordLength,
-                )
-
-                when (loadState) {
-                    AmityChannelCreateConversationPageViewModel.UserListState.LOADING -> {
-                        UserListSkeleton()
-                    }
-                    AmityChannelCreateConversationPageViewModel.UserListState.SHORT_INPUT -> {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .imePadding()
-                                .padding(32.dp),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.amity_ic_empty_search),
-                                contentDescription = "Search",
-                                modifier = Modifier.size(60.dp),
-                                alpha = 0.5f,
-                            )
-                            Spacer(Modifier.height(8.dp))
-                            Text(
-                                text = amityChatString("chat.search.min.chars"),
-                                style = AmityTheme.typography.titleBold.copy(
-                                    textAlign = TextAlign.Center,
-                                    color = AmityTheme.colors.baseShade3,
+                AmityChannelCreateConversationPageViewModel.UserListState.EMPTY -> {
+                    AmityEmptyState(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .imePadding()
+                            .padding(horizontal = 24.dp),
+                        variant = AmityEmptyStateVariant.ICON,
+                        icon = CommonR.drawable.amity_ic_search_cross_l,
+                        title = amityChatString("chat.search.no.results"),
+                    )
+                }
+                AmityChannelCreateConversationPageViewModel.UserListState.SUCCESS -> {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                    ) {
+                        items(
+                            count = lazyPagingItems.itemCount,
+                            key = { index -> lazyPagingItems[index]?.getUserId() ?: index }
+                        ) { index ->
+                            val user = lazyPagingItems[index] ?: return@items
+                            // List atom row (the legacy AmityUserListItem is no longer used in chat).
+                            AmityListItem(
+                                variant = AmityListItemVariant.DEFAULT,
+                                title = user.getDisplayName() ?: "",
+                                leadingType = AmityListLeadingType.AVATAR,
+                                leading = AmityListLeadingContent(
+                                    type = AmityListLeadingType.AVATAR,
+                                    avatarUrl = user.resolvedAvatarUrl()?.ifEmpty { null },
+                                    // Chat avatar rule: single first letter.
+                                    avatarInitials = user.getDisplayName().toChatAvatarInitial(),
+                                    avatarSize = AmityAvatarSize.Size40,
                                 ),
-                            )
-                        }
-                    }
-                    AmityChannelCreateConversationPageViewModel.UserListState.EMPTY -> {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(32.dp),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            Text(
-                                text = amityChatString("chat.no.users.found"),
-                                style = AmityTheme.typography.bodyLegacy.copy(
-                                    fontSize = 15.sp,
-                                    color = AmityTheme.colors.baseShade2,
-                                    textAlign = TextAlign.Center,
-                                ),
-                            )
-                        }
-                    }
-                    AmityChannelCreateConversationPageViewModel.UserListState.SUCCESS -> {
-                        LazyColumn(
-                            modifier = Modifier.fillMaxSize(),
-                        ) {
-                            items(
-                                count = lazyPagingItems.itemCount,
-                                key = { index -> lazyPagingItems[index]?.getUserId() ?: index }
-                            ) { index ->
-                                val user = lazyPagingItems[index] ?: return@items
-                                AmityUserListItem(
-                                    user = user,
-                                    showRightMenu = false,
-                                    onUserClick = { selectedUser ->
-                                        viewModel.createConversation(
-                                            userId = selectedUser.getUserId(),
-                                            onSuccess = { channelId ->
-                                                context.startActivity(
-                                                    AmityChatPageActivity.newIntent(
-                                                        context, channelId
-                                                    )
+                                onPress = {
+                                    viewModel.createConversation(
+                                        userId = user.getUserId(),
+                                        onSuccess = { channelId ->
+                                            context.startActivity(
+                                                AmityChatPageActivity.newIntent(
+                                                    context, channelId
                                                 )
-                                                (context as? Activity)?.finish()
-                                            },
-                                            onError = {
-                                                Toast.makeText(context, R.string.amity_chat_load_error, Toast.LENGTH_SHORT).show()
-                                            },
-                                        )
-                                    },
-                                )
-                            }
+                                            )
+                                            (context as? Activity)?.finish()
+                                        },
+                                        onError = {
+                                            AmityUIKitSnackbar.publishSnackbarErrorMessage(
+                                                context.getString(R.string.amity_chat_load_error)
+                                            )
+                                        },
+                                    )
+                                },
+                            )
                         }
                     }
                 }
@@ -235,9 +222,9 @@ private fun UserListSkeleton() {
     )
     val shimmerBrush = Brush.linearGradient(
         colors = listOf(
-            AmityTheme.colors.baseShade4,
-            AmityTheme.colors.baseShade4.copy(alpha = 0.4f),
-            AmityTheme.colors.baseShade4,
+            AmityTheme.token(AmityColorToken.SurfaceListDefaultHover),
+            AmityTheme.token(AmityColorToken.SurfaceListDefaultHover).copy(alpha = 0.4f),
+            AmityTheme.token(AmityColorToken.SurfaceListDefaultHover),
         ),
         start = Offset(translateAnim - 200f, 0f),
         end = Offset(translateAnim, 0f),

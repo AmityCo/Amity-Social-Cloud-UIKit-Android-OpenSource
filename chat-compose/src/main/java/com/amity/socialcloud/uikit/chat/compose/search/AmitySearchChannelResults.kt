@@ -1,21 +1,15 @@
 package com.amity.socialcloud.uikit.chat.compose.search
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,19 +20,22 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import com.amity.socialcloud.uikit.chat.compose.localization.amityChatString
-import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.sdk.model.chat.channel.AmityChannel
 import com.amity.socialcloud.sdk.model.chat.member.AmityChannelMember
-import com.amity.socialcloud.uikit.chat.compose.R
 import com.amity.socialcloud.uikit.chat.compose.home.element.AmityChatListItem
 import com.amity.socialcloud.uikit.chat.compose.home.element.AmityChatListSkeleton
+import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButton
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonColor
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonHierarchy
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonVariant
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityLoader
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityLoaderSize
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityLoaderVariant
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 
 /**
  * Public thin wrapper for channel search results list.
@@ -119,10 +116,9 @@ fun AmitySearchChannelResults(
                         .padding(16.dp),
                     contentAlignment = Alignment.Center,
                 ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        color = AmityTheme.colors.primary,
-                        strokeWidth = 2.dp,
+                    AmityLoader(
+                        variant = AmityLoaderVariant.Spinner,
+                        size = AmityLoaderSize.Sm,
                     )
                 }
             }
@@ -158,35 +154,27 @@ private fun SwipeToDismissListItem(
         enableDismissFromStartToEnd = false,
         enableDismissFromEndToStart = true,
         backgroundContent = {
-            val iconResId = if (isArchived) R.drawable.amity_ic_chat_unarchive
-                else R.drawable.amity_ic_chat_home_archive
+            val iconResId = if (isArchived) CommonR.drawable.amity_ic_unarchive_r
+                else CommonR.drawable.amity_ic_archive_r
             val label = if (isArchived) amityChatString("chat.unarchive")
                 else amityChatString("chat.archive")
 
+            // Full-width reveal keeps the SquareButton surface behind the whole row
+            // while it slides; the atom sits flush at the trailing edge.
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(AmityTheme.colors.baseShade2)
-                    .padding(horizontal = 24.dp),
+                    .background(AmityTheme.token(AmityColorToken.SurfaceSquareButtonDefaultSecondaryDefault)),
                 contentAlignment = Alignment.CenterEnd,
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = iconResId),
-                        contentDescription = null,
-                        modifier = Modifier.size(24.dp),
-                        tint = amityColorWhite,
-                    )
-                    Text(
-                        text = label,
-                        color = amityColorWhite,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Medium,
-                    )
-                }
+                AmityButton(
+                    variant = AmityButtonVariant.SQUARE,
+                    color = AmityButtonColor.DEFAULT,
+                    hierarchy = AmityButtonHierarchy.SECONDARY,
+                    label = label,
+                    icon = iconResId,
+                    onClick = currentOnSwipe,
+                )
             }
         },
         content = {

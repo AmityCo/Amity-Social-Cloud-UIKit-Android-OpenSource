@@ -129,15 +129,14 @@ class AmityEventDetailViewModel(
             .catch { e ->
                 // Phase 4: a private/hidden community event the link recipient can't access can't be
                 // fetched — show the "private community" fallback instead of a generic error, and
-                // never reveal the event details. The SDK surfaces this as FORBIDDEN/PERMISSION_DENIED
-                // or, when the event isn't visible to the user at all, ITEM_NOT_FOUND
-                // (see EventLocalDataStore / EventResponseLocalDataStore).
-                // NOTE: ITEM_NOT_FOUND also covers a genuinely deleted event (Plan 29 Open Question #4) —
-                // QA should confirm against a real private event; refine if the two need distinct UI.
+                // never reveal the event details. The SDK surfaces genuine access denial as
+                // FORBIDDEN/PERMISSION_DENIED.
+                // PDT-4058: ITEM_NOT_FOUND is NOT an access issue — it covers a genuinely deleted (or
+                // missing) event, which must show the generic "Something went wrong" state with a
+                // [Go back] button, not the misleading "This community is private" fallback.
                 val isNoAccess = when (AmityError.from(e)) {
                     AmityError.FORBIDDEN_ERROR,
-                    AmityError.PERMISSION_DENIED,
-                    AmityError.ITEM_NOT_FOUND -> true
+                    AmityError.PERMISSION_DENIED -> true
                     else -> false
                 }
                 _eventDetailState.value = if (isNoAccess) {

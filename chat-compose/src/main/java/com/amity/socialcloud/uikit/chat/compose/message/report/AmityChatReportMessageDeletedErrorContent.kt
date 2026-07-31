@@ -1,8 +1,5 @@
 package com.amity.socialcloud.uikit.chat.compose.message.report
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -10,22 +7,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.amity.socialcloud.uikit.chat.compose.R
+import com.amity.socialcloud.uikit.common.compose.R as CommonR
 import com.amity.socialcloud.uikit.chat.compose.localization.amityChatString
-import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButton
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonVariant
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityDivider
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityDividerVariant
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityEmptyState
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityEmptyStateVariant
 
 @Composable
 fun AmityChatReportMessageDeletedErrorContent(
@@ -36,60 +28,31 @@ fun AmityChatReportMessageDeletedErrorContent(
             .fillMaxHeight(fraction = 0.95f)
             .fillMaxWidth()
             .navigationBarsPadding(),
-        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Spacer(modifier = Modifier.weight(1f))
-
-        Image(
-            painter = painterResource(R.drawable.amity_ic_chat_report_reason_error),
-            contentDescription = "error",
-            modifier = Modifier.size(60.dp),
+        AmityEmptyState(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth(),
+            variant = AmityEmptyStateVariant.ICON,
+            icon = CommonR.drawable.amity_ic_newspaper_question_l,
+            title = amityChatString("chat.report.error.title"),
+            description = amityChatString("chat.report.error.desc"),
         )
+
+        AmityDivider(variant = AmityDividerVariant.Post)
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(
-            text = amityChatString("chat.report.error.title"),
-            style = AmityTheme.typography.headLine,
-            color = AmityTheme.colors.baseShade3,
-            textAlign = TextAlign.Center,
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = amityChatString("chat.report.error.desc"),
-            style = AmityTheme.typography.body,
-            color = AmityTheme.colors.baseShade3,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = 32.dp),
-        )
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        Box(Modifier.height(1.dp)
-            .fillMaxWidth()
-            .background(AmityTheme.colors.divider))
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(
+        // Fixed bottom-docked full-width footer button — a separate page-level affordance,
+        // not this atom's own hug-width action slot.
+        AmityButton(
+            variant = AmityButtonVariant.MAIN,
             onClick = onCloseClick,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .height(48.dp),
-            shape = RoundedCornerShape(8.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = AmityTheme.colors.primary,
-            ),
-        ) {
-            Text(
-                text = amityChatString("chat.report.error.close"),
-                style = AmityTheme.typography.bodyBold,
-                color = amityColorWhite,
-            )
-        }
+                .padding(horizontal = 16.dp),
+            label = amityChatString("chat.report.error.close"),
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
     }

@@ -18,6 +18,7 @@ import com.amity.socialcloud.uikit.chat.compose.live.elements.AmityChannelMentio
 import com.amity.socialcloud.uikit.chat.compose.live.elements.AmityMessageComposeView
 import com.amity.socialcloud.uikit.chat.compose.live.elements.AmityUserMention
 import com.amity.socialcloud.uikit.chat.compose.live.mention.AmityMentionSuggestion
+import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.linkedin.android.spyglass.mentions.Mentionable
 
@@ -44,7 +45,7 @@ fun AmityMessageMentionTextField(
     shouldRequestFocus: Boolean = false
 ) {
     val textColor = AmityTheme.colors.base.toArgb()
-    val hintColor = AmityTheme.colors.baseShade1.toArgb()
+    val hintColor = AmityTheme.token(AmityColorToken.TextInputTextInputPlaceholderEnabled).toArgb()
 
     AndroidView(
         modifier = modifier

@@ -45,8 +45,16 @@ fun AmityEventsComponent(
 
     val viewModel: AmityEventsComponentViewModel = viewModel()
     
+    // Explore tab excludes the current user's own events, so it needs its own streams
+    // separate from the My event tab's.
+    val exploreLiveEvents = remember {
+        viewModel.getLiveEvents(AmityEventOriginType.COMMUNITY, excludeOwnEvents = true)
+    }.collectAsLazyPagingItems()
+    val exploreUpcomingEvents = remember {
+        viewModel.getUpcomingEvents(AmityEventOriginType.COMMUNITY, excludeOwnEvents = true)
+    }.collectAsLazyPagingItems()
+
     val liveEvents = remember { viewModel.getLiveEvents(AmityEventOriginType.COMMUNITY) }.collectAsLazyPagingItems()
-    val upcomingEvents = remember { viewModel.getUpcomingEvents(AmityEventOriginType.COMMUNITY) }.collectAsLazyPagingItems()
     val myUpcomingEvents = remember { viewModel.getMyUpcomingEvents(AmityEventOriginType.COMMUNITY) }.collectAsLazyPagingItems()
     val pastEvents = remember { viewModel.getPastEvents(AmityEventOriginType.COMMUNITY, AmityCoreClient.getUserId()) }.collectAsLazyPagingItems()
 
@@ -97,8 +105,8 @@ fun AmityEventsComponent(
                 // Explore tab - shows all events
                 AmityExploreEventFeedComponent(
                     pageScope = pageScope,
-                    liveEvents = liveEvents,
-                    upcomingEvents = upcomingEvents,
+                    liveEvents = exploreLiveEvents,
+                    upcomingEvents = exploreUpcomingEvents,
                     onEventClick = { event ->
                         context.startActivity(AmityEventDetailPageActivity.newIntent(context, event.getEventId()))
                     },

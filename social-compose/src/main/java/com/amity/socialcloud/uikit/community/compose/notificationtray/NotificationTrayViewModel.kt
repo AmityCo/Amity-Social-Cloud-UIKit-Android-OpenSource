@@ -67,7 +67,7 @@ open class NotificationTrayViewModel : AmityBaseViewModel() {
             notiTray.markSeen()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe()
+                .subscribe({},{})
         )
     }
 

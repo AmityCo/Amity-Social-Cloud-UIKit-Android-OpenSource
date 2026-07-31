@@ -15,8 +15,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,6 +39,11 @@ import com.amity.socialcloud.uikit.chat.compose.R
 import com.amity.socialcloud.uikit.chat.compose.live.component.AmityLiveChatHeader
 import com.amity.socialcloud.uikit.chat.compose.live.component.AmityLiveChatMessageList
 import com.amity.socialcloud.uikit.chat.compose.live.composer.AmityLiveChatMessageComposeBar
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityDivider
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityDividerVariant
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityLoader
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityLoaderSize
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityLoaderVariant
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.asColor
@@ -81,7 +84,7 @@ fun AmityLiveChatPage(
             viewModel.onStop()
         }
     }
-    AmityBasePage(pageId = "live_chat_page") {
+    AmityBasePage(pageId = "live_chat_page", useAmityToast = true) {
         Column(
             modifier = modifier
                 .background(
@@ -103,12 +106,8 @@ fun AmityLiveChatPage(
                     viewModel = viewModel,
                 )
             }
-            HorizontalDivider(
-                color = getPageScope()
-                    .getPageTheme()
-                    ?.baseShade4Color
-                    ?.asColor() ?: AmityTheme.colors.baseShade4,
-            )
+            // Resolved to Post: matches the nav/content boundary in the specced sibling AmityChatPage.
+            AmityDivider(variant = AmityDividerVariant.Post)
             Box(
                 modifier = Modifier
                     .weight(1f)
@@ -125,12 +124,7 @@ fun AmityLiveChatPage(
                         && membership?.isBanned() == false
                         && (membership?.isMuted() == true || isChannelMuted)
             if (showMutedLabel) {
-                HorizontalDivider(
-                    color = getPageScope()
-                        .getPageTheme()
-                        ?.baseShade4Color
-                        ?.asColor() ?: AmityTheme.colors.baseShade4,
-                )
+                AmityDivider(variant = AmityDividerVariant.Post)
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Start,
@@ -182,10 +176,11 @@ fun LoadingIndicator(itemCount: Int = 0) {
         LoadingToast()
     } else {
         Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
-            CircularProgressIndicator(
+            AmityLoader(
+                variant = AmityLoaderVariant.Spinner,
+                size = AmityLoaderSize.Sm,
                 modifier = Modifier
                     .size(20.dp),
-                color = AmityTheme.colors.primary,
             )
         }
     }
@@ -217,10 +212,11 @@ fun LoadingToast() {
                         Column {
                             Row(Modifier.padding(0.dp, 18.dp)) {
                                 Spacer(modifier = Modifier.width(12.dp))
-                                CircularProgressIndicator(
+                                AmityLoader(
+                                    variant = AmityLoaderVariant.Spinner,
+                                    size = AmityLoaderSize.Sm,
                                     modifier = Modifier
                                         .size(20.dp),
-                                    color = AmityTheme.colors.primary
                                 )
                                 Spacer(modifier = Modifier.width(12.dp))
                                 Text(

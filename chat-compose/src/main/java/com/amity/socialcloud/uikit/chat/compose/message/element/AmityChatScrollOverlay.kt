@@ -36,6 +36,13 @@ import coil3.compose.AsyncImage
 import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.uikit.chat.compose.localization.DefaultAmityChatStringProvider
+import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButton
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonHierarchy
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonStyle
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonVariant
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityIconButtonSize
+import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 
 /**
@@ -54,34 +61,22 @@ fun AmityChatScrollToBottomFab(
         exit = fadeOut() + slideOutVertically { it },
         modifier = modifier,
     ) {
-        Box(
+        AmityButton(
+            variant = AmityButtonVariant.ICON,
+            style = AmityButtonStyle.FILLED,
+            hierarchy = AmityButtonHierarchy.SECONDARY,
+            iconSize = AmityIconButtonSize.SIZE40,
+            icon = CommonR.drawable.amity_ic_chevron_down,
+            contentDescription = "Scroll to bottom",
+            onClick = onClick,
             modifier = Modifier
-                .size(40.dp)
-                .shadow(
-                    elevation = 4.dp,
-                    shape = CircleShape,
-                    clip = true,
-                )
-                .background(
-                    color = AmityTheme.colors.baseShade4,
-                    shape = CircleShape,
-                )
+                .shadow(elevation = 4.dp, shape = CircleShape, clip = true)
                 .border(
                     width = 1.dp,
                     color = AmityTheme.colors.base.copy(alpha = 0.1f),
                     shape = CircleShape,
-                )
-                .clip(CircleShape)
-                .clickable(onClick = onClick),
-            contentAlignment = Alignment.Center,
-        ) {
-            Icon(
-                painter = painterResource(id = com.amity.socialcloud.uikit.common.R.drawable.amity_arrow_down),
-                contentDescription = "Scroll to bottom",
-                modifier = Modifier.size(20.dp),
-                tint = AmityTheme.colors.base,
-            )
-        }
+                ),
+        )
     }
 }
 
@@ -114,7 +109,7 @@ fun AmityChatNewMessageNotification(
                         clip = true,
                     )
                     .background(
-                        color = AmityTheme.colors.baseShade4,
+                        color = AmityTheme.token(AmityColorToken.SurfaceCustomToastDefaultDefault),
                         shape = RoundedCornerShape(20.dp),
                     )
                     .border(
@@ -135,7 +130,7 @@ fun AmityChatNewMessageNotification(
                     modifier = Modifier
                         .size(28.dp)
                         .clip(CircleShape)
-                        .background(AmityTheme.colors.baseShade3, CircleShape),
+                        .background(AmityTheme.token(AmityColorToken.SurfaceAvatarProfileDefault), CircleShape),
                 )
 
                 Spacer(modifier = Modifier.width(8.dp))
@@ -146,7 +141,7 @@ fun AmityChatNewMessageNotification(
                     style = AmityTheme.typography.bodyLegacy.copy(
                         fontSize = 13.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = AmityTheme.colors.baseInverse,
+                        color = AmityTheme.token(AmityColorToken.TextCustomToastDefault),
                     ),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -157,10 +152,10 @@ fun AmityChatNewMessageNotification(
 
                 // Down arrow
                 Icon(
-                    painter = painterResource(id = com.amity.socialcloud.uikit.common.R.drawable.amity_arrow_down),
+                    painter = painterResource(id = CommonR.drawable.amity_ic_chevron_down),
                     contentDescription = null,
                     modifier = Modifier.size(12.dp),
-                    tint = AmityTheme.colors.base,
+                    tint = AmityTheme.token(AmityColorToken.IconCustomToastDefault),
                 )
             }
         }

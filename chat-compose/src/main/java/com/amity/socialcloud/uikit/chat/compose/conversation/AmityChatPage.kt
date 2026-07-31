@@ -12,11 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -28,9 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.vectorResource
 import com.amity.socialcloud.uikit.chat.compose.common.AmityChatConfirmDialog
 import com.amity.socialcloud.uikit.chat.compose.localization.amityChatString
 import androidx.compose.ui.text.font.FontWeight
@@ -41,7 +35,6 @@ import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.core.session.model.NetworkConnectionEvent
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.uikit.chat.compose.AmityChatBehaviorHelper
-import com.amity.socialcloud.uikit.chat.compose.R
 import com.amity.socialcloud.uikit.chat.compose.config.AmityChatConfigHelper
 import com.amity.socialcloud.uikit.chat.compose.home.element.AmityUserAvatarView
 import com.amity.socialcloud.uikit.chat.compose.message.component.AmityChatMessageList
@@ -49,8 +42,22 @@ import com.amity.socialcloud.uikit.chat.compose.message.composer.AmityMessageCom
 import com.amity.socialcloud.uikit.chat.compose.message.element.AmityChatHeaderSkeleton
 import com.amity.socialcloud.uikit.chat.compose.message.element.AmityChatWaitingForNetworkRow
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButton
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonVariant
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonStyle
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonHierarchy
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityDivider
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityDividerVariant
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityIconButtonSize
+import com.amity.socialcloud.uikit.common.compose.R as CommonR
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
+import androidx.compose.material3.Icon
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
+import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import androidx.compose.foundation.layout.size
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 import com.amity.socialcloud.uikit.chat.compose.message.element.LocalSentVideoUris
 import androidx.compose.runtime.CompositionLocalProvider
 import com.amity.socialcloud.uikit.chat.compose.live.elements.AmityAvatarFullScreenDialog
@@ -114,12 +121,12 @@ fun AmityChatPage(
 
     val sentVideoUris by viewModel.sentVideoUris.collectAsState()
 
-    AmityBasePage(pageId = "chat_page") {
+    AmityBasePage(pageId = "chat_page", useAmityToast = true) {
         CompositionLocalProvider(LocalSentVideoUris provides sentVideoUris) {
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .background(AmityTheme.colors.background),
+                .background(AmityTheme.token(AmityColorToken.SurfacePageBackgroundDefault)),
         ) {
             // Header
             val headerDisplayName = otherMembers.firstOrNull()?.getUser()?.getDisplayName() ?: channel?.getDisplayName() ?: ""
@@ -129,19 +136,20 @@ fun AmityChatPage(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp)
-                        .padding(horizontal = 12.dp),
+                        .background(AmityTheme.token(AmityColorToken.SurfaceListDefaultDefault))
+                        .height(64.dp)
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_chat_back),
-                        contentDescription = "Back",
-                        modifier = Modifier
-                            .size(24.dp)
-                            .clickable(onClick = { (context as? android.app.Activity)?.finish() }),
-                        tint = AmityTheme.colors.base,
+                    AmityButton(
+                        variant = AmityButtonVariant.ICON,
+                        style = AmityButtonStyle.GHOST,
+                        hierarchy = AmityButtonHierarchy.SECONDARY,
+                        iconSize = AmityIconButtonSize.SIZE32,
+                        icon = CommonR.drawable.amity_ic_chevron_left,
+                        onClick = { (context as? android.app.Activity)?.finish() },
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(16.dp))
                     AmityChatHeaderSkeleton()
                 }
             } else {
@@ -163,7 +171,7 @@ fun AmityChatPage(
                 )
             }
 
-            HorizontalDivider(color = AmityTheme.colors.baseShade4)
+            AmityDivider(variant = AmityDividerVariant.Post)
 
             // Message list
             Box(
@@ -195,7 +203,7 @@ fun AmityChatPage(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(AmityTheme.colors.baseShade4)
+                        .background(AmityTheme.token(AmityColorToken.SurfaceCustomToastDefaultDefault))
                         .padding(horizontal = 16.dp, vertical = 12.dp)
                         .imePadding()
                         .navigationBarsPadding(),
@@ -204,7 +212,7 @@ fun AmityChatPage(
                     Text(
                         text = amityChatString("chat.blocked.message"),
                         style = AmityTheme.typography.bodyLegacy.copy(
-                            color = AmityTheme.colors.baseShade2,
+                            color = AmityTheme.token(AmityColorToken.TextCustomToastDefault),
                         ),
                     )
                 }
@@ -333,18 +341,22 @@ private fun ConversationChatHeader(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(56.dp)
-            .padding(horizontal = 12.dp),
+            // The header is a Banner-family row per the design.
+            .background(AmityTheme.token(AmityColorToken.SurfaceBannerDefaultGeneral))
+            .height(64.dp)
+            .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        // Back button
+        // Back chevron: a 24dp box with the glyph full-bleed per the design. No icon-button
+        // atom size maps to 24/24 (SIZE24 pads its glyph to 16dp), so this is the raw glyph
+        // with the same Ghost/Secondary tint the atom would apply.
         Icon(
-            imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_chat_back),
+            imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_chevron_left),
             contentDescription = "Back",
+            tint = AmityTheme.token(AmityColorToken.IconIconButtonGhostSecondaryDefault),
             modifier = Modifier
                 .size(24.dp)
-                .clickable(onClick = onBack),
-            tint = AmityTheme.colors.base,
+                .clickableWithoutRipple { onBack() },
         )
 
         Spacer(modifier = Modifier.width(8.dp))
@@ -355,10 +367,10 @@ private fun ConversationChatHeader(
             avatarUrl = avatarUrl,
             displayName = displayName,
             isDeleted = isUserDeleted,
-            size = 36,
+            size = 40,
         )
 
-        Spacer(modifier = Modifier.width(10.dp))
+        Spacer(modifier = Modifier.width(12.dp))
 
         // Channel name + waiting-for-network subtitle
         Column(
@@ -367,9 +379,10 @@ private fun ConversationChatHeader(
             Text(
                 text = displayName,
                 style = AmityTheme.typography.bodyLegacy.copy(
-                    fontSize = 17.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = AmityTheme.colors.baseInverse,
+                    fontSize = 15.sp,
+                    lineHeight = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = AmityTheme.token(AmityColorToken.TextBannerDefaultHeaderGeneral),
                 ),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -382,13 +395,14 @@ private fun ConversationChatHeader(
         // Meatball menu (three-dot) — hidden when all user actions are disabled
         if (showMoreButton) {
             Spacer(modifier = Modifier.width(8.dp))
-            Icon(
-                imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_chat_home_more),
-                contentDescription = "More options",
-                modifier = Modifier
-                    .size(24.dp)
-                    .clickable(onClick = onMoreClick),
-                tint = AmityTheme.colors.base,
+            AmityButton(
+                variant = AmityButtonVariant.ICON,
+                style = AmityButtonStyle.GHOST,
+                hierarchy = AmityButtonHierarchy.SECONDARY,
+                // 32dp icon-button with the 24dp ellipsis glyph per the design.
+                iconSize = AmityIconButtonSize.SIZE32,
+                icon = CommonR.drawable.amity_ic_ellipsis_v_r,
+                onClick = onMoreClick,
             )
         }
     }

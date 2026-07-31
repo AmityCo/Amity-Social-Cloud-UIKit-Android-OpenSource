@@ -2,7 +2,6 @@ package com.amity.socialcloud.uikit.chat.compose.setting
 
 import android.app.Activity
 import android.content.Intent
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -16,9 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,34 +33,41 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import com.amity.socialcloud.uikit.chat.compose.localization.amityChatString
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.rememberAsyncImagePainter
-import coil3.compose.AsyncImagePainter
-import coil3.request.CachePolicy
-import coil3.request.ImageRequest
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.chat.channel.AmityChannel
 import com.amity.socialcloud.sdk.model.chat.channel.AmityChannelNotificationMode
-import com.amity.socialcloud.uikit.chat.compose.R
 import com.amity.socialcloud.uikit.chat.compose.common.AmityChatConfirmDialog
 import com.amity.socialcloud.uikit.chat.compose.home.AmityChatHomePageActivity
 import com.amity.socialcloud.uikit.chat.compose.home.element.AmityUserAvatarView
 import com.amity.socialcloud.uikit.chat.compose.notification.AmityGroupNotificationPreferencePageActivity
 import com.amity.socialcloud.uikit.chat.compose.notification.AmityEditGroupNotificationPageActivity
+import com.amity.socialcloud.uikit.common.compose.R as CommonR
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityAvatar
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityAvatarSize
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityAvatarStyle
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityAvatarVariant
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityBanner
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityBannerHierarchy
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButton
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonHierarchy
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonVariant
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonStyle
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityDivider
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityDividerVariant
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityIconButtonSize
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 import com.amity.socialcloud.uikit.common.utils.AmityConstants
-import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 
 @Composable
 fun AmityGroupSettingPage(
@@ -95,12 +99,13 @@ fun AmityGroupSettingPage(
 
     // Snackbar messages
     val errorLeaveGroup = amityChatString("chat.action.leave.group.failed")
+    val leftGroupChat = amityChatString("chat.group.leave.toast")
 
-    AmityBasePage(pageId = "group_setting_page") {
+    AmityBasePage(pageId = "group_setting_page", useAmityToast = true) {
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .background(AmityTheme.colors.background),
+                .background(AmityTheme.token(AmityColorToken.SurfaceSheetsBackgroundGeneral)),
         ) {
             // Header
             Box(
@@ -108,21 +113,20 @@ fun AmityGroupSettingPage(
                     .fillMaxWidth()
                     .padding(horizontal = 12.dp),
             ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_chat_back),
-                    contentDescription = "Back",
-                    modifier = Modifier
-                        .size(24.dp)
-                        .align(Alignment.CenterStart)
-                        .clickableWithoutRipple {
-                            (context as? Activity)?.finish()
-                        },
-                    tint = AmityTheme.colors.base,
+                AmityButton(
+                    variant = AmityButtonVariant.ICON,
+                    style = AmityButtonStyle.GHOST,
+                    hierarchy = AmityButtonHierarchy.SECONDARY,
+                    iconSize = AmityIconButtonSize.SIZE32,
+                    icon = CommonR.drawable.amity_ic_chevron_left,
+                    onClick = { (context as? Activity)?.finish() },
+                    modifier = Modifier.align(Alignment.CenterStart),
                 )
 
                 Text(
                     text = channel?.getDisplayName() ?: "",
                     style = AmityTheme.typography.titleLegacy,
+                    color = AmityTheme.token(AmityColorToken.TextSheetsHeaderTitleDefault),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
@@ -153,50 +157,22 @@ fun AmityGroupSettingPage(
                             size = 120,
                         )
                     } else {
-                        val painter = rememberAsyncImagePainter(
-                            model = ImageRequest
-                                .Builder(LocalContext.current)
-                                .data(channel?.getAvatar()?.getUrl(AmityImage.Size.MEDIUM))
-                                .diskCachePolicy(CachePolicy.ENABLED)
-                                .memoryCachePolicy(CachePolicy.ENABLED)
-                                .build()
+                        AmityAvatar(
+                            variant = AmityAvatarVariant.Image,
+                            imageUrl = channel?.getAvatar()?.getUrl(AmityImage.Size.MEDIUM),
+                            icon = CommonR.drawable.amity_ic_comments_alt_s,
+                            style = AmityAvatarStyle.Squared,
+                            size = AmityAvatarSize.Size120,
                         )
-                        val painterState by painter.state.collectAsState()
-                        Box(
-                            modifier = Modifier
-                                .size(120.dp)
-                                .clip(RoundedCornerShape(24.dp))
-                        ) {
-                            Image(
-                                painter = painter,
-                                contentDescription = "Channel Avatar",
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .size(120.dp)
-                                    .clip(RoundedCornerShape(24.dp))
-                            )
-                            if (painterState !is AsyncImagePainter.State.Success) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(120.dp)
-                                        .clip(RoundedCornerShape(24.dp))
-                                        .background(AmityTheme.colors.primaryShade3),
-                                    contentAlignment = Alignment.Center,
-                                ) {
-                                    Image(
-                                        painter = painterResource(id = R.drawable.amity_ic_group_chat_avatar_placeholder),
-                                        contentDescription = null,
-                                        modifier = Modifier.size(48.dp),
-                                    )
-                                }
-                            }
-                        }
                     }
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                SectionHeader(text = amityChatString("chat.group.settings.section"))
+                AmityBanner(
+                    hierarchy = AmityBannerHierarchy.DEFAULT,
+                    header = amityChatString("chat.group.settings.section"),
+                )
 
                 // Moderator section (moderator only)
                 if (isModerator) {
@@ -204,7 +180,7 @@ fun AmityGroupSettingPage(
 
                     SettingItem(
                         text = amityChatString("chat.edit.group.profile.navbar.title"),
-                        iconResId = com.amity.socialcloud.uikit.common.R.drawable.amity_ic_edit_profile,
+                        iconResId = CommonR.drawable.amity_ic_pen_s,
                         onClick = {
                             context.startActivity(
                                 AmityEditGroupProfilePageActivity.newIntent(context, channelId)
@@ -214,7 +190,7 @@ fun AmityGroupSettingPage(
 
                     SettingItem(
                         text = amityChatString("chat.group.notifications"),
-                        iconResId = R.drawable.amity_ic_chat_notification,
+                        iconResId = CommonR.drawable.amity_ic_bell_s,
                         trailingText = when (channel?.getNotificationMode()) {
                             "silent" -> amityChatString("chat.group.notification.silent.label")
                             "subscribe" -> amityChatString("chat.group.notification.subscribe.label")
@@ -229,7 +205,7 @@ fun AmityGroupSettingPage(
 
                     SettingItem(
                         text = amityChatString("chat.group.member.permissions"),
-                        iconResId = R.drawable.amity_ic_member_permissions,
+                        iconResId = CommonR.drawable.amity_ic_user_lock_s,
                         onClick = {
                             context.startActivity(
                                 AmityEditGroupMemberPermissionsPageActivity.newIntent(context, channelId)
@@ -239,7 +215,7 @@ fun AmityGroupSettingPage(
 
                     SettingItem(
                         text = amityChatString("chat.group.members.label"),
-                        iconResId = R.drawable.amity_ic_members_list,
+                        iconResId = CommonR.drawable.amity_ic_user_group_s,
                         onClick = {
                             context.startActivity(
                                 AmityGroupMemberListPageActivity.newIntent(context, channelId)
@@ -249,7 +225,7 @@ fun AmityGroupSettingPage(
 
                     SettingItem(
                         text = amityChatString("chat.group.banned.members"),
-                        iconResId = R.drawable.amity_ic_ban_member,
+                        iconResId = CommonR.drawable.amity_ic_ban_s,
                         onClick = {
                             context.startActivity(
                                 AmityBannedGroupMemberListPageActivity.newIntent(context, channelId)
@@ -257,9 +233,9 @@ fun AmityGroupSettingPage(
                         },
                     )
 
-                    HorizontalDivider(
-                        color = AmityTheme.colors.baseShade4,
-                        modifier = Modifier.padding(horizontal = 16.dp),
+                    AmityDivider(
+                        variant = AmityDividerVariant.Post,
+                        inset = true,
                     )
                 }
 
@@ -269,7 +245,7 @@ fun AmityGroupSettingPage(
                 if (!isModerator) {
                     SettingItem(
                         text = amityChatString("chat.group.members.label"),
-                        iconResId = R.drawable.amity_ic_members_list,
+                        iconResId = CommonR.drawable.amity_ic_user_group_s,
                         onClick = {
                             context.startActivity(
                                 AmityGroupMemberListPageActivity.newIntent(context, channelId)
@@ -284,7 +260,7 @@ fun AmityGroupSettingPage(
 
                 SettingItem(
                     text = amityChatString("chat.notifications.title"),
-                    iconResId = R.drawable.amity_ic_chat_notification,
+                    iconResId = CommonR.drawable.amity_ic_bell_s,
                     trailingText = if (notificationsEnabled) amityChatString("chat.notifications.on")
                                    else amityChatString("chat.notifications.off"),
                     onClick = {
@@ -299,7 +275,7 @@ fun AmityGroupSettingPage(
 
                 SettingItem(
                     text = amityChatString("chat.group.leave"),
-                    textColor = AmityTheme.colors.alert,
+                    textColor = AmityTheme.token(AmityColorToken.TextListHeaderDestructiveDefault),
                     showArrow = false,
                     onClick = {
                         if (isModerator && (channel?.getModeratorMemberCount() ?: 0) <= 1) {
@@ -322,6 +298,10 @@ fun AmityGroupSettingPage(
                     showLeaveDialog = false
                     viewModel.leaveChannel(
                         onSuccess = {
+                            // Publish before navigating: the snackbar flow is a shared broadcast, so
+                            // the chat list — already in the back stack — receives it and shows the
+                            // toast on the page the user lands on.
+                            AmityUIKitSnackbar.publishSnackbarMessage(message = leftGroupChat)
                             context.startActivity(
                                 Intent(context, AmityChatHomePageActivity::class.java).apply {
                                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
@@ -342,7 +322,7 @@ fun AmityGroupSettingPage(
                 title = amityChatString("chat.group.leave.last.mod.title"),
                 message = amityChatString("chat.group.leave.last.mod.message"),
                 confirmLabel = amityChatString("chat.group.promote.member"),
-                confirmColor = AmityTheme.colors.primary,
+                confirmColor = AmityTheme.token(AmityColorToken.TextBaseHighlight),
                 onConfirm = {
                     showLastModeratorDialog = false
                     context.startActivity(
@@ -360,9 +340,10 @@ private fun SectionHeader(text: String) {
     Text(
         text = text,
         style = AmityTheme.typography.bodyLegacy.copy(
-            fontSize = 15.sp,
+            fontSize = 17.sp,
+            lineHeight = 24.sp,
             fontWeight = FontWeight.SemiBold,
-            color = AmityTheme.colors.base,
+            color = AmityTheme.token(AmityColorToken.TextListHeaderDefaultDefault),
         ),
         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
     )
@@ -372,7 +353,7 @@ private fun SectionHeader(text: String) {
 private fun SettingItem(
     text: String,
     iconResId: Int? = null,
-    textColor: androidx.compose.ui.graphics.Color = AmityTheme.colors.base,
+    textColor: androidx.compose.ui.graphics.Color = AmityTheme.token(AmityColorToken.TextListHeaderDefaultDefault),
     showArrow: Boolean = true,
     trailingText: String? = null,
     onClick: () -> Unit,
@@ -387,27 +368,28 @@ private fun SettingItem(
         if (iconResId != null) {
             Box(
                 modifier = Modifier
-                    .size(28.dp)
+                    .size(32.dp)
                     .background(
-                        color = AmityTheme.colors.baseShade4,
-                        shape = androidx.compose.foundation.shape.RoundedCornerShape(4.dp),
+                        color = AmityTheme.token(AmityColorToken.SurfaceFeaturedIconTinted),
+                        shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp),
                     ),
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(id = iconResId),
                     contentDescription = null,
-                    modifier = Modifier.size(20.dp),
-                    tint = AmityTheme.colors.base,
+                    modifier = Modifier.size(24.dp),
+                    tint = AmityTheme.token(AmityColorToken.IconFeaturedIconTinted),
                 )
             }
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(8.dp))
         }
         Text(
             text = text,
             style = AmityTheme.typography.bodyLegacy.copy(
                 fontSize = 15.sp,
-                fontWeight = FontWeight.SemiBold,
+                lineHeight = 20.sp,
+                fontWeight = if (iconResId != null) FontWeight.Normal else FontWeight.SemiBold,
                 color = textColor,
             ),
             modifier = Modifier.weight(1f),
@@ -416,8 +398,10 @@ private fun SettingItem(
             Text(
                 text = trailingText,
                 style = AmityTheme.typography.bodyLegacy.copy(
-                    fontSize = 13.sp,
-                    color = AmityTheme.colors.baseShade2,
+                    fontSize = 15.sp,
+                    lineHeight = 20.sp,
+                    fontWeight = FontWeight.Normal,
+                    color = AmityTheme.token(AmityColorToken.TextListTrailingTextGeneral),
                 ),
                 modifier = Modifier.padding(end = 4.dp),
             )
@@ -425,11 +409,11 @@ private fun SettingItem(
         if (showArrow && iconResId != null) {
             Icon(
                 imageVector = ImageVector.vectorResource(
-                    id = com.amity.socialcloud.uikit.common.R.drawable.amity_ic_chevron_right,
+                    id = CommonR.drawable.amity_ic_chevron_right,
                 ),
                 contentDescription = null,
-                modifier = Modifier.size(16.dp),
-                tint = AmityTheme.colors.baseShade2,
+                modifier = Modifier.size(24.dp),
+                tint = AmityTheme.token(AmityColorToken.IconListLeadingDefaultDefault),
             )
         }
     }

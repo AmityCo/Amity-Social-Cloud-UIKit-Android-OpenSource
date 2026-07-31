@@ -24,7 +24,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.common.ui.theme.amityCreateStorySelectionSelectedBackground
 import com.amity.socialcloud.uikit.common.ui.theme.amityCreateStorySelectionSelectedText
 import com.amity.socialcloud.uikit.common.ui.theme.amityCreateStorySelectionUnselectedBackground
 import com.amity.socialcloud.uikit.common.ui.theme.amityCreateStorySelectionUnselectedText

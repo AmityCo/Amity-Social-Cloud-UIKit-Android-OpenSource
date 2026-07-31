@@ -1563,7 +1563,7 @@ private fun EventDetailsSection(
                 )
                 event.getStartTime()?.let { startTime ->
                     val endTime = event.getEndTime()
-                    val dateText = formatEventTimestamp(startTime, endTime)
+                    val dateText = formatEventTimestamp(startTime, endTime, context)
                     Text(
                         text = dateText,
                         style = AmityTheme.typography.body.copy(

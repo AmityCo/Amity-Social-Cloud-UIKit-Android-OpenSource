@@ -70,30 +70,8 @@ val amityChatErrorRed = Color(0xFFFF3B30)
 
 val amityStoryEngagementBackground = Color(0xFF292B32)
 val amityStoryEngagementIcon = Color(0xFFA5A9B5)
-
-val amityCreateStorySelectionSelectedBackground = amityColorSecondaryShade1
 val amityCreateStorySelectionUnselectedBackground = amityColorSecondary
 val amityCreateStorySelectionSelectedText = amityColorSecondaryShade1
 val amityCreateStorySelectionUnselectedText = amityColorSecondaryShade2
 
 val amityLivestreamChatBubbleBackground = amityColorBaseShade1
-
-@Composable
-fun amityAvatarPlaceholderBackground() =
-    if (isUIKitInDarkTheme()) amityColorPrimaryShade1
-    else amityColorPrimaryShade2
-
-@Composable
-fun amityDeletedAvatarPlaceholderBackground() =
-    if (isUIKitInDarkTheme()) amityColorSecondaryShade1
-    else amityColorSecondaryShade2
-
-@Composable
-fun amityNotificationTrayHighlightBackground() =
-    if (isUIKitInDarkTheme()) amityColorPrimary
-    else amityColorPrimaryShade3
-
-@Composable
-fun amityProductTagBadgeCountBackground() =
-    if (isUIKitInDarkTheme()) amityColorBaseShade4
-    else amityColorBase

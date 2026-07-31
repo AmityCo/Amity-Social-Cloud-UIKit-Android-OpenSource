@@ -589,7 +589,7 @@ fun ModeratorBadge() {
             contentDescription = "Moderator badge",
             tint = AmityTheme.colors.base,
             modifier = Modifier
-                .size(width = 12.dp, height = 9.dp)
+                .size(12.dp)
                 .padding(start = 2.dp, top = 1.dp, bottom = 1.dp, end = 1.dp)
         )
         Text(
@@ -757,7 +757,7 @@ fun AmityUserActionsSheet(
                     )
                     Text(
                         text = DefaultAmitySocialStringProvider.getInstance().getString("amity_common_button_moderator"),
-                        color = AmityTheme.colors.baseShade3,
+                        color = AmityTheme.colors.base,
                         style = AmityTheme.typography.captionSmall,
                         modifier = Modifier.padding(end = 3.dp)
                     )

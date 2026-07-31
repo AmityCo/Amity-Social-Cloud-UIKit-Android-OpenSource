@@ -6,18 +6,15 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -28,15 +25,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import com.amity.socialcloud.uikit.chat.compose.localization.amityChatString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import com.amity.socialcloud.uikit.chat.compose.R
+import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButton
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonHierarchy
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonVariant
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonStyle
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityIconButtonSize
+import com.amity.socialcloud.uikit.common.ui.atoms.AmitySheet
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 import java.io.File
 
 /**
@@ -84,15 +87,19 @@ fun AmityMediaAttachmentPicker(
         uri?.let(onSelectMedia)
     }
 
+    // Picker slot per v2: sheet surface, 106 high, 40 px Filled/Secondary actions
+    // 56 apart, inset 8 top
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(24.dp),
-        horizontalArrangement = Arrangement.Center,
+            .height(106.dp)
+            .background(AmityTheme.token(AmityColorToken.SurfaceSheetsBackgroundGeneral))
+            .padding(top = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(56.dp, Alignment.CenterHorizontally),
     ) {
         // Camera button
         MediaAttachmentButton(
-            iconResId = R.drawable.amity_ic_chat_camera_button,
+            iconResId = CommonR.drawable.amity_ic_camera_r,
             label = amityChatString("chat.media.camera"),
             onClick = {
                 val hasCameraPermission = ContextCompat.checkSelfPermission(
@@ -106,11 +113,9 @@ fun AmityMediaAttachmentPicker(
             },
         )
 
-        Spacer(modifier = Modifier.width(72.dp))
-
-        // Gallery button
+        // Media/Gallery button
         MediaAttachmentButton(
-            iconResId = R.drawable.amity_ic_chat_image_button,
+            iconResId = CommonR.drawable.amity_ic_image_r,
             label = amityChatString("chat.media.photo"),
             onClick = {
                 galleryLauncher.launch(
@@ -124,7 +129,7 @@ fun AmityMediaAttachmentPicker(
 
     // Camera type chooser bottom sheet
     if (showCameraChooser) {
-        ModalBottomSheet(
+        AmitySheet(
             onDismissRequest = { showCameraChooser = false },
             sheetState = cameraChooserSheetState,
         ) {
@@ -176,21 +181,25 @@ private fun MediaAttachmentButton(
     label: String,
     onClick: () -> Unit,
 ) {
+    // Avatar-with-label action per v2: 40 px Filled/Secondary icon button + 13/18 label (gap 4)
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.clickable(onClick = onClick),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        Image(
-            painter = painterResource(id = iconResId),
-            contentDescription = label,
-            modifier = Modifier.size(40.dp),
+        AmityButton(
+            variant = AmityButtonVariant.ICON,
+            style = AmityButtonStyle.FILLED,
+            hierarchy = AmityButtonHierarchy.SECONDARY,
+            iconSize = AmityIconButtonSize.SIZE40,
+            icon = iconResId,
+            onClick = onClick,
         )
         Text(
             text = label,
             style = AmityTheme.typography.bodyLegacy.copy(
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Normal,
-                color = AmityTheme.colors.baseShade1,
+                color = AmityTheme.token(AmityColorToken.TextIconButtonLabelGeneral),
             ),
         )
     }

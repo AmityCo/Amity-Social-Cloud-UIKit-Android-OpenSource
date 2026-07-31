@@ -219,14 +219,16 @@ fun LivestreamPinnedProductElement(
                                         color = AmityTheme.colors.primary.copy(if (isProductArchived) 0.3f else 1f),
                                         shape = RoundedCornerShape(6.dp)
                                     )
-                                    .clickable { onProductClick(getElementScope().getConfigId()) }
+                                    .clickable(enabled = !isProductArchived) {
+                                        onProductClick(getElementScope().getConfigId())
+                                    }
                                     .padding(horizontal = 8.dp, vertical = 6.dp),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
                                     text = amitySocialString("amity_social_button_view"),
                                     style = AmityTheme.typography.captionBold.copy(
-                                        color = AmityTheme.colors.baseInverse
+                                        color = AmityTheme.colors.baseInverse.copy(if (isProductArchived) 0.3f else 1f)
                                     )
                                 )
                             }

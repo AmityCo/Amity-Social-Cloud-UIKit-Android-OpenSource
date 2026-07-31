@@ -207,10 +207,6 @@ fun AmityLivestreamMessageComposeBar(
                     AmityLivestreamReadOnlyComposeBar(
                         modifier = Modifier.weight(1f),
                     )
-                } else if (isNonMember) {
-                    AmityLivestreamNonMemberComposeBar(
-                        modifier = Modifier.weight(1f)
-                    )
                 } else if (isUserMuted && !isCurrentUserStreamHost) {
                     AmityLivestreamReadOnlyComposeBar(
                         modifier = Modifier.weight(1f),
@@ -271,7 +267,7 @@ fun AmityLivestreamMessageComposeBar(
                 val defaultReaction =
                     AmityMessageReactions.getList().getOrNull(0) ?: AmityMessageReactions.getList()
                         .firstOrNull()
-                if (isPendingApproval || isNonMember) {
+                if (isPendingApproval) {
                     Box {}
                 } else if (messageText.isNotEmpty() || defaultReaction == null) {
                     Button(
@@ -406,14 +402,26 @@ fun AmityLivestreamMessageComposeBar(
                             .pointerInput(onReactionLongClick) {
                                 detectTapGestures(
                                     onTap = {
-                                        onReactionClick()
-                                        keyboardController?.hide()
-                                        focusManager.clearFocus()
+                                        if (AmityCoreClient.isVisitor()) {
+                                            behavior.handleVisitorUserAction()
+                                        } else if (isNonMember) {
+                                            behavior.handleNonMemberAction()
+                                        } else {
+                                            onReactionClick()
+                                            keyboardController?.hide()
+                                            focusManager.clearFocus()
+                                        }
                                     },
                                     onLongPress = {
-                                        onReactionLongClick()
-                                        keyboardController?.hide()
-                                        focusManager.clearFocus()
+                                        if (AmityCoreClient.isVisitor()) {
+                                            behavior.handleVisitorUserAction()
+                                        } else if (isNonMember) {
+                                            behavior.handleNonMemberAction()
+                                        } else {
+                                            onReactionLongClick()
+                                            keyboardController?.hide()
+                                            focusManager.clearFocus()
+                                        }
                                     }
                                 )
                             }

@@ -557,3 +557,4 @@ When adding architecture sections to this file (AGENTS.md), keep them concise an
 | `.agent/skills/sdk/social/sdk-social-models.md` | SDK model reference — `AmityPost`, `AmityProductTag`, `AmityProduct`, and related types |
 | `.agent/skills/uikit/social/notification-tray/notification-tray-architecture.md` | Notification tray internals — item rendering, avatar pattern, click routing, HighlightText, SDK model |
 | `.agent/skills/uikit/chat/chat-config-and-localization.md` | Chat config system (bubble colors, feature toggles, composer settings) + string localization architecture, key gotchas (`getIdentifier` trap, pure JVM color parsing), and how to extend both systems |
+| `.agent/skills/uikit/common/popover-primitive.md` | `AmityPopover` shared contextual-menu container — token bindings, API surface, current/future adopters (create-chat menu, message/media action menus, mention picker) |

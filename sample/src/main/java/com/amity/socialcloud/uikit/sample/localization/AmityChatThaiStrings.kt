@@ -34,6 +34,8 @@ object AmityChatThaiStrings {
         "chat.action.unmute" to "เปิดการแจ้งเตือนแล้ว",
         "chat.action.report.user" to "รายงานผู้ใช้",
         "chat.action.unreport.user" to "ยกเลิกรายงานผู้ใช้",
+        "chat.dm.action.report.user" to "รายงานผู้ใช้",
+        "chat.dm.action.unreport.user" to "ยกเลิกรายงานผู้ใช้",
         "chat.action.block.user" to "บล็อกผู้ใช้",
         "chat.action.unblock.user" to "ยกเลิกการบล็อกผู้ใช้",
         "chat.blocked.message" to "คุณไม่สามารถส่งข้อความถึงบุคคลนี้ได้",
@@ -86,6 +88,7 @@ object AmityChatThaiStrings {
         "chat.group.leave" to "ออกจากกลุ่ม",
         "chat.group.leave.confirm.title" to "ออกจากกลุ่ม",
         "chat.group.leave.confirm.message" to "คุณแน่ใจหรือไม่ว่าต้องการออกจากกลุ่มนี้?",
+        "chat.group.leave.toast" to "ออกจากแชทกลุ่มแล้ว",
         "chat.group.leave.last.mod.title" to "คุณเป็นผู้ดูแลคนเดียว",
         "chat.group.leave.last.mod.message" to "โปรดเลื่อนตำแหน่งสมาชิกคนอื่นเป็นผู้ดูแลก่อนออกจากกลุ่ม",
         "chat.group.promote.member" to "เลื่อนตำแหน่งสมาชิก",
@@ -395,7 +398,7 @@ object AmityChatThaiStrings {
         "chat.timestamp.now" to "ตอนนี้",
 
         // Toast messages
-        "chat.toast.banned.word" to "ไม่สามารถส่งข้อความได้เนื่องจากมีคำที่ถูกบล็อก",
+        "chat.toast.banned.word" to "ไม่สามารถส่งข้อความได้เนื่องจากมีคำที่ไม่เหมาะสม",
         "chat.toast.copied" to "คัดลอกแล้ว",
         "chat.toast.delete.error" to "ไม่สามารถลบข้อความได้ กรุณาลองใหม่",
         "chat.toast.group.chat.left" to "ออกจากแชทกลุ่มแล้ว",

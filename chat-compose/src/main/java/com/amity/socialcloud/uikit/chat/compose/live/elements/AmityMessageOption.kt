@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -41,13 +40,18 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.Popup
 import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
 import com.amity.socialcloud.uikit.chat.compose.R
+import com.amity.socialcloud.uikit.chat.compose.common.AmityChatConfirmDialog
 import com.amity.socialcloud.uikit.chat.compose.live.AmityLiveChatPageViewModel
 import com.amity.socialcloud.uikit.chat.compose.localization.DefaultAmityChatStringProvider
 import com.amity.socialcloud.uikit.chat.compose.localization.amityChatString
+import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityDivider
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityDividerVariant
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.elements.BottomConfirmDeletePopup
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
+import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.localization.amityCommonString
 
@@ -97,7 +101,8 @@ fun AmityMessageOption(
 								onDismiss = onDismiss,
 								action = onReply
 							)
-							HorizontalDivider(color = AmityTheme.colors.secondaryShade1)
+							// Resolved to Content: intra-menu row separator (matches AmityMessageActionMenu).
+							AmityDivider(variant = AmityDividerVariant.Content, inset = false)
 						}
 						AmityMessageOptionItem(
 							option = amityChatString("chat.option.copy"),
@@ -109,7 +114,7 @@ fun AmityMessageOption(
 							},
 						)
 						if (onFlag != null) {
-							HorizontalDivider(color = AmityTheme.colors.secondaryShade1)
+							AmityDivider(variant = AmityDividerVariant.Content, inset = false)
 							AmityMessageOptionItem(
 								option = amityChatString("chat.option.report"),
 								icon = ImageVector.vectorResource(id = R.drawable.amity_ic_flag_message),
@@ -119,17 +124,17 @@ fun AmityMessageOption(
 							)
 						}
 						if (onUnFlag != null) {
-							HorizontalDivider(color = AmityTheme.colors.secondaryShade1)
+							AmityDivider(variant = AmityDividerVariant.Content, inset = false)
 							AmityMessageOptionItem(
 								option = amityChatString("chat.option.unreport"),
-								icon = ImageVector.vectorResource(id = R.drawable.amity_ic_unreport),
+								icon = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_flag_slash_r),
 								tint = AmityTheme.colors.alert,
 								onDismiss = onDismiss,
 								action = onUnFlag
 							)
 						}
 						if (onDelete != null) {
-							HorizontalDivider(color = AmityTheme.colors.secondaryShade1)
+							AmityDivider(variant = AmityDividerVariant.Content, inset = false)
 							AmityMessageOptionItem(
 								option = amityChatString("chat.option.delete"),
 								icon = ImageVector.vectorResource(id = R.drawable.amity_ic_delete_message),
@@ -237,83 +242,13 @@ fun CenterConfirmDeletePopup(
 	onCancel: (() -> Unit)? = null,
 	onDelete: (() -> Unit)? = null
 ) {
-	Dialog(
-		onDismissRequest = {},
-		DialogProperties(
-			usePlatformDefaultWidth = false
-		)
-	) {
-		Box(
-			modifier = Modifier
-				.fillMaxSize(),
-			contentAlignment = Alignment.Center
-		) {
-			Box(
-				modifier = Modifier
-					.clip(RoundedCornerShape(16.dp))
-					.background(AmityTheme.colors.baseShade4)
-					.width(270.dp)
-			) {
-				Column {
-					Column(
-						modifier = Modifier.padding(19.dp),
-						horizontalAlignment = Alignment.CenterHorizontally
-					) {
-						Text(
-							text = amityChatString("chat.delete.alert.title"),
-							fontSize = 17.sp,
-							lineHeight = 22.sp,
-							fontWeight = FontWeight(600),
-							textAlign = TextAlign.Center,
-							modifier = Modifier.fillMaxWidth(),
-							color = AmityTheme.colors.baseInverse,
-						)
-						Text(
-							text = amityChatString("chat.delete.alert.message"),
-							fontSize = 13.sp,
-							lineHeight = 16.sp,
-							fontWeight = FontWeight(400),
-							textAlign = TextAlign.Center,
-							modifier = Modifier.fillMaxWidth(),
-							color = AmityTheme.colors.baseInverse,
-						)
-					}
-					HorizontalDivider(thickness = 1.dp, color = AmityTheme.colors.secondaryShade1)
-					Row(
-						modifier = Modifier
-							.height(41.dp)
-							.fillMaxWidth()
-					) {
-						TextButton(
-							onClick = { onCancel?.invoke() },
-							modifier = Modifier.weight(0.5f)
-						) {
-							Text(
-								text = amityCommonString("amity_common_button_cancel"),
-								fontSize = 17.sp,
-								lineHeight = 22.sp,
-								fontWeight = FontWeight(600),
-								color = AmityTheme.colors.primary,
-							)
-						}
-						VerticalDivider(thickness = 1.dp, color = AmityTheme.colors.secondaryShade1)
-						TextButton(
-							onClick = {
-								onDelete?.invoke()
-							},
-							modifier = Modifier.weight(0.5f)
-						) {
-							Text(
-								text = amityCommonString("amity_common_button_delete"),
-								fontSize = 17.sp,
-								lineHeight = 22.sp,
-								fontWeight = FontWeight(600),
-								color = AmityTheme.colors.alert,
-							)
-						}
-					}
-				}
-			}
-		}
-	}
+	// Delegates to chat's shared native confirm dialog — same title/body/actions, token-bound.
+	// pageScope/componentScope kept for caller API stability.
+	AmityChatConfirmDialog(
+		title = amityChatString("chat.delete.alert.title"),
+		message = amityChatString("chat.delete.alert.message"),
+		confirmLabel = amityCommonString("amity_common_button_delete"),
+		onConfirm = { onDelete?.invoke() },
+		onDismiss = { onCancel?.invoke() },
+	)
 }

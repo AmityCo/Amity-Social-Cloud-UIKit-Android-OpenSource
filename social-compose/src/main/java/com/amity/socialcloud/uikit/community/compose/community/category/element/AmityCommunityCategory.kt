@@ -37,7 +37,6 @@ import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import com.amity.socialcloud.sdk.model.social.category.AmityCommunityCategory
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.common.ui.theme.amityAvatarPlaceholderBackground
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.R
 
@@ -112,7 +111,7 @@ fun AmityCommunityCategoryElement(
                     contentDescription = null,
                     modifier = Modifier
                         .size(28.dp)
-                        .background(amityAvatarPlaceholderBackground(), CircleShape)
+                        .background(AmityTheme.colors.primaryShade1, CircleShape)
                         .clip(CircleShape)
                 )
             }

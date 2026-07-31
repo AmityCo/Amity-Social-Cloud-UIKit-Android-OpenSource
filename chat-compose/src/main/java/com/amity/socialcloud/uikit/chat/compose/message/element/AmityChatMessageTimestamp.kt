@@ -1,28 +1,28 @@
 package com.amity.socialcloud.uikit.chat.compose.message.element
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import android.text.format.DateFormat
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import com.amity.socialcloud.uikit.chat.compose.localization.amityChatString
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
-import com.amity.socialcloud.uikit.chat.compose.R
+import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButton
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonHierarchy
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonStyle
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonVariant
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityIconButtonSize
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityTimestamp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 
 @Composable
 fun AmityChatMessageTimestamp(
@@ -33,69 +33,52 @@ fun AmityChatMessageTimestamp(
     isCancelledUpload: Boolean = false,
 ) {
     val state = message.getState()
+    val context = LocalContext.current
 
     when (state) {
         AmityMessage.State.SYNCED -> {
-            Row(
+            AmityTimestamp(
+                text = formatMessageTime(message.getCreatedAt(), context),
                 modifier = modifier.wrapContentWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = formatMessageTime(message.getCreatedAt()),
-                    style = AmityTheme.typography.bodyLegacy.copy(
-                        fontSize = 11.sp,
-                        color = AmityTheme.colors.baseShade2,
-                    ),
-                )
-            }
+            )
         }
 
         AmityMessage.State.SYNCING,
         AmityMessage.State.CREATED,
         AmityMessage.State.UPLOADING -> {
-            Text(
-                modifier = modifier,
+            AmityTimestamp(
                 text = amityChatString("chat.sending.status"),
-                style = AmityTheme.typography.bodyLegacy.copy(
-                    fontSize = 11.sp,
-                    color = AmityTheme.colors.baseShade2,
-                ),
+                modifier = modifier,
+                color = AmityTheme.token(AmityColorToken.TextChatBubbleTimestampSendingDefault),
             )
         }
 
         AmityMessage.State.FAILED -> {
-            if (isCancelledUpload) {
-                Box(contentAlignment = Alignment.Center, modifier = modifier) {
-                    Box(
-                        modifier = Modifier
-                            .size(20.dp)
-                            .background(AmityTheme.colors.baseShade4, CircleShape)
-                            .then(
-                                if (onFailedClick != null) Modifier.clickable { onFailedClick() }
-                                else Modifier
-                            ),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Image(
-                            painter = painterResource(id = com.amity.socialcloud.uikit.common.compose.R.drawable.amity_ic_retry),
-                            contentDescription = "Retry",
-                            modifier = Modifier.size(16.dp),
-                            colorFilter = ColorFilter.tint(AmityTheme.colors.base)
-                        )
-                    }
-                }
-            } else {
-                Box(contentAlignment = Alignment.Center, modifier = modifier) {
-                    Image(
-                        painter = painterResource(id = R.drawable.amity_ic_fail_sending_message),
-                        contentDescription = "Failed to send",
-                        modifier = Modifier
-                            .size(36.dp)
-                            .then(
-                                if (onFailedClick != null) Modifier.clickable { onFailedClick() }
-                                else Modifier
-                            ),
-                        colorFilter = ColorFilter.tint(AmityTheme.colors.baseShade2)
+            Box(contentAlignment = Alignment.Center, modifier = modifier) {
+                if (isCancelledUpload) {
+                    AmityButton(
+                        variant = AmityButtonVariant.ICON,
+                        style = AmityButtonStyle.FILLED,
+                        hierarchy = AmityButtonHierarchy.SECONDARY,
+                        iconSize = AmityIconButtonSize.SIZE24,
+                        icon = CommonR.drawable.amity_ic_redo_r,
+                        contentDescription = "Retry",
+                        enabled = onFailedClick != null,
+                        onClick = { onFailedClick?.invoke() },
+                    )
+                } else {
+                    // A genuine send failure (not a cancelled upload) shows an exclamation mark
+                    // rather than a retry affordance — the SDK's AmityMessage.State carries no
+                    // failure-reason, so retry is only offered where the user explicitly cancelled.
+                    AmityButton(
+                        variant = AmityButtonVariant.ICON,
+                        style = AmityButtonStyle.TRANSPARENT,
+                        hierarchy = AmityButtonHierarchy.PRIMARY,
+                        iconSize = AmityIconButtonSize.SIZE24,
+                        icon = CommonR.drawable.amity_ic_exclamation_s,
+                        contentDescription = amityChatString("chat.status.failed"),
+                        enabled = onFailedClick != null,
+                        onClick = { onFailedClick?.invoke() },
                     )
                 }
             }
@@ -105,7 +88,8 @@ fun AmityChatMessageTimestamp(
     }
 }
 
-private fun formatMessageTime(dateTime: org.joda.time.DateTime?): String {
+private fun formatMessageTime(dateTime: org.joda.time.DateTime?, context: android.content.Context): String {
     if (dateTime == null) return ""
-    return dateTime.toString("h:mm a")
+    val pattern = if (DateFormat.is24HourFormat(context)) "HH:mm" else "h:mm a"
+    return dateTime.toString(pattern)
 }

@@ -2,14 +2,16 @@
 <resources>
     <!-- Chat Home Page -->
     <string name="amity_chat_home_title">Chat</string>
+    <string name="amity_chat_list_timestamp_now">Now</string>
     <string name="amity_chat_tab_all">All</string>
     <string name="amity_chat_tab_direct">Direct</string>
     <string name="amity_chat_tab_groups">Groups</string>
     <string name="amity_chat_home_empty_title">No conversation yet</string>
     <string name="amity_chat_home_empty_description">Let\'s create chat to get started.</string>
     <string name="amity_chat_home_menu_archived">Archived</string>
-    <string name="amity_chat_create_direct">Direct Chat</string>
-    <string name="amity_chat_create_group">Group Chat</string>
+    <string name="amity_chat_group_notifications_title">Group Notifications</string>
+    <string name="amity_chat_create_direct">Direct chat</string>
+    <string name="amity_chat_create_group">Group chat</string>
     <string name="amity_chat_edit_group_profile_name_placeholder">Please enter a group name</string>
     <string name="amity_chat_archived_navbar_title">Archived chats</string>
     <string name="amity_chat_archived">Archived</string>
@@ -33,6 +35,11 @@
     <string name="amity_chat_action_unmute_failed">Failed to turn on notification. Please try again.</string>
     <string name="amity_chat_action_report_user">Report member</string>
     <string name="amity_chat_action_unreport_user">Unreport member</string>
+    <!-- 1:1 (direct message) sheet. Key mirrors iOS chat_dm_action_report_user so the two
+         platforms align. Separate from the group member-list labels above, which say "member"
+         because that list is about group membership; a conversation has no members. -->
+    <string name="amity_chat_dm_action_report_user">Report user</string>
+    <string name="amity_chat_dm_action_unreport_user">Unreport user</string>
     <string name="amity_chat_action_block_user">Block user</string>
     <string name="amity_chat_block_confirm_label">Block</string>
     <string name="amity_chat_action_unblock_user">Unblock user</string>
@@ -77,7 +84,7 @@
     <string name="amity_chat_select_members_title">New group</string>
     <string name="amity_chat_next">Next</string>
     <string name="amity_chat_create_group_title">New group</string>
-    <string name="amity_chat_group_name_label">Group Name</string>
+    <string name="amity_chat_group_name_label">Group name</string>
     <string name="amity_chat_group_name_placeholder">Name your group</string>
     <string name="amity_chat_create_group_button">Create</string>
 
@@ -91,6 +98,7 @@
     <string name="amity_chat_group_leave">Leave group</string>
     <string name="amity_chat_group_leave_confirm_message">If you leave this group, you will no longer see new activities or participate in this group.</string>
     <string name="amity_chat_group_leave_confirm_label">Leave</string>
+    <string name="amity_chat_group_leave_toast">Group chat left.</string>
 
     <string name="amity_chat_group_leave_last_mod_title">You\'re the last moderator</string>
     <string name="amity_chat_group_leave_last_mod_message">You must promote another member to moderator before leaving.</string>
@@ -127,6 +135,7 @@
 
     <!-- Search -->
     <string name="amity_chat_search_placeholder">Search</string>
+    <string name="amity_chat_group_member_list_search_placeholder">Search member</string>
     <string name="amity_chat_search_min_chars">Start your search by typing\nat least 3 letters</string>
     <string name="amity_chat_search_no_results">No results found</string>
     <string name="amity_chat_search_tab_chats">Chats</string>
@@ -134,7 +143,7 @@
 
     <!-- Message Report -->
     <string name="amity_chat_report_title">Report reason</string>
-    <string name="amity_chat_report_description">Tell us why you\'re reporting this content. Your report will be reviewed by our moderators and kept confidential.</string>
+    <string name="amity_chat_report_description">Tell us why you\'re reporting this message. Your report will be reviewed by our moderators and kept confidential.</string>
     <string name="amity_chat_report_submit">Submit</string>
     <string name="amity_chat_toast_message_reported">Message reported.</string>
     <string name="amity_chat_toast_un_report_message">Message unreported.</string>
@@ -150,7 +159,7 @@
     <string name="amity_chat_notifications_off">Off</string>
     <string name="amity_chat_group_notification_preference_description">Turn on to receive push notifications from this group.</string>
     <string name="amity_chat_group_notifications_disabled">Group notifications have been disabled by moderator.</string>
-    <string name="amity_chat_notifications_disabled">You have disabled notifications for chat</string>
+    <string name="amity_chat_notifications_disabled">Push notifications have been disabled by admin</string>
 
     <!-- Notification Modes -->
     <string name="amity_chat_group_notification_default_title">Default mode</string>
@@ -165,7 +174,7 @@
 
     <!-- Media Composer -->
     <string name="amity_chat_media_camera">Camera</string>
-    <string name="amity_chat_media_photo">Photo</string>
+    <string name="amity_chat_media_photo">Media</string>
 
     <!-- Member Actions (extended) -->
     <string name="amity_chat_option_report">Report</string>
@@ -181,7 +190,7 @@
     <string name="amity_chat_unban_confirm_label">Unban</string>
 
     <!-- Banned Members Page -->
-    <string name="amity_chat_banned_member_list_navbar_title">Banned Users</string>
+    <string name="amity_chat_banned_member_list_navbar_title">Banned users</string>
     <string name="amity_chat_banned_members_empty">Nothing here to see yet</string>
     <string name="amity_chat_member_action_unban">Unban user</string>
     <string name="amity_chat_error_banned_chat_sub_title">Based on your previous activities, you have been banned from this group.</string>
@@ -208,11 +217,11 @@
     <string name="amity_chat_reach_mention_limit_message">You can only mention up to 30 mentions per message.</string>
 
     <!-- Member Permissions -->
-    <string name="amity_chat_group_member_permissions_navbar_title">Member Permissions</string>
+    <string name="amity_chat_group_member_permissions_navbar_title">Member permissions</string>
     <string name="amity_chat_group_edit_permissions_messaging_title">Messaging</string>
     <string name="amity_chat_group_edit_permissions_everyone_title">Everyone</string>
     <string name="amity_chat_group_edit_permissions_everyone_description">Everyone can send a message in the group.</string>
-    <string name="amity_chat_group_edit_permissions_moderators_only_title">Only moderators</string>
+    <string name="amity_chat_group_edit_permissions_moderators_only_title">Only Moderator</string>
     <string name="amity_chat_group_edit_permissions_moderators_only_description">Members who are not moderators can read messages but cannot send any messages.</string>
     <string name="amity_chat_group_permission_only_moderators_banner">Members that are not moderators can read but not send\nany messages.</string>
 
@@ -221,7 +230,7 @@
     <string name="amity_chat_group_member_permissions">Member permissions</string>
 
     <!-- Message Bubble -->
-    <string name="amity_chat_see_more">See More</string>
+    <string name="amity_chat_see_more">See more</string>
     <string name="amity_chat_action_save">Save</string>
 
     <!-- Reply -->
@@ -257,7 +266,7 @@
     <string name="amity_chat_action_unreport_user_failed">Failed to unreport member. Please try again.</string>
     <string name="amity_chat_add_group_member_toast_failed">Failed to add members. Please try again.</string>
     <string name="amity_chat_archived_badge_label">Archived</string>
-    <string name="amity_chat_archived_empty_title">No archive chat</string>
+    <string name="amity_chat_archived_empty_title">No archived chat</string>
     <string name="amity_chat_group_notification_save_error">Failed to update group notification. Please try again.</string>
     <string name="amity_chat_group_notification_save_success">Group notification updated.</string>
     <string name="amity_chat_privacy_warning">Ensure the correct privacy setting is chosen for your group, as it can\'t be changed later.</string>
@@ -285,14 +294,15 @@
     <string name="amity_chat_mention_everyone">Notify everyone</string>
 
     <string name="amity_chat_loading_label">Loading chat…</string>
-    <string name="amity_chat_toast_banned_word">Your message wasn\'t sent as it contained a blocked word.</string>
-    <string name="amity_chat_toast_link_not_allow">Your message wasn\'t sent as it contained a link that\'s not allowed.</string>
+    <string name="amity_chat_toast_banned_word">Your message wasn’t sent as it contains an inappropriate word.</string>
+    <string name="amity_chat_toast_link_not_allow">Your message wasn’t sent as it contains a link that’s not allowed.</string>
     <string name="amity_chat_toast_copied">Copied.</string>
     <string name="amity_chat_user_is_muted">You\'ve been muted. You won\'t be able to send messages.</string>
     <string name="amity_chat_button_ok">OK</string>
     <string name="amity_chat_toast_delete_error">Couldn\'t to delete message. Please try again.</string>
     <string name="amity_chat_unknown_user">Unknown</string>
     <string name="amity_chat_label_banned_from_chat">You are banned from chat</string>"
+    <string name="amity_chat_label_banned_from_chat_description">You won\'t be able to participate in this chat until you\'ve been unbanned.</string>
     <string name="amity_chat_leave_without_finishing_title">Leave without finishing?</string>
     <string name="amity_chat_leave_without_finishing_message">Your progress won\'t be saved and your group won\'t be created.</string>
     <string name="amity_chat_leave_without_finishing_label">Leave</string>
@@ -309,7 +319,7 @@
     <string name="amity_chat_group_member_list_remove_message">Are you sure you want to remove this member from the group? They will be aware of their removal.</string>
     <string name="amity_chat_group_member_list_remove_title">Confirm removal</string>
 
-    <string name="amity_chat_delete_alert_message">This message will also be removed from your friend\'s devices.</string>
+    <string name="amity_chat_delete_alert_message">This message will also be removed from your friend’s devices.</string>
     <string name="amity_chat_delete_alert_title">Delete this message?</string>
     <string name="amity_chat_group_member_action_mute">Mute user</string>
     <string name="amity_chat_group_member_action_unmute">Unmute user</string>

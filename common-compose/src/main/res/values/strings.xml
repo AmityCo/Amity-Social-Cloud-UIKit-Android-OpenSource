@@ -63,6 +63,7 @@
     <string name="amity_common_label_preview_not_available_title">Preview not available</string>
     <string name="amity_common_label_sign_in_to_continue">Create an account or sign in to continue.</string>
     <string name="amity_common_time_just_now">Just now</string>
+    <string name="amity_common_time_edited_suffix">(edited)</string>
     <string name="amity_common_time_time_days_suffix">d</string>
     <string name="amity_common_time_time_hours_suffix">h</string>
     <string name="amity_common_time_time_minutes_suffix">m</string>

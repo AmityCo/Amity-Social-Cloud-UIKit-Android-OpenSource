@@ -1,6 +1,7 @@
 package com.amity.socialcloud.uikit.community.compose.post.composer.poll
 
 import android.app.Activity
+import android.text.format.DateFormat
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -162,7 +163,7 @@ fun AmityPollPostComposerPage(
 
     val dateFormatter = DateTimeFormat.forPattern("dd MMM")
         .withLocale(context.resources.configuration.locale)
-    val timeFormatter = DateTimeFormat.forPattern("h:mm a")
+    val timeFormatter = DateTimeFormat.forPattern(if (DateFormat.is24HourFormat(context)) "HH:mm" else "h:mm a")
         .withLocale(context.resources.configuration.locale)
     val durationMap = mapOf(
         1 to DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_poll_duration_1_day"),
@@ -1079,7 +1080,7 @@ fun AmityPollPostComposerPage(
                                             color = AmityTheme.colors.base,
                                         )
                                     )
-                                    val timeFormat = DateTimeFormat.forPattern("hh:mm a")
+                                    val timeFormat = DateTimeFormat.forPattern(if (DateFormat.is24HourFormat(context)) "HH:mm" else "hh:mm a")
                                     Text(
                                         modifier = Modifier
                                             .background(

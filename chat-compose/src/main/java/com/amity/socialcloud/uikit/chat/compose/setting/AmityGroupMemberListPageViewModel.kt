@@ -224,23 +224,17 @@ class AmityGroupMemberListPageViewModel(
             .subscribe()
     }
 
-    fun getBannedMembers(keyword: String = ""): Flow<List<AmityChannelMember>> {
+    fun searchBannedMembers(keyword: String = ""): Flow<PagingData<AmityChannelMember>> {
         return AmityChatClient.newChannelRepository()
             .membership(channelId)
-            .getMembersFromCache()
-            .map { members ->
-                members.filter { member ->
-                    member.isBanned()
-                }.filter { member ->
-                    if (keyword.isBlank()) true
-                    else member.getUser()?.getDisplayName()
-                        ?.contains(keyword, ignoreCase = true) == true
-                }
-            }
+            .searchMembers(keyword)
+            .membershipFilter(listOf(AmityChannelMembership.BANNED))
+            .build()
+            .query()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .asFlow()
-            .catch { emit(emptyList()) }
+            .catch { }
     }
 
     fun addMembers(

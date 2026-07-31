@@ -1619,6 +1619,32 @@ fun AmityRoomPlayerPage(
                 requestFocus = true
             )
         }
+
+        val invitation = uiState.invitation
+        if (showInvitationSheet && invitation != null) {
+            CoHostBottomSheet(
+                invitation = invitation,
+                onAccept = {
+                    showInvitationSheet = false
+                    // Stop watch tracking and sync when becoming co-host
+                    viewModel.stopWatchTracking(shouldSync = true)
+                    viewModel.setIsStreamerMode(true)
+                    viewModel.acceptInvitation(invitation)
+                    if (!isCameraAndRecAudioPermissionGranted) {
+                        cameraPermissionLauncher.launch(cameraAndAudioPermissions)
+                    }
+                },
+                onDecline = {
+                    showInvitationSheet = false
+                    viewModel.rejectInvitation(invitation, {
+                        AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_invitation_declined"))
+                    })
+                },
+                onDismiss = {
+                    showInvitationSheet = false
+                }
+            )
+        }
     }
 
     if (showBottomSheet) {
@@ -1677,32 +1703,6 @@ fun AmityRoomPlayerPage(
             }
 
         }
-    }
-
-    val invitation = uiState.invitation
-    if (showInvitationSheet && invitation != null) {
-        CoHostBottomSheet(
-            invitation = invitation,
-            onAccept = {
-                showInvitationSheet = false
-                // Stop watch tracking and sync when becoming co-host
-                viewModel.stopWatchTracking(shouldSync = true)
-                viewModel.setIsStreamerMode(true)
-                viewModel.acceptInvitation(invitation)
-                if (!isCameraAndRecAudioPermissionGranted) {
-                    cameraPermissionLauncher.launch(cameraAndAudioPermissions)
-                }
-            },
-            onDecline = {
-                showInvitationSheet = false
-                viewModel.rejectInvitation(invitation, {
-                    AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_invitation_declined"))
-                })
-            },
-            onDismiss = {
-                showInvitationSheet = false
-            }
-        )
     }
 
     if (showLeaveAsCoHostSheet) {
@@ -2162,7 +2162,7 @@ fun CoHostBottomSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = amityLivestreamSurfaceElevated,
+        containerColor = AmityTheme.colors.background,
         shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
         dragHandle = {
             Box(
@@ -2171,7 +2171,7 @@ fun CoHostBottomSheet(
                     .width(40.dp)
                     .height(4.dp)
                     .background(
-                        color = AmityTheme.colors.background,
+                        color = AmityTheme.colors.baseShade3,
                         shape = RoundedCornerShape(2.dp)
                     )
             )
@@ -2180,7 +2180,6 @@ fun CoHostBottomSheet(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 24.dp)
                 .padding(top = 24.dp, bottom = 40.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -2188,32 +2187,38 @@ fun CoHostBottomSheet(
             Row(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(bottom = 24.dp)
+                modifier = Modifier
+                    .padding(horizontal = 24.dp)
+                    .padding(bottom = 24.dp)
             ) {
                 // Host Avatar with Badge
                 Box {
                     Spacer(modifier = Modifier.width(12.dp))
-                    AmityUserAvatarView(
-                        user = hostUser,
-                        size = 120.dp,
+                    Box(
                         modifier = Modifier
                             .size(120.dp)
-                            .clip(CircleShape)
-                            .clip(CircleShape)
-                            .border(3.dp, amityLivestreamSurfaceElevated, CircleShape)
-
-                    )
+                            .background(AmityTheme.colors.background, CircleShape)
+                            .padding(3.dp),
+                            contentAlignment = Alignment.Center
+                    ) {
+                        AmityUserAvatarView(
+                            user = hostUser,
+                            size = 120.dp,
+                        )
+                    }
 
                     // Host Badge
                     Row(
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
-                            .offset(y = 8.dp)
+                            .offset(y = 4.dp)
+                            .border(1.dp, AmityTheme.colors.background, RoundedCornerShape(4.dp))
                             .background(
                                 color = amityLiveBadgeRedAlt,
-                                shape = RoundedCornerShape(12.dp)
+                                shape = RoundedCornerShape(4.dp)
                             )
-                            .padding(horizontal = 8.dp, vertical = 2.dp)
+                            .padding(horizontal = 8.dp, vertical = 2.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.amity_ic_livestream_host),
@@ -2225,23 +2230,26 @@ fun CoHostBottomSheet(
                         )
                         Text(
                             text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_host_badge"),
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Bold,
+                            style = AmityTheme.typography.captionSmall,
                             color = AmityTheme.colors.baseInverse
                         )
                     }
                 }
 
                 // Invited User Avatar
-                AmityUserAvatarView(
-                    user = cohostUser,
-                    size = 120.dp,
-                    modifier = Modifier
-                        .offset(x = -25.dp)
-                        .clip(CircleShape)
-                        .border(4.dp, amityLivestreamSurfaceElevated, CircleShape)
-                        .zIndex(0f),
-                )
+                Box(modifier = Modifier
+                    .offset(x = (-25).dp)
+                    .size(120.dp)
+                    .background(AmityTheme.colors.background, CircleShape)
+                    .padding(3.dp)
+                    .zIndex(0f),
+                    contentAlignment = Alignment.Center)
+                {
+                    AmityUserAvatarView(
+                        user = cohostUser,
+                        size = 120.dp,
+                    )
+                }
             }
 
             // Title
@@ -2260,7 +2268,11 @@ fun CoHostBottomSheet(
                 color = AmityTheme.colors.baseShade1,
                 textAlign = TextAlign.Center,
                 lineHeight = 20.sp,
-                modifier = Modifier.padding(bottom = 32.dp)
+                modifier = Modifier.padding(
+                    bottom = 32.dp,
+                    start = 24.dp,
+                    end = 24.dp
+                )
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -2279,12 +2291,13 @@ fun CoHostBottomSheet(
                     onDismiss()
                 },
                 modifier = Modifier
+                    .padding(horizontal = 24.dp)
                     .fillMaxWidth()
                     .height(40.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = AmityTheme.colors.highlight
+                    containerColor = AmityTheme.colors.primary
                 ),
-                shape = RoundedCornerShape(24.dp)
+                shape = RoundedCornerShape(8.dp)
             ) {
                 Text(
                     text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_accept_invite"),
@@ -2303,13 +2316,14 @@ fun CoHostBottomSheet(
                     onDismiss()
                 },
                 modifier = Modifier
+                    .padding(horizontal = 24.dp)
                     .fillMaxWidth()
                     .height(40.dp),
                 border = BorderStroke(1.dp, amityLivestreamBorder),
                 colors = ButtonDefaults.outlinedButtonColors(
                     containerColor = Color.Transparent
                 ),
-                shape = RoundedCornerShape(24.dp)
+                shape = RoundedCornerShape(8.dp)
             ) {
                 Text(
                     text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_decline"),

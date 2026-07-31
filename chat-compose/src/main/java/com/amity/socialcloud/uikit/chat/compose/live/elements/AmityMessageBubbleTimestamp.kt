@@ -7,18 +7,20 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import android.text.format.DateFormat
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
 import com.amity.socialcloud.uikit.chat.compose.R
+import com.amity.socialcloud.uikit.chat.compose.localization.amityChatString
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityTimestamp
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
+import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 
 @Composable
@@ -35,15 +37,14 @@ fun AmityMessageBubbleTimestamp(
 		elementId = "message_bubble_timestamp"
 	) {
 		if (!message.isDeleted()) {
+			val context = LocalContext.current
 			Row(modifier = modifier) {
 				if (message.getState() == AmityMessage.State.SYNCED) {
 					Spacer(modifier = Modifier.width(6.dp))
-					Text(
-						text = message.getCreatedAt().toString("h:mm a"),
-						fontSize = 9.sp,
-						lineHeight = 12.sp,
-						fontWeight = FontWeight(400),
-						color = AmityTheme.colors.secondaryShade2,
+					AmityTimestamp(
+						text = message.getCreatedAt().toString(
+                            if (DateFormat.is24HourFormat(context)) "HH:mm" else "h:mm a"
+                        ),
 						modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 10.dp),
 					)
 				} else if (message.getState() == AmityMessage.State.SYNCING
@@ -51,13 +52,10 @@ fun AmityMessageBubbleTimestamp(
 					|| message.getState() == AmityMessage.State.UPLOADING
 				) {
 					Spacer(modifier = Modifier.width(6.dp))
-					Text(
-						text = "sending...",
-						fontSize = 9.sp,
-						lineHeight = 12.sp,
-						fontWeight = FontWeight(400),
-						color = AmityTheme.colors.secondaryShade2,
+					AmityTimestamp(
+						text = amityChatString("chat.sending.status"),
 						modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 10.dp),
+						color = AmityTheme.token(AmityColorToken.TextChatBubbleTimestampSendingDefault),
 					)
 				} else if (message.getState() == AmityMessage.State.FAILED) {
 					Image(

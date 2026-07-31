@@ -5,11 +5,11 @@ import android.content.Context
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
-import android.widget.Toast
 import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.file.AmityVideo
 import com.amity.socialcloud.uikit.chat.compose.R
+import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.utils.getVideoUrlWithFallbackQuality
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -70,11 +70,11 @@ internal suspend fun saveImageToGallery(
             }
 
             withContext(Dispatchers.Main) {
-                Toast.makeText(context, context.getString(R.string.amity_chat_save_photo_success), Toast.LENGTH_SHORT).show()
+                AmityUIKitSnackbar.publishSnackbarMessage(context.getString(R.string.amity_chat_save_photo_success))
             }
         } catch (e: Exception) {
             withContext(Dispatchers.Main) {
-                Toast.makeText(context, context.getString(R.string.amity_chat_save_photo_failed), Toast.LENGTH_SHORT).show()
+                AmityUIKitSnackbar.publishSnackbarErrorMessage(context.getString(R.string.amity_chat_save_photo_failed))
             }
         }
     }
@@ -120,11 +120,11 @@ internal suspend fun saveVideoToGallery(
             inputStream.close()
 
             withContext(Dispatchers.Main) {
-                Toast.makeText(context, context.getString(R.string.amity_chat_save_video_success), Toast.LENGTH_SHORT).show()
+                AmityUIKitSnackbar.publishSnackbarMessage(context.getString(R.string.amity_chat_save_video_success))
             }
         } catch (e: Exception) {
             withContext(Dispatchers.Main) {
-                Toast.makeText(context, context.getString(R.string.amity_chat_save_video_failed), Toast.LENGTH_SHORT).show()
+                AmityUIKitSnackbar.publishSnackbarErrorMessage(context.getString(R.string.amity_chat_save_video_failed))
             }
         }
     }

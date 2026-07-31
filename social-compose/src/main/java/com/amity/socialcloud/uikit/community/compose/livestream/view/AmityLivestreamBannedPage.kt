@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
@@ -126,7 +127,7 @@ fun AmityBaseWarningPage(
                         Text(
                             text = buttonText,
                             style = AmityTheme.typography.bodyBold,
-                            color = AmityTheme.colors.baseInverse
+                            color = amityColorWhite
                         )
                     }
                 }

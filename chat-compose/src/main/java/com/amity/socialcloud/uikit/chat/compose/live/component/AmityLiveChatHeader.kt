@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -23,6 +22,9 @@ import com.amity.socialcloud.uikit.chat.compose.R
 import com.amity.socialcloud.uikit.chat.compose.live.AmityLiveChatPageViewModel
 import com.amity.socialcloud.uikit.chat.compose.live.elements.AmityLiveChatHeaderAvatar
 import com.amity.socialcloud.uikit.chat.compose.localization.amityChatString
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityLoader
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityLoaderSize
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityLoaderVariant
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
@@ -133,11 +135,12 @@ fun ChatHeaderWaitingForNetwork(
 			modifier = modifier,
 			verticalAlignment = Alignment.CenterVertically
 		) {
-			CircularProgressIndicator(
+			AmityLoader(
+				variant = AmityLoaderVariant.Spinner,
+				size = AmityLoaderSize.Sm,
 				modifier = Modifier
 					.size(16.dp)
 					.padding(top = 0.dp, bottom = 2.dp),
-				color = AmityTheme.colors.baseInverse
 			)
 			Spacer(modifier = Modifier.width(4.dp))
 			Text(

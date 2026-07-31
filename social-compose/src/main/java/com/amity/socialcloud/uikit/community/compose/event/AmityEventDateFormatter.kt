@@ -1,5 +1,7 @@
 package com.amity.socialcloud.uikit.community.compose.event
 
+import android.content.Context
+import android.text.format.DateFormat
 import org.joda.time.DateTime
 import org.joda.time.LocalDate
 import org.joda.time.format.DateTimeFormat
@@ -14,12 +16,31 @@ import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySo
  * @param endTime Event end time (optional, defaults to startTime + 12 hours)
  * @return Formatted time string
  */
-fun formatEventTimestamp(startTime: DateTime, endTime: DateTime?): String {
+/**
+ * Formats an event's start date and start time only (no end time / range).
+ * Used by the notification tray event item secondary line, which shows the
+ * event type chip followed by the start date and start time.
+ *
+ * @param startTime Event start time (required)
+ * @return Formatted start date + time, e.g. "12 Jul 2026 3:00 PM"
+ */
+fun formatEventStartDateTime(startTime: DateTime, context: Context): String {
+    val is24HourFormat = DateFormat.is24HourFormat(context)
+    val dateTimeFormatter = DateTimeFormat.forPattern(
+        if (is24HourFormat) "dd MMM yyyy HH:mm" else "dd MMM yyyy h:mm aa"
+    )
+    return dateTimeFormatter.print(startTime)
+}
+
+fun formatEventTimestamp(startTime: DateTime, endTime: DateTime?, context: Context): String {
     val today = LocalDate.now()
     val startDate = startTime.toLocalDate()
 
-    val timeFormatter = DateTimeFormat.forPattern("h:mm aa")
-    val dateTimeFormatter = DateTimeFormat.forPattern("dd MMM yyyy, h:mm aa")
+    val is24HourFormat = DateFormat.is24HourFormat(context)
+    val timeFormatter = DateTimeFormat.forPattern(if (is24HourFormat) "HH:mm" else "h:mm aa")
+    val dateTimeFormatter = DateTimeFormat.forPattern(
+        if (is24HourFormat) "dd MMM yyyy, HH:mm" else "dd MMM yyyy, h:mm aa"
+    )
 
     // If no endTime provided, default to 12 hours after startTime
     val finalEndTime = endTime ?: startTime.plusHours(12)

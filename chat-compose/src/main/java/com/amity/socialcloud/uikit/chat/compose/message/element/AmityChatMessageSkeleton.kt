@@ -29,6 +29,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 
 @Composable
 fun AmityChatMessageSkeleton(
@@ -47,9 +48,9 @@ fun AmityChatMessageSkeleton(
 
     val shimmerBrush = Brush.linearGradient(
         colors = listOf(
-            AmityTheme.colors.baseShade4,
-            AmityTheme.colors.baseShade4.copy(alpha = 0.4f),
-            AmityTheme.colors.baseShade4,
+            AmityTheme.token(AmityColorToken.SurfaceSkeletonEffectDefault),
+            AmityTheme.token(AmityColorToken.SurfaceSkeletonEffectDefault).copy(alpha = 0.4f),
+            AmityTheme.token(AmityColorToken.SurfaceSkeletonEffectDefault),
         ),
         start = Offset(shimmerTranslate.value - 200f, 0f),
         end = Offset(shimmerTranslate.value, 0f),
@@ -174,9 +175,9 @@ fun AmityChatHeaderSkeleton(
 
     val shimmerBrush = Brush.linearGradient(
         colors = listOf(
-            AmityTheme.colors.baseShade4,
-            AmityTheme.colors.baseShade4.copy(alpha = 0.4f),
-            AmityTheme.colors.baseShade4,
+            AmityTheme.token(AmityColorToken.SurfaceSkeletonEffectDefault),
+            AmityTheme.token(AmityColorToken.SurfaceSkeletonEffectDefault).copy(alpha = 0.4f),
+            AmityTheme.token(AmityColorToken.SurfaceSkeletonEffectDefault),
         ),
         start = Offset(shimmerTranslate.value - 200f, 0f),
         end = Offset(shimmerTranslate.value, 0f),

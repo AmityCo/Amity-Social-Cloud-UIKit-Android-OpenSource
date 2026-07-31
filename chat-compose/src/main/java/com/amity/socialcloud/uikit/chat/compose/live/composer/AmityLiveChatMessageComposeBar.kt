@@ -1,24 +1,16 @@
 package com.amity.socialcloud.uikit.chat.compose.live.composer
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -33,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -44,11 +35,18 @@ import androidx.compose.ui.window.DialogProperties
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadata
 import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.core.error.AmityException
-import com.amity.socialcloud.uikit.chat.compose.R
 import com.amity.socialcloud.uikit.chat.compose.live.AmityLiveChatPageViewModel
 import com.amity.socialcloud.uikit.chat.compose.live.mention.AmityMentionSuggestion
 import com.amity.socialcloud.uikit.chat.compose.localization.DefaultAmityChatStringProvider
 import com.amity.socialcloud.uikit.chat.compose.localization.amityChatString
+import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButton
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonHierarchy
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonStyle
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonVariant
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityDivider
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityDividerVariant
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityIconButtonSize
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
@@ -113,7 +111,7 @@ fun AmityLiveChatMessageComposeBar(
         isReplyingToMessage = parentMessage != null
     }
 
-    // Observe reply parent message for deletion (PDT-2888 Case 2)
+    // Observe reply parent message for deletion
     val parentMessageId = parentMessage?.getMessageId()
     LaunchedEffect(parentMessageId) {
         if (parentMessageId != null) {
@@ -172,9 +170,8 @@ fun AmityLiveChatMessageComposeBar(
                     }
                 }
 
-                HorizontalDivider(
-                    color = AmityTheme.colors.baseShade4,
-                )
+                // Top-of-composer boundary — mirrors AmityMessageComposer's outer divider (Post).
+                AmityDivider(variant = AmityDividerVariant.Post)
 
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -227,14 +224,21 @@ fun AmityLiveChatMessageComposeBar(
                     val bannedWordErrorMessage = amityChatString("chat.toast.banned.word")
                     val linkNotAllowedErrorMessage = amityChatString("chat.toast.link.not.allow")
                     val generalErrorMessage = amityChatString("chat.message.failed.to.send")
-                    Button(
+                    AmityButton(
+                        variant = AmityButtonVariant.ICON,
+                        style = AmityButtonStyle.FILLED,
+                        hierarchy = if (isTextValid) AmityButtonHierarchy.PRIMARY else AmityButtonHierarchy.SECONDARY,
+                        iconSize = AmityIconButtonSize.SIZE32,
+                        icon = CommonR.drawable.amity_ic_arrow_up_r,
+                        enabled = isTextValid,
+                        modifier = Modifier.align(Alignment.CenterVertically),
                         onClick = {
                             if (messageText.isBlank()) {
-                                return@Button
+                                return@AmityButton
                             }
                             if (messageText.length > maxChar) {
                                 showComposeErrorDialog.value = true
-                                return@Button
+                                return@AmityButton
                             }
                             shouldClearText = true
                             viewModel.createMessage(
@@ -272,25 +276,7 @@ fun AmityLiveChatMessageComposeBar(
                                 }
                             )
                         },
-                        shape = CircleShape,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = AmityTheme.colors.primary,
-                            contentColor = AmityTheme.colors.primaryShade4,
-                            disabledContainerColor = AmityTheme.colors.primaryShade2,
-                            disabledContentColor = AmityTheme.colors.primaryShade4,
-                        ),
-                        modifier = Modifier
-                            .size(32.dp)
-                            .align(Alignment.CenterVertically)
-                            .clickable(enabled = isTextValid) {},
-                        contentPadding = PaddingValues(1.dp)
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.amity_arrow_upward),
-                            contentDescription = "Send",
-                            modifier = Modifier.size(16.dp)
-                        )
-                    }
+                    )
                 }
             }
         }
@@ -346,10 +332,7 @@ fun MessageComposeErrorPopup(
                             color = AmityTheme.colors.baseInverse,
                         )
                     }
-                    HorizontalDivider(
-                        thickness = 1.dp,
-                        color = AmityTheme.colors.secondaryShade1
-                    )
+                    AmityDivider(variant = AmityDividerVariant.Post)
                     Row(
                         modifier = Modifier
                             .height(41.dp)

@@ -33,8 +33,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import com.amity.socialcloud.uikit.chat.compose.localization.amityChatString
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import com.amity.socialcloud.uikit.common.extionsions.extractUrls
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
@@ -45,12 +49,11 @@ import coil3.request.ImageRequest
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
-import com.amity.socialcloud.uikit.chat.compose.R
+import com.amity.socialcloud.uikit.common.compose.R as CommonR
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 import com.amity.socialcloud.uikit.common.utils.shimmerBackground
 import kotlinx.coroutines.flow.Flow
-import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
-import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 
 /**
  * Renders the quoted/parent message above a reply bubble.
@@ -151,15 +154,24 @@ private fun ReplyAttributionRow(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_reply_message_filled),
+                imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_share_left_s),
                 contentDescription = null,
-                modifier = Modifier.size(16.dp)
+                modifier = Modifier.size(16.dp),
+                tint = if (isCurrentUser) {
+                    AmityTheme.token(AmityColorToken.IconChatBubbleOutboundHeaderRepliedToDefault)
+                } else {
+                    AmityTheme.token(AmityColorToken.IconChatBubbleInboundHeaderRepliedToDefault)
+                },
             )
             Text(
                 text = replyText,
                 style = AmityTheme.typography.bodyLegacy.copy(
                     fontSize = 12.sp,
-                    color = AmityTheme.colors.baseShade1,
+                    color = if (isCurrentUser) {
+                        AmityTheme.token(AmityColorToken.TextChatBubbleOutboundHeaderRepliedToDefault)
+                    } else {
+                        AmityTheme.token(AmityColorToken.TextChatBubbleInboundHeaderRepliedToDefault)
+                    },
                 ),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -177,14 +189,31 @@ private fun QuotedMessageContent(
             Box(
                 modifier = Modifier
                     .widthIn(max = 260.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(AmityTheme.colors.backgroundShade1),
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(AmityTheme.token(AmityColorToken.SurfaceChatBubbleReplyMessageDefault)),
             ) {
+                val quotedText = data.getText()
+                val linkColor = AmityTheme.token(AmityColorToken.TextChatBubbleInboundLinkDefault)
+                val annotatedQuote = remember(quotedText, linkColor) {
+                    buildAnnotatedString {
+                        append(quotedText)
+                        quotedText.extractUrls().forEach { pos ->
+                            addStyle(
+                                style = SpanStyle(
+                                    color = linkColor,
+                                    textDecoration = TextDecoration.Underline,
+                                ),
+                                start = pos.start,
+                                end = pos.end,
+                            )
+                        }
+                    }
+                }
                 Text(
-                    text = data.getText(),
+                    text = annotatedQuote,
                     style = AmityTheme.typography.bodyLegacy.copy(
                         fontSize = 13.sp,
-                        color = AmityTheme.colors.baseInverse,
+                        color = AmityTheme.token(AmityColorToken.TextChatBubbleInboundMessagesDefault),
                     ),
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
@@ -193,7 +222,7 @@ private fun QuotedMessageContent(
                 Box(
                     modifier = Modifier
                         .matchParentSize()
-                        .background(AmityTheme.colors.background.copy(alpha = 0.4f)),
+                        .background(AmityTheme.token(AmityColorToken.SurfaceChatBubbleReplyOverlayDefault)),
                 )
             }
         }
@@ -217,7 +246,7 @@ private fun QuotedMessageContent(
             Box(
                 modifier = Modifier
                     .widthIn(max = 260.dp)
-                    .clip(RoundedCornerShape(12.dp)),
+                    .clip(RoundedCornerShape(20.dp)),
             ) {
                 Image(
                     painter = painter,
@@ -230,7 +259,7 @@ private fun QuotedMessageContent(
                 Box(
                     modifier = Modifier
                         .matchParentSize()
-                        .background(AmityTheme.colors.background.copy(alpha = 0.4f)),
+                        .background(AmityTheme.token(AmityColorToken.SurfaceChatBubbleReplyOverlayDefault)),
                 )
             }
         }
@@ -240,8 +269,8 @@ private fun QuotedMessageContent(
             Box(
                 modifier = Modifier
                     .size(120.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(AmityTheme.colors.baseShade4),
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(AmityTheme.token(AmityColorToken.SurfaceChatBubbleReplyMessageDefault)),
                 contentAlignment = Alignment.Center,
             ) {
                 if (!thumbnailUrl.isNullOrEmpty()) {
@@ -259,22 +288,27 @@ private fun QuotedMessageContent(
                 Box(
                     modifier = Modifier
                         .size(32.dp)
-                        .background(amityColorBlack.copy(alpha = 0.4f), CircleShape),
+                        .background(
+                            // The media scrim (flat 50% black in both modes), not the icon-button
+                            // surface — that one darkens to 60% in dark mode.
+                            AmityTheme.token(AmityColorToken.SurfaceMediaOverlayTransparentBlack),
+                            CircleShape,
+                        ),
                     contentAlignment = Alignment.Center,
                 ) {
                     Icon(
                         imageVector = ImageVector.vectorResource(
-                            id = R.drawable.amity_ic_chat_video_play,
+                            id = CommonR.drawable.amity_ic_video_play_s,
                         ),
                         contentDescription = "Video",
                         modifier = Modifier.size(16.dp),
-                        tint = amityColorWhite,
+                        tint = AmityTheme.token(AmityColorToken.IconIconButtonTransparentPrimaryDefault),
                     )
                 }
                 Box(
                     modifier = Modifier
                         .matchParentSize()
-                        .background(AmityTheme.colors.background.copy(alpha = 0.4f)),
+                        .background(AmityTheme.token(AmityColorToken.SurfaceChatBubbleReplyOverlayDefault)),
                 )
             }
         }
@@ -282,14 +316,14 @@ private fun QuotedMessageContent(
             Box(
                 modifier = Modifier
                     .widthIn(max = 260.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(AmityTheme.colors.baseShade4),
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(AmityTheme.token(AmityColorToken.SurfaceChatBubbleReplyMessageDefault)),
             ) {
                 Text(
                     text = amityChatString("chat.unsupported.message"),
                     style = AmityTheme.typography.bodyLegacy.copy(
                         fontSize = 13.sp,
-                        color = AmityTheme.colors.baseShade2,
+                        color = AmityTheme.token(AmityColorToken.TextChatBubbleInboundMessagesDefault),
                     ),
                     maxLines = 1,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
@@ -297,7 +331,7 @@ private fun QuotedMessageContent(
                 Box(
                     modifier = Modifier
                         .matchParentSize()
-                        .background(AmityTheme.colors.background.copy(alpha = 0.4f)),
+                        .background(AmityTheme.token(AmityColorToken.SurfaceChatBubbleReplyOverlayDefault)),
                 )
             }
         }
@@ -312,7 +346,7 @@ private fun QuotedMessageDeleted() {
                 .background(Color.Transparent, RoundedCornerShape(20.dp))
                 .border(
                     width = 1.dp,
-                    color = AmityTheme.colors.baseShade4,
+                    color = AmityTheme.token(AmityColorToken.BorderChatBubbleInboundDeleted),
                     shape = RoundedCornerShape(20.dp)
                 )
                 .padding(vertical = 4.dp, horizontal = 8.dp),
@@ -320,22 +354,22 @@ private fun QuotedMessageDeleted() {
             horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_delete_message),
+                imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_trash_s),
                 contentDescription = null,
                 modifier = Modifier.size(16.dp),
-                tint = AmityTheme.colors.baseShade2,
+                tint = AmityTheme.token(AmityColorToken.IconChatBubbleInboundMessagesDeleted),
             )
             Text(
                 text = amityChatString("chat.message.deleted"),
                 style = AmityTheme.typography.bodyLegacy.copy(
                     fontSize = 13.sp,
-                    color = AmityTheme.colors.baseShade2,
+                    color = AmityTheme.token(AmityColorToken.TextChatBubbleInboundMessagesDeleted),
                 ),
             )
         }
         Box(
             Modifier.matchParentSize()
-                .background(AmityTheme.colors.background.copy(alpha = 0.4f))
+                .background(AmityTheme.token(AmityColorToken.SurfaceChatBubbleReplyOverlayDefault))
         ) {}
     }
 }
@@ -345,8 +379,8 @@ private fun QuotedMessageLoading() {
     Column(
         modifier = Modifier
             .widthIn(max = 228.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .background(AmityTheme.colors.baseShade4)
+            .clip(RoundedCornerShape(20.dp))
+            .background(AmityTheme.token(AmityColorToken.SurfaceChatBubbleReplyMessageDefault))
             .padding(12.dp),
     ) {
         Box(

@@ -2,20 +2,31 @@ package com.amity.socialcloud.uikit.community.compose.notificationtray.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -25,18 +36,34 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.amity.socialcloud.sdk.api.social.AmitySocialClient
+import com.amity.socialcloud.sdk.api.video.AmityVideoClient
+import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.model.core.notificationtray.AmityNotificationTrayItem
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.sdk.model.social.event.AmityEvent
+import com.amity.socialcloud.sdk.model.social.event.AmityEventOriginType
+import com.amity.socialcloud.sdk.model.video.room.AmityRoom
+import com.amity.socialcloud.sdk.model.video.room.AmityRoomStatus
 import com.amity.socialcloud.uikit.common.utils.readableSocialTimeDiff
 import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAvatarView
+import com.amity.socialcloud.uikit.common.ui.elements.AmityCommunityAvatarView
 import com.amity.socialcloud.uikit.common.ui.elements.AmityEventAvatarView
 import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.community.compose.R
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
+import com.amity.socialcloud.uikit.community.compose.event.components.AmityEventTypeChip
+import com.amity.socialcloud.uikit.community.compose.event.formatEventStartDateTime
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
-import com.amity.socialcloud.uikit.common.ui.theme.amityNotificationTrayHighlightBackground
+import com.amity.socialcloud.uikit.common.ui.theme.amityLiveBadgeRed
+import com.amity.socialcloud.uikit.community.compose.R
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.emptyFlow
+
 
 @Composable
 fun AmityNotificationTrayItemView(
@@ -44,17 +71,22 @@ fun AmityNotificationTrayItemView(
     isSeen: Boolean = false,
     data: AmityNotificationTrayItem? = null,
 ) {
+    // Event-creation notifications share actionType == "event" with event reminder/started;
+    // only "event_created" renders the dedicated event-creation variant (PDT-3724).
+    val isEventCreated = data?.getTrayItemCategory() == "event_created"
+
     Row(
         modifier = modifier
             .fillMaxWidth()
             .background(
                 if (isSeen) AmityTheme.colors.background
-                else amityNotificationTrayHighlightBackground().copy(alpha = 0.3f)
+                else AmityTheme.colors.primary.copy(alpha = 0.3f)
             )
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Avatar - show system icon for user_profile_reset, event cover for events, user avatar otherwise
+        // Avatar - system icon for user_profile_reset, community avatar for event creation,
+        // user avatar otherwise
         if (data?.getTrayItemCategory() == "user_profile_reset") {
             AmityAvatarView(
                 image = null,
@@ -65,16 +97,29 @@ fun AmityNotificationTrayItemView(
                 placeholderBackground = AmityTheme.colors.primaryShade2,
             )
         } else if (data?.getActionType() == "event") {
-            data.getEvent()?.let { event ->
-                AmityEventAvatarView(
-                    eventCoverImage = event.getCoverImage()
+            if (isEventCreated) {
+                // Event creation notification shows the community's avatar (PDT-3724)
+                AmityCommunityAvatarView(
+                    community = rememberEventCommunity(data.getEvent(), data.getTargetId()),
+                    size = 32.dp,
                 )
+            } else {
+                data.getEvent()?.let { event ->
+                    AmityEventAvatarView(
+                        eventCoverImage = event.getCoverImage()
+                    )
+                }
             }
         } else if (data?.getTrayItemCategory() == "user_profile_reset") {
             Image(
                 painter = painterResource(R.drawable.amity_ic_notification_moderation),
                 contentDescription = "Moderation notification",
                 modifier = Modifier.size(40.dp)
+            )
+        } else if (data?.getActionType() == "invitation") {
+            AmityLiveStreamInvitationAvatarView(
+                user = data.getUsers()?.firstOrNull(),
+                roomId = if (data.getTargetType() == "room") data.getTargetId() else null,
             )
         } else {
             data?.getUsers()?.firstOrNull()?.let {
@@ -86,13 +131,33 @@ fun AmityNotificationTrayItemView(
 
         Spacer(Modifier.width(12.dp))
 
-        //create annotate string for highlight text
-        HighlightText(
-            modifier = Modifier.weight(1f),
-            text = data?.getText() ?: "",
-            templatedText = data?.getTemplatedText() ?: "",
-            category = data?.getTrayItemCategory() ?: ""
-        )
+        Column(modifier = Modifier.weight(1f)) {
+            //create annotate string for highlight text
+            HighlightText(
+                text = data?.getText() ?: "",
+                templatedText = data?.getTemplatedText() ?: "",
+                category = data?.getTrayItemCategory() ?: ""
+            )
+
+            // Event creation notification: secondary line with event type chip
+            // followed by the event start date and start time (PDT-3724)
+            val event = data?.getEvent()
+            if (isEventCreated && event != null) {
+                val context = LocalContext.current
+                Spacer(Modifier.height(4.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    AmityEventTypeChip(type = event.getType())
+                    Text(
+                        text = formatEventStartDateTime(event.getStartTime(), context),
+                        style = AmityTheme.typography.caption.copy(fontSize = 13.sp),
+                        color = AmityTheme.colors.baseShade2
+                    )
+                }
+            }
+        }
 
         Spacer(Modifier.width(12.dp))
 
@@ -109,6 +174,38 @@ fun AmityNotificationTrayItemView(
 @Preview
 private fun AmityNotificationTrayItemReview() {
     AmityNotificationTrayItemView(isSeen = true)
+}
+
+/**
+ * Resolves the community to display for an event notification.
+ *
+ * The notification tray API response embeds the event but not its community, so
+ * the SDK can only resolve [AmityEvent.getTargetCommunity] when the community is
+ * already cached (typically public ones surfaced elsewhere). For an uncached
+ * community — e.g. a private one the user hasn't loaded through another screen —
+ * this fetches it reactively so the avatar fills in when it arrives, without
+ * blocking the list from rendering. Falls back to the community placeholder while
+ * loading or if the fetch fails.
+ */
+@Composable
+private fun rememberEventCommunity(event: AmityEvent?, targetId: String?): AmityCommunity? {
+    val target = event?.getTargetCommunity()
+    val communityId = event?.getOriginId() ?: targetId
+
+    val fetched by produceState<AmityCommunity?>(null, communityId) {
+        if (communityId.isNullOrEmpty()) {
+            value = null
+            return@produceState
+        }
+        val disposable = AmitySocialClient.newCommunityRepository()
+            .getCommunity(communityId)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ value = it }, { /* keep placeholder on error */ })
+        awaitDispose { disposable.dispose() }
+    }
+
+    return target ?: fetched
 }
 
 @Composable
@@ -197,6 +294,64 @@ fun HighlightText(
             maxLines = 3,
             modifier = modifier
         )
+    }
+}
+
+
+@Composable
+private fun AmityLiveStreamInvitationAvatarView(
+    user: AmityUser?,
+    roomId: String?,
+) {
+    // Observe the room so the live badge only appears while the stream is actually live.
+    val roomFlow = remember(roomId) {
+        if (roomId.isNullOrEmpty()) {
+            emptyFlow<AmityRoom>()
+        } else {
+            AmityVideoClient.newRoomRepository()
+                .getRoom(roomId)
+                .asFlow()
+                .catch { /* room unavailable (deleted, network error) — keep the badge hidden */ }
+        }
+    }
+    val room by roomFlow.collectAsState(initial = null)
+    val isLive = room?.getStatus() == AmityRoomStatus.LIVE
+
+    Box(
+        modifier = Modifier.size(32.dp)
+    ) {
+        AmityUserAvatarView(
+            user = user,
+            size = 32.dp,
+            modifier = Modifier
+                .align(Alignment.Center)
+        )
+
+        if (isLive) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .size(16.dp) // Total size of the badge including white border
+                    .clip(CircleShape) // Clip the outer box to a circle
+                    .background(AmityTheme.colors.background) // This provides the white border
+                    .padding(1.dp) // Inner padding to create the white border thickness
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(CircleShape)
+                        .background(amityLiveBadgeRed),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.amity_ic_live_badge),
+                        contentDescription = "Live Icon",
+                        modifier = Modifier.size(9.dp),
+                        tint = amityColorWhite
+                    )
+                }
+            }
+        }
     }
 }
 

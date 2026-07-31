@@ -1,7 +1,5 @@
 package com.amity.socialcloud.uikit.chat.compose.group.component
 
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,17 +20,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconToggleButton
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -48,7 +37,6 @@ import androidx.compose.runtime.snapshotFlow
 import kotlinx.coroutines.flow.first
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -74,6 +62,7 @@ import androidx.paging.compose.itemKey
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.uikit.common.utils.AmityConstants
 import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
 import com.amity.socialcloud.uikit.chat.compose.R
 import com.amity.socialcloud.uikit.chat.compose.group.AmityGroupChatPageViewModel
@@ -81,7 +70,6 @@ import com.amity.socialcloud.uikit.chat.compose.live.elements.CenterConfirmDelet
 import com.amity.socialcloud.uikit.chat.compose.message.element.AmityChatDateSeparator
 import com.amity.socialcloud.uikit.chat.compose.message.element.AmityMessageBubble
 import com.amity.socialcloud.uikit.chat.compose.message.element.AmityMessageActionMenuAction
-import com.amity.socialcloud.uikit.chat.compose.message.element.AmityChatMessageSkeleton
 import com.amity.socialcloud.uikit.chat.compose.message.element.AmityChatNewMessageNotification
 import com.amity.socialcloud.uikit.chat.compose.message.element.AmityChatScrollToBottomFab
 import com.amity.socialcloud.uikit.chat.compose.message.element.shouldShowDateSeparator
@@ -91,17 +79,24 @@ import com.amity.socialcloud.uikit.chat.compose.message.report.AmityChatReportOt
 import com.amity.socialcloud.uikit.chat.compose.message.report.AmityChatReportMessageDeletedErrorContent
 import com.amity.socialcloud.uikit.chat.compose.live.elements.ConfirmDeletePopup
 import com.amity.socialcloud.uikit.chat.compose.localization.DefaultAmityChatStringProvider
-import com.amity.socialcloud.uikit.common.reaction.AmityMessageReactionBottomSheetTemp
+import com.amity.socialcloud.uikit.chat.compose.message.element.reaction.AmityChatMessageReactionSheet
 import com.amity.socialcloud.uikit.common.reaction.AmityMessageReactionListViewModel
 import com.amity.socialcloud.uikit.common.reaction.AmityMessageReactionListViewModel.AmityMessageReactionListSheetUIState
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
+import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButton
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonVariant
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityDivider
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityDividerVariant
+import com.amity.socialcloud.uikit.common.ui.atoms.AmitySelection
+import com.amity.socialcloud.uikit.common.ui.atoms.AmitySelectionVariant
+import com.amity.socialcloud.uikit.common.ui.atoms.AmitySheet
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
-import com.amity.socialcloud.uikit.common.ui.theme.amityDisabledColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -131,14 +126,13 @@ fun AmityGroupChatMessageList(
     var highlightedMessageId by remember { mutableStateOf<String?>(null) }
     var jumpHandled by remember { mutableStateOf(false) }
 
-    // Snackbar messages
     val errorReportMessage = amityChatString("chat.toast.message.reported.error")
     val reportSuccessMsg = amityChatString("chat.toast.message.reported")
     val unreportErrorMessage = amityChatString("chat.toast.un.report.message.error")
     val unreportSuccessMessage = amityChatString("chat.toast.un.report.message")
+    val copiedMsg = amityChatString("chat.toast.copied")
 
 
-    // Report sheet state
     var showReportSheet by remember { mutableStateOf(false) }
     var messageToReport by remember { mutableStateOf<AmityMessage?>(null) }
     val reportSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -158,19 +152,17 @@ fun AmityGroupChatMessageList(
         }
         viewModel.finishLoading()
     }
-    // Start in overflow (reverseLayout) mode so the very first paint anchors the newest
-    // message to the bottom with NO programmatic scrolling — starting in natural mode and
-    // flipping after layout caused the visible "opens at top, then jumps" flash (PDT-2757).
-    // Once the first page is laid out, if the content does NOT fill the viewport we relax
-    // to natural top-down layout so short conversations align to the top (mirrors Flutter's
-    // `contentOverflowsScreen` in chat_page.dart), re-latching if the content later grows.
+    // Start in overflow (reverseLayout) mode so the very first paint anchors the newest message to
+    // // the bottom with NO programmatic scrolling — starting in natural mode and flipping after
+    // layout // caused a visible "opens at top, then jumps" flash. Once laid out, if the content
+    // doesn't fill // the viewport, relax to natural top-down layout so short conversations sit at
+    // the top, re-latching // to overflow mode if content later grows past the viewport.
     var contentOverflowsViewport by remember { mutableStateOf(true) }
     LaunchedEffect(Unit) {
         // Wait until the list has actually laid out items, so scrollability is meaningful.
         snapshotFlow { state.layoutInfo.totalItemsCount }.first { it > 0 }
         if (!state.canScrollForward && !state.canScrollBackward) {
             contentOverflowsViewport = false
-            // Re-latch to overflow mode as soon as the content outgrows the viewport.
             snapshotFlow { state.canScrollForward || state.canScrollBackward }.first { it }
             contentOverflowsViewport = true
             if (jumpToMessageId == null || jumpHandled) {
@@ -179,12 +171,10 @@ fun AmityGroupChatMessageList(
         }
     }
 
-    // Jump-to-message: wait for data to contain the target, then scroll and highlight.
-    // reverseLayout=true means index 0 = newest message, so the paging index from peek() is
-    // already the correct LazyColumn index — no flip needed.
+    // reverseLayout=true means index 0 = newest message, so the paging index from peek() is already
+    // // the correct LazyColumn index — no flip needed.
     LaunchedEffect(jumpToMessageId) {
         if (jumpToMessageId == null || jumpHandled) return@LaunchedEffect
-        // Wait for the list to be non-empty and stable (refresh complete).
         snapshotFlow { messages.loadState.refresh to messages.itemCount }
             .first { (load, count) -> load is LoadState.NotLoading && count > 0 }
         val targetIndex = (0 until messages.itemCount).firstOrNull { i ->
@@ -233,7 +223,6 @@ fun AmityGroupChatMessageList(
             }
     }
 
-    // Clear new message notification when user scrolls back to bottom
     LaunchedEffect(isScrolledUp) {
         if (!isScrolledUp) {
             newMessage = null
@@ -262,15 +251,17 @@ fun AmityGroupChatMessageList(
                         style = AmityTheme.typography.bodyLegacy.copy(
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Normal,
-                            color = AmityTheme.colors.baseShade2,
+                            color = AmityTheme.token(AmityColorToken.TextEmptyStateTitleDefault),
                             textAlign = TextAlign.Center,
                         ),
                     )
                 }
             }
         } else if (isLoading && messages.itemCount == 0) {
-            // Show skeleton while loading so transitions feel instant
-            AmityChatMessageSkeleton()
+            // Blank fill during initial load: AmityGroupChatPage already shows a "Loading chat"
+            // toast via // showProgressSnackbar, so rendering the skeleton here too caused both to
+            // appear at once. Mirrors // AmityChatMessageList.
+            Box(modifier = Modifier.fillMaxSize())
         } else {
             Box(modifier = Modifier.fillMaxSize()) {
                 LazyColumn(
@@ -287,7 +278,6 @@ fun AmityGroupChatMessageList(
                     items(
                         count = messages.itemCount,
                         key = { index ->
-                            // Non-overflow: map composable index → reversed paging index (oldest first).
                             val actualIndex = if (contentOverflowsViewport) index
                                               else messages.itemCount - 1 - index
                             messages.peek(actualIndex)?.getMessageId() ?: index
@@ -299,13 +289,12 @@ fun AmityGroupChatMessageList(
                         messages[actualIndex]?.let { message ->
                         val isOwnMessage = message.getCreatorId() == AmityCoreClient.getUserId()
                         val isSenderModerator = memberRoles[message.getCreatorId()]
-                            ?.any { it.contains("channel-moderator") } == true
+                            ?.any { it.contains(AmityConstants.CHANNEL_MODERATOR_ROLE) } == true
 
-                        // ── Date separator ──────────────────────────────────────────────────────
                         // Overflow (reverseLayout=true): separator AFTER bubble (visually above).
-                        //   Check NEXT paging item (older with LAST_CREATED: index+1).
-                        // Non-overflow (reverseLayout=false): separator BEFORE bubble.
-                        //   Check PREV paging item (older = actualIndex+1 in LAST_CREATED).
+                        // //   Check NEXT paging item (older with LAST_CREATED: index+1). // Non-
+                        // overflow (reverseLayout=false): separator BEFORE bubble. //   Check PREV
+                        // paging item (older = actualIndex+1 in LAST_CREATED).
                         val currentDate = message.getCreatedAt()?.millis ?: 0L
                         val showSeparatorBefore: Boolean
                         val showSeparatorAfter: Boolean
@@ -359,6 +348,7 @@ fun AmityGroupChatMessageList(
                                     val data = message.getData()
                                     if (data is AmityMessage.Data.TEXT) {
                                         clipboardManager.setText(AnnotatedString(data.getText()))
+                                        AmityUIKitSnackbar.publishSnackbarMessage(copiedMsg)
                                     }
                                 },
                                 onDelete = if (isOwnMessage || isModerator) {
@@ -391,9 +381,9 @@ fun AmityGroupChatMessageList(
                                     is AmityMessage.Data.IMAGE -> {
                                         { scope.launch { saveImageToGallery(context, message) } }
                                     }
-                                    is AmityMessage.Data.VIDEO -> {
-                                        { scope.launch { saveVideoToGallery(context, message) } }
-                                    }
+                                    // Video save is intentionally omitted, not an oversight.
+                                    // Re-enable it together with the media-preview dialog's
+                                    // own video-save gate, or the two surfaces disagree.
                                     else -> null
                                 },
                             ),
@@ -434,7 +424,6 @@ fun AmityGroupChatMessageList(
                         .padding(horizontal = 16.dp, vertical = 8.dp),
                 )
 
-                // Scroll-to-bottom FAB (shown when scrolled up and no new message)
                 AmityChatScrollToBottomFab(
                     visible = isScrolledUp && newMessage == null,
                     onClick = {
@@ -447,10 +436,8 @@ fun AmityGroupChatMessageList(
             }
         }
 
-        // Reaction list bottom sheet
-        AmityMessageReactionBottomSheetTemp()
+        AmityChatMessageReactionSheet()
 
-        // Delete confirmation dialog
         if (showDeleteConfirmation) {
             CenterConfirmDeletePopup(
                 pageScope = pageScope,
@@ -469,7 +456,6 @@ fun AmityGroupChatMessageList(
             )
         }
 
-        // Report message bottom sheet
         if (showReportSheet) {
             var isMessageDeleted by remember { mutableStateOf(false) }
 
@@ -483,25 +469,12 @@ fun AmityGroupChatMessageList(
                 }
             }
 
-            ModalBottomSheet(
+            AmitySheet(
                 onDismissRequest = {
                     showReportSheet = false
                     messageToReport = null
                 },
                 sheetState = reportSheetState,
-                containerColor = AmityTheme.colors.background,
-                dragHandle = {
-                    Box(
-                        modifier = Modifier
-                            .padding(top = 12.dp, bottom = 20.dp)
-                            .width(36.dp)
-                            .height(4.dp)
-                            .background(
-                                AmityTheme.colors.baseShade3,
-                                RoundedCornerShape(2.dp)
-                            )
-                    )
-                },
             ) {
                 AmityGroupChatMessageReportContent(
                     isMessageDeleted = isMessageDeleted,
@@ -580,7 +553,6 @@ private fun AmityGroupChatMessageReportReasonList(
         modifier = Modifier
             .fillMaxHeight(fraction = 0.95f)
     ) {
-        // Header
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -590,7 +562,7 @@ private fun AmityGroupChatMessageReportReasonList(
                 text = amityChatString("chat.report.title"),
                 style = AmityTheme.typography.titleBold,
                 modifier = Modifier.align(Alignment.Center),
-                color = AmityTheme.colors.base,
+                color = AmityTheme.token(AmityColorToken.TextSheetsHeaderTitleDefault),
             )
             Box(
                 modifier = Modifier
@@ -600,22 +572,20 @@ private fun AmityGroupChatMessageReportReasonList(
             ) {
                 Icon(
                     modifier = Modifier.align(Alignment.CenterEnd),
-                    painter = painterResource(com.amity.socialcloud.uikit.common.R.drawable.amity_ic_close3),
+                    painter = painterResource(CommonR.drawable.amity_ic_cross_r),
                     contentDescription = "cancel_report_button",
-                    tint = AmityTheme.colors.base,
+                    tint = AmityTheme.token(AmityColorToken.IconIconButtonGhostSecondaryDefault),
                 )
             }
         }
 
-        HorizontalDivider(color = AmityTheme.colors.baseShade4)
+        AmityDivider(variant = AmityDividerVariant.Post)
 
-        // Scrollable content area
         LazyColumn(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
         ) {
-            // Description
             item {
                 Text(
                     text = amityChatString("chat.report.description"),
@@ -624,11 +594,10 @@ private fun AmityGroupChatMessageReportReasonList(
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
                         .padding(vertical = 12.dp),
-                    color = AmityTheme.colors.baseShade1,
+                    color = AmityTheme.token(AmityColorToken.TextSheetsHeaderTextDescriptionDefault),
                 )
             }
 
-            // Report reason selection
             item {
                 val radioOptions = AmityContentFlagReason.list().dropLast(1)
 
@@ -652,40 +621,20 @@ private fun AmityGroupChatMessageReportReasonList(
                             Text(
                                 text = reportReason.reason,
                                 style = AmityTheme.typography.bodyBold,
-                                color = AmityTheme.colors.base,
+                                color = AmityTheme.token(AmityColorToken.TextListHeaderDefaultDefault),
                             )
 
-                            IconToggleButton(
-                                checked = (reportReason == selectedReason),
-                                onCheckedChange = { onReasonSelected(reportReason) })
-                            {
-                                val backgroundColor = AmityTheme.colors.background
-                                val strokeColor = if (reportReason == selectedReason) AmityTheme.colors.primary else AmityTheme.colors.baseShade3
-                                val innerCircleDivider = if (reportReason == selectedReason) 5f else 2.5f
-                                Canvas(
-                                    modifier = Modifier.size(24.dp)
-                                ) {
-                                    // Outer black circle
-                                    drawCircle(
-                                        color = strokeColor,
-                                        radius = size.minDimension / 2f,
-                                        center = Offset(size.width / 2, size.height / 2)
-                                    )
-
-                                    // Inner white circle
-                                    drawCircle(
-                                        color = backgroundColor,
-                                        radius = size.minDimension / innerCircleDivider, // 4 / 24 of total size
-                                        center = Offset(size.width / 2, size.height / 2)
-                                    )
-                                }
-                            }
+                            AmitySelection(
+                                variant = AmitySelectionVariant.RADIO,
+                                isSelected = (reportReason == selectedReason),
+                                value = reportReason.reason,
+                                onChange = { _, _ -> onReasonSelected(reportReason) },
+                            )
                         }
                     }
                 }
             }
 
-            // Others option
             item {
                 Row(
                     modifier = Modifier
@@ -699,12 +648,12 @@ private fun AmityGroupChatMessageReportReasonList(
                     Text(
                         text = amityChatString("chat.report.others"),
                         style = AmityTheme.typography.bodyBold,
-                        color = AmityTheme.colors.base,
+                        color = AmityTheme.token(AmityColorToken.TextListHeaderDefaultDefault),
                     )
 
                     Icon(
-                        painterResource(com.amity.socialcloud.uikit.common.R.drawable.amity_ic_chevron_right),
-                        tint = AmityTheme.colors.base,
+                        painterResource(CommonR.drawable.amity_ic_chevron_right),
+                        tint = AmityTheme.token(AmityColorToken.IconListLeadingDefaultDefault),
                         contentDescription = null,
                         modifier = Modifier
                             .width(24.dp)
@@ -714,10 +663,10 @@ private fun AmityGroupChatMessageReportReasonList(
             }
         }
 
-        // Fixed bottom section
-        HorizontalDivider(color = AmityTheme.colors.baseShade4)
+        AmityDivider(variant = AmityDividerVariant.Post)
 
-        Button(
+        AmityButton(
+            variant = AmityButtonVariant.MAIN,
             onClick = {
                 selectedReason?.let {
                     setButtonEnabled(false)
@@ -726,22 +675,11 @@ private fun AmityGroupChatMessageReportReasonList(
                     }
                 }
             },
+            label = amityChatString("chat.report.submit"),
             enabled = selectedReason != null && isButtonEnabled,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
-                .height(40.dp),
-            shape = RoundedCornerShape(8.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = AmityTheme.colors.primary,
-                disabledContainerColor = AmityTheme.colors.primaryShade3,
-            ),
-        ) {
-            Text(
-                text = amityChatString("chat.report.submit"),
-                style = AmityTheme.typography.bodyBold,
-                color = if (selectedReason != null && isButtonEnabled) amityColorWhite else amityDisabledColor(amityColorWhite),
-            )
-        }
+                .padding(16.dp),
+        )
     }
 }
