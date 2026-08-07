@@ -226,7 +226,7 @@ class AmitySocialHomePageViewModel : AmityBaseViewModel() {
         viewModelScope.launch {
             while (true) {
                 getNotificationTraySeen()
-                delay(60000)
+                delay(61000)
             }
         }
     }

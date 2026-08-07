@@ -167,7 +167,10 @@ fun AmityCommunityCoverView(
                     }
                     Spacer(modifier = Modifier.weight(1f))
 
-                    if(isModerator || isSharable) {
+                    // Same gate as the COLLAPSE header below: a joined member needs the
+                    // menu to reach community information and leave the community,
+                    // even when the community is private and not sharable.
+                    if (community.isJoined() || isModerator || isSharable) {
                         AmityBaseElement(
                             pageScope = pageScope,
                             elementId = "menu_button"

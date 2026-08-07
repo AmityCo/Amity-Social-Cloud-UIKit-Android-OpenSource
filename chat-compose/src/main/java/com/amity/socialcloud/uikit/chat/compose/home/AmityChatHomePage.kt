@@ -178,6 +178,19 @@ fun AmityChatHomePage(
             Column(
                 modifier = Modifier.fillMaxSize(),
             ) {
+                // Optional leading back affordance for integrators hosting this page as a sub-page, so they
+                // don't have to overlay their own back control on the leading-pinned title.
+                if (onBackClick != null) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_chevron_left),
+                        contentDescription = "Back",
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickableWithoutRipple { onBackClick() },
+                        tint = AmityTheme.token(AmityColorToken.IconIconButtonGhostSecondaryDefault),
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                }
                 AmityChatHomeTopNavigationBar(
                     isConnected = isConnected,
                     onSearchClick = { behavior.goToSearchPage(context) },
@@ -282,7 +295,6 @@ fun AmityChatHomePage(
 private fun AmityChatHomeTopNavigationBar(
     modifier: Modifier = Modifier,
     isConnected: Boolean = true,
-    onBackClick: (() -> Unit)? = null,
     onSearchClick: () -> Unit = {},
     onCreateDirectChatClick: () -> Unit = {},
     onCreateGroupChatClick: () -> Unit = {},
@@ -296,20 +308,6 @@ private fun AmityChatHomeTopNavigationBar(
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        // Optional leading back affordance for integrators hosting this page as a sub-page, so they
-        // don't have to overlay their own back control on the leading-pinned title.
-        if (onBackClick != null) {
-            Icon(
-                imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_chevron_left),
-                contentDescription = "Back",
-                modifier = Modifier
-                    .size(24.dp)
-                    .clickableWithoutRipple { onBackClick() },
-                tint = AmityTheme.token(AmityColorToken.IconIconButtonGhostSecondaryDefault),
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-        }
-
         if (isConnected) {
             Text(
                 text = amityChatString("chat.home.title"),

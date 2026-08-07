@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -36,6 +37,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.amity.socialcloud.sdk.api.chat.AmityChatClient
+import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 private val PageBg = Color(0xFFF2F2F7)
 private val CardBg = Color.White
@@ -49,6 +53,7 @@ private val GreenDot = Color(0xFF34C759)
 private val BadgeBg = Color(0xFFE3F6E8)
 private val BadgeText = Color(0xFF1F7A3D)
 private val ChipBg = Color(0xFFF0F0F3)
+private val UnreadBadgeBg = Color(0xFFFF3B30)
 
 @Composable
 fun SelectModuleScreen(
@@ -61,6 +66,17 @@ fun SelectModuleScreen(
     val config by viewModel.config.collectAsState()
     val loggedInUserId by viewModel.loggedInUserId.collectAsState()
     val context = LocalContext.current
+
+    // Total unread across every channel, straight from the SDK. Errors are swallowed
+    // to 0 because this is a debug read-out, not a feature the screen depends on.
+    val totalUnread by remember {
+        AmityChatClient.newChannelRepository()
+            .getTotalChannelsUnreadInfo()
+            .map { it.unreadCount }
+            .onErrorReturnItem(0)
+            .subscribeOn(Schedulers.io())
+            .asFlow()
+    }.collectAsState(initial = 0)
 
     val displayUser = config.displayName.trim().ifEmpty {
         config.userId.trim().ifEmpty { loggedInUserId.ifEmpty { LoginViewModel.DEFAULT_USER_ID } }
@@ -139,7 +155,8 @@ fun SelectModuleScreen(
                 ModuleRow(
                     icon = "💬",
                     title = "Chat",
-                    subtitle = "Tap to enter →",
+                    subtitle = "Total unread: $totalUnread",
+                    badgeCount = totalUnread,
                     onClick = onChatClick,
                 )
                 RowDivider()
@@ -265,6 +282,7 @@ private fun ModuleRow(
     title: String,
     subtitle: String,
     onClick: () -> Unit,
+    badgeCount: Int = 0,
 ) {
     Row(
         modifier = Modifier
@@ -286,6 +304,22 @@ private fun ModuleRow(
         Column(modifier = Modifier.weight(1f)) {
             Text(title, fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = Ink)
             Text(subtitle, fontSize = 12.sp, color = Muted)
+        }
+        if (badgeCount > 0) {
+            Box(
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .background(UnreadBadgeBg)
+                    .padding(horizontal = 7.dp, vertical = 2.dp),
+            ) {
+                Text(
+                    if (badgeCount > 99) "99+" else badgeCount.toString(),
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                )
+            }
+            Spacer(modifier = Modifier.width(8.dp))
         }
         Text("›", fontSize = 18.sp, color = Color(0xFFC0C0C6))
     }
