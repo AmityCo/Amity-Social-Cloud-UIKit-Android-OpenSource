@@ -18,7 +18,7 @@ android {
         minSdkVersion amityMinSdkVersion
         targetSdkVersion amityTargetSdkVersion
         versionCode 1
-        versionName "4.23.1"
+        versionName "4.23.2"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

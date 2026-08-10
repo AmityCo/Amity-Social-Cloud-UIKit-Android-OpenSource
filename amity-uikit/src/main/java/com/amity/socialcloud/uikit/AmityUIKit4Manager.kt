@@ -33,7 +33,6 @@ object AmityUIKit4Manager {
             endpoint = endpoint,
             dbEncryption = dbEncryption
         )
-        AmityCoreClient.enableUnreadCount()
         AmityStreamBroadcasterClient.setup(AmityCoreClient.getConfiguration())
         AmityStreamPlayerClient.setup(AmityCoreClient.getConfiguration())
         AmityAdEngine.init()

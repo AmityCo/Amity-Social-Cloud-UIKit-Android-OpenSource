@@ -71,7 +71,7 @@ fun SelectModuleScreen(
     // to 0 because this is a debug read-out, not a feature the screen depends on.
     val totalUnread by remember {
         AmityChatClient.newChannelRepository()
-            .getTotalChannelsUnreadInfo()
+            .getTotalChannelUnread()
             .map { it.unreadCount }
             .onErrorReturnItem(0)
             .subscribeOn(Schedulers.io())
