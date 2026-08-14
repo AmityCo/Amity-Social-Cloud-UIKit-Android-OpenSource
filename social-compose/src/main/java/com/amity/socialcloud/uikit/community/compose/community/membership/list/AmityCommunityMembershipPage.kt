@@ -76,7 +76,7 @@ fun AmityCommunityMembershipPage(
     val membershipAcceptance = viewModel.getMembershipAcceptanceType()
         .subscribeAsState(initial = AmityMembershipAcceptanceType.AUTOMATIC)
 
-    val hasEditPermission by viewModel.hasEditPermission().subscribeAsState(initial = false)
+    val hasAddPermission by viewModel.hasAddPermission().subscribeAsState(initial = false)
 
     val addingInProgressMessage = amitySocialString("amity_social_toast_community_add_member_in_progress")
     val successMessage = amitySocialString("amity_social_toast_community_add_member_success")
@@ -137,11 +137,10 @@ fun AmityCommunityMembershipPage(
                     context.closePageWithResult(Activity.RESULT_CANCELED)
                 }
             ) {
-                if ((membershipAcceptance.value
-                    == AmityMembershipAcceptanceType.INVITATION
-                    && hasEditPermission)
-                    || community.isJoined()
-                ) {
+                // Both routes below bring a user into the community, which the backend gates
+                // on ADD_COMMUNITY_USER. EDIT_COMMUNITY_USER only covers role management
+                // (promote/demote) and must not unlock this button.
+                if (hasAddPermission) {
                     Icon(
                         painter = painterResource(R.drawable.amity_ic_add),
                         contentDescription = "Close",

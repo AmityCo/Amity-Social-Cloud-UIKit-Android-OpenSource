@@ -60,6 +60,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.social.post.query.AmityFeedSource
 import com.amity.socialcloud.sdk.model.core.error.AmityError
+import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.follow.AmityFollowStatus
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
@@ -67,11 +68,13 @@ import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
 import com.amity.socialcloud.uikit.common.ui.elements.AmityToolBar
+import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarPreviewDialog
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.closePage
 import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.common.utils.isSignedIn
+import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipFeedPageType
@@ -82,7 +85,6 @@ import com.amity.socialcloud.uikit.community.compose.paging.feed.user.amityUserF
 import com.amity.socialcloud.uikit.community.compose.paging.feed.user.amityUserImageFeedLLS
 import com.amity.socialcloud.uikit.community.compose.paging.feed.user.amityUserVideoFeedLLS
 import com.amity.socialcloud.uikit.community.compose.post.composer.poll.AmityPollPostTypeSelectionBottomSheet
-import com.amity.socialcloud.uikit.community.compose.ui.components.feed.AmityProfileImageFeedItemPreviewDialog
 import com.amity.socialcloud.uikit.community.compose.user.profile.components.AmityUserProfileHeaderComponent
 import com.amity.socialcloud.uikit.community.compose.user.profile.elements.AmityFeedFilterBottomSheet
 import com.amity.socialcloud.uikit.community.compose.user.profile.elements.AmityUserActionsBottomSheet
@@ -331,7 +333,7 @@ fun AmityUserProfilePage(
                             pageScope = getPageScope(),
                             user = user!!,
                             onAvatarClick = {
-                                if (user?.getAvatar() != null) {
+                                if (user?.resolvedAvatarUrl() != null) {
                                     showAvatarPopupDialog = true
                                 }
                             },
@@ -527,7 +529,9 @@ fun AmityUserProfilePage(
             }
 
             if (showAvatarPopupDialog) {
-                AmityProfileImageFeedItemPreviewDialog(data = user?.getAvatar()) {
+                AmityUserAvatarPreviewDialog(
+                    avatarUrl = user?.resolvedAvatarUrl(AmityImage.Size.LARGE)
+                ) {
                     showAvatarPopupDialog = false
                 }
             }

@@ -331,8 +331,8 @@ fun AmityPostMediaPreviewDialog(
                     if (isVideoPost) {
                         Image(
                             painter = painterResource(
-                                id = if (isAudioMuted) R.drawable.amity_ic_story_audio_mute
-                                else R.drawable.amity_ic_story_audio_unmute
+                                id = if (isAudioMuted) R.drawable.amity_ic_media_audio_mute
+                                else R.drawable.amity_ic_media_audio_unmute
                             ),
                             contentDescription = "Video Audio",
                             modifier = Modifier

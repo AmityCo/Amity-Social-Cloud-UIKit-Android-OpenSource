@@ -192,13 +192,21 @@ fun AmityExpandableText(
                 )
             }
 
-            boldWhenMatches.forEach {
+            boldWhenMatches.forEach { rawMatch ->
+                // Highlight the keyword/hashtag only. The search query is trimmed
+                // before searching, but this match term was not — a keyword carrying
+                // leading/trailing whitespace matched (and highlighted) the spaces
+                // before and after the word (PDT-4254). Trim it so only the word is
+                // highlighted, and skip blank terms (an empty pattern matches at
+                // every index and would highlight the whole text).
+                val keyword = rawMatch.trim()
+                if (keyword.isEmpty()) return@forEach
                 val matches = findMatchIndices(
                     input = displayText,
-                    pattern = it,
+                    pattern = keyword,
                     ignoreCase = true,
                     findFirstOnly = true,
-                    exactMatch = it.startsWith('#')
+                    exactMatch = keyword.startsWith('#')
                 )
                 val match = matches.firstOrNull()
                 if (match == null) return@forEach
@@ -212,7 +220,7 @@ fun AmityExpandableText(
                 )
                 addStringAnnotation(
                     tag = "BOLDED",
-                    annotation = it,
+                    annotation = keyword,
                     start = match.first,
                     end = match.second
                 )
@@ -309,7 +317,11 @@ fun AmityExpandableText(
             modifier = modifier
                 .drawBehind {
                     layoutResult.value?.let { textLayout ->
-                        val hPadding = 5.dp.toPx()
+                        // Highlight the keyword only — no horizontal padding, or the
+                        // rect extends ~a space-width past the word on each side and
+                        // looks like the space before/after is highlighted (PDT-4254).
+                        // Keep vertical padding for legibility.
+                        val hPadding = 0.dp.toPx()
                         val vPadding = 3.dp.toPx()
                         annotatedString
                             .getStringAnnotations("BOLDED", 0, annotatedString.length)

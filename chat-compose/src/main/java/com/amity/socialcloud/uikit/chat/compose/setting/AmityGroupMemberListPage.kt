@@ -96,6 +96,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 import com.amity.socialcloud.uikit.common.utils.AmityConstants
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
 import kotlinx.coroutines.launch
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -710,7 +711,7 @@ private fun MemberListItem(
         leadingType = AmityListLeadingType.AVATAR,
         leading = AmityListLeadingContent(
             type = AmityListLeadingType.AVATAR,
-            avatarUrl = user?.getAvatar()?.getUrl(AmityImage.Size.SMALL),
+            avatarUrl = user?.resolvedAvatarUrl(AmityImage.Size.SMALL),
             avatarInitials = user?.getDisplayName().toChatAvatarInitial(),
             icon = CommonR.drawable.amity_ic_user_r,
             avatarSize = AmityAvatarSize.Size40,

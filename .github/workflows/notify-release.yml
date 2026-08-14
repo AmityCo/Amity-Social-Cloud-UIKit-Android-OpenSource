@@ -1,0 +1,79 @@
+name: Notify Release
+
+# Announces a finished UIKit release to the release squad chat thread.
+# The private and opensource coordinates are tagged and built separately, so each gets
+# its own announcement and its own existence check before anything is sent.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Released version, e.g. 4.23.2'
+        required: true
+        type: string
+      target:
+        description: 'Which announcement to send'
+        required: true
+        default: both
+        type: choice
+        options:
+          - both
+          - private
+          - opensource
+      dry_run:
+        description: 'Print the message instead of sending it'
+        default: false
+        type: boolean
+
+env:
+  ekoapp_release_squad_group_id: 66fe6fe1374cc881617636f7
+  ekoapp_release_squad_thread_id: 66fe707dd497892cc7c51046
+
+jobs:
+  notify:
+    # ubuntu-latest, not asc-amity-shr-runners-node: this job only curls, and the
+    # self-hosted pool is what left the tag-triggered Release workflow queued for a day.
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v3
+
+      - name: notify jitpack release
+        if: github.event.inputs.target == 'both' || github.event.inputs.target == 'private'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BOT_EKO_CHAT_URL: ${{ secrets.BOT_EKO_CHAT_URL }}
+          BOT_EKO_CHAT_ACCESS_TOKEN: ${{ secrets.BOT_EKO_CHAT_ACCESS_TOKEN }}
+          VERSION: ${{ github.event.inputs.version }}
+        run: |
+          gh release view "$VERSION" --repo "${{ github.repository }}" --json tagName -q .tagName
+          release_url="${{ github.server_url }}/${{ github.repository }}/releases/tag/$VERSION"
+          echo -e "🚀 Product : Android UIKit $VERSION \n Environment: Jitpack release \n$release_url" > payload.txt
+          cat payload.txt
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            echo "dry run - message not sent"
+            exit 0
+          fi
+          chmod +x .scripts/notify.sh && \
+          .scripts/notify.sh payload.txt ${ekoapp_release_squad_group_id} ${ekoapp_release_squad_thread_id}
+
+      - name: notify opensource release
+        if: github.event.inputs.target == 'both' || github.event.inputs.target == 'opensource'
+        env:
+          BOT_EKO_CHAT_URL: ${{ secrets.BOT_EKO_CHAT_URL }}
+          BOT_EKO_CHAT_ACCESS_TOKEN: ${{ secrets.BOT_EKO_CHAT_ACCESS_TOKEN }}
+          VERSION: ${{ github.event.inputs.version }}
+        run: |
+          # The opensource mirror is public, so its release is checked without a token —
+          # GITHUB_TOKEN is scoped to this repo and cannot be relied on across repos.
+          oss_repo="${{ github.repository }}-OpenSource"
+          curl -sf "${{ github.api_url }}/repos/$oss_repo/releases/tags/$VERSION" > /dev/null
+          release_url="${{ github.server_url }}/$oss_repo/releases/tag/$VERSION"
+          echo -e "🚀 Product : Android UIKit OpenSource $VERSION \n$release_url" > payload.txt
+          cat payload.txt
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            echo "dry run - message not sent"
+            exit 0
+          fi
+          chmod +x .scripts/notify.sh && \
+          .scripts/notify.sh payload.txt ${ekoapp_release_squad_group_id} ${ekoapp_release_squad_thread_id}

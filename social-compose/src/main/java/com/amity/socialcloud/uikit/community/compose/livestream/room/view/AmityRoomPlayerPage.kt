@@ -121,6 +121,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
 import com.amity.socialcloud.uikit.common.ui.elements.DisposableEffectWithLifeCycle
 import com.amity.socialcloud.uikit.common.ui.elements.drawVerticalScrollbar
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
+import com.amity.socialcloud.uikit.common.ui.theme.AmityComposeTheme
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.ui.theme.amityLiveBadgeRed
 import com.amity.socialcloud.uikit.common.ui.theme.amityLiveBadgeRedAlt
@@ -490,7 +491,7 @@ fun AmityRoomPlayerPage(
         return
     }
 
-    AmityBasePage(pageId = "live_stream_page") {
+    AmityBasePage(pageId = "live_stream_page", toastBottomPadding = 72.dp) {
         AmityBaseComponent(
             pageScope = getPageScope(),
             componentId = "stream_player",
@@ -1748,92 +1749,100 @@ fun AmityRoomPlayerPage(
     }
 
     if (showLeaveBackstageDialog) {
-        AmityAlertDialog(
-            dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_leave_backstage_title"),
-            dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_leave_backstage_message"),
-            confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_leave"),
-            dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel"),
-            confirmTextColor = AmityTheme.colors.alert,
-            dismissTextColor = AmityTheme.colors.highlight,
-            onConfirmation = {
-                viewModel.setIsStreamerMode(false)
-                showLeaveBackstageDialog = false
-            },
-            onDismissRequest = {
-                showLeaveBackstageDialog = false
-            }
-        )
+        AmityComposeTheme {
+            AmityAlertDialog(
+                dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_leave_backstage_title"),
+                dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_leave_backstage_message"),
+                confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_leave"),
+                dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel"),
+                confirmTextColor = AmityTheme.colors.alert,
+                dismissTextColor = AmityTheme.colors.highlight,
+                onConfirmation = {
+                    viewModel.setIsStreamerMode(false)
+                    showLeaveBackstageDialog = false
+                },
+                onDismissRequest = {
+                    showLeaveBackstageDialog = false
+                }
+            )
+        }
     }
 
     if (showLeaveAsCoHostDialog) {
-        AmityAlertDialog(
-            dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_leave_as_co_host"),
-            dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_alert_leave_as_cohost_message"),
-            confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_leave"),
-            dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel"),
-            confirmTextColor = AmityTheme.colors.alert,
-            dismissTextColor = AmityTheme.colors.highlight,
-            onConfirmation = {
-                viewModel.setIsLeaving(true)
-                leaveRoom(
-                    context = context,
-                    behavior = behavior,
-                    uiState = uiState,
-                    viewModel = viewModel,
-                    onSuccess = {
-                        AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_left_stage"))
-                        // Set viewer mode - LaunchedEffect will start watch tracking
-                        viewModel.setIsStreamerMode(false)
-                        viewModel.setIsLeaving(false)
-                    },
-                    onError = {
-                        viewModel.setIsLeaving(false)
-                        AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_something_went_wrong"))
-                    }
-                )
-                showLeaveAsCoHostDialog = false
-            },
-            onDismissRequest = {
-                showLeaveAsCoHostDialog = false
-            }
-        )
+        AmityComposeTheme {
+            AmityAlertDialog(
+                dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_leave_as_co_host"),
+                dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_alert_leave_as_cohost_message"),
+                confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_leave"),
+                dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel"),
+                confirmTextColor = AmityTheme.colors.alert,
+                dismissTextColor = AmityTheme.colors.highlight,
+                onConfirmation = {
+                    viewModel.setIsLeaving(true)
+                    leaveRoom(
+                        context = context,
+                        behavior = behavior,
+                        uiState = uiState,
+                        viewModel = viewModel,
+                        onSuccess = {
+                            AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_left_stage"))
+                            // Set viewer mode - LaunchedEffect will start watch tracking
+                            viewModel.setIsStreamerMode(false)
+                            viewModel.setIsLeaving(false)
+                        },
+                        onError = {
+                            viewModel.setIsLeaving(false)
+                            AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_something_went_wrong"))
+                        }
+                    )
+                    showLeaveAsCoHostDialog = false
+                },
+                onDismissRequest = {
+                    showLeaveAsCoHostDialog = false
+                }
+            )
+        }
     }
 
     if (showLeaveLivestreamDialog) {
-        AmityAlertDialog(
-            dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_alert_cohost_leave_title"),
-            dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_alert_cohost_leave_message"),
-            confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_leave"),
-            dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel"),
-            confirmTextColor = AmityTheme.colors.alert,
-            dismissTextColor = AmityTheme.colors.highlight,
-            onConfirmation = {
-                viewModel.setIsLeaving(true)
-                leaveLivestream(
-                    context = context,
-                    behavior = behavior,
-                    uiState = uiState,
-                    viewModel = viewModel,
-                )
-                viewModel.setIsStreamerMode(false)
-                viewModel.setIsLeaving(false)
-                showLeaveLivestreamDialog = false
-            },
-            onDismissRequest = {
-                showLeaveLivestreamDialog = false
-            }
-        )
+        AmityComposeTheme {
+            AmityAlertDialog(
+                dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_alert_cohost_leave_title"),
+                dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_alert_cohost_leave_message"),
+                confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_leave"),
+                dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel"),
+                confirmTextColor = AmityTheme.colors.alert,
+                dismissTextColor = AmityTheme.colors.highlight,
+                onConfirmation = {
+                    viewModel.setIsLeaving(true)
+                    leaveLivestream(
+                        context = context,
+                        behavior = behavior,
+                        uiState = uiState,
+                        viewModel = viewModel,
+                    )
+                    viewModel.setIsStreamerMode(false)
+                    viewModel.setIsLeaving(false)
+                    showLeaveLivestreamDialog = false
+                },
+                onDismissRequest = {
+                    showLeaveLivestreamDialog = false
+                }
+            )
+        }
     }
 
     if (showCannotStartLivestreamDialog) {
-        AmityAlertDialog(
-            dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_title_cannot_join_cohost"),
-            dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_please_try_again"),
-            dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_ok"),
-            onDismissRequest = {
-                showCannotStartLivestreamDialog = false
-            },
-        )
+        AmityComposeTheme {
+            AmityAlertDialog(
+                dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_title_cannot_join_cohost"),
+                dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_please_try_again"),
+                dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_ok"),
+                onDismissRequest = {
+                    showCannotStartLivestreamDialog = false
+                },
+            )
+        }
     }
 
     showProductWebViewBottomSheet?.let { product ->
@@ -1846,18 +1855,20 @@ fun AmityRoomPlayerPage(
     }
 
     if (showProductTaggingDisabledDialog) {
-        AmityAlertDialog(
-            dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_product_tagging_unavailable_title"),
-            dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_remove_products_description"),
-            confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_ok"),
-            dismissText = "",
-            onDismissRequest = {
-                showProductTaggingDisabledDialog = false
-            },
-            onConfirmation = {
-                showProductTaggingDisabledDialog = false
-            },
-        )
+        AmityComposeTheme {
+            AmityAlertDialog(
+                dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_product_tagging_unavailable_title"),
+                dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_remove_products_description"),
+                confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_ok"),
+                dismissText = "",
+                onDismissRequest = {
+                    showProductTaggingDisabledDialog = false
+                },
+                onConfirmation = {
+                    showProductTaggingDisabledDialog = false
+                },
+            )
+        }
     }
 }
 

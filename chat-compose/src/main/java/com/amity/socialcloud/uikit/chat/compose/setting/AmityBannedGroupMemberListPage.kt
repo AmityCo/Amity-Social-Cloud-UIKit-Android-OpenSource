@@ -61,6 +61,7 @@ import com.amity.socialcloud.uikit.common.ui.atoms.AmitySearchBar
 import com.amity.socialcloud.uikit.chat.compose.common.toChatAvatarInitial
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
+import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -258,7 +259,7 @@ private fun BannedMemberItem(
         leadingType = AmityListLeadingType.AVATAR,
         leading = AmityListLeadingContent(
             type = AmityListLeadingType.AVATAR,
-            avatarUrl = user?.getAvatar()?.getUrl(AmityImage.Size.SMALL),
+            avatarUrl = user?.resolvedAvatarUrl(AmityImage.Size.SMALL),
             avatarInitials = user?.getDisplayName().toChatAvatarInitial(),
             icon = CommonR.drawable.amity_ic_user_r,
             avatarSize = AmityAvatarSize.Size40,

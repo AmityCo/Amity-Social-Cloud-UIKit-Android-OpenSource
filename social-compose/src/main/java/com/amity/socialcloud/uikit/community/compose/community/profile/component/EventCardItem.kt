@@ -277,7 +277,7 @@ private fun EventCardMedium(
                     .crossfade(true)
                     .build(),
                 contentDescription = "Event cover",
-                contentScale = ContentScale.FillBounds,
+                contentScale = ContentScale.Crop,
                 placeholder = painterResource(R.drawable.amity_ic_event_list_placeholder),
                 error = painterResource(R.drawable.amity_ic_event_list_placeholder),
                 modifier = Modifier

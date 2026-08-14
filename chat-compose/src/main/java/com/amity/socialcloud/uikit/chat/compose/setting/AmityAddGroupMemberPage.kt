@@ -62,6 +62,7 @@ import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
 
 @Composable
 fun AmityAddGroupMemberPage(
@@ -167,7 +168,7 @@ fun AmityAddGroupMemberPage(
                         ) {
                             Box(modifier = Modifier.size(40.dp)) {
                                 AmityMessageAvatarView(
-                                    avatarUrl = user.getAvatar()?.getUrl(AmityImage.Size.SMALL) ?: "",
+                                    avatarUrl = user.resolvedAvatarUrl(AmityImage.Size.SMALL) ?: "",
                                     displayName = user.getDisplayName(),
                                     size = 40.dp,
                                     borderWidth = 2,
@@ -219,7 +220,7 @@ fun AmityAddGroupMemberPage(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         AmityMessageAvatarView(
-                            avatarUrl = user.getAvatar()?.getUrl(AmityImage.Size.SMALL) ?: "",
+                            avatarUrl = user.resolvedAvatarUrl(AmityImage.Size.SMALL) ?: "",
                             displayName = user.getDisplayName(),
                             size = 40.dp,
                             borderWidth = 2,

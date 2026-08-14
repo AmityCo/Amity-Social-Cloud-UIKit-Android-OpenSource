@@ -451,10 +451,7 @@ fun AmityPostEngagementView(
                             text = amitySocialReactionDisplayName(resolvedReactionKey),
                             style = AmityTheme.typography.bodyLegacy.copy(
                                 fontWeight = FontWeight.SemiBold,
-                                color = if (isReacted) {
-                                    if (isUIKitInDarkTheme()) amityColorWhite
-                                    else AmityTheme.colors.primary
-                                }
+                                color = if (isReacted) AmityTheme.colors.base
                                 else AmityTheme.colors.baseShade2
                             ),
                         )

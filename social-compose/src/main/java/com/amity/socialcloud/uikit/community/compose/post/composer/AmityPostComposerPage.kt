@@ -1071,7 +1071,7 @@ fun AmityPostComposerPage(
                             .padding(horizontal = 16.dp, vertical = 20.dp),
                         value = localPostText,
                         maxLines = 30,
-                        hintText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_placeholder_whats_on_your_mind"),
+                        hintText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_placeholder_post_composer_body_placeholder"),
                         mentionedUser = selectedUserToMention,
                         mentionedProduct = selectedProductToMention,
                         mentionMetadata = mentionGetter.getMentionedUsers(),
@@ -1183,7 +1183,7 @@ fun AmityPostComposerPage(
         } else {
             item {
                 val captionPlaceholder = amitySocialString("amity_social_placeholder_clip_caption")
-                val textPostPlaceholder = amitySocialString("amity_social_placeholder_whats_on_your_mind")
+                val textPostPlaceholder = amitySocialString("amity_social_placeholder_post_composer_body_placeholder")
                 AmityMentionTextField(
                     modifier = modifier
                         .fillMaxSize()

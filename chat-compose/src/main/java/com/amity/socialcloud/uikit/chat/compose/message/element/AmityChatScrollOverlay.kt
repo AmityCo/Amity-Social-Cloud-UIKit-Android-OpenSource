@@ -44,6 +44,7 @@ import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonVariant
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityIconButtonSize
 import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
 
 /**
  * Scroll-to-bottom FAB — 40×40 circle with down arrow.
@@ -122,7 +123,7 @@ fun AmityChatNewMessageNotification(
                     .padding(horizontal = 8.dp),
             ) {
                 // Avatar
-                val avatarUrl = msg.getCreator()?.getAvatar()?.getUrl(AmityImage.Size.SMALL)
+                val avatarUrl = msg.getCreator()?.resolvedAvatarUrl(AmityImage.Size.SMALL)
                 AsyncImage(
                     model = avatarUrl,
                     contentDescription = null,

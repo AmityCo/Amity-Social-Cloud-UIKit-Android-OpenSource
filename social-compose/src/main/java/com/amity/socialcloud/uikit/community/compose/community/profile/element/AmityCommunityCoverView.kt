@@ -1,7 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.community.profile.element
 
 import android.graphics.Bitmap
-import android.os.Build
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -24,7 +23,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -64,7 +62,7 @@ import com.amity.socialcloud.uikit.community.compose.community.profile.AmityComm
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfileViewModel
 import com.amity.socialcloud.uikit.community.compose.community.profile.component.AmityCommunityHeaderStyle
 import com.amity.socialcloud.uikit.community.compose.utils.BlurImage
-import com.amity.socialcloud.uikit.community.compose.utils.LegacyBlurImage
+import com.amity.socialcloud.uikit.community.compose.utils.gaussianBlur
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
 @Composable
@@ -225,22 +223,16 @@ fun AmityCommunityCoverView(
                             .align(Alignment.Center)
                             .alpha(0.5f)
                     )
-                    if (bitmap != null) {
-                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
-                            LegacyBlurImage(
-                                bitmap!!, 25f, modifier = Modifier
-                                    .matchParentSize()
-                                    .align(Alignment.Center)
-                            )
-                        } else {
-                            BlurImage(
-                                bitmap!!,
-                                Modifier
-                                    .matchParentSize()
-                                    .align(Alignment.Center)
-                                    .blur(radiusX = 15.dp, radiusY = 15.dp)
-                            )
-                        }
+                    // Blurred in software rather than with Modifier.blur, which does nothing
+                    // below API 31 and so left this header sharp on most devices.
+                    val blurredCover = remember(bitmap) { bitmap?.gaussianBlur() }
+                    if (blurredCover != null) {
+                        BlurImage(
+                            blurredCover,
+                            Modifier
+                                .matchParentSize()
+                                .align(Alignment.Center)
+                        )
                     }
                 }
                 Column(

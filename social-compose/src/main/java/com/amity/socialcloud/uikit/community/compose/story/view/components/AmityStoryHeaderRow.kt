@@ -202,9 +202,9 @@ fun AmityStoryHeaderRow(
                     if (isAd) {
                         AmityAvatarView(
                             image = ad?.getAdvertiser()?.getAvatar(),
+                            size = 40.dp,
                             placeholder = R.drawable.amity_ic_default_advertiser,
                             iconPadding = 8.dp,
-                            modifier = modifier.padding(vertical = 8.dp)
                         )
                     } else {
                         val community = (story?.getTarget() as? AmityStoryTarget.COMMUNITY)?.getCommunity()
@@ -244,7 +244,10 @@ fun AmityStoryHeaderRow(
                                 color = amityColorWhite,
                                 fontWeight = FontWeight.SemiBold
                             ),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
                             modifier = Modifier
+                                .weight(1f, fill = false)
                                 .clickableWithoutRipple {
                                     if (isAd) return@clickableWithoutRipple
                                     if (isSingleTarget) {

@@ -5,6 +5,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
+import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
 import com.linkedin.android.spyglass.mentions.Mentionable
 import com.linkedin.android.spyglass.mentions.Mentionable.MentionDisplayMode
 import java.util.UUID
@@ -73,7 +74,22 @@ class AmityUserMention private constructor() : Mentionable {
         return user?.getDisplayName() ?: ""
     }
 
+    @Deprecated(
+        "Returns only the Amity-hosted avatar and ignores avatarCustomUrl, so it " +
+            "resolves to null for users whose avatar is an external operator URL. " +
+            "Use resolvedAvatarUrl() instead.",
+        ReplaceWith("resolvedAvatarUrl()")
+    )
     fun getAvatar(): AmityImage? {
         return user?.getAvatar()
+    }
+
+    /**
+     * Returns the best available avatar URL for this mention's user, honouring `avatarCustomUrl`.
+     *
+     * Related: SLE-566
+     */
+    fun resolvedAvatarUrl(size: AmityImage.Size = AmityImage.Size.MEDIUM): String? {
+        return user?.resolvedAvatarUrl(size)
     }
 }

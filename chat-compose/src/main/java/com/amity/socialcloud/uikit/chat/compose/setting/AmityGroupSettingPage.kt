@@ -68,6 +68,7 @@ import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 import com.amity.socialcloud.uikit.common.utils.AmityConstants
+import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
 
 @Composable
 fun AmityGroupSettingPage(
@@ -151,7 +152,7 @@ fun AmityGroupSettingPage(
                     if (channel?.getChannelType() == AmityChannel.Type.CONVERSATION) {
                         val otherMembers = members.filter { it.getUserId() != AmityCoreClient.getUserId() }
                         AmityUserAvatarView(
-                            avatarUrl = otherMembers.firstOrNull()?.getUser()?.getAvatar()?.getUrl(AmityImage.Size.MEDIUM),
+                            avatarUrl = otherMembers.firstOrNull()?.getUser()?.resolvedAvatarUrl(AmityImage.Size.MEDIUM),
                             displayName = otherMembers.firstOrNull()?.getUser()?.getDisplayName(),
                             isDeleted = otherMembers.firstOrNull()?.getUser()?.isDeleted() == true,
                             size = 120,

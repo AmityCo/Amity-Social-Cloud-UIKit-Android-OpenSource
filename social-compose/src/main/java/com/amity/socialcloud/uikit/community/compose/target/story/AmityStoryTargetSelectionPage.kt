@@ -84,7 +84,7 @@ fun AmityStoryTargetSelectionPage(
                     elementId = "title"
                 ) {
                     Text(
-                        text = amitySocialConfigString("amity_social_button_story_to"),
+                        text = amitySocialConfigString("amity_social_button_share_to"),
                         style = AmityTheme.typography.titleLegacy,
                         modifier = modifier.align(Alignment.Center)
                     )

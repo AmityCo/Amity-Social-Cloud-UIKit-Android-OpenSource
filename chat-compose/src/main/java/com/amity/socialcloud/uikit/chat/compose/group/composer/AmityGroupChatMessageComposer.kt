@@ -108,6 +108,7 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
 import java.io.File
 import kotlinx.coroutines.delay
 
@@ -813,7 +814,7 @@ internal fun GroupMentionSuggestionView(
                 amityChatString("chat.tab.all")
             }
             val avatarUrl = if (suggestion is AmityMentionSuggestion.USER) {
-                suggestion.user.getAvatar()?.getUrl(AmityImage.Size.SMALL)
+                suggestion.user.resolvedAvatarUrl(AmityImage.Size.SMALL)
             } else {
                 null
             }

@@ -114,6 +114,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
 import com.amity.socialcloud.uikit.common.ui.elements.DisposableEffectWithLifeCycle
 import com.amity.socialcloud.uikit.common.ui.elements.drawVerticalScrollbar
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
+import com.amity.socialcloud.uikit.common.ui.theme.AmityComposeTheme
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.ui.theme.amityLivestreamSurfaceDivider
 import com.amity.socialcloud.uikit.common.ui.theme.amityLivestreamSurfaceElevated
@@ -637,7 +638,7 @@ fun AmityCreateRoomPage(
         )
         return
     }
-    AmityBasePage(pageId = "create_livestream_page") {
+    AmityBasePage(pageId = "create_livestream_page", toastBottomPadding = 72.dp) {
         Box(
             modifier = modifier,
         ) {
@@ -1171,6 +1172,7 @@ fun AmityCreateRoomPage(
                                                     .height(40.dp)
                                                     .clip(RoundedCornerShape(size = 4.dp))
                                                     .background(AmityTheme.colors.baseShade4)
+                                                    .background(amityColorBlack.copy(alpha = 0.5f))
                                                     .border(
                                                         width = 1.dp,
                                                         color = AmityTheme.colors.baseShade3,
@@ -1633,14 +1635,16 @@ fun AmityCreateRoomPage(
         }
 
         if (showCannotStartLivestreamDialog) {
-            AmityAlertDialog(
-                dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_title_cannot_start_livestream"),
-                dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_request_failed"),
-                dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_ok"),
-                onDismissRequest = {
-                    showCannotStartLivestreamDialog = false
-                },
-            )
+            AmityComposeTheme {
+                AmityAlertDialog(
+                    dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_title_cannot_start_livestream"),
+                    dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_request_failed"),
+                    dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_ok"),
+                    onDismissRequest = {
+                        showCannotStartLivestreamDialog = false
+                    },
+                )
+            }
         }
 
         if (showThumbnailErrorUploadDialog.first) {
@@ -1656,55 +1660,61 @@ fun AmityCreateRoomPage(
                 } else {
                     DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_please_try_again")
                 }
-            AmityAlertDialog(
-                dialogTitle = title,
-                dialogText = desc,
-                dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_ok"),
-                onDismissRequest = {
-                    showThumbnailErrorUploadDialog = Pair(false, 0)
-                },
-            )
+            AmityComposeTheme {
+                AmityAlertDialog(
+                    dialogTitle = title,
+                    dialogText = desc,
+                    dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_ok"),
+                    onDismissRequest = {
+                        showThumbnailErrorUploadDialog = Pair(false, 0)
+                    },
+                )
+            }
         }
 
         if (showDiscardPostDialog) {
-            AmityAlertDialog(
-                dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_create_livestream_discard_livestream_dialog_title"),
-                dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_create_livestream_discard_livestream_dialog_desc"),
-                confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_create_livestream_discard_livestream_dialog_confirm_text"),
-                dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_cancel_button"),
-                confirmTextColor = AmityTheme.colors.alert,
-                dismissTextColor = AmityTheme.colors.highlight,
-                onConfirmation = {
-                    context.closePageWithResult(Activity.RESULT_CANCELED)
-                },
-                onDismissRequest = {
-                    showDiscardPostDialog = false
-                }
-            )
+            AmityComposeTheme {
+                AmityAlertDialog(
+                    dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_create_livestream_discard_livestream_dialog_title"),
+                    dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_create_livestream_discard_livestream_dialog_desc"),
+                    confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_create_livestream_discard_livestream_dialog_confirm_text"),
+                    dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_cancel_button"),
+                    confirmTextColor = AmityTheme.colors.alert,
+                    dismissTextColor = AmityTheme.colors.highlight,
+                    onConfirmation = {
+                        context.closePageWithResult(Activity.RESULT_CANCELED)
+                    },
+                    onDismissRequest = {
+                        showDiscardPostDialog = false
+                    }
+                )
+            }
         }
 
         if (showEndLivestreamDialog) {
-            AmityAlertDialog(
-                dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_create_livestream_end_livestream_dialog_title"),
-                dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_create_livestream_end_livestream_dialog_desc"),
-                confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_create_livestream_end_livestream_dialog_confirm_text"),
-                dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_cancel_button"),
-                confirmTextColor = AmityTheme.colors.alert,
-                dismissTextColor = AmityTheme.colors.highlight,
-                onConfirmation = {
-                    endLivestream(
-                        context = context,
-                        durationDisposable = durationDisposable,
-                        behavior = behavior,
-                        uiState = uiState,
-                        viewModel = viewModel,
-                        shouldNavigateToPostDetails = !fromEventPage,
-                    )
-                },
-                onDismissRequest = {
-                    showEndLivestreamDialog = false
-                }
-            )
+            AmityComposeTheme {
+                AmityAlertDialog(
+                    dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_create_livestream_end_livestream_dialog_title"),
+                    dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_create_livestream_end_livestream_dialog_desc"),
+                    confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_create_livestream_end_livestream_dialog_confirm_text"),
+                    dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_cancel_button"),
+                    confirmTextColor = AmityTheme.colors.alert,
+                    dismissTextColor = AmityTheme.colors.highlight,
+                    onConfirmation = {
+                        endLivestream(
+                            context = context,
+                            durationDisposable = durationDisposable,
+                            behavior = behavior,
+                            uiState = uiState,
+                            viewModel = viewModel,
+                            shouldNavigateToPostDetails = !fromEventPage,
+                        )
+                    },
+                    onDismissRequest = {
+                        showEndLivestreamDialog = false
+                    }
+                )
+            }
         }
 
         if (showEditThumbnailSheet) {
@@ -1728,66 +1738,72 @@ fun AmityCreateRoomPage(
         }
 
         showInviteConfirmDialog?.let {
-            AmityAlertDialog(
-                dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_invite_co_host"),
-                dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_confirm_invite_cohost_message").format(it.second?.getDisplayName() ?: "the user"),
-                confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_invite_co_host"),
-                dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_cancel_button"),
-                confirmTextColor = AmityTheme.colors.highlight,
-                dismissTextColor = AmityTheme.colors.highlight,
-                onConfirmation = {
-                    viewModel.inviteCohost(userId = it.first, user = it.second)
-                    showInviteConfirmDialog = null
-                },
-                onDismissRequest = {
-                    showInviteConfirmDialog = null
-                }
-            )
+            AmityComposeTheme {
+                AmityAlertDialog(
+                    dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_invite_co_host"),
+                    dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_confirm_invite_cohost_message").format(it.second?.getDisplayName() ?: "the user"),
+                    confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_invite_co_host"),
+                    dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_cancel_button"),
+                    confirmTextColor = AmityTheme.colors.highlight,
+                    dismissTextColor = AmityTheme.colors.highlight,
+                    onConfirmation = {
+                        viewModel.inviteCohost(userId = it.first, user = it.second)
+                        showInviteConfirmDialog = null
+                    },
+                    onDismissRequest = {
+                        showInviteConfirmDialog = null
+                    }
+                )
+            }
         }
 
         if (showCancelInvitationDialog) {
-            AmityAlertDialog(
-                dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_alert_cancel_cohost_invitation_title"),
-                dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_alert_cancel_cohost_invitation_message"),
-                confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_confirm"),
-                dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_cancel_button"),
-                confirmTextColor = AmityTheme.colors.alert,
-                dismissTextColor = AmityTheme.colors.highlight,
-                onConfirmation = {
-                    uiState
-                        .invitation
-                        ?.let(viewModel::cancelInvitation)
-                    showCancelInvitationDialog = false
-                },
-                onDismissRequest = {
-                    showCancelInvitationDialog = false
-                }
-            )
+            AmityComposeTheme {
+                AmityAlertDialog(
+                    dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_alert_cancel_cohost_invitation_title"),
+                    dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_alert_cancel_cohost_invitation_message"),
+                    confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_confirm"),
+                    dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_cancel_button"),
+                    confirmTextColor = AmityTheme.colors.alert,
+                    dismissTextColor = AmityTheme.colors.highlight,
+                    onConfirmation = {
+                        uiState
+                            .invitation
+                            ?.let(viewModel::cancelInvitation)
+                        showCancelInvitationDialog = false
+                    },
+                    onDismissRequest = {
+                        showCancelInvitationDialog = false
+                    }
+                )
+            }
         }
 
         if (showRemoveCoHostConfirmDialog) {
-            AmityAlertDialog(
-                dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_alert_remove_cohost_title"),
-                dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_alert_remove_cohost_message"),
-                confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_remove"),
-                dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_cancel_button"),
-                confirmTextColor = AmityTheme.colors.alert,
-                dismissTextColor = AmityTheme.colors.highlight,
-                onConfirmation = {
-                    val roomId = uiState.room?.getRoomId()
-                    val coHostUserId = uiState.cohostUserId
-                    if (roomId != null && coHostUserId != null) {
-                        viewModel.removeParticipant(
-                            roomId = roomId,
-                            userId = coHostUserId
-                        )
+            AmityComposeTheme {
+                AmityAlertDialog(
+                    dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_alert_remove_cohost_title"),
+                    dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_alert_remove_cohost_message"),
+                    confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_remove"),
+                    dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_cancel_button"),
+                    confirmTextColor = AmityTheme.colors.alert,
+                    dismissTextColor = AmityTheme.colors.highlight,
+                    onConfirmation = {
+                        val roomId = uiState.room?.getRoomId()
+                        val coHostUserId = uiState.cohostUserId
+                        if (roomId != null && coHostUserId != null) {
+                            viewModel.removeParticipant(
+                                roomId = roomId,
+                                userId = coHostUserId
+                            )
+                        }
+                        showRemoveCoHostConfirmDialog = false
+                    },
+                    onDismissRequest = {
+                        showRemoveCoHostConfirmDialog = false
                     }
-                    showRemoveCoHostConfirmDialog = false
-                },
-                onDismissRequest = {
-                    showRemoveCoHostConfirmDialog = false
-                }
-            )
+                )
+            }
         }
 
         if (showLivestreamLimitSnackBar) {
@@ -1957,50 +1973,56 @@ fun AmityCreateRoomPage(
         }
 
         if (showProductTaggingUnavailableDialog != null) {
-            AmityAlertDialog(
-                dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_product_tagging_unavailable_title"),
-                dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_remove_products_description"),
-                confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_go_live"),
-                dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_edit_live"),
-                onDismissRequest = {
-                    showProductTaggingUnavailableDialog = null
-                },
-                onConfirmation = {
-                    showProductTaggingUnavailableDialog?.invoke()
-                    showProductTaggingUnavailableDialog = null
-                },
-            )
+            AmityComposeTheme {
+                AmityAlertDialog(
+                    dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_product_tagging_unavailable_title"),
+                    dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_remove_products_description"),
+                    confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_go_live"),
+                    dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_edit_live"),
+                    onDismissRequest = {
+                        showProductTaggingUnavailableDialog = null
+                    },
+                    onConfirmation = {
+                        showProductTaggingUnavailableDialog?.invoke()
+                        showProductTaggingUnavailableDialog = null
+                    },
+                )
+            }
         }
 
         if (showDisableCohostManageProductPermissionDialog != null) {
-            AmityAlertDialog(
-                dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_title_disable_cohost_product_tags"),
-                dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_disable_product_tagging_description"),
-                confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_disable"),
-                dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel"),
-                onDismissRequest = {
-                    showDisableCohostManageProductPermissionDialog = null
-                },
-                onConfirmation = {
-                    showDisableCohostManageProductPermissionDialog?.invoke()
-                    showDisableCohostManageProductPermissionDialog = null
-                },
-            )
+            AmityComposeTheme {
+                AmityAlertDialog(
+                    dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_title_disable_cohost_product_tags"),
+                    dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_disable_product_tagging_description"),
+                    confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_disable"),
+                    dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel"),
+                    onDismissRequest = {
+                        showDisableCohostManageProductPermissionDialog = null
+                    },
+                    onConfirmation = {
+                        showDisableCohostManageProductPermissionDialog?.invoke()
+                        showDisableCohostManageProductPermissionDialog = null
+                    },
+                )
+            }
         }
 
         if (showProductTaggingDisabledDialog) {
-            AmityAlertDialog(
-                dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_product_tagging_unavailable_title"),
-                dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_remove_products_description"),
-                confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_ok"),
-                dismissText = "",
-                onDismissRequest = {
-                    showProductTaggingDisabledDialog = false
-                },
-                onConfirmation = {
-                    showProductTaggingDisabledDialog = false
-                },
-            )
+            AmityComposeTheme {
+                AmityAlertDialog(
+                    dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_product_tagging_unavailable_title"),
+                    dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_remove_products_description"),
+                    confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_ok"),
+                    dismissText = "",
+                    onDismissRequest = {
+                        showProductTaggingDisabledDialog = false
+                    },
+                    onConfirmation = {
+                        showProductTaggingDisabledDialog = false
+                    },
+                )
+            }
         }
     }
 }

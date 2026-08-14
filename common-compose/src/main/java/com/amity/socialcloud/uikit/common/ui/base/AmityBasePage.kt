@@ -22,6 +22,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.compose.R
 import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
@@ -51,6 +52,9 @@ import java.util.UUID
 fun AmityBasePage(
     pageId: String,
     useAmityToast: Boolean = false,
+    // How far the toast clears the bottom of the screen. A page with a compose bar has to lift it by
+    // the bar's own height, so the value belongs to the page rather than to the toast.
+    toastBottomPadding: Dp = if (useAmityToast) 72.dp else 16.dp,
     content: @Composable AmityComposePageScope.() -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -97,15 +101,12 @@ fun AmityBasePage(
                     SnackbarHost(
                         hostState = snackbarHostState,
                         modifier = Modifier
-                            // Chat toasts (useAmityToast) sit ABOVE the compose bar: the idle composer
-                            // is ~56dp and the offset already accounts for keyboardHeight, so with the
-                            // keyboard down a bottom-16 toast overlaps the composer. Lift the chat base
-                            // by ~composer(56)+gap(16)=72dp so a toast never hides the composer
-                            // and all chat toasts read higher . Social
-                            // (legacy snackbar, useAmityToast=false) keeps the original 16dp — unchanged.
-                            // Value is approximate pending on-device/design confirmation (QA toast-position
-                            // node is stale post-rebaseline).
-                            .padding(bottom = keyboardHeight + additionalHeight.dp + if (useAmityToast) 72.dp else 16.dp)
+                            // A toast sitting at bottom-16 overlaps any compose bar, since the offset
+                            // already accounts for keyboardHeight and the bar sits above that. Pages
+                            // with a composer lift it by composer + gap; the rest keep 16.
+                            // Values are approximate pending on-device/design confirmation (QA
+                            // toast-position node is stale post-rebaseline).
+                            .padding(bottom = keyboardHeight + additionalHeight.dp + toastBottomPadding)
                             .padding(horizontal = 16.dp),
                     ) {
                         when (it.visuals) {

@@ -94,6 +94,10 @@ class AmityCommunityMembershipPageViewModel(val communityId: String) : AmityBase
         return hasPermissionAtCommunity(AmityPermission.EDIT_COMMUNITY_USER, communityId)
     }
 
+    fun hasAddPermission(): Flowable<Boolean> {
+        return hasPermissionAtCommunity(AmityPermission.ADD_COMMUNITY_USER, communityId)
+    }
+
     fun hasRemovePermission(): Flowable<Boolean> {
         return hasPermissionAtCommunity(AmityPermission.REMOVE_COMMUNITY_USER, communityId)
     }

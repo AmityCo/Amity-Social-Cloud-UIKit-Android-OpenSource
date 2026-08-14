@@ -61,6 +61,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem
 import com.amity.socialcloud.uikit.common.ui.elements.BottomConfirmDeletePopup
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
+import com.amity.socialcloud.uikit.common.ui.theme.AmityComposeTheme
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.ui.theme.amityLiveBadgeRed
 import com.amity.socialcloud.uikit.common.ui.theme.amityLivestreamChatBubbleBackground
@@ -73,6 +74,8 @@ import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySo
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityReportOtherReasonScreen
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityReportReasonListScreen
 import com.google.gson.JsonObject
+
+enum class UserActionConfirmation { PROMOTE, DEMOTE, MUTE, UNMUTE }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -89,6 +92,7 @@ fun ChatOverlay(
     onInviteCohost: (String, AmityUser?) -> Unit = {_,_ -> },
     onCohostBadgeClick: () -> Unit = {},
 ) {
+    var pending by remember { mutableStateOf<Pair<UserActionConfirmation, String>?>(null) }
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
     }
@@ -351,6 +355,10 @@ fun ChatOverlay(
                             },
                             viewModel = viewModel,
                             pageScope = pageScope,
+                            onConfirmAction = { action ->
+                                pending = action to userActionsState.userId
+                                viewModel.updateSheetUIState(AmityLiveStreamSheetUIState.CloseSheet)
+                            },
                             onClose = {
                                 viewModel.updateSheetUIState(AmityLiveStreamSheetUIState.CloseSheet)
                             }
@@ -363,6 +371,131 @@ fun ChatOverlay(
             }
         }
     }
+
+    // Raised from AmityUserActionsSheet, which the tap also closes -- a dialog declared inside the
+    // sheet dies with it, so the confirmation is owned here instead.
+
+        // Promote confirmation dialog
+        if (pending?.first == UserActionConfirmation.PROMOTE) {
+            AmityComposeTheme {
+                AmityAlertDialog(
+                    dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_title_moderator_promotion"),
+                    dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_promote_moderator_description"),
+                    confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_promote"),
+                    dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel"),
+                    onConfirmation = {
+                        val userId = pending?.second.orEmpty()
+                        pending = null
+                        viewModel.promoteToModerator(
+                            userId = userId,
+                            onSuccess = {
+                                AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_user_promoted"))
+                                pageScope?.showSnackbar(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_user_promoted"))
+                            },
+                            onError = {
+                                AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_user_promoted_failed"))
+                                pageScope?.showSnackbar(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_user_promoted_failed"))
+                            }
+                        )
+                    },
+                    onDismissRequest = {
+                        pending = null
+                    }
+                )
+            }
+        }
+
+        // Demote confirmation dialog
+        if (pending?.first == UserActionConfirmation.DEMOTE) {
+            AmityComposeTheme {
+                AmityAlertDialog(
+                    dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_title_moderator_demotion"),
+                    dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_demote_moderator_description"),
+                    confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_demote"),
+                    dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel"),
+                    confirmTextColor = AmityTheme.colors.alert,
+                    onConfirmation = {
+                        val userId = pending?.second.orEmpty()
+                        pending = null
+                        viewModel.demoteToMember(
+                            userId = userId,
+                            onSuccess = {
+                                AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_member_demote_success_toast"))
+                                pageScope?.showSnackbar(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_member_demote_success_toast"))
+                            },
+                            onError = {
+                                AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_user_demoted_failed"))
+                                pageScope?.showSnackbar(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_user_demoted_failed"))
+                            }
+                        )
+                    },
+                    onDismissRequest = {
+                        pending = null
+                    }
+                )
+            }
+        }
+
+        // Mute confirmation dialog
+        if (pending?.first == UserActionConfirmation.MUTE) {
+            AmityComposeTheme {
+                AmityAlertDialog(
+                    dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_title_confirm_mute"),
+                    dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_mute_user_description"),
+                    confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_mute"),
+                    dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel"),
+                    confirmTextColor = AmityTheme.colors.alert,
+                    onConfirmation = {
+                        val userId = pending?.second.orEmpty()
+                        pending = null
+                        viewModel.muteUser(
+                            userId = userId,
+                            onSuccess = {
+                                AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_user_muted"))
+                                pageScope?.showSnackbar(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_user_muted"))
+                            },
+                            onError = {
+                                AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_user_muted_failed"))
+                                pageScope?.showSnackbar(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_user_muted_failed"))
+                            }
+                        )
+                    },
+                    onDismissRequest = {
+                        pending = null
+                    }
+                )
+            }
+        }
+
+        // Unmute confirmation dialog
+        if (pending?.first == UserActionConfirmation.UNMUTE) {
+            AmityComposeTheme {
+                AmityAlertDialog(
+                    dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_title_confirm_unmute"),
+                    dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_unmute_user_description"),
+                    confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_unmute"),
+                    dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel"),
+                    onConfirmation = {
+                        val userId = pending?.second.orEmpty()
+                        pending = null
+                        viewModel.unmuteUser(
+                            userId = userId,
+                            onSuccess = {
+                                AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_user_unmuted"))
+                                pageScope?.showSnackbar(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_user_unmuted"))
+                            },
+                            onError = {
+                                AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_user_unmuted_failed"))
+                                pageScope?.showSnackbar(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_user_unmuted_failed"))
+                            }
+                        )
+                    },
+                    onDismissRequest = {
+                        pending = null
+                    }
+                )
+            }
+        }
 
     if (isShowDeleteDialog) {
         BottomConfirmDeletePopup(
@@ -682,12 +815,11 @@ fun AmityUserActionsSheet(
     onInviteCohost: (String, AmityUser?) -> Unit = { _, _ -> },
     viewModel: AmityLivestreamChatViewModel,
     pageScope: AmityComposePageScope?,
+    // The confirmation lives above this sheet: closing the sheet unmounts everything inside it, so a
+    // dialog declared here would be torn down by the very close that is supposed to reveal it.
+    onConfirmAction: (UserActionConfirmation) -> Unit,
     onClose: () -> Unit
 ) {
-    var showPromoteDialog by remember { mutableStateOf(false) }
-    var showDemoteDialog by remember { mutableStateOf(false) }
-    var showMuteDialog by remember { mutableStateOf(false) }
-    var showUnmuteDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -798,9 +930,9 @@ fun AmityUserActionsSheet(
                 color = AmityTheme.colors.base,
             ) {
                 if (isModerator) {
-                    showDemoteDialog = true
+                    onConfirmAction(UserActionConfirmation.DEMOTE)
                 } else {
-                    showPromoteDialog = true
+                    onConfirmAction(UserActionConfirmation.PROMOTE)
                 }
             }
         }
@@ -813,9 +945,9 @@ fun AmityUserActionsSheet(
                 color = AmityTheme.colors.base,
             ) {
                 if (isMuted) {
-                    showUnmuteDialog = true
+                    onConfirmAction(UserActionConfirmation.UNMUTE)
                 } else {
-                    showMuteDialog = true
+                    onConfirmAction(UserActionConfirmation.MUTE)
                 }
             }
         }
@@ -823,119 +955,6 @@ fun AmityUserActionsSheet(
         }
     }
 
-    // Promote confirmation dialog
-    if (showPromoteDialog) {
-        AmityAlertDialog(
-            dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_title_moderator_promotion"),
-            dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_promote_moderator_description"),
-            confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_promote"),
-            dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel"),
-            onConfirmation = {
-                showPromoteDialog = false
-                viewModel.promoteToModerator(
-                    userId = userId,
-                    onSuccess = {
-                        AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_user_promoted"))
-                        pageScope?.showSnackbar(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_user_promoted"))
-                        onClose()
-                    },
-                    onError = {
-                        AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_user_promoted_failed"))
-                        pageScope?.showSnackbar(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_user_promoted_failed"))
-                    }
-                )
-            },
-            onDismissRequest = {
-                showPromoteDialog = false
-            }
-        )
-    }
-
-    // Demote confirmation dialog
-    if (showDemoteDialog) {
-        AmityAlertDialog(
-            dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_title_moderator_demotion"),
-            dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_demote_moderator_description"),
-            confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_demote"),
-            dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel"),
-            confirmTextColor = AmityTheme.colors.alert,
-            onConfirmation = {
-                showDemoteDialog = false
-                viewModel.demoteToMember(
-                    userId = userId,
-                    onSuccess = {
-                        AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_member_demote_success_toast"))
-                        pageScope?.showSnackbar(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_member_demote_success_toast"))
-                        onClose()
-                    },
-                    onError = {
-                        AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_user_demoted_failed"))
-                        pageScope?.showSnackbar(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_user_demoted_failed"))
-                    }
-                )
-            },
-            onDismissRequest = {
-                showDemoteDialog = false
-            }
-        )
-    }
-
-    // Mute confirmation dialog
-    if (showMuteDialog) {
-        AmityAlertDialog(
-            dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_title_confirm_mute"),
-            dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_mute_user_description"),
-            confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_mute"),
-            dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel"),
-            confirmTextColor = AmityTheme.colors.alert,
-            onConfirmation = {
-                showMuteDialog = false
-                viewModel.muteUser(
-                    userId = userId,
-                    onSuccess = {
-                        AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_user_muted"))
-                        pageScope?.showSnackbar(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_user_muted"))
-                        onClose()
-                    },
-                    onError = {
-                        AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_user_muted_failed"))
-                        pageScope?.showSnackbar(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_user_muted_failed"))
-                    }
-                )
-            },
-            onDismissRequest = {
-                showMuteDialog = false
-            }
-        )
-    }
-
-    // Unmute confirmation dialog
-    if (showUnmuteDialog) {
-        AmityAlertDialog(
-            dialogTitle = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_title_confirm_unmute"),
-            dialogText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_unmute_user_description"),
-            confirmText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_unmute"),
-            dismissText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel"),
-            onConfirmation = {
-                showUnmuteDialog = false
-                viewModel.unmuteUser(
-                    userId = userId,
-                    onSuccess = {
-                        AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_user_unmuted"))
-                        pageScope?.showSnackbar(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_user_unmuted"))
-                        onClose()
-                    },
-                    onError = {
-                        AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_user_unmuted_failed"))
-                        pageScope?.showSnackbar(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_user_unmuted_failed"))
-                    }
-                )
-            },
-            onDismissRequest = {
-                showUnmuteDialog = false
-            }
-        )
-    }
 }
 
 private fun submitReport(

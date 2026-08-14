@@ -225,7 +225,7 @@ fun AmityLivestreamPlayerPage(
         )
         return
     }
-    AmityBasePage(pageId = "live_stream_page") {
+    AmityBasePage(pageId = "live_stream_page", toastBottomPadding = 72.dp) {
         AmityBaseComponent(
             pageScope = getPageScope(),
             componentId = "stream_player",

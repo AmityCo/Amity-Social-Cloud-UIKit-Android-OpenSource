@@ -57,7 +57,7 @@ fun AmityPostPreviewLinkView(
 ) {
     val isAllowedPostDataType by remember(post.getPostId(), post.getUpdatedAt()) {
         derivedStateOf {
-            post.getType() == AmityPost.DataType.TEXT
+            post.getType() == AmityPost.DataType.TEXT && post.getChildren().isEmpty()
         }
     }
 

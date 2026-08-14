@@ -365,9 +365,9 @@
     <string name="amity_social_button_post_content_share_button">Share</string>
     <string name="amity_social_button_post_declined">Post declined.</string>
     <string name="amity_social_button_post_deleted">Post deleted</string>
-    <string name="amity_social_button_post_reported">Post reported</string>
+    <string name="amity_social_button_post_reported">Post reported.</string>
     <string name="amity_social_button_post_to">Post to</string>
-    <string name="amity_social_button_post_unreported">Post unreported</string>
+    <string name="amity_social_button_post_unreported">Post unreported.</string>
     <string name="amity_social_button_product_already_tagged">Already tagged</string>
     <string name="amity_social_button_products_tagged">Products tagged</string>
     <string name="amity_social_button_promote">Promote</string>
@@ -1071,7 +1071,7 @@
     <string name="amity_social_button_group">Group</string>
     <string name="amity_social_button_in_person">In-person</string>
     <string name="amity_social_button_invite_co_host">Invite co-host</string>
-    <string name="amity_social_button_story_to">Story to</string>
+    <string name="amity_social_button_story_to">Share to</string>
     <string name="amity_social_button_unknown_community">Unknown Community</string>
     <string name="amity_social_button_user_pending_button">Cancel request</string>
     <string name="amity_social_button_virtual">Virtual</string>

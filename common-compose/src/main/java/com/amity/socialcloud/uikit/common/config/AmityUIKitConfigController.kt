@@ -2,6 +2,7 @@ package com.amity.socialcloud.uikit.common.config
 
 import android.content.Context
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.core.session.model.SessionState
 import com.amity.socialcloud.sdk.model.core.shareablelink.AmityShareableLinkConfiguration
@@ -18,6 +19,7 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 
 object AmityUIKitConfigController {
@@ -41,49 +43,45 @@ object AmityUIKitConfigController {
 
     private var callbacks = mutableMapOf<String,() -> Unit>()
 
-    @Volatile
-    private var _shareableLinkPattern: AmityShareableLinkConfiguration? = null
+    // Compose snapshot state: composables that read the link pattern (via getPostLink /
+    // getCommunityLink / getUserLink) recompose when the async fetch lands.
+    private val _shareableLinkPattern = mutableStateOf<AmityShareableLinkConfiguration?>(null)
 
     var shareableLinkPattern: AmityShareableLinkConfiguration?
-        get() = _shareableLinkPattern
+        get() = _shareableLinkPattern.value
         set(value) {
-            _shareableLinkPattern = value
+            _shareableLinkPattern.value = value
         }
 
+    private var shareableLinkSessionDisposable: Disposable? = null
+    private var shareableLinkFetchDisposable: Disposable? = null
+
     fun initializeShareableLinkPattern() {
-        AmityCoreClient.observeSessionState()
+        // setup() can be called again (e.g. switching networks); replace any previous subscription
+        shareableLinkSessionDisposable?.dispose()
+        shareableLinkSessionDisposable = AmityCoreClient.observeSessionState()
+            .distinctUntilChanged()
             .filter { it == SessionState.Established }
-            .firstOrError()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .doOnSuccess {
-                if (_shareableLinkPattern == null) {
-                    fetchShareableLinkConfig()
-                }
-            }
-            .doOnError {
-
-            }
-            .subscribe()
+            .subscribe(
+                { fetchShareableLinkConfig() },
+                { /* ignored: session stream errors are non-actionable here */ }
+            )
     }
 
     private fun fetchShareableLinkConfig() {
         // SDK 7.23.0-alpha03: getShareableLinkConfiguration() returns the configuration
         // Single directly (the AmityShareableLink intermediate step is deprecated).
-        AmityCoreClient.getShareableLinkConfiguration()
+        shareableLinkFetchDisposable?.dispose()
+        shareableLinkFetchDisposable = AmityCoreClient.getShareableLinkConfiguration()
+            .retry(3)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .doOnError { error ->
-                // Handle the error gracefully instead of crashing
-                Log.d("link pattern", "error: $error")
-                // Set to null or a default configuration
-                _shareableLinkPattern = null
-            }
-            .doOnSuccess { shareableLink ->
-                //println("Shareable link pattern api calling success $shareableLink")
-                _shareableLinkPattern = shareableLink
-            }
-            .subscribe()
+            .subscribe(
+                { shareableLink -> shareableLinkPattern = shareableLink },
+                { /* keep the last known pattern; the next session establishment refetches */ }
+            )
     }
 
     fun registerChangeCallback(id: String, callback: () -> Unit) {

@@ -140,4 +140,22 @@ class AmityPostContentElementScreenshotTest {
         }
         composeTestRule.onRoot().captureRoboImage("src/test/golden/product_tag_post.png")
     }
+
+    // ── 8. Search keyword highlight (PDT-4254) ────────────────────────────────
+    // The search query is trimmed before searching, but the highlight term was
+    // not — a keyword carrying surrounding whitespace (" beauty ") highlighted the
+    // spaces before and after the word. The highlight must cover the keyword only.
+
+    @Test
+    fun search_keyword_highlight() {
+        composeTestRule.setContent {
+            AmityPostContentElement(
+                post = FakePostFactory.textPost(text = "I love beauty products"),
+                style = AmityPostContentComponentStyle.FEED,
+                boldedText = " beauty ",
+                onClick = {},
+            )
+        }
+        composeTestRule.onRoot().captureRoboImage("src/test/golden/search_keyword_highlight.png")
+    }
 }
