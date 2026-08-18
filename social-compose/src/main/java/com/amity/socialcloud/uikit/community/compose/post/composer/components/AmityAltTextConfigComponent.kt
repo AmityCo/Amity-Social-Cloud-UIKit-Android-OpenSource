@@ -189,7 +189,7 @@ fun AmityAltTextConfigComponent(
                             Text(
                                 text = if (isInEditMode) DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_save_button") else DefaultAmitySocialStringProvider.getInstance().getString("amity_social_modal_dialog_done_button"),
                                 style = AmityTheme.typography.bodyLegacy.copy(
-                                    color = if (shouldAllowToSave) AmityTheme.colors.primary else AmityTheme.colors.primaryShade2
+                                    color = AmityTheme.colors.primary.copy(alpha = if (shouldAllowToSave) 1f else 0.3f)
                                 ),
                                 modifier = modifier
                                     .clickableWithoutRipple(enabled = shouldAllowToSave) {

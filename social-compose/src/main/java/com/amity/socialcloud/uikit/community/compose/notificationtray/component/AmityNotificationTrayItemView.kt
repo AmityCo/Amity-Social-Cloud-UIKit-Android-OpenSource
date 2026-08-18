@@ -80,7 +80,7 @@ fun AmityNotificationTrayItemView(
             .fillMaxWidth()
             .background(
                 if (isSeen) AmityTheme.colors.background
-                else AmityTheme.colors.primary.copy(alpha = 0.3f)
+                else AmityTheme.colors.primary.copy(alpha = 0.2f)
             )
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically

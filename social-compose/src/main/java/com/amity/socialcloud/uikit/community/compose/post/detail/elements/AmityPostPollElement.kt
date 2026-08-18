@@ -328,7 +328,7 @@ fun AmityPostPollElement(
                     val isOptionSelected =
                         pollStateUiState.find { it.postId == post.getPostId() }?.selectedOption?.contains(
                             index
-                        ) ?: selectedIndices.contains(index)
+                        ) == true
                     Row(
                         modifier = Modifier
                             .padding(bottom = 8.dp)
@@ -388,6 +388,12 @@ fun AmityPostPollElement(
                                     onClick = {
                                         selectedIndices.clear()
                                         selectedIndices.add(index)
+                                        viewModel.updatePollState(
+                                            post.getPostId(),
+                                            isExpanded = isOptionsExpanded,
+                                            isResultMode = isResultState,
+                                            selectedOption = selectedIndices.toMutableList(),
+                                        )
                                     },
                                 )
                             }
@@ -401,6 +407,12 @@ fun AmityPostPollElement(
                                     } else {
                                         selectedIndices.add(index)
                                     }
+                                    viewModel.updatePollState(
+                                        post.getPostId(),
+                                        isExpanded = isOptionsExpanded,
+                                        isResultMode = isResultState,
+                                        selectedOption = selectedIndices.toMutableList(),
+                                    )
                                 },
                             )
                         }
@@ -516,8 +528,8 @@ fun AmityPostPollElement(
                                     AmitySocialClient.newPollRepository()
                                         .votePoll(
                                             poll.getPollId(),
-                                            pollStateUiState.find { it.postId == post.getPostId() }?.selectedOption?.map { poll.getAnswers()[it].id }
-                                                ?: selectedIndices.map { poll.getAnswers()[it].id }
+                                            pollStateUiState.find { it.postId == post.getPostId() }?.selectedOption.orEmpty()
+                                                .map { poll.getAnswers()[it].id }
                                         )
                                         .await()
 

@@ -26,28 +26,20 @@ class AmityPostPollElementViewModel(postId: String) : AmityBaseViewModel() {
 
     fun updatePollState(postId: String, isExpanded: Boolean, isResultMode: Boolean, selectedOption: MutableList<Int> = mutableListOf()) {
         _uiState.update { currentState ->
-            currentState.apply {
-                if (currentState.any { it.postId == postId }) {
-                    // Update existing state
-                    val index = currentState.indexOfFirst { it.postId == postId }
-                    this[index] = PollStateUiState(
-                        postId = postId,
-                        isExpanded = isExpanded,
-                        isResultMode = isResultMode,
-                        selectedOption = selectedOption
-                    )
-                } else {
-                    // Add new state
-                    this.add(
-                        PollStateUiState(
-                            postId = postId,
-                            isExpanded = isExpanded,
-                            isResultMode = isResultMode,
-                            selectedOption = selectedOption
-                        )
-                    )
-                }
+            val updatedState = currentState.toMutableList()
+            val newState = PollStateUiState(
+                postId = postId,
+                isExpanded = isExpanded,
+                isResultMode = isResultMode,
+                selectedOption = selectedOption
+            )
+            val index = updatedState.indexOfFirst { it.postId == postId }
+            if (index >= 0) {
+                updatedState[index] = newState
+            } else {
+                updatedState.add(newState)
             }
+            updatedState
         }
     }
 

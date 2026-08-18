@@ -378,7 +378,7 @@ private fun AmityProductSelectionTopBar(
             Text(
                 text = actionText,
                 style = AmityTheme.typography.body.copy(
-                    color = if (isActionDisabled) AmityTheme.colors.primaryShade2 else AmityTheme.colors.primary
+                    color = AmityTheme.colors.primary.copy(alpha = if (isActionDisabled) 0.3f else 1f)
                 ),
                 modifier = Modifier
                     .align(Alignment.CenterEnd)
