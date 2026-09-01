@@ -20,7 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 import com.amity.socialcloud.uikit.common.ui.theme.amityStoryEngagementBackground
 
@@ -45,7 +45,7 @@ fun AmityStoryHyperlinkView(
     ) {
         Icon(
             painter = painterResource(
-                id = R.drawable.amity_ic_hyperlink
+                id = CommonR.drawable.amity_ic_hyperlink
             ),
             contentDescription = null,
             tint = AmityTheme.colors.primary

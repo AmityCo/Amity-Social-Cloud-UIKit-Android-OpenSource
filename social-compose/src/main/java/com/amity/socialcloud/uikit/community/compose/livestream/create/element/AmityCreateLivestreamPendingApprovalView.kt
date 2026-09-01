@@ -21,7 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 
@@ -35,7 +35,7 @@ fun AmityCreateLivestreamPendingApprovalView() {
     ) {
         Spacer(Modifier.weight(1f))
         Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.amity_ic_base_hidden),
+            imageVector = ImageVector.vectorResource(CommonR.drawable.amity_ic_base_hidden),
             contentDescription = null,
             modifier = Modifier
                 .width(48.dp)

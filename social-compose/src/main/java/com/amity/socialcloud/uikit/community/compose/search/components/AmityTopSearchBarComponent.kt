@@ -40,7 +40,7 @@ import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.closePage
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getText
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.search.global.AmityGlobalSearchType
 import com.amity.socialcloud.uikit.community.compose.search.global.AmityGlobalSearchViewModel
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
@@ -99,7 +99,7 @@ fun AmityTopSearchBarComponent(
                 elementId = "back_button"
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.amity_ic_back),
+                    painter = painterResource(CommonR.drawable.amity_ic_back),
                     contentDescription = "Back",
                     tint = AmityTheme.colors.base,
                     modifier = modifier
@@ -175,7 +175,7 @@ fun AmityTopSearchBarComponent(
                             elementId = "clear_button"
                         ) {
                             Icon(
-                                painter = painterResource(id = R.drawable.amity_ic_close),
+                                painter = painterResource(id = CommonR.drawable.amity_ic_close),
                                 tint = amityColorWhite,
                                 contentDescription = null,
                                 modifier = modifier

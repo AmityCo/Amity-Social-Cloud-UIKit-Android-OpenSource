@@ -35,7 +35,7 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.shade
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import kotlinx.coroutines.launch
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
@@ -458,7 +458,7 @@ fun AmityLocationBottomSheet(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
-                                    painter = painterResource(R.drawable.amity_ic_event_livestream),
+                                    painter = painterResource(CommonR.drawable.amity_ic_event_livestream),
                                     contentDescription = amitySocialString("amity_social_status_live_stream"),
                                     tint = AmityTheme.colors.base,
                                     modifier = Modifier.size(24.dp)
@@ -543,7 +543,7 @@ fun AmityLocationBottomSheet(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
-                                    painter = painterResource(R.drawable.amity_ic_event_external),
+                                    painter = painterResource(CommonR.drawable.amity_ic_event_external),
                                     contentDescription = "Event link",
                                     tint = AmityTheme.colors.base,
                                     modifier = Modifier.size(24.dp)

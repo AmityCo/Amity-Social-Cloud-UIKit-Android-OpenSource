@@ -36,7 +36,7 @@ import coil3.compose.AsyncImage
 import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.uikit.chat.compose.localization.DefaultAmityChatStringProvider
-import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButton
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonHierarchy
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonStyle
@@ -67,7 +67,7 @@ fun AmityChatScrollToBottomFab(
             style = AmityButtonStyle.FILLED,
             hierarchy = AmityButtonHierarchy.SECONDARY,
             iconSize = AmityIconButtonSize.SIZE40,
-            icon = CommonR.drawable.amity_ic_chevron_down,
+            icon = CommonComposeR.drawable.amity_ic_chevron_down,
             contentDescription = "Scroll to bottom",
             onClick = onClick,
             modifier = Modifier
@@ -153,7 +153,7 @@ fun AmityChatNewMessageNotification(
 
                 // Down arrow
                 Icon(
-                    painter = painterResource(id = CommonR.drawable.amity_ic_chevron_down),
+                    painter = painterResource(id = CommonComposeR.drawable.amity_ic_chevron_down),
                     contentDescription = null,
                     modifier = Modifier.size(12.dp),
                     tint = AmityTheme.token(AmityColorToken.IconCustomToastDefault),

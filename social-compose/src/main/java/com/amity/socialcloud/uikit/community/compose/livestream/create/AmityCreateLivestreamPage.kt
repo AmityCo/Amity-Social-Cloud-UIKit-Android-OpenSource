@@ -112,6 +112,7 @@ import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getText
 import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.livestream.chat.AmityLivestreamMessageComposeBar
 import com.amity.socialcloud.uikit.community.compose.livestream.chat.ChatOverlay
@@ -563,7 +564,7 @@ fun AmityCreateLivestreamPage(
                                     }
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Image(
-                                        painter = painterResource(R.drawable.amity_arrow_down),
+                                        painter = painterResource(CommonR.drawable.amity_arrow_down),
                                         contentDescription = "Close Button",
                                         modifier = modifier
                                             .size(16.dp)
@@ -777,7 +778,7 @@ fun AmityCreateLivestreamPage(
                                                             showEndLivestreamDialog = true
                                                         }
                                                         .testTag(getAccessibilityId()),
-                                                    painter = painterResource(id = R.drawable.amity_ic_close),
+                                                    painter = painterResource(id = CommonR.drawable.amity_ic_close),
                                                     contentDescription = "end_livestream_button",
                                                     contentScale = ContentScale.Fit
                                                 )
@@ -830,7 +831,7 @@ fun AmityCreateLivestreamPage(
                                                                     showBottomSheet = true
                                                                 }
                                                                 .testTag(getAccessibilityId()),
-                                                            painter = painterResource(id = R.drawable.amity_ic_more_vertical),
+                                                            painter = painterResource(id = CommonR.drawable.amity_ic_more_vertical),
                                                             contentDescription = "create_livestream_option_button",
                                                             tint = AmityTheme.colors.baseInverse
                                                         )
@@ -1201,7 +1202,7 @@ fun AmityCreateLivestreamPage(
                                     .testTag("switch_camera_button")
                             ) {
                                 Image(
-                                    painter = painterResource(R.drawable.amity_v4_switch_camera_button),
+                                    painter = painterResource(CommonR.drawable.amity_v4_switch_camera_button),
                                     contentDescription = "",
                                     modifier = Modifier
                                         .size(36.dp)
@@ -1250,7 +1251,7 @@ fun AmityCreateLivestreamPage(
                     val postLink = if(post != null) AmityUIKitConfigController.getPostLink(post) else ""
                     if(postLink.isNotEmptyOrBlank()) {
                         AmityBottomSheetActionItem(
-                            icon = R.drawable.amity_v4_link_icon,
+                            icon = CommonR.drawable.amity_v4_link_icon,
                             text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_copy_live_stream_link"),
                             modifier = Modifier
                                 .padding(horizontal = 12.dp),
@@ -1263,7 +1264,7 @@ fun AmityCreateLivestreamPage(
                         }
 
                         AmityBottomSheetActionItem(
-                            icon = R.drawable.amity_v4_share_icon,
+                            icon = CommonR.drawable.amity_v4_share_icon,
                             text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_share_to"),
                             modifier = Modifier
                                 .padding(horizontal = 12.dp),

@@ -88,7 +88,7 @@ import com.amity.socialcloud.uikit.chat.compose.live.elements.AmityAvatarType
 import com.amity.socialcloud.uikit.chat.compose.live.elements.AmityMessageAvatarView
 import com.amity.socialcloud.uikit.chat.compose.live.mention.AmityMentionSuggestion
 import com.amity.socialcloud.uikit.chat.compose.localization.DefaultAmityChatStringProvider
-import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.localization.amityCommonString
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityBanner
@@ -398,9 +398,9 @@ private fun ComposerContent(
                 hierarchy = AmityButtonHierarchy.SECONDARY,
                 iconSize = AmityIconButtonSize.SIZE32,
                 icon = if (showMediaSection)
-                    CommonR.drawable.amity_ic_cross_r
+                    CommonComposeR.drawable.amity_ic_cross_r
                 else
-                    CommonR.drawable.amity_ic_plus_r,
+                    CommonComposeR.drawable.amity_ic_plus_r,
                 onClick = {
                     showMediaSection = !showMediaSection
                 },
@@ -449,7 +449,7 @@ private fun ComposerContent(
                 style = AmityButtonStyle.FILLED,
                 hierarchy = if (isSendButtonEnabled) AmityButtonHierarchy.PRIMARY else AmityButtonHierarchy.SECONDARY,
                 iconSize = AmityIconButtonSize.SIZE32,
-                icon = CommonR.drawable.amity_ic_arrow_up_r,
+                icon = CommonComposeR.drawable.amity_ic_arrow_up_r,
                 enabled = isSendButtonEnabled,
                 onClick = {
                     val text = messageText.trim()
@@ -524,7 +524,7 @@ private fun ComposerContent(
             horizontalArrangement = Arrangement.spacedBy(56.dp, Alignment.CenterHorizontally),
         ) {
             MediaButton(
-                iconResId = CommonR.drawable.amity_ic_camera_r,
+                iconResId = CommonComposeR.drawable.amity_ic_camera_r,
                 label = amityChatString("chat.media.camera"),
                 onClick = {
                     val hasCameraPermission = ContextCompat.checkSelfPermission(
@@ -540,7 +540,7 @@ private fun ComposerContent(
             )
 
             MediaButton(
-                iconResId = CommonR.drawable.amity_ic_image_r,
+                iconResId = CommonComposeR.drawable.amity_ic_image_r,
                 label = amityChatString("chat.media.photo"),
                 onClick = {
                     imagePickerLauncher.launch(
@@ -645,7 +645,7 @@ private fun EditPreview(
             style = AmityButtonStyle.GHOST,
             hierarchy = AmityButtonHierarchy.SECONDARY,
             iconSize = AmityIconButtonSize.SIZE32,
-            icon = CommonR.drawable.amity_ic_cross_r,
+            icon = CommonComposeR.drawable.amity_ic_cross_r,
             onClick = onDismiss,
         )
     }
@@ -736,7 +736,7 @@ private fun ReplyPreview(
                         contentAlignment = Alignment.Center,
                     ) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_video_play_s),
+                            imageVector = ImageVector.vectorResource(id = CommonComposeR.drawable.amity_ic_video_play_s),
                             contentDescription = "Video",
                             modifier = Modifier.size(16.dp),
                             tint = AmityTheme.token(AmityColorToken.IconIconButtonTransparentPrimaryDefault),
@@ -752,7 +752,7 @@ private fun ReplyPreview(
             style = AmityButtonStyle.GHOST,
             hierarchy = AmityButtonHierarchy.SECONDARY,
             iconSize = AmityIconButtonSize.SIZE32,
-            icon = CommonR.drawable.amity_ic_cross_r,
+            icon = CommonComposeR.drawable.amity_ic_cross_r,
             onClick = onDismiss,
         )
     }
@@ -845,7 +845,7 @@ internal fun GroupMentionSuggestionView(
                         contentAlignment = Alignment.Center,
                     ) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_at_s),
+                            imageVector = ImageVector.vectorResource(id = CommonComposeR.drawable.amity_ic_at_s),
                             contentDescription = null,
                             tint = AmityTheme.token(AmityColorToken.IconFeaturedIconSolid),
                             modifier = Modifier.size(24.dp),
@@ -871,7 +871,7 @@ internal fun GroupMentionSuggestionView(
 
                 if (isBrandUser) {
                     Image(
-                        painter = painterResource(id = R.drawable.amity_ic_brand_badge),
+                        painter = painterResource(id = CommonComposeR.drawable.amity_ic_brand_badge),
                         contentDescription = "",
                         modifier = Modifier
                             .size(20.dp)
@@ -900,7 +900,7 @@ internal fun GroupMentionSuggestionView(
                 style = AmityButtonStyle.FILLED,
                 hierarchy = AmityButtonHierarchy.SECONDARY,
                 iconSize = AmityIconButtonSize.SIZE24,
-                icon = CommonR.drawable.amity_ic_cross_r,
+                icon = CommonComposeR.drawable.amity_ic_cross_r,
                 contentDescription = "Close",
                 onClick = onClose,
                 modifier = Modifier

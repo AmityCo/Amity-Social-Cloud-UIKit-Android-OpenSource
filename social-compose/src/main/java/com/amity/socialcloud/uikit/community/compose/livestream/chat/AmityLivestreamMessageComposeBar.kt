@@ -69,6 +69,7 @@ import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.isSignedIn
 import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityProductTaggingButton
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
@@ -327,7 +328,7 @@ fun AmityLivestreamMessageComposeBar(
                         contentPadding = PaddingValues(1.dp)
                     ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.amity_arrow_upward),
+                            painter = painterResource(id = CommonR.drawable.amity_arrow_upward),
                             contentDescription = "Send",
                             modifier = Modifier.size(16.dp)
                         )
@@ -346,7 +347,7 @@ fun AmityLivestreamMessageComposeBar(
                                 .testTag("invite_sheet_button")
                         ) {
                             Image(
-                                painter = painterResource(R.drawable.amity_ic_room_invite_button),
+                                painter = painterResource(CommonR.drawable.amity_ic_room_invite_button),
                                 contentDescription = "",
                                 modifier = Modifier
                                     .size(36.dp)
@@ -366,8 +367,8 @@ fun AmityLivestreamMessageComposeBar(
                                 .testTag("toggle_microphone_button")
                         ) {
                             Image(
-                                painter = if (isMicrophoneMute) { painterResource(R.drawable.amity_ic_room_unmute_button) } else {
-                                    painterResource(R.drawable.amity_ic_room_mute_button)
+                                painter = if (isMicrophoneMute) { painterResource(CommonR.drawable.amity_ic_room_unmute_button) } else {
+                                    painterResource(CommonR.drawable.amity_ic_room_mute_button)
                                 },
                                 contentDescription = "",
                                 modifier = Modifier
@@ -388,7 +389,7 @@ fun AmityLivestreamMessageComposeBar(
                                 .testTag("switch_camera_button")
                         ) {
                             Image(
-                                painter = painterResource(R.drawable.amity_ic_room_switch_camera),
+                                painter = painterResource(CommonR.drawable.amity_ic_room_switch_camera),
                                 contentDescription = "",
                                 modifier = Modifier
                                     .size(36.dp)

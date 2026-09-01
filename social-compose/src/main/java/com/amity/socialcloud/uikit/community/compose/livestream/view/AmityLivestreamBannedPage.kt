@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
@@ -143,7 +144,7 @@ fun AmityLivestreamBannedPage(
 ) {
     AmityBaseWarningPage(
         pageId = "live_stream_banned_page",
-        iconRes = R.drawable.amity_ic_base_warning,
+        iconRes = CommonR.drawable.amity_ic_base_warning,
         title = amitySocialString("amity_social_label_banned_title"),
         description = amitySocialString("amity_social_status_banned_desc"), buttonText = amitySocialString("amity_social_button_ok"),
         onOkClick = onOkClick,

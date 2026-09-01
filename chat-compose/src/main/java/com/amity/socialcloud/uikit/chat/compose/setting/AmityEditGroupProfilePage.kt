@@ -68,7 +68,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 import com.amity.socialcloud.uikit.common.ui.theme.isUIKitInDarkTheme
 import com.amity.socialcloud.uikit.common.utils.AmityCameraUtil
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
-import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButton
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonVariant
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonStyle
@@ -162,7 +162,7 @@ fun AmityEditGroupProfilePage(
                     style = AmityButtonStyle.GHOST,
                     hierarchy = AmityButtonHierarchy.SECONDARY,
                     iconSize = AmityIconButtonSize.SIZE24,
-                    icon = CommonR.drawable.amity_ic_chevron_left,
+                    icon = CommonComposeR.drawable.amity_ic_chevron_left,
                     onClick = { (context as? Activity)?.finish() },
                     modifier = Modifier.align(Alignment.CenterStart),
                 )
@@ -257,7 +257,7 @@ fun AmityEditGroupProfilePage(
                             imageUrl = channel?.getAvatar()?.getUrl(AmityImage.Size.MEDIUM),
                             style = AmityAvatarStyle.Squared,
                             size = AmityAvatarSize.Size120,
-                            icon = CommonR.drawable.amity_ic_comments_alt_s,
+                            icon = CommonComposeR.drawable.amity_ic_comments_alt_s,
                         )
                     }
                     // Dark overlay with camera icon or progress
@@ -277,7 +277,7 @@ fun AmityEditGroupProfilePage(
                         } else {
                             Icon(
                                 imageVector = ImageVector.vectorResource(
-                                    id = CommonR.drawable.amity_ic_camera_r,
+                                    id = CommonComposeR.drawable.amity_ic_camera_r,
                                 ),
                                 contentDescription = "Change photo",
                                 tint = AmityTheme.token(AmityColorToken.IconAvatarDefault),
@@ -382,7 +382,7 @@ fun AmityEditGroupProfilePage(
                             ) {
                                 Icon(
                                     imageVector = ImageVector.vectorResource(
-                                        id = CommonR.drawable.amity_ic_camera_r,
+                                        id = CommonComposeR.drawable.amity_ic_camera_r,
                                     ),
                                     contentDescription = null,
                                     tint = AmityTheme.token(AmityColorToken.IconIconButtonFilledSecondaryDefault),
@@ -410,7 +410,7 @@ fun AmityEditGroupProfilePage(
                             ) {
                                 Icon(
                                     imageVector = ImageVector.vectorResource(
-                                        id = CommonR.drawable.amity_ic_image_r,
+                                        id = CommonComposeR.drawable.amity_ic_image_r,
                                     ),
                                     contentDescription = null,
                                     tint = AmityTheme.token(AmityColorToken.IconIconButtonFilledSecondaryDefault),

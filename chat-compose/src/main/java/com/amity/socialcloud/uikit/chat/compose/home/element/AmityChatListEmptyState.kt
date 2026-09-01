@@ -8,7 +8,7 @@ import com.amity.socialcloud.uikit.chat.compose.R
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityEmptyState
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityEmptyStateAction
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityEmptyStateVariant
-import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 
 @Composable
 fun AmityChatListEmptyState(
@@ -24,7 +24,7 @@ fun AmityChatListEmptyState(
         description = amityChatString("chat.home.empty.description"),
         primaryAction = AmityEmptyStateAction(
             label = amityChatString("chat.create.new.chat"),
-            icon = CommonR.drawable.amity_ic_plus_r,
+            icon = CommonComposeR.drawable.amity_ic_plus_r,
             onPress = onCreateChatClick,
         ),
     )

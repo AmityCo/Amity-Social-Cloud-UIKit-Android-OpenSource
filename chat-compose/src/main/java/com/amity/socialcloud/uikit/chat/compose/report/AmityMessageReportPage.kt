@@ -29,7 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.sdk.model.core.flag.AmityContentFlagReason
-import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityBanner
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityBannerHierarchy
@@ -70,7 +70,7 @@ fun AmityMessageReportPage(
                     .padding(horizontal = 12.dp),
             ) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_chevron_left),
+                    imageVector = ImageVector.vectorResource(id = CommonComposeR.drawable.amity_ic_chevron_left),
                     contentDescription = "Back",
                     modifier = Modifier
                         .size(24.dp)

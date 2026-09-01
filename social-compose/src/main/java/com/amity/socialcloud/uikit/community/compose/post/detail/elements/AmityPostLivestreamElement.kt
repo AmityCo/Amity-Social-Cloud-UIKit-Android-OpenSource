@@ -59,6 +59,8 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityExpandableText
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.ui.theme.amityLiveBadgeRed
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
+import com.amity.socialcloud.uikit.common.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityProductWebViewBottomSheet
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
@@ -229,7 +231,7 @@ fun AmityChildLivestreamPostElement(
                     }
                     if (stream.getStatus() != AmityStream.Status.IDLE) {
                         Image(
-                            painter = painterResource(id = R.drawable.amity_ic_play_v4),
+                            painter = painterResource(id = CommonComposeR.drawable.amity_ic_play_v4),
                             contentDescription = null,
                             modifier = Modifier.align(Alignment.Center)
                         )
@@ -324,7 +326,7 @@ fun AmityLivestreamEndedView(modifier: Modifier = Modifier) {
 fun AmityLivestreamUnavailableView(modifier: Modifier = Modifier) {
     AmityLivestreamNoticeView(
         modifier = modifier,
-        icon = R.drawable.amity_ic_warning,
+        icon = CommonR.drawable.amity_ic_warning,
         title = amitySocialString("amity_social_label_livestream_post_thumbnail_unavailable_title"),
     )
 }
@@ -333,7 +335,7 @@ fun AmityLivestreamUnavailableView(modifier: Modifier = Modifier) {
 fun AmityLivestreamReplayUnavailableView(modifier: Modifier = Modifier) {
     AmityLivestreamNoticeView(
         modifier = modifier,
-        icon = R.drawable.amity_ic_warning,
+        icon = CommonR.drawable.amity_ic_warning,
         title = amitySocialString("amity_social_label_livestream_post_thumbnail_ended_too_short_title"),
         description = amitySocialString("amity_social_status_livestream_post_thumbnail_ended_too_short_desc"),
     )
@@ -777,7 +779,7 @@ fun AmityChildRoomPostElement(
                     // Play button overlay (all states except IDLE)
                     if (room != null && roomStatus != AmityRoomStatus.IDLE) {
                         Image(
-                            painter = painterResource(id = R.drawable.amity_ic_play_v4),
+                            painter = painterResource(id = CommonComposeR.drawable.amity_ic_play_v4),
                             contentDescription = null,
                             modifier = Modifier.align(Alignment.Center)
                         )

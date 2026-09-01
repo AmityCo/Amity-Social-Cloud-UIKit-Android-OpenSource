@@ -31,7 +31,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityMenuButton
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import com.amity.socialcloud.uikit.common.ui.theme.amityMediaSurface
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
@@ -109,7 +109,7 @@ private fun ImageNotAvailableDialog(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.amity_ic_image_not_available),
+                    painter = painterResource(id = CommonR.drawable.amity_ic_image_not_available),
                     contentDescription = "Image Not Available",
                     tint = amityColorWhite,
                     modifier = Modifier.size(60.dp)
@@ -128,7 +128,7 @@ private fun ImageNotAvailableDialog(
             }
 
             AmityMenuButton(
-                icon = R.drawable.amity_ic_close2,
+                icon = CommonR.drawable.amity_ic_close2,
                 size = 32.dp,
                 iconPadding = 10.dp,
                 tint = amityColorBlack.copy(0.5f),

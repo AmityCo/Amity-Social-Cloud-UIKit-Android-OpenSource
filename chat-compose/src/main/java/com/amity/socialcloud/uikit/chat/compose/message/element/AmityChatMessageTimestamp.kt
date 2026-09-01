@@ -14,7 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import com.amity.socialcloud.uikit.chat.compose.localization.amityChatString
 import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
-import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButton
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonHierarchy
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonStyle
@@ -61,7 +61,7 @@ fun AmityChatMessageTimestamp(
                         style = AmityButtonStyle.FILLED,
                         hierarchy = AmityButtonHierarchy.SECONDARY,
                         iconSize = AmityIconButtonSize.SIZE24,
-                        icon = CommonR.drawable.amity_ic_redo_r,
+                        icon = CommonComposeR.drawable.amity_ic_redo_r,
                         contentDescription = "Retry",
                         enabled = onFailedClick != null,
                         onClick = { onFailedClick?.invoke() },
@@ -75,7 +75,7 @@ fun AmityChatMessageTimestamp(
                         style = AmityButtonStyle.TRANSPARENT,
                         hierarchy = AmityButtonHierarchy.PRIMARY,
                         iconSize = AmityIconButtonSize.SIZE24,
-                        icon = CommonR.drawable.amity_ic_exclamation_s,
+                        icon = CommonComposeR.drawable.amity_ic_exclamation_s,
                         contentDescription = amityChatString("chat.status.failed"),
                         enabled = onFailedClick != null,
                         onClick = { onFailedClick?.invoke() },

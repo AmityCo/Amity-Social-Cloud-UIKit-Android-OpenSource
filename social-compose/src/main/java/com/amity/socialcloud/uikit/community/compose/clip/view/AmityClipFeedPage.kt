@@ -53,7 +53,7 @@ import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.community.compose.clip.view.element.AmityClipLoadStateError
 import com.amity.socialcloud.uikit.community.compose.clip.view.element.AmityClipModalBottomSheet
 import com.amity.socialcloud.uikit.community.compose.clip.view.element.AmityClipPostDeleted
@@ -482,7 +482,7 @@ fun AmityClipFeedPage(
                 ) > 0 && !isPlaying && !isDragging && playerState == ExoPlayer.STATE_READY && !isPostDeleted
             ) {
                 Image(
-                    painter = painterResource(R.drawable.amity_ic_play_v4),
+                    painter = painterResource(CommonComposeR.drawable.amity_ic_play_v4),
                     contentDescription = "Play Icon",
                     modifier = Modifier
                         .size(40.dp)

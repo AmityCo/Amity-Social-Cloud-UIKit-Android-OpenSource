@@ -85,7 +85,7 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
-import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityBadge
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityBadgeVariant
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityBadgeShape
@@ -277,7 +277,7 @@ fun AmityMessageBubble(
                     ) {
                         AmityBadge(
                             variant = AmityBadgeVariant.ICON,
-                            icon = CommonR.drawable.amity_ic_shield_check_s,
+                            icon = CommonComposeR.drawable.amity_ic_shield_check_s,
                             shape = AmityBadgeShape.ROUND,
                             size = AmityBadgeSize.SIZE_14,
                             preset = AmityBadgePreset(
@@ -701,7 +701,7 @@ private fun MessageContent(
                             ),
                         )
                         Icon(
-                            imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_chevron_right),
+                            imageVector = ImageVector.vectorResource(id = CommonComposeR.drawable.amity_ic_chevron_right),
                             contentDescription = null,
                             modifier = Modifier.size(20.dp),
                             tint = if (isCurrentUser) AmityTheme.token(AmityColorToken.IconChatBubbleOutboundSeeMoreDefault)
@@ -957,7 +957,7 @@ private fun AmityChatUploadController(
         )
         if (onCancel != null) {
             Icon(
-                imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_cross_l),
+                imageVector = ImageVector.vectorResource(id = CommonComposeR.drawable.amity_ic_cross_l),
                 contentDescription = "Cancel upload",
                 tint = AmityTheme.token(AmityColorToken.IconLoadersUploadControllerDefault),
                 modifier = Modifier.size(24.dp),
@@ -1145,7 +1145,7 @@ fun AmityChatImageContent(
             ) {
                 if (!isUploading) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_image_slash_r),
+                        imageVector = ImageVector.vectorResource(id = CommonComposeR.drawable.amity_ic_image_slash_r),
                         contentDescription = null,
                         modifier = Modifier.size(40.dp),
                         tint = AmityTheme.token(AmityColorToken.IconMediaImageBroken),
@@ -1349,7 +1349,7 @@ fun AmityChatVideoContent(
                         )
                         if (onCancelUpload != null) {
                             Icon(
-                                imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_cross_l),
+                                imageVector = ImageVector.vectorResource(id = CommonComposeR.drawable.amity_ic_cross_l),
                                 contentDescription = "Cancel upload",
                                 tint = AmityTheme.token(AmityColorToken.IconLoadersUploadControllerDefault),
                                 modifier = Modifier.size(24.dp),
@@ -1379,7 +1379,7 @@ fun AmityChatVideoContent(
                         contentAlignment = Alignment.Center,
                     ) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_video_play_s),
+                            imageVector = ImageVector.vectorResource(id = CommonComposeR.drawable.amity_ic_video_play_s),
                             contentDescription = "Play video",
                             modifier = Modifier.size(24.dp),
                             tint = AmityTheme.token(AmityColorToken.IconLoadersUploadControllerDefault),
@@ -1422,7 +1422,7 @@ fun AmityChatVideoContent(
                         )
                         if (onCancelUpload != null) {
                             Icon(
-                                imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_cross_l),
+                                imageVector = ImageVector.vectorResource(id = CommonComposeR.drawable.amity_ic_cross_l),
                                 contentDescription = "Cancel upload",
                                 tint = AmityTheme.token(AmityColorToken.IconLoadersUploadControllerDefault),
                                 modifier = Modifier.size(24.dp),
@@ -1452,7 +1452,7 @@ fun AmityChatVideoContent(
                         contentAlignment = Alignment.Center,
                     ) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_video_play_s),
+                            imageVector = ImageVector.vectorResource(id = CommonComposeR.drawable.amity_ic_video_play_s),
                             contentDescription = "Play video",
                             modifier = Modifier.size(24.dp),
                             tint = AmityTheme.token(AmityColorToken.IconLoadersUploadControllerDefault),
@@ -1490,7 +1490,7 @@ fun AmityChatVideoContent(
                         )
                         if (onCancelUpload != null) {
                             Icon(
-                                imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_cross_l),
+                                imageVector = ImageVector.vectorResource(id = CommonComposeR.drawable.amity_ic_cross_l),
                                 contentDescription = "Cancel upload",
                                 tint = AmityTheme.token(AmityColorToken.IconLoadersUploadControllerDefault),
                                 modifier = Modifier.size(24.dp),
@@ -1523,7 +1523,7 @@ fun AmityChatVideoContent(
                         contentAlignment = Alignment.Center,
                     ) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_video_play_s),
+                            imageVector = ImageVector.vectorResource(id = CommonComposeR.drawable.amity_ic_video_play_s),
                             contentDescription = "Play video",
                             modifier = Modifier.size(24.dp),
                             tint = AmityTheme.token(AmityColorToken.IconLoadersUploadControllerDefault),
@@ -1604,7 +1604,7 @@ fun DeletedMessageBubble(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(CommonR.drawable.amity_ic_trash_r),
+                    imageVector = ImageVector.vectorResource(CommonComposeR.drawable.amity_ic_trash_r),
                     contentDescription = "deleted message",
                     tint = deletedIconColor
                 )

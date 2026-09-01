@@ -31,6 +31,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.common.compose.R
 import com.amity.socialcloud.uikit.common.ui.elements.AmitySearchBarView
 import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
@@ -138,7 +139,7 @@ fun AmityCommunityMembersMembershipComponent(
                                             )
                                     ) {
                                         Icon(
-                                            painter = painterResource(R.drawable.amity_ic_moderator_social),
+                                            painter = painterResource(CommonR.drawable.amity_ic_moderator_social),
                                             contentDescription = "Moderator badge",
                                             tint = AmityTheme.colors.primary,
                                             modifier = Modifier
@@ -178,7 +179,7 @@ fun AmityCommunityMembersMembershipComponent(
                             }
                             if (member.getUserId() != AmityCoreClient.getUserId()) {
                                 Icon(
-                                    painter = painterResource(R.drawable.amity_ic_more_horiz),
+                                    painter = painterResource(CommonR.drawable.amity_ic_more_horiz),
                                     contentDescription = "Action",
                                     tint = AmityTheme.colors.base,
                                     modifier = modifier

@@ -42,6 +42,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostCategory
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetailPageViewModel
@@ -175,7 +176,7 @@ fun AmityPostHeaderElement(
 
                     val isBrandCreator = post.getCreator()?.isBrand() == true
                     if (isBrandCreator) {
-                        val badge = R.drawable.amity_ic_brand_badge
+                        val badge = CommonComposeR.drawable.amity_ic_brand_badge
                         Image(
                             painter = painterResource(id = badge),
                             contentDescription = "",
@@ -285,7 +286,7 @@ fun AmityPostHeaderElement(
 
                                     val isBrandTarget = target.getUser()?.isBrand() == true
                                     if (isBrandTarget) {
-                                        val badge = R.drawable.amity_ic_brand_badge
+                                        val badge = CommonComposeR.drawable.amity_ic_brand_badge
                                         Image(
                                             painter = painterResource(id = badge),
                                             contentDescription = "",

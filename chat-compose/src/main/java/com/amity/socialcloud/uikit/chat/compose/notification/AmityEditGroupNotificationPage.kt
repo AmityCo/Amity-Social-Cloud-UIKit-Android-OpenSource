@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.sdk.model.chat.channel.AmityChannelNotificationMode
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButton
@@ -87,7 +87,7 @@ fun AmityEditGroupNotificationPage(
                         hierarchy = AmityButtonHierarchy.SECONDARY,
                         style = AmityButtonStyle.GHOST,
                         iconSize = AmityIconButtonSize.SIZE32,
-                        icon = CommonR.drawable.amity_ic_chevron_left,
+                        icon = CommonComposeR.drawable.amity_ic_chevron_left,
                     )
 
                     Text(

@@ -44,6 +44,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.asColor
 import com.amity.socialcloud.uikit.common.utils.getBackgroundColor
 import com.amity.socialcloud.uikit.common.utils.getValue
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.common.utils.formatCurrencyForLocale
 import org.joda.time.DateTime
@@ -255,7 +256,7 @@ fun LivestreamPinnedProductElement(
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.amity_ic_close),
+                        painter = painterResource(id = CommonR.drawable.amity_ic_close),
                         contentDescription = "Close",
                         modifier = Modifier.size(12.dp),
                         tint = AmityTheme.colors.baseInverse

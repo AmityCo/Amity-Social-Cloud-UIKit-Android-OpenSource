@@ -32,10 +32,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.amity.socialcloud.uikit.common.compose.R.*
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
-import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.livestream.create.element.AmityNoOutlineTextField
 import kotlinx.coroutines.delay
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
@@ -76,7 +75,7 @@ fun AmityReportOtherReasonScreen(
                 .padding(horizontal = 16.dp),
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.amity_ic_back),
+                painter = painterResource(id = CommonR.drawable.amity_ic_back),
                 contentDescription = null,
                 tint = AmityTheme.colors.base,
                 modifier = Modifier
@@ -103,7 +102,7 @@ fun AmityReportOtherReasonScreen(
             ) {
                 Icon(
                     modifier = Modifier.align(Alignment.CenterEnd),
-                    painter = painterResource(drawable.amity_ic_close3),
+                    painter = painterResource(CommonR.drawable.amity_ic_close3),
                     contentDescription = "cancel_report_button",
                     tint = AmityTheme.colors.base
                 )

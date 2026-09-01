@@ -32,7 +32,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.isSignedIn
 import com.amity.socialcloud.uikit.common.utils.isVisitor
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 
@@ -76,7 +76,7 @@ fun AmityEmptyClipFeedScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
-                imageVector = ImageVector.vectorResource(R.drawable.amity_v4_empty_clip_feed),
+                imageVector = ImageVector.vectorResource(CommonR.drawable.amity_v4_empty_clip_feed),
                 contentDescription = null,
                 modifier = Modifier
                     .padding(bottom = 16.dp)
@@ -104,7 +104,7 @@ fun AmityEmptyClipFeedScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.amity_v4_language_icon),
+                    painter = painterResource(CommonR.drawable.amity_v4_language_icon),
                     tint = AmityTheme.colors.baseInverse,
                     contentDescription = null,
                     modifier = Modifier

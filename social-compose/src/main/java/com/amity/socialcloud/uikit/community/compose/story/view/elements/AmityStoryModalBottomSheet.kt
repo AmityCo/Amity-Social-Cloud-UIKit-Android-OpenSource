@@ -28,7 +28,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.sdk.model.social.comment.AmityCommentReferenceType
 import com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponent
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityStoryModalDialogUIState
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityStoryModalSheetUIState
@@ -113,7 +113,7 @@ fun AmityStoryModalBottomSheet(
                             .padding(start = 16.dp, end = 16.dp, bottom = 64.dp)
                     ) {
                         AmityBottomSheetActionItem(
-                            icon = R.drawable.amity_ic_delete_story,
+                            icon = CommonR.drawable.amity_ic_delete_story,
                             text = amityCommonString("amity_common_button_delete_story"),
                             modifier = modifier.testTag("bottom_sheet_delete_button"),
                             color = AmityTheme.colors.alert

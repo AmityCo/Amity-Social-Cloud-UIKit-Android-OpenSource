@@ -44,7 +44,7 @@ import androidx.paging.compose.itemKey
 import com.amity.socialcloud.sdk.api.chat.AmityChatClient
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.model.chat.channel.AmityChannel
-import com.amity.socialcloud.uikit.common.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAvatarView
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -198,7 +198,7 @@ fun ChannelItemView(channel: AmityChannel, onChannelClick: (AmityChannel) -> Uni
 
         AmityAvatarView(
             image = channel.getAvatar(),
-            placeholder = R.drawable.amity_ic_default_community_avatar_circular
+            placeholder = CommonR.drawable.amity_ic_default_community_avatar_circular
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(

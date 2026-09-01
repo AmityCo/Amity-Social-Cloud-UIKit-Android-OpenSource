@@ -21,7 +21,7 @@ import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.theme.amityEventHostBadgeBackground
 import com.amity.socialcloud.uikit.common.ui.theme.amityEventHostBadgeContent
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
@@ -46,7 +46,7 @@ fun AmityPostEventHostBadge(
                 .testTag(getAccessibilityId()),
         ) {
             Image(
-                painter = painterResource(id = R.drawable.amity_ic_event_host_badge),
+                painter = painterResource(id = CommonR.drawable.amity_ic_event_host_badge),
                 contentDescription = null,
                 modifier = Modifier.size(12.dp)
             )

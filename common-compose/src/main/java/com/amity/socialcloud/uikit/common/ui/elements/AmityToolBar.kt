@@ -15,7 +15,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.common.isNotEmptyOrBlank
-import com.amity.socialcloud.uikit.common.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
@@ -42,8 +42,8 @@ fun AmityToolBar(
             elementId = "back_button"
         ) {
             val icon = getConfig().getIcon().takeIf {
-                it != R.drawable.amity_empty
-            } ?: R.drawable.amity_ic_back
+                it != CommonR.drawable.amity_empty
+            } ?: CommonR.drawable.amity_ic_back
 
             Icon(
                 painter = painterResource(icon),

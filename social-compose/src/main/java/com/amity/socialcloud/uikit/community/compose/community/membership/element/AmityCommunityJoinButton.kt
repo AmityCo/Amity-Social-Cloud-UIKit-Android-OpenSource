@@ -46,7 +46,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -220,7 +220,7 @@ fun AmityCommunityJoinButton(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.amity_ic_clock),
+                painter = painterResource(id = CommonR.drawable.amity_ic_clock),
                 contentDescription = "Pending join community icon",
                 modifier = Modifier
                     .size(20.dp),
@@ -373,7 +373,7 @@ fun TestPendingButton() {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.amity_ic_clock),
+            painter = painterResource(id = CommonR.drawable.amity_ic_clock),
             contentDescription = "Pending join community icon",
             modifier = Modifier
                 .size(20.dp),

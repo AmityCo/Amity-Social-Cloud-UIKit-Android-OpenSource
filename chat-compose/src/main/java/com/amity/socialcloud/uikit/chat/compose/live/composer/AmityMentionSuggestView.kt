@@ -24,7 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.amity.socialcloud.uikit.chat.compose.R
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
 import com.amity.socialcloud.uikit.chat.compose.live.AmityLiveChatPageViewModel
 import com.amity.socialcloud.uikit.chat.compose.live.elements.AmityAvatarType
@@ -92,7 +92,7 @@ fun AmityMentionSuggestionView(
                 )
 
                 if(isBrandUser) {
-                    val badge = R.drawable.amity_ic_brand_badge
+                    val badge = CommonComposeR.drawable.amity_ic_brand_badge
                     Image(
                         painter = painterResource(id = badge),
                         contentDescription = "",

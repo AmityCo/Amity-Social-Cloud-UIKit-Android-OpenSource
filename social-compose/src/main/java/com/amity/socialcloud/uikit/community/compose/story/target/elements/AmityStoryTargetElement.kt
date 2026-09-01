@@ -31,7 +31,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.asColorList
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.getValueAsList
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import com.amity.socialcloud.uikit.community.compose.story.target.utils.AmityStoryTargetRingUiState
 
@@ -113,9 +113,9 @@ fun AmityStoryTargetElement(
                 }
 
                 val badge = when {
-                    ringUiState == AmityStoryTargetRingUiState.FAILED -> R.drawable.amity_ic_error_circle
-                    hasManageStoryPermission -> R.drawable.amity_ic_plus_circle
-                    isOfficialCommunity -> R.drawable.amity_ic_verified
+                    ringUiState == AmityStoryTargetRingUiState.FAILED -> CommonR.drawable.amity_ic_error_circle
+                    hasManageStoryPermission -> CommonR.drawable.amity_ic_plus_circle
+                    isOfficialCommunity -> CommonR.drawable.amity_ic_verified
                     else -> null
                 }
 
@@ -147,7 +147,7 @@ fun AmityStoryTargetElement(
             ) {
                 if (!isPublicCommunity && !isCommunityTarget) {
                     Image(
-                        painter = painterResource(id = R.drawable.amity_ic_lock1),
+                        painter = painterResource(id = CommonR.drawable.amity_ic_lock1),
                         contentDescription = "",
                         modifier = Modifier.size(12.dp)
                     )

@@ -44,6 +44,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getText
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.community.membership.add.AmityCommunityAddMemberPageViewModel
 import com.amity.socialcloud.uikit.community.compose.community.membership.invite.AmityCommunityInviteMemberPageViewModel
@@ -194,7 +195,7 @@ fun AmityCommunityInviteMemberItem(
             )
             val isBrandUser = user.isBrand()
             if (isBrandUser) {
-                val badge = R.drawable.amity_ic_brand_badge
+                val badge = CommonComposeR.drawable.amity_ic_brand_badge
                 Image(
                     painter = painterResource(id = badge),
                     contentDescription = "",

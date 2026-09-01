@@ -77,7 +77,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetailPageViewModel
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostPollElementViewModel
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponentStyle
@@ -904,7 +904,7 @@ fun AmityPostPollElement(
                                             val text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_vote_removed")
                                             pageScope?.showSnackbar(
                                                 message = text,
-                                                drawableRes = R.drawable.amity_ic_snack_bar_success,
+                                                drawableRes = CommonComposeR.drawable.amity_ic_snack_bar_success,
                                                 additionalHeight = 16,
                                             )
                                         }
@@ -917,7 +917,7 @@ fun AmityPostPollElement(
                                             }
                                             pageScope?.showSnackbar(
                                                 message = text,
-                                                drawableRes = R.drawable.amity_ic_snack_bar_warning,
+                                                drawableRes = CommonComposeR.drawable.amity_ic_snack_bar_warning,
                                                 additionalHeight = 16,
                                             )
                                         }

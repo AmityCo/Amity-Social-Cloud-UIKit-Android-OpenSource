@@ -41,6 +41,8 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
 import com.amity.socialcloud.uikit.common.ui.elements.AmityMenuButton
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.event.detail.components.AmityEventInfoComponent
 import com.amity.socialcloud.uikit.community.compose.event.detail.components.amityEventDiscussionFeedItems
@@ -414,7 +416,7 @@ fun AmityEventDetailPage(
                             modifier = Modifier.padding(horizontal = 32.dp)
                         ) {
                             Icon(
-                                painter = painterResource(R.drawable.amity_ic_unable_to_load),
+                                painter = painterResource(CommonR.drawable.amity_ic_unable_to_load),
                                 contentDescription = "Error",
                                 tint = AmityTheme.colors.baseShade4,
                                 modifier = Modifier.size(60.dp)
@@ -619,7 +621,7 @@ fun AmityEventDetailPage(
                                     .align(Alignment.BottomEnd)
                             ) {
                                 Icon(
-                                    painter = painterResource(id = R.drawable.amity_ic_plus),
+                                    painter = painterResource(id = CommonR.drawable.amity_ic_plus),
                                     contentDescription = "create post",
                                     tint = amityColorWhite,
                                     modifier = Modifier.size(32.dp)
@@ -818,7 +820,7 @@ fun AmityEventDetailPage(
                             Spacer(modifier = Modifier.height(20.dp))
                             // Calendar icon
                             Image(
-                                painter = painterResource(R.drawable.amity_ic_event_add_to_calendar),
+                                painter = painterResource(CommonR.drawable.amity_ic_event_add_to_calendar),
                                 contentDescription = "Calendar",
                                 modifier = Modifier.size(120.dp)
                             )
@@ -909,7 +911,7 @@ fun AmityEventDetailPage(
                             shape = RoundedCornerShape(8.dp)
                         ) {
                             Icon(
-                                painter = painterResource(R.drawable.amity_ic_event_add_to_calendar_button),
+                                painter = painterResource(CommonR.drawable.amity_ic_event_add_to_calendar_button),
                                 contentDescription = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_add_to_calendar"),
                                 tint = amityColorWhite,
                                 modifier = Modifier.size(20.dp)
@@ -973,7 +975,7 @@ fun AmityEventDetailPage(
                                 image = targetCommunity!!.getAvatar(),
                                 size = 120.dp,
                                 roundedCornerShape = RoundedCornerShape(24.dp),
-                                placeholder = R.drawable.amity_ic_community_placeholder,
+                                placeholder = CommonR.drawable.amity_ic_community_placeholder,
                                 placeholderTint = amityColorWhite,
                                 placeholderBackground = AmityTheme.colors.primaryShade1,
                                 iconPadding = 24.dp,
@@ -1208,7 +1210,7 @@ private fun EventCollapsedHeader(
             )
         } else {
             Image(
-                painter = painterResource(R.drawable.amity_ic_event_list_placeholder),
+                painter = painterResource(CommonR.drawable.amity_ic_event_list_placeholder),
                 contentDescription = "Event background",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -1226,7 +1228,7 @@ private fun EventCollapsedHeader(
         ) {
             IconButton(onClick = onBackClick) {
                 Icon(
-                    painter = painterResource(R.drawable.amity_ic_back),
+                    painter = painterResource(CommonR.drawable.amity_ic_back),
                     contentDescription = "Back",
                     tint = AmityTheme.colors.base
                 )
@@ -1248,7 +1250,7 @@ private fun EventCollapsedHeader(
 
             onMenuClick?.let {
                 AmityMenuButton(
-                    icon = R.drawable.amity_ic_more_horiz,
+                    icon = CommonR.drawable.amity_ic_more_horiz,
                     size = 32.dp,
                     iconPadding = 4.dp,
                     onClick = it
@@ -1283,15 +1285,15 @@ private fun EventExpandedHeader(
                         .build(),
                     contentDescription = "Event cover",
                     contentScale = ContentScale.Crop,
-                    placeholder = painterResource(R.drawable.amity_ic_event_list_placeholder),
-                    error = painterResource(R.drawable.amity_ic_event_list_placeholder),
+                    placeholder = painterResource(CommonR.drawable.amity_ic_event_list_placeholder),
+                    error = painterResource(CommonR.drawable.amity_ic_event_list_placeholder),
                     modifier = Modifier.fillMaxSize()
                 )
             }
         } else {
             Box(modifier = Modifier.matchParentSize()) {
                 Image(
-                    painter = painterResource(R.drawable.amity_ic_event_list_placeholder),
+                    painter = painterResource(CommonR.drawable.amity_ic_event_list_placeholder),
                     contentDescription = "Event cover",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
@@ -1314,7 +1316,7 @@ private fun EventExpandedHeader(
             ) {
                 IconButton(onClick = onBackClick) {
                     Icon(
-                        painter = painterResource(R.drawable.amity_ic_back),
+                        painter = painterResource(CommonR.drawable.amity_ic_back),
                         contentDescription = "Back",
                         tint = amityColorWhite
                     )
@@ -1325,7 +1327,7 @@ private fun EventExpandedHeader(
 
             onMenuClick?.let {
                 AmityMenuButton(
-                    icon = R.drawable.amity_ic_more_horiz,
+                    icon = CommonR.drawable.amity_ic_more_horiz,
                     size = 32.dp,
                     iconPadding = 4.dp,
                     tint = amityColorWhite,
@@ -1366,7 +1368,7 @@ private fun EventTabRow(
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.amity_ic_event_detail_info_tab),
+                        painter = painterResource(CommonR.drawable.amity_ic_event_detail_info_tab),
                         contentDescription = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_edit_user_about_title"),
                         tint = if (selectedIndex == 0) AmityTheme.colors.base else AmityTheme.colors.secondaryShade3,
                         modifier = Modifier.size(24.dp)
@@ -1400,7 +1402,7 @@ private fun EventTabRow(
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.amity_ic_event_detail_discussion_feed),
+                        painter = painterResource(CommonR.drawable.amity_ic_event_detail_discussion_feed),
                         contentDescription = "Discussion",
                         tint = if (selectedIndex == 1) AmityTheme.colors.base else AmityTheme.colors.secondaryShade3,
                         modifier = Modifier.size(24.dp)
@@ -1481,7 +1483,7 @@ private fun EventTitleSection(event: AmityEvent) {
                     // Lock icon - only show if community is private
                     if (!community.isPublic()) {
                         Icon(
-                            painter = painterResource(R.drawable.amity_ic_lock1),
+                            painter = painterResource(CommonR.drawable.amity_ic_lock1),
                             contentDescription = "Private",
                             tint = AmityTheme.colors.baseShade1,
                             modifier = Modifier
@@ -1504,7 +1506,7 @@ private fun EventTitleSection(event: AmityEvent) {
                     // Verified badge if official
                     if (community.isOfficial()) {
                         Image(
-                            painter = painterResource(R.drawable.amity_ic_verified),
+                            painter = painterResource(CommonR.drawable.amity_ic_verified),
                             contentDescription = "Verified",
                             modifier = Modifier
                                 .padding(start = 4.dp)
@@ -1641,9 +1643,9 @@ private fun EventDetailsSection(
         ) {
             // Event type icon with border (similar to calendar style)
             val eventTypeIcon = when (event.getType()) {
-                AmityEventType.IN_PERSON -> R.drawable.amity_ic_event_detail_location
-                AmityEventType.VIRTUAL -> R.drawable.amity_ic_event_detail_video
-                else -> R.drawable.amity_ic_event_detail_location
+                AmityEventType.IN_PERSON -> CommonR.drawable.amity_ic_event_detail_location
+                AmityEventType.VIRTUAL -> CommonR.drawable.amity_ic_event_detail_video
+                else -> CommonR.drawable.amity_ic_event_detail_location
             }
             Box(
                 modifier = Modifier
@@ -1719,7 +1721,7 @@ private fun EventDetailsSection(
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.amity_ic_event_attendee),
+                        painter = painterResource(CommonR.drawable.amity_ic_event_attendee),
                         contentDescription = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_event_attendees_page_title"),
                         tint = AmityTheme.colors.base,
                         modifier = Modifier.size(20.dp)
@@ -1808,7 +1810,7 @@ private fun EventDetailsSection(
                     val isBrandCreator = event.getCreator()?.isBrand() == true
                     if (isBrandCreator) {
                         Image(
-                            painter = painterResource(id = R.drawable.amity_ic_brand_badge),
+                            painter = painterResource(id = CommonComposeR.drawable.amity_ic_brand_badge),
                             contentDescription = "Brand badge",
                             modifier = Modifier.size(18.dp)
                         )
@@ -1856,7 +1858,7 @@ private fun EventDetailsSection(
                     shape = RoundedCornerShape(8.dp)
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.amity_ic_event_external),
+                        painter = painterResource(CommonR.drawable.amity_ic_event_external),
                         contentDescription = "Set up live stream",
                         tint = amityColorWhite,
                         modifier = Modifier.size(20.dp)
@@ -1941,9 +1943,9 @@ private fun EventDetailsSection(
                     Icon(
                         painter = painterResource(
                             when (isGoing) {
-                                null -> R.drawable.amity_ic_event_rsvp
-                                true -> R.drawable.amity_ic_event_going
-                                false -> R.drawable.amity_ic_event_not_going
+                                null -> CommonR.drawable.amity_ic_event_rsvp
+                                true -> CommonR.drawable.amity_ic_event_going
+                                false -> CommonR.drawable.amity_ic_event_not_going
                             }
                         ),
                         contentDescription = when (isGoing) {

@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.AmityNumberUtil.getNumberAbbreveation
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 
@@ -40,14 +40,14 @@ fun AmityRoomViewerCountBadge(
     ) {
         if (!isHost) {
             Image(
-                painter = painterResource(id = R.drawable.amity_ic_live_badge_dot),
+                painter = painterResource(id = CommonR.drawable.amity_ic_live_badge_dot),
                 contentDescription = "Live badge dot",
                 modifier = Modifier.size(16.dp),
             )
         }
         if (viewerCount != null && viewerCount > 0) {
             Image(
-                painter = painterResource(id = R.drawable.amity_ic_cohost_chat_badge),
+                painter = painterResource(id = CommonR.drawable.amity_ic_cohost_chat_badge),
                 contentDescription = "viewer icon",
                 modifier = Modifier.size(16.dp),
             )

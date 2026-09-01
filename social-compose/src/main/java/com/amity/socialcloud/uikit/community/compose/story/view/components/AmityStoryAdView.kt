@@ -38,6 +38,7 @@ import com.amity.socialcloud.uikit.common.common.isNotEmptyOrBlank
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.isVisible
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.story.hyperlink.elements.AmityStoryAdHyperlinkView
 import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmityStoryBodyGestureBox
@@ -128,7 +129,7 @@ fun AmityStoryAdView(
         }
 
         Icon(
-            painter = painterResource(id = R.drawable.amity_ic_more_info),
+            painter = painterResource(id = CommonR.drawable.amity_ic_more_info),
             contentDescription = null,
             tint = AmityTheme.colors.baseShade3,
             modifier = Modifier

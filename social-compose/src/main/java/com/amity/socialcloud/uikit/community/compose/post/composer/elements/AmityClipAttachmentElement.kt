@@ -26,7 +26,7 @@ import coil3.compose.AsyncImage
 import coil3.video.VideoFrameDecoder
 import com.amity.socialcloud.sdk.model.core.file.AmityClip
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 
@@ -98,7 +98,7 @@ fun AmityClipAttachmentElement(
                     )
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.amity_ic_play_v4),
+                    painter = painterResource(id = CommonComposeR.drawable.amity_ic_play_v4),
                     contentDescription = null,
                     tint = amityColorWhite,
                     modifier = Modifier

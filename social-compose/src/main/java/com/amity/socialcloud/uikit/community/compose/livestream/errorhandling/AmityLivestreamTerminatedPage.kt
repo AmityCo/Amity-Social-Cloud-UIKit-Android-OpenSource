@@ -34,6 +34,7 @@ import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.common.utils.getText
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.livestream.util.LivestreamScreenType
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
@@ -166,7 +167,7 @@ fun AmityLivestreamTerminatedPage(
                 Row(modifier = Modifier.fillMaxWidth()) {
                     Icon(
                         modifier = Modifier.size(28.dp),
-                        painter = painterResource(id = R.drawable.amity_v4_ic_trash),
+                        painter = painterResource(id = CommonR.drawable.amity_v4_ic_trash),
                         tint = AmityTheme.colors.base,
                         contentDescription = ""
                     )

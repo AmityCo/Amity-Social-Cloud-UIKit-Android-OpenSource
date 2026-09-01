@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.uikit.common.ui.theme.amityEventHostBadgeBackground
 import com.amity.socialcloud.uikit.common.ui.theme.amityEventHostBadgeContent
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
@@ -37,7 +37,7 @@ fun AmityCommentEventHostBadge(
             .height(18.dp)
     ) {
         Image(
-            painter = painterResource(id = R.drawable.amity_ic_event_host_badge),
+            painter = painterResource(id = CommonR.drawable.amity_ic_event_host_badge),
             contentDescription = null,
             modifier = Modifier.size(12.dp)
         )

@@ -41,7 +41,7 @@ import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
-import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 import com.amity.socialcloud.uikit.common.utils.shimmerBackground
@@ -203,7 +203,7 @@ private fun LinkPreviewImage(
                     contentAlignment = Alignment.Center,
                 ) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_image_slash_r),
+                        imageVector = ImageVector.vectorResource(id = CommonComposeR.drawable.amity_ic_image_slash_r),
                         contentDescription = null,
                         tint = AmityTheme.token(AmityColorToken.IconMediaImageBroken),
                         modifier = Modifier.size(40.dp),
@@ -293,7 +293,7 @@ private fun LinkPreviewFallback(
             contentAlignment = Alignment.Center,
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_image_slash_r),
+                imageVector = ImageVector.vectorResource(id = CommonComposeR.drawable.amity_ic_image_slash_r),
                 contentDescription = null,
                 tint = AmityTheme.token(AmityColorToken.IconMediaImageBroken),
                 modifier = Modifier.size(40.dp),

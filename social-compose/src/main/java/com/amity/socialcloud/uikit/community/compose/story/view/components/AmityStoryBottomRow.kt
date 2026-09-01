@@ -32,14 +32,14 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityStoryModalDialogUIState
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityStoryModalSheetUIState
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageViewModel
 import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmityStoryCommentCountElement
 import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmityStoryReactionCountElement
 import com.amity.socialcloud.uikit.community.compose.story.view.elements.AmityStoryViewCountElement
-import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.common.ui.theme.amityMediaSurface
 
@@ -246,7 +246,7 @@ fun AmityStoryUploadFailedRow(
                     story = story,
                     onSuccess = {
                         pageScope?.showSnackbar(
-                            drawableRes = CommonR.drawable.amity_ic_check_circle,
+                            drawableRes = CommonComposeR.drawable.amity_ic_check_circle,
                             message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_story_shared")
                         )
                     },
@@ -276,7 +276,7 @@ fun AmityStoryUploadFailedRow(
             modifier = modifier.align(Alignment.CenterStart)
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.amity_ic_warning),
+                painter = painterResource(id = CommonR.drawable.amity_ic_warning),
                 tint = AmityTheme.colors.baseInverse,
                 contentDescription = null,
                 modifier = modifier.size(16.dp)
@@ -289,7 +289,7 @@ fun AmityStoryUploadFailedRow(
         }
 
         Icon(
-            painter = painterResource(id = R.drawable.amity_ic_more_horiz),
+            painter = painterResource(id = CommonR.drawable.amity_ic_more_horiz),
             tint = AmityTheme.colors.baseInverse,
             contentDescription = null,
             modifier = modifier

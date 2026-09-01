@@ -79,7 +79,7 @@ import com.amity.socialcloud.uikit.chat.compose.live.composer.MessageComposeErro
 import com.amity.socialcloud.uikit.chat.compose.localization.DefaultAmityChatStringProvider
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.localization.amityCommonString
-import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityBanner
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityBannerHierarchy
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityBannerLeadingContent
@@ -320,9 +320,9 @@ fun AmityMessageComposer(
                         hierarchy = AmityButtonHierarchy.SECONDARY,
                         iconSize = AmityIconButtonSize.SIZE32,
                         icon = if (showMediaSection)
-                            CommonR.drawable.amity_ic_cross_r
+                            CommonComposeR.drawable.amity_ic_cross_r
                         else
-                            CommonR.drawable.amity_ic_plus_r,
+                            CommonComposeR.drawable.amity_ic_plus_r,
                         onClick = {
                             showMediaSection = !showMediaSection
                         },
@@ -372,7 +372,7 @@ fun AmityMessageComposer(
                         style = AmityButtonStyle.FILLED,
                         hierarchy = if (isSendButtonEnabled) AmityButtonHierarchy.PRIMARY else AmityButtonHierarchy.SECONDARY,
                         iconSize = AmityIconButtonSize.SIZE32,
-                        icon = CommonR.drawable.amity_ic_arrow_up_r,
+                        icon = CommonComposeR.drawable.amity_ic_arrow_up_r,
                         enabled = isSendButtonEnabled,
                         onClick = onClick@{
                             val text = messageText.trim()
@@ -434,7 +434,7 @@ fun AmityMessageComposer(
                     horizontalArrangement = Arrangement.spacedBy(56.dp, Alignment.CenterHorizontally),
                 ) {
                     MediaButton(
-                        iconResId = CommonR.drawable.amity_ic_camera_r,
+                        iconResId = CommonComposeR.drawable.amity_ic_camera_r,
                         label = amityChatString("chat.media.camera"),
                         onClick = {
                             val hasCameraPermission = ContextCompat.checkSelfPermission(
@@ -450,7 +450,7 @@ fun AmityMessageComposer(
                     )
 
                     MediaButton(
-                        iconResId = CommonR.drawable.amity_ic_image_r,
+                        iconResId = CommonComposeR.drawable.amity_ic_image_r,
                         label = amityChatString("chat.media.photo"),
                         onClick = {
                             imagePickerLauncher.launch(
@@ -530,7 +530,7 @@ private fun EditPreview(
             style = AmityButtonStyle.GHOST,
             hierarchy = AmityButtonHierarchy.SECONDARY,
             iconSize = AmityIconButtonSize.SIZE32,
-            icon = CommonR.drawable.amity_ic_cross_r,
+            icon = CommonComposeR.drawable.amity_ic_cross_r,
             onClick = onDismiss,
         )
     }
@@ -634,7 +634,7 @@ private fun ReplyPreview(
                         contentAlignment = Alignment.Center,
                     ) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_video_play_s),
+                            imageVector = ImageVector.vectorResource(id = CommonComposeR.drawable.amity_ic_video_play_s),
                             contentDescription = "Video",
                             modifier = Modifier.size(16.dp),
                             tint = AmityTheme.token(AmityColorToken.IconIconButtonTransparentPrimaryDefault),
@@ -650,7 +650,7 @@ private fun ReplyPreview(
             style = AmityButtonStyle.GHOST,
             hierarchy = AmityButtonHierarchy.SECONDARY,
             iconSize = AmityIconButtonSize.SIZE32,
-            icon = CommonR.drawable.amity_ic_cross_r,
+            icon = CommonComposeR.drawable.amity_ic_cross_r,
             onClick = onDismiss,
         )
     }
@@ -678,7 +678,7 @@ private fun MutedBanner(
         centered = true,
         leading = AmityBannerLeadingContent(
             type = AmityBannerLeadingType.ICON,
-            icon = CommonR.drawable.amity_ic_volume_slash_r,
+            icon = CommonComposeR.drawable.amity_ic_volume_slash_r,
         ),
         header = when {
             isUserBanned -> amityChatString("chat.group.user.banned")

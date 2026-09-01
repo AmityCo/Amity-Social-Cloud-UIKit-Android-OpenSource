@@ -46,7 +46,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
 import com.amity.socialcloud.uikit.common.ui.elements.AmityTextField
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.localization.AmitySocialStrings
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialConfigString
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
@@ -323,7 +323,7 @@ fun AmityStoryHyperlinkComponent(
                         .testTag(getAccessibilityId("remove_link_button")),
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.amity_ic_delete_story),
+                        painter = painterResource(id = CommonR.drawable.amity_ic_delete_story),
                         contentDescription = "Remove link",
                         tint = AmityTheme.colors.alert,
                         modifier = Modifier.align(Alignment.CenterVertically)

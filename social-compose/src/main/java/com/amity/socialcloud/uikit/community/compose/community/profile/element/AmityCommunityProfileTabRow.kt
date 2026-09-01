@@ -23,7 +23,7 @@ import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 
 @Composable
 fun AmityCommunityProfileTabRow(
@@ -58,7 +58,7 @@ fun AmityCommunityProfileTabRow(
                         contentAlignment = Alignment.Center,
                     ) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_community_feed),
+                            imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_community_feed),
                             contentDescription = "",
                             tint = if (selectedIndex == 0) AmityTheme.colors.base else AmityTheme.colors.secondaryShade3,
                             modifier = Modifier.size(24.dp)
@@ -91,7 +91,7 @@ fun AmityCommunityProfileTabRow(
                         contentAlignment = Alignment.Center,
                     ) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_community_pin),
+                            imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_community_pin),
                             contentDescription = "",
                             tint = if (selectedIndex == 1) AmityTheme.colors.base else AmityTheme.colors.secondaryShade3,
                             modifier = Modifier.size(24.dp)
@@ -157,7 +157,7 @@ fun AmityCommunityProfileTabRow(
                         contentAlignment = Alignment.Center,
                     ) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_community_media_tab),
+                            imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_community_media_tab),
                             contentDescription = "",
                             tint = if (selectedIndex == 3) AmityTheme.colors.base else AmityTheme.colors.secondaryShade3,
                             modifier = Modifier

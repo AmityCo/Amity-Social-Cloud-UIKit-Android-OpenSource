@@ -14,7 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.amity.socialcloud.uikit.common.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
@@ -33,7 +33,7 @@ fun AmityProductTaggingButton(
     ) {
         Box(modifier.size(50.dp)){
             Image(
-                painter = painterResource(R.drawable.amity_ic_room_product_tags),
+                painter = painterResource(CommonR.drawable.amity_ic_room_product_tags),
                 contentDescription = "open tagged products bottomsheet button",
                 modifier = Modifier
                     .align(Alignment.Center)

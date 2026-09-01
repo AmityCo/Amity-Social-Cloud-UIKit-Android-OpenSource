@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
-import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityDivider
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityDividerVariant
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
@@ -64,7 +64,7 @@ fun AmityMessageActionMenu(
         // Reply
         action.onReply?.let { onReply ->
             MessageOptionItem(
-                icon = CommonR.drawable.amity_ic_share_left_l,
+                icon = CommonComposeR.drawable.amity_ic_share_left_l,
                 text = amityChatString("chat.option.reply"),
                 onClick = {
                     onReply()
@@ -77,7 +77,7 @@ fun AmityMessageActionMenu(
         if (message.getData() is AmityMessage.Data.TEXT) {
             action.onCopy?.let { onCopy ->
                 MessageOptionItem(
-                    icon = CommonR.drawable.amity_ic_copy_r,
+                    icon = CommonComposeR.drawable.amity_ic_copy_r,
                     text = amityChatString("chat.option.copy"),
                     onClick = {
                         onCopy()
@@ -90,7 +90,7 @@ fun AmityMessageActionMenu(
         // Save (only for image/video messages)
         action.onSave?.let { onSave ->
             MessageOptionItem(
-                icon = CommonR.drawable.amity_ic_arrow_down_to_bracket_r,
+                icon = CommonComposeR.drawable.amity_ic_arrow_down_to_bracket_r,
                 text = amityChatString("chat.action.save"),
                 onClick = {
                     onDismiss()
@@ -103,7 +103,7 @@ fun AmityMessageActionMenu(
         if (!isCurrentUser) {
             action.onReport?.let { onReport ->
                 MessageOptionItem(
-                    icon = CommonR.drawable.amity_ic_flag_r,
+                    icon = CommonComposeR.drawable.amity_ic_flag_r,
                     text = amityChatString("chat.option.report"),
                     onClick = {
                         onReport()
@@ -118,7 +118,7 @@ fun AmityMessageActionMenu(
             action.onDelete?.let { onDelete ->
                 AmityDivider(variant = AmityDividerVariant.Content)
                 MessageOptionItem(
-                    icon = CommonR.drawable.amity_ic_trash_r,
+                    icon = CommonComposeR.drawable.amity_ic_trash_r,
                     text = amityChatString("chat.option.delete"),
                     textColor = AmityTheme.token(AmityColorToken.TextListHeaderDestructiveDefault),
                     iconTint = AmityTheme.token(AmityColorToken.IconListLeadingDestructiveDefault),

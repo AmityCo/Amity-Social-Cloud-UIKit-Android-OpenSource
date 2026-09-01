@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.amity.socialcloud.uikit.common.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
@@ -37,7 +37,7 @@ fun AmityNotificationTrayEmptyState(
             val iconRes = getConfig().getIcon()
             Icon(
                 painter = painterResource(
-                    if (iconRes != 0) iconRes else R.drawable.amity_ic_notification_tray_empty
+                    if (iconRes != 0) iconRes else CommonR.drawable.amity_ic_notification_tray_empty
                 ),
                 tint = AmityTheme.colors.baseShade4,
                 contentDescription = null,

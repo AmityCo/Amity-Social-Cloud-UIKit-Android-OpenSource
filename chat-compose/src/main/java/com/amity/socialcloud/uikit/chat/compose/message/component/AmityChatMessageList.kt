@@ -81,7 +81,7 @@ import com.amity.socialcloud.uikit.common.localization.amityCommonString
 import com.amity.socialcloud.uikit.chat.compose.message.element.reaction.AmityChatMessageReactionSheet
 import com.amity.socialcloud.uikit.common.reaction.AmityMessageReactionListViewModel
 import com.amity.socialcloud.uikit.common.reaction.AmityMessageReactionListViewModel.AmityMessageReactionListSheetUIState
-import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButton
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonVariant
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonHierarchy
@@ -594,7 +594,7 @@ private fun AmityChatMessageReportReasonList(
             ) {
                 Icon(
                     modifier = Modifier.align(Alignment.CenterEnd),
-                    imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_cross_r),
+                    imageVector = ImageVector.vectorResource(id = CommonComposeR.drawable.amity_ic_cross_r),
                     contentDescription = "cancel_report_button",
                     tint = AmityTheme.token(AmityColorToken.IconIconButtonGhostSecondaryDefault),
                 )
@@ -672,7 +672,7 @@ private fun AmityChatMessageReportReasonList(
                     )
 
                     Icon(
-                        imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_chevron_right),
+                        imageVector = ImageVector.vectorResource(id = CommonComposeR.drawable.amity_ic_chevron_right),
                         tint = AmityTheme.token(AmityColorToken.IconListLeadingDefaultDefault),
                         contentDescription = null,
                         modifier = Modifier

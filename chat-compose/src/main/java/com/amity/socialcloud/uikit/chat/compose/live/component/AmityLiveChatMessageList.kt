@@ -63,7 +63,7 @@ import com.amity.socialcloud.uikit.common.utils.copyText
 import com.amity.socialcloud.uikit.common.localization.DefaultAmityCommonStringProvider
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
-import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.common.reaction.AmityMessageReactionListViewModel.AmityMessageReactionListSheetUIState
 import com.amity.socialcloud.uikit.common.utils.isVisitor
 
@@ -250,7 +250,7 @@ fun AmityLiveChatMessageList(
                                             onSuccess = {
                                                 getComponentScope().showSnackbar(
                                                     message = successReportMessage,
-                                                    drawableRes = CommonR.drawable.amity_ic_check_circle
+                                                    drawableRes = CommonComposeR.drawable.amity_ic_check_circle
                                                 )
                                             },
                                             onError = {
@@ -273,7 +273,7 @@ fun AmityLiveChatMessageList(
                                         onSuccess = {
                                             getComponentScope().showSnackbar(
                                                 message = unreportSuccessMessage,
-                                                drawableRes = CommonR.drawable.amity_ic_check_circle
+                                                drawableRes = CommonComposeR.drawable.amity_ic_check_circle
                                             )
                                         },
                                         onError = {

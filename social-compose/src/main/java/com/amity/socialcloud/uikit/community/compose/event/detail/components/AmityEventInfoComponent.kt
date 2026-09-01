@@ -33,6 +33,7 @@ import com.amity.socialcloud.uikit.common.extionsions.extractUrls
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAnnotatedText
 import com.amity.socialcloud.uikit.common.ui.elements.AmityExpandableText
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.R
 import com.google.gson.JsonObject
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityChildRoomPostElement
@@ -67,7 +68,7 @@ private fun CopyButton(
         shape = RoundedCornerShape(4.dp)
     ) {
         Icon(
-            painter = painterResource(R.drawable.amity_ic_event_copy_badge),
+            painter = painterResource(CommonR.drawable.amity_ic_event_copy_badge),
             contentDescription = "Copy",
             tint = AmityTheme.colors.secondary,
             modifier = Modifier

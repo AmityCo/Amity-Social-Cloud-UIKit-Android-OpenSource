@@ -54,6 +54,8 @@ import coil3.request.allowHardware
 import coil3.video.VideoFrameDecoder
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerPageViewModel
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityProductTagBadge
@@ -175,7 +177,7 @@ fun AmitySelectedMediaComponent(
                     }
                     .background(color = AmityTheme.colors.alert.copy(alpha = 0.1f))) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_error),
+                        imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_error),
                         contentDescription = "media_error",
                         modifier = Modifier
                             .padding(start = 24.dp, top = 16.dp)
@@ -348,7 +350,7 @@ fun AmitySelectedMediaElement(
                             .clip(RoundedCornerShape(4.dp))
                     ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.amity_ic_play_v4),
+                            painter = painterResource(id = CommonComposeR.drawable.amity_ic_play_v4),
                             contentDescription = "Video placeholder",
                             tint = AmityTheme.colors.baseShade2,
                             modifier = Modifier
@@ -369,7 +371,7 @@ fun AmitySelectedMediaElement(
                         )
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.amity_ic_play_v4),
+                        painter = painterResource(id = CommonComposeR.drawable.amity_ic_play_v4),
                         contentDescription = null,
                         tint = amityColorWhite,
                         modifier = Modifier
@@ -393,7 +395,7 @@ fun AmitySelectedMediaElement(
             if (media.uploadState == AmityFileUploadState.FAILED) {
                 // Show warning icon for failed uploads
                 Image(
-                    painter = painterResource(id = R.drawable.amity_ic_warning),
+                    painter = painterResource(id = CommonR.drawable.amity_ic_warning),
                     contentDescription = null,
                     modifier = Modifier
                         .align(Alignment.Center)
@@ -439,7 +441,7 @@ fun AmitySelectedMediaElement(
                 },
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.amity_ic_close),
+                painter = painterResource(id = CommonR.drawable.amity_ic_close),
                 contentDescription = null,
                 tint = amityColorWhite,
                 modifier = Modifier
@@ -526,7 +528,7 @@ fun AmitySelectedMediaElement(
 //                contentAlignment = Alignment.Center,
 //            ) {
 //                Icon(
-//                    painter = painterResource(id = R.drawable.amity_ic_product_tag),
+//                    painter = painterResource(id = CommonR.drawable.amity_ic_product_tag),
 //                    contentDescription = "Tag products",
 //                    tint = amityColorWhite,
 //                    modifier = Modifier

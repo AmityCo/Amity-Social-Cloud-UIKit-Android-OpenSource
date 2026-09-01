@@ -39,7 +39,7 @@ import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
 import com.amity.socialcloud.uikit.common.utils.shade
 import com.amity.socialcloud.sdk.model.social.category.AmityCommunityCategory
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
-import com.amity.socialcloud.uikit.common.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
@@ -55,7 +55,7 @@ fun AmityCommunityAvatarView(
         modifier = modifier,
         size = size,
         image = community?.getAvatar(),
-        placeholder = R.drawable.amity_ic_default_community_avatar_circular,
+        placeholder = CommonR.drawable.amity_ic_default_community_avatar_circular,
 
         )
 }
@@ -96,7 +96,7 @@ fun AmityCommunityAvatarWithRoundedCornerView(
                     .background(AmityTheme.colors.secondary.shade(AmityColorShade.SHADE3))
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.amity_ic_community_placeholder),
+                    painter = painterResource(id = CommonR.drawable.amity_ic_community_placeholder),
                     contentDescription = null,
                     tint = amityColorWhite,
                     modifier = Modifier
@@ -172,7 +172,7 @@ fun AmityAvatarView(
     displayName: String?,
     isDeleted: Boolean = false,
     size: Dp = 40.dp,
-    placeholderRes: Int = R.drawable.amity_ic_default_profile1,
+    placeholderRes: Int = CommonR.drawable.amity_ic_default_profile1,
 ) {
     // Trim early — ensures leading/trailing spaces in display names never produce a blank initial
     val trimmedName = displayName?.trim().orEmpty()
@@ -328,7 +328,7 @@ fun AmityCategoryAvatarView(
         )
         if (painterState !is AsyncImagePainter.State.Success) {
             Image(
-                painter = painterResource(id = R.drawable.amity_ic_category_placeholder),
+                painter = painterResource(id = CommonR.drawable.amity_ic_category_placeholder),
                 contentScale = ContentScale.Crop,
                 contentDescription = null,
                 modifier = Modifier
@@ -376,7 +376,7 @@ fun AmityEventAvatarView(
                     .background(amityEventAvatarPlaceholderBackground)
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.amity_ic_event_list_placeholder),
+                    painter = painterResource(id = CommonR.drawable.amity_ic_event_list_placeholder),
                     contentScale = ContentScale.Crop,
                     contentDescription = null,
                     modifier = Modifier
@@ -395,7 +395,7 @@ fun AmityAvatarView(
     iconPadding: Dp = 0.dp,
     image: AmityImage?,
     roundedCornerShape: RoundedCornerShape = CircleShape,
-    placeholder: Int = R.drawable.amity_ic_default_profile1,
+    placeholder: Int = CommonR.drawable.amity_ic_default_profile1,
     placeholderTint: Color = amityColorWhite,
     placeholderBackground: Color = AmityTheme.colors.primaryShade1,
 ) {

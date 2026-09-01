@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.waterfall
 import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.waterfall
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -31,6 +30,8 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
+import com.amity.socialcloud.uikit.common.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityModalSheetUIState
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
@@ -77,7 +78,7 @@ fun AmityUserMenuBottomSheet(
         ) {
             if (user.getUserId() == AmityCoreClient.getUserId()) {
                 AmityBottomSheetActionItem(
-                    icon = R.drawable.amity_ic_edit_profile,
+                    icon = CommonR.drawable.amity_ic_edit_profile,
                     text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_edit_profile"),
                     modifier = modifier.testTag("bottom_sheet_edit_profile"),
                 ) {
@@ -100,7 +101,7 @@ fun AmityUserMenuBottomSheet(
             } else {
                 if (isFollowedByMe) {
                     AmityBottomSheetActionItem(
-                        icon = R.drawable.amity_ic_user_unfollow,
+                        icon = CommonR.drawable.amity_ic_user_unfollow,
                         text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_unfollow"),
                         modifier = modifier,
                     ) {
@@ -121,13 +122,13 @@ fun AmityUserMenuBottomSheet(
                             .doOnComplete {
                                 pageScope?.showSnackbar(
                                     message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_user_unreported"),
-                                    drawableRes = R.drawable.amity_ic_snack_bar_success
+                                    drawableRes = CommonComposeR.drawable.amity_ic_snack_bar_success
                                 )
                             }
                             .doOnError {
                                 pageScope?.showSnackbar(
                                     message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_user_unreport_failed"),
-                                    drawableRes = R.drawable.amity_ic_snack_bar_warning
+                                    drawableRes = CommonComposeR.drawable.amity_ic_snack_bar_warning
                                 )
                             }.subscribe()
 
@@ -148,13 +149,13 @@ fun AmityUserMenuBottomSheet(
                                 .doOnComplete {
                                     pageScope?.showSnackbar(
                                         message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_user_reported"),
-                                        drawableRes = R.drawable.amity_ic_snack_bar_success
+                                        drawableRes = CommonComposeR.drawable.amity_ic_snack_bar_success
                                     )
                                 }
                                 .doOnError {
                                     pageScope?.showSnackbar(
                                         message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_user_report_failed"),
-                                        drawableRes = R.drawable.amity_ic_snack_bar_warning
+                                        drawableRes = CommonComposeR.drawable.amity_ic_snack_bar_warning
                                     )
                                 }
                                 .subscribe()
@@ -192,7 +193,7 @@ fun AmityUserMenuBottomSheet(
             val userLink = AmityUIKitConfigController.getUserLink(user)
             if (userLink.isNotEmptyOrBlank()) {
                 AmityBottomSheetActionItem(
-                    icon = R.drawable.amity_v4_link_icon,
+                    icon = CommonR.drawable.amity_v4_link_icon,
                     text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_copy_profile_link"),
                     modifier = modifier.testTag("bottom_sheet_copy_link_button"),
                 ) {
@@ -203,7 +204,7 @@ fun AmityUserMenuBottomSheet(
                 }
 
                 AmityBottomSheetActionItem(
-                    icon = R.drawable.amity_v4_share_icon,
+                    icon = CommonR.drawable.amity_v4_share_icon,
                     text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_share_to"),
                     modifier = modifier.testTag("bottom_sheet_share_to_button"),
                 ) {

@@ -49,7 +49,7 @@ import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonHierarchy
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityDivider
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityDividerVariant
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityIconButtonSize
-import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import androidx.compose.material3.Icon
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -146,7 +146,7 @@ fun AmityChatPage(
                         style = AmityButtonStyle.GHOST,
                         hierarchy = AmityButtonHierarchy.SECONDARY,
                         iconSize = AmityIconButtonSize.SIZE32,
-                        icon = CommonR.drawable.amity_ic_chevron_left,
+                        icon = CommonComposeR.drawable.amity_ic_chevron_left,
                         onClick = { (context as? android.app.Activity)?.finish() },
                     )
                     Spacer(modifier = Modifier.width(16.dp))
@@ -351,7 +351,7 @@ private fun ConversationChatHeader(
         // atom size maps to 24/24 (SIZE24 pads its glyph to 16dp), so this is the raw glyph
         // with the same Ghost/Secondary tint the atom would apply.
         Icon(
-            imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_chevron_left),
+            imageVector = ImageVector.vectorResource(id = CommonComposeR.drawable.amity_ic_chevron_left),
             contentDescription = "Back",
             tint = AmityTheme.token(AmityColorToken.IconIconButtonGhostSecondaryDefault),
             modifier = Modifier
@@ -401,7 +401,7 @@ private fun ConversationChatHeader(
                 hierarchy = AmityButtonHierarchy.SECONDARY,
                 // 32dp icon-button with the 24dp ellipsis glyph per the design.
                 iconSize = AmityIconButtonSize.SIZE32,
-                icon = CommonR.drawable.amity_ic_ellipsis_v_r,
+                icon = CommonComposeR.drawable.amity_ic_ellipsis_v_r,
                 onClick = onMoreClick,
             )
         }

@@ -16,14 +16,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.amity.socialcloud.uikit.common.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 
 @Composable
 fun AmityMenuButton(
     modifier: Modifier = Modifier,
-    icon: Int = R.drawable.amity_ic_close,
+    icon: Int = CommonR.drawable.amity_ic_close,
     size: Dp = 20.dp,
     iconPadding: Dp = 0.dp,
     tint: Color = amityColorWhite,

@@ -43,7 +43,8 @@ import com.amity.socialcloud.uikit.common.common.isNotEmptyOrBlank
 import com.amity.socialcloud.uikit.common.behavior.AmityGlobalBehavior
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityProductWebViewBottomSheet
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.AmityProductTagListComponent
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.RenderModeEnum
@@ -748,7 +749,7 @@ fun AmityProductTagBadge(
         horizontalArrangement = Arrangement.spacedBy(2.dp)
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.amity_ic_product_tag_filled),
+            painter = painterResource(id = CommonR.drawable.amity_ic_product_tag_filled),
             contentDescription = "Product tags",
             tint = amityColorWhite,
             modifier = Modifier.size(16.dp)
@@ -769,7 +770,7 @@ fun AmityPostMediaPlayButton(
     modifier: Modifier = Modifier,
 ) {
     Image(
-        painter = painterResource(id = R.drawable.amity_ic_play_v4),
+        painter = painterResource(id = CommonComposeR.drawable.amity_ic_play_v4),
         contentDescription = null,
         modifier = modifier.size(40.dp)
     )

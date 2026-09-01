@@ -72,7 +72,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.shimmerBackground
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
@@ -391,7 +391,7 @@ private fun PollItem(
 
                     is AsyncImagePainter.State.Error -> {
                         Image(
-                            painter = painterResource(R.drawable.amity_v4_poll_image_failed),
+                            painter = painterResource(CommonR.drawable.amity_v4_poll_image_failed),
                             contentDescription = "Error Loading Image",
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop
@@ -438,7 +438,7 @@ private fun PollItem(
             }
 
             Image(
-                painter = painterResource(R.drawable.amity_v4_expand),
+                painter = painterResource(CommonR.drawable.amity_v4_expand),
                 contentDescription = "Image preview Icon",
                 modifier = Modifier
                     .padding(8.dp)

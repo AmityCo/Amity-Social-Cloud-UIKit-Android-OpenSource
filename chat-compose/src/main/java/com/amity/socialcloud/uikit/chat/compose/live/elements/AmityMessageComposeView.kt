@@ -9,7 +9,7 @@ import androidx.core.widget.doAfterTextChanged
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadata
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionee
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
-import com.amity.socialcloud.uikit.chat.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.common.common.views.AmityColorPaletteUtil
 import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
 import com.amity.socialcloud.uikit.common.localization.DefaultAmityCommonStringProvider
@@ -60,7 +60,7 @@ class AmityMessageComposeView(context: Context) : MentionsEditText(context) {
                 .setMentionTextColor(
                     ContextCompat.getColor(
                         context,
-                        R.color.amityColorHighlight
+                        CommonR.color.amityColorHighlight
                     )
                 ).build()
         )

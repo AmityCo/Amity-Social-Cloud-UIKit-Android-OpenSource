@@ -70,7 +70,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorBase
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorBaseShade4
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerPageViewModel
 import com.amity.socialcloud.uikit.community.compose.post.composer.RenderAltTextConfigSheet
@@ -275,7 +275,7 @@ fun AmityPostMediaPreviewDialog(
                                     ) {
                                         if (isPostCreator) {
                                             AmityBottomSheetActionItem(
-                                                icon = R.drawable.amity_ic_edit_profile,
+                                                icon = CommonR.drawable.amity_ic_edit_profile,
                                                 text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_image_edit_alt_text_title"),
                                                 modifier = modifier.testTag("bottom_sheet_edit_alt_text_button"),
                                             ) {
@@ -315,7 +315,7 @@ fun AmityPostMediaPreviewDialog(
                     val (closeBtn, muteBtn, counter, menuBtn) = createRefs()
 
                     Image(
-                        painter = painterResource(R.drawable.amity_v4_image_preview_close),
+                        painter = painterResource(CommonR.drawable.amity_v4_image_preview_close),
                         contentDescription = "Close",
                         modifier = Modifier
                             .zIndex(Float.MAX_VALUE)
@@ -330,8 +330,8 @@ fun AmityPostMediaPreviewDialog(
                     if (isVideoPost) {
                         Image(
                             painter = painterResource(
-                                id = if (isAudioMuted) R.drawable.amity_ic_media_audio_mute
-                                else R.drawable.amity_ic_media_audio_unmute
+                                id = if (isAudioMuted) CommonR.drawable.amity_ic_media_audio_mute
+                                else CommonR.drawable.amity_ic_media_audio_unmute
                             ),
                             contentDescription = "Video Audio",
                             modifier = Modifier
@@ -366,7 +366,7 @@ fun AmityPostMediaPreviewDialog(
 
                     if (isPostCreator && !isVideoPost) {
                         AmityMenuButton(
-                            icon = R.drawable.amity_ic_more_horiz,
+                            icon = CommonR.drawable.amity_ic_more_horiz,
                             size = 32.dp,
                             iconPadding = 2.dp,
                             modifier = Modifier.constrainAs(menuBtn) {

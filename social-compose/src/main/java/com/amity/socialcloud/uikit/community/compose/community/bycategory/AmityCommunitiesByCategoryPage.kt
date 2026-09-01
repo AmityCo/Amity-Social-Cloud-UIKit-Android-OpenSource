@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.amity.socialcloud.uikit.common.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityToolBar
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
@@ -88,7 +88,7 @@ fun AmityCommunitiesByCategoryPage(
                             .padding(top = 0.dp, bottom = 60.dp, start = 24.dp, end = 24.dp)
                     ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.amity_ic_empty_community_list),
+                            painter = painterResource(id = CommonR.drawable.amity_ic_empty_community_list),
                             contentDescription = null,
                             tint = AmityTheme.colors.baseShade4,
                         )
@@ -112,7 +112,7 @@ fun AmityCommunitiesByCategoryPage(
                             .padding(top = 0.dp, bottom = 60.dp, start = 24.dp, end = 24.dp)
                     ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.amity_ic_unable_to_load),
+                            painter = painterResource(id = CommonR.drawable.amity_ic_unable_to_load),
                             contentDescription = null,
                             tint = AmityTheme.colors.baseShade4,
                         )

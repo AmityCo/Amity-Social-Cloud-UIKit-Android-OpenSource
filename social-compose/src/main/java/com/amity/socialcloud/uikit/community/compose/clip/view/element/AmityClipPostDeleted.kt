@@ -23,7 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
@@ -41,7 +41,7 @@ fun AmityClipPostDeleted(
             )
         ) {
             Image(
-                painter = painterResource(id = R.drawable.amity_v4_clip_post_deleted),
+                painter = painterResource(id = CommonR.drawable.amity_v4_clip_post_deleted),
                 contentDescription = "Error Icon",
                 modifier = Modifier
                     .size(60.dp)

@@ -41,7 +41,7 @@ import com.amity.socialcloud.uikit.chat.compose.home.element.AmityChatListEmptyS
 import com.amity.socialcloud.uikit.chat.compose.home.element.AmityChatListItem
 import com.amity.socialcloud.uikit.chat.compose.home.element.AmityChatListSkeleton
 import com.amity.socialcloud.uikit.chat.compose.localization.DefaultAmityChatStringProvider
-import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityBanner
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityBannerHierarchy
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButton
@@ -266,8 +266,8 @@ private fun SwipeToDismissListItem(
         enableDismissFromEndToStart = true,
         backgroundContent = {
             val iconResId = when (swipeAction) {
-                SwipeAction.ARCHIVE -> CommonR.drawable.amity_ic_archive_r
-                SwipeAction.UNARCHIVE -> CommonR.drawable.amity_ic_unarchive_r
+                SwipeAction.ARCHIVE -> CommonComposeR.drawable.amity_ic_archive_r
+                SwipeAction.UNARCHIVE -> CommonComposeR.drawable.amity_ic_unarchive_r
             }
             val label = when (swipeAction) {
                 SwipeAction.ARCHIVE -> DefaultAmityChatStringProvider.getInstance().getString("chat.archive")
@@ -308,6 +308,6 @@ private fun NotificationsDisabledBanner() {
         hierarchy = AmityBannerHierarchy.SUBDUE,
         centered = true,   // full-width system notice: icon + text are centred
         description = amityChatString("chat.notifications.disabled"),
-        descriptionIcon = CommonR.drawable.amity_ic_bell_slash_r,
+        descriptionIcon = CommonComposeR.drawable.amity_ic_bell_slash_r,
     )
 }

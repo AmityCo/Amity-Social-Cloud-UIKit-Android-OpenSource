@@ -33,7 +33,8 @@ import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAvatarView
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.getIcon
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.community.compose.livestream.room.view.CommunityRoomPlayerHeader
 import com.amity.socialcloud.uikit.community.compose.screenshot.base.BaseScreenshotTest
 import com.github.takahirom.roborazzi.RoborazziOptions
@@ -76,7 +77,7 @@ class AmityCommunityRoomPlayerHeaderScreenshotTest : BaseScreenshotTest() {
                             image = null,
                             size = 32.dp,
                             iconPadding = 24.dp,
-                            placeholder = R.drawable.amity_ic_community_placeholder,
+                            placeholder = CommonR.drawable.amity_ic_community_placeholder,
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Column {
@@ -117,7 +118,7 @@ class AmityCommunityRoomPlayerHeaderScreenshotTest : BaseScreenshotTest() {
                                     overflow = TextOverflow.Ellipsis,
                                 )
                                 Image(
-                                    painter = painterResource(id = R.drawable.amity_ic_brand_badge),
+                                    painter = painterResource(id = CommonComposeR.drawable.amity_ic_brand_badge),
                                     contentDescription = "Brand badge",
                                     modifier = Modifier.size(12.dp),
                                 )
@@ -153,7 +154,7 @@ class AmityCommunityRoomPlayerHeaderScreenshotTest : BaseScreenshotTest() {
                             image = null,
                             size = 32.dp,
                             iconPadding = 24.dp,
-                            placeholder = R.drawable.amity_ic_community_placeholder,
+                            placeholder = CommonR.drawable.amity_ic_community_placeholder,
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Column {

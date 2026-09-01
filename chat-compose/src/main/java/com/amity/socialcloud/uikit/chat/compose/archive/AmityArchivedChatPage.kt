@@ -27,7 +27,7 @@ import com.amity.socialcloud.sdk.model.chat.channel.AmityChannel
 import com.amity.socialcloud.uikit.chat.compose.home.AmityChatHomePageBehavior
 import com.amity.socialcloud.uikit.chat.compose.home.component.AmityChatListComponent
 import com.amity.socialcloud.uikit.chat.compose.home.component.SwipeAction
-import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButton
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonHierarchy
@@ -72,7 +72,7 @@ fun AmityArchivedChatPage(
                         style = AmityButtonStyle.GHOST,
                         hierarchy = AmityButtonHierarchy.SECONDARY,
                         iconSize = AmityIconButtonSize.SIZE32,
-                        icon = CommonR.drawable.amity_ic_chevron_left,
+                        icon = CommonComposeR.drawable.amity_ic_chevron_left,
                         onClick = { (context as? Activity)?.finish() },
                         modifier = Modifier.align(Alignment.CenterStart),
                     )
@@ -137,7 +137,7 @@ private fun ArchivedChatEmptyState(
     AmityEmptyState(
         modifier = modifier.fillMaxSize(),
         variant = AmityEmptyStateVariant.ICON,
-        icon = CommonR.drawable.amity_ic_inbox_l,
+        icon = CommonComposeR.drawable.amity_ic_inbox_l,
         title = amityChatString("chat.archived.empty.title"),
     )
 }

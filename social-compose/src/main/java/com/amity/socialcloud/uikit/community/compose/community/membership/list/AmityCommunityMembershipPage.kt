@@ -27,8 +27,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.sdk.model.chat.settings.AmityMembershipAcceptanceType
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.common.compose.R
-import com.amity.socialcloud.uikit.community.compose.R as SocialR
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityTabRow
 import com.amity.socialcloud.uikit.common.ui.elements.AmityTabRowItem
@@ -142,7 +142,7 @@ fun AmityCommunityMembershipPage(
                 // (promote/demote) and must not unlock this button.
                 if (hasAddPermission) {
                     Icon(
-                        painter = painterResource(R.drawable.amity_ic_add),
+                        painter = painterResource(CommonR.drawable.amity_ic_add),
                         contentDescription = "Close",
                         tint = AmityTheme.colors.base,
                         modifier = modifier

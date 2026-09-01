@@ -38,7 +38,7 @@ import coil3.request.ImageRequest
 import com.amity.socialcloud.sdk.model.social.category.AmityCommunityCategory
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -106,7 +106,7 @@ fun AmityCommunityCategoryElement(
             )
             if (painterState !is AsyncImagePainter.State.Success) {
                 Image(
-                    painter = painterResource(id = com.amity.socialcloud.uikit.common.compose.R.drawable.amity_ic_category_placeholder),
+                    painter = painterResource(id = CommonR.drawable.amity_ic_category_placeholder),
                     contentScale = ContentScale.Crop,
                     contentDescription = null,
                     modifier = Modifier
@@ -129,7 +129,7 @@ fun AmityCommunityCategoryElement(
         Spacer(modifier.width(4.dp))
         if (onRemove != null) {
             Icon(
-                painter = painterResource(R.drawable.amity_ic_close2),
+                painter = painterResource(CommonR.drawable.amity_ic_close2),
                 contentDescription = "Close",
                 tint = AmityTheme.colors.baseShade1,
                 modifier = modifier

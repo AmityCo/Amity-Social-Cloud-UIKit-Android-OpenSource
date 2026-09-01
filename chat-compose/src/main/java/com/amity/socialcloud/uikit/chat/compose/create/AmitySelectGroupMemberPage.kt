@@ -56,8 +56,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
-import com.amity.socialcloud.uikit.chat.compose.R
-import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityAvatar
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityAvatarSize
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityAvatarVariant
@@ -117,7 +116,7 @@ fun AmitySelectGroupMemberPage(
                         style = AmityButtonStyle.GHOST,
                         hierarchy = AmityButtonHierarchy.SECONDARY,
                         iconSize = AmityIconButtonSize.SIZE32,
-                        icon = CommonR.drawable.amity_ic_cross_r,
+                        icon = CommonComposeR.drawable.amity_ic_cross_r,
                         onClick = { onBack.invoke() },
                         modifier = Modifier.align(Alignment.CenterStart),
                     )
@@ -197,7 +196,7 @@ fun AmitySelectGroupMemberPage(
                                 .imePadding()
                                 .padding(32.dp),
                             variant = AmityEmptyStateVariant.ICON,
-                            icon = CommonR.drawable.amity_ic_search_l,
+                            icon = CommonComposeR.drawable.amity_ic_search_l,
                             title = amityChatString("chat.search.min.chars"),
                         )
                     }
@@ -208,7 +207,7 @@ fun AmitySelectGroupMemberPage(
                                 .fillMaxSize()
                                 .padding(32.dp),
                             variant = AmityEmptyStateVariant.ICON,
-                            icon = CommonR.drawable.amity_ic_search_cross_l,
+                            icon = CommonComposeR.drawable.amity_ic_search_cross_l,
                             title = amityChatString("chat.no.users.found"),
                         )
                     }
@@ -251,7 +250,7 @@ private fun SelectableUserItem(
         titleAccessory = if (user.isBrand()) {
             {
                 Image(
-                    painter = painterResource(id = R.drawable.amity_ic_brand_badge),
+                    painter = painterResource(id = CommonComposeR.drawable.amity_ic_brand_badge),
                     contentDescription = "",
                     modifier = Modifier
                         .size(20.dp)
@@ -264,7 +263,7 @@ private fun SelectableUserItem(
             type = AmityListLeadingType.AVATAR,
             avatarUrl = user.avatarImageUrl(),
             avatarInitials = user.avatarInitials(),
-            icon = CommonR.drawable.amity_ic_user_r,
+            icon = CommonComposeR.drawable.amity_ic_user_r,
             avatarSize = AmityAvatarSize.Size40,
             avatarBorderWidth = 2,
         ),
@@ -272,7 +271,7 @@ private fun SelectableUserItem(
             AmityListTrailingContent(
                 type = AmityListTrailingType.CHECKBOX,
                 checked = isSelected,
-                icon = CommonR.drawable.amity_ic_scale_2_s,
+                icon = CommonComposeR.drawable.amity_ic_scale_2_s,
             )
         ),
         onPress = onToggle,
@@ -295,7 +294,7 @@ private fun SelectedUserChip(
                 variant = if (user.avatarImageUrl() != null) AmityAvatarVariant.Image else AmityAvatarVariant.Text,
                 imageUrl = user.avatarImageUrl(),
                 initials = user.avatarInitials(),
-                icon = CommonR.drawable.amity_ic_user_r,
+                icon = CommonComposeR.drawable.amity_ic_user_r,
                 size = AmityAvatarSize.Size40,
                 borderWidth = 2,
             )
@@ -305,7 +304,7 @@ private fun SelectedUserChip(
                 style = AmityButtonStyle.TRANSPARENT,
                 hierarchy = AmityButtonHierarchy.PRIMARY,
                 iconSize = AmityIconButtonSize.SIZE16,
-                icon = CommonR.drawable.amity_ic_cross_r,
+                icon = CommonComposeR.drawable.amity_ic_cross_r,
                 contentDescription = "Remove",
                 onClick = onRemove,
                 modifier = Modifier.align(Alignment.TopEnd),

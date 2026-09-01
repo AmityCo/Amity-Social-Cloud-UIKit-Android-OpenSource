@@ -21,7 +21,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
-import com.amity.socialcloud.uikit.chat.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
 import com.amity.socialcloud.uikit.chat.compose.live.elements.AmityMessageAvatarView
 import com.amity.socialcloud.uikit.common.localization.amityCommonString
@@ -80,7 +80,7 @@ fun AmityMessageComposeReplyLabel(
         }
 
         Icon(
-            painter = painterResource(id = R.drawable.amity_ic_close),
+            painter = painterResource(id = CommonR.drawable.amity_ic_close),
             contentDescription = null,
             tint = AmityTheme.colors.secondaryShade2,
             modifier = modifier

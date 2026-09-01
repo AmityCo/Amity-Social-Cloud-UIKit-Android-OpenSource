@@ -28,7 +28,8 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
@@ -100,7 +101,7 @@ fun AmityPendingPostHeaderElement(
 
                     val isBrandCreator = post.getCreator()?.isBrand() == true
                     if (isBrandCreator) {
-                        val badge = R.drawable.amity_ic_brand_badge
+                        val badge = CommonComposeR.drawable.amity_ic_brand_badge
                         Image(
                             painter = painterResource(id = badge),
                             contentDescription = "",
@@ -134,7 +135,7 @@ fun AmityPendingPostHeaderElement(
 
             if (!hideMenuButton) {
                 Icon(
-                    painter = painterResource(id = R.drawable.amity_ic_more_horiz),
+                    painter = painterResource(id = CommonR.drawable.amity_ic_more_horiz),
                     contentDescription = null,
                     tint = AmityTheme.colors.base,
                     modifier = modifier

@@ -109,7 +109,8 @@ import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getText
 import com.amity.socialcloud.uikit.common.utils.shimmerBackground
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.AltTextConfigMode
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.AltTextMedia
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.AmityAltTextConfigComponent
@@ -801,7 +802,7 @@ fun AmityPostComposerPage(
                     elementId = "close_button"
                 ) {
                     Icon(
-                        painter = if (isCreateClipMode) painterResource(R.drawable.amity_ic_back) else painterResource(
+                        painter = if (isCreateClipMode) painterResource(CommonR.drawable.amity_ic_back) else painterResource(
                             getConfig().getIcon()
                         ),
                         contentDescription = null,
@@ -1109,7 +1110,7 @@ fun AmityPostComposerPage(
                                 )
                         ) {
                             Image(
-                                painter = painterResource(id = R.drawable.amity_ic_play_v4),
+                                painter = painterResource(id = CommonComposeR.drawable.amity_ic_play_v4),
                                 contentDescription = null,
                                 modifier = Modifier
                                     .align(Alignment.Center)
@@ -1473,7 +1474,7 @@ fun AmityPostComposerPage(
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
-                                painter = painterResource(id = R.drawable.amity_ic_dismiss_preview),
+                                painter = painterResource(id = CommonR.drawable.amity_ic_dismiss_preview),
                                 contentDescription = "Remove link preview",
                                 tint = amityColorWhite,
                                 modifier = Modifier.size(24.dp)
@@ -1557,7 +1558,7 @@ fun AmityPostComposerPage(
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.amity_ic_product_tag),
+                    painter = painterResource(id = CommonR.drawable.amity_ic_product_tag),
                     contentDescription = "Product tags",
                     tint = AmityTheme.colors.base,
                     modifier = Modifier.size(32.dp)

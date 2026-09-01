@@ -44,7 +44,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.amity.socialcloud.uikit.chat.compose.R
 import com.amity.socialcloud.uikit.chat.compose.conversation.AmityChatPageActivity
-import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButton
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonHierarchy
@@ -99,7 +99,7 @@ fun AmityChannelCreateConversationPage(
                     hierarchy = AmityButtonHierarchy.SECONDARY,
                     style = AmityButtonStyle.GHOST,
                     iconSize = AmityIconButtonSize.SIZE32,
-                    icon = CommonR.drawable.amity_ic_cross_r,
+                    icon = CommonComposeR.drawable.amity_ic_cross_r,
                     modifier = Modifier.align(Alignment.CenterStart),
                 )
 
@@ -145,7 +145,7 @@ fun AmityChannelCreateConversationPage(
                             .imePadding()
                             .padding(32.dp),
                         variant = AmityEmptyStateVariant.ICON,
-                        icon = CommonR.drawable.amity_ic_search_l,
+                        icon = CommonComposeR.drawable.amity_ic_search_l,
                         title = amityChatString("chat.search.min.chars"),
                     )
                 }
@@ -156,7 +156,7 @@ fun AmityChannelCreateConversationPage(
                             .imePadding()
                             .padding(horizontal = 24.dp),
                         variant = AmityEmptyStateVariant.ICON,
-                        icon = CommonR.drawable.amity_ic_search_cross_l,
+                        icon = CommonComposeR.drawable.amity_ic_search_cross_l,
                         title = amityChatString("chat.search.no.results"),
                     )
                 }

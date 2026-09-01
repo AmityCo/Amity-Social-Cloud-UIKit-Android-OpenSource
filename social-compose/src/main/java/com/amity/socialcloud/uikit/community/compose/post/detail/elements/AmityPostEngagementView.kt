@@ -76,6 +76,7 @@ import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetailPageViewModel
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialConfigString
@@ -520,7 +521,7 @@ fun AmityPostEngagementView(
 
                 if (shouldShowShareButton) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.amity_v4_share_icon),
+                        imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_v4_share_icon),
                         contentDescription = "Post Comment Count",
                         tint = Color.Unspecified,
                         modifier = Modifier

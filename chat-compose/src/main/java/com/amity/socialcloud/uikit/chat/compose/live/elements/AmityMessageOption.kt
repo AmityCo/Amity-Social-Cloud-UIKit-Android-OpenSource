@@ -44,7 +44,7 @@ import com.amity.socialcloud.uikit.chat.compose.common.AmityChatConfirmDialog
 import com.amity.socialcloud.uikit.chat.compose.live.AmityLiveChatPageViewModel
 import com.amity.socialcloud.uikit.chat.compose.localization.DefaultAmityChatStringProvider
 import com.amity.socialcloud.uikit.chat.compose.localization.amityChatString
-import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityDivider
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityDividerVariant
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
@@ -127,7 +127,7 @@ fun AmityMessageOption(
 							AmityDivider(variant = AmityDividerVariant.Content, inset = false)
 							AmityMessageOptionItem(
 								option = amityChatString("chat.option.unreport"),
-								icon = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_flag_slash_r),
+								icon = ImageVector.vectorResource(id = CommonComposeR.drawable.amity_ic_flag_slash_r),
 								tint = AmityTheme.colors.alert,
 								onDismiss = onDismiss,
 								action = onUnFlag

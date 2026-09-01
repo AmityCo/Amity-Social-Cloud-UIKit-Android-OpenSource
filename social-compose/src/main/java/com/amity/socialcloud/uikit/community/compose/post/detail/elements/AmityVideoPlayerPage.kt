@@ -81,6 +81,8 @@ import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.elements.AmityMenuButton
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityAddProductBottomSheet
 import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityProductTaggingBottomSheet
@@ -397,8 +399,8 @@ fun AmityVideoPlayerPage(
                             } else {
                                 Image(
                                     painter = painterResource(
-                                        if (isPlaying) R.drawable.amity_ic_pause
-                                        else R.drawable.amity_ic_play_v4
+                                        if (isPlaying) CommonComposeR.drawable.amity_ic_pause
+                                        else CommonComposeR.drawable.amity_ic_play_v4
                                     ),
                                     contentDescription = if (isPlaying) "Pause" else "Play",
                                     modifier = Modifier.fillMaxSize().clickableWithoutRipple {
@@ -470,7 +472,7 @@ fun AmityVideoPlayerPage(
                     // Menu button (3 dots)
                     if (showMenuButton && (isProductCatalogueEnabled || isHost)) {
                         AmityMenuButton(
-                            icon = if (isRecordedRoomPost) R.drawable.amity_ic_more_vertical else R.drawable.amity_ic_more_horiz,
+                            icon = if (isRecordedRoomPost) CommonR.drawable.amity_ic_more_vertical else CommonR.drawable.amity_ic_more_horiz,
                             size = 32.dp,
                             iconPadding = 2.dp,
                             modifier = Modifier.constrainAs(menuBtn) {
@@ -799,7 +801,7 @@ private fun VideoPlayerMenuBottomSheet(
             // View original post option (for video feed)
             if (onViewOriginalPost != null) {
                 com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem(
-                    icon = R.drawable.amity_ic_view_post,
+                    icon = CommonR.drawable.amity_ic_view_post,
                     text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_view_post"),
                 ) {
                     onDismiss()
@@ -821,7 +823,7 @@ private fun VideoPlayerMenuBottomSheet(
                         .padding(horizontal = 4.dp, vertical = 16.dp)
                 ) {
                     Image(
-                        painter = painterResource(R.drawable.amity_ic_room_product_tags),
+                        painter = painterResource(CommonR.drawable.amity_ic_room_product_tags),
                         contentDescription = "open tagged products bottomsheet button",
                         modifier = Modifier
                             .size(32.dp)
@@ -845,7 +847,7 @@ private fun VideoPlayerMenuBottomSheet(
                             color = AmityTheme.colors.baseShade3
                         )
                         Icon(
-                            painter = painterResource(id = R.drawable.amity_ic_chevron_right),
+                            painter = painterResource(id = CommonComposeR.drawable.amity_ic_chevron_right),
                             contentDescription = null,
                             tint = AmityTheme.colors.baseShade3,
                             modifier = Modifier.size(18.dp)
@@ -858,7 +860,7 @@ private fun VideoPlayerMenuBottomSheet(
                 if (postLink.isNotEmpty()) {
                     // Copy post link
                     com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem(
-                        icon = R.drawable.amity_v4_link_icon,
+                        icon = CommonR.drawable.amity_v4_link_icon,
                         text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_copy_post_link"),
                     ) {
                         onDismiss()
@@ -870,7 +872,7 @@ private fun VideoPlayerMenuBottomSheet(
 
                     // Share to
                     com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem(
-                        icon = R.drawable.amity_v4_share_icon,
+                        icon = CommonR.drawable.amity_v4_share_icon,
                         text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_share_to"),
                     ) {
                         onDismiss()

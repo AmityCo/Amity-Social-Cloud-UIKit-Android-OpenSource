@@ -47,6 +47,8 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getText
+import com.amity.socialcloud.uikit.common.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.community.membership.add.AmityCommunityAddMemberPageViewModel
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialConfigString
@@ -185,7 +187,7 @@ fun AmityCommunityAddMemberElement(
                         .clickableWithoutRipple { onRemoveAction(user) }
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.amity_ic_close2),
+                        painter = painterResource(id = CommonR.drawable.amity_ic_close2),
                         contentDescription = null,
                         tint = amityColorWhite,
                         modifier = Modifier.align(Alignment.Center)
@@ -210,7 +212,7 @@ fun AmityCommunityAddMemberElement(
             if (isBrandUser) {
                 Spacer(modifier = Modifier.width(1.dp))
                 Image(
-                    painter = painterResource(id = R.drawable.amity_ic_brand_badge),
+                    painter = painterResource(id = CommonComposeR.drawable.amity_ic_brand_badge),
                     contentDescription = "Brand badge",
                     modifier = Modifier.size(16.dp)
                 )
@@ -323,7 +325,7 @@ fun AmityCommunityAddMemberItem(
             )
             val isBrandUser = user.isBrand()
             if (isBrandUser) {
-                val badge = R.drawable.amity_ic_brand_badge
+                val badge = CommonComposeR.drawable.amity_ic_brand_badge
                 Image(
                     painter = painterResource(id = badge),
                     contentDescription = "",

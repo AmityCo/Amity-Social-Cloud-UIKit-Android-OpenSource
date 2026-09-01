@@ -30,6 +30,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.story.target.elements.AmityStoryGradientRingElement
 
@@ -114,7 +115,7 @@ fun AmityCommunityLiveRoomTarget(
             )
             if (post?.getCreator()?.isBrand() == true) {
                 Image(
-                    painter = painterResource(id = R.drawable.amity_ic_brand_badge),
+                    painter = painterResource(id = CommonComposeR.drawable.amity_ic_brand_badge),
                     contentDescription = "Brand badge",
                     modifier = Modifier.size(12.dp)
                 )

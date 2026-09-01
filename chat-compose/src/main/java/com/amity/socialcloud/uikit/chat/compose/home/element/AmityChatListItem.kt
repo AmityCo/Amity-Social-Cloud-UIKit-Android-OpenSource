@@ -44,7 +44,7 @@ import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
 import com.amity.socialcloud.uikit.chat.compose.R
-import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.chat.compose.localization.DefaultAmityChatStringProvider
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityAvatar
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityAvatarSize
@@ -145,7 +145,7 @@ fun AmityChatListItem(
                 if (isMuted) {
                     Spacer(modifier = Modifier.width(4.dp))
                     Icon(
-                        imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_bell_slash_s),
+                        imageVector = ImageVector.vectorResource(id = CommonComposeR.drawable.amity_ic_bell_slash_s),
                         contentDescription = null,
                         modifier = Modifier.size(20.dp),
                         tint = AmityTheme.token(AmityColorToken.IconListHeaderGeneral),
@@ -228,7 +228,7 @@ fun AmityChatListItem(
                 AmityBadge(
                     variant = AmityBadgeVariant.LABEL,
                     label = amityChatString("chat.archived.badge.label"),
-                    leadingIcon = CommonR.drawable.amity_ic_archive_r,
+                    leadingIcon = CommonComposeR.drawable.amity_ic_archive_r,
                     shape = AmityBadgeShape.ROUND,
                     size = AmityBadgeSize.SIZE_20,
                     preset = AmityBadgePreset(
@@ -249,7 +249,7 @@ fun AmityChatListItem(
                     if (isMentioned && unreadCount > 0) {
                         AmityBadge(
                             variant = AmityBadgeVariant.ICON,
-                            icon = CommonR.drawable.amity_ic_at_r,
+                            icon = CommonComposeR.drawable.amity_ic_at_r,
                             shape = AmityBadgeShape.ROUND,
                             size = AmityBadgeSize.SIZE_24,
                             preset = AmityBadgePreset(
@@ -309,7 +309,7 @@ fun AmityUserAvatarView(
             },
             imageUrl = avatarUrl,
             initials = initials,
-            icon = if (isDeleted) CommonR.drawable.amity_ic_user_s else CommonR.drawable.amity_ic_user_r,
+            icon = if (isDeleted) CommonComposeR.drawable.amity_ic_user_s else CommonComposeR.drawable.amity_ic_user_r,
             size = nearestAvatarSize(size.dp),
             borderWidth = borderWidth,
         )
@@ -319,7 +319,7 @@ fun AmityUserAvatarView(
             // only where that badge isn't (mutually exclusive per row).
             AmityBadge(
                 variant = AmityBadgeVariant.ICON,
-                icon = CommonR.drawable.amity_ic_shield_check_s,
+                icon = CommonComposeR.drawable.amity_ic_shield_check_s,
                 shape = AmityBadgeShape.ROUND,
                 size = AmityBadgeSize.SIZE_16,
                 preset = AmityBadgePreset(
@@ -356,14 +356,14 @@ fun AmityChannelAvatarView(
         modifier = modifier,
         variant = if (!avatarUrl.isNullOrEmpty()) AmityAvatarVariant.Image else AmityAvatarVariant.Icon,
         imageUrl = avatarUrl,
-        icon = CommonR.drawable.amity_ic_comments_alt_s,
+        icon = CommonComposeR.drawable.amity_ic_comments_alt_s,
         style = AmityAvatarStyle.Squared,
         size = nearestAvatarSize(size.dp),
         indicator = if (isPrivate) {
             {
                 AmityBadge(
                     variant = AmityBadgeVariant.ICON,
-                    icon = CommonR.drawable.amity_ic_lock_keyhole_s,
+                    icon = CommonComposeR.drawable.amity_ic_lock_keyhole_s,
                     shape = AmityBadgeShape.ROUND,
                     size = AmityBadgeSize.SIZE_16,
                     preset = AmityBadgePreset(
@@ -417,17 +417,17 @@ private fun getMessagePreviewData(
     if (searchMessage != null) {
         if (searchMessage.isDeleted()) return MessagePreviewData(
             text = context.getString(R.string.amity_chat_preview_deleted),
-            iconResId = CommonR.drawable.amity_ic_trash_s,
+            iconResId = CommonComposeR.drawable.amity_ic_trash_s,
         )
         return when (val data = searchMessage.getData()) {
             is AmityMessage.Data.TEXT -> MessagePreviewData(text = data.getText())
             is AmityMessage.Data.IMAGE -> MessagePreviewData(
                 text = context.getString(R.string.amity_chat_preview_sent_photo),
-                iconResId = CommonR.drawable.amity_ic_image_s,
+                iconResId = CommonComposeR.drawable.amity_ic_image_s,
             )
             is AmityMessage.Data.VIDEO -> MessagePreviewData(
                 text = context.getString(R.string.amity_chat_preview_sent_video),
-                iconResId = CommonR.drawable.amity_ic_circle_play_s,
+                iconResId = CommonComposeR.drawable.amity_ic_circle_play_s,
             )
             else -> MessagePreviewData(text = "")
         }
@@ -437,17 +437,17 @@ private fun getMessagePreviewData(
         ?: return MessagePreviewData(text = DefaultAmityChatStringProvider.getInstance().getString("chat.preview.no.message"))
     if (preview.isDeleted()) return MessagePreviewData(
         text = DefaultAmityChatStringProvider.getInstance().getString("chat.preview.deleted"),
-        iconResId = CommonR.drawable.amity_ic_trash_s,
+        iconResId = CommonComposeR.drawable.amity_ic_trash_s,
     )
     return when (val data = preview.getData()) {
         is AmityMessage.Data.TEXT -> MessagePreviewData(text = data.getText())
         is AmityMessage.Data.IMAGE -> MessagePreviewData(
             text = DefaultAmityChatStringProvider.getInstance().getString("chat.preview.sent.photo"),
-            iconResId = CommonR.drawable.amity_ic_image_s,
+            iconResId = CommonComposeR.drawable.amity_ic_image_s,
         )
         is AmityMessage.Data.VIDEO -> MessagePreviewData(
             text = DefaultAmityChatStringProvider.getInstance().getString("chat.preview.sent.video"),
-            iconResId = CommonR.drawable.amity_ic_circle_play_s,
+            iconResId = CommonComposeR.drawable.amity_ic_circle_play_s,
         )
         else -> MessagePreviewData(text = "")
     }

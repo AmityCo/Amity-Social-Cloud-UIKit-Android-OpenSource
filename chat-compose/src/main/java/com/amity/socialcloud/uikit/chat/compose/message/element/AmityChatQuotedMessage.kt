@@ -49,7 +49,7 @@ import coil3.request.ImageRequest
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
-import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 import com.amity.socialcloud.uikit.common.utils.shimmerBackground
@@ -154,7 +154,7 @@ private fun ReplyAttributionRow(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_share_left_s),
+                imageVector = ImageVector.vectorResource(id = CommonComposeR.drawable.amity_ic_share_left_s),
                 contentDescription = null,
                 modifier = Modifier.size(16.dp),
                 tint = if (isCurrentUser) {
@@ -298,7 +298,7 @@ private fun QuotedMessageContent(
                 ) {
                     Icon(
                         imageVector = ImageVector.vectorResource(
-                            id = CommonR.drawable.amity_ic_video_play_s,
+                            id = CommonComposeR.drawable.amity_ic_video_play_s,
                         ),
                         contentDescription = "Video",
                         modifier = Modifier.size(16.dp),
@@ -354,7 +354,7 @@ private fun QuotedMessageDeleted() {
             horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_trash_s),
+                imageVector = ImageVector.vectorResource(id = CommonComposeR.drawable.amity_ic_trash_s),
                 contentDescription = null,
                 modifier = Modifier.size(16.dp),
                 tint = AmityTheme.token(AmityColorToken.IconChatBubbleInboundMessagesDeleted),

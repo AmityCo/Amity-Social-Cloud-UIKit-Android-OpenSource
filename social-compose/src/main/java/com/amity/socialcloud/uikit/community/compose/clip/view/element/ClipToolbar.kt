@@ -24,13 +24,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
-import com.amity.socialcloud.uikit.common.R.drawable
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.isSignedIn
 import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.common.utils.shimmerBackground
-import com.amity.socialcloud.uikit.community.compose.R
 
 @Composable
 fun ClipToolbar(
@@ -56,7 +55,7 @@ fun ClipToolbar(
         ) {
             // Back button
             Icon(
-                painter = painterResource(R.drawable.amity_ic_back),
+                painter = painterResource(CommonR.drawable.amity_ic_back),
                 contentDescription = "Back",
                 tint = AmityTheme.colors.baseInverse,
                 modifier = Modifier
@@ -80,7 +79,7 @@ fun ClipToolbar(
                     // Private community icon
                     if (community != null && !isError && !community.isPublic()) {
                         Icon(
-                            painter = painterResource(id = drawable.amity_ic_lock1),
+                            painter = painterResource(id = CommonR.drawable.amity_ic_lock1),
                             contentDescription = "Private community icon",
                             tint = AmityTheme.colors.baseInverse,
                             modifier = Modifier.size(12.dp)
@@ -101,7 +100,7 @@ fun ClipToolbar(
                     if (community != null && !isError && community.isOfficial()) {
                         Spacer(Modifier.width(4.dp))
                         Image(
-                            painter = painterResource(id = drawable.amity_v4_verified_badge),
+                            painter = painterResource(id = CommonR.drawable.amity_v4_verified_badge),
                             contentDescription = "Verified community icon",
                             modifier = Modifier.size(16.dp)
                         )
@@ -123,7 +122,7 @@ fun ClipToolbar(
 
                 // Create button
                 Icon(
-                    painter = painterResource(R.drawable.amity_v4_ic_camera),
+                    painter = painterResource(CommonR.drawable.amity_v4_ic_camera),
                     contentDescription = "Create Clip",
                     tint = AmityTheme.colors.baseInverse,
                     modifier = Modifier

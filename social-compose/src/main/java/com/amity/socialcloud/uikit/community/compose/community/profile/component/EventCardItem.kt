@@ -33,7 +33,8 @@ import com.amity.socialcloud.sdk.model.social.event.AmityEventType
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.ui.theme.amityEventHostBadgeBackground
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.community.compose.event.formatEventTimestamp
 import org.joda.time.DateTime
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
@@ -57,7 +58,7 @@ private fun EventHostBadge(
         contentAlignment = Alignment.Center
     ) {
         Image(
-            painter = painterResource(id = R.drawable.amity_ic_event_host_badge),
+            painter = painterResource(id = CommonR.drawable.amity_ic_event_host_badge),
             contentDescription = "Host badge"
         )
     }
@@ -149,8 +150,8 @@ private fun EventCardLarge(
                     .build(),
                 contentDescription = "Event cover",
                 contentScale = ContentScale.Crop,
-                placeholder = painterResource(R.drawable.amity_ic_event_list_placeholder),
-                error = painterResource(R.drawable.amity_ic_event_list_placeholder),
+                placeholder = painterResource(CommonR.drawable.amity_ic_event_list_placeholder),
+                error = painterResource(CommonR.drawable.amity_ic_event_list_placeholder),
                 modifier = Modifier.fillMaxSize()
             )
 
@@ -238,7 +239,7 @@ private fun EventCardLarge(
                 val isBrandCreator = event?.getCreator()?.isBrand() == true
                 if (isBrandCreator) {
                     Image(
-                        painter = painterResource(id = R.drawable.amity_ic_brand_badge),
+                        painter = painterResource(id = CommonComposeR.drawable.amity_ic_brand_badge),
                         contentDescription = "Brand badge",
                         modifier = Modifier.size(18.dp)
                     )
@@ -286,8 +287,8 @@ private fun EventCardMedium(
                     .build(),
                 contentDescription = "Event cover",
                 contentScale = ContentScale.Crop,
-                placeholder = painterResource(R.drawable.amity_ic_event_list_placeholder),
-                error = painterResource(R.drawable.amity_ic_event_list_placeholder),
+                placeholder = painterResource(CommonR.drawable.amity_ic_event_list_placeholder),
+                error = painterResource(CommonR.drawable.amity_ic_event_list_placeholder),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(141.dp),
@@ -429,8 +430,8 @@ private fun EventCardList(
                     .build(),
                 contentDescription = "Event cover",
                 contentScale = ContentScale.Crop,
-                placeholder = painterResource(R.drawable.amity_ic_event_list_placeholder),
-                error = painterResource(R.drawable.amity_ic_event_list_placeholder),
+                placeholder = painterResource(CommonR.drawable.amity_ic_event_list_placeholder),
+                error = painterResource(CommonR.drawable.amity_ic_event_list_placeholder),
                 modifier = Modifier.fillMaxSize()
             )
 

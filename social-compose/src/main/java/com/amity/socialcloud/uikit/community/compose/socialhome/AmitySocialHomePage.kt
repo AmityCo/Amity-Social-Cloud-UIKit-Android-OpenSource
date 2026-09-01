@@ -58,7 +58,7 @@ import com.amity.socialcloud.uikit.community.compose.post.detail.components.Amit
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.shimmerBackground
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -132,7 +132,7 @@ fun AmitySocialHomePage(
         ) {
             if (onBackClick != null) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_back),
+                    imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_back),
                     contentDescription = "Back",
                     modifier = Modifier
                         .padding(start = 16.dp, top = 12.dp)

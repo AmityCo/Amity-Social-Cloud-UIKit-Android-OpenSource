@@ -44,7 +44,7 @@ import com.amity.socialcloud.uikit.common.utils.closePage
 import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialConfigString
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostTargetType
@@ -281,7 +281,7 @@ private fun AmityEventLockedCommunityRow(
         ) {
             if (!community.isPublic()) {
                 Icon(
-                    painter = painterResource(R.drawable.amity_ic_lock1),
+                    painter = painterResource(CommonR.drawable.amity_ic_lock1),
                     tint = AmityTheme.colors.base,
                     contentDescription = "Private Community",
                     modifier = Modifier.size(20.dp),

@@ -54,7 +54,8 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.common.utils.shade
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.community.compose.community.membership.element.AmityCommunityInviteMemberItem
 import com.amity.socialcloud.uikit.community.compose.community.membership.element.AmityCommunityInviteMemberRowList
 import com.amity.socialcloud.uikit.community.compose.community.membership.invite.AmityCommunityInviteMemberPageViewModel
@@ -99,7 +100,7 @@ fun AmityCommunityPendingInviteMemberPage(
                         .padding(start = 12.dp, end = 16.dp)
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.amity_ic_close),
+                        painter = painterResource(CommonR.drawable.amity_ic_close),
                         contentDescription = "Close",
                         tint = AmityTheme.colors.base,
                         modifier = modifier
@@ -211,7 +212,7 @@ fun AmityCommunityInvitationItem(
             )
             val isBrandUser = user.isBrand()
             if (isBrandUser) {
-                val badge = R.drawable.amity_ic_brand_badge
+                val badge = CommonComposeR.drawable.amity_ic_brand_badge
                 Image(
                     painter = painterResource(id = badge),
                     contentDescription = "",

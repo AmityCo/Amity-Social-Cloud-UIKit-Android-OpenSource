@@ -83,7 +83,8 @@ import com.amity.socialcloud.uikit.common.utils.AmityConstants.POST_REACTION
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.common.utils.readableSocialTimeDiff
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipFeedPageType
 import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipFeedPageViewModel
 import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipModalSheetUIState
@@ -390,7 +391,7 @@ fun ClipItem(
                                     if (post.getCreator()?.isBrand() == true) {
                                         Spacer(modifier = Modifier.width(2.dp))
                                         Image(
-                                            painter = painterResource(id = R.drawable.amity_ic_brand_badge),
+                                            painter = painterResource(id = CommonComposeR.drawable.amity_ic_brand_badge),
                                             contentDescription = "",
                                             modifier = Modifier
                                                 .size(18.dp)
@@ -429,7 +430,7 @@ fun ClipItem(
                                             .height(18.dp),
                                     ) {
                                         Icon(
-                                            painter = painterResource(id = R.drawable.amity_ic_moderator_social),
+                                            painter = painterResource(id = CommonR.drawable.amity_ic_moderator_social),
                                             contentDescription = null,
                                             tint = AmityTheme.colors.primary,
                                         )
@@ -666,7 +667,7 @@ fun ClipItem(
                                         .let(AmitySocialReactions::toReaction)
                                         .icon
                                 } else {
-                                    R.drawable.amity_v4_clip_like
+                                    CommonR.drawable.amity_v4_clip_like
                                 },
                                 count = localReactionCount.readableNumber(),
                             )
@@ -674,7 +675,7 @@ fun ClipItem(
 
                         // Comment button
                         InteractionButton(
-                            icon = R.drawable.amity_v4_ic_clip_comment,
+                            icon = CommonR.drawable.amity_v4_ic_clip_comment,
                             count = commentCount.readableNumber(),
                             onClick = {
                                 viewModel.updateSheetUIState(
@@ -690,7 +691,7 @@ fun ClipItem(
 
                         // Mute and Unmute button
                         InteractionButton(
-                            icon = if (isMuted) R.drawable.amity_v4_clip_mute_state else R.drawable.amity_v4_clip_unmute_state,
+                            icon = if (isMuted) CommonR.drawable.amity_v4_clip_mute_state else CommonR.drawable.amity_v4_clip_unmute_state,
                             count = null,
                             onClick = {
                                 isMuted = !isMuted
@@ -705,7 +706,7 @@ fun ClipItem(
 
                         // option button
                         InteractionButton(
-                            icon = R.drawable.amity_v4_ic_clip_option,
+                            icon = CommonR.drawable.amity_v4_ic_clip_option,
                             count = null,
                             onClick = {
                                 viewModel.updateSheetUIState(

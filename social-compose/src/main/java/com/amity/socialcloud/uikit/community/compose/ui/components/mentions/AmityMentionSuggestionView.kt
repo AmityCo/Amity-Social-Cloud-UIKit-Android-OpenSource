@@ -39,6 +39,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.shimmerBackground
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.community.compose.R
 
 @Composable
@@ -135,7 +136,7 @@ fun AmityMentionSuggestionView(
 
                                 val isBrandUser = user.isBrand()
                                 if (isBrandUser) {
-                                    val badge = R.drawable.amity_ic_brand_badge
+                                    val badge = CommonComposeR.drawable.amity_ic_brand_badge
                                     Image(
                                         painter = painterResource(id = badge),
                                         contentDescription = "",

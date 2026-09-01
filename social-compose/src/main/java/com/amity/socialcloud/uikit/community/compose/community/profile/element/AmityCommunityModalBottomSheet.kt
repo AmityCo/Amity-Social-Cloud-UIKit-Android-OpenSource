@@ -33,7 +33,7 @@ import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipFeedPageViewModel
 import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipModalSheetUIState
 import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipPageBehavior
@@ -113,7 +113,7 @@ fun AmityCommunityModalBottomSheet(
                     ) {
                         if (isModerator) {
                             AmityBottomSheetActionItem(
-                                icon = R.drawable.amity_v4_setting_icon,
+                                icon = CommonR.drawable.amity_v4_setting_icon,
                                 text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_setting_community_settings"),
                                 modifier = modifier,
                             ) {
@@ -127,7 +127,7 @@ fun AmityCommunityModalBottomSheet(
                             }
                         } else if (community.isJoined()) {
                             AmityBottomSheetActionItem(
-                                icon = R.drawable.amity_v4_community_info,
+                                icon = CommonR.drawable.amity_v4_community_info,
                                 text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_community_information_title"),
                                 modifier = modifier,
                             ) {
@@ -147,7 +147,7 @@ fun AmityCommunityModalBottomSheet(
 
                         if (isSharable) {
                             AmityBottomSheetActionItem(
-                                icon = R.drawable.amity_v4_link_icon,
+                                icon = CommonR.drawable.amity_v4_link_icon,
                                 text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_copy_profile_link"),
                                 modifier = modifier.testTag("bottom_sheet_copy_link_button"),
                             ) {
@@ -159,7 +159,7 @@ fun AmityCommunityModalBottomSheet(
                             }
 
                             AmityBottomSheetActionItem(
-                                icon = R.drawable.amity_v4_share_icon,
+                                icon = CommonR.drawable.amity_v4_share_icon,
                                 text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_share_to"),
                                 modifier = modifier.testTag("bottom_sheet_share_to_button"),
                             ) {

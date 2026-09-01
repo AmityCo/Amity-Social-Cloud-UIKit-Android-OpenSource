@@ -39,7 +39,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.uikit.common.ui.elements.AmityNewsFeedDivider
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.community.category.component.AmityCommunityCategoriesComponent
 import com.amity.socialcloud.uikit.community.compose.community.category.component.AmityCommunityCategoriesViewModel
 import com.amity.socialcloud.uikit.community.compose.community.recommending.AmityRecommendedCommunitiesComponent
@@ -146,7 +146,7 @@ fun AmityExploreComponent(
                             .padding(top = paddingTop, start = 24.dp, end = 24.dp)
                     ) {
                         Image(
-                            painter = painterResource(id = R.drawable.amity_ic_no_explore_communities),
+                            painter = painterResource(id = CommonR.drawable.amity_ic_no_explore_communities),
                             contentDescription = null,
                         )
 
@@ -219,7 +219,7 @@ fun AmityExploreComponent(
                             .padding(top = paddingTop, start = 24.dp, end = 24.dp)
                     ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.amity_ic_unable_to_load),
+                            painter = painterResource(id = CommonR.drawable.amity_ic_unable_to_load),
                             contentDescription = null,
                             tint = AmityTheme.colors.baseShade4,
                         )

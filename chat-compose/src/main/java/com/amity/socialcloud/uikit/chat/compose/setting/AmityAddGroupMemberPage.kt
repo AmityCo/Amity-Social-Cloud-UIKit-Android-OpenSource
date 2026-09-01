@@ -42,7 +42,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.uikit.chat.compose.live.elements.AmityMessageAvatarView
-import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButton
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonHierarchy
@@ -101,7 +101,7 @@ fun AmityAddGroupMemberPage(
                     style = AmityButtonStyle.GHOST,
                     hierarchy = AmityButtonHierarchy.SECONDARY,
                     iconSize = AmityIconButtonSize.SIZE32,
-                    icon = CommonR.drawable.amity_ic_cross_r,
+                    icon = CommonComposeR.drawable.amity_ic_cross_r,
                     onClick = {
                         (context as? Activity)?.finish()
                     },
@@ -128,8 +128,8 @@ fun AmityAddGroupMemberPage(
                     modifier = Modifier.fillMaxWidth(),
                     value = searchKeyword,
                     placeholder = amityChatString("chat.search.placeholder"),
-                    leadingIcon = CommonR.drawable.amity_ic_search_r,
-                    trailingIcon = if (searchKeyword.isNotEmpty()) CommonR.drawable.amity_ic_clear_r else null,
+                    leadingIcon = CommonComposeR.drawable.amity_ic_search_r,
+                    trailingIcon = if (searchKeyword.isNotEmpty()) CommonComposeR.drawable.amity_ic_clear_r else null,
                     size = AmityInputSize.M,
                     boxedStyle = AmityBoxedInputStyle.SQUARE,
                     onChangeText = { searchKeyword = it },
@@ -178,7 +178,7 @@ fun AmityAddGroupMemberPage(
                                     style = AmityButtonStyle.TRANSPARENT,
                                     hierarchy = AmityButtonHierarchy.PRIMARY,
                                     iconSize = AmityIconButtonSize.SIZE16,
-                                    icon = CommonR.drawable.amity_ic_cross_r,
+                                    icon = CommonComposeR.drawable.amity_ic_cross_r,
                                     contentDescription = "Remove",
                                     onClick = { viewModel.removeUser(user.getUserId()) },
                                     modifier = Modifier.align(Alignment.TopEnd),
@@ -244,7 +244,7 @@ fun AmityAddGroupMemberPage(
                             )
                             if (user.isBrand()) {
                                 Image(
-                                    painter = painterResource(id = CommonR.drawable.amity_ic_brand_badge),
+                                    painter = painterResource(id = CommonComposeR.drawable.amity_ic_brand_badge),
                                     contentDescription = "",
                                     modifier = Modifier
                                         .size(20.dp)
@@ -256,7 +256,7 @@ fun AmityAddGroupMemberPage(
                         AmitySelection(
                             variant = AmitySelectionVariant.CHECKBOX,
                             isSelected = isSelected,
-                            icon = CommonR.drawable.amity_ic_scale_2_s,
+                            icon = CommonComposeR.drawable.amity_ic_scale_2_s,
                         )
                     }
                 }

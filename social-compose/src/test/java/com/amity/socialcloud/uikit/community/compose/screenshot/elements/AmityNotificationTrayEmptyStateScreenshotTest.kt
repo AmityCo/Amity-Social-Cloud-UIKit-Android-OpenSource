@@ -20,6 +20,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
+import com.amity.socialcloud.uikit.common.R as CommonR
 
 /**
  * Screenshot tests for [AmityNotificationTrayEmptyState].
@@ -32,7 +33,7 @@ import org.robolectric.annotation.GraphicsMode
  * IMPORTANT: Must be wrapped in AmityBasePage(pageId = "notification_tray_page")
  * so that AmityBaseElement resolves the correct config key
  * "notification_tray_page/[star]/empty_notification" -> image "notificationTrayEmptyStateIcon"
- * -> R.drawable.amity_ic_notification_tray_empty.
+ * -> CommonR.drawable.amity_ic_notification_tray_empty.
  *
  * Without the page wrapper, the element scope uses pageId="*" which produces
  * config key "[star]/[star]/empty_notification" -- no match in config -> getIcon() returns

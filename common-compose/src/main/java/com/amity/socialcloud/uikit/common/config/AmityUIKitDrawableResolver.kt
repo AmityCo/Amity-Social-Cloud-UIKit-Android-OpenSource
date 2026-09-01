@@ -2,7 +2,6 @@ package com.amity.socialcloud.uikit.common.config
 
 import androidx.annotation.DrawableRes
 import com.amity.socialcloud.uikit.common.R
-import com.amity.socialcloud.uikit.common.compose.R as ComposeR
 
 object AmityUIKitDrawableResolver {
 

@@ -58,6 +58,8 @@ import coil3.request.crossfade
 import com.amity.socialcloud.uikit.common.ui.elements.AmityBasicTextField
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.AltTextMedia
 import com.amity.socialcloud.uikit.community.compose.post.composer.poll.model.ImagePollUiState
@@ -219,7 +221,7 @@ fun AmityPollImageTypeItemView(
                         ) {
                             Icon(
                                 modifier = Modifier.size(28.dp),
-                                painter = painterResource(R.drawable.amity_ic_snack_bar_warning),
+                                painter = painterResource(CommonComposeR.drawable.amity_ic_snack_bar_warning),
                                 contentDescription = "Upload Failed",
                                 tint = amityColorWhite
                             )
@@ -350,7 +352,7 @@ fun AmityPollImageTypeItemView(
                     .clickableWithoutRipple {
                         onRemoveAnswerClick()
                     },
-                painter = painterResource(R.drawable.amity_close_circle_buttons),
+                painter = painterResource(CommonR.drawable.amity_close_circle_buttons),
                 tint = Color.Unspecified,
                 contentDescription = ""
             )
@@ -382,7 +384,7 @@ fun AmityPollImageTypeAddItemView(
             verticalArrangement = Arrangement.Center
         ) {
             Icon(
-                painter = painterResource(R.drawable.amity_ic_add),
+                painter = painterResource(CommonR.drawable.amity_ic_add),
                 contentDescription = "",
                 modifier = Modifier
                     .size(28.dp),

@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 /**
@@ -89,7 +89,7 @@ fun AmityEventPostCreationSuccessBottomSheet(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Image(
-                painter = painterResource(id = R.drawable.amity_ic_event_empty),
+                painter = painterResource(id = CommonR.drawable.amity_ic_event_empty),
                 contentDescription = "event created bottom sheet icon",
                 colorFilter = ColorFilter.tint(AmityTheme.colors.baseShade2),
                 modifier = Modifier.size(60.dp)

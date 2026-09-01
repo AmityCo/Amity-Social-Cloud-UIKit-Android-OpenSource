@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 
 
 @Composable
@@ -69,7 +69,7 @@ fun AmityUserProfileTabRow(
                     contentAlignment = Alignment.Center,
                 ) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_community_feed),
+                        imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_community_feed),
                         contentDescription = "",
                         tint = if (selectedIndex == 0) AmityTheme.colors.base else AmityTheme.colors.secondaryShade3,
                         modifier = Modifier.size(24.dp)
@@ -102,7 +102,7 @@ fun AmityUserProfileTabRow(
                     contentAlignment = Alignment.Center,
                 ) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_community_media_tab),
+                        imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_community_media_tab),
                         contentDescription = "",
                         tint = if (selectedIndex == 1) AmityTheme.colors.base else AmityTheme.colors.secondaryShade3,
                         modifier = Modifier

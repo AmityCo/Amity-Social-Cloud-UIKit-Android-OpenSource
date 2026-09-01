@@ -44,7 +44,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.comment.query.components.AmityCommentContentContainer
 import com.amity.socialcloud.uikit.community.compose.comment.query.components.AmityCommentEngagementBar
 import com.amity.socialcloud.uikit.community.compose.comment.query.components.AmityEditCommentContainer
@@ -176,7 +176,7 @@ fun AmitySingleCommentView(
 
                     if (comment.getState() == AmityComment.State.FAILED) {
                         Image(
-                            painter = painterResource(id = R.drawable.amity_ic_error_comment),
+                            painter = painterResource(id = CommonR.drawable.amity_ic_error_comment),
                             contentDescription = null,
                             modifier = Modifier
                                 .padding(8.dp)

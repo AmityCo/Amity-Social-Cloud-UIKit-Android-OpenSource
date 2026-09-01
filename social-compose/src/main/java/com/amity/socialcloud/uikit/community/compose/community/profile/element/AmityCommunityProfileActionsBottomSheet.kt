@@ -23,7 +23,7 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageBehavior
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostTargetType
 import kotlinx.coroutines.launch
@@ -118,7 +118,7 @@ fun AmityCommunityProfileActionsContainer(
                     pageScope = pageScope
                 ) {
                     AmityBottomSheetActionItem(
-                        icon = R.drawable.amity_ic_post_create,
+                        icon = CommonR.drawable.amity_ic_post_create,
                         text = amitySocialString("amity_social_button_social_home_create_post_button"),
                         modifier = modifier,
                     ) {
@@ -140,7 +140,7 @@ fun AmityCommunityProfileActionsContainer(
                     pageScope = pageScope
                 ) {
                     AmityBottomSheetActionItem(
-                        icon = R.drawable.ic_amity_ic_poll_create,
+                        icon = CommonR.drawable.ic_amity_ic_poll_create,
                         text = amitySocialString("amity_social_button_poll"),
                         modifier = modifier,
                     ) {
@@ -156,7 +156,7 @@ fun AmityCommunityProfileActionsContainer(
                     elementId = "create_livestream_button"
                 ) {
                     AmityBottomSheetActionItem(
-                        icon = R.drawable.ic_amity_ic_live_stream_create,
+                        icon = CommonR.drawable.ic_amity_ic_live_stream_create,
                         text = amitySocialString("amity_social_status_live_stream"),
                         modifier = modifier,
                     ) {
@@ -178,7 +178,7 @@ fun AmityCommunityProfileActionsContainer(
                     elementId = "create_story_button"
                 ) {
                     AmityBottomSheetActionItem(
-                        icon = R.drawable.amity_ic_create_story_social,
+                        icon = CommonR.drawable.amity_ic_create_story_social,
                         text = amitySocialString("amity_social_button_story"),
                         modifier = modifier,
                     ) {
@@ -200,7 +200,7 @@ fun AmityCommunityProfileActionsContainer(
                     elementId = "create_clip_button"
                 ) {
                     AmityBottomSheetActionItem(
-                        icon = R.drawable.amity_ic_create_clip,
+                        icon = CommonR.drawable.amity_ic_create_clip,
                         text = amitySocialString("amity_social_button_clip"),
                         modifier = modifier,
                     ) {

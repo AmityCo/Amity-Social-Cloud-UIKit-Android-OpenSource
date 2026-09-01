@@ -31,7 +31,7 @@ import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipFeedPageViewModel
 import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipModalSheetUIState
 import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipPageBehavior
@@ -110,7 +110,7 @@ fun AmityClipModalBottomSheet(
                             .padding(start = 16.dp, end = 16.dp, bottom = 64.dp)
                     ) {
                         AmityBottomSheetActionItem(
-                            icon = R.drawable.amity_v4_bottom_sheet_view_post,
+                            icon = CommonR.drawable.amity_v4_bottom_sheet_view_post,
                             text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_view_post"),
                             modifier = modifier,
                         ) {
@@ -125,7 +125,7 @@ fun AmityClipModalBottomSheet(
                         val linkCopiedStr = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_link_copied")
                         if (postLink.isNotEmptyOrBlank()) {
                             AmityBottomSheetActionItem(
-                                icon = R.drawable.amity_v4_link_icon,
+                                icon = CommonR.drawable.amity_v4_link_icon,
                                 text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_copy_post_link"),
                                 modifier = modifier.testTag("bottom_sheet_copy_link_button"),
                             ) {
@@ -137,7 +137,7 @@ fun AmityClipModalBottomSheet(
                             }
 
                             AmityBottomSheetActionItem(
-                                icon = R.drawable.amity_v4_share_icon,
+                                icon = CommonR.drawable.amity_v4_share_icon,
                                 text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_share_to"),
                                 modifier = modifier.testTag("bottom_sheet_share_to_button"),
                             ) {

@@ -82,7 +82,7 @@ import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.common.utils.isSignedIn
 import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.livestream.chat.AmityLivestreamMessageComposeBar
 import com.amity.socialcloud.uikit.community.compose.livestream.chat.ChatOverlay
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
@@ -286,7 +286,7 @@ fun AmityLivestreamPlayerPage(
                             ) {
                                 Icon(
                                     painter = painterResource(
-                                        id = R.drawable.amity_ic_close
+                                        id = CommonR.drawable.amity_ic_close
                                     ),
                                     contentDescription = "Close",
                                     tint = AmityTheme.colors.baseInverse,
@@ -523,7 +523,7 @@ fun AmityLivestreamPlayerPage(
 
                 if (postLink.isNotEmptyOrBlank()) {
                     AmityBottomSheetActionItem(
-                        icon = R.drawable.amity_v4_link_icon,
+                        icon = CommonR.drawable.amity_v4_link_icon,
                         text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_copy_live_stream_link"),
                         modifier = Modifier
                             .padding(horizontal = 12.dp),
@@ -539,7 +539,7 @@ fun AmityLivestreamPlayerPage(
                     }
 
                     AmityBottomSheetActionItem(
-                        icon = R.drawable.amity_v4_share_icon,
+                        icon = CommonR.drawable.amity_v4_share_icon,
                         text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_share_to"),
                         modifier = Modifier
                             .padding(horizontal = 12.dp),
@@ -622,7 +622,7 @@ fun CommunityLivestreamPlayerHeader(
                     .clip(CircleShape)
                     .background(amityColorGray), // Fallback background
                 contentScale = ContentScale.Crop,
-                placeholder = painterResource(id = R.drawable.amity_ic_community_placeholder) // Add placeholder
+                placeholder = painterResource(id = CommonR.drawable.amity_ic_community_placeholder) // Add placeholder
             )
 
             Spacer(modifier = Modifier.width(12.dp))
@@ -687,7 +687,7 @@ fun CommunityLivestreamPlayerHeader(
                 Spacer(Modifier.width(8.dp))
                 Icon(
                     painter = painterResource(
-                        id = R.drawable.amity_v4_option_vertical
+                        id = CommonR.drawable.amity_v4_option_vertical
                     ),
                     contentDescription = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_options"),
                     tint = AmityTheme.colors.baseInverse,

@@ -89,6 +89,7 @@ import com.amity.socialcloud.uikit.common.utils.AmityCameraUtil
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.closePage
 import com.amity.socialcloud.uikit.common.utils.closePageWithResult
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.community.setup.elements.AmityMediaImageSelectionSheet
 import com.amity.socialcloud.uikit.community.compose.community.setup.elements.AmityMediaImageSelectionType
@@ -499,7 +500,7 @@ fun AmityEventSetupPage(
                         .padding(horizontal = 12.dp)
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.amity_ic_close),
+                        painter = painterResource(id = CommonR.drawable.amity_ic_close),
                         contentDescription = "Close Button",
                         tint = AmityTheme.colors.base,
                         modifier = modifier
@@ -598,7 +599,7 @@ fun AmityEventSetupPage(
                         )
                     } else {
                         Image(
-                            painterResource(R.drawable.amity_ic_event_setup_camera),
+                            painterResource(CommonR.drawable.amity_ic_event_setup_camera),
                             contentDescription = "Cover placeholder",
                             contentScale = ContentScale.Crop,
                             modifier = modifier.fillMaxWidth(),

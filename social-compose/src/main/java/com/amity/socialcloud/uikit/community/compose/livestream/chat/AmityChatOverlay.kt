@@ -68,6 +68,8 @@ import com.amity.socialcloud.uikit.common.ui.theme.amityLivestreamChatBubbleBack
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
+import com.amity.socialcloud.uikit.common.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.livestream.chat.AmityLivestreamChatViewModel.AmityLiveStreamSheetUIState
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
@@ -584,7 +586,7 @@ fun ChatMessageItem(
                         val isBrandCreator = message.getCreator()?.isBrand() == true
                         if (isBrandCreator && !message.isDeleted()) {
                             Image(
-                                painter = painterResource(id = R.drawable.amity_ic_brand_badge),
+                                painter = painterResource(id = CommonComposeR.drawable.amity_ic_brand_badge),
                                 contentDescription = "Brand badge",
                                 modifier = Modifier.size(16.dp)
                             )
@@ -631,7 +633,7 @@ fun ChatMessageItem(
                     if (message.isDeleted()) {
                         Icon(
                             painter = painterResource(
-                                id = R.drawable.amity_ic_delete_story
+                                id = CommonR.drawable.amity_ic_delete_story
                             ),
                             contentDescription = "message options",
                             tint = AmityTheme.colors.baseShade2,
@@ -658,7 +660,7 @@ fun ChatMessageItem(
             if (message.getState() == AmityMessage.State.FAILED) {
                 Icon(
                     painter = painterResource(
-                        id = R.drawable.amity_ic_livestream_chat_sending_fail
+                        id = CommonR.drawable.amity_ic_livestream_chat_sending_fail
                     ),
                     contentDescription = "message sending failed icon",
                     tint = AmityTheme.colors.baseInverse,
@@ -689,9 +691,9 @@ fun HostBadge(
     ) {
         Icon(
             painter = painterResource(id = if (isCoHost) {
-                R.drawable.amity_ic_cohost_chat_badge
+                CommonR.drawable.amity_ic_cohost_chat_badge
             } else {
-                R.drawable.amity_ic_livestream_host
+                CommonR.drawable.amity_ic_livestream_host
             }),
             contentDescription = if (isCoHost) { "Co-host badge" } else {  "Host badge" },
             tint = AmityTheme.colors.baseInverse,
@@ -728,7 +730,7 @@ fun ModeratorBadge() {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.amity_ic_moderator_social),
+            painter = painterResource(id = CommonR.drawable.amity_ic_moderator_social),
             contentDescription = "Moderator badge",
             tint = AmityTheme.colors.base,
             modifier = Modifier
@@ -747,7 +749,7 @@ fun ModeratorBadge() {
 @Composable
 fun MutedBadge() {
     Icon(
-        painter = painterResource(id = R.drawable.amity_ic_mute_user),
+        painter = painterResource(id = CommonR.drawable.amity_ic_mute_user),
         contentDescription = "Muted badge",
         tint = AmityTheme.colors.baseShade2,
         modifier = Modifier
@@ -803,7 +805,7 @@ fun AmityLivestreamMessageActionsContainer(
         }
         if (message.getCreatorId() == AmityCoreClient.getUserId() || (isChannelModerator && !isHostMessage)) {
             AmityBottomSheetActionItem(
-                icon = R.drawable.amity_ic_delete_story,
+                icon = CommonR.drawable.amity_ic_delete_story,
                 text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_delete_message"),
                 color = AmityTheme.colors.alert,
                 modifier = modifier.testTag("comment_tray_component/bottom_sheet_delete_comment_button"),
@@ -860,7 +862,7 @@ fun AmityUserActionsSheet(
                 val isBrandUser = user?.isBrand() == true
                 if (isBrandUser) {
                     Image(
-                        painter = painterResource(id = R.drawable.amity_ic_brand_badge),
+                        painter = painterResource(id = CommonComposeR.drawable.amity_ic_brand_badge),
                         contentDescription = "Brand badge",
                         modifier = Modifier.size(16.dp)
                     )
@@ -869,7 +871,7 @@ fun AmityUserActionsSheet(
                 // Muted icon if user is muted
                 if (isMuted) {
                     Icon(
-                        painter = painterResource(id = R.drawable.amity_ic_mute_user),
+                        painter = painterResource(id = CommonR.drawable.amity_ic_mute_user),
                         contentDescription = "Muted badge",
                         tint = AmityTheme.colors.baseShade2,
                         modifier = Modifier
@@ -890,7 +892,7 @@ fun AmityUserActionsSheet(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.amity_ic_moderator_social),
+                        painter = painterResource(id = CommonR.drawable.amity_ic_moderator_social),
                         contentDescription = "Moderator badge",
                         tint = AmityTheme.colors.baseInverse,
                         modifier = Modifier
@@ -923,7 +925,7 @@ fun AmityUserActionsSheet(
         // Invite as co-host button - only show if canInviteCohost is true
         if (canInviteCohost) {
             AmityBottomSheetActionItem(
-                icon = R.drawable.amity_ic_invite_cohost_in_chat,
+                icon = CommonR.drawable.amity_ic_invite_cohost_in_chat,
                 text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_invite_as_co_host"),
                 color = AmityTheme.colors.base,
             ) {
@@ -950,7 +952,7 @@ fun AmityUserActionsSheet(
         // Mute/Unmute user - only show if user is not a moderator
         if (!isModerator) {
             AmityBottomSheetActionItem(
-                icon = if (isMuted) R.drawable.amity_ic_unmute_user else R.drawable.amity_ic_mute_user,
+                icon = if (isMuted) CommonR.drawable.amity_ic_unmute_user else CommonR.drawable.amity_ic_mute_user,
                 text = if (isMuted) DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_unmute_user") else DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_mute_user"),
                 color = AmityTheme.colors.base,
             ) {
@@ -983,7 +985,7 @@ private fun submitReport(
         },
         onError = { error ->
             onError()
-            pageScope?.showSnackbar(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_message_report_failed"), drawableRes = R.drawable.amity_ic_warning)
+            pageScope?.showSnackbar(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_message_report_failed"), drawableRes = CommonR.drawable.amity_ic_warning)
         }
     )
 }

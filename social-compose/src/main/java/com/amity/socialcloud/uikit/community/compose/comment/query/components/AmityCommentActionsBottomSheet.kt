@@ -37,6 +37,7 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayComponentViewModel
@@ -307,7 +308,7 @@ fun AmityCommentActionsContainer(
         if (isCommentCreatedByMe) {
             if (!isFailed) {
                 AmityBottomSheetActionItem(
-                    icon = R.drawable.amity_ic_edit_profile,
+                    icon = CommonR.drawable.amity_ic_edit_profile,
                     text = DefaultAmitySocialStringProvider.getInstance().getString(
                         if (isReplyComment) "amity_social_button_edit_reply"
                         else "amity_social_button_edit_comment"
@@ -320,7 +321,7 @@ fun AmityCommentActionsContainer(
             }
 
             AmityBottomSheetActionItem(
-                icon = R.drawable.amity_ic_delete_story,
+                icon = CommonR.drawable.amity_ic_delete_story,
                 text = DefaultAmitySocialStringProvider.getInstance().getString(
                     if (isReplyComment) "amity_social_button_delete_reply"
                     else "amity_social_button_delete_comment"

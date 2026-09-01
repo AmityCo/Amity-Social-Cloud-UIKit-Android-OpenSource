@@ -58,6 +58,7 @@ import com.amity.socialcloud.uikit.common.utils.closePage
 import com.amity.socialcloud.uikit.common.utils.getValue
 import com.amity.socialcloud.uikit.common.utils.isSignedIn
 import com.amity.socialcloud.uikit.common.utils.readableTimeDiff
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityStoryModalSheetUIState
 import com.amity.socialcloud.uikit.community.compose.story.view.AmityViewStoryPageViewModel
@@ -203,7 +204,7 @@ fun AmityStoryHeaderRow(
                         AmityAvatarView(
                             image = ad?.getAdvertiser()?.getAvatar(),
                             size = 40.dp,
-                            placeholder = R.drawable.amity_ic_default_advertiser,
+                            placeholder = CommonR.drawable.amity_ic_default_advertiser,
                             iconPadding = 8.dp,
                         )
                     } else {
@@ -219,7 +220,7 @@ fun AmityStoryHeaderRow(
                     val canCreate = !isAd && shouldShowStoryCreationButton
                     if (canCreate) {
                         Image(
-                            painter = painterResource(id = R.drawable.amity_ic_plus_circle),
+                            painter = painterResource(id = CommonR.drawable.amity_ic_plus_circle),
                             contentDescription = "",
                             modifier = Modifier
                                 .size(16.dp)

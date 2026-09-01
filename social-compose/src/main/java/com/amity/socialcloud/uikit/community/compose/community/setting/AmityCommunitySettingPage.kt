@@ -57,6 +57,7 @@ import com.amity.socialcloud.uikit.common.utils.isSocialNetworkEnabled
 import com.amity.socialcloud.uikit.common.utils.isSocialNotificationEnabled
 import com.amity.socialcloud.uikit.common.utils.isStoryNotificationEnabled
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.community.setting.elements.AmityCommunitySettingItem
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
@@ -206,7 +207,7 @@ fun AmityCommunitySettingPage(
                 modifier = modifier.fillMaxWidth()
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.amity_ic_back),
+                    painter = painterResource(CommonR.drawable.amity_ic_back),
                     contentDescription = "Close",
                     tint = AmityTheme.colors.base,
                     modifier = modifier

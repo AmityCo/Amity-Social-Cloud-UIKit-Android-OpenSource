@@ -43,7 +43,7 @@ import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getText
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostTargetType
 import com.amity.socialcloud.uikit.community.compose.target.AmityPostTargetSelectionPageType
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
@@ -165,7 +165,7 @@ fun AmityCreatePostMenuComponent(
                                 modifier = modifier.padding(horizontal = 8.dp),
                             ) {
                                 Icon(
-                                    painter = painterResource(R.drawable.ic_amity_ic_poll_create),
+                                    painter = painterResource(CommonR.drawable.ic_amity_ic_poll_create),
                                     contentDescription = "Create Poll Post",
                                     tint = AmityTheme.colors.base,
                                     modifier = modifier.size(20.dp)
@@ -201,7 +201,7 @@ fun AmityCreatePostMenuComponent(
                                 modifier = modifier.padding(horizontal = 8.dp),
                             ) {
                                 Icon(
-                                    painter = painterResource(id = R.drawable.ic_amity_ic_live_stream_create),
+                                    painter = painterResource(id = CommonR.drawable.ic_amity_ic_live_stream_create),
                                     contentDescription = "Create Livestream Post",
                                     tint = AmityTheme.colors.base,
                                     modifier = modifier.size(20.dp)
@@ -290,7 +290,7 @@ fun AmityCreatePostMenuComponent(
                                 modifier = modifier.padding(horizontal = 8.dp),
                             ) {
                                 Icon(
-                                    painter = painterResource(id = R.drawable.amity_ic_create_clip),
+                                    painter = painterResource(id = CommonR.drawable.amity_ic_create_clip),
                                     contentDescription = "Create clip post",
                                     tint = AmityTheme.colors.base,
                                     modifier = modifier.size(20.dp)

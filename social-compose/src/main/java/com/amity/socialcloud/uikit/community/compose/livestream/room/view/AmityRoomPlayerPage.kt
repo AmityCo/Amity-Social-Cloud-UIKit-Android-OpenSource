@@ -131,6 +131,8 @@ import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
+import com.amity.socialcloud.uikit.common.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.VideoSeekBar
 import com.amity.socialcloud.uikit.community.compose.livestream.chat.AmityLivestreamMessageComposeBar
@@ -152,15 +154,12 @@ import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.Live
 import com.amity.socialcloud.uikit.community.compose.livestream.util.LivestreamErrorScreenType
 import com.amity.socialcloud.uikit.community.compose.livestream.view.AmityLivestreamBannedPage
 import com.amity.socialcloud.uikit.community.compose.livestream.view.AmityLivestreamDeclinedPage
-import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityStreamerView
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostCategory
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetailPageActivity.Companion.EXTRA_PARAM_LIVESTREAM_ERROR_TYPE
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityLivestreamDisconnectedView
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityLivestreamEndedView
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityLivestreamLoadingView
 import com.amity.socialcloud.uikit.community.compose.utils.sharePost
-import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityRoomViewerCountBadge
-import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.LivestreamPinnedProductElement
 import io.livekit.android.compose.ui.flipped
 import io.livekit.android.room.Room
 import io.livekit.android.room.track.LocalVideoTrack
@@ -562,7 +561,7 @@ fun AmityRoomPlayerPage(
                             ) {
                                 Icon(
                                     painter = painterResource(
-                                        id = R.drawable.amity_ic_close
+                                        id = CommonR.drawable.amity_ic_close
                                     ),
                                     contentDescription = "Close",
                                     tint = AmityTheme.colors.baseInverse,
@@ -715,8 +714,8 @@ fun AmityRoomPlayerPage(
                                             } else {
                                                 Image(
                                                     painter = painterResource(
-                                                        if (isLivePlaying) R.drawable.amity_ic_pause
-                                                        else R.drawable.amity_ic_play_v4
+                                                        if (isLivePlaying) CommonComposeR.drawable.amity_ic_pause
+                                                        else CommonComposeR.drawable.amity_ic_play_v4
                                                     ),
                                                     contentDescription = if (isLivePlaying) "Pause" else "Play",
                                                     modifier = Modifier
@@ -962,7 +961,7 @@ fun AmityRoomPlayerPage(
                                                             }
                                                         }
                                                         .testTag(getAccessibilityId()),
-                                                    painter = painterResource(R.drawable.amity_ic_room_close),
+                                                    painter = painterResource(CommonR.drawable.amity_ic_room_close),
                                                     contentDescription = "cancel_create_livestream_button",
                                                 )
                                             }
@@ -1138,7 +1137,7 @@ fun AmityRoomPlayerPage(
                                                                 .padding(end = 8.dp)
                                                                 .size(20.dp)
                                                                 .testTag(getAccessibilityId()),
-                                                            painter = painterResource(id = R.drawable.amity_ic_cohost_badge),
+                                                            painter = painterResource(id = CommonR.drawable.amity_ic_cohost_badge),
                                                             contentDescription = "Join livestream",
                                                             contentScale = ContentScale.Fit
                                                         )
@@ -1521,8 +1520,8 @@ fun AmityRoomPlayerPage(
                                 .testTag("toggle_microphone_button")
                         ) {
                             Image(
-                                painter = if (!userEnabledMic) { painterResource(R.drawable.amity_ic_room_unmute_button) } else {
-                                    painterResource(R.drawable.amity_ic_room_mute_button)
+                                painter = if (!userEnabledMic) { painterResource(CommonR.drawable.amity_ic_room_unmute_button) } else {
+                                    painterResource(CommonR.drawable.amity_ic_room_mute_button)
                                 },
                                 contentDescription = "",
                                 modifier = Modifier
@@ -1536,7 +1535,7 @@ fun AmityRoomPlayerPage(
                             elementId = "switch_camera_button"
                         ) {
                             Image(
-                                painter = painterResource(R.drawable.amity_ic_room_switch_camera),
+                                painter = painterResource(CommonR.drawable.amity_ic_room_switch_camera),
                                 contentDescription = "switch camera button",
                                 modifier = Modifier
                                     .size(40.dp)
@@ -1693,7 +1692,7 @@ fun AmityRoomPlayerPage(
 
                 if (postLink.isNotEmptyOrBlank()) {
                     AmityBottomSheetActionItem(
-                        icon = R.drawable.amity_v4_link_icon,
+                        icon = CommonR.drawable.amity_v4_link_icon,
                         text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_copy_live_stream_link"),
                         modifier = Modifier
                             .padding(horizontal = 12.dp),
@@ -1709,7 +1708,7 @@ fun AmityRoomPlayerPage(
                     }
 
                     AmityBottomSheetActionItem(
-                        icon = R.drawable.amity_v4_share_icon,
+                        icon = CommonR.drawable.amity_v4_share_icon,
                         text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_share_to"),
                         modifier = Modifier
                             .padding(horizontal = 12.dp),
@@ -1753,7 +1752,7 @@ fun AmityRoomPlayerPage(
                     .navigationBarsPadding()
             ) {
                 AmityBottomSheetActionItem(
-                    icon = R.drawable.amity_ic_cohost_leave,
+                    icon = CommonR.drawable.amity_ic_cohost_leave,
                     text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_leave_as_co_host"),
                     modifier = Modifier
                         .padding(horizontal = 12.dp),
@@ -1988,7 +1987,7 @@ fun CommunityRoomPlayerHeader(
                             }
                         }
                         .testTag(getAccessibilityId()),
-                    painter = painterResource(R.drawable.amity_ic_room_close),
+                    painter = painterResource(CommonR.drawable.amity_ic_room_close),
                     contentDescription = "close_room_button",
                 )
             }
@@ -2012,7 +2011,7 @@ fun CommunityRoomPlayerHeader(
                         image = null,
                         size = 40.dp,
                         iconPadding = 24.dp,
-                        placeholder = R.drawable.amity_ic_community_placeholder,
+                        placeholder = CommonR.drawable.amity_ic_community_placeholder,
                     )
                 }
             }
@@ -2052,7 +2051,7 @@ fun CommunityRoomPlayerHeader(
                         if (target.getCommunity()?.isOfficial() == true) {
                             AmityBaseElement(elementId = "community_official_badge") {
                                 Image(
-                                    painter = painterResource(id = R.drawable.amity_v4_verified_badge),
+                                    painter = painterResource(id = CommonR.drawable.amity_v4_verified_badge),
                                     contentDescription = "Verified Community",
                                     modifier = Modifier
                                         .size(16.dp)
@@ -2080,7 +2079,7 @@ fun CommunityRoomPlayerHeader(
                         val isBrandCreator = post.getCreator()?.isBrand() == true
                         if (isBrandCreator) {
                             Image(
-                                painter = painterResource(id = R.drawable.amity_ic_brand_badge),
+                                painter = painterResource(id = CommonComposeR.drawable.amity_ic_brand_badge),
                                 contentDescription = "Brand badge",
                                 modifier = Modifier.size(16.dp)
                             )
@@ -2105,7 +2104,7 @@ fun CommunityRoomPlayerHeader(
                         val isBrandCreator = target.getUser()?.isBrand() == true
                         if (isBrandCreator) {
                             Image(
-                                painter = painterResource(id = R.drawable.amity_ic_brand_badge),
+                                painter = painterResource(id = CommonComposeR.drawable.amity_ic_brand_badge),
                                 contentDescription = "Brand badge",
                                 modifier = Modifier.size(16.dp)
                             )
@@ -2124,7 +2123,7 @@ fun CommunityRoomPlayerHeader(
                 Spacer(Modifier.width(8.dp))
                 Icon(
                     painter = painterResource(
-                        id = R.drawable.amity_v4_option_vertical
+                        id = CommonR.drawable.amity_v4_option_vertical
                     ),
                     contentDescription = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_options"),
                     tint = AmityTheme.colors.baseInverse,
@@ -2252,7 +2251,7 @@ fun CoHostBottomSheet(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.amity_ic_livestream_host),
+                            painter = painterResource(id = CommonR.drawable.amity_ic_livestream_host),
                             contentDescription = "Host badge",
                             tint = AmityTheme.colors.baseInverse,
                             modifier = Modifier

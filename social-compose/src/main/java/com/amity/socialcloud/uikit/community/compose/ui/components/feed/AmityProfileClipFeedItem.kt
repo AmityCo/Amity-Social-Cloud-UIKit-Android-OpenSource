@@ -39,7 +39,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityMenuButton
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.formatVideoDuration
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostVideoPlayerHelper
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostMediaVideoPlayer
 import com.amity.socialcloud.uikit.common.ui.theme.amityMediaSurface
@@ -182,7 +182,7 @@ fun AmityProfileClipFeedItemPreviewDialog(
             )
 
             AmityMenuButton(
-                icon = R.drawable.amity_ic_close2,
+                icon = CommonR.drawable.amity_ic_close2,
                 size = 32.dp,
                 iconPadding = 10.dp,
                 tint = amityColorBlack.copy(0.5f),

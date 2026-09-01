@@ -77,7 +77,8 @@ import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.common.utils.isSignedIn
 import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.community.compose.clip.view.AmityClipFeedPageType
 import com.amity.socialcloud.uikit.community.compose.community.profile.element.AmityVideoAndClipChipSelector
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
@@ -255,7 +256,7 @@ fun AmityUserProfilePage(
                                 .padding(horizontal = 12.dp, vertical = 16.dp)
                         ) {
                             Icon(
-                                painter = painterResource(R.drawable.amity_ic_back),
+                                painter = painterResource(CommonR.drawable.amity_ic_back),
                                 contentDescription = "Back",
                                 tint = AmityTheme.colors.base,
                                 modifier = Modifier
@@ -283,7 +284,7 @@ fun AmityUserProfilePage(
                                 if (user?.isBrand() == true) {
                                     Spacer(modifier = Modifier.width(4.dp))
                                     Image(
-                                        painter = painterResource(id = R.drawable.amity_ic_brand_badge),
+                                        painter = painterResource(id = CommonComposeR.drawable.amity_ic_brand_badge),
                                         contentDescription = "Brand badge",
                                         modifier = Modifier.size(16.dp)
                                     )
@@ -291,7 +292,7 @@ fun AmityUserProfilePage(
                             }
 
                             Icon(
-                                painter = painterResource(R.drawable.amity_ic_more_horiz),
+                                painter = painterResource(CommonR.drawable.amity_ic_more_horiz),
                                 contentDescription = "Menu",
                                 tint = AmityTheme.colors.base,
                                 modifier = Modifier
@@ -325,7 +326,7 @@ fun AmityUserProfilePage(
                     ) {
                         if (AmityCoreClient.isSignedIn()) {
                             Icon(
-                                painter = painterResource(R.drawable.amity_ic_more_horiz),
+                                painter = painterResource(CommonR.drawable.amity_ic_more_horiz),
                                 contentDescription = "Close",
                                 tint = AmityTheme.colors.base,
                                 modifier = Modifier
@@ -530,7 +531,7 @@ fun AmityUserProfilePage(
                             .align(Alignment.BottomEnd)
                     ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.amity_ic_plus),
+                            painter = painterResource(id = CommonR.drawable.amity_ic_plus),
                             contentDescription = "create post",
                             tint = amityColorWhite,
                             modifier = Modifier
@@ -607,13 +608,13 @@ fun AmityUserProfilePage(
                             onSuccess = {
                                 getPageScope().showSnackbar(
                                     message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_user_blocked"),
-                                    drawableRes = R.drawable.amity_ic_snack_bar_success,
+                                    drawableRes = CommonComposeR.drawable.amity_ic_snack_bar_success,
                                 )
                             },
                             onError = {
                                 getPageScope().showErrorSnackbar(
                                     message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_user_block_failed"),
-                                    drawableRes = R.drawable.amity_ic_snack_bar_warning
+                                    drawableRes = CommonComposeR.drawable.amity_ic_snack_bar_warning
                                 )
                             }
                         )
@@ -648,13 +649,13 @@ fun AmityUserProfilePage(
                             onSuccess = {
                                 getPageScope().showSnackbar(
                                     message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_user_unblocked"),
-                                    drawableRes = R.drawable.amity_ic_snack_bar_success,
+                                    drawableRes = CommonComposeR.drawable.amity_ic_snack_bar_success,
                                 )
                             },
                             onError = {
                                 getPageScope().showErrorSnackbar(
                                     message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_user_unblock_failed"),
-                                    drawableRes = R.drawable.amity_ic_snack_bar_warning
+                                    drawableRes = CommonComposeR.drawable.amity_ic_snack_bar_warning
                                 )
                             }
                         )

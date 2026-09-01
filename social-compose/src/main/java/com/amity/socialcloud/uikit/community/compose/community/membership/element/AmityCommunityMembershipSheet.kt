@@ -22,6 +22,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.isModerator
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.community.membership.list.AmityCommunityMembershipPageViewModel
 import com.amity.socialcloud.uikit.community.compose.community.membership.list.AmityCommunityMembershipSheetUIState
@@ -106,14 +107,14 @@ fun AmityCommunityMembershipSheet(
                                             pageScope?.dismissSnackbar()
                                             pageScope?.showSnackbar(
                                                 message = demoteSuccessStr,
-                                                drawableRes = R.drawable.amity_ic_snack_bar_success,
+                                                drawableRes = CommonComposeR.drawable.amity_ic_snack_bar_success,
                                             )
                                         },
                                         onError = {
                                             pageScope?.dismissSnackbar()
                                             pageScope?.showSnackbar(
                                                 message = demoteFailedStr,
-                                                drawableRes = R.drawable.amity_ic_snack_bar_warning,
+                                                drawableRes = CommonComposeR.drawable.amity_ic_snack_bar_warning,
                                             )
                                         }
                                     )
@@ -139,14 +140,14 @@ fun AmityCommunityMembershipSheet(
                                             pageScope?.dismissSnackbar()
                                             pageScope?.showSnackbar(
                                                 message = promoteSuccessStr,
-                                                drawableRes = R.drawable.amity_ic_snack_bar_success,
+                                                drawableRes = CommonComposeR.drawable.amity_ic_snack_bar_success,
                                             )
                                         },
                                         onError = {
                                             pageScope?.dismissSnackbar()
                                             pageScope?.showSnackbar(
                                                 message = promoteFailedStr,
-                                                drawableRes = R.drawable.amity_ic_snack_bar_warning,
+                                                drawableRes = CommonComposeR.drawable.amity_ic_snack_bar_warning,
                                             )
                                         }
                                     )
@@ -166,13 +167,13 @@ fun AmityCommunityMembershipSheet(
                                     onSuccess = {
                                         pageScope?.showSnackbar(
                                             message = unreportedStr,
-                                            drawableRes = R.drawable.amity_ic_snack_bar_success,
+                                            drawableRes = CommonComposeR.drawable.amity_ic_snack_bar_success,
                                         )
                                     },
                                     onError = {
                                         pageScope?.showSnackbar(
                                             message = unreportFailedStr,
-                                            drawableRes = R.drawable.amity_ic_snack_bar_warning,
+                                            drawableRes = CommonComposeR.drawable.amity_ic_snack_bar_warning,
                                         )
                                     }
                                 )
@@ -189,13 +190,13 @@ fun AmityCommunityMembershipSheet(
                                     onSuccess = {
                                         pageScope?.showSnackbar(
                                             message = reportedStr,
-                                            drawableRes = R.drawable.amity_ic_snack_bar_success,
+                                            drawableRes = CommonComposeR.drawable.amity_ic_snack_bar_success,
                                         )
                                     },
                                     onError = {
                                         pageScope?.showSnackbar(
                                             message = reportFailedStr,
-                                            drawableRes = R.drawable.amity_ic_snack_bar_warning,
+                                            drawableRes = CommonComposeR.drawable.amity_ic_snack_bar_warning,
                                         )
                                     }
                                 )
@@ -221,14 +222,14 @@ fun AmityCommunityMembershipSheet(
                                         pageScope?.dismissSnackbar()
                                         pageScope?.showSnackbar(
                                             message = removedStr,
-                                            drawableRes = R.drawable.amity_ic_snack_bar_success,
+                                            drawableRes = CommonComposeR.drawable.amity_ic_snack_bar_success,
                                         )
                                     },
                                     onError = {
                                         pageScope?.dismissSnackbar()
                                         pageScope?.showSnackbar(
                                             message = removeFailedStr,
-                                            drawableRes = R.drawable.amity_ic_snack_bar_warning,
+                                            drawableRes = CommonComposeR.drawable.amity_ic_snack_bar_warning,
                                         )
                                     }
                                 )

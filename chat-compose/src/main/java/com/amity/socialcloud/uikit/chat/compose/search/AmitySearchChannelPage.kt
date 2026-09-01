@@ -32,7 +32,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.sdk.model.chat.channel.AmityChannel
 import com.amity.socialcloud.uikit.chat.compose.home.AmityChatHomePageBehavior
 import com.amity.socialcloud.uikit.chat.compose.home.element.AmityChatListSkeleton
-import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButton
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonHierarchy
@@ -107,8 +107,8 @@ fun AmitySearchChannelPage(
                             .focusRequester(focusRequester),
                         value = searchKeyword,
                         placeholder = amityChatString("chat.search.placeholder"),
-                        leadingIcon = CommonR.drawable.amity_ic_search_r,
-                        trailingIcon = if (searchKeyword.isNotEmpty()) CommonR.drawable.amity_ic_clear_r else null,
+                        leadingIcon = CommonComposeR.drawable.amity_ic_search_r,
+                        trailingIcon = if (searchKeyword.isNotEmpty()) CommonComposeR.drawable.amity_ic_clear_r else null,
                         size = AmityInputSize.M,
                         boxedStyle = AmityBoxedInputStyle.SQUARE,
                         onChangeText = { viewModel.onSearchKeywordChanged(it) },
@@ -180,7 +180,7 @@ fun AmitySearchChannelPage(
                             .imePadding()
                             .padding(32.dp),
                         variant = AmityEmptyStateVariant.ICON,
-                        icon = CommonR.drawable.amity_ic_search_l,
+                        icon = CommonComposeR.drawable.amity_ic_search_l,
                         title = amityChatString("chat.search.min.chars"),
                     )
                 }
@@ -198,7 +198,7 @@ fun AmitySearchChannelPage(
                             .imePadding()
                             .padding(32.dp),
                         variant = AmityEmptyStateVariant.ICON,
-                        icon = CommonR.drawable.amity_ic_search_cross_l,
+                        icon = CommonComposeR.drawable.amity_ic_search_cross_l,
                         title = amityChatString("chat.search.no.results"),
                     )
                 }

@@ -27,7 +27,7 @@ import coil3.compose.AsyncImage
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 
@@ -75,7 +75,7 @@ fun AmityEditUserAvatar(
         )
 
         Icon(
-            painter = painterResource(R.drawable.amity_ic_camera),
+            painter = painterResource(CommonR.drawable.amity_ic_camera),
             contentDescription = null,
             tint = amityColorWhite,
             modifier = modifier.align(Alignment.Center)

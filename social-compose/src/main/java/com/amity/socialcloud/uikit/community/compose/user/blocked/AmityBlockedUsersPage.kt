@@ -44,6 +44,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityUserListShimmer
@@ -191,13 +192,13 @@ fun AmityBlockedUsersPage(
                         onSuccess = {
                             getPageScope().showSnackbar(
                                 message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_user_unblocked"),
-                                drawableRes = R.drawable.amity_ic_snack_bar_success,
+                                drawableRes = CommonComposeR.drawable.amity_ic_snack_bar_success,
                             )
                         },
                         onError = {
                             getPageScope().showSnackbar(
                                 message = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_user_unblock_failed"),
-                                drawableRes = R.drawable.amity_ic_snack_bar_warning,
+                                drawableRes = CommonComposeR.drawable.amity_ic_snack_bar_warning,
                             )
                         }
                     )

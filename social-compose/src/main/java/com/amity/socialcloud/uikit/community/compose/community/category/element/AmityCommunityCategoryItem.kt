@@ -24,6 +24,7 @@ import com.amity.socialcloud.sdk.model.social.category.AmityCommunityCategory
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAvatarView
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.community.category.AmityCommunityAddCategoryPageViewModel
 
@@ -70,7 +71,7 @@ fun AmityCommunityCategoryItem(
         AmityAvatarView(
             image = category.getAvatar(),
             iconPadding = 8.dp,
-            placeholder = R.drawable.amity_ic_default_category_avatar,
+            placeholder = CommonR.drawable.amity_ic_default_category_avatar,
             modifier = modifier.padding(vertical = 8.dp)
         )
         Spacer(modifier.width(12.dp))

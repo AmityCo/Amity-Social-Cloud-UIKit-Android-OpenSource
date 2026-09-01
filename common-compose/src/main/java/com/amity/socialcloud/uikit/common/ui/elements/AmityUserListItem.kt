@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.common.compose.R
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
@@ -78,7 +79,7 @@ fun AmityUserListItem(
         if (showRightMenu) {
             if (rightMenuContent == null) {
                 Icon(
-                    painter = painterResource(R.drawable.amity_ic_more_horiz),
+                    painter = painterResource(CommonR.drawable.amity_ic_more_horiz),
                     contentDescription = "Action",
                     modifier = modifier
                         .size(24.dp)

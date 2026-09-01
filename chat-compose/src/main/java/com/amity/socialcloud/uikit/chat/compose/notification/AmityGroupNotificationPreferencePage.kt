@@ -28,7 +28,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.sdk.model.chat.channel.AmityChannelNotificationMode
-import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityBanner
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityBannerHierarchy
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
@@ -88,7 +88,7 @@ fun AmityGroupNotificationPreferencePage(
                     style = AmityButtonStyle.GHOST,
                     hierarchy = AmityButtonHierarchy.SECONDARY,
                     iconSize = AmityIconButtonSize.SIZE32,
-                    icon = CommonR.drawable.amity_ic_chevron_left,
+                    icon = CommonComposeR.drawable.amity_ic_chevron_left,
                     onClick = { (context as? Activity)?.finish() },
                     modifier = Modifier.align(Alignment.CenterStart),
                 )
@@ -112,7 +112,7 @@ fun AmityGroupNotificationPreferencePage(
                     hierarchy = AmityBannerHierarchy.SUBDUE,
                     centered = true,
                     description = amityChatString("chat.group.notifications.disabled"),
-                    descriptionIcon = CommonR.drawable.amity_ic_bell_slash_r,
+                    descriptionIcon = CommonComposeR.drawable.amity_ic_bell_slash_r,
                 )
             }
 

@@ -53,7 +53,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityMenuButton
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.formatVideoDuration
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostVideoPlayerHelper
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityPostMediaVideoPlayer
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityProductTagBadge
@@ -180,7 +180,7 @@ fun AmityProfileVideoFeedItem(
                     .padding(start = 16.dp, end = 16.dp, bottom = 32.dp)
             ) {
                 AmityBottomSheetActionItem(
-                    icon = R.drawable.amity_ic_view_post,
+                    icon = CommonR.drawable.amity_ic_view_post,
                     text = amitySocialString("amity_social_button_view_post"),
                     modifier = Modifier,
                     onClick = {
@@ -270,7 +270,7 @@ fun AmityProfileVideoFeedItemPreviewDialog(
                     val (closeBtn, menuBtn) = createRefs()
 
                     AmityMenuButton(
-                        icon = R.drawable.amity_ic_close2,
+                        icon = CommonR.drawable.amity_ic_close2,
                         size = 32.dp,
                         iconPadding = 8.dp,
                         modifier = Modifier
@@ -285,7 +285,7 @@ fun AmityProfileVideoFeedItemPreviewDialog(
 
                     if (showMenuButton) {
                         AmityMenuButton(
-                            icon = R.drawable.amity_ic_more_horiz,
+                            icon = CommonR.drawable.amity_ic_more_horiz,
                             size = 32.dp,
                             iconPadding = 2.dp,
                             modifier = Modifier.constrainAs(menuBtn) {

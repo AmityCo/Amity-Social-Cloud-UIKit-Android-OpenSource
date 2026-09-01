@@ -46,6 +46,7 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityProductWebViewBottomSheet
 import com.amity.socialcloud.uikit.common.utils.formatCurrencyForLocale
@@ -333,7 +334,7 @@ private fun SeeMoreButton(
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.amity_ic_chevron_right),
+                    painter = painterResource(CommonComposeR.drawable.amity_ic_chevron_right),
                     contentDescription = "See more products",
                     tint = AmityTheme.colors.base,
                     modifier = Modifier.size(20.dp)

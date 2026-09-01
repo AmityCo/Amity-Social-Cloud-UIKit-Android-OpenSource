@@ -26,7 +26,7 @@ import com.amity.socialcloud.sdk.model.chat.channel.AmityChannel
 import com.amity.socialcloud.sdk.model.chat.member.AmityChannelMember
 import com.amity.socialcloud.uikit.chat.compose.home.element.AmityChatListItem
 import com.amity.socialcloud.uikit.chat.compose.home.element.AmityChatListSkeleton
-import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButton
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonColor
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonHierarchy
@@ -154,8 +154,8 @@ private fun SwipeToDismissListItem(
         enableDismissFromStartToEnd = false,
         enableDismissFromEndToStart = true,
         backgroundContent = {
-            val iconResId = if (isArchived) CommonR.drawable.amity_ic_unarchive_r
-                else CommonR.drawable.amity_ic_archive_r
+            val iconResId = if (isArchived) CommonComposeR.drawable.amity_ic_unarchive_r
+                else CommonComposeR.drawable.amity_ic_archive_r
             val label = if (isArchived) amityChatString("chat.unarchive")
                 else amityChatString("chat.archive")
 

@@ -23,7 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
@@ -58,7 +58,7 @@ fun AmityDeletedCommentView(
                     .padding(vertical = 5.dp)
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.amity_ic_remove),
+                    painter = painterResource(id = CommonR.drawable.amity_ic_remove),
                     contentDescription = null,
                     tint = AmityTheme.colors.baseShade2,
                     modifier = modifier.size(16.dp)
@@ -86,7 +86,7 @@ fun AmityDeletedCommentView(
                 modifier = modifier.padding(horizontal = 16.dp, vertical = 10.dp)
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.amity_ic_remove),
+                    painter = painterResource(id = CommonR.drawable.amity_ic_remove),
                     contentDescription = null,
                     tint = AmityTheme.colors.baseShade2,
                     modifier = modifier.size(16.dp)

@@ -27,7 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.uikit.chat.compose.localization.DefaultAmityChatStringProvider
-import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButton
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonHierarchy
@@ -80,7 +80,7 @@ fun AmityEditGroupMemberPermissionsPage(
                     style = AmityButtonStyle.GHOST,
                     hierarchy = AmityButtonHierarchy.SECONDARY,
                     iconSize = AmityIconButtonSize.SIZE32,
-                    icon = CommonR.drawable.amity_ic_chevron_left,
+                    icon = CommonComposeR.drawable.amity_ic_chevron_left,
                     onClick = { (context as? Activity)?.finish() },
                     modifier = Modifier.align(Alignment.CenterStart),
                 )

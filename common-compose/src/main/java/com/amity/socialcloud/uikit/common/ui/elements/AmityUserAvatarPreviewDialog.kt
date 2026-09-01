@@ -24,7 +24,7 @@ import coil3.compose.rememberAsyncImagePainter
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import coil3.request.crossfade
-import com.amity.socialcloud.uikit.common.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.common.ui.image.rememberZoomState
 import com.amity.socialcloud.uikit.common.ui.image.zoomable
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
@@ -100,7 +100,7 @@ fun AmityUserAvatarPreviewDialog(
                     .zIndex(Float.MAX_VALUE),
             ) {
                 AmityMenuButton(
-                    icon = R.drawable.amity_ic_close2,
+                    icon = CommonR.drawable.amity_ic_close2,
                     size = 32.dp,
                     iconPadding = 8.dp,
                     modifier = Modifier

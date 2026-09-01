@@ -55,7 +55,7 @@ import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.common.utils.getBackgroundColor
 import com.amity.socialcloud.uikit.common.utils.getValue
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.story.create.elements.AmityStoryCameraPreviewElement
 import com.amity.socialcloud.uikit.community.compose.story.create.elements.AmityStoryCameraShutterButtonElement
 import com.amity.socialcloud.uikit.community.compose.story.create.elements.AmityStoryPhotoVideoSelectionElement
@@ -263,7 +263,7 @@ fun AmityCreateStoryPage(
                     }
 
                     AmityMenuButton(
-                        icon = if (isFlashEffectivelyOn) R.drawable.amity_ic_story_flash else R.drawable.amity_ic_story_flash_off,
+                        icon = if (isFlashEffectivelyOn) CommonR.drawable.amity_ic_story_flash else CommonR.drawable.amity_ic_story_flash_off,
                         size = if (isFlashEffectivelyOn) 19.dp else 24.dp,
                         modifier = Modifier
                             .statusBarsPadding()
@@ -281,7 +281,7 @@ fun AmityCreateStoryPage(
                         }
                     )
                     AmityMenuButton(
-                        icon = R.drawable.amity_ic_story_media,
+                        icon = CommonR.drawable.amity_ic_story_media,
                         size = 24.dp,
                         modifier = Modifier
                             .size(40.dp)
@@ -301,7 +301,7 @@ fun AmityCreateStoryPage(
                         )
                     }
                     AmityMenuButton(
-                        icon = R.drawable.amity_ic_story_switch_camera,
+                        icon = CommonR.drawable.amity_ic_story_switch_camera,
                         size = 20.dp,
                         modifier = Modifier
                             .size(40.dp)

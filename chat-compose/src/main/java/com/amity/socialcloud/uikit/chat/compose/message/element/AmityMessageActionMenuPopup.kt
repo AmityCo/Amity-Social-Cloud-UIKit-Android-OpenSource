@@ -18,7 +18,7 @@ import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
 
 import com.amity.socialcloud.uikit.chat.compose.localization.amityChatString
-import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.common.ui.elements.AmityPopover
 import com.amity.socialcloud.uikit.common.ui.elements.AmityPopoverRow
 import com.amity.socialcloud.uikit.common.ui.elements.AmityPopoverRowSize
@@ -88,7 +88,7 @@ fun AmityMessageActionMenuPopup(
                 if (isSynced && !isUserMuted && isCurrentUser && message.getData() is AmityMessage.Data.TEXT) {
                     action.onEdit?.let { onEdit ->
                         AmityPopoverRow(
-                            icon = CommonR.drawable.amity_ic_pen_r,
+                            icon = CommonComposeR.drawable.amity_ic_pen_r,
                             label = amityChatString("chat.option.edit"),
                             size = AmityPopoverRowSize.COMPACT,
                             onSelect = {
@@ -102,7 +102,7 @@ fun AmityMessageActionMenuPopup(
                 if (isSynced && !isUserMuted) {
                     action.onReply?.let { onReply ->
                         AmityPopoverRow(
-                            icon = CommonR.drawable.amity_ic_share_left_l,
+                            icon = CommonComposeR.drawable.amity_ic_share_left_l,
                             label = amityChatString("chat.option.reply"),
                             size = AmityPopoverRowSize.COMPACT,
                             onSelect = {
@@ -117,7 +117,7 @@ fun AmityMessageActionMenuPopup(
                 if (message.getData() is AmityMessage.Data.TEXT) {
                     action.onCopy?.let { onCopy ->
                         AmityPopoverRow(
-                            icon = CommonR.drawable.amity_ic_copy_r,
+                            icon = CommonComposeR.drawable.amity_ic_copy_r,
                             label = amityChatString("chat.option.copy"),
                             size = AmityPopoverRowSize.COMPACT,
                             onSelect = {
@@ -133,7 +133,7 @@ fun AmityMessageActionMenuPopup(
                 if (isSynced && !isUserMuted && isMediaMessage) {
                     action.onSave?.let { onSave ->
                         AmityPopoverRow(
-                            icon = CommonR.drawable.amity_ic_arrow_down_to_bracket_r,
+                            icon = CommonComposeR.drawable.amity_ic_arrow_down_to_bracket_r,
                             label = amityChatString("chat.action.save"),
                             size = AmityPopoverRowSize.COMPACT,
                             onSelect = {
@@ -148,7 +148,7 @@ fun AmityMessageActionMenuPopup(
                     if (message.isFlaggedByMe()) {
                         action.onUnreport?.let { onUnreport ->
                             AmityPopoverRow(
-                                icon = CommonR.drawable.amity_ic_flag_slash_r,
+                                icon = CommonComposeR.drawable.amity_ic_flag_slash_r,
                                 label = amityChatString("chat.option.unreport"),
                                 size = AmityPopoverRowSize.COMPACT,
                                 onSelect = {
@@ -160,7 +160,7 @@ fun AmityMessageActionMenuPopup(
                     } else {
                         action.onReport?.let { onReport ->
                             AmityPopoverRow(
-                                icon = CommonR.drawable.amity_ic_flag_r,
+                                icon = CommonComposeR.drawable.amity_ic_flag_r,
                                 label = amityChatString("chat.option.report"),
                                 size = AmityPopoverRowSize.COMPACT,
                                 onSelect = {
@@ -178,7 +178,7 @@ fun AmityMessageActionMenuPopup(
                 // here silently overrode the group's moderator branch.
                 action.onDelete?.let { onDelete ->
                     AmityPopoverRow(
-                        icon = CommonR.drawable.amity_ic_trash_r,
+                        icon = CommonComposeR.drawable.amity_ic_trash_r,
                         label = amityChatString("chat.option.delete"),
                         size = AmityPopoverRowSize.COMPACT,
                         destructive = true,

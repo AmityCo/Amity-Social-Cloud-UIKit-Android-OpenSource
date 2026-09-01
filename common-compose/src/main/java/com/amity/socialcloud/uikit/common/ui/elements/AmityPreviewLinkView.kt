@@ -38,7 +38,7 @@ import coil3.request.crossfade
 import com.amity.socialcloud.sdk.model.core.link.AmityLink
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
-import com.amity.socialcloud.uikit.common.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.common.extionsions.extractUrls
 import com.amity.socialcloud.uikit.common.extionsions.parseUrls
 import com.amity.socialcloud.uikit.common.linkpreview.AmityPreviewUrl
@@ -234,7 +234,7 @@ fun AmityPreviewLinkView(
                     )
                 } else {
                     Icon(
-                        painter = painterResource(R.drawable.amity_ic_placeholder_image),
+                        painter = painterResource(CommonR.drawable.amity_ic_placeholder_image),
                         tint = AmityTheme.colors.baseShade3,
                         contentDescription = null,
                         modifier = modifier
@@ -244,7 +244,7 @@ fun AmityPreviewLinkView(
                 }
             } else {
                 Icon(
-                    painter = painterResource(R.drawable.amity_ic_warning_triangle),
+                    painter = painterResource(CommonR.drawable.amity_ic_warning_triangle),
                     tint = AmityTheme.colors.baseShade3,
                     contentDescription = null,
                     modifier = modifier

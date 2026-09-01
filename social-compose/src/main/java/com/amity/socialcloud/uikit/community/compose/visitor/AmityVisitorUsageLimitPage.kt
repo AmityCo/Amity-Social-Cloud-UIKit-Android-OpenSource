@@ -29,6 +29,7 @@ import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.community.compose.R
 
 @Composable
@@ -46,7 +47,7 @@ fun AmityVisitorUsageLimitPage(
         LaunchedEffect(Unit) {
             getPageScope().showSnackbar(
                 toastText,
-                drawableRes = R.drawable.amity_ic_snack_bar_info,
+                drawableRes = CommonComposeR.drawable.amity_ic_snack_bar_info,
                 dismissable = true
             )
         }

@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.community.compose.R
 
 @Composable
@@ -50,7 +51,7 @@ fun AmityCommunitySettingItem(
         }
 
         Icon(
-            painter = painterResource(id = R.drawable.amity_ic_chevron_right),
+            painter = painterResource(id = CommonComposeR.drawable.amity_ic_chevron_right),
             contentDescription = "",
             tint = AmityTheme.colors.baseShade2,
             modifier = modifier

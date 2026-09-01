@@ -31,7 +31,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.common.extionsions.extractUrls
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityDivider
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityDividerVariant
@@ -88,7 +88,7 @@ fun AmityChatMessageFullTextPage(
                     .padding(horizontal = 12.dp),
             ) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_chevron_left),
+                    imageVector = ImageVector.vectorResource(id = CommonComposeR.drawable.amity_ic_chevron_left),
                     contentDescription = "Back",
                     modifier = Modifier
                         .size(24.dp)

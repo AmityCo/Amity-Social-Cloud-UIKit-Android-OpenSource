@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
@@ -49,7 +49,7 @@ fun AmityUserUnfollowBottomSheet(
                 .navigationBarsPadding()
         ) {
             AmityBottomSheetActionItem(
-                icon = R.drawable.amity_ic_user_unfollow,
+                icon = CommonR.drawable.amity_ic_user_unfollow,
                 text = amitySocialString("amity_social_button_unfollow"),
                 modifier = modifier,
             ) {

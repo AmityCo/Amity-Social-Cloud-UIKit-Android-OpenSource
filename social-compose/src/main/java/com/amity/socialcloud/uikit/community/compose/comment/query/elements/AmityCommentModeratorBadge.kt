@@ -17,7 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
@@ -36,7 +36,7 @@ fun AmityCommentModeratorBadge(
             .testTag("comment_list/comment_bubble_moderator_badge")
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.amity_ic_moderator_social),
+            painter = painterResource(id = CommonR.drawable.amity_ic_moderator_social),
             contentDescription = null,
             tint = AmityTheme.colors.primary,
         )

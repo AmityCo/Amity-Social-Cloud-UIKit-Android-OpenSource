@@ -19,7 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.amity.socialcloud.uikit.common.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
@@ -58,7 +58,7 @@ fun AmitySnackbar(
 
 data class AmitySnackbarVisuals(
     override val message: String,
-    @DrawableRes var drawableRes: Int = R.drawable.amity_ic_warning,
+    @DrawableRes var drawableRes: Int = CommonR.drawable.amity_ic_warning,
     override val actionLabel: String? = null,
     override val duration: SnackbarDuration = if (actionLabel == null) SnackbarDuration.Short else SnackbarDuration.Indefinite,
     override val withDismissAction: Boolean = false,

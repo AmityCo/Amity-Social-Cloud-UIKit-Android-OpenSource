@@ -32,7 +32,7 @@ import com.amity.socialcloud.uikit.common.ui.image.rememberZoomState
 import com.amity.socialcloud.uikit.common.ui.image.zoomable
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.common.ui.theme.amityMediaSurface
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
@@ -111,7 +111,7 @@ fun AmityCommunityImagePreviewDialog(
             )
 
             AmityMenuButton(
-                icon = R.drawable.amity_ic_close2,
+                icon = CommonR.drawable.amity_ic_close2,
                 size = 32.dp,
                 iconPadding = 10.dp,
                 tint = amityColorBlack.copy(0.5f),

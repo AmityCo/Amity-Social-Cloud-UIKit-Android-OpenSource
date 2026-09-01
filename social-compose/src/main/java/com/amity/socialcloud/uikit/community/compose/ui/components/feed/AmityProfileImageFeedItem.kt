@@ -50,7 +50,7 @@ import com.amity.socialcloud.uikit.common.ui.image.rememberZoomState
 import com.amity.socialcloud.uikit.common.ui.image.zoomable
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerPageViewModel
 import com.amity.socialcloud.uikit.community.compose.post.composer.RenderAltTextConfigSheet
@@ -147,7 +147,7 @@ fun AmityProfileImageFeedItem(
             ) {
 
                 AmityBottomSheetActionItem(
-                    icon = R.drawable.amity_ic_view_post,
+                    icon = CommonR.drawable.amity_ic_view_post,
                     text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_view_post"),
                     modifier = Modifier,
                     onClick = {
@@ -158,7 +158,7 @@ fun AmityProfileImageFeedItem(
 
                 if (isPostCreator) {
                     AmityBottomSheetActionItem(
-                        icon = R.drawable.amity_ic_edit_profile,
+                        icon = CommonR.drawable.amity_ic_edit_profile,
                         text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_image_edit_alt_text_title"),
                         modifier = Modifier,
                     ) {
@@ -245,7 +245,7 @@ fun AmityProfileImageFeedItemPreviewDialog(
                     val (closeBtn, menuBtn) = createRefs()
 
                     AmityMenuButton(
-                        icon = R.drawable.amity_ic_close2,
+                        icon = CommonR.drawable.amity_ic_close2,
                         size = 32.dp,
                         iconPadding = 8.dp,
                         background = amityColorBaseShade4,
@@ -261,7 +261,7 @@ fun AmityProfileImageFeedItemPreviewDialog(
                     )
 
                     AmityMenuButton(
-                        icon = R.drawable.amity_ic_more_horiz,
+                        icon = CommonR.drawable.amity_ic_more_horiz,
                         size = 32.dp,
                         iconPadding = 2.dp,
                         modifier = Modifier.constrainAs(menuBtn) {

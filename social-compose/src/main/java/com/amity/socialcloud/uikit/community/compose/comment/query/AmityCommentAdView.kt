@@ -51,7 +51,7 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.isVisible
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.google.gson.JsonObject
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
@@ -90,7 +90,7 @@ fun AmityCommentAdView(
     ) {
         AmityAvatarView(
             image = ad.getAdvertiser()?.getAvatar(),
-            placeholder = R.drawable.amity_ic_default_advertiser,
+            placeholder = CommonR.drawable.amity_ic_default_advertiser,
             iconPadding = 8.dp,
             modifier = modifier.testTag("comment_list/comment_bubble_avatar")
         )
@@ -139,7 +139,7 @@ fun AmityCommentAdView(
                         )
 
                         Icon(
-                            painter = painterResource(id = R.drawable.amity_ic_more_info),
+                            painter = painterResource(id = CommonR.drawable.amity_ic_more_info),
                             contentDescription = null,
                             tint = AmityTheme.colors.baseShade3,
                             modifier = Modifier

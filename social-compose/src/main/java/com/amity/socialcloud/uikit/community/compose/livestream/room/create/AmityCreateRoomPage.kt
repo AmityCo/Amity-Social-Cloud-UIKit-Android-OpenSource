@@ -124,6 +124,7 @@ import com.amity.socialcloud.uikit.common.utils.getBackgroundColor
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.livestream.chat.AmityLivestreamMessageComposeBar
 import com.amity.socialcloud.uikit.community.compose.livestream.chat.ChatOverlay
@@ -743,7 +744,7 @@ fun AmityCreateRoomPage(
                                                             }
                                                         }
                                                         .testTag(getAccessibilityId()),
-                                                    painter = painterResource(R.drawable.amity_ic_room_close),
+                                                    painter = painterResource(CommonR.drawable.amity_ic_room_close),
                                                     contentDescription = "cancel_create_livestream_button",
                                                 )
                                             }
@@ -770,7 +771,7 @@ fun AmityCreateRoomPage(
                                         }
                                         Spacer(modifier = Modifier.width(8.dp))
                                         Image(
-                                            painter = painterResource(R.drawable.amity_arrow_down),
+                                            painter = painterResource(CommonR.drawable.amity_arrow_down),
                                             contentDescription = "Close Button",
                                             modifier = Modifier
                                                 .size(16.dp)
@@ -984,7 +985,7 @@ fun AmityCreateRoomPage(
                                                                 showEndLivestreamDialog = true
                                                             }
                                                             .testTag(getAccessibilityId()),
-                                                        painter = painterResource(id = R.drawable.amity_ic_room_close),
+                                                        painter = painterResource(id = CommonR.drawable.amity_ic_room_close),
                                                         contentDescription = "end_livestream_button",
                                                         contentScale = ContentScale.Fit
                                                     )
@@ -1056,7 +1057,7 @@ fun AmityCreateRoomPage(
                                                                         showCreateRoomBottomSheet = true
                                                                     }
                                                                     .testTag(getAccessibilityId()),
-                                                                painter = painterResource(id = R.drawable.amity_ic_more_vertical),
+                                                                painter = painterResource(id = CommonR.drawable.amity_ic_more_vertical),
                                                                 contentDescription = "create_livestream_option_button",
                                                                 tint = AmityTheme.colors.baseInverse
                                                             )
@@ -1239,7 +1240,7 @@ fun AmityCreateRoomPage(
                                         elementId = "create_livestream_settings_button"
                                     ) {
                                         Image(
-                                            painter = painterResource(R.drawable.amity_ic_room_create_setting),
+                                            painter = painterResource(CommonR.drawable.amity_ic_room_create_setting),
                                             contentDescription = "create livestream settings button",
                                             modifier = Modifier
                                                 .size(40.dp)
@@ -1262,8 +1263,8 @@ fun AmityCreateRoomPage(
                                         .testTag("toggle_microphone_button")
                                 ) {
                                     Image(
-                                        painter = if (!userEnabledMic) { painterResource(R.drawable.amity_ic_room_unmute_button) } else {
-                                            painterResource(R.drawable.amity_ic_room_mute_button)
+                                        painter = if (!userEnabledMic) { painterResource(CommonR.drawable.amity_ic_room_unmute_button) } else {
+                                            painterResource(CommonR.drawable.amity_ic_room_mute_button)
                                         },
                                         contentDescription = "",
                                         modifier = Modifier
@@ -1277,7 +1278,7 @@ fun AmityCreateRoomPage(
                                     elementId = "switch_camera_button"
                                 ) {
                                     Image(
-                                        painter = painterResource(R.drawable.amity_ic_room_switch_camera),
+                                        painter = painterResource(CommonR.drawable.amity_ic_room_switch_camera),
                                         contentDescription = "switch camera button",
                                         modifier = Modifier
                                             .size(40.dp)
@@ -1330,8 +1331,8 @@ fun AmityCreateRoomPage(
                                         .testTag("toggle_microphone_button")
                                 ) {
                                     Image(
-                                        painter = if (!userEnabledMic) { painterResource(R.drawable.amity_ic_room_unmute_button) } else {
-                                            painterResource(R.drawable.amity_ic_room_mute_button)
+                                        painter = if (!userEnabledMic) { painterResource(CommonR.drawable.amity_ic_room_unmute_button) } else {
+                                            painterResource(CommonR.drawable.amity_ic_room_mute_button)
                                         },
                                         contentDescription = "",
                                         modifier = Modifier
@@ -1345,7 +1346,7 @@ fun AmityCreateRoomPage(
                                     elementId = "switch_camera_button"
                                 ) {
                                     Image(
-                                        painter = painterResource(R.drawable.amity_ic_room_switch_camera),
+                                        painter = painterResource(CommonR.drawable.amity_ic_room_switch_camera),
                                         contentDescription = "switch camera button",
                                         modifier = Modifier
                                             .size(40.dp)
@@ -1550,9 +1551,9 @@ fun AmityCreateRoomPage(
                             ) {
                                 Image(
                                     painter = if (!userEnabledMic) {
-                                        painterResource(R.drawable.amity_ic_room_unmute_button)
+                                        painterResource(CommonR.drawable.amity_ic_room_unmute_button)
                                     } else {
-                                        painterResource(R.drawable.amity_ic_room_mute_button)
+                                        painterResource(CommonR.drawable.amity_ic_room_mute_button)
                                     },
                                     contentDescription = "",
                                     modifier = Modifier.size(36.dp)
@@ -1579,7 +1580,7 @@ fun AmityCreateRoomPage(
                                     .testTag("switch_camera_button")
                             ) {
                                 Image(
-                                    painter = painterResource(R.drawable.amity_v4_switch_camera_button),
+                                    painter = painterResource(CommonR.drawable.amity_v4_switch_camera_button),
                                     contentDescription = "",
                                     modifier = Modifier
                                         .size(36.dp)
@@ -1628,7 +1629,7 @@ fun AmityCreateRoomPage(
                     val postLink = if(post != null) AmityUIKitConfigController.getPostLink(post) else ""
                     if(postLink.isNotEmptyOrBlank()) {
                         AmityBottomSheetActionItem(
-                            icon = R.drawable.amity_v4_link_icon,
+                            icon = CommonR.drawable.amity_v4_link_icon,
                             text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_copy_live_stream_link"),
                             modifier = Modifier
                                 .padding(horizontal = 12.dp),
@@ -1641,7 +1642,7 @@ fun AmityCreateRoomPage(
                         }
 
                         AmityBottomSheetActionItem(
-                            icon = R.drawable.amity_v4_share_icon,
+                            icon = CommonR.drawable.amity_v4_share_icon,
                             text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_share_to"),
                             modifier = Modifier
                                 .padding(horizontal = 12.dp),
@@ -1902,7 +1903,7 @@ fun AmityCreateRoomPage(
                         )
                     }
                     AmityBottomSheetActionItem(
-                        icon = R.drawable.amity_ic_cohost_remove,
+                        icon = CommonR.drawable.amity_ic_cohost_remove,
                         text = if (notJoinedYet) DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_cancel_invitation") else DefaultAmitySocialStringProvider.getInstance().getString("amity_social_status_remove_from_live"),
                         modifier = Modifier
                             .padding(horizontal = 12.dp),
@@ -2116,7 +2117,7 @@ fun EventRoomPlayerHeader(
                             context.closePageWithResult(Activity.RESULT_OK)
                         }
                         .testTag(getAccessibilityId()),
-                    painter = painterResource(R.drawable.amity_ic_room_close),
+                    painter = painterResource(CommonR.drawable.amity_ic_room_close),
                     contentDescription = "close_room_button",
                 )
             }
@@ -2127,7 +2128,7 @@ fun EventRoomPlayerHeader(
                 modifier = Modifier
                     .size(32.dp)
                     .clip(CircleShape),
-                placeholder = R.drawable.amity_ic_default_community_avatar_circular
+                placeholder = CommonR.drawable.amity_ic_default_community_avatar_circular
             )
 
             Spacer(modifier = Modifier.width(12.dp))
@@ -2197,7 +2198,7 @@ fun AmityInviteCoHostHeader(
                 }
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.amity_ic_dismiss_preview),
+                painter = painterResource(id = CommonR.drawable.amity_ic_dismiss_preview),
                 contentDescription = "Close",
                 tint = AmityTheme.colors.baseInverse,
             )
@@ -2407,7 +2408,7 @@ fun EmptyViewerList() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(
-            painter = painterResource(R.drawable.amity_ic_invite_cohost_in_chat),
+            painter = painterResource(CommonR.drawable.amity_ic_invite_cohost_in_chat),
             tint = AmityTheme.colors.baseShade3,
             contentDescription = "empty invitation icon",
             modifier = Modifier.size(64.dp)

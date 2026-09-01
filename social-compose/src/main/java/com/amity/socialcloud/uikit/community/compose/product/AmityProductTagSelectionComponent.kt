@@ -66,6 +66,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmitySearchBarView
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.shade
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.R
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -343,7 +344,7 @@ private fun AmityProductSelectionTopBar(
             .padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 8.dp)
     ) {
         Icon(
-            painter = painterResource(R.drawable.amity_ic_dismiss_preview),
+            painter = painterResource(CommonR.drawable.amity_ic_dismiss_preview),
             contentDescription = "Close",
             tint = theme?.baseColor?.asColor() ?: AmityTheme.colors.base,
             modifier = Modifier
@@ -493,7 +494,7 @@ private fun AmityProductTagSelectedItemElement(
                     .clickableWithoutRipple { onRemove() },
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.amity_ic_close),
+                    painter = painterResource(CommonR.drawable.amity_ic_close),
                     contentDescription = amitySocialString("amity_social_modal_alert_remove_button"),
                     tint = amityColorWhite,
                     modifier = Modifier
@@ -731,7 +732,7 @@ private fun AmityCircleCheckIndicator(
 
     if (isChecked && !enabled) {
         Icon(
-            painter = painterResource(R.drawable.amity_ic_check_disabled),
+            painter = painterResource(CommonR.drawable.amity_ic_check_disabled),
             tint = AmityTheme.colors.primary.copy(alpha = 0.8f),
             contentDescription = "Selected already",
         )
@@ -761,7 +762,7 @@ private fun AmityCircleCheckIndicator(
                     contentAlignment = Alignment.Center
                 ) {}
                 Icon(
-                    painter = painterResource(R.drawable.amity_ic_check),
+                    painter = painterResource(CommonR.drawable.amity_ic_check),
                     contentDescription = "Selected",
                     tint = AmityTheme.colors.primary,
                     modifier = Modifier.fillMaxSize()

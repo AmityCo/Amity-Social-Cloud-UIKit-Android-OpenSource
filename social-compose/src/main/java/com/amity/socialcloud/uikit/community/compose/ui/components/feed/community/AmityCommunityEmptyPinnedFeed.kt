@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
@@ -40,7 +40,7 @@ fun AmityCommunityEmptyPinnedFeedView(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = painterResource(id = R.drawable.amity_ic_empty_feed),
+            painter = painterResource(id = CommonR.drawable.amity_ic_empty_feed),
             contentDescription = "empty feed icon",
             colorFilter = ColorFilter.tint(AmityTheme.colors.baseShade4)
         )

@@ -25,7 +25,7 @@ import androidx.core.content.ContextCompat
 import com.amity.socialcloud.uikit.common.ui.elements.DisposableEffectWithLifeCycle
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.closePageWithResult
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import com.amity.socialcloud.uikit.community.compose.livestream.create.element.AmityMediaAndCameraNoPermissionView
 import com.amity.socialcloud.uikit.common.ui.theme.amityMediaSurface
@@ -64,7 +64,7 @@ fun AmityNoPermissionPage() {
                 modifier = Modifier.clickableWithoutRipple {
                     context.closePageWithResult(Activity.RESULT_CANCELED)
                 },
-                painter = painterResource(R.drawable.amity_ic_back),
+                painter = painterResource(CommonR.drawable.amity_ic_back),
                 tint = AmityTheme.colors.baseInverse,
                 contentDescription = "back"
             )

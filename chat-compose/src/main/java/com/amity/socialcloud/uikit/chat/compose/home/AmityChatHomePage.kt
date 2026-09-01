@@ -57,7 +57,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.sdk.model.chat.channel.AmityChannel
 import com.amity.socialcloud.sdk.core.session.model.NetworkConnectionEvent
 import com.amity.socialcloud.uikit.chat.compose.AmityChatBehaviorHelper
-import com.amity.socialcloud.uikit.chat.compose.R
 import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import com.amity.socialcloud.uikit.chat.compose.home.component.AmityChatListComponent
 import com.amity.socialcloud.uikit.chat.compose.home.component.SwipeAction
@@ -76,7 +75,7 @@ import com.amity.socialcloud.uikit.common.ui.atoms.AmityTab
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityTabVariant
 import com.amity.socialcloud.uikit.common.ui.elements.AmityPopover
 import com.amity.socialcloud.uikit.common.ui.elements.AmityPopoverRow
-import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import kotlinx.coroutines.launch
 
@@ -182,7 +181,7 @@ fun AmityChatHomePage(
                 // don't have to overlay their own back control on the leading-pinned title.
                 if (onBackClick != null) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_chevron_left),
+                        imageVector = ImageVector.vectorResource(id = CommonComposeR.drawable.amity_ic_chevron_left),
                         contentDescription = "Back",
                         modifier = Modifier
                             .size(24.dp)
@@ -336,7 +335,7 @@ private fun AmityChatHomeTopNavigationBar(
             style = AmityButtonStyle.FILLED,
             hierarchy = AmityButtonHierarchy.SECONDARY,
             iconSize = AmityIconButtonSize.SIZE32,
-            icon = CommonR.drawable.amity_ic_search_r,
+            icon = CommonComposeR.drawable.amity_ic_search_r,
             onClick = onSearchClick,
         )
 
@@ -420,7 +419,7 @@ private fun AmityCreateChatButton(
             style = AmityButtonStyle.FILLED,
             hierarchy = AmityButtonHierarchy.SECONDARY,
             iconSize = AmityIconButtonSize.SIZE32,
-            icon = CommonR.drawable.amity_ic_plus_r,
+            icon = CommonComposeR.drawable.amity_ic_plus_r,
             onClick = {
                 when {
                     onlyConversation -> onCreateDirectChatClick()
@@ -443,7 +442,7 @@ private fun AmityCreateChatButton(
                     AmityPopover {
                         if (showConversationType) {
                             AmityPopoverRow(
-                                icon = CommonR.drawable.amity_ic_user_plus_r,
+                                icon = CommonComposeR.drawable.amity_ic_user_plus_r,
                                 label = amityChatString("chat.create.direct"),
                                 onSelect = {
                                     expanded = false
@@ -453,7 +452,7 @@ private fun AmityCreateChatButton(
                         }
                         if (showCommunityType) {
                             AmityPopoverRow(
-                                icon = CommonR.drawable.amity_ic_user_group_r,
+                                icon = CommonComposeR.drawable.amity_ic_user_group_r,
                                 label = amityChatString("chat.create.group"),
                                 onSelect = {
                                     expanded = false
@@ -481,7 +480,7 @@ private fun AmityChatMoreMenuButton(
             style = AmityButtonStyle.FILLED,
             hierarchy = AmityButtonHierarchy.SECONDARY,
             iconSize = AmityIconButtonSize.SIZE32,
-            icon = CommonR.drawable.amity_ic_ellipsis_v_r,
+            icon = CommonComposeR.drawable.amity_ic_ellipsis_v_r,
             onClick = { expanded = true },
         )
 
@@ -494,7 +493,7 @@ private fun AmityChatMoreMenuButton(
                 Box(modifier = Modifier.padding(AmityPopoverShadowGutter)) {
                     AmityPopover {
                         AmityPopoverRow(
-                            icon = CommonR.drawable.amity_ic_archive_r,
+                            icon = CommonComposeR.drawable.amity_ic_archive_r,
                             label = amityChatString("chat.archived"),
                             onSelect = {
                                 expanded = false

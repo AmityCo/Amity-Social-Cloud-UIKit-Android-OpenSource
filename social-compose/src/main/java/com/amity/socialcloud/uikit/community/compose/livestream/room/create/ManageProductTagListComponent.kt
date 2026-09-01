@@ -64,6 +64,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.asColor
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.formatCurrencyForLocale
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.R
 import org.joda.time.DateTime
 import kotlin.math.max
@@ -121,7 +122,7 @@ fun ManageProductTagListComponent(
             }
 
             Icon(
-                painter = painterResource(id = R.drawable.amity_ic_dismiss_preview),
+                painter = painterResource(id = CommonR.drawable.amity_ic_dismiss_preview),
                 contentDescription = "Close",
                 tint = componentTheme?.baseColor?.asColor() ?: AmityTheme.colors.base,
                 modifier = Modifier

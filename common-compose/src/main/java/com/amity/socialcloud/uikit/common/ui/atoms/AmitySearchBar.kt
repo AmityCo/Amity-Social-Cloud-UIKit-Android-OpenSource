@@ -27,7 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.amity.socialcloud.uikit.common.compose.R as ComposeR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
@@ -86,7 +86,7 @@ fun AmitySearchBar(
                 .padding(horizontal = innerHorizontalPadding)
         ) {
             Icon(
-                painter = painterResource(id = ComposeR.drawable.amity_ic_search_r),
+                painter = painterResource(id = CommonComposeR.drawable.amity_ic_search_r),
                 tint = iconTint,
                 contentDescription = null,
             )
@@ -121,7 +121,7 @@ fun AmitySearchBar(
 
             if (keyword.text.isNotEmpty()) {
                 Icon(
-                    painter = painterResource(id = ComposeR.drawable.amity_ic_clear_r),
+                    painter = painterResource(id = CommonComposeR.drawable.amity_ic_clear_r),
                     tint = iconTint,
                     contentDescription = "Clear search",
                     modifier = Modifier

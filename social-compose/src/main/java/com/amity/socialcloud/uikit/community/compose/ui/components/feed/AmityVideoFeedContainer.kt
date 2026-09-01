@@ -29,7 +29,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.media3.common.util.UnstableApi
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.ui.elements.AmityMenuButton
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.post.detail.elements.AmityVideoPlayerPage
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import com.amity.socialcloud.uikit.common.ui.theme.amityMediaSurface
@@ -101,7 +101,7 @@ private fun VideoNotAvailableDialog(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.amity_ic_video_not_available),
+                    painter = painterResource(id = CommonR.drawable.amity_ic_video_not_available),
                     contentDescription = "Video Not Available",
                     tint = amityColorWhite,
                     modifier = Modifier.size(60.dp)
@@ -120,7 +120,7 @@ private fun VideoNotAvailableDialog(
             }
 
             AmityMenuButton(
-                icon = R.drawable.amity_ic_close2,
+                icon = CommonR.drawable.amity_ic_close2,
                 size = 32.dp,
                 iconPadding = 10.dp,
                 tint = amityColorBlack.copy(0.5f),

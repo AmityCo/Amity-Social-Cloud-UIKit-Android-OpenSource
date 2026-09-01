@@ -41,6 +41,7 @@ import com.amity.socialcloud.sdk.model.core.product.AmityProduct
 import com.amity.socialcloud.sdk.model.core.product.AmityProductStatus
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.common.utils.formatCurrencyForLocale
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
@@ -99,7 +100,7 @@ fun AmityProductTagListComponent(
 
                 if (renderMode == RenderModeEnum.LIVESTREAM) {
                     Icon(
-                        painter = painterResource(id = R.drawable.amity_ic_dismiss_preview),
+                        painter = painterResource(id = CommonR.drawable.amity_ic_dismiss_preview),
                         contentDescription = "Close",
                         tint = AmityTheme.colors.base,
                         modifier = Modifier

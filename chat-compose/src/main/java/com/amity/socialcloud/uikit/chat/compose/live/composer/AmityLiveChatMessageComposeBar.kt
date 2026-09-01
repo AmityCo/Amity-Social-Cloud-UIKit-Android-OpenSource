@@ -39,7 +39,7 @@ import com.amity.socialcloud.uikit.chat.compose.live.AmityLiveChatPageViewModel
 import com.amity.socialcloud.uikit.chat.compose.live.mention.AmityMentionSuggestion
 import com.amity.socialcloud.uikit.chat.compose.localization.DefaultAmityChatStringProvider
 import com.amity.socialcloud.uikit.chat.compose.localization.amityChatString
-import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButton
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonHierarchy
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonStyle
@@ -229,7 +229,7 @@ fun AmityLiveChatMessageComposeBar(
                         style = AmityButtonStyle.FILLED,
                         hierarchy = if (isTextValid) AmityButtonHierarchy.PRIMARY else AmityButtonHierarchy.SECONDARY,
                         iconSize = AmityIconButtonSize.SIZE32,
-                        icon = CommonR.drawable.amity_ic_arrow_up_r,
+                        icon = CommonComposeR.drawable.amity_ic_arrow_up_r,
                         enabled = isTextValid,
                         modifier = Modifier.align(Alignment.CenterVertically),
                         onClick = {

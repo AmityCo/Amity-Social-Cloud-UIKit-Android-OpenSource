@@ -45,7 +45,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.common.utils.shade
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.community.category.element.AmityCommunityCategoryItem
 import com.amity.socialcloud.uikit.community.compose.community.category.element.AmityCommunityCategoryList
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
@@ -95,7 +95,7 @@ fun AmityCommunityAddCategoryPage(
                         .padding(start = 12.dp, end = 16.dp)
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.amity_ic_close),
+                        painter = painterResource(CommonR.drawable.amity_ic_close),
                         contentDescription = "Close",
                         tint = AmityTheme.colors.base,
                         modifier = modifier

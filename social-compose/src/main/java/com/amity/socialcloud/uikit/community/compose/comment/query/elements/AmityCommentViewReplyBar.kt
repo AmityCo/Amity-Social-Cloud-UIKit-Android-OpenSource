@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
@@ -41,7 +42,7 @@ fun AmityCommentViewReplyBar(
         if (isViewAllReplies) {
             Spacer(Modifier.width(16.dp))
             Icon(
-                painter = painterResource(id = R.drawable.amity_arrow_down),
+                painter = painterResource(id = CommonR.drawable.amity_arrow_down),
                 contentDescription = null,
                 tint = AmityTheme.colors.baseShade1,
                 modifier = Modifier.size(12.dp)

@@ -36,11 +36,11 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.sdk.model.core.flag.AmityContentFlagReason
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.common.compose.R
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.NoRippleInteractionSource
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
-import com.amity.socialcloud.uikit.community.compose.R.*
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 import com.amity.socialcloud.uikit.common.ui.theme.amityDisabledColor
@@ -96,7 +96,7 @@ fun AmityReportReasonListScreen(
             ) {
                 Icon(
                     modifier = Modifier.align(Alignment.CenterEnd),
-                    painter = painterResource(R.drawable.amity_ic_close3),
+                    painter = painterResource(CommonR.drawable.amity_ic_close3),
                     contentDescription = "cancel_report_button",
                     tint = AmityTheme.colors.base
                 )

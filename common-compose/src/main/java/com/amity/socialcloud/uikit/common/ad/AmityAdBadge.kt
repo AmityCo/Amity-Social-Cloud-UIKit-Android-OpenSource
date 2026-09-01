@@ -17,7 +17,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.amity.socialcloud.uikit.common.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.common.localization.amityCommonString
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
@@ -38,7 +38,7 @@ fun AmityAdBadge(
             .padding(start = 4.dp, end = 6.dp)
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.amity_ic_sponsor_badge),
+            painter = painterResource(id = CommonR.drawable.amity_ic_sponsor_badge),
             contentDescription = null,
             tint = amityColorWhite,
         )

@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
@@ -28,7 +28,7 @@ fun AmityProfileEmptyClipFeed(
     ) {
         Spacer(modifier.height(12.dp))
         Icon(
-            painter = painterResource(id = R.drawable.amity_ic_clip_empty),
+            painter = painterResource(id = CommonR.drawable.amity_ic_clip_empty),
             tint = AmityTheme.colors.baseShade4,
             contentDescription = "empty feed icon"
         )

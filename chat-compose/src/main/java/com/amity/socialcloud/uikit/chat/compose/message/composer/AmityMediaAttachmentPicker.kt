@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButton
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonHierarchy
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonVariant
@@ -99,7 +99,7 @@ fun AmityMediaAttachmentPicker(
     ) {
         // Camera button
         MediaAttachmentButton(
-            iconResId = CommonR.drawable.amity_ic_camera_r,
+            iconResId = CommonComposeR.drawable.amity_ic_camera_r,
             label = amityChatString("chat.media.camera"),
             onClick = {
                 val hasCameraPermission = ContextCompat.checkSelfPermission(
@@ -115,7 +115,7 @@ fun AmityMediaAttachmentPicker(
 
         // Media/Gallery button
         MediaAttachmentButton(
-            iconResId = CommonR.drawable.amity_ic_image_r,
+            iconResId = CommonComposeR.drawable.amity_ic_image_r,
             label = amityChatString("chat.media.photo"),
             onClick = {
                 galleryLauncher.launch(

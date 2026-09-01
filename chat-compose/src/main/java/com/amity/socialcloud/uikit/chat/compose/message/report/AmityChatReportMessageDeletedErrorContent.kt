@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.chat.compose.localization.amityChatString
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButton
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonVariant
@@ -34,7 +34,7 @@ fun AmityChatReportMessageDeletedErrorContent(
                 .weight(1f)
                 .fillMaxWidth(),
             variant = AmityEmptyStateVariant.ICON,
-            icon = CommonR.drawable.amity_ic_newspaper_question_l,
+            icon = CommonComposeR.drawable.amity_ic_newspaper_question_l,
             title = amityChatString("chat.report.error.title"),
             description = amityChatString("chat.report.error.desc"),
         )

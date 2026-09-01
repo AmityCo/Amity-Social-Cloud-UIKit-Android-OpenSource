@@ -34,7 +34,7 @@ import com.amity.socialcloud.uikit.common.localization.amityCommonString
 import com.amity.socialcloud.sdk.model.chat.member.AmityChannelMember
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.uikit.chat.compose.common.AmityChatConfirmDialog
-import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityAvatarSize
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButton
@@ -105,7 +105,7 @@ fun AmityBannedGroupMemberListPage(
                     style = AmityButtonStyle.GHOST,
                     hierarchy = AmityButtonHierarchy.SECONDARY,
                     iconSize = AmityIconButtonSize.SIZE32,
-                    icon = CommonR.drawable.amity_ic_chevron_left,
+                    icon = CommonComposeR.drawable.amity_ic_chevron_left,
                     onClick = { (context as? Activity)?.finish() },
                     modifier = Modifier.align(Alignment.CenterStart),
                 )
@@ -150,7 +150,7 @@ fun AmityBannedGroupMemberListPage(
                         AmityEmptyState(
                             modifier = Modifier.fillMaxSize(),
                             variant = AmityEmptyStateVariant.ICON,
-                            icon = CommonR.drawable.amity_ic_list_radio_l,
+                            icon = CommonComposeR.drawable.amity_ic_list_radio_l,
                             title = amityChatString("chat.banned.members.empty"),
                         )
                     } else {
@@ -205,7 +205,7 @@ fun AmityBannedGroupMemberListPage(
                 ) {
                     MemberActionItem(
                         text = amityChatString("chat.member.action.unban"),
-                        iconResId = CommonR.drawable.amity_ic_ban_r,
+                        iconResId = CommonComposeR.drawable.amity_ic_ban_r,
                         onClick = {
                             pendingUnbanUserId = selectedMember?.getUserId()
                             selectedMember = null
@@ -261,14 +261,14 @@ private fun BannedMemberItem(
             type = AmityListLeadingType.AVATAR,
             avatarUrl = user?.resolvedAvatarUrl(AmityImage.Size.SMALL),
             avatarInitials = user?.getDisplayName().toChatAvatarInitial(),
-            icon = CommonR.drawable.amity_ic_user_r,
+            icon = CommonComposeR.drawable.amity_ic_user_r,
             avatarSize = AmityAvatarSize.Size40,
             avatarBorderWidth = 2,
         ),
         trailing = listOf(
             AmityListTrailingContent(
                 type = AmityListTrailingType.ICON,
-                icon = CommonR.drawable.amity_ic_ellipsis_r,
+                icon = CommonComposeR.drawable.amity_ic_ellipsis_r,
             )
         ),
         onTrailingPress = { onMoreClick() },

@@ -35,7 +35,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.isCreatorCommunityModerator
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.community.compose.comment.query.elements.AmityCommentModeratorBadge
 import com.google.gson.JsonObject
 import kotlinx.coroutines.delay
@@ -117,7 +117,7 @@ fun AmityCommentContentContainer(
 
             val isBrandCreator = comment.getCreator()?.isBrand() == true
             if (isBrandCreator) {
-                val badge = R.drawable.amity_ic_brand_badge
+                val badge = CommonComposeR.drawable.amity_ic_brand_badge
                 Image(
                     painter = painterResource(id = badge),
                     contentDescription = "",

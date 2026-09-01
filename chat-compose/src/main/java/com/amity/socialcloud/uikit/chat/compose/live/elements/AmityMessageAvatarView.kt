@@ -14,7 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlin.math.abs
-import com.amity.socialcloud.uikit.chat.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.chat.compose.common.toChatAvatarInitial
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityAvatar
@@ -47,7 +47,7 @@ fun AmityMessageAvatarView(
         Box(modifier = modifier) {
             if (avatarType == AmityAvatarType.MENTION_ALL) {
                 Image(
-                    painter = painterResource(id = R.drawable.amity_ic_mention_all),
+                    painter = painterResource(id = CommonR.drawable.amity_ic_mention_all),
                     contentDescription = "Mention all",
                     modifier = Modifier
                         .size(size)

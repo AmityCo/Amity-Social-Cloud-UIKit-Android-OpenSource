@@ -47,7 +47,7 @@ import com.amity.socialcloud.sdk.model.social.event.AmityEventOriginType
 import com.amity.socialcloud.sdk.model.video.room.AmityRoom
 import com.amity.socialcloud.sdk.model.video.room.AmityRoomStatus
 import com.amity.socialcloud.uikit.common.utils.readableSocialTimeDiff
-import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAvatarView
 import com.amity.socialcloud.uikit.common.ui.elements.AmityCommunityAvatarView
 import com.amity.socialcloud.uikit.common.ui.elements.AmityEventAvatarView
@@ -92,7 +92,7 @@ fun AmityNotificationTrayItemView(
                 image = null,
                 size = 32.dp,
                 iconPadding = 8.dp,
-                placeholder = CommonComposeR.drawable.amity_ic_default_profile1,
+                placeholder = CommonR.drawable.amity_ic_default_profile1,
                 placeholderTint = amityColorWhite,
                 placeholderBackground = AmityTheme.colors.primaryShade1,
             )

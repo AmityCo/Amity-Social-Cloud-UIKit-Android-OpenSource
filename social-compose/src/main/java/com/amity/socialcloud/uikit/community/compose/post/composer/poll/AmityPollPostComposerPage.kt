@@ -117,6 +117,8 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.closePageWithResult
+import com.amity.socialcloud.uikit.common.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerHelper
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerPageViewModel
@@ -392,7 +394,7 @@ fun AmityPollPostComposerPage(
                                                     DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_error_create_post_failed")
                                                 getPageScope().showSnackbar(
                                                     message = text,
-                                                    drawableRes = R.drawable.amity_ic_snack_bar_warning,
+                                                    drawableRes = CommonComposeR.drawable.amity_ic_snack_bar_warning,
                                                     additionalHeight = 52,
                                                 )
                                             } finally {
@@ -810,7 +812,7 @@ fun AmityPollPostComposerPage(
                                             horizontalArrangement = Arrangement.Center
                                         ) {
                                             Icon(
-                                                painter = painterResource(R.drawable.amity_ic_add),
+                                                painter = painterResource(CommonR.drawable.amity_ic_add),
                                                 contentDescription = "Create",
                                                 tint = AmityTheme.colors.secondary,
                                                 modifier = modifier.size(16.dp)

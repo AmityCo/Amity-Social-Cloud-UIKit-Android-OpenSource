@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.amity.socialcloud.uikit.common.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.common.localization.amityCommonString
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 
@@ -84,7 +84,7 @@ fun AmityAdInfoSheet(
                     .padding(8.dp)
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.amity_ic_more_info),
+                    painter = painterResource(CommonR.drawable.amity_ic_more_info),
                     contentDescription = null,
                     tint = AmityTheme.colors.baseShade3,
                 )
@@ -121,7 +121,7 @@ fun AmityAdInfoSheet(
                     .padding(8.dp)
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.amity_ic_more_info),
+                    painter = painterResource(CommonR.drawable.amity_ic_more_info),
                     contentDescription = null,
                     tint = AmityTheme.colors.baseShade3,
                 )

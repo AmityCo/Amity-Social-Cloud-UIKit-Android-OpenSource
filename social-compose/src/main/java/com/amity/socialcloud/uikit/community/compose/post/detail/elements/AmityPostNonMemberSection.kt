@@ -39,7 +39,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.localization.amityCommonString
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
@@ -139,7 +139,7 @@ fun AmityPostNonMemberSection(
 
 					if (shouldShowIcon) {
 						Icon(
-							imageVector = ImageVector.vectorResource(id = R.drawable.amity_v4_share_icon),
+							imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_v4_share_icon),
 							contentDescription = "Share button",
 							tint = Color.Unspecified,
 							modifier = Modifier

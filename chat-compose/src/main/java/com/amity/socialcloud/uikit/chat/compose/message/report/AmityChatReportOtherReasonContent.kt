@@ -33,7 +33,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.chat.compose.localization.amityChatString
-import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButton
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonColor
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonHierarchy
@@ -76,7 +76,7 @@ fun AmityChatReportOtherReasonContent(
                 .padding(horizontal = 16.dp, vertical = 12.dp),
         ) {
             Icon(
-                painter = painterResource(id = CommonR.drawable.amity_ic_chevron_left),
+                painter = painterResource(id = CommonComposeR.drawable.amity_ic_chevron_left),
                 contentDescription = null,
                 tint = AmityTheme.token(AmityColorToken.IconIconButtonGhostSecondaryDefault),
                 modifier = Modifier
@@ -100,7 +100,7 @@ fun AmityChatReportOtherReasonContent(
             ) {
                 Icon(
                     modifier = Modifier.align(Alignment.CenterEnd),
-                    painter = painterResource(CommonR.drawable.amity_ic_cross_r),
+                    painter = painterResource(CommonComposeR.drawable.amity_ic_cross_r),
                     contentDescription = "cancel_report_button",
                     tint = AmityTheme.token(AmityColorToken.IconIconButtonGhostSecondaryDefault),
                 )

@@ -15,7 +15,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.amity.socialcloud.uikit.common.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.localization.amityCommonString
@@ -91,7 +91,7 @@ fun AmityBottomSheetActionItemPreview() {
         onClick = {},
         icon = {
             Icon(
-                painter = painterResource(id = R.drawable.amity_ic_camera2),
+                painter = painterResource(id = CommonR.drawable.amity_ic_camera2),
                 contentDescription = null,
                 tint = AmityTheme.colors.base,
                 modifier = Modifier.size(24.dp)

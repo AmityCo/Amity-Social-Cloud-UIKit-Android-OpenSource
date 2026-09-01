@@ -34,7 +34,7 @@ import com.amity.socialcloud.sdk.model.social.event.AmityEventOriginType
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.community.profile.component.EventCardItem
 import com.amity.socialcloud.uikit.community.compose.community.profile.component.EventCardStyle
 import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmityEventsComponentViewModel
@@ -96,7 +96,7 @@ fun AmityPastEventsPage(
                     navigationIcon = {
                         IconButton(onClick = onBackClick) {
                             Icon(
-                                painter = painterResource(R.drawable.amity_ic_back),
+                                painter = painterResource(CommonR.drawable.amity_ic_back),
                                 contentDescription = "Back",
                                 tint = AmityTheme.colors.base
                             )

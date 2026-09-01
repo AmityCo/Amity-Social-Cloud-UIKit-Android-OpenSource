@@ -17,13 +17,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 
 
 @Composable
 fun AmitySocialHomeNavigationButton(
     modifier: Modifier = Modifier,
-    icon: Int = R.drawable.amity_ic_plus,
+    icon: Int = CommonR.drawable.amity_ic_plus,
     iconSize: Dp = 20.dp,
     tint: Color = AmityTheme.colors.base,
     background: Color = AmityTheme.colors.baseShade4,
@@ -58,7 +58,7 @@ fun AmitySocialHomeNavigationButtonPreview() {
 @Composable
 fun AmitySocialHomeNavigationNotificationButtonPreview() {
     Image(
-        painter = painterResource(R.drawable.amity_ic_notification_tray_default),
+        painter = painterResource(CommonR.drawable.amity_ic_notification_tray_default),
         contentDescription = "",
         modifier =  Modifier
             .clip(CircleShape)

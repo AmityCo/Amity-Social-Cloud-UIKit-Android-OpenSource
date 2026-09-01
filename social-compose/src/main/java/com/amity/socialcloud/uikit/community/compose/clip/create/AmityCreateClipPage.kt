@@ -65,7 +65,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.amityLiveBadgeRed
 import com.amity.socialcloud.uikit.common.utils.closePage
 import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.clip.create.element.AmityClipCameraShutterButtonElement
 import com.amity.socialcloud.uikit.community.compose.livestream.create.element.AmityMediaAndCameraNoPermissionView
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostTargetType
@@ -281,7 +281,7 @@ fun AmityCreateClipPage(
                     // AmityMenuButton for close button here
 
                     AmityMenuButton(
-                        icon = R.drawable.amity_ic_close,
+                        icon = CommonR.drawable.amity_ic_close,
                         size = 12.dp,
                         modifier = Modifier
                             .size(32.dp),
@@ -295,7 +295,7 @@ fun AmityCreateClipPage(
 
                     if (isBackCameraSelected && isCameraPermissionGranted) {
                         AmityMenuButton(
-                            icon = if (isFlashLightOn) R.drawable.amity_ic_story_flash else R.drawable.amity_ic_story_flash_off,
+                            icon = if (isFlashLightOn) CommonR.drawable.amity_ic_story_flash else CommonR.drawable.amity_ic_story_flash_off,
                             size = if (isFlashLightOn) 19.dp else 24.dp,
                             modifier = Modifier
                                 .size(32.dp)
@@ -397,7 +397,7 @@ fun AmityCreateClipPage(
         ) {
             if (!isCurrentlyRecording) {
                 AmityMenuButton(
-                    icon = R.drawable.amity_ic_story_media,
+                    icon = CommonR.drawable.amity_ic_story_media,
                     size = 24.dp,
                     modifier = Modifier
                         .size(40.dp)
@@ -432,7 +432,7 @@ fun AmityCreateClipPage(
             }
 
             AmityMenuButton(
-                icon = R.drawable.amity_ic_story_switch_camera,
+                icon = CommonR.drawable.amity_ic_story_switch_camera,
                 size = 20.dp,
                 modifier = Modifier
                     .size(40.dp)

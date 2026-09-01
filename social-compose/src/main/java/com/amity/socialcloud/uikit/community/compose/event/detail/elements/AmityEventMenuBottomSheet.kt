@@ -16,6 +16,7 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getText
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
@@ -98,7 +99,7 @@ fun AmityEventMenuBottomSheet(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            painter = painterResource(R.drawable.amity_ic_edit_profile),
+                            painter = painterResource(CommonR.drawable.amity_ic_edit_profile),
                             contentDescription = amitySocialString("amity_social_label_edit_event"),
                             tint = AmityTheme.colors.base,
                             modifier = Modifier.size(24.dp)
@@ -130,7 +131,7 @@ fun AmityEventMenuBottomSheet(
                         }
                         val configuredImage = getConfig().get("image")?.asString.orEmpty()
                         val iconRes = if (configuredImage.isBlank()) {
-                            R.drawable.amity_ic_event_add_to_feed
+                            CommonR.drawable.amity_ic_event_add_to_feed
                         } else {
                             getConfig().getIcon()
                         }
@@ -177,7 +178,7 @@ fun AmityEventMenuBottomSheet(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            painter = painterResource(R.drawable.amity_ic_event_add_to_calendar_button),
+                            painter = painterResource(CommonR.drawable.amity_ic_event_add_to_calendar_button),
                             contentDescription = amitySocialString("amity_social_label_add_to_calendar"),
                             tint = AmityTheme.colors.base,
                             modifier = Modifier.size(24.dp)
@@ -209,7 +210,7 @@ fun AmityEventMenuBottomSheet(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            painter = painterResource(R.drawable.amity_v4_link_icon),
+                            painter = painterResource(CommonR.drawable.amity_v4_link_icon),
                             contentDescription = amitySocialString("amity_social_button_copy_event_link"),
                             tint = AmityTheme.colors.base,
                             modifier = Modifier.size(24.dp)
@@ -237,7 +238,7 @@ fun AmityEventMenuBottomSheet(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            painter = painterResource(R.drawable.amity_v4_share_icon),
+                            painter = painterResource(CommonR.drawable.amity_v4_share_icon),
                             contentDescription = amitySocialString("amity_social_button_share_to"),
                             tint = AmityTheme.colors.base,
                             modifier = Modifier.size(24.dp)

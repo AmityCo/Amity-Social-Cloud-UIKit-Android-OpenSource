@@ -46,7 +46,7 @@ import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.community.AmityJoinRequest
 import com.amity.socialcloud.sdk.model.social.community.AmityJoinRequestStatus
 import com.amity.socialcloud.uikit.common.common.readableNumber
-import com.amity.socialcloud.uikit.common.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
@@ -166,7 +166,7 @@ fun AmityRecommendedCommunitiesComponent(
 fun AmityRecommendedCommunityAvatarView(
     modifier: Modifier = Modifier,
     image: AmityImage?,
-    placeholder: Int = R.drawable.amity_ic_community_placeholder,
+    placeholder: Int = CommonR.drawable.amity_ic_community_placeholder,
 ) {
     val url = image?.getUrl(AmityImage.Size.MEDIUM)?.ifEmpty { null }
 

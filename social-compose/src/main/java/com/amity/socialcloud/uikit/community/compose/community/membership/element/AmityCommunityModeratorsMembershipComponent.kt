@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.common.compose.R
 import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
@@ -128,7 +129,7 @@ fun AmityCommunityModeratorsMembershipComponent(
                                         )
                                 ) {
                                     Icon(
-                                        painter = painterResource(R.drawable.amity_ic_moderator_social),
+                                        painter = painterResource(CommonR.drawable.amity_ic_moderator_social),
                                         contentDescription = "Action",
                                         tint = AmityTheme.colors.primary,
                                         modifier = modifier
@@ -161,7 +162,7 @@ fun AmityCommunityModeratorsMembershipComponent(
 
                             if (member.getUserId() != AmityCoreClient.getUserId()) {
                                 Icon(
-                                    painter = painterResource(R.drawable.amity_ic_more_horiz),
+                                    painter = painterResource(CommonR.drawable.amity_ic_more_horiz),
                                     contentDescription = "Action",
                                     tint = AmityTheme.colors.base,
                                     modifier = modifier

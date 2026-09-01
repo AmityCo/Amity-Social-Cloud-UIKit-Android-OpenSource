@@ -49,7 +49,7 @@ import com.amity.socialcloud.uikit.chat.compose.home.AmityChatHomePageActivity
 import com.amity.socialcloud.uikit.chat.compose.home.element.AmityUserAvatarView
 import com.amity.socialcloud.uikit.chat.compose.notification.AmityGroupNotificationPreferencePageActivity
 import com.amity.socialcloud.uikit.chat.compose.notification.AmityEditGroupNotificationPageActivity
-import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityAvatar
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityAvatarSize
@@ -119,7 +119,7 @@ fun AmityGroupSettingPage(
                     style = AmityButtonStyle.GHOST,
                     hierarchy = AmityButtonHierarchy.SECONDARY,
                     iconSize = AmityIconButtonSize.SIZE32,
-                    icon = CommonR.drawable.amity_ic_chevron_left,
+                    icon = CommonComposeR.drawable.amity_ic_chevron_left,
                     onClick = { (context as? Activity)?.finish() },
                     modifier = Modifier.align(Alignment.CenterStart),
                 )
@@ -161,7 +161,7 @@ fun AmityGroupSettingPage(
                         AmityAvatar(
                             variant = AmityAvatarVariant.Image,
                             imageUrl = channel?.getAvatar()?.getUrl(AmityImage.Size.MEDIUM),
-                            icon = CommonR.drawable.amity_ic_comments_alt_s,
+                            icon = CommonComposeR.drawable.amity_ic_comments_alt_s,
                             style = AmityAvatarStyle.Squared,
                             size = AmityAvatarSize.Size120,
                         )
@@ -181,7 +181,7 @@ fun AmityGroupSettingPage(
 
                     SettingItem(
                         text = amityChatString("chat.edit.group.profile.navbar.title"),
-                        iconResId = CommonR.drawable.amity_ic_pen_s,
+                        iconResId = CommonComposeR.drawable.amity_ic_pen_s,
                         onClick = {
                             context.startActivity(
                                 AmityEditGroupProfilePageActivity.newIntent(context, channelId)
@@ -191,7 +191,7 @@ fun AmityGroupSettingPage(
 
                     SettingItem(
                         text = amityChatString("chat.group.notifications"),
-                        iconResId = CommonR.drawable.amity_ic_bell_s,
+                        iconResId = CommonComposeR.drawable.amity_ic_bell_s,
                         trailingText = when (channel?.getNotificationMode()) {
                             "silent" -> amityChatString("chat.group.notification.silent.label")
                             "subscribe" -> amityChatString("chat.group.notification.subscribe.label")
@@ -206,7 +206,7 @@ fun AmityGroupSettingPage(
 
                     SettingItem(
                         text = amityChatString("chat.group.member.permissions"),
-                        iconResId = CommonR.drawable.amity_ic_user_lock_s,
+                        iconResId = CommonComposeR.drawable.amity_ic_user_lock_s,
                         onClick = {
                             context.startActivity(
                                 AmityEditGroupMemberPermissionsPageActivity.newIntent(context, channelId)
@@ -216,7 +216,7 @@ fun AmityGroupSettingPage(
 
                     SettingItem(
                         text = amityChatString("chat.group.members.label"),
-                        iconResId = CommonR.drawable.amity_ic_user_group_s,
+                        iconResId = CommonComposeR.drawable.amity_ic_user_group_s,
                         onClick = {
                             context.startActivity(
                                 AmityGroupMemberListPageActivity.newIntent(context, channelId)
@@ -226,7 +226,7 @@ fun AmityGroupSettingPage(
 
                     SettingItem(
                         text = amityChatString("chat.group.banned.members"),
-                        iconResId = CommonR.drawable.amity_ic_ban_s,
+                        iconResId = CommonComposeR.drawable.amity_ic_ban_s,
                         onClick = {
                             context.startActivity(
                                 AmityBannedGroupMemberListPageActivity.newIntent(context, channelId)
@@ -246,7 +246,7 @@ fun AmityGroupSettingPage(
                 if (!isModerator) {
                     SettingItem(
                         text = amityChatString("chat.group.members.label"),
-                        iconResId = CommonR.drawable.amity_ic_user_group_s,
+                        iconResId = CommonComposeR.drawable.amity_ic_user_group_s,
                         onClick = {
                             context.startActivity(
                                 AmityGroupMemberListPageActivity.newIntent(context, channelId)
@@ -261,7 +261,7 @@ fun AmityGroupSettingPage(
 
                 SettingItem(
                     text = amityChatString("chat.notifications.title"),
-                    iconResId = CommonR.drawable.amity_ic_bell_s,
+                    iconResId = CommonComposeR.drawable.amity_ic_bell_s,
                     trailingText = if (notificationsEnabled) amityChatString("chat.notifications.on")
                                    else amityChatString("chat.notifications.off"),
                     onClick = {
@@ -410,7 +410,7 @@ private fun SettingItem(
         if (showArrow && iconResId != null) {
             Icon(
                 imageVector = ImageVector.vectorResource(
-                    id = CommonR.drawable.amity_ic_chevron_right,
+                    id = CommonComposeR.drawable.amity_ic_chevron_right,
                 ),
                 contentDescription = null,
                 modifier = Modifier.size(24.dp),

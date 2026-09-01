@@ -56,7 +56,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.AmityConstants.POST_REACTION
 import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import com.amity.socialcloud.uikit.common.localization.amitySocialReactionDisplayName
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
@@ -330,7 +330,7 @@ fun AmityCommentEngagementBar(
 
                 if (allowAction) {
                     Icon(
-                        painter = painterResource(id = R.drawable.amity_ic_more_horiz),
+                        painter = painterResource(id = CommonR.drawable.amity_ic_more_horiz),
                         contentDescription = null,
                         tint = AmityTheme.colors.secondaryShade2,
                         modifier = modifier

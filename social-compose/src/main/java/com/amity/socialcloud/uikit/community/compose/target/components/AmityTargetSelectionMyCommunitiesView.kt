@@ -38,7 +38,7 @@ import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.community.compose.target.AmityTargetSelectionPageViewModel
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityCommunityTargetListShimmer
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 
@@ -94,7 +94,7 @@ fun AmityTargetSelectionMyCommunitiesView(
                         modifier = modifier.padding(horizontal = 32.dp)
                     ) {
                         Image(
-                            painter = painterResource(R.drawable.amity_ic_empty_target_community),
+                            painter = painterResource(CommonR.drawable.amity_ic_empty_target_community),
                             contentDescription = "No communities",
                             modifier = modifier.size(160.dp)
                         )

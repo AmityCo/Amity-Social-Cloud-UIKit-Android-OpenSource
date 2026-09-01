@@ -34,7 +34,7 @@ import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.community.compose.community.bycategory.AmityCommunitiesByCategoryPageActivity
 import com.amity.socialcloud.uikit.community.compose.community.category.AmityAllCategoriesPageActivity
 import com.amity.socialcloud.uikit.community.compose.community.category.element.AmityCommunityCategoryElement
@@ -139,7 +139,7 @@ fun AmityCommunityCategoriesComponent(
                                         )
                                         Spacer(modifier.width(4.dp))
                                         Icon(
-                                            painter = painterResource(R.drawable.amity_ic_chevron_right),
+                                            painter = painterResource(CommonComposeR.drawable.amity_ic_chevron_right),
                                             contentDescription = "more",
                                             tint = AmityTheme.colors.baseShade1,
                                             modifier = modifier

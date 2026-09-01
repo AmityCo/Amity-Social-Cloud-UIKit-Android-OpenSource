@@ -88,7 +88,7 @@ import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
-import com.amity.socialcloud.uikit.common.compose.R as CommonR
+import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButton
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonVariant
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityDivider
@@ -590,7 +590,7 @@ private fun AmityGroupChatMessageReportReasonList(
             ) {
                 Icon(
                     modifier = Modifier.align(Alignment.CenterEnd),
-                    painter = painterResource(CommonR.drawable.amity_ic_cross_r),
+                    painter = painterResource(CommonComposeR.drawable.amity_ic_cross_r),
                     contentDescription = "cancel_report_button",
                     tint = AmityTheme.token(AmityColorToken.IconIconButtonGhostSecondaryDefault),
                 )
@@ -670,7 +670,7 @@ private fun AmityGroupChatMessageReportReasonList(
                     )
 
                     Icon(
-                        painterResource(CommonR.drawable.amity_ic_chevron_right),
+                        painterResource(CommonComposeR.drawable.amity_ic_chevron_right),
                         tint = AmityTheme.token(AmityColorToken.IconListLeadingDefaultDefault),
                         contentDescription = null,
                         modifier = Modifier

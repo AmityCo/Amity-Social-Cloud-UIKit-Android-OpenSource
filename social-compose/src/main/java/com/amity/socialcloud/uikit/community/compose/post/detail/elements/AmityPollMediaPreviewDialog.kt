@@ -48,7 +48,7 @@ import com.amity.socialcloud.uikit.common.ui.image.rememberZoomState
 import com.amity.socialcloud.uikit.common.ui.image.zoomable
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerPageViewModel
 import com.amity.socialcloud.uikit.community.compose.post.composer.RenderAltTextConfigSheet
@@ -125,7 +125,7 @@ fun AmityPollMediaPreviewDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Image(
-                        painterResource(R.drawable.amity_v4_image_preview_close),
+                        painterResource(CommonR.drawable.amity_v4_image_preview_close),
                         contentDescription = "Close",
                         modifier = Modifier
                             .statusBarsPadding()
@@ -135,7 +135,7 @@ fun AmityPollMediaPreviewDialog(
 
                     if (isPostCreator) {
                         Icon(
-                            painter = painterResource(R.drawable.amity_ic_more_horiz),
+                            painter = painterResource(CommonR.drawable.amity_ic_more_horiz),
                             contentDescription = "Close",
                             tint = amityColorWhite,
                             modifier = Modifier
@@ -165,7 +165,7 @@ fun AmityPollMediaPreviewDialog(
                             .padding(start = 16.dp, end = 16.dp, bottom = 64.dp)
                     ) {
                         AmityBottomSheetActionItem(
-                            icon = R.drawable.amity_ic_edit_profile,
+                            icon = CommonR.drawable.amity_ic_edit_profile,
                             text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_image_edit_alt_text_title"),
                             modifier = Modifier.testTag("bottom_sheet_edit_alt_text_button"),
                         ) {

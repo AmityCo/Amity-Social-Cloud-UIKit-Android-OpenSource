@@ -16,7 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
-import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 
 @Composable
@@ -34,7 +34,7 @@ fun AmityClipLoadStateError(
             )
         ) {
             Image(
-                painter = painterResource(id = R.drawable.amity_v4_reload_clip),
+                painter = painterResource(id = CommonR.drawable.amity_v4_reload_clip),
                 contentDescription = "Error Icon",
                 modifier = Modifier
                     .size(28.dp)
