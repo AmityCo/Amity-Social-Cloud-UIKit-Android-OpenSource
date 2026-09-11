@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -45,7 +46,8 @@ import com.amity.socialcloud.uikit.community.compose.localization.amitySocialStr
 fun AmityCommunityCategoriesComponent(
     modifier: Modifier = Modifier,
     pageScope: AmityComposePageScope? = null,
-    onStateChanged: (AmityCommunityCategoriesViewModel.CategoryListState) -> Unit = {}
+    onStateChanged: (AmityCommunityCategoriesViewModel.CategoryListState) -> Unit = {},
+    refreshKey: Int = 0,
 ) {
     val context = LocalContext.current
 
@@ -60,6 +62,12 @@ fun AmityCommunityCategoriesComponent(
     }.collectAsLazyPagingItems()
 
     val categoryListState by viewModel.categoryListState.collectAsState()
+
+    LaunchedEffect(refreshKey) {
+        if (refreshKey > 0) {
+            categories.refresh()
+        }
+    }
 
     AmityBaseComponent(
         pageScope = pageScope,

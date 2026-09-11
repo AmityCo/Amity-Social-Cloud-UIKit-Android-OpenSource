@@ -36,9 +36,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Pause
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -51,12 +48,13 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -93,7 +91,6 @@ import androidx.media3.exoplayer.source.ConcatenatingMediaSource
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.ui.PlayerView
 import androidx.media3.common.Player
-import coil3.compose.AsyncImage
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.social.post.review.AmityReviewStatus
 import com.amity.socialcloud.sdk.core.engine.analytics.AnalyticsEventSourceType
@@ -102,10 +99,12 @@ import com.amity.socialcloud.sdk.model.core.invitation.AmityInvitation
 import com.amity.socialcloud.sdk.model.core.invitation.AmityInvitationStatus
 import com.amity.socialcloud.sdk.model.core.product.AmityProduct
 import com.amity.socialcloud.sdk.model.core.reaction.AmityLiveReactionReferenceType
+import com.amity.socialcloud.sdk.model.core.settings.AmityLiveViewerCountConfig
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.sdk.model.video.room.AmityRoom
 import com.amity.socialcloud.sdk.model.video.room.AmityRoomBroadcastData
 import com.amity.socialcloud.sdk.model.video.room.AmityRoomStatus
+import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityLiveViewerCountElement
 import com.amity.socialcloud.uikit.common.common.isNotEmptyOrBlank
 import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
@@ -126,8 +125,9 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.ui.theme.amityLiveBadgeRed
 import com.amity.socialcloud.uikit.common.ui.theme.amityLiveBadgeRedAlt
 import com.amity.socialcloud.uikit.common.ui.theme.amityLivestreamBorder
-import com.amity.socialcloud.uikit.common.ui.theme.amityLivestreamSurfaceElevated
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.utils.getActivity
+import com.amity.socialcloud.uikit.community.compose.livestream.room.util.AmityRoomPipController
 import com.amity.socialcloud.uikit.common.utils.closePageWithResult
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
@@ -148,6 +148,7 @@ import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.Amit
 import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityProductTaggingBottomSheet
 import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityProductTaggingButton
 import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityProductWebViewBottomSheet
+import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityProductWebViewPageActivity
 import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityRoomViewerCountBadge
 import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityStreamerView
 import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.LivestreamPinnedProductElement
@@ -185,6 +186,12 @@ import com.amity.socialcloud.uikit.common.ui.theme.amityLivestreamShadowTint
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorGray
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
+import com.amity.socialcloud.uikit.common.behavior.AmityGlobalBehavior
 
 @UnstableApi
 @OptIn(ExperimentalMaterial3Api::class)
@@ -194,8 +201,11 @@ fun AmityRoomPlayerPage(
     post: AmityPost,
     liveOnly: Boolean = false,
     fromInvitation: Boolean = false,
+    isInPipMode: Boolean = false,
 ) {
     val context = LocalContext.current
+    // PiP is driven by the host Activity; the page only expresses intent through this bridge.
+    val pipController = remember(context) { context.getActivity() as? AmityRoomPipController }
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
     }
@@ -225,6 +235,39 @@ fun AmityRoomPlayerPage(
 
     val isLeaving = uiState.isLeaving
 
+    // Allow PiP only for the room viewer. The host and any co-host must stay in the app to
+    // keep broadcasting, so neither may enter the floating window. isStreamerMode alone is
+    // not enough: a co-host watching the room is not in streamer mode, so match the viewer
+    // test used for watch tracking below and exclude the co-host by user id as well.
+    // A room that has ended but whose recording is still processing has neither a live URL
+    // nor recorded playback info. There is nothing to float in that case, so PiP must stay
+    // off rather than open a window onto a dead player. Mirrors exactly how the player
+    // below resolves its media urls, so the two can never disagree.
+    val hasPlayableMedia = if (uiState.room?.getStatus() == AmityRoomStatus.RECORDED) {
+        uiState.room?.getRecordedPlaybackInfos()?.any { !it.url.isNullOrBlank() } == true
+    } else {
+        !uiState.room?.getLivePlaybackUrl().isNullOrBlank()
+    }
+
+    LaunchedEffect(
+        pipController,
+        uiState.isStreamerMode,
+        uiState.cohostUserId,
+        hasPlayableMedia,
+    ) {
+        val cohostUserId = uiState.cohostUserId
+        // cohostUserId is null whenever the room has no co-host, so it must be checked for
+        // presence before comparing — a plain equality test would match null-to-null and
+        // silently deny PiP to an ordinary viewer.
+        val isCoHost = !cohostUserId.isNullOrBlank() &&
+            cohostUserId == AmityCoreClient.getUserId()
+        pipController?.setPipAllowed(
+            !uiState.isStreamerMode &&
+                !isCoHost &&
+                hasPlayableMedia
+        )
+    }
+
     var wasLive by remember { mutableStateOf(false) }
 
     var showReactionPicker by remember { mutableStateOf(false) }
@@ -243,6 +286,7 @@ fun AmityRoomPlayerPage(
         AmitySocialBehaviorHelper.createRoomPageBehavior
     }
 
+
     var showBottomSheet by remember { mutableStateOf(false) }
     var showInvitationSheet by remember { mutableStateOf(false) }
     var showLeaveAsCoHostSheet by remember { mutableStateOf(false) }
@@ -260,6 +304,71 @@ fun AmityRoomPlayerPage(
     var showPinnedProductOverlay by remember { mutableStateOf(false) }
     var showAddProductBottomSheet by remember { mutableStateOf(false) }
     var isVideoReady by remember { mutableStateOf(false) }
+    val globalBehavior = remember { AmitySocialBehaviorHelper.globalBehavior }
+
+    /**
+     * Opens the built-in product page and leaves the stream floating over it.
+     *
+     * A viewer's product tap is a navigation, not an overlay: the page is a separate Activity,
+     * so the room loses the foreground and the OS floats it in a real PiP window — the same
+     * window every other departure produces, which is why there is no hand-drawn mini-player.
+     *
+     * Streamers never leave: they keep the modal bottom sheet, since a broadcaster dropping
+     * into PiP would stop the show.
+     */
+    val openProduct: (AmityProduct) -> Unit = { product ->
+        if (uiState.isStreamerMode) {
+            showProductWebViewBottomSheet = product
+        } else {
+            pipController?.enterPipAndStart(
+                AmityProductWebViewPageActivity.newIntent(
+                    context = context,
+                    product = product,
+                    ownerPostId = post.getPostId(),
+                )
+            ) ?: run {
+                // No PiP host (previews, tests): still navigate, just without the window.
+                context.startActivity(
+                    AmityProductWebViewPageActivity.newIntent(
+                        context = context,
+                        product = product,
+                        ownerPostId = post.getPostId(),
+                    )
+                )
+            }
+        }
+    }
+
+    /**
+     * Routes a product tap through the integrator's override first, then falls back to the
+     * built-in product page.
+     *
+     * When the override claims the tap it navigates somewhere of its own, and this page never
+     * learns where — so PiP is requested right here, in the same call stack. startActivity is
+     * asynchronous, so the claim returning leaves us still resumed, which is the only state
+     * the OS accepts the request from; waiting for onPause is too late.
+     */
+    val onProductTapped: (AmityProduct) -> Unit = { product ->
+        val claimed = globalBehavior.onLivestreamProductTagClick(
+            AmityGlobalBehavior.Context(
+                pageContext = context,
+                product = product,
+                // A livestream can be posted to a user timeline as well as a community, so this
+                // is a safe cast — a hard one would crash on the timeline case.
+                communityId = (post.getTarget() as? AmityPost.Target.COMMUNITY)?.getCommunityId(),
+                // If the override navigates via startActivityWithPictureInPicture, this enters
+                // PiP first and launches the destination into its own task once pinned.
+                pipNavigator = { intent ->
+                    pipController?.enterPipAndStart(intent) ?: context.startActivity(intent)
+                },
+            )
+        )
+        // An override that claims the tap owns the navigation (via the launcher above, so PiP is
+        // already handled). Unclaimed falls back to the built-in product page, which floats too.
+        if (!claimed) {
+            openProduct(product)
+        }
+    }
     // Playback controls, shown on tap. Live shows only play/pause; recorded shows
     // the same controls as a video post (play/pause, ±10s skip, seek bar).
     var isLivePlaying by remember { mutableStateOf(true) }
@@ -371,12 +480,22 @@ fun AmityRoomPlayerPage(
         }
     )
 
-    LaunchedEffect(uiState.post.isDeleted()) {
+    // Deleting the post ends access at once, but how that is delivered depends on where the
+    // viewer is. Closing the page finishes the Activity, and while floating that destroys the
+    // window — so the deletion would read as the stream vanishing rather than as an
+    // explanation. In PiP the window is kept and playback stopped instead; `isInPipMode` is a
+    // key, so expanding re-runs this and the deleted screen arrives then. Same rule as the
+    // other terminal states below.
+    LaunchedEffect(uiState.post.isDeleted(), isInPipMode) {
         if (uiState.post.isDeleted()) {
-            closePageWithLivestreamError(
-                context,
-                LivestreamErrorScreenType.DELETED
-            )
+            if (isInPipMode) {
+                livePlayer?.pause()
+            } else {
+                closePageWithLivestreamError(
+                    context,
+                    LivestreamErrorScreenType.DELETED
+                )
+            }
         }
     }
 
@@ -431,12 +550,75 @@ fun AmityRoomPlayerPage(
         }
     )
 
+    // A PiP transition fires the same onPause/onResume pair as backgrounding, but PiP keeps
+    // the Activity — and the player surface — alive throughout. Running the resync below
+    // across a PiP transition would reset the media source and restart the stream from
+    // scratch on every entry and every expand, which the floating window must never do.
+    //
+    // The flag is latched on entry rather than read at resume time because PiP is already
+    // false by the time onResume fires on expand, so isInPipMode alone cannot distinguish
+    // "returning from PiP" from "returning from background".
+    var skipResumeResync by remember { mutableStateOf(false) }
+    LaunchedEffect(isInPipMode) {
+        if (isInPipMode) skipResumeResync = true
+    }
+
+    // The floating window's controls are OS-drawn, so the page cannot handle their taps
+    // directly — it hands the Activity closures that drive this player, and reports state back
+    // so the icons stay truthful (a paused stream must not keep offering "pause").
+    // Skips are offered for recorded playback only — there is nothing ahead of the live edge.
+    val canSeekInPip = uiState.room?.getStatus() == AmityRoomStatus.RECORDED
+    DisposableEffect(pipController, livePlayer) {
+        pipController?.setPipControlHandlers(
+            onTogglePlay = {
+                livePlayer?.let { player ->
+                    if (player.isPlaying) {
+                        player.pause()
+                    } else {
+                        // Resuming a live stream returns to the live edge rather than the stale
+                        // buffered position; a recording continues from where it was paused.
+                        if (uiState.room?.getStatus() == AmityRoomStatus.LIVE) {
+                            player.seekToDefaultPosition()
+                        }
+                        player.play()
+                    }
+                }
+            },
+            onSkipBack = { livePlayer?.seekBack() },
+            onSkipForward = { livePlayer?.seekForward() },
+        )
+        onDispose { pipController?.setPipControlHandlers(null, null, null) }
+    }
+
+    LaunchedEffect(pipController, isLivePlaying, canSeekInPip) {
+        pipController?.setPipPlaybackState(isPlaying = isLivePlaying, canSeek = canSeekInPip)
+    }
+
+    // Chat is not rendered while floating and its subscription is not guaranteed to survive
+    // the trip, so coming back reloads it at the latest messages rather than replaying
+    // everything that arrived while the viewer was away. Bumping this nonce re-keys the
+    // overlay, disposing it and its view model so it re-subscribes and fetches the newest
+    // page. Playback is untouched — the player lives outside the re-keyed subtree.
+    var chatReloadNonce by remember { mutableIntStateOf(0) }
+    var wasFloating by remember { mutableStateOf(false) }
+    LaunchedEffect(isInPipMode) {
+        if (wasFloating && !isInPipMode) {
+            chatReloadNonce++
+        }
+        wasFloating = isInPipMode
+    }
+
     // Returning from background recreates the player's surface, which otherwise
     // leaves a black frame (a paused player pushes no new frame, and a live
     // stream's buffered position has expired). Re-sync on resume so the video
     // comes back, preserving the play/pause state via playWhenReady.
     DisposableEffectWithLifeCycle(
         onResume = {
+            if (isInPipMode || skipResumeResync) {
+                // Came back from the floating window — the surface and player are intact.
+                skipResumeResync = false
+                return@DisposableEffectWithLifeCycle
+            }
             livePlayer?.let { player ->
                 if (uiState.room?.getStatus() == AmityRoomStatus.LIVE) {
                     // While backgrounded the buffered live window expires and the surface
@@ -466,31 +648,99 @@ fun AmityRoomPlayerPage(
         .getNetworkConnectionStateFlow()
         .collectAsState(initial = NetworkConnectionEvent.Connected)
 
-    if (uiState.isBanned == true && uiState.room?.getStatus() == AmityRoomStatus.LIVE) {
-
-        return
+    // Recovering from a data stall. Losing the connection strands the player on its last frame,
+    // and reloading the source was only ever wired to onResume — which works when the viewer
+    // navigates back in, but never fires for a floating window, so the stream stayed frozen
+    // until they left and came back.
+    //
+    // Two things can mark the player as needing recovery: the SDK reporting the connection gone,
+    // and the player itself erroring out. Either alone can miss — a stall need not surface as a
+    // session disconnect, and a player that merely buffers forever never reports an error — so
+    // both set the flag and the reload runs once the connection is back.
+    var needsStallRecovery by remember { mutableStateOf(false) }
+    LaunchedEffect(connection) {
+        if (connection == NetworkConnectionEvent.Disconnected) needsStallRecovery = true
     }
-    if ((fromInvitation && (uiState.room?.getStatus() == AmityRoomStatus.ENDED || uiState.room?.getStatus() == AmityRoomStatus.RECORDED)
-        || uiState.reviewStatus == AmityReviewStatus.DECLINED) || uiState.post.isDeleted()
+    LaunchedEffect(connection, needsStallRecovery, livePlayer) {
+        if (connection == NetworkConnectionEvent.Disconnected) return@LaunchedEffect
+        if (!needsStallRecovery) return@LaunchedEffect
+        val player = livePlayer ?: return@LaunchedEffect
+        needsStallRecovery = false
+        if (uiState.room?.getStatus() == AmityRoomStatus.LIVE) {
+            // Reset the position: the buffered live window expired while offline, so seeking the
+            // stale timeline would hit a behind-live-window error instead of catching up.
+            val liveUrl = uiState.room?.getLivePlaybackUrl()
+            if (!liveUrl.isNullOrBlank()) {
+                player.setMediaSource(getMediaSource(listOf(liveUrl)), true)
+                player.prepare()
+            }
+        } else if (player.playbackState == Player.STATE_IDLE) {
+            // Recorded: the position is still valid, so only a player that errored out needs
+            // re-preparing.
+            player.prepare()
+        }
+    }
+    // Hoisted so the player's listener can flag an error from inside the AndroidView factory.
+    val onLivePlayerError = { needsStallRecovery = true }
+
+    val isBannedFromLive =
+        uiState.isBanned == true && uiState.room?.getStatus() == AmityRoomStatus.LIVE
+    val isDeclinedOrDeleted =
+        (fromInvitation && (uiState.room?.getStatus() == AmityRoomStatus.ENDED || uiState.room?.getStatus() == AmityRoomStatus.RECORDED)
+            || uiState.reviewStatus == AmityReviewStatus.DECLINED) || uiState.post.isDeleted()
+    val isLiveOnlyUnavailable =
+        liveOnly && uiState.room?.getStatus() != AmityRoomStatus.LIVE && !wasLive
+
+    // A terminal state is enforced inside the floating window straight away — playback stops,
+    // so a ban or deletion really does end access in real time rather than waiting for the
+    // viewer to expand. What must NOT happen is swapping the window's content: it can only
+    // show video, and the screens below would either replace the frame or close the page
+    // outright, dismissing the window. So while in PiP the window is left frozen on its last
+    // frame and the explanation is deferred until the viewer expands.
+    LaunchedEffect(
+        isInPipMode,
+        isBannedFromLive,
+        isDeclinedOrDeleted,
+        isLiveOnlyUnavailable,
     ) {
-        AmityLivestreamDeclinedPage(
-            onOkClick = {
-                context.closePageWithResult(Activity.RESULT_OK)
-            }
-        )
-        return
+        if (
+            isInPipMode
+            && (isBannedFromLive || isDeclinedOrDeleted || isLiveOnlyUnavailable)
+        ) {
+            livePlayer?.pause()
+        }
     }
 
-    if (liveOnly && uiState.room?.getStatus() != AmityRoomStatus.LIVE && !wasLive) {
-        AmityLivestreamBannedPage(
-            onOkClick = {
-                context.closePageWithResult(Activity.RESULT_OK)
-            }
-        )
-        return
+    if (!isInPipMode) {
+        if (isBannedFromLive) {
+            return
+        }
+        if (isDeclinedOrDeleted) {
+            AmityLivestreamDeclinedPage(
+                onOkClick = {
+                    context.closePageWithResult(Activity.RESULT_OK)
+                }
+            )
+            return
+        }
+
+        if (isLiveOnlyUnavailable) {
+            AmityLivestreamBannedPage(
+                onOkClick = {
+                    context.closePageWithResult(Activity.RESULT_OK)
+                }
+            )
+            return
+        }
     }
 
-    AmityBasePage(pageId = "live_stream_page", toastBottomPadding = 72.dp) {
+    AmityBasePage(
+        pageId = "livestream_player_page",
+        toastBottomPadding = 72.dp,
+        // The floating window shows video only; a toast rendered there would cover the stream
+        // while the screen the viewer actually tapped shows nothing.
+        showSnackbar = !isInPipMode,
+    ) {
         AmityBaseComponent(
             pageScope = getPageScope(),
             componentId = "stream_player",
@@ -507,12 +757,24 @@ fun AmityRoomPlayerPage(
                 val isUnavailable = uiState.error != null || uiState.room?.isDeleted() == true || roomId == null
                 val isDisconnected =
                     connection == NetworkConnectionEvent.Disconnected && roomStatus == AmityRoomStatus.LIVE
-                if (
-                    terminateLabels.isNotEmpty()
-                        || roomStatus == AmityRoomStatus.ENDED
-                        || (roomStatus != AmityRoomStatus.LIVE && wasLive)
-                        || isUnavailable
-                ){
+                val isTerminalState = terminateLabels.isNotEmpty()
+                    || roomStatus == AmityRoomStatus.ENDED
+                    || (roomStatus != AmityRoomStatus.LIVE && wasLive)
+                    || isUnavailable
+
+                // Stop playback the moment the stream reaches a terminal state, even though
+                // the branch below is suppressed while floating. The window then holds its
+                // last frame, showing no further playback, until it is closed or expanded.
+                LaunchedEffect(isTerminalState, isInPipMode) {
+                    if (isTerminalState && isInPipMode) {
+                        livePlayer?.pause()
+                    }
+                }
+
+                // Suppressed while floating: the PiP window can only show video, and this
+                // branch is an `if/else` against the whole player subtree, so letting it win
+                // would tear the session down. The viewer gets the notice on expand.
+                if (isTerminalState && !isInPipMode) {
                     AmityBaseElement(
                         pageScope = getPageScope(),
                         elementId = if (roomId == null) {
@@ -642,6 +904,16 @@ fun AmityRoomPlayerPage(
                                                 override fun onPlaybackStateChanged(playbackState: Int) {
                                                     isLiveBuffering = playbackState == Player.STATE_BUFFERING
                                                 }
+
+                                                override fun onPlayerError(
+                                                    error: androidx.media3.common.PlaybackException
+                                                ) {
+                                                    // A dropped connection lands here and leaves
+                                                    // the player idle; ExoPlayer never retries on
+                                                    // its own. Flag it so the reload runs as soon
+                                                    // as the connection is back.
+                                                    onLivePlayerError()
+                                                }
                                             })
                                         }
                                     PlayerView(context).apply {
@@ -661,6 +933,12 @@ fun AmityRoomPlayerPage(
                                 }
                             )
 
+
+                            // In PiP the floating window shows only the video surface,
+                            // so every overlay (controls, header, chat, reactions) is
+                            // skipped. The system draws its own RemoteAction controls.
+                            // Overlays are also hidden while the product mini-player is up.
+                            if (!isInPipMode) {
                             // Playback controls, revealed by tapping the video and
                             // toggled off by tapping again. Live shows only a play/pause
                             // button (resume seeks to the live edge). Recorded shows the
@@ -674,13 +952,13 @@ fun AmityRoomPlayerPage(
                                     },
                                 contentAlignment = Alignment.Center
                             ) {
-                                if (isLiveBuffering && !isRecorded) {
+                                if (isLiveBuffering && !isRecorded && !isInPipMode) {
                                     CircularProgressIndicator(
                                         modifier = Modifier.size(48.dp),
                                         color = amityColorWhite,
                                         strokeWidth = 3.dp,
                                     )
-                                } else if (showLiveControls) {
+                                } else if (showLiveControls && !isInPipMode) {
                                     Row(
                                         verticalAlignment = Alignment.CenterVertically,
                                         horizontalArrangement = Arrangement.spacedBy(32.dp)
@@ -782,6 +1060,9 @@ fun AmityRoomPlayerPage(
                                 CommunityRoomPlayerHeader(
                                     room = uiState.room,
                                     viewerCount = uiState.viewerCount,
+                                    isHostOrCoHost = uiState.isCurrentUserHostOrCoHost(),
+                                    liveViewerCountConfig = uiState.liveViewerCountConfig,
+                                    isLiveViewerCountConfigResolved = uiState.isLiveViewerCountConfigResolved,
                                     onCloseClick = {
                                         context.closePageWithResult(Activity.RESULT_OK)
                                     },
@@ -832,9 +1113,14 @@ fun AmityRoomPlayerPage(
                                     }
                                 }
                             }
-                            if (isDisconnected) {
+                            // The window can only show video, so a stall freezes it on the
+                            // last frame with no reconnecting indicator; the explanation
+                            // appears only once the viewer expands.
+                            if (isDisconnected && !isInPipMode) {
                                 AmityLivestreamDisconnectedView()
                             }
+
+                            } // end if (!isInPipMode) — PiP hides all overlays
                         }
 
                     }
@@ -1179,6 +1465,9 @@ fun AmityRoomPlayerPage(
                                                 CommunityRoomPlayerHeader(
                                                     room = uiState.room,
                                                     viewerCount = uiState.viewerCount,
+                                                    isHostOrCoHost = uiState.isCurrentUserHostOrCoHost(),
+                                                    liveViewerCountConfig = uiState.liveViewerCountConfig,
+                                                    isLiveViewerCountConfigResolved = uiState.isLiveViewerCountConfigResolved,
                                                     onOptionsClick = {
                                                         showBottomSheet = true
                                                     },
@@ -1311,6 +1600,7 @@ fun AmityRoomPlayerPage(
                         }
                     }
                 }
+                if (!isInPipMode)
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -1328,7 +1618,7 @@ fun AmityRoomPlayerPage(
                             )
                         )
                 )
-                if (roomStatus == AmityRoomStatus.LIVE && isTargetCommunity && (!uiState.isStreamerMode || (uiState.isStreamerMode && uiState.broadcasterData != null))) {
+                if (!isInPipMode && roomStatus == AmityRoomStatus.LIVE && isTargetCommunity && (!uiState.isStreamerMode || (uiState.isStreamerMode && uiState.broadcasterData != null))) {
                     Column(
                         verticalArrangement = Arrangement.Bottom,
                         horizontalAlignment = Alignment.End,
@@ -1350,16 +1640,18 @@ fun AmityRoomPlayerPage(
                         // drive joinChannel("")/getChannel("") and crash the paging collector.
                         val chatChannelId = uiState.room?.getChannelId().orEmpty()
                         if (chatChannelId.isNotBlank()) {
-                            ChatOverlay(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .fillMaxHeight(0.5f),
-                                pageScope = getPageScope(),
-                                channelId = chatChannelId,
-                                streamHostUserId = uiState.hostUserId,
-                                coHostUserId = uiState.cohostUserId,
-                                onReactionClick = { showReactionPicker = true }
-                            )
+                            key(chatReloadNonce) {
+                                ChatOverlay(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .fillMaxHeight(0.5f),
+                                    pageScope = getPageScope(),
+                                    channelId = chatChannelId,
+                                    streamHostUserId = uiState.hostUserId,
+                                    coHostUserId = uiState.cohostUserId,
+                                    onReactionClick = { showReactionPicker = true }
+                                )
+                            }
                         }
 
                         val pinnedProduct = uiState.getRoomPost()?.getPinnedProduct()
@@ -1383,7 +1675,8 @@ fun AmityRoomPlayerPage(
                                             sourceId = uiState.room?.getRoomId() ?: "",
                                             location = location
                                         )
-                                    showProductWebViewBottomSheet = pinnedProduct
+
+                                    onProductTapped(pinnedProduct)
                                 },
                                 onCloseClick = {
                                     showPinnedProductOverlay = false
@@ -1597,7 +1890,9 @@ fun AmityRoomPlayerPage(
                     showAddProductBottomSheet = true
                 },
                 onProductClick = { product, location ->
-                    showProductWebViewBottomSheet = product
+                    // Close the list first, or it stays stacked over the product page.
+                    showManageProductTagBottomSheet = false
+                    onProductTapped(product)
                     product.analytics()
                         .markAsClicked(
                             sourceType = AnalyticsEventSourceType.ROOM,
@@ -1863,13 +2158,17 @@ fun AmityRoomPlayerPage(
         }
     }
 
-    showProductWebViewBottomSheet?.let { product ->
-        AmityProductWebViewBottomSheet(
-            product = product,
-            onDismiss = {
-                showProductWebViewBottomSheet = null
-            },
-        )
+    // Streamer/co-host keeps the modal bottom sheet — a broadcaster must not leave the page.
+    // Viewers open the product as its own Activity instead (see openProduct).
+    if (uiState.isStreamerMode) {
+        showProductWebViewBottomSheet?.let { product ->
+            AmityProductWebViewBottomSheet(
+                product = product,
+                onDismiss = {
+                    showProductWebViewBottomSheet = null
+                },
+            )
+        }
     }
 
     if (showProductTaggingDisabledDialog) {
@@ -1953,6 +2252,9 @@ fun CommunityRoomPlayerHeader(
     pageScope: AmityComposePageScope? = null,
     room: AmityRoom? = null,
     viewerCount: Int? = null,
+    isHostOrCoHost: Boolean = false,
+    liveViewerCountConfig: AmityLiveViewerCountConfig? = null,
+    isLiveViewerCountConfigResolved: Boolean = liveViewerCountConfig != null,
     onCloseClick: (() -> Unit)? = null,
     onOptionsClick: () -> Unit = {},
 ) {
@@ -2116,7 +2418,13 @@ fun CommunityRoomPlayerHeader(
 
         if (room?.getStatus() == AmityRoomStatus.LIVE) {
             // Right side: LIVE badge
-            AmityRoomViewerCountBadge(viewerCount = viewerCount)
+            AmityLiveViewerCountElement(
+                pageScope = pageScope,
+                viewerCount = viewerCount,
+                isHostOrCoHost = isHostOrCoHost,
+                config = liveViewerCountConfig,
+                isConfigResolved = isLiveViewerCountConfigResolved,
+            )
 
             val postLink = if (post != null) AmityUIKitConfigController.getPostLink(post) else ""
             if (postLink.isNotEmptyOrBlank()) {

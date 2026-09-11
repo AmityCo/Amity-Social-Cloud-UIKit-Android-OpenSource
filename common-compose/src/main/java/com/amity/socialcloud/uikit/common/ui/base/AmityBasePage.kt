@@ -55,6 +55,12 @@ fun AmityBasePage(
     // How far the toast clears the bottom of the screen. A page with a compose bar has to lift it by
     // the bar's own height, so the value belongs to the page rather than to the toast.
     toastBottomPadding: Dp = if (useAmityToast) 72.dp else 16.dp,
+    // Toasts are published on a process-wide bus that every composed page listens to, so a page
+    // that is still composed but not the one the viewer is looking at will render them too. A
+    // page floating in Picture-in-Picture is exactly that case: its window shows video only, and
+    // a toast there covers the stream while the screen the viewer actually tapped shows nothing.
+    // Set false while floating; the foreground page still receives the same emission and shows it.
+    showSnackbar: Boolean = true,
     content: @Composable AmityComposePageScope.() -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -98,6 +104,7 @@ fun AmityBasePage(
             Scaffold(
                 containerColor = AmityTheme.colors.background,
                 snackbarHost = {
+                    if (!showSnackbar) return@Scaffold
                     SnackbarHost(
                         hostState = snackbarHostState,
                         modifier = Modifier

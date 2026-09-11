@@ -61,6 +61,9 @@ import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
@@ -204,28 +207,31 @@ fun AmityGroupChatMessageList(
     }
 
     // Watch for new messages by tracking segment changes (distinctUntilChanged avoids re-fires)
-    LaunchedEffect(Unit) {
-        snapshotFlow { messages.itemSnapshotList.firstOrNull() }
-            .map { it?.getSegment() ?: 0 }
-            .distinctUntilChanged()
-            .collect { segment ->
-                if (segment > highestSegment) {
-                    highestSegment = segment
-                    val firstMsg = messages.itemSnapshotList.firstOrNull()
-                    val isOwnMessage = firstMsg?.getCreator()?.getUserId() == AmityCoreClient.getUserId()
-                    if (!isScrolledUp || isOwnMessage) {
-                        // Only scroll programmatically in overflow mode (reverseLayout=true).
-                        // In non-overflow, the newest message is already visible at the bottom.
-                        if (contentOverflowsViewport) {
-                            scope.launch { state.scrollToItem(0) }
+    val lifecycleOwner = LocalLifecycleOwner.current
+    LaunchedEffect(lifecycleOwner) {
+        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            snapshotFlow { messages.itemSnapshotList.firstOrNull() }
+                .map { it?.getSegment() ?: 0 }
+                .distinctUntilChanged()
+                .collect { segment ->
+                    if (segment > highestSegment) {
+                        highestSegment = segment
+                        val firstMsg = messages.itemSnapshotList.firstOrNull()
+                        val isOwnMessage = firstMsg?.getCreator()?.getUserId() == AmityCoreClient.getUserId()
+                        if (!isScrolledUp || isOwnMessage) {
+                            // Only scroll programmatically in overflow mode (reverseLayout=true).
+                            // In non-overflow, the newest message is already visible at the bottom.
+                            if (contentOverflowsViewport) {
+                                scope.launch { state.scrollToItem(0) }
+                            }
+                            if (firstMsg != null) viewModel.markMessageAsRead(firstMsg)
+                            newMessage = null
+                        } else {
+                            newMessage = firstMsg
                         }
-                        if (firstMsg != null) viewModel.markMessageAsRead(firstMsg)
-                        newMessage = null
-                    } else {
-                        newMessage = firstMsg
                     }
                 }
-            }
+        }
     }
 
     LaunchedEffect(isScrolledUp) {

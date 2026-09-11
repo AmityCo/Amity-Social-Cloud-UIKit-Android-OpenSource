@@ -9,6 +9,7 @@ import com.amity.socialcloud.sdk.api.chat.AmityChatClient
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.core.user.search.AmityUserSortOption
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
+import com.amity.socialcloud.sdk.model.core.search.AmitySearchUserBy
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -39,6 +40,7 @@ class AmityChannelCreateConversationPageViewModel : AmityBaseViewModel() {
         return AmityCoreClient.newUserRepository()
             .searchUsers(keyword)
             .sortBy(AmityUserSortOption.DISPLAYNAME)
+            .searchBy(listOf(AmitySearchUserBy.DISPLAY_NAME))
             .build()
             .query()
             .subscribeOn(Schedulers.io())

@@ -34,9 +34,7 @@ import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
-import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
 import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
-import com.amity.socialcloud.uikit.common.utils.shade
 import com.amity.socialcloud.sdk.model.social.category.AmityCommunityCategory
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.uikit.common.R as CommonR
@@ -93,7 +91,7 @@ fun AmityCommunityAvatarWithRoundedCornerView(
                 modifier = Modifier
                     .size(size)
                     .clip(roundedCornerShape)
-                    .background(AmityTheme.colors.secondary.shade(AmityColorShade.SHADE3))
+                    .background(AmityTheme.colors.secondaryShade3)
             ) {
                 Icon(
                     painter = painterResource(id = CommonR.drawable.amity_ic_community_placeholder),

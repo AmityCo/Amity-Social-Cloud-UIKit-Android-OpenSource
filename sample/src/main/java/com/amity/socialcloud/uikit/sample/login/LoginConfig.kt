@@ -31,6 +31,9 @@ data class LoginConfig(
     val visitorCanViewClip: Boolean = false,
     val hideExplore: Boolean = false,
     val socialCommunityCreationButtonVisible: Boolean = true,
+    // Demonstrates the product-tag behaviour override: a livestream product tap navigates to the
+    // social home page instead of the built-in product web view, with the stream floating over it.
+    val inAppPipTesting: Boolean = false,
     val theme: AppTheme = AppTheme.DEFAULT,
     val syncNetworkConfig: Boolean = false,
 )

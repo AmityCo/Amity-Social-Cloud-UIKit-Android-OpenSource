@@ -121,6 +121,13 @@
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/Amity.Base.Theme.AmityApp" />
+
+        <activity
+            android:name=".message.AmityAvatarFullScreenPageActivity"
+            android:configChanges="uiMode"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Amity.Base.Theme.AmityApp" />
     </application>
 
 </manifest>

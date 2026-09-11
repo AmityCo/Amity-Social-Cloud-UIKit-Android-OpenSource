@@ -1406,7 +1406,7 @@ fun AmityCreateRoomPage(
                         ChatOverlay(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .fillMaxHeight(0.2f)
+                                .fillMaxHeight(0.5f)
                             ,
                             pageScope = getPageScope(),
                             channelId = uiState.channelId ?: "",

@@ -20,6 +20,7 @@ object LoginPreferences {
     private const val KEY_VISITOR_CAN_VIEW_CLIP = "visitor_can_view_clip"
     private const val KEY_HIDE_EXPLORE = "hide_explore"
     private const val KEY_SOCIAL_COMMUNITY_CREATION = "social_community_creation"
+    private const val KEY_IN_APP_PIP_TESTING = "in_app_pip_testing"
     private const val KEY_THEME = "theme"
     private const val KEY_SYNC_NETWORK_CONFIG = "sync_network_config"
     private const val KEY_LAST_SETUP_API_KEY = "last_setup_api_key"
@@ -41,6 +42,7 @@ object LoginPreferences {
             putString(KEY_AUTH_SIGNATURE_URL, config.authSignatureUrl)
             putBoolean(KEY_VISITOR_CAN_VIEW_CLIP, config.visitorCanViewClip)
             putBoolean(KEY_HIDE_EXPLORE, config.hideExplore)
+            putBoolean(KEY_IN_APP_PIP_TESTING, config.inAppPipTesting)
             putBoolean(KEY_SOCIAL_COMMUNITY_CREATION, config.socialCommunityCreationButtonVisible)
             putString(KEY_THEME, config.theme.name)
             putBoolean(KEY_SYNC_NETWORK_CONFIG, config.syncNetworkConfig)
@@ -70,6 +72,7 @@ object LoginPreferences {
             authSignatureUrl = p.getString(KEY_AUTH_SIGNATURE_URL, "") ?: "",
             visitorCanViewClip = p.getBoolean(KEY_VISITOR_CAN_VIEW_CLIP, false),
             hideExplore = p.getBoolean(KEY_HIDE_EXPLORE, false),
+            inAppPipTesting = p.getBoolean(KEY_IN_APP_PIP_TESTING, false),
             socialCommunityCreationButtonVisible = p.getBoolean(KEY_SOCIAL_COMMUNITY_CREATION, true),
             theme = try {
                 AppTheme.valueOf(p.getString(KEY_THEME, AppTheme.DEFAULT.name)!!)
@@ -102,4 +105,11 @@ object LoginPreferences {
         val p = prefs(context)
         return p.getString(KEY_LAST_SETUP_API_KEY, "")?.isNotEmpty() == true
     }
+
+    /**
+     * Read on its own because the behaviour override needs it at click time, long after login,
+     * where the full config is not in hand.
+     */
+    fun isInAppPipTestingEnabled(context: Context): Boolean =
+        prefs(context).getBoolean(KEY_IN_APP_PIP_TESTING, false)
 }

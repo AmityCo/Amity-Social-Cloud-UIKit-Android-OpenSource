@@ -154,8 +154,7 @@ fun AmityCommentEngagementBar(
                     text = amitySocialReactionDisplayName(resolvedReactionKey),
                     style = AmityTheme.typography.captionLegacy.copy(
                         color = if (isReacted) {
-                            if (isUIKitInDarkTheme()) amityColorWhite
-                            else AmityTheme.colors.primary
+                            AmityTheme.colors.base
                         }
                         else AmityTheme.colors.baseShade2,
                     ),

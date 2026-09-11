@@ -497,14 +497,36 @@ fun AmityPostComposerPage(
 
     var capturedMediaUri by remember { mutableStateOf(Uri.EMPTY) }
 
+    // Recomputed on every recomposition (selectedMediaFiles is live state) so the
+    // launchers below always register with the current remaining count rather than
+    // one baked in at first composition.
+    val remainingMediaSlots = (MAX_ATTACHMENTS - selectedMediaFiles.size).coerceAtLeast(0)
+
+    // PickMultipleVisualMedia throws if maxItems < 2, so the multi-picker is only ever
+    // launched with 2+ slots remaining; coerceAtLeast(2) here just keeps registration
+    // itself from crashing when fewer remain (the single picker is used instead below).
     val imagePickerLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) { uris ->
+        rememberLauncherForActivityResult(
+            ActivityResultContracts.PickMultipleVisualMedia(maxItems = remainingMediaSlots.coerceAtLeast(2))
+        ) { uris ->
             viewModel.addMedia(uris, AmityPostMedia.Type.IMAGE)
         }
 
+    val singleImagePickerLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            uri?.let { viewModel.addMedia(listOf(it), AmityPostMedia.Type.IMAGE) }
+        }
+
     val videoPickerLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) { uris ->
+        rememberLauncherForActivityResult(
+            ActivityResultContracts.PickMultipleVisualMedia(maxItems = remainingMediaSlots.coerceAtLeast(2))
+        ) { uris ->
             viewModel.addMedia(uris, AmityPostMedia.Type.VIDEO)
+        }
+
+    val singleVideoPickerLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            uri?.let { viewModel.addMedia(listOf(it), AmityPostMedia.Type.VIDEO) }
         }
 
     val imageCaptureLauncher =
@@ -641,11 +663,21 @@ fun AmityPostComposerPage(
             }
 
             AmityPostAttachmentPickerEvent.OpenImagePicker -> {
-                imagePickerLauncher.launch(PickVisualMediaRequest(mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly))
+                val request = PickVisualMediaRequest(mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly)
+                if (remainingMediaSlots >= 2) {
+                    imagePickerLauncher.launch(request)
+                } else {
+                    singleImagePickerLauncher.launch(request)
+                }
             }
 
             AmityPostAttachmentPickerEvent.OpenVideoPicker -> {
-                videoPickerLauncher.launch(PickVisualMediaRequest(mediaType = ActivityResultContracts.PickVisualMedia.VideoOnly))
+                val request = PickVisualMediaRequest(mediaType = ActivityResultContracts.PickVisualMedia.VideoOnly)
+                if (remainingMediaSlots >= 2) {
+                    videoPickerLauncher.launch(request)
+                } else {
+                    singleVideoPickerLauncher.launch(request)
+                }
             }
 
             AmityPostAttachmentPickerEvent.OpenFilePicker -> {
@@ -1535,57 +1567,11 @@ fun AmityPostComposerPage(
     } // Close Body Box
     } // Close Column
 
-    // Product tags button - positioned above bottom bar at right (OUTSIDE Column, INSIDE root Box)
-    if (options is AmityPostComposerOptions.AmityPostComposerCreateOptions ||
-        options is AmityPostComposerOptions.AmityPostComposerEditOptions
-    ) {
-        val allDistinctTags by viewModel.allDistinctProductTags.collectAsState(initial = emptyList())
-        if (allDistinctTags.isNotEmpty()) {
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(end = 16.dp, bottom = attachmentHeightDp + 2.dp)
-                .clickableWithoutRipple { showAllProductTagsDialog = true },
-        ) {
-            // Circular background with icon - light gray color
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .background(
-                        color = AmityTheme.colors.backgroundShade1,
-                        shape = CircleShape
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    painter = painterResource(id = CommonR.drawable.amity_ic_product_tag),
-                    contentDescription = "Product tags",
-                    tint = AmityTheme.colors.base,
-                    modifier = Modifier.size(32.dp)
-                )
-                Box(
-                    modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .offset(x = 4.dp, y = (-4).dp)
-                    .size(20.dp)
-                    .background(
-                        color = AmityTheme.colors.base,
-                        shape = CircleShape
-                    ),
-                contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = allDistinctTags.size.toString(),
-                        style = AmityTheme.typography.captionBold.copy(
-                            color = AmityTheme.colors.background,
-                            fontSize = 10.sp
-                        ),
-                    )
-                }
-            }
-        }
-    }
-}
+    val allDistinctTags by viewModel.allDistinctProductTags.collectAsState(initial = emptyList())
+    val productTagCount =
+        if (options is AmityPostComposerOptions.AmityPostComposerCreateOptions ||
+            options is AmityPostComposerOptions.AmityPostComposerEditOptions
+        ) allDistinctTags.size else 0
 
     // Attachment bar - positioned at bottom center (OUTSIDE Column, INSIDE root Box).
     // Hidden for event posts: media can't be attached alongside an event.
@@ -1603,6 +1589,8 @@ fun AmityPostComposerPage(
             AmityMediaAttachmentElement(
                 modifier = Modifier.fillMaxWidth(),
                 pageScope = getPageScope(),
+                productTagCount = productTagCount,
+                onProductTagClick = { showAllProductTagsDialog = true },
             )
         }
     }

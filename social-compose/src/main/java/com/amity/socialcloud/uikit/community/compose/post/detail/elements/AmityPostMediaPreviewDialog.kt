@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
@@ -29,7 +30,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rxjava3.subscribeAsState
 import androidx.compose.runtime.setValue
@@ -94,6 +94,7 @@ fun AmityPostMediaPreviewDialog(
     selectedFileId: String,
     isPostCreator: Boolean = false,
     onDismiss: () -> Unit,
+    onPageChanged: (String) -> Unit = {},
 ) {
     val imageMap = remember { mutableMapOf<String, AmityImage>() }
     val context = LocalContext.current
@@ -164,6 +165,11 @@ fun AmityPostMediaPreviewDialog(
         AmityPostVideoPlayerHelper.playMediaItem(pagerState.currentPage)
     }
 
+    // Reports the page the member is on as it changes, so the caller can return to it on dismiss.
+    LaunchedEffect(pagerState.currentPage) {
+        childPosts.getOrNull(pagerState.currentPage)?.getPostId()?.let(onPageChanged)
+    }
+
     Dialog(
         onDismissRequest = {},
         properties = DialogProperties(
@@ -216,16 +222,20 @@ fun AmityPostMediaPreviewDialog(
                                 modifier = modifier.fillMaxSize(),
                                 contentAlignment = Alignment.Center
                             ) {
-                                if (imageUrl != null) {
-                                    val imageBoxModifier = if (aspectRatio != null) {
-                                        Modifier
-                                            .fillMaxWidth()
-                                            .aspectRatio(aspectRatio!!)
-                                    } else {
-                                        Modifier.fillMaxSize()
-                                    }
+                                val mediaBoxModifier = if (imageUrl != null && aspectRatio != null) {
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .aspectRatio(aspectRatio!!)
+                                } else if (imageUrl != null) {
+                                    Modifier.fillMaxSize()
+                                } else {
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .height(480.dp)
+                                }
 
-                                    Box(modifier = imageBoxModifier) {
+                                Box(modifier = mediaBoxModifier) {
+                                    if (imageUrl != null) {
                                         AsyncImage(
                                             model = ImageRequest
                                                 .Builder(LocalContext.current)
@@ -247,14 +257,15 @@ fun AmityPostMediaPreviewDialog(
                                                 .fillMaxSize()
                                                 .zoomable(rememberZoomState()),
                                         )
+                                    } else {
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .background(AmityTheme.colors.baseShade4),
+                                        )
                                     }
-                                } else {
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(480.dp)
-                                            .background(AmityTheme.colors.baseShade4),
-                                    )
+
+                                    MediaProductTagBadge(childPost)
                                 }
                             }
                             if (openMenu) {
@@ -299,6 +310,8 @@ fun AmityPostMediaPreviewDialog(
                                     exoPlayer = exoPlayer,
                                     isVisible = pagerState.currentPage == index,
                                 )
+
+                                MediaProductTagBadge(childPost)
                             }
                         }
 
@@ -379,21 +392,6 @@ fun AmityPostMediaPreviewDialog(
                     }
                 }
 
-                // Product Tag Badge at bottom-right of screen
-                val currentProductTagCount by remember {
-                    derivedStateOf {
-                        childPosts.getOrNull(pagerState.currentPage)?.let { getProductTagCount(it) } ?: 0
-                    }
-                }
-                if (currentProductTagCount > 0) {
-                    AmityProductTagBadge(
-                        count = currentProductTagCount,
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(end = 12.dp, bottom = 120.dp)
-                    )
-                }
-
             } // End of Box wrapper
             RenderAltTextConfigSheet(
                 forcedEditMode = true,
@@ -417,6 +415,21 @@ fun AmityPostMediaPreviewDialog(
                 onDismiss()
             }
         }
+    }
+}
+
+@Composable
+private fun BoxScope.MediaProductTagBadge(childPost: AmityPost) {
+    val productTagCount = remember(childPost.getPostId(), childPost.getUpdatedAt()) {
+        getProductTagCount(childPost)
+    }
+    if (productTagCount > 0) {
+        AmityProductTagBadge(
+            count = productTagCount,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = 12.dp, bottom = 12.dp)
+        )
     }
 }
 

@@ -81,6 +81,8 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     fun updateAuthSignatureExpiresAt(millis: Long) = _config.update { it.copy(authSignatureExpiresAtMillis = millis) }
     fun updateVisitorCanViewClip(value: Boolean) = _config.update { it.copy(visitorCanViewClip = value) }
     fun updateHideExplore(value: Boolean) = _config.update { it.copy(hideExplore = value) }
+
+    fun updateInAppPipTesting(value: Boolean) = _config.update { it.copy(inAppPipTesting = value) }
     fun updateSocialCommunityCreation(value: Boolean) = _config.update { it.copy(socialCommunityCreationButtonVisible = value) }
     fun updateTheme(value: AppTheme) = _config.update { it.copy(theme = value) }
     fun updateSyncNetworkConfig(value: Boolean) = _config.update { it.copy(syncNetworkConfig = value) }

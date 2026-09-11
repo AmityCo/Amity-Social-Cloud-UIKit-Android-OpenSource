@@ -900,6 +900,12 @@
     <string name="amity_social_status_host_badge">Host</string>
     <string name="amity_social_status_join_community_to_interact_with_live_stream">Join community to interact with live stream</string>
     <string name="amity_social_status_join_live">Join LIVE</string>
+    <!-- Picture-in-Picture window controls. The window is OS-rendered, so these are the
+         action labels the system shows and TalkBack announces. -->
+    <string name="amity_social_livestream_pip_play">Play</string>
+    <string name="amity_social_livestream_pip_pause">Pause</string>
+    <string name="amity_social_livestream_pip_skip_back">Rewind 10 seconds</string>
+    <string name="amity_social_livestream_pip_skip_forward">Forward 10 seconds</string>
     <string name="amity_social_status_live">LIVE</string>
     <string name="amity_social_status_banned_page_title">Live stream</string>
     <string name="amity_social_status_live_stream_duration_label">LIVE %s</string>

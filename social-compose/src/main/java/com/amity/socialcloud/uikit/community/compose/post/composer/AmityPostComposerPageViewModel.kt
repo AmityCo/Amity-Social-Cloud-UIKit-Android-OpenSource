@@ -42,6 +42,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.launch
 import java.util.UUID
 import androidx.core.net.toUri
+import com.amity.socialcloud.sdk.core.session.model.NetworkConnectionEvent
 import com.amity.socialcloud.sdk.helper.core.asAmityImage
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.helper.core.hashtag.AmityHashtag
@@ -56,6 +57,7 @@ import com.amity.socialcloud.sdk.model.core.product.AmityProduct
 import com.amity.socialcloud.sdk.model.core.product.AmityProductStatus
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.AltTextMedia
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
+import com.amity.socialcloud.uikit.common.eventbus.NetworkConnectionEventBus
 import com.amity.socialcloud.uikit.common.infra.initializer.AmityAppContext
 import com.amity.socialcloud.uikit.community.compose.R
 import kotlin.apply
@@ -67,7 +69,6 @@ import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySo
 class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
 
     private val MAX_CHAR_LIMIT = 50000
-    private val MAX_ATTACHMENTS = 10
     private val MAX_PRODUCT_TAGS_PER_MEDIA = 5
     // Media files must be under 1 GB (PDT-2327). Oversized files are marked FAILED
     // (warning icon) instead of being uploaded.
@@ -113,8 +114,13 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
     private val uploadedMediaMap = LinkedHashMap<String, AmityFileInfo>()
     private val deletedImageIds = mutableListOf<String>()
     private val uploadFailedMediaMap = LinkedHashMap<String, Boolean>()
+    private val oversizedMediaUrls = mutableSetOf<String>()
     private val showAltTextConfigSheet = mutableStateOf(false)
     private val altTextMedia = mutableStateOf<AltTextMedia?>(null)
+
+    init {
+        observeNetwork()
+    }
 
     // Product tags per media file: key = fileId/uploadId, value = list of products
     private val _mediaProductTags by lazy {
@@ -700,12 +706,12 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
     private fun prepareVideoPost(videoData: AmityPost.Data.VIDEO) {
         val thumbnail = videoData.getThumbnailImage()
         val videoPost = if (thumbnail != null) {
-            mapVideoToFeedImage(
-                video = videoData.getVideo().blockingGet(),
-                thumbnail = thumbnail,
-                type = Type.VIDEO
+            // Keeps the thumbnail's identity, because removal in edit mode matches deleted ids
+            // against the thumbnail's file id -- but carries the video record, the only place the
+            // real dimensions live. A thumbnail exposes none, so the frame would fall back to 1:1.
+            mapImageToFeedImage(thumbnail, Type.VIDEO).copy(
+                media = AmityPostMedia.Media.Video(videoData.getVideo().blockingGet())
             )
-            mapImageToFeedImage(thumbnail, Type.VIDEO)
         } else {
             // Create placeholder for video without thumbnail
             createPlaceholderVideoMedia(videoData)
@@ -854,16 +860,17 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
     }
 
     private fun createPlaceholderVideoMedia(videoData: AmityPost.Data.VIDEO): AmityPostMedia {
-        val fileId = videoData.getVideo().blockingGet().getFileId()
+        val video = videoData.getVideo().blockingGet()
+        val fileId = video.getFileId()
 
         return AmityPostMedia(
             id = fileId,
             uploadId = fileId, // Use fileId as uploadId for existing media so tag icon shows in edit mode
-            url = Uri.EMPTY, // Use empty URI as placeholder
+            url = Uri.EMPTY, // No thumbnail to show in the grid, but the video itself still plays
             uploadState = AmityFileUploadState.COMPLETE,
             currentProgress = 100,
             type = Type.VIDEO,
-            media = null // No thumbnail available
+            media = AmityPostMedia.Media.Video(video)
         )
     }
 
@@ -1249,9 +1256,20 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
             }
 
             isUploadedVideoMedia() -> {
-                val videos = uploadedMediaMap.values.toList().map {
-                    it as AmityVideo
-                }.toSet()
+                // Publish in the order the member arranged, not the order the uploads happened to
+                // finish -- a shorter clip finishing first would otherwise become the first
+                // attachment, which is also the one that fixes the carousel's frame ratio.
+                val orderById =
+                    mediaMap.values.withIndex().associate { it.value.id to it.index }
+                val videos =
+                    uploadedMediaMap.values
+                        .filter { file ->
+                            mediaMap.values.any { postMedia -> postMedia.id == file.getFileId() }
+                        }.sortedBy {
+                            orderById[it.getFileId()]
+                        }.map {
+                            it as AmityVideo
+                        }.toSet()
 
                 createPostTextAndVideos(
                     postText = postText,
@@ -1465,6 +1483,7 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
                 )
                 mediaMap[uri.toString()] = failedMedia
                 uploadFailedMediaMap[uri.toString()] = true
+                oversizedMediaUrls.add(uri.toString())
                 updateList(failedMedia)
             } else {
                 val postMedia = AmityPostMedia(UUID.randomUUID().toString(), uri, mediaType)
@@ -1490,6 +1509,7 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
     fun removeMedia(postMedia: AmityPostMedia) {
         mediaMap.remove(postMedia.url.toString())
         uploadFailedMediaMap.remove(postMedia.url.toString())
+        oversizedMediaUrls.remove(postMedia.url.toString())
         cancelUpload(postMedia.uploadId)
 
         if (postMedia.id != null) {
@@ -1522,6 +1542,39 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
                 }
             )
         }
+    }
+
+    fun retryMediaUpload(postMedia: AmityPostMedia) {
+        val key = postMedia.url.toString()
+        val failedMedia = mediaMap[key] ?: return
+        if (failedMedia.uploadState != AmityFileUploadState.FAILED) return
+        if (oversizedMediaUrls.contains(key)) return
+
+        uploadFailedMediaMap.remove(key)
+        val retryMedia = AmityPostMedia(UUID.randomUUID().toString(), failedMedia.url, failedMedia.type)
+        mediaMap[key] = retryMedia
+        uploadMedia(retryMedia)
+    }
+
+    private fun retryFailedMediaUploads() {
+        mediaMap.values
+            .filter { it.uploadState == AmityFileUploadState.FAILED }
+            .forEach { retryMediaUpload(it) }
+    }
+
+    private fun observeNetwork() {
+        addDisposable(
+            NetworkConnectionEventBus.observe()
+                .distinctUntilChanged()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext {
+                    if (it is NetworkConnectionEvent.Connected) {
+                        retryFailedMediaUploads()
+                    }
+                }
+                .subscribe()
+        )
     }
 
     fun isUploadedImageMedia(): Boolean {
@@ -1739,6 +1792,7 @@ class AmityPostComposerPageViewModel : AmityMediaAttachmentViewModel() {
             }
 
             is AmityUploadResult.COMPLETE -> {
+                if (!mediaMap.containsKey(postMedia.url.toString())) return
                 val file = result.getFile()
                 uploadFailedMediaMap.remove(postMedia.url.toString())
                 uploadedMediaMap[file.getFileId()] = file
@@ -1919,8 +1973,11 @@ sealed class AmityPostCreationEvent {
 
 class TextPostExceedException(val charLimit: Int) : Exception()
 
-const val MEDIA_VIDEO_UPLOAD_LIMIT = 10
-const val MEDIA_IMAGE_UPLOAD_LIMIT = 10
+// Single cap for every attachment-limit enforcement site (button enablement and the
+// post-picker rejection). The two names stay so existing callers keep compiling.
+const val MAX_ATTACHMENTS = 10
+const val MEDIA_VIDEO_UPLOAD_LIMIT = MAX_ATTACHMENTS
+const val MEDIA_IMAGE_UPLOAD_LIMIT = MAX_ATTACHMENTS
 
 /**
  * Creates a combined metadata object containing both mentions and hashtags

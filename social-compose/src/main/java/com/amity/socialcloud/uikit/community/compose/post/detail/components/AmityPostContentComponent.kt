@@ -81,6 +81,7 @@ fun AmityPostContentComponent(
     onClipClick: (childPost: AmityPost) -> Unit = {},
     onTapAction: () -> Unit = {},
     isNonMemberOfCommunity: Boolean? = null,
+    refreshKey: Int = 0,
 ) {
     val context = LocalContext.current
     val behavior = remember {
@@ -353,7 +354,8 @@ fun AmityPostContentComponent(
                         } else {
                             onClipClick(it)
                         }
-                    }
+                    },
+                    refreshKey = refreshKey,
                 )
             } else {
                 AmityPostContentElement(
@@ -385,7 +387,8 @@ fun AmityPostContentComponent(
                 )
                 AmityPostMediaElement(
                     modifier = modifier,
-                    post = post
+                    post = post,
+                    refreshKey = refreshKey,
                 )
             }
 

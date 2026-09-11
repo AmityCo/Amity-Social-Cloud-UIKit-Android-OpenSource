@@ -3,7 +3,11 @@ package com.amity.socialcloud.uikit.community.compose.community.profile.componen
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -81,8 +85,11 @@ fun AmityCommunityFeedComponent(
             .catch {}
     }.collectAsLazyPagingItems()
 
+    var refreshKey by remember { mutableIntStateOf(0) }
+
     LaunchedEffect(shouldRefresh) {
         if (shouldRefresh) {
+            refreshKey++
             communityPosts.refresh()
         }
     }
@@ -105,7 +112,8 @@ fun AmityCommunityFeedComponent(
                     category = AmityPostCategory.PIN,
                     autoFocusCommentInput = true,
                     )
-            }
+            },
+            refreshKey = refreshKey,
         )
     }
 }

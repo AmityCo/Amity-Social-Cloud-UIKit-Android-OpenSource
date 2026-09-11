@@ -41,6 +41,8 @@ import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 fun AmityMediaAttachmentElement(
     modifier: Modifier = Modifier,
     pageScope: AmityComposePageScope? = null,
+    productTagCount: Int = 0,
+    onProductTagClick: () -> Unit = {},
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -60,9 +62,9 @@ fun AmityMediaAttachmentElement(
     }
 
     LaunchedEffect(isKeyboardOpen, hasMediaAttached) {
-        // Collapse to the compact attachment row whenever the keyboard is open OR
-        // media is already attached — the detailed picker would otherwise cover
-        // the selected-media preview.
+        // Collapsing when the keyboard opens or the first attachment lands is a starting point, not a
+        // lock: the expanded sheet would cover the preview, so it gets out of the way by default and
+        // the member can drag it back up. Keyed so a manual expand survives until one of these changes.
         showDetailedView = !isKeyboardOpen && !hasMediaAttached
     }
 
@@ -74,9 +76,11 @@ fun AmityMediaAttachmentElement(
                     onDragEnd = {
                         val isDragUp = verticalDragAmount < 0
                         if (isDragUp) {
-                            // Don't expand to the detailed picker if media is already
-                            // attached — the compact row is the intended state.
-                            if (!isKeyboardOpen && !hasMediaAttached) {
+                            // Reachable with media attached: the labelled rows -- Tag products in
+                            // particular -- exist only in the expanded sheet, so blocking it here hid
+                            // them exactly when they are wanted. Still suppressed under the keyboard,
+                            // which already owns that space.
+                            if (!isKeyboardOpen) {
                                 showDetailedView = true
                             }
                         } else {
@@ -136,11 +140,15 @@ fun AmityMediaAttachmentElement(
                 AmityDetailedMediaAttachmentComponent(
                     pageScope = pageScope,
                     viewModel = viewModel,
+                    productTagCount = productTagCount,
+                    onProductTagClick = onProductTagClick,
                 )
             } else {
                 AmityMediaAttachmentComponent(
                     pageScope = pageScope,
                     viewModel = viewModel,
+                    productTagCount = productTagCount,
+                    onProductTagClick = onProductTagClick,
                 )
             }
         }

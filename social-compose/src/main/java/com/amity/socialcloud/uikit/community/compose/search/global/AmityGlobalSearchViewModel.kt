@@ -9,6 +9,7 @@ import com.amity.socialcloud.sdk.api.core.user.search.AmityUserSearchMatchType
 import com.amity.socialcloud.sdk.api.core.user.search.AmityUserSortOption
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
+import com.amity.socialcloud.sdk.model.core.search.AmitySearchUserBy
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunityFilter
@@ -99,6 +100,7 @@ class AmityGlobalSearchViewModel : AmityBaseViewModel() {
             .searchUsers(_keyword.value)
             .sortBy(AmityUserSortOption.DISPLAYNAME)
             .matchType(AmityUserSearchMatchType.PARTIAL)
+            .searchBy(listOf(AmitySearchUserBy.DISPLAY_NAME))
             .build()
             .query()
             .subscribeOn(Schedulers.io())

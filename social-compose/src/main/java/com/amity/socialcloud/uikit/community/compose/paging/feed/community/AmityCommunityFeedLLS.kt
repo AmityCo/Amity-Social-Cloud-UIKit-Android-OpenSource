@@ -28,6 +28,7 @@ fun LazyListScope.amityCommunityFeedLLS(
     announcementPosts: LazyPagingItems<AmityPinnedPost>,
     onClipClick: (AmityPost) -> Unit = {},
     onClick: (AmityPost, AmityPostCategory) -> Unit,
+    refreshKey: Int = 0,
 ) {
     items(
         count = communityPosts.itemCount,
@@ -63,7 +64,8 @@ fun LazyListScope.amityCommunityFeedLLS(
                     },
                     onTapAction = {
                         onClick(post, category)
-                    }
+                    },
+                    refreshKey = refreshKey,
                 )
                 AmityNewsFeedDivider()
             }

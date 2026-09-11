@@ -24,6 +24,9 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -46,9 +49,6 @@ import com.amity.socialcloud.uikit.community.compose.community.recommending.Amit
 import com.amity.socialcloud.uikit.community.compose.community.setup.AmityCommunitySetupPageActivity
 import com.amity.socialcloud.uikit.community.compose.community.setup.AmityCommunitySetupPageMode
 import com.amity.socialcloud.uikit.community.compose.community.trending.AmityTrendingCommunitiesComponent
-import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityExploreCategoryShimmer
-import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityRecommendedCommunityShimmer
-import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityTrendingCommunityShimmer
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
 @Composable
@@ -69,6 +69,8 @@ fun AmityExploreComponent(
 
     val isRefreshing by viewModel.isRefreshing.collectAsState()
 
+    var refreshKey by remember { mutableIntStateOf(0) }
+
     val isEmpty by viewModel.isEmpty.collectAsState()
 
     val isError by viewModel.isError.collectAsState()
@@ -80,6 +82,7 @@ fun AmityExploreComponent(
         state = pullRefreshState,
         isRefreshing = isRefreshing,
         onRefresh = {
+            refreshKey++
             viewModel.setRefreshing()
         },
         indicator = {
@@ -91,24 +94,7 @@ fun AmityExploreComponent(
         },
         modifier = modifier.fillMaxSize(),
     ) {
-        if (isRefreshing) {
-            Column {
-                AmityNewsFeedDivider()
-                AmityExploreCategoryShimmer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            start = 16.dp,
-                            top = 16.dp,
-                            bottom = 16.dp,
-                            end = 0.dp
-                        )
-                )
-                AmityRecommendedCommunityShimmer()
-                AmityTrendingCommunityShimmer(modifier = Modifier.padding(start = 16.dp))
-            }
-        } else {
-            Column(
+        Column(
                 modifier = Modifier.verticalScroll(rememberScrollState())
             ) {
                 AmityNewsFeedDivider()
@@ -116,7 +102,8 @@ fun AmityExploreComponent(
                     pageScope = pageScope,
                     onStateChanged = {
                         viewModel.setCategoryState(it)
-                    }
+                    },
+                    refreshKey = refreshKey,
                 )
                 if (isEmpty) {
                     val paddingTop =
@@ -246,14 +233,15 @@ fun AmityExploreComponent(
                     onStateChanged = {
                         viewModel.setRecommendedState(it)
                     },
+                    refreshKey = refreshKey,
                 )
                 AmityTrendingCommunitiesComponent(
                     pageScope = pageScope,
                     onStateChanged = {
                         viewModel.setTrendingState(it)
                     },
+                    refreshKey = refreshKey,
                 )
             }
-        }
     }
 }

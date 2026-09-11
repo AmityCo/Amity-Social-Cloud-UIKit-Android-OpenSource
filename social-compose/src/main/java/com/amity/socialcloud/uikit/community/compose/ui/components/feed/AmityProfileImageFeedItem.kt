@@ -228,13 +228,38 @@ fun AmityProfileImageFeedItemPreviewDialog(
                     .fillMaxSize()
                     .background(amityMediaSurface)
             ) {
-                Image(
-                    painter = painter,
-                    contentDescription = "Image Post",
-                    contentScale = ContentScale.Fit,
-                    modifier = modifier.fillMaxSize()
-                        .zoomable(rememberZoomState()),
-                )
+                val mediaAspectRatio = painter.intrinsicSize.let { size ->
+                    if (size.width > 0f && size.height > 0f) size.width / size.height else null
+                }
+                Box(
+                    modifier = if (mediaAspectRatio != null) {
+                        Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(mediaAspectRatio)
+                            .align(Alignment.Center)
+                    } else {
+                        Modifier.fillMaxSize()
+                    }
+                ) {
+                    Image(
+                        painter = painter,
+                        contentDescription = "Image Post",
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .zoomable(rememberZoomState()),
+                    )
+
+                    if (productTagCount > 0) {
+                        AmityProductTagBadge(
+                            count = productTagCount,
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .padding(end = 12.dp, bottom = 12.dp),
+                            onClick = onProductTagClick
+                        )
+                    }
+                }
 
                 ConstraintLayout(
                     modifier = modifier
@@ -294,16 +319,6 @@ fun AmityProfileImageFeedItemPreviewDialog(
                     .background(amityMediaSurface)
             )
 
-            // Product Tag Badge at bottom-right of screen (outside inner boxes)
-            if (productTagCount > 0) {
-                AmityProductTagBadge(
-                    count = productTagCount,
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(end = 12.dp, bottom = 120.dp),
-                    onClick = onProductTagClick
-                )
-            }
         }
     }
 }

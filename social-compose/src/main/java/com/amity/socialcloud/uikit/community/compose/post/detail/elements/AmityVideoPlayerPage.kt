@@ -7,6 +7,7 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,11 +21,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Pause
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -36,15 +34,17 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rxjava3.subscribeAsState
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.width
 import androidx.compose.ui.Alignment
+import com.amity.socialcloud.uikit.common.utils.getActivity
+import com.amity.socialcloud.uikit.community.compose.livestream.room.util.AmityRoomPipController
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -52,6 +52,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -87,6 +89,7 @@ import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityAddProductBottomSheet
 import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityProductTaggingBottomSheet
 import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityProductWebViewBottomSheet
+import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityProductWebViewPageActivity
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.AmityProductTagListComponent
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.RenderModeEnum
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostVideoPlayerHelper
@@ -102,6 +105,16 @@ import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySo
 import com.amity.socialcloud.uikit.common.ui.theme.amityMediaSurface
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
+import androidx.compose.ui.draw.clip
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.Icons
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
+import com.amity.socialcloud.uikit.common.behavior.AmityGlobalBehavior
+import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
+import com.amity.socialcloud.sdk.core.session.model.NetworkConnectionEvent
+import com.amity.socialcloud.uikit.community.compose.livestream.room.util.AmityPipSessionRegistry
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
@@ -111,11 +124,35 @@ fun AmityVideoPlayerPage(
     selectedFileId: String,
     showMenuButton: Boolean = false,
     recordedUrls: List<String> = emptyList(),
+    // When false the page renders full-screen without the Dialog wrapper, so a host
+    // Activity can own it and enter Picture-in-Picture (recorded livestream). Video-post
+    // usages keep the default Dialog and are excluded from PiP.
+    asDialog: Boolean = true,
+    isInPipMode: Boolean = false,
+    // Identifies the floating window this page owns, so leaving a product page can restore it.
+    // Supplied by the host Activity, which registers the same id when it enters PiP.
+    pipOwnerPostId: String? = null,
+    post: AmityPost? = null,
     onDismiss: () -> Unit,
+    onPageChanged: (String) -> Unit = {},
     onProductsUpdated: ((List<AmityProduct>) -> Unit)? = null,
     onViewOriginalPost: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
+    // Present only when hosted by a PiP-capable Activity (asDialog == false).
+    val pipController = remember(context) { context.getActivity() as? AmityRoomPipController }
+    // A room whose recording is still processing arrives here with no playable url, so there
+    // is nothing to float — PiP must stay off rather than open a window onto a dead player.
+    val hasPlayableMedia = recordedUrls.any { it.isNotBlank() }
+    LaunchedEffect(pipController, asDialog, hasPlayableMedia) {
+        if (!asDialog) {
+            pipController?.setPipAllowed(hasPlayableMedia)
+        }
+    }
+
+    // Recorded playback is VOD, so pausing holds position and resuming continues from it —
+    // no live-edge seek. Mute silences audio while video keeps playing.
+    var isMuted by remember { mutableStateOf(false) }
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
         "No ViewModelStoreOwner provided for AmityVideoPlayerPage"
     }
@@ -137,6 +174,38 @@ fun AmityVideoPlayerPage(
             .build()
     }
 
+    // As a Dialog this is an ordinary video post, hosted by a page that is not a PiP host — so
+    // nothing else would stand a floating livestream down and the viewer would hear both. As the
+    // recorded livestream host (asDialog = false) this page IS the session, and its Activity has
+    // already reconciled against the registry, so it must not end its own window here.
+    if (asDialog) {
+        LaunchedEffect(Unit) {
+            AmityPipSessionRegistry.endSession()
+        }
+    }
+
+    val connection by viewModel
+        .getNetworkConnectionStateFlow()
+        .collectAsState(initial = NetworkConnectionEvent.Connected)
+
+    // Recovering from a data stall, mirroring the live room player. A recording that loses its
+    // connection stops on the last frame and ExoPlayer does not retry; in a floating window there
+    // is no resume to hang a reload on either. Both the connection dropping and the player
+    // erroring mark it, and the retry runs once the connection is back — the position is still
+    // valid for a recording, so it resumes where it stopped rather than restarting.
+    var needsStallRecovery by remember { mutableStateOf(false) }
+    LaunchedEffect(connection) {
+        if (connection == NetworkConnectionEvent.Disconnected) needsStallRecovery = true
+    }
+    LaunchedEffect(connection, needsStallRecovery) {
+        if (connection == NetworkConnectionEvent.Disconnected) return@LaunchedEffect
+        if (!needsStallRecovery) return@LaunchedEffect
+        needsStallRecovery = false
+        if (exoPlayer.playbackState == Player.STATE_IDLE) {
+            exoPlayer.prepare()
+        }
+    }
+
     var isAudioMuted by remember { mutableStateOf(false) }
     var isPlaying by remember { mutableStateOf(true) }
     var playerState by remember { mutableIntStateOf(ExoPlayer.STATE_IDLE) }
@@ -152,6 +221,54 @@ fun AmityVideoPlayerPage(
     var showAddProductBottomSheet by remember { mutableStateOf(false) }
     var selectedProducts by remember { mutableStateOf<List<AmityProduct>>(emptyList()) }
     var selectedProduct by remember { mutableStateOf<AmityProduct?>(null) }
+    /**
+     * Opens a product and leaves the recording floating over it.
+     *
+     * When this page is Activity-hosted (the recorded livestream), the product opens as a page
+     * of its own so the Activity backgrounds and the OS floats the recording in a real PiP
+     * window — the same treatment every other navigation gets. As a Dialog (regular video
+     * posts) there is no PiP to preserve, so the modal sheet below still serves.
+     */
+    val globalBehavior = remember { AmitySocialBehaviorHelper.globalBehavior }
+
+    /**
+     * Handles a product tap.
+     *
+     * As a Dialog (regular video posts) this is an in-place sheet — not a livestream, so the
+     * livestream override does not apply and there is no playback to float.
+     *
+     * Activity-hosted (the recorded livestream) the integrator's override gets first refusal.
+     * When it claims the tap it navigates somewhere of its own and this page never learns
+     * where, so PiP is requested right here, in the same call stack: startActivity is
+     * asynchronous, so the claim returning leaves us still resumed — the only state the OS
+     * accepts the request from. Waiting for onPause is too late. Unclaimed, the built-in
+     * product page opens and floats the recording the same way.
+     */
+    val openProduct: (AmityProduct) -> Unit = { product ->
+        if (asDialog) {
+            selectedProduct = product
+        } else {
+            val claimed = globalBehavior.onLivestreamProductTagClick(
+                AmityGlobalBehavior.Context(
+                    pageContext = context,
+                    product = product,
+                    communityId = (post?.getTarget() as? AmityPost.Target.COMMUNITY)
+                        ?.getCommunityId(),
+                    pipNavigator = { intent ->
+                        pipController?.enterPipAndStart(intent) ?: context.startActivity(intent)
+                    },
+                )
+            )
+            if (!claimed) {
+                val intent = AmityProductWebViewPageActivity.newIntent(
+                    context = context,
+                    product = product,
+                    ownerPostId = pipOwnerPostId,
+                )
+                pipController?.enterPipAndStart(intent) ?: context.startActivity(intent)
+            }
+        }
+    }
     val disposables = remember { CompositeDisposable() }
 
     // Sync selectedProducts from ViewModel after add/remove operations
@@ -209,6 +326,14 @@ fun AmityVideoPlayerPage(
         }
     }
 
+    // Reports the page the member is on as it changes, so the caller can return to it on dismiss.
+    // Recorded room posts are a single fixed page with no per-page child post, so skip them.
+    LaunchedEffect(pagerState.currentPage, isRecordedRoomPost) {
+        if (!isRecordedRoomPost) {
+            videoPosts.getOrNull(pagerState.currentPage)?.getPostId()?.let(onPageChanged)
+        }
+    }
+
     // Setup player and helper
     LaunchedEffect(exoPlayer) {
         AmityPostVideoPlayerHelper.setup(exoPlayer)
@@ -253,6 +378,29 @@ fun AmityVideoPlayerPage(
         }
     }
 
+    // The floating window's controls are OS-drawn, so taps come back through the Activity
+    // rather than as clicks here. Hand it closures that drive this player, and report state
+    // so the icons stay truthful.
+    DisposableEffect(pipController, exoPlayer, asDialog) {
+        if (!asDialog) {
+            pipController?.setPipControlHandlers(
+                onTogglePlay = {
+                    if (exoPlayer.isPlaying) exoPlayer.pause() else exoPlayer.play()
+                },
+                onSkipBack = { exoPlayer.seekBack() },
+                onSkipForward = { exoPlayer.seekForward() },
+            )
+        }
+        onDispose { pipController?.setPipControlHandlers(null, null, null) }
+    }
+
+    // This host only ever plays recorded content, so the skips are always offered.
+    LaunchedEffect(pipController, asDialog, isPlaying) {
+        if (!asDialog) {
+            pipController?.setPipPlaybackState(isPlaying = isPlaying, canSeek = true)
+        }
+    }
+
     // Setup player listener
     DisposableEffect(exoPlayer) {
         val listener = object : Player.Listener {
@@ -263,6 +411,13 @@ fun AmityVideoPlayerPage(
             override fun onPlaybackStateChanged(playbackState: Int) {
                 playerState = playbackState
                 isPlaying = exoPlayer.isPlaying
+            }
+
+            override fun onPlayerError(error: androidx.media3.common.PlaybackException) {
+                // A dropped connection lands here and leaves the player idle; ExoPlayer never
+                // retries on its own, and a floating window never resumes, so nothing else would
+                // recover it. Flag it for the retry below.
+                needsStallRecovery = true
             }
         }
         exoPlayer.addListener(listener)
@@ -303,18 +458,19 @@ fun AmityVideoPlayerPage(
         }
     }
 
-    Dialog(
-        onDismissRequest = {},
-        properties = DialogProperties(
-            usePlatformDefaultWidth = false
-        ),
-    ) {
+    OptionalDialog(asDialog = asDialog) {
         AmityBaseComponent(
             componentId = "video_player_page",
             needScaffold = true,
+            // See AmityBasePage.showSnackbar — the floating window shows video only.
+            showSnackbar = !isInPipMode,
+            // The video is full-bleed and the overlays inset themselves, so the scaffold must
+            // not consume the system-bar insets — otherwise the close/menu buttons, the mini
+            // player and the product page all draw under the status bar.
+            contentWindowInsets = WindowInsets(0, 0, 0, 0),
         ) {
             Box(
-                modifier = Modifier
+                modifier = modifier
                     .fillMaxSize()
                     .background(amityMediaSurface)
             ) {
@@ -354,8 +510,10 @@ fun AmityVideoPlayerPage(
                     }
                 }
 
-                // Dim scrim behind the controls for readability.
-                if (showControls) {
+
+                // Dim scrim behind the controls for readability. Not drawn while floating:
+                // the PiP window shows video only.
+                if (showControls && !isInPipMode) {
                     Box(
                         modifier = Modifier
                             .matchParentSize()
@@ -366,7 +524,7 @@ fun AmityVideoPlayerPage(
                 // Center transport controls: rewind 10s, play/pause, forward 10s.
                 // Not gated on playback state, so seeking (which briefly buffers)
                 // doesn't make the controls flicker away and back.
-                if (showControls) {
+                if (showControls && !isInPipMode) {
                     Row(
                         modifier = Modifier.align(Alignment.Center),
                         verticalAlignment = Alignment.CenterVertically,
@@ -425,14 +583,38 @@ fun AmityVideoPlayerPage(
                 }
 
                 // Toolbar (top) — shown together with the media controls.
-                if (showControls) ConstraintLayout(
+                if (showControls && !isInPipMode) ConstraintLayout(
                     modifier = Modifier
                         .fillMaxWidth()
                         .statusBarsPadding()
                         .padding(horizontal = 16.dp, vertical = 16.dp)
                         .zIndex(Float.MAX_VALUE)
                 ) {
-                    val (closeBtn, muteBtn, menuBtn) = createRefs()
+                    val (closeBtn, muteBtn, menuBtn, pageCounter) = createRefs()
+
+                    // Which frame of how many. Same style and placement as the image previewer's, so
+                    // the two viewers state position identically. A recorded room is one continuous
+                    // video, so there is no position to state.
+                    if (!isRecordedRoomPost && videoPosts.size > 1) {
+                        Text(
+                            text = "${pagerState.currentPage + 1} / ${videoPosts.size}",
+                            style = AmityTheme.typography.titleLegacy.copy(
+                                fontWeight = FontWeight.Normal,
+                                color = amityColorWhite,
+                            ),
+                            modifier = Modifier
+                                .constrainAs(pageCounter) {
+                                    top.linkTo(closeBtn.top)
+                                    bottom.linkTo(closeBtn.bottom)
+                                    start.linkTo(parent.start)
+                                    end.linkTo(parent.end)
+                                }
+                                .semantics {
+                                    contentDescription =
+                                        "Video ${pagerState.currentPage + 1} of ${videoPosts.size}"
+                                },
+                        )
+                    }
 
                     // Close button
                     AmityMenuButton(
@@ -486,7 +668,7 @@ fun AmityVideoPlayerPage(
                 }
 
                 // Bottom section: Product tag + SeekBar — shown with the media controls.
-                if (showControls) Column(
+                if (showControls && !isInPipMode) Column(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .fillMaxWidth()
@@ -536,6 +718,7 @@ fun AmityVideoPlayerPage(
                             .padding(horizontal = 16.dp)
                     )
                 }
+
             }
 
             // Product tag bottom sheet
@@ -557,7 +740,9 @@ fun AmityVideoPlayerPage(
                             showAddProductBottomSheet = true
                         },
                         onProductClick = { product, location ->
-                            selectedProduct = product
+                            // Close the list first, or it stays stacked over the product page.
+                            showProductTagSheet = false
+                            openProduct(product)
                             roomChildPost?.let {
                                 product.analytics()
                                     .markAsClicked(
@@ -589,7 +774,10 @@ fun AmityVideoPlayerPage(
                         productTags = selectedProducts,
                         renderMode = RenderModeEnum.VIDEO,
                         onDismiss = { showProductTagSheet = false },
-                        onProductClick = { product -> selectedProduct = product },
+                        onProductClick = { product ->
+                            showProductTagSheet = false
+                            openProduct(product)
+                        },
                     )
                 }
             }
@@ -614,6 +802,8 @@ fun AmityVideoPlayerPage(
                 )
             }
 
+            // Only reachable as a Dialog (regular video posts). The Activity-hosted recorded
+            // livestream opens the product as its own page instead — see openProduct.
             selectedProduct?.let { product ->
                 AmityProductWebViewBottomSheet(
                     product = product,
@@ -641,6 +831,25 @@ fun AmityVideoPlayerPage(
                 onDismiss()
             }
         }
+    }
+}
+
+/**
+ * Wraps [content] in a full-screen [Dialog] when [asDialog] is true (the default, used for
+ * video posts), or renders it directly when false so a host Activity owns the window and can
+ * enter Picture-in-Picture (recorded livestream).
+ */
+@Composable
+private fun OptionalDialog(asDialog: Boolean, content: @Composable () -> Unit) {
+    if (asDialog) {
+        Dialog(
+            onDismissRequest = {},
+            properties = DialogProperties(usePlatformDefaultWidth = false),
+        ) {
+            content()
+        }
+    } else {
+        content()
     }
 }
 

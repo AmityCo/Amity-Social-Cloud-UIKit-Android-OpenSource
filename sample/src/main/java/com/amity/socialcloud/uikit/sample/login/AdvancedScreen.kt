@@ -215,6 +215,13 @@ fun AdvancedScreen(
                     checked = config.socialCommunityCreationButtonVisible,
                     onCheckedChange = { viewModel.updateSocialCommunityCreation(it) },
                 )
+                RowDivider()
+                ToggleRow(
+                    label = "In-app PiP Testing",
+                    subtitle = "Click product tag on livestream to force to open home screen",
+                    checked = config.inAppPipTesting,
+                    onCheckedChange = { viewModel.updateInAppPipTesting(it) },
+                )
             }
 
             // APPEARANCE section

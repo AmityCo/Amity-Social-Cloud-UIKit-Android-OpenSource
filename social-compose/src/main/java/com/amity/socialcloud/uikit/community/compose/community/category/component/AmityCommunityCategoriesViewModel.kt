@@ -55,7 +55,7 @@ class AmityCommunityCategoriesViewModel : AmityBaseViewModel() {
                 loadState: LoadState,
                 itemCount: Int,
             ): CategoryListState {
-                return if (loadState is LoadState.Loading) {
+                return if (loadState is LoadState.Loading && itemCount == 0) {
                     LOADING
                 } else if (loadState is LoadState.NotLoading && itemCount == 0 && loadState.endOfPaginationReached) {
                     EMPTY

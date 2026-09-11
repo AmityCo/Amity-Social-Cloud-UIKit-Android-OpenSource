@@ -8,6 +8,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -34,6 +38,7 @@ fun AmityTrendingCommunitiesComponent(
     modifier: Modifier = Modifier,
     pageScope: AmityComposePageScope? = null,
     onStateChanged: (AmityTrendingCommunitiesViewModel.CommunityListState) -> Unit = {},
+    refreshKey: Int = 0,
 ) {
     val context = LocalContext.current
     val behavior by lazy {
@@ -47,12 +52,23 @@ fun AmityTrendingCommunitiesComponent(
         viewModel<AmityTrendingCommunitiesViewModel>(viewModelStoreOwner = viewModelStoreOwner)
 
     // Remember the Flow of communities to prevent recreating on recomposition
-    val communitiesFlow = remember {
+    var lastCommunities by remember { mutableStateOf(emptyList<AmityCommunity>()) }
+    val communitiesFlow = remember(refreshKey) {
         viewModel.getTrendingCommunities()
     }
 
-    val communities by communitiesFlow.collectAsState(initial = emptyList())
+    val communities by communitiesFlow.collectAsState(initial = lastCommunities)
+    LaunchedEffect(communities) {
+        if (communities.isNotEmpty()) {
+            lastCommunities = communities
+        }
+    }
     val communityListState by viewModel.communityListState.collectAsState()
+    val resolvedListState = if (communities.isNotEmpty()) {
+        AmityTrendingCommunitiesViewModel.CommunityListState.SUCCESS
+    } else {
+        communityListState
+    }
 
     val joinRequests by viewModel.joinRequestList.collectAsState()
 
@@ -63,7 +79,7 @@ fun AmityTrendingCommunitiesComponent(
         Column(
             modifier = modifier.fillMaxWidth()
         ) {
-            when (communityListState) {
+            when (resolvedListState) {
                 AmityTrendingCommunitiesViewModel.CommunityListState.SUCCESS -> {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,

@@ -276,6 +276,25 @@
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".livestream.room.view.AmityRoomPlayerPageActivity"
+            android:configChanges="uiMode|screenSize|smallestScreenSize|screenLayout|orientation"
+            android:screenOrientation="portrait"
+            android:supportsPictureInPicture="true"
+            android:theme="@style/AmitySocialTheme"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".post.detail.elements.AmityVideoPlayerPageActivity"
+            android:configChanges="uiMode|screenSize|smallestScreenSize|screenLayout|orientation"
+            android:screenOrientation="portrait"
+            android:supportsPictureInPicture="true"
+            android:theme="@style/AmitySocialTheme"
+            android:windowSoftInputMode="adjustResize" />
+        <!--
+            Opened by the livestream players instead of a bottom sheet, so the product page is a
+            real navigation and the stream can float over it in system PiP. Deliberately NOT
+            picture-in-picture capable itself: it is the destination, not the content.
+        -->
+        <activity
+            android:name=".livestream.room.shared.AmityProductWebViewPageActivity"
             android:configChanges="uiMode"
             android:screenOrientation="portrait"
             android:theme="@style/AmitySocialTheme"

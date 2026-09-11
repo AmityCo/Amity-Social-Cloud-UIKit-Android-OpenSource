@@ -10,6 +10,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.amity.socialcloud.uikit.community.compose.clip.view.util.SharedClipFeedStore
+import com.amity.socialcloud.uikit.community.compose.livestream.room.util.AmityPipSessionRegistry
 
 class AmityClipFeedPageActivity : AppCompatActivity() {
 
@@ -17,6 +18,11 @@ class AmityClipFeedPageActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()
+
+        // Another video surface is taking over, and this one is not a PiP host — end any
+        // floating livestream so two things never play at once.
+        AmityPipSessionRegistry.endSession()
+
 
         with(window) {
             requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)

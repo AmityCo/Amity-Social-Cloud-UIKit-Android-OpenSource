@@ -157,7 +157,9 @@ fun AmityCommunityInviteMemberPage(
                     when (loadState) {
                         AmityCommunityInviteMemberPageViewModel.UserListState.EMPTY -> {
                             item {
-                                if (keyword.isNotBlank() && keyword.length < viewModel.minKeywordLength) {
+                                if (keyword.isEmpty()) {
+                                    AmityEmptyUserListComponent(modifier)
+                                } else if (keyword.length < viewModel.minKeywordLength) {
                                     AmitySearchPlaceholderComponent(modifier)
                                 } else {
                                     AmityEmptySearchResultComponent(modifier)
@@ -167,7 +169,7 @@ fun AmityCommunityInviteMemberPage(
 
                         AmityCommunityInviteMemberPageViewModel.UserListState.LOADING -> {
                             item {
-                                if (keyword.isNotBlank() && keyword.length < viewModel.minKeywordLength) {
+                                if (keyword.isNotEmpty() && keyword.length < viewModel.minKeywordLength) {
                                     AmitySearchPlaceholderComponent(modifier)
                                 } else {
                                     AmityUserListShimmer(

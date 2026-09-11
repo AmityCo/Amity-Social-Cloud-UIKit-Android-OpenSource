@@ -68,6 +68,7 @@ import coil3.compose.rememberAsyncImagePainter
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.uikit.chat.compose.AmityChatBehaviorHelper
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadataGetter
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionee
 import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
@@ -78,7 +79,6 @@ import kotlinx.coroutines.withContext
 import com.amity.socialcloud.uikit.chat.compose.live.elements.AmityMessageAvatarView
 import com.amity.socialcloud.uikit.chat.compose.message.element.reaction.AmityMessageReactionPicker
 import com.amity.socialcloud.uikit.chat.compose.message.element.reaction.AmityMessageReactionPreview
-import com.amity.socialcloud.uikit.chat.compose.live.elements.AmityAvatarFullScreenDialog
 import com.amity.socialcloud.uikit.common.extionsions.extractUrls
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
@@ -170,7 +170,6 @@ fun AmityMessageBubble(
     var showReactionPicker by remember { mutableStateOf(false) }
     var menuExpanded by remember { mutableStateOf(false) }
     var showFailedActionSheet by remember { mutableStateOf(false) }
-    var showAvatarFullScreen by remember { mutableStateOf(false) }
     var isCancelledUpload by remember { mutableStateOf(false) }
     var showParentMediaPreview by remember { mutableStateOf(false) }
     var parentPreviewMedia by remember { mutableStateOf<Any?>(null) }
@@ -259,7 +258,14 @@ fun AmityMessageBubble(
                 modifier = Modifier
                     .size(if (isSenderModerator) 36.dp else 32.dp)
                     .then(if (hasReactions) Modifier.offset(y = (-16).dp) else Modifier)
-                    .clickable { showAvatarFullScreen = true },
+                    .clickable {
+                        val creator = message.getCreator()
+                        AmityChatBehaviorHelper.messageBubbleBehavior.onAvatarTap(
+                            context = context,
+                            userId = creator?.getUserId().orEmpty(),
+                            avatarUrl = creator?.resolvedAvatarUrl(AmityImage.Size.LARGE),
+                        )
+                    },
             ) {
                 AmityMessageAvatarView(
                     pageScope = pageScope,
@@ -323,7 +329,10 @@ fun AmityMessageBubble(
                                     AmityChatMessageFullTextPageActivity.newIntent(
                                         context,
                                         repliedMessageTitle,
-                                        data.getText()
+                                        data.getText(),
+                                        parent.getMetadata()?.toString(),
+                                        parent.getMentionees()
+                                            .mapNotNull { (it as? AmityMentionee.USER)?.getUserId() },
                                     )
                                 )
                             }
@@ -467,7 +476,14 @@ fun AmityMessageBubble(
                                 }
                             },
                             onSeeMore = onSeeMore ?: { text, displayName -> context.startActivity(
-                                AmityChatMessageFullTextPageActivity.newIntent(context, displayName, text)
+                                AmityChatMessageFullTextPageActivity.newIntent(
+                                    context,
+                                    displayName,
+                                    text,
+                                    message.getMetadata()?.toString(),
+                                    message.getMentionees()
+                                        .mapNotNull { (it as? AmityMentionee.USER)?.getUserId() },
+                                )
                             )},
                             senderDisplayName = senderDisplayName,
                             bubbleColors = bubbleColors,
@@ -569,14 +585,6 @@ fun AmityMessageBubble(
                 }
             } else null,
             onDismiss = { showFailedActionSheet = false },
-        )
-    }
-
-    val avatarUrl = message.getCreator()?.resolvedAvatarUrl(AmityImage.Size.LARGE)
-    if (showAvatarFullScreen && avatarUrl != null) {
-        AmityAvatarFullScreenDialog(
-            avatarUrl = avatarUrl,
-            onDismiss = { showAvatarFullScreen = false },
         )
     }
 
@@ -792,6 +800,12 @@ fun AmityChatTextContent(
                         start = start,
                         end = end,
                     )
+                    addStringAnnotation(
+                        tag = "MENTION",
+                        annotation = mentionItem.getUserId(),
+                        start = start,
+                        end = end,
+                    )
                 }
             }
 
@@ -839,12 +853,25 @@ fun AmityChatTextContent(
                         onTap = { offset ->
                             textLayoutResult?.let { layout ->
                                 val charOffset = layout.getOffsetForPosition(offset)
-                                annotatedString.getStringAnnotations("URL", charOffset, charOffset)
-                                    .firstOrNull()?.let { annotation ->
-                                        val url = AmityLinkPreviewFetcher.normalizeUrl(annotation.item)
+                                val mentionedUserId = annotatedString
+                                    .getStringAnnotations("MENTION", charOffset, charOffset)
+                                    .firstOrNull()?.item
+                                val linkUrl = annotatedString
+                                    .getStringAnnotations("URL", charOffset, charOffset)
+                                    .firstOrNull()?.item
+
+                                when {
+                                    mentionedUserId != null -> {
+                                        AmityChatBehaviorHelper.messageBubbleBehavior
+                                            .onMentionUserTap(context, mentionedUserId)
+                                    }
+
+                                    linkUrl != null -> {
+                                        val url = AmityLinkPreviewFetcher.normalizeUrl(linkUrl)
                                         val intent = Intent(Intent.ACTION_VIEW, AndroidUri.parse(url))
                                         context.startActivity(intent)
                                     }
+                                }
                             }
                         },
                         onLongPress = { onLongClick() },

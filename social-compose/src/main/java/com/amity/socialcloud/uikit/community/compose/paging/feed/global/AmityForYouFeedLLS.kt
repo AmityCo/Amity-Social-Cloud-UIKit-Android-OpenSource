@@ -25,6 +25,7 @@ fun LazyListScope.amityForYouFeedLLS(
     // PDT-4735: every other feed forwards clip taps; this one did not, so the play button on a
     // clip in the For You feed did nothing.
     onClipClick: (AmityPost) -> Unit = {},
+    refreshKey: Int = 0,
 ) {
     val createdPosts = AmityPostComposerHelper.getCreatedPosts()
     val pinnedPostIds = pinnedPosts.value.pinnedPostIds()
@@ -45,7 +46,8 @@ fun LazyListScope.amityForYouFeedLLS(
             style = AmityPostContentComponentStyle.FEED,
             hideMenuButton = false,
             onClipClick = { childPost -> onClipClick(childPost) },
-            onTapAction = { onClick(post) }
+            onTapAction = { onClick(post) },
+            refreshKey = refreshKey,
         )
         AmityNewsFeedDivider()
     }
@@ -73,7 +75,8 @@ fun LazyListScope.amityForYouFeedLLS(
                     style = AmityPostContentComponentStyle.FEED,
                     hideMenuButton = false,
                     onClipClick = { childPost -> onClipClick(childPost) },
-                    onTapAction = { onClick(post) }
+                    onTapAction = { onClick(post) },
+                    refreshKey = refreshKey,
                 )
                 AmityNewsFeedDivider()
             }

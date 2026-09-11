@@ -23,6 +23,7 @@ import com.amity.socialcloud.sdk.model.core.product.AmityProduct
 import com.amity.socialcloud.sdk.model.core.producttag.AmityProductTag
 import com.amity.socialcloud.sdk.model.core.reaction.AmityLiveReactionReferenceType
 import com.amity.socialcloud.sdk.model.core.reaction.live.AmityLiveReaction
+import com.amity.socialcloud.sdk.model.core.settings.AmityLiveViewerCountConfig
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.sdk.model.video.room.AmityRoom
@@ -95,6 +96,7 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
         observeRoom()
         observeRecordedUrls()
         fetchProductCatalogueSettings()
+        fetchLiveViewerCountConfig()
     }
 
     private fun observeRoom() {
@@ -775,20 +777,50 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
 
     fun setIsStreamerMode(isStreamerMode: Boolean) {
         viewModelScope.launch {
-            _uiState.update { currentState ->
-                val leavingStreamerMode = currentState.isStreamerMode && !isStreamerMode
-                if (leavingStreamerMode) {
-                    Log.d(TAG, "setIsStreamerMode: leaving streamer mode, dropping stale room + token")
-                    // If switching from streamer to viewer, change observing online user count interval to 20s
-                    currentState
-                        .room
-                        ?.getRoomId()
-                        ?.let { roomId ->
-                            observeOnlineUsersCount(
-                                roomId = roomId,
-                            )
-                        }
+            // Read once and act before the update. MutableStateFlow.update may re-run its lambda
+            // under contention, so side effects belong out here, not inside it.
+            val previousState = _uiState.value
+            val leavingStreamerMode = previousState.isStreamerMode && !isStreamerMode
+
+            if (leavingStreamerMode) {
+                Log.d(TAG, "setIsStreamerMode: leaving streamer mode, dropping stale room + token")
+
+                // Disconnect BEFORE the state flip below drops the reference and takes
+                // AmityStreamerView out of composition.
+                //
+                // Nothing else disconnects on this path: the SDK's leaveRoom(roomId) is a plain
+                // REST call and never touches LiveKit, and RoomScope only disconnects + releases
+                // once AmityStreamerView leaves composition -- which the same state flip triggers.
+                // Releasing while the RTC threads still hold MediaStreamTrack wrappers frees the
+                // native peers underneath them, and the next setEnabled() on one is a
+                // use-after-free: SIGSEGV in nativeSetEnabled on LK_RTC_THREAD_*, which kills the
+                // activity and looks like an unexplained pop back to the community profile.
+                //
+                // Disconnecting first lets LiveKit unpublish and quiesce those threads in its own
+                // order before the release lands. Deliberately no release() here -- RoomScope owns
+                // the Room's lifecycle and releasing it twice is worse than not releasing it.
+                previousState.liveKitRoom?.let { room ->
+                    Log.d(TAG, "setIsStreamerMode: disconnecting LiveKit room state=${room.state}")
+                    try {
+                        room.disconnect()
+                    } catch (disconnectError: Throwable) {
+                        // disconnect() throws on an already-torn-down room; nothing left to do.
+                        Log.w(TAG, "setIsStreamerMode: LiveKit disconnect errored", disconnectError)
+                    }
                 }
+
+                // If switching from streamer to viewer, change observing online user count interval to 20s
+                previousState
+                    .room
+                    ?.getRoomId()
+                    ?.let { roomId ->
+                        observeOnlineUsersCount(
+                            roomId = roomId,
+                        )
+                    }
+            }
+
+            _uiState.update { currentState ->
                 currentState.copy(
                     isStreamerMode = isStreamerMode,
                     // Drop the released LiveKit room and stale co-host token when leaving the
@@ -1018,6 +1050,38 @@ class AmityRoomPlayerViewModel(private val post: AmityPost) : AmityBaseViewModel
 
     }
 
+    /**
+     * Reads the viewer-count display config once per entry to the page.
+     *
+     * There is deliberately no observer: an admin change reaches a watching viewer on their
+     * next join, not mid-stream. A failed read resolves without a config, which the pill
+     * treats as today's behaviour rather than as a reason to hide the count.
+     */
+    fun fetchLiveViewerCountConfig() {
+        AmityCoreClient.getLiveViewerCountConfig()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSuccess { config ->
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        liveViewerCountConfig = config,
+                        isLiveViewerCountConfigResolved = true,
+                    )
+                }
+            }
+            .doOnError {
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        liveViewerCountConfig = null,
+                        isLiveViewerCountConfigResolved = true,
+                    )
+                }
+            }
+            .onErrorComplete()
+            .subscribe()
+            .let(::addDisposable)
+    }
+
     fun fetchProductCatalogueSettings(
         onEnabledAction: (() -> Unit)? = null,
         onDisabledAction: (() -> Unit)? = null
@@ -1197,11 +1261,25 @@ data class RoomPlayerState(
     val cohostUser: AmityUser? = null,
     val viewerCount: Int? = null,
     val cameraPosition: CameraPosition = CameraPosition.FRONT,
-    val isProductCatalogueEnabled: Boolean = false
+    val isProductCatalogueEnabled: Boolean = false,
+    val liveViewerCountConfig: AmityLiveViewerCountConfig? = null,
+    val isLiveViewerCountConfigResolved: Boolean = false,
 ) {
 
     fun getRoomPost() : AmityPost? {
         return post.getChildren().firstOrNull{ it.getData() is AmityPost.Data.ROOM }
+    }
+
+    /**
+     * Hosts and co-hosts are exempt from every viewer-count display mode. Streamer mode covers
+     * the broadcaster before the room reports them as a participant.
+     */
+    fun isCurrentUserHostOrCoHost(): Boolean {
+        if (isStreamerMode) {
+            return true
+        }
+        val currentUserId = AmityCoreClient.getUserId()
+        return currentUserId == hostUserId || currentUserId == cohostUserId
     }
 
     fun isCoHostCanManageProducts() : Boolean {

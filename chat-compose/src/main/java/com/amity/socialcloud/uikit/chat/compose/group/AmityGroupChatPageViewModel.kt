@@ -27,6 +27,7 @@ import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.core.error.AmityException
 import com.amity.socialcloud.sdk.model.core.flag.AmityContentFlagReason
 import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
+import com.amity.socialcloud.sdk.model.core.search.AmitySearchUserBy
 import com.amity.socialcloud.uikit.chat.compose.live.mention.AmityMentionSuggestion
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
@@ -186,6 +187,7 @@ class AmityGroupChatPageViewModel(
             .membership(channelId)
             .searchMembers(keyword)
             .membershipFilter(listOf(AmityChannelMembership.MEMBER, AmityChannelMembership.MUTED))
+            .searchBy(listOf(AmitySearchUserBy.DISPLAY_NAME))
             .build()
             .query()
             .debounce(500, TimeUnit.MILLISECONDS)

@@ -11,7 +11,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -65,7 +68,10 @@ fun AmityGlobalFeedComponent(
     val pullRefreshState = rememberPullToRefreshState()
     val isRefreshing by viewModel.isGlobalFeedRefreshing.collectAsState()
 
+    var refreshKey by remember { mutableIntStateOf(0) }
+
     val onRefresh = {
+        refreshKey++
         viewModel.setGlobalFeedRefreshing()
         posts.refresh()
         viewModel.clearCreatedPostsForRefresh()
@@ -120,7 +126,8 @@ fun AmityGlobalFeedComponent(
                     },
                     onExploreCommunityClicked = {
                         onExploreRequested()
-                    }
+                    },
+                    refreshKey = refreshKey,
                 )
             }
         }

@@ -791,7 +791,7 @@
       "image": "closeCircleButton",
       "background_color": "#80000000"
     },
-    "live_stream_page/*/*": {
+    "livestream_player_page/*/*": {
       "theme": {
         "light": {
           "primary_color": "#1054DE",
@@ -827,7 +827,7 @@
         }
       }
     },
-    "live_stream_page/manage_product_tag_list/*": {
+    "livestream_player_page/manage_product_tag_list/*": {
       "theme": {
         "light": {
           "primary_color": "#1054DE",
@@ -861,7 +861,7 @@
         }
       }
     },
-    "live_stream_page/product_tag_selection/*": {
+    "livestream_player_page/product_tag_selection/*": {
       "theme": {
         "light": {
           "primary_color": "#1054DE",
@@ -895,7 +895,8 @@
         }
       }
     },
-    "live_stream_page/*/livestream_pinned_product": {
+    "livestream_player_page/*/live_viewer_count_element": {},
+    "livestream_player_page/*/livestream_pinned_product": {
       "image": "closeCircleButton",
       "theme": {
         "light": {

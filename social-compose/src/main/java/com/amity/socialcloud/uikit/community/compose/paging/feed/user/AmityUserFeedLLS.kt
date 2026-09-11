@@ -34,6 +34,7 @@ fun LazyListScope.amityUserFeedLLS(
     postListState: PostListState,
     onClipClick: (childPost: AmityPost) -> Unit = {},
     isBlockedByMe: Boolean,
+    refreshKey: Int = 0,
 ) {
     val behavior by lazy {
         AmitySocialBehaviorHelper.userFeedComponentBehavior
@@ -140,6 +141,7 @@ fun LazyListScope.amityUserFeedLLS(
                                     autoFocusCommentInput = true,
                                 )
                             },
+                            refreshKey = refreshKey,
                         )
                         AmityNewsFeedDivider()
                     }

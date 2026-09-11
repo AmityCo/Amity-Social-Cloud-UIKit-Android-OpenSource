@@ -164,7 +164,10 @@ fun AmityCommunityProfilePage(
     val allEvents =
         remember(communityId) { viewModel.getCommunityEvents() }.collectAsLazyPagingItems()
 
+    var refreshKey by remember { mutableIntStateOf(0) }
+
     val onRefresh: () -> Unit = {
+        refreshKey++
         viewModel.refresh()
         // Refresh event feeds
         liveEvents.refresh()
@@ -445,12 +448,13 @@ fun AmityCommunityProfilePage(
                                                 AmityPostCategory.ANNOUNCEMENT
                                             }
                                         )
-                                    }
+                                    },
+                                    refreshKey = refreshKey,
                                 )
                             }
                             when (selectedTabIndex) {
                                 0 -> {
-                                    if (communityPosts.loadState.refresh == LoadState.Loading) {
+                                    if (communityPosts.loadState.refresh == LoadState.Loading && communityPosts.itemCount == 0) {
                                         repeat(4) {
                                             item {
                                                 AmityPostShimmer()
@@ -486,7 +490,8 @@ fun AmityCommunityProfilePage(
                                                     category = category,
                                                     autoFocusCommentInput = true,
                                                 )
-                                            }
+                                            },
+                                            refreshKey = refreshKey,
                                         )
                                     }
                                 }
@@ -506,7 +511,8 @@ fun AmityCommunityProfilePage(
                                                 postId = it.getPostId(),
                                                 category = AmityPostCategory.PIN
                                             )
-                                        }
+                                        },
+                                        refreshKey = refreshKey,
                                     )
                                 }
 

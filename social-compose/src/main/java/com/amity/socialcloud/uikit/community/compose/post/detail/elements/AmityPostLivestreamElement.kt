@@ -502,7 +502,6 @@ fun AmityChildRoomPostElement(
         post.getData() as? AmityPost.Data.TEXT
     }
 
-    var showVideoPlayerDialog by remember { mutableStateOf(false) }
     var showProductTagSheet by remember { mutableStateOf(false) }
     var selectedProduct by remember { mutableStateOf<AmityProduct?>(null) }
     val behavior = AmitySocialBehaviorHelper.globalBehavior
@@ -517,18 +516,6 @@ fun AmityChildRoomPostElement(
     var roomPostProducts by remember(post.getPostId(), post.getUpdatedAt()) {
         mutableStateOf(
             post.getChildren().find { it.getData() is AmityPost.Data.ROOM }?.getProducts() ?: emptyList()
-        )
-    }
-
-    // Show video player dialog for recorded livestream
-    if (showVideoPlayerDialog) {
-        AmityVideoPlayerPage(
-            childPosts = post.getChildren(),
-            selectedFileId = post.getChildren().firstOrNull()?.getPostId() ?: "",
-            recordedUrls = recordedUrls,
-            onDismiss = { showVideoPlayerDialog = false },
-            showMenuButton = true,
-            onProductsUpdated = { roomPostProducts = it }
         )
     }
 
@@ -704,7 +691,15 @@ fun AmityChildRoomPostElement(
                         .clickable {
                             if (room != null && roomStatus != AmityRoomStatus.IDLE) {
                                 if (roomStatus == AmityRoomStatus.RECORDED) {
-                                    showVideoPlayerDialog = true
+                                    // Recorded livestream now opens in its own Activity so it can
+                                    // enter Picture-in-Picture (video posts still use the Dialog).
+                                    context.startActivity(
+                                        AmityVideoPlayerPageActivity.newIntent(
+                                            context = context,
+                                            post = post,
+                                            recordedUrls = recordedUrls,
+                                        )
+                                    )
                                 } else {
                                     AmityRoomPlayerPageActivity
                                         .newIntent(context = context, post = post)

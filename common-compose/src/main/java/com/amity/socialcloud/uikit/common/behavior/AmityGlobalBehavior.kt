@@ -16,7 +16,27 @@ open class AmityGlobalBehavior : AmityBaseBehavior()  {
         val pageContext: android.content.Context,
         val activityLauncher: ActivityResultLauncher<Intent>? = null,
         val product: AmityProduct? = null,
-    ) : AmityBaseBehaviorContext(pageContext, activityLauncher)
+        val communityId: String? = null,
+        // Set by UIKit when the tap comes from a livestream player that can float. Do not read
+        // it directly — call [startActivityWithPictureInPicture]. Null elsewhere, so that helper
+        // simply starts the Activity.
+        private val pipNavigator: ((Intent) -> Unit)? = null,
+    ) : AmityBaseBehaviorContext(pageContext, activityLauncher) {
+
+        /**
+         * Navigate from a livestream product tap **and keep the stream floating** over the
+         * destination. Call this instead of [pageContext].startActivity: on Android system
+         * Picture-in-Picture must be entered before the player loses the foreground and the
+         * destination must land in its own task, and UIKit owns that ordering. Passing the
+         * Intent here lets UIKit enter PiP first, then launch it once the window is pinned.
+         *
+         * Outside a floating-capable player this is a plain `startActivity`, so it is always safe
+         * to call. Do not add launch flags — UIKit adds the task flags PiP needs.
+         */
+        fun startActivityWithPictureInPicture(intent: Intent) {
+            pipNavigator?.invoke(intent) ?: pageContext.startActivity(intent)
+        }
+    }
 
     open fun handleVisitorUserAction() {
         AmityUIKitSnackbar.publishSnackbarMessage(
@@ -54,6 +74,20 @@ open class AmityGlobalBehavior : AmityBaseBehavior()  {
         return false
     }
 
+    /**
+     * Called when a viewer taps a tagged product in a livestream player.
+     *
+     * Return `true` to claim the tap — you have handled the navigation and UIKit does nothing
+     * further. Return `false` (the default) to get UIKit's built-in product web view, which
+     * leaves the stream playing in a floating window over it. The default does **not** navigate.
+     *
+     * To keep the stream floating over your destination, navigate with
+     * [Context.startActivityWithPictureInPicture] rather than starting the Activity yourself —
+     * UIKit enters PiP first, then launches your Intent into its own task. Starting the Activity
+     * directly enters PiP too late (the window never opens) and, with the wrong flags, leaves the
+     * destination with no back stack so Back exits the app. [context] carries the tapped
+     * [AmityProduct] and, for a community livestream, its [Context.communityId].
+     */
     open fun onLivestreamProductTagClick(context: AmityGlobalBehavior.Context): Boolean {
         return false
     }

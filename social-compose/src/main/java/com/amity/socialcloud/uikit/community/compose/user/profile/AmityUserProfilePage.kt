@@ -144,7 +144,11 @@ fun AmityUserProfilePage(
     var targetUser by remember(state) { mutableStateOf<AmityUser?>(null) }
 
     var isHeaderSticky by remember { mutableStateOf(false) }
-    val onRefresh = { viewModel.refresh() }
+    var refreshKey by remember { mutableIntStateOf(0) }
+    val onRefresh = {
+        refreshKey++
+        viewModel.refresh()
+    }
     var showAvatarPopupDialog by remember { mutableStateOf(false) }
 
     var showMenuSheet by remember { mutableStateOf(false) }
@@ -397,6 +401,7 @@ fun AmityUserProfilePage(
                             },
                             postListState = postListState,
                             isBlockedByMe = isBlockedByMe,
+                            refreshKey = refreshKey,
                         )
                     }
 

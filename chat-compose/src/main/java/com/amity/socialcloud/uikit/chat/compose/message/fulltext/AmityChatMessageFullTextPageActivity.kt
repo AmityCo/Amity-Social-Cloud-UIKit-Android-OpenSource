@@ -18,6 +18,8 @@ class AmityChatMessageFullTextPageActivity : AppCompatActivity() {
 
         val displayName = intent.getStringExtra(EXTRA_DISPLAY_NAME) ?: ""
         val text = intent.getStringExtra(EXTRA_TEXT) ?: return finish()
+        val mentionMetadata = intent.getStringExtra(EXTRA_MENTION_METADATA)
+        val mentionedUserIds = intent.getStringArrayListExtra(EXTRA_MENTIONED_USER_IDS).orEmpty()
 
         setContent {
             AmityChatMessageFullTextPage(
@@ -26,6 +28,8 @@ class AmityChatMessageFullTextPageActivity : AppCompatActivity() {
                     .systemBarsPadding(),
                 displayName = displayName,
                 text = text,
+                mentionMetadata = mentionMetadata,
+                mentionedUserIds = mentionedUserIds,
                 onBack = { finish() },
             )
         }
@@ -34,11 +38,21 @@ class AmityChatMessageFullTextPageActivity : AppCompatActivity() {
     companion object {
         private const val EXTRA_DISPLAY_NAME = "EXTRA_DISPLAY_NAME"
         private const val EXTRA_TEXT = "EXTRA_TEXT"
+        private const val EXTRA_MENTION_METADATA = "EXTRA_MENTION_METADATA"
+        private const val EXTRA_MENTIONED_USER_IDS = "EXTRA_MENTIONED_USER_IDS"
 
-        fun newIntent(context: Context, displayName: String, text: String): Intent {
+        fun newIntent(
+            context: Context,
+            displayName: String,
+            text: String,
+            mentionMetadata: String? = null,
+            mentionedUserIds: List<String> = emptyList(),
+        ): Intent {
             return Intent(context, AmityChatMessageFullTextPageActivity::class.java).apply {
                 putExtra(EXTRA_DISPLAY_NAME, displayName)
                 putExtra(EXTRA_TEXT, text)
+                putExtra(EXTRA_MENTION_METADATA, mentionMetadata)
+                putStringArrayListExtra(EXTRA_MENTIONED_USER_IDS, ArrayList(mentionedUserIds))
             }
         }
     }

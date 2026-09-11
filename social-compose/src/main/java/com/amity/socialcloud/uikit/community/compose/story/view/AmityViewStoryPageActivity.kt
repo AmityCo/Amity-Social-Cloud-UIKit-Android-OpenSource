@@ -8,12 +8,18 @@ import android.view.Gravity
 import android.view.Window
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import com.amity.socialcloud.uikit.community.compose.livestream.room.util.AmityPipSessionRegistry
 
 
 class AmityViewStoryPageActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Another video surface is taking over, and this one is not a PiP host — end any
+        // floating livestream so two things never play at once.
+        AmityPipSessionRegistry.endSession()
+
 
         with(window) {
             requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)

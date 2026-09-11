@@ -13,6 +13,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlin.collections.orEmpty
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
+import com.amity.socialcloud.uikit.common.eventbus.NetworkConnectionEventBus
+import com.amity.socialcloud.sdk.core.session.model.NetworkConnectionEvent
+import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 
 class AmityVideoPlayerViewModel : AmityBaseViewModel() {
 
@@ -115,5 +120,17 @@ class AmityVideoPlayerViewModel : AmityBaseViewModel() {
                 )
             }
             .subscribe()
+    }
+
+    /**
+     * Device/session connectivity, so the page can retry a stalled recording once the connection
+     * is back. Same source the room player observes — a process-wide bus, not room state.
+     */
+    fun getNetworkConnectionStateFlow(): Flow<NetworkConnectionEvent> {
+        return NetworkConnectionEventBus.observe()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .asFlow()
+            .catch { }
     }
 }

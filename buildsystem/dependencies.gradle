@@ -15,12 +15,12 @@ ext {
     amityCoroutinesTestVersion = "1.7.0"
     amitySDKJitpackDependency = 'com.github.AmityCo.Amity-Social-Cloud-SDK-Android'
     amitySDKMavenDependency = 'co.amity.android'
-    amityMessagingSdkVersion = '7.25.0'
+    amityMessagingSdkVersion = '7.26.0'
     // Single source of truth for the UIKit's own version. The library modules only ever carried
     // the placeholder versionName "1.0" from submodule.gradle, so the library could not report
     // what it was; the real number lived solely in the sample app. Both read this now, and a
     // release bump is one edit here.
-    amityUIKitVersion = '4.25.1'
+    amityUIKitVersion = '4.26.0'
     amitySDKDependency = amitySDKMavenDependency
     amityRxLifeCycleVersion = '1.1.2-beta01'
     amityJacocoVersion = '0.8.5'

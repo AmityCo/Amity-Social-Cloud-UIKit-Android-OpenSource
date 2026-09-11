@@ -28,6 +28,7 @@ fun LazyListScope.amityGlobalFeedLLS(
     onClipClick: (AmityPost) -> Unit = {},
     onCreateCommunityClicked: () -> Unit,
     onExploreCommunityClicked: () -> Unit,
+    refreshKey: Int = 0,
 ) {
     val createdPosts = AmityPostComposerHelper.getCreatedPosts()
     val pinnedPostIds = pinnedPosts.value.pinnedPostIds()
@@ -52,7 +53,8 @@ fun LazyListScope.amityGlobalFeedLLS(
             hideMenuButton = false,
             onTapAction = {
                 onClick(post)
-            }
+            },
+            refreshKey = refreshKey,
         )
         AmityNewsFeedDivider()
     }
@@ -81,7 +83,8 @@ fun LazyListScope.amityGlobalFeedLLS(
                             },
                             onClipClick = { childPost ->
                                 onClipClick(childPost)
-                            }
+                            },
+                            refreshKey = refreshKey,
                         )
                         AmityNewsFeedDivider()
                     }

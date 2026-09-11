@@ -38,6 +38,8 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.media3.common.Player
+import androidx.media3.common.VideoSize
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import coil3.compose.AsyncImagePainter
@@ -256,10 +258,44 @@ fun AmityProfileVideoFeedItemPreviewDialog(
                     .fillMaxSize()
                     .background(amityMediaSurface)
             ) {
-                AmityPostMediaVideoPlayer(
-                    exoPlayer = exoPlayer,
-                    isVisible = true,
-                )
+                var videoAspectRatio by remember { mutableStateOf<Float?>(null) }
+                DisposableEffect(exoPlayer) {
+                    val listener = object : Player.Listener {
+                        override fun onVideoSizeChanged(videoSize: VideoSize) {
+                            if (videoSize.width > 0 && videoSize.height > 0) {
+                                videoAspectRatio =
+                                    videoSize.width * videoSize.pixelWidthHeightRatio / videoSize.height
+                            }
+                        }
+                    }
+                    exoPlayer.addListener(listener)
+                    onDispose { exoPlayer.removeListener(listener) }
+                }
+
+                Box(
+                    modifier = if (videoAspectRatio != null) {
+                        Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(videoAspectRatio!!)
+                            .align(Alignment.Center)
+                    } else {
+                        Modifier.fillMaxSize()
+                    }
+                ) {
+                    AmityPostMediaVideoPlayer(
+                        exoPlayer = exoPlayer,
+                        isVisible = true,
+                    )
+
+                    if (productTagCount > 0) {
+                        AmityProductTagBadge(
+                            count = productTagCount,
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .padding(end = 12.dp, bottom = 12.dp)
+                        )
+                    }
+                }
 
                 ConstraintLayout(
                     modifier = modifier
@@ -301,15 +337,6 @@ fun AmityProfileVideoFeedItemPreviewDialog(
                     }
                 } // closes ConstraintLayout
 
-            // Product Tag Badge at bottom-right of screen
-            if (productTagCount > 0) {
-                AmityProductTagBadge(
-                    count = productTagCount,
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(end = 12.dp, bottom = 12.dp)
-                )
-            }
             } // closes inner Box(fillMaxSize)
         } // closes outer Box(fillMaxSize)
     } // closes Dialog

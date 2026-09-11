@@ -8,6 +8,7 @@ import androidx.paging.filter
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.core.user.search.AmityUserSortOption
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
+import com.amity.socialcloud.sdk.model.core.search.AmitySearchUserBy
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.uikit.chat.compose.create.AmityChannelCreateConversationPageViewModel.UserListState
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
@@ -30,6 +31,7 @@ class AmitySelectGroupMemberPageViewModel : AmityBaseViewModel() {
         return AmityCoreClient.newUserRepository()
             .searchUsers(keyword)
             .sortBy(AmityUserSortOption.DISPLAYNAME)
+            .searchBy(listOf(AmitySearchUserBy.DISPLAY_NAME))
             .build()
             .query()
             .subscribeOn(Schedulers.io())

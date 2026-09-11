@@ -1,9 +1,11 @@
 package com.amity.socialcloud.uikit.common.ui.base
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SwipeToDismissBox
@@ -41,6 +43,13 @@ fun AmityBaseComponent(
     pageScope: AmityComposePageScope? = null,
     componentId: String,
     needScaffold: Boolean = false,
+    // Scaffold consumes the system-bar insets it applies, which turns any statusBarsPadding()
+    // inside the content into a no-op. Full-bleed content that insets its own overlays must
+    // pass WindowInsets(0) so those insets reach it unconsumed.
+    contentWindowInsets: WindowInsets = ScaffoldDefaults.contentWindowInsets,
+    // See AmityBasePage.showSnackbar — false while this component is floating in
+    // Picture-in-Picture, so its toasts do not cover the video in the window.
+    showSnackbar: Boolean = true,
     content: @Composable AmityComposeComponentScope.() -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -69,7 +78,9 @@ fun AmityBaseComponent(
             if (needScaffold) {
                 Scaffold(
                     containerColor = AmityTheme.colors.background,
+                    contentWindowInsets = contentWindowInsets,
                     snackbarHost = {
+                        if (!showSnackbar) return@Scaffold
                         SnackbarHost(
                             hostState = snackbarHostState,
                             modifier = Modifier
