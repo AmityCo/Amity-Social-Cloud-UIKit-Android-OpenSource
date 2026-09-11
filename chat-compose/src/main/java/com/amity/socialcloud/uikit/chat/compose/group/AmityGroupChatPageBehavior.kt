@@ -20,6 +20,11 @@ open class AmityGroupChatPageBehavior {
         context.startActivity(AmityGroupMemberListPageActivity.newIntent(context, channelId))
     }
 
+    @Deprecated(
+        message = "Never invoked by the UIKit, and it names a destination rather than the tap " +
+                "that would reach it. Mention taps go through " +
+                "AmityMessageBubbleBehavior.onMentionUserTap.",
+    )
     open fun goToUserProfile(
         context: Context,
         userId: String,

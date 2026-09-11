@@ -3,6 +3,7 @@ package com.amity.socialcloud.uikit.chat.compose
 import com.amity.socialcloud.uikit.chat.compose.conversation.AmityChatPageBehavior
 import com.amity.socialcloud.uikit.chat.compose.group.AmityGroupChatPageBehavior
 import com.amity.socialcloud.uikit.chat.compose.home.AmityChatHomePageBehavior
+import com.amity.socialcloud.uikit.chat.compose.message.AmityMessageBubbleBehavior
 import com.amity.socialcloud.uikit.common.behavior.AmityGlobalBehavior
 
 object AmityChatBehaviorHelper {
@@ -18,4 +19,7 @@ object AmityChatBehaviorHelper {
 
     var groupChatPageBehavior: AmityGroupChatPageBehavior =
         AmityGroupChatPageBehavior()
+
+    var messageBubbleBehavior: AmityMessageBubbleBehavior =
+        AmityMessageBubbleBehavior()
 }

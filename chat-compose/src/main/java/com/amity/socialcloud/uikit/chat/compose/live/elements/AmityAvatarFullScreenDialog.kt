@@ -42,37 +42,36 @@ fun AmityAvatarFullScreenDialog(
             decorFitsSystemWindows = false,
         ),
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(amityColorBlack)
-                .clickableWithoutRipple { onDismiss() },
-            contentAlignment = Alignment.Center,
-        ) {
-            if (!avatarUrl.isNullOrBlank()) {
-                var loadFailed by remember(avatarUrl) { mutableStateOf(false) }
-                if (!loadFailed) {
-                    AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(avatarUrl)
-                            .diskCachePolicy(CachePolicy.ENABLED)
-                            .memoryCachePolicy(CachePolicy.ENABLED)
-                            .listener(onError = { _, _ -> loadFailed = true })
-                            .build(),
-                        contentDescription = "Avatar",
-                        contentScale = ContentScale.Fit,
-                        modifier = Modifier.fillMaxSize(),
-                    )
-                } else {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(
-                            id = R.drawable.amity_ic_chat_avatar_placeholder
-                        ),
-                        contentDescription = "Avatar",
-                        tint = Color.Unspecified,
-                        modifier = Modifier.size(120.dp),
-                    )
-                }
+        AmityAvatarFullScreenContent(avatarUrl = avatarUrl, onDismiss = onDismiss)
+    }
+}
+
+@Composable
+fun AmityAvatarFullScreenContent(
+    avatarUrl: String?,
+    onDismiss: () -> Unit,
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(amityColorBlack)
+            .clickableWithoutRipple { onDismiss() },
+        contentAlignment = Alignment.Center,
+    ) {
+        if (!avatarUrl.isNullOrBlank()) {
+            var loadFailed by remember(avatarUrl) { mutableStateOf(false) }
+            if (!loadFailed) {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(avatarUrl)
+                        .diskCachePolicy(CachePolicy.ENABLED)
+                        .memoryCachePolicy(CachePolicy.ENABLED)
+                        .listener(onError = { _, _ -> loadFailed = true })
+                        .build(),
+                    contentDescription = "Avatar",
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier.fillMaxSize(),
+                )
             } else {
                 Icon(
                     imageVector = ImageVector.vectorResource(
@@ -83,24 +82,33 @@ fun AmityAvatarFullScreenDialog(
                     modifier = Modifier.size(120.dp),
                 )
             }
+        } else {
+            Icon(
+                imageVector = ImageVector.vectorResource(
+                    id = R.drawable.amity_ic_chat_avatar_placeholder
+                ),
+                contentDescription = "Avatar",
+                tint = Color.Unspecified,
+                modifier = Modifier.size(120.dp),
+            )
+        }
 
-            // Close button — top-left
-            Box(
-                modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .padding(start = 16.dp, top = 48.dp)
-                    .size(36.dp)
-                    .background(color = amityColorBlack.copy(alpha = 0.5f), shape = CircleShape)
-                    .clickableWithoutRipple { onDismiss() },
-                contentAlignment = Alignment.Center,
-            ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_close_reply),
-                    contentDescription = "Close",
-                    tint = amityColorWhite,
-                    modifier = Modifier.size(20.dp),
-                )
-            }
+        // Close button — top-left
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(start = 16.dp, top = 48.dp)
+                .size(36.dp)
+                .background(color = amityColorBlack.copy(alpha = 0.5f), shape = CircleShape)
+                .clickableWithoutRipple { onDismiss() },
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(id = R.drawable.amity_ic_close_reply),
+                contentDescription = "Close",
+                tint = amityColorWhite,
+                modifier = Modifier.size(20.dp),
+            )
         }
     }
 }

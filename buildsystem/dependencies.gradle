@@ -20,7 +20,7 @@ ext {
     // the placeholder versionName "1.0" from submodule.gradle, so the library could not report
     // what it was; the real number lived solely in the sample app. Both read this now, and a
     // release bump is one edit here.
-    amityUIKitVersion = '4.25.1'
+    amityUIKitVersion = '4.25.2'
     amitySDKDependency = amitySDKMavenDependency
     amityRxLifeCycleVersion = '1.1.2-beta01'
     amityJacocoVersion = '0.8.5'

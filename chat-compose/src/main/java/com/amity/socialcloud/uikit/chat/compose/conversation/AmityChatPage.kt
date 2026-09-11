@@ -60,7 +60,6 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 import com.amity.socialcloud.uikit.chat.compose.message.element.LocalSentVideoUris
 import androidx.compose.runtime.CompositionLocalProvider
-import com.amity.socialcloud.uikit.chat.compose.live.elements.AmityAvatarFullScreenDialog
 import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
 
 @Composable
@@ -83,7 +82,6 @@ fun AmityChatPage(
     val hasAnyUserAction = remember { AmityChatConfigHelper.hasAnyEnabledChatUserAction() }
     var showBlockConfirm by remember { mutableStateOf(false) }
     var showUnblockConfirm by remember { mutableStateOf(false) }
-    var showAvatarFullScreen by remember { mutableStateOf(false) }
     val headerAvatarUrl = otherMembers.firstOrNull()?.getUser()?.resolvedAvatarUrl(AmityImage.Size.LARGE)
         ?: channel?.getAvatar()?.getUrl(AmityImage.Size.LARGE)
 
@@ -163,7 +161,11 @@ fun AmityChatPage(
                         (context as? android.app.Activity)?.finish()
                     },
                     onAvatarClick = {
-                        showAvatarFullScreen = true
+                        behavior.onAvatarTap(
+                            context = context,
+                            userId = otherMembers.firstOrNull()?.getUser()?.getUserId().orEmpty(),
+                            avatarUrl = headerAvatarUrl,
+                        )
                     },
                     onMoreClick = {
                         showActionSheet = true
@@ -316,12 +318,6 @@ fun AmityChatPage(
             )
         }
 
-        if (showAvatarFullScreen) {
-            AmityAvatarFullScreenDialog(
-                avatarUrl = headerAvatarUrl,
-                onDismiss = { showAvatarFullScreen = false },
-            )
-        }
         }
     }
 }
