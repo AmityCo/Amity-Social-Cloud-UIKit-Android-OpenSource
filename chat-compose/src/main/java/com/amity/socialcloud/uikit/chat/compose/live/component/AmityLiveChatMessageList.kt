@@ -83,7 +83,7 @@ fun AmityLiveChatMessageList(
     val behavior = remember {
         AmityChatBehaviorHelper.globalBehavior
     }
-    val isModerator = remember { viewModel.isChannelModerator() }.collectAsState(initial = false)
+    val canDeleteMessage = remember { viewModel.canDeleteMessage() }.collectAsState(initial = false)
     var isError by remember {
         mutableStateOf(false)
     }
@@ -227,7 +227,7 @@ fun AmityLiveChatMessageList(
                 ) { index ->
                     messages[index]?.let { message ->
                         val onDeleteAction =
-                            if (message.getCreatorId() == AmityCoreClient.getUserId() || isModerator.value) {
+                            if (message.getCreatorId() == AmityCoreClient.getUserId() || canDeleteMessage.value) {
                                 { onDelete(message) }
                             } else {
                                 null

@@ -117,7 +117,7 @@ fun AmityGroupChatMessageComposer(
     modifier: Modifier = Modifier,
     pageScope: AmityComposePageScope? = null,
     viewModel: AmityGroupChatPageViewModel,
-    isModerator: Boolean = false,
+    canBypassMute: Boolean = false,
     isUserMuted: Boolean = false,
     isUserBanned: Boolean = false,
     isChannelMuted: Boolean = false,
@@ -128,7 +128,7 @@ fun AmityGroupChatMessageComposer(
     val shouldShowComposer = when {
         isUserBanned -> false
         isUserMuted -> false
-        isChannelMuted -> isModerator
+        isChannelMuted -> canBypassMute
         else -> true
     }
 

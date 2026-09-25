@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -72,6 +73,10 @@ fun AmityBannedGroupMemberListPage(
 ) {
     val viewModel = remember { AmityGroupMemberListPageViewModel(channelId) }
     val context = LocalContext.current
+
+    // Self-check: this page has its own entry points (deep link / behavior override), so it must
+    // gate unban on its own permission rather than trusting the group-settings row that opened it.
+    val canUnban by viewModel.canBan().collectAsState(initial = false)
 
     var searchKeyword by remember { mutableStateOf("") }
     val bannedMembers = remember(searchKeyword) {
@@ -181,6 +186,7 @@ fun AmityBannedGroupMemberListPage(
                             val member = bannedMembers[index] ?: return@items
                             BannedMemberItem(
                                 member = member,
+                                showMoreAction = canUnban,
                                 onMoreClick = {
                                     selectedMember = member
                                     scope.launch { sheetState.show() }
@@ -249,6 +255,7 @@ fun AmityBannedGroupMemberListPage(
 @Composable
 private fun BannedMemberItem(
     member: AmityChannelMember,
+    showMoreAction: Boolean,
     onMoreClick: () -> Unit,
 ) {
     val user = member.getUser()
@@ -265,12 +272,16 @@ private fun BannedMemberItem(
             avatarSize = AmityAvatarSize.Size40,
             avatarBorderWidth = 2,
         ),
-        trailing = listOf(
-            AmityListTrailingContent(
-                type = AmityListTrailingType.ICON,
-                icon = CommonComposeR.drawable.amity_ic_ellipsis_r,
+        trailing = if (showMoreAction) {
+            listOf(
+                AmityListTrailingContent(
+                    type = AmityListTrailingType.ICON,
+                    icon = CommonComposeR.drawable.amity_ic_ellipsis_r,
+                )
             )
-        ),
-        onTrailingPress = { onMoreClick() },
+        } else {
+            emptyList()
+        },
+        onTrailingPress = { if (showMoreAction) onMoreClick() },
     )
 }

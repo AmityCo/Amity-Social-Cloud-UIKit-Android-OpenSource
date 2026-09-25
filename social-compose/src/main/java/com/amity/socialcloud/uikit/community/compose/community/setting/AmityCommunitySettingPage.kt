@@ -106,7 +106,6 @@ fun AmityCommunitySettingPage(
 
     val hasEditPermission by viewModel.hasEditPermission().subscribeAsState(initial = false)
     val hasDeletePermission by viewModel.hasDeletePermission().subscribeAsState(initial = false)
-    val hasReviewPermission by viewModel.hasReviewPermission().subscribeAsState(initial = false)
 
     var showLeaveCommunityDialog by remember { mutableStateOf(false) }
     var showModeratorLeaveCommunityDialog by remember { mutableStateOf(false) }
@@ -343,7 +342,7 @@ fun AmityCommunitySettingPage(
                 }
             }
 
-            if (hasReviewPermission || hasEditPermission) {
+            if (hasEditPermission) {
                 HorizontalDivider(
                     color = AmityTheme.colors.divider,
                     modifier = modifier.padding(top = 4.dp, bottom = 8.dp)
@@ -355,7 +354,7 @@ fun AmityCommunitySettingPage(
                 )
             }
 
-            if (hasReviewPermission) {
+            if (hasEditPermission) {
                 AmityBaseElement(
                     pageScope = getPageScope(),
                     elementId = "post_permission"

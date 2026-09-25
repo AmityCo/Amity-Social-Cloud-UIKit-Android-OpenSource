@@ -38,6 +38,7 @@ fun AmityEventMenuBottomSheet(
     eventEndTime: org.joda.time.DateTime? = null,
     isEventCreator: Boolean = false,
     hasDeletePermission: Boolean = false,
+    hasUpdatePermission: Boolean = false,
     hasRsvpd: Boolean = false,
     showShareActions: Boolean = false,
     showPostToFeed: Boolean = false
@@ -73,9 +74,9 @@ fun AmityEventMenuBottomSheet(
                     .fillMaxWidth()
                     .padding(bottom = 16.dp)
             ) {
-                // Edit option - only show for host (event creator), regardless of event status
-                // This appears first in the menu per design requirements
-                if (isEventCreator) {
+                // Edit option - show for host (event creator) or a role holding UPDATE_EVENT,
+                // regardless of event status. Appears first in the menu per design requirements.
+                if (isEventCreator || hasUpdatePermission) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()

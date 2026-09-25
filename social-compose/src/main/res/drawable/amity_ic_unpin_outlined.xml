@@ -1,0 +1,28 @@
+<!--
+  ~ Copyright (C) 2026 The Android Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+  <path
+      android:pathData="M15.554,14.524C15.945,16.639 15.397,18.754 13.909,20.242C13.543,20.607 12.995,20.581 12.656,20.242L8.896,16.482L6.181,19.197C6.155,19.223 6.103,19.223 6.077,19.25L4.406,20.085C4.171,20.216 3.884,19.928 4.014,19.693L4.85,18.023C4.876,17.997 4.902,17.97 4.928,17.944L7.643,15.229L3.884,11.47C3.518,11.104 3.518,10.582 3.884,10.217C5.372,8.728 7.46,8.154 9.575,8.546L10.854,7.58L10.149,6.875C9.784,6.509 9.784,5.987 10.149,5.622L12.656,3.115C12.995,2.776 13.543,2.75 13.909,3.115L21.01,10.217C21.349,10.556 21.349,11.13 21.01,11.47L18.504,13.976C18.138,14.341 17.59,14.315 17.25,13.976L16.519,13.245L15.554,14.524ZM5.815,10.895L13.204,18.284C13.987,17.083 14.092,15.516 13.622,14.159L16.363,10.582L17.877,12.096L19.13,10.843L13.282,4.995L12.029,6.248L13.543,7.762L9.967,10.504C8.583,10.008 7.016,10.112 5.815,10.895Z"
+      android:fillColor="#EBECEF"/>
+  <path
+      android:pathData="M3.139,4.165C2.974,3.952 2.937,3.614 3.133,3.392L3.46,3.012C3.626,2.789 3.958,2.778 4.126,2.958L20.934,19.851C21.132,20.032 21.138,20.368 20.972,20.592L20.643,21.006C20.449,21.194 20.145,21.239 19.949,21.024L3.139,4.165Z"
+      android:fillColor="#EBECEF"
+      android:fillType="evenOdd"/>
+</vector>

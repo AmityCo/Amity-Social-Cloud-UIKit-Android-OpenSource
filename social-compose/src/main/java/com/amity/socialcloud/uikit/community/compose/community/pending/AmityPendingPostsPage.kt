@@ -43,7 +43,7 @@ fun AmityPendingPostsPage(
         AmityPendingRequestPageViewModel(community.getCommunityId())
     }
 
-    val isModerator by AmityCoreClient.hasPermission(AmityPermission.EDIT_COMMUNITY)
+    val isModerator by AmityCoreClient.hasPermission(AmityPermission.REVIEW_COMMUNITY_POST)
         .atCommunity(community.getCommunityId())
         .check()
         .asFlow()

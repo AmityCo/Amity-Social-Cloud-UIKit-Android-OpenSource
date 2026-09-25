@@ -23,6 +23,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.uikit.chat.compose.home.AmityChatHomePageActivity
 import com.amity.socialcloud.uikit.community.compose.socialhome.AmitySocialHomePageActivity
+import com.amity.socialcloud.uikit.sample.discoverywidget.AmityDiscoveryWidgetTestActivity
+import com.amity.socialcloud.uikit.community.compose.user.profile.AmityUserProfilePageActivity
+import com.amity.socialcloud.uikit.community.compose.visitor.AmityVisitorUsageLimitPageActivity
 import com.amity.socialcloud.uikit.sample.liveChat.AmityLiveChatListActivity
 
 class LoginActivity : ComponentActivity() {
@@ -105,6 +108,24 @@ class LoginActivity : ComponentActivity() {
                             },
                             onChangeUser = { currentScreen = Screen.ENVIRONMENT_SETUP },
                             onLoggedOut = { currentScreen = Screen.ENVIRONMENT_SETUP },
+                            onDiscoveryWidgetClick = {
+                                startActivity(
+                                    AmityDiscoveryWidgetTestActivity.newIntent(this@LoginActivity)
+                                )
+                            },
+                            onUserProfileClick = {
+                                startActivity(
+                                    AmityUserProfilePageActivity.newIntent(
+                                        this@LoginActivity,
+                                        AmityCoreClient.getUserId()
+                                    )
+                                )
+                            },
+                            onVisitorUsageLimitClick = {
+                                startActivity(
+                                    AmityVisitorUsageLimitPageActivity.newIntent(this@LoginActivity)
+                                )
+                            },
                         )
                     }
                 }

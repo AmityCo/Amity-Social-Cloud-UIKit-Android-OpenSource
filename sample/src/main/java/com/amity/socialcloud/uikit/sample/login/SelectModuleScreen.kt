@@ -62,6 +62,9 @@ fun SelectModuleScreen(
     onSocialClick: () -> Unit,
     onChangeUser: () -> Unit,
     onLoggedOut: () -> Unit,
+    onDiscoveryWidgetClick: () -> Unit,
+    onUserProfileClick: () -> Unit,
+    onVisitorUsageLimitClick: () -> Unit,
 ) {
     val config by viewModel.config.collectAsState()
     val loggedInUserId by viewModel.loggedInUserId.collectAsState()
@@ -204,6 +207,35 @@ fun SelectModuleScreen(
                     Text("Re-sync Network Config", fontSize = 15.sp, color = Ink)
                     Text("Enabled when Sync = ON", fontSize = 11.sp, color = Muted)
                 }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Card(
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(containerColor = CardBg),
+                modifier = Modifier.padding(horizontal = 14.dp),
+            ) {
+                ModuleRow(
+                    icon = "\uD83E\uDDEA",
+                    title = "Discovery Widget",
+                    subtitle = "Topic pool test harness \u2192",
+                    onClick = onDiscoveryWidgetClick,
+                )
+                RowDivider()
+                ModuleRow(
+                    icon = "\uD83D\uDC64",
+                    title = "User Profile",
+                    subtitle = "Your own profile page \u2192",
+                    onClick = onUserProfileClick,
+                )
+                RowDivider()
+                ModuleRow(
+                    icon = "\uD83D\uDEAB",
+                    title = "Visitor Usage Limit",
+                    subtitle = "Limit page \u2192",
+                    onClick = onVisitorUsageLimitClick,
+                )
             }
 
             Spacer(modifier = Modifier.height(16.dp))

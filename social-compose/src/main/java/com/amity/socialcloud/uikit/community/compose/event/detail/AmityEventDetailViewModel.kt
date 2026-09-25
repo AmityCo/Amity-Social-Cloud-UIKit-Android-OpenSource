@@ -46,6 +46,9 @@ class AmityEventDetailViewModel(
     private val _hasDeleteEventPermission = MutableStateFlow(false)
     val hasDeleteEventPermission: StateFlow<Boolean> = _hasDeleteEventPermission.asStateFlow()
 
+    private val _hasUpdateEventPermission = MutableStateFlow(false)
+    val hasUpdateEventPermission: StateFlow<Boolean> = _hasUpdateEventPermission.asStateFlow()
+
     // Generated shareable event link, or null when the network deep-link config is not set
     // (domain or "events" pattern missing) or the fetch fails. Null => hide share actions.
     private val _eventShareUrl = MutableStateFlow<String?>(null)
@@ -96,6 +99,7 @@ class AmityEventDetailViewModel(
             // Check permissions
             if (targetCommunityId.isNotEmpty()) {
                 checkDeleteEventPermission(targetCommunityId)
+                checkUpdateEventPermission(targetCommunityId)
             }
         }
     }
@@ -113,8 +117,21 @@ class AmityEventDetailViewModel(
         }
     }
 
+    private fun checkUpdateEventPermission(communityId: String) {
+        viewModelScope.launch {
+            AmityCoreClient.hasPermission(AmityPermission.UPDATE_EVENT)
+                .atCommunity(communityId)
+                .check()
+                .asFlow()
+                .catch { _hasUpdateEventPermission.value = false }
+                .collect { hasPermission ->
+                    _hasUpdateEventPermission.value = hasPermission
+                }
+        }
+    }
+
     fun shouldShowMenu(isGoing: Boolean?): Boolean {
-        return _isEventCreator.value || _hasDeleteEventPermission.value
+        return _isEventCreator.value || _hasDeleteEventPermission.value || _hasUpdateEventPermission.value
     }
 
     /**

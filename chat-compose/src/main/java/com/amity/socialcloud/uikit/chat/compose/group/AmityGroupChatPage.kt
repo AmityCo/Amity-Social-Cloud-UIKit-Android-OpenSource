@@ -105,6 +105,10 @@ fun AmityGroupChatPage(
 
 
     val isUserMuted = membership?.isMuted() == true
+
+    // Per-action channel permissions, replacing the old channel-moderator role check.
+    val canDeleteMessage by remember { viewModel.canDeleteMessage() }.collectAsState(initial = false)
+    val canBypassMute by remember { viewModel.canBypassChannelMute() }.collectAsState(initial = false)
     val headerAvatarUrl = channel?.getAvatar()?.getUrl(AmityImage.Size.LARGE)
     var showAvatarFullScreen by remember { mutableStateOf(false) }
 
@@ -196,7 +200,7 @@ fun AmityGroupChatPage(
                     AmityGroupChatMessageList(
                         pageScope = getPageScope(),
                         viewModel = viewModel,
-                        isModerator = memberRoles[AmityCoreClient.getUserId()]?.any { it.contains(AmityConstants.CHANNEL_MODERATOR_ROLE) } == true,
+                        canDeleteMessage = canDeleteMessage,
                         memberRoles = memberRoles,
                         isUserMuted = isUserMuted,
                         jumpToMessageId = jumpToMessageId,
@@ -248,7 +252,7 @@ fun AmityGroupChatPage(
                 AmityGroupChatMessageComposer(
                     pageScope = getPageScope(),
                     viewModel = viewModel,
-                    isModerator = memberRoles[AmityCoreClient.getUserId()]?.any { it.contains(AmityConstants.CHANNEL_MODERATOR_ROLE) } == true,
+                    canBypassMute = canBypassMute,
                     isUserMuted = isUserMuted,
                     isUserBanned = membership?.isBanned() == true,
                     isChannelMuted = isChannelMuted,

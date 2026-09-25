@@ -1,0 +1,27 @@
+# Logs in on staging. Pass the account with -e USER_ID=<id> (host: arezy, viewer: brezy). The pin endpoints and both realtime
+# events are only deployed there, so the region must stay "staging".
+appId: com.amity.sample.ascuikit
+---
+- launchApp:
+    clearState: true
+    permissions:
+      all: allow
+- assertVisible: "Android UI-Kit"
+- assertVisible: "staging"          # pin BE is staging-only
+- tapOn: "android-test"
+- eraseText
+- inputText: "${USER_ID}"
+# Not hideKeyboard: on this screen it presses back, which leaves the app entirely. The log-in
+# button is pinned to the bottom behind the keyboard and the form will not scroll past it, so
+# the keyboard has to go before the tap can land. This is the IME's own done key.
+- tapOn:
+    point: "92%,91%"
+- extendedWaitUntil:
+    visible: ".*Log in.*"
+    timeout: 15000
+- tapOn:
+    text: ".*Log in.*"     # "Apply & Log in →" when the region changed, "Log in →" otherwise
+- extendedWaitUntil:
+    notVisible: "Android UI-Kit"
+    timeout: 60000
+- takeScreenshot: after-login

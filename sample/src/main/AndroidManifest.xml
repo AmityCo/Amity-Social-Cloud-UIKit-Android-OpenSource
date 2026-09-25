@@ -38,13 +38,12 @@
         android:label="@string/amity_app_name"
         android:supportsRtl="true"
         android:theme="@style/MyTheme">
-        <activity android:name=".AmitySettingActivity" />
-        <activity android:name=".AmityFeatureListActivity" />
         <activity android:name=".liveChat.AmityLiveChatActivity"
             android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".liveChat.AmityLiveChatListActivity" />
+        <activity android:name=".discoverywidget.AmityDiscoveryWidgetTestActivity"
+            android:windowSoftInputMode="adjustResize" />
         <activity android:name=".env.EnvironmentActivity" />
-        <activity android:name=".MainActivity" />
         <activity
             android:name=".login.LoginActivity"
             android:exported="true">

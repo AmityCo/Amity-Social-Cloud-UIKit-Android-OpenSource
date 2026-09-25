@@ -253,6 +253,7 @@ fun AmityEventDetailPage(
 
     // Get permissions from ViewModel
     val hasDeleteEventPermission by viewModel.hasDeleteEventPermission.collectAsState()
+    val hasUpdateEventPermission by viewModel.hasUpdateEventPermission.collectAsState()
     val isEventCreator by viewModel.isEventCreator.collectAsState()
 
     // Share visibility (Phase 3): deep-link config present (eventShareUrl != null) AND origin
@@ -279,7 +280,7 @@ fun AmityEventDetailPage(
     // the separately fetched target community, the same source the discussion FAB uses.
     val canPostEventToFeed = isEventCreator || isMember
 
-    val showMenu = isEventCreator || hasDeleteEventPermission || isGoing == true || showShareActions || canPostEventToFeed
+    val showMenu = isEventCreator || hasDeleteEventPermission || hasUpdateEventPermission || isGoing == true || showShareActions || canPostEventToFeed
 
     // Setup paging data for discussion feed
     val announcementPosts = remember(communityId) {
@@ -636,6 +637,7 @@ fun AmityEventDetailPage(
                     AmityEventDiscussionActionsBottomSheet(
                         community = community!!,
                         shouldShow = showCreatePostBottomSheet,
+                        pageScope = getPageScope(),
                         showPollTypeSelectionSheet = {
                             showCreatePostBottomSheet = false
                             showPollSelectionBottomSheet = true
@@ -780,6 +782,7 @@ fun AmityEventDetailPage(
                     eventEndTime = event!!.getEndTime(),
                     isEventCreator = isEventCreator,
                     hasDeletePermission = hasDeleteEventPermission,
+                    hasUpdatePermission = hasUpdateEventPermission,
                     hasRsvpd = isGoing == true,
                     showShareActions = showShareActions,
                     showPostToFeed = canPostEventToFeed

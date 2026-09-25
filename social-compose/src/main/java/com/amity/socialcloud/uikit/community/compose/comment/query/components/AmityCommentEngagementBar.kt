@@ -46,6 +46,10 @@ import androidx.compose.ui.window.PopupProperties
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
+import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
+import androidx.compose.runtime.produceState
+import kotlinx.coroutines.flow.catch
 import com.amity.socialcloud.sdk.model.social.comment.AmityComment
 import com.amity.socialcloud.uikit.common.utils.readableSocialTimeDiff
 import com.amity.socialcloud.uikit.common.model.AmitySocialReactions
@@ -435,6 +439,20 @@ fun AmityCommentEngagementBar(
             }
         }
 
+        // Non-authors can delete a comment when they hold the target's delete permission:
+        // DELETE_COMMUNITY_COMMENT for community comments, DELETE_USER_FEED_COMMENT for user feed.
+        val canDeleteComment by produceState(initialValue = false, comment.getCommentId()) {
+            val checker = when (val target = comment.getTarget()) {
+                is AmityComment.Target.COMMUNITY ->
+                    AmityCoreClient.hasPermission(AmityPermission.DELETE_COMMUNITY_COMMENT)
+                        .atCommunity(target.getCommunityId()).check()
+                else ->
+                    AmityCoreClient.hasPermission(AmityPermission.DELETE_USER_FEED_COMMENT)
+                        .atGlobal().check()
+            }
+            checker.asFlow().catch { emit(false) }.collect { value = it }
+        }
+
         AmityCommentActionsBottomSheet(
             modifier = modifier,
             componentScope = componentScope,
@@ -442,6 +460,7 @@ fun AmityCommentEngagementBar(
             commentId = comment.getCommentId(),
             isReplyComment = isReplyComment,
             isCommentCreatedByMe = isCreatedByMe,
+            canDeleteComment = canDeleteComment,
             isFlaggedByMe = comment.isFlaggedByMe(),
             isFailed = false,
             fromNonMemberCommunity = fromNonMemberCommunity,

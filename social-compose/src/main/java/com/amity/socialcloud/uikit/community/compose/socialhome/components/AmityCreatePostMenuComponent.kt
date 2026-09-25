@@ -154,6 +154,7 @@ fun AmityCreatePostMenuComponent(
                 }
 
                 AmityBaseElement(
+                    pageScope = pageScope,
                     elementId = "create_poll_button",
                     componentScope = getComponentScope()
                 ) {
@@ -190,6 +191,7 @@ fun AmityCreatePostMenuComponent(
                 }
 
                 AmityBaseElement(
+                    pageScope = pageScope,
                     elementId = "create_livestream_button",
                     componentScope = getComponentScope()
                 ) {
@@ -279,6 +281,7 @@ fun AmityCreatePostMenuComponent(
                 }
 
                 AmityBaseElement(
+                    pageScope = pageScope,
                     elementId = "create_clip_button",
                     componentScope = getComponentScope()
                 ) {

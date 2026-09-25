@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import com.amity.socialcloud.uikit.community.compose.livestream.chat.amityLiveChatFeedHeight
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -88,6 +89,7 @@ import com.amity.socialcloud.uikit.community.compose.livestream.chat.ChatOverlay
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.community.compose.livestream.chat.FloatingReaction
 import com.amity.socialcloud.uikit.community.compose.livestream.chat.FloatingReactionsOverlay
+import com.amity.socialcloud.uikit.community.compose.livestream.chat.amityLiveChatHiddenByKeyboard
 import com.amity.socialcloud.uikit.community.compose.livestream.chat.ReactionPicker
 import com.amity.socialcloud.uikit.community.compose.livestream.util.LivestreamErrorScreenType
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetailPageActivity.Companion.EXTRA_PARAM_LIVESTREAM_ERROR_TYPE
@@ -349,13 +351,16 @@ fun AmityLivestreamPlayerPage(
                             .align(Alignment.BottomStart)
                             .fillMaxSize()
                     ) {
-                        // Floating reactions animation
-                        FloatingReactionsOverlay(
-                            reactions = floatingReactions,
-                            modifier = Modifier
-                                .height(182.dp)
-                                .width(120.dp),
-                        )
+                        // Floating reactions animation. Hidden while the keyboard is open,
+                        // so a reaction never flies over the keyboard while the user types.
+                        if (!amityLiveChatHiddenByKeyboard()) {
+                            FloatingReactionsOverlay(
+                                reactions = floatingReactions,
+                                modifier = Modifier
+                                    .height(182.dp)
+                                    .width(120.dp),
+                            )
+                        }
                         Column(
                             verticalArrangement = Arrangement.Bottom,
                             horizontalAlignment = Alignment.End,
@@ -387,7 +392,7 @@ fun AmityLivestreamPlayerPage(
                                 ChatOverlay(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .fillMaxHeight(0.5f)
+                                        .height(amityLiveChatFeedHeight())
                                         .drawWithContent {
                                             drawContent()
                                             // TODO: Finding alternative approach. Temporarily disable the fade effect as it causes inconsistent with other ui parts

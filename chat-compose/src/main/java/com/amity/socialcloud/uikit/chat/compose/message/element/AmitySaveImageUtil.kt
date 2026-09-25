@@ -10,10 +10,30 @@ import com.amity.socialcloud.sdk.model.core.file.AmityImage
 import com.amity.socialcloud.sdk.model.core.file.AmityVideo
 import com.amity.socialcloud.uikit.chat.compose.R
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
-import com.amity.socialcloud.uikit.common.utils.getVideoUrlWithFallbackQuality
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.net.URL
+
+private val mediaSaveScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
+internal fun saveImageToGalleryDetached(
+    context: Context,
+    image: AmityImage,
+    onResult: (message: String, isError: Boolean) -> Unit,
+) {
+    mediaSaveScope.launch { saveImageToGallery(context, image, onResult = onResult) }
+}
+
+internal fun saveVideoToGalleryDetached(
+    context: Context,
+    video: AmityVideo,
+    onResult: (message: String, isError: Boolean) -> Unit,
+) {
+    mediaSaveScope.launch { saveVideoToGallery(context, video, onResult = onResult) }
+}
 
 internal suspend fun saveImageToGallery(context: Context, message: AmityMessage) {
     val data = message.getData()
@@ -33,6 +53,7 @@ internal suspend fun saveImageToGallery(
     context: Context,
     image: AmityImage,
     messageId: String = System.currentTimeMillis().toString(),
+    onResult: ((message: String, isError: Boolean) -> Unit)? = null,
 ) {
     val imageUrl = image.getUrl(AmityImage.Size.LARGE) ?: return
 
@@ -70,11 +91,15 @@ internal suspend fun saveImageToGallery(
             }
 
             withContext(Dispatchers.Main) {
-                AmityUIKitSnackbar.publishSnackbarMessage(context.getString(R.string.amity_chat_save_photo_success))
+                val text = context.getString(R.string.amity_chat_save_photo_success)
+                if (onResult != null) onResult(text, false)
+                else AmityUIKitSnackbar.publishSnackbarMessage(text)
             }
         } catch (e: Exception) {
             withContext(Dispatchers.Main) {
-                AmityUIKitSnackbar.publishSnackbarErrorMessage(context.getString(R.string.amity_chat_save_photo_failed))
+                val text = context.getString(R.string.amity_chat_save_photo_failed)
+                if (onResult != null) onResult(text, true)
+                else AmityUIKitSnackbar.publishSnackbarErrorMessage(text)
             }
         }
     }
@@ -84,8 +109,9 @@ internal suspend fun saveVideoToGallery(
     context: Context,
     video: AmityVideo,
     messageId: String = System.currentTimeMillis().toString(),
+    onResult: ((message: String, isError: Boolean) -> Unit)? = null,
 ) {
-    val videoUrl = video.getVideoUrlWithFallbackQuality() ?: return
+    val videoUrl = video.getVideoUrl() ?: return
 
     withContext(Dispatchers.IO) {
         try {
@@ -120,11 +146,15 @@ internal suspend fun saveVideoToGallery(
             inputStream.close()
 
             withContext(Dispatchers.Main) {
-                AmityUIKitSnackbar.publishSnackbarMessage(context.getString(R.string.amity_chat_save_video_success))
+                val text = context.getString(R.string.amity_chat_save_video_success)
+                if (onResult != null) onResult(text, false)
+                else AmityUIKitSnackbar.publishSnackbarMessage(text)
             }
         } catch (e: Exception) {
             withContext(Dispatchers.Main) {
-                AmityUIKitSnackbar.publishSnackbarErrorMessage(context.getString(R.string.amity_chat_save_video_failed))
+                val text = context.getString(R.string.amity_chat_save_video_failed)
+                if (onResult != null) onResult(text, true)
+                else AmityUIKitSnackbar.publishSnackbarErrorMessage(text)
             }
         }
     }

@@ -1,0 +1,140 @@
+# PDT-5770, host POV. The pinned message and the chat messages leave the screen while the
+# keyboard is open. The pinned product and the compose bar stay.
+#
+# Requires: 00-login has run, and the emulator has a camera. LiveKit throws
+# NotImplementedError in createCameraTrack when the emulator runs with -camera-back none,
+# which kills the app on the way into the room. Check with:
+#   adb shell dumpsys media.camera | grep "Number of camera devices"
+#
+# Ends the stream on the way out.
+appId: com.amity.sample.ascuikit
+---
+- launchApp
+- tapOn:
+    text: "Discard"
+    optional: true
+- tapOn:
+    text: "Social"
+    optional: true
+- extendedWaitUntil:
+    visible: "Community"
+    timeout: 60000
+
+# ---- go live ----
+# The "Live on" target picker sometimes opens with an empty community list and no shimmer
+# (pre-existing app bug, not pin-related). Re-entering populates it, so retry the open-picker
+# step instead of waiting on a list that never loads.
+- retry:
+    maxRetries: 3
+    commands:
+      - tapOn:
+          text: "Discard"
+          optional: true
+      - runFlow:                    # only when the picker is the thing on screen: the same
+          when:                     # glyph is the create page's close button, and tapping that
+            visible: "My Timeline"  # raises "Unsaved changes" and blocks everything after it
+          commands:
+            - tapOn: "✕"
+      - tapOn:
+          point: "92%,9%"
+      - extendedWaitUntil:
+          visible: "Live stream"
+          timeout: 15000
+      - tapOn: "Live stream"
+      - extendedWaitUntil:
+          visible: "Rezyception"
+          timeout: 20000
+- tapOn: "Rezyception"
+- extendedWaitUntil:
+    visible:
+      id: "create_livestream_page/\\*/start_livestream_button"
+    timeout: 30000
+- tapOn:
+    point: "50%,16%"                # "Add live stream title…"
+- inputText: "Keyboard test"
+# Not hideKeyboard: it presses back, and with a title typed the create page treats that as
+# leaving and puts up "Unsaved changes", which then blocks everything after it.
+- tapOn:
+    point: "50%,45%"
+- tapOn:
+    id: "create_livestream_page/\\*/start_livestream_button"
+- extendedWaitUntil:
+    visible:
+      id: "message_composer_text_field"
+    timeout: 120000
+
+# ---- tag a product and pin it ----
+- tapOn:
+    id: "product_tagging_button_element"
+- extendedWaitUntil:
+    visible: "Tagged products"
+    timeout: 15000
+- tapOn: "Add products"
+- tapOn: "Search by product name"
+- inputText: "Desk"
+- extendedWaitUntil:
+    visible: "Synthetic Stone Desk"
+    timeout: 20000
+- tapOn: "Synthetic Stone Desk"
+- tapOn:
+    text: "Add products"
+    index: 1                        # the sheet's footer button, not the empty-state one
+- extendedWaitUntil:
+    visible: "Pin"
+    timeout: 15000
+- tapOn: "Pin"
+- extendedWaitUntil:
+    visible: "Unpin"
+    timeout: 15000
+- tapOn:
+    point: "93%,14%"                # close the Tagged products sheet
+- waitForAnimationToEnd
+
+# ---- send a message and pin it ----
+- tapOn:
+    id: "message_composer_text_field"
+- inputText: "Promo code SPRING2026 is valid until the end of the stream, use it at checkout for 20 percent off"
+- hideKeyboard
+# By content description, not by point: the pinned product card lifts the compose bar, so a
+# fixed point misses the send button and the message stays in the composer.
+- waitForAnimationToEnd
+- tapOn: "Send"
+- extendedWaitUntil:
+    visible: "message options"
+    timeout: 30000
+- tapOn: "message options"
+- extendedWaitUntil:
+    visible: "Pin message"
+    timeout: 15000
+- tapOn: "Pin message"
+- extendedWaitUntil:
+    visible:
+      id: "\\*/livestream_chat_feed/pinned_message_banner"
+    timeout: 30000
+- waitForAnimationToEnd
+- takeScreenshot: 10-keyboard-closed
+
+# ---- open the keyboard: banner and messages go, product card stays ----
+- tapOn:
+    id: "message_composer_text_field"
+- waitForAnimationToEnd
+- takeScreenshot: 11-keyboard-open
+- assertVisible: "Synthetic Stone Desk"
+
+# ---- close it: everything comes back, and the list keeps its place ----
+- hideKeyboard
+- waitForAnimationToEnd
+- takeScreenshot: 12-keyboard-closed-again
+- assertVisible:
+    id: "\\*/livestream_chat_feed/pinned_message_banner"
+- assertVisible: "Promo code SPRING2026 is valid until the end of the stream, use it at checkout for 20 percent off"
+
+# ---- leave no live stream behind ----
+- tapOn:
+    id: "\\*/livestream_chat_feed/unpin_message_button"
+- waitForAnimationToEnd
+- tapOn: "end_livestream_button"
+- extendedWaitUntil:
+    visible: "End"
+    timeout: 15000
+- tapOn: "End"

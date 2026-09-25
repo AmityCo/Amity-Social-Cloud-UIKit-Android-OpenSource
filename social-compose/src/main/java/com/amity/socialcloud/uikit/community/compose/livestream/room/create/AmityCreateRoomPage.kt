@@ -17,6 +17,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
+import com.amity.socialcloud.uikit.community.compose.livestream.chat.amityLiveChatFeedHeight
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -68,6 +69,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
@@ -100,6 +102,7 @@ import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.sdk.model.video.room.AmityRoom
 import com.amity.socialcloud.sdk.model.video.room.AmityRoomBroadcastData
+import com.amity.socialcloud.sdk.model.video.room.AmityRoomStatus
 import com.amity.socialcloud.uikit.common.common.isNotEmptyOrBlank
 import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
@@ -130,6 +133,7 @@ import com.amity.socialcloud.uikit.community.compose.livestream.chat.AmityLivest
 import com.amity.socialcloud.uikit.community.compose.livestream.chat.ChatOverlay
 import com.amity.socialcloud.uikit.community.compose.livestream.chat.FloatingReaction
 import com.amity.socialcloud.uikit.community.compose.livestream.chat.FloatingReactionsOverlay
+import com.amity.socialcloud.uikit.community.compose.livestream.chat.amityLiveChatHiddenByKeyboard
 import com.amity.socialcloud.uikit.community.compose.livestream.chat.HostBadge
 import com.amity.socialcloud.uikit.community.compose.livestream.chat.ReactionPicker
 import com.amity.socialcloud.uikit.community.compose.livestream.create.element.AmityCircularProgressWithCountDownTimer
@@ -259,6 +263,7 @@ fun AmityCreateRoomPage(
     var showDisableCohostManageProductPermissionDialog: (() -> Unit)? by remember { mutableStateOf(null) }
     val isTargetCommunity = targetType == AmityPost.TargetType.COMMUNITY
     var isTerminated by remember { mutableStateOf(false) }
+    var isEnding by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
 
     val haptics = LocalHapticFeedback.current
@@ -517,7 +522,7 @@ fun AmityCreateRoomPage(
         }
     }
 
-    LaunchedEffect(liveKitRoomState) {
+    LaunchedEffect(liveKitRoomState, uiState.roomModeration?.terminateLabels, uiState.room?.getStatus()) {
         when (liveKitRoomState) {
             Room.State.CONNECTED -> {
                 // Start duration counter only when it never start yet to prevent redundant counting
@@ -547,13 +552,25 @@ fun AmityCreateRoomPage(
             }
 
            Room.State.DISCONNECTED -> {
-                uiState.roomModeration?.terminateLabels?.let {
-                    if (it.isNotEmpty() && !isTerminated) {
+                // A console terminate arrives as the room's own status; the moderation labels are
+                // not persisted on that path, so keying on them alone never fires.
+                val terminatedByModeration =
+                    uiState.roomModeration?.terminateLabels?.isNotEmpty() == true
+                val terminatedByStatus =
+                    uiState.room?.getStatus() == AmityRoomStatus.TERMINATED
+                if (terminatedByModeration || terminatedByStatus) {
+                    if (!isTerminated) {
                         isTerminated = true
+                        uiState.liveKitRoom?.let(::stopLocalCameraTrack)
                         if (durationDisposable?.isDisposed == false) {
-                            uiState.liveKitRoom?.let(::stopLocalCameraTrack)
-                            uiState.liveKitRoom?.release()
                             durationDisposable?.dispose()
+                        }
+                        if (!fromEventPage) {
+                            behavior.goToPostDetailPage(
+                                context = context,
+                                id = uiState.createPostId ?: "",
+                                category = AmityPostCategory.GENERAL,
+                            )
                         }
                         behavior.goToTerminatedPage(
                             context = context,
@@ -571,6 +588,7 @@ fun AmityCreateRoomPage(
     LaunchedEffect(uiState.networkConnection) {
         if (uiState.networkConnection is NetworkConnectionEvent.Disconnected) {
             delay(LIVESTREAM_INTERNET_LOSS_MAXIMUM_DURATION)
+            isEnding = true
             endLivestream(
                 context = context,
                 durationDisposable = durationDisposable,
@@ -584,7 +602,8 @@ fun AmityCreateRoomPage(
     }
 
     LaunchedEffect(uiState.post?.isDeleted()) {
-        if (uiState.post?.isDeleted() == true) {
+        if (uiState.post?.isDeleted() == true && !isTerminated) {
+            isTerminated = true
             if (durationDisposable?.isDisposed == false) {
                 uiState.liveKitRoom?.let(::stopLocalCameraTrack)
                 uiState.liveKitRoom?.release()
@@ -682,11 +701,15 @@ fun AmityCreateRoomPage(
                             }
                         )
                     }
+                    val isDisconnectedAfterLive = !isStarting &&
+                            liveKitRoomState == Room.State.DISCONNECTED && duration > 0
+                    val isReconnecting = (isDisconnectedAfterLive && !isEnding) ||
+                            (!isStarting && liveKitRoomState == Room.State.RECONNECTING)
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
                             .background(
-                                if (liveKitRoomState == Room.State.CONNECTED) {
+                                if (liveKitRoomState == Room.State.CONNECTED || isReconnecting || isDisconnectedAfterLive) {
                                     Color.Transparent
                                 } else {
                                     amityColorBlack.copy(
@@ -697,7 +720,7 @@ fun AmityCreateRoomPage(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         when {
-                            liveKitRoomState == Room.State.DISCONNECTED && !isStarting -> {
+                            liveKitRoomState == Room.State.DISCONNECTED && !isStarting && !isDisconnectedAfterLive -> {
                                 val room = uiState.room
                                 if (room != null) {
                                     EventRoomPlayerHeader(
@@ -920,13 +943,18 @@ fun AmityCreateRoomPage(
                                 }
                             }
 
-                            liveKitRoomState == Room.State.CONNECTED -> {
+                            liveKitRoomState == Room.State.CONNECTED || isReconnecting || isDisconnectedAfterLive -> {
                                 isStarting = false
                                 Box(modifier = Modifier.fillMaxSize()) {
+                                    if (isReconnecting) {
+                                        AmityCreateLivestreamNoInternetView()
+                                    }
+
                                     if (showCountdownEndingLivestream) {
                                         AmityCircularProgressWithCountDownTimer(
                                             totalTime = LIVESTREAM_COUNTDOWN_DURATION,
                                             onTimeUp = {
+                                                isEnding = true
                                                 endLivestream(
                                                     context = context,
                                                     durationDisposable = durationDisposable,
@@ -941,9 +969,7 @@ fun AmityCreateRoomPage(
                                         )
                                     }
 
-                                    if (liveKitRoomState == Room.State.DISCONNECTED) {
-                                        AmityCreateLivestreamNoInternetView()
-                                    } else if (uiState.isPendingApproval == true) {
+                                    if (uiState.isPendingApproval == true) {
                                         AmityCreateLivestreamPendingApprovalView()
                                     }
 
@@ -1099,6 +1125,21 @@ fun AmityCreateRoomPage(
                                                 )
                                             }
                                         }
+                                    }
+
+                                    if (isReconnecting) {
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .pointerInput(Unit) {
+                                                    awaitPointerEventScope {
+                                                        while (true) {
+                                                            awaitPointerEvent(PointerEventPass.Initial)
+                                                                .changes.forEach { it.consume() }
+                                                        }
+                                                    }
+                                                }
+                                        )
                                     }
                                 }
                             }
@@ -1394,24 +1435,28 @@ fun AmityCreateRoomPage(
                             .imePadding()
                             .fillMaxSize()
                     ) {
-                        // Floating reactions animation
-                        FloatingReactionsOverlay(
-                            reactions = floatingReactions,
-                            modifier = Modifier
-                                .height(182.dp)
-                                .width(120.dp),
-                        )
+                        // Floating reactions animation. Hidden while the keyboard is open,
+                        // so a reaction never flies over the keyboard while the user types.
+                        if (!amityLiveChatHiddenByKeyboard()) {
+                            FloatingReactionsOverlay(
+                                reactions = floatingReactions,
+                                modifier = Modifier
+                                    .height(182.dp)
+                                    .width(120.dp),
+                            )
+                        }
                         Spacer(modifier = Modifier.height(12.dp))
                         // Chat overlay
                         ChatOverlay(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .fillMaxHeight(0.5f)
+                                .height(amityLiveChatFeedHeight())
                             ,
                             pageScope = getPageScope(),
                             channelId = uiState.channelId ?: "",
                             streamHostUserId = uiState.hostUserId,
                             coHostUserId = if (uiState.invitation == null) uiState.cohostUserId else null,
+                            isLive = uiState.isLive,
                             onReactionClick = { showReactionPicker = true },
                             canInviteCohost = uiState.cohostUserId.isNullOrBlank(),
                             onInviteCohost = { userId, user ->
@@ -1725,6 +1770,7 @@ fun AmityCreateRoomPage(
                     confirmTextColor = AmityTheme.colors.alert,
                     dismissTextColor = AmityTheme.colors.primary,
                     onConfirmation = {
+                        isEnding = true
                         endLivestream(
                             context = context,
                             durationDisposable = durationDisposable,

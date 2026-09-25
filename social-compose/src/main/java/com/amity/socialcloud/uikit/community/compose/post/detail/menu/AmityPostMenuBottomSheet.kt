@@ -82,6 +82,7 @@ fun AmityPostMenuBottomSheet(
         if (post.getTarget() is AmityPost.Target.COMMUNITY) {
             val communityId = (post.getTarget() as AmityPost.Target.COMMUNITY).getCommunityId()
             viewModel.checkDeleteCommunityPostPermission(communityId)
+            viewModel.checkEditCommunityPostPermission(communityId)
         } else if (post.getTarget() is AmityPost.Target.USER) {
             viewModel.checkDeleteUserFeedPostPermission()
         }
@@ -92,8 +93,13 @@ fun AmityPostMenuBottomSheet(
     val hasDeleteCommunityPostPermission by viewModel.hasDeleteCommunityPostPermission.collectAsState()
 
     val hasDeleteUserFeedPostPermission by viewModel.hasDeleteUserFeedPostPermission.collectAsState()
+    val hasEditCommunityPostPermission by viewModel.hasEditCommunityPostPermission.collectAsState()
 
-    val shouldShowDeletePostOption by remember(post.getPostId()) {
+    val shouldShowDeletePostOption by remember(
+        post.getPostId(),
+        hasDeleteCommunityPostPermission,
+        hasDeleteUserFeedPostPermission,
+    ) {
         derivedStateOf {
             val isCommunityTarget = post.getTarget() is AmityPost.Target.COMMUNITY
 
@@ -103,7 +109,7 @@ fun AmityPostMenuBottomSheet(
                 if (isCommunityTarget) {
                     hasDeleteCommunityPostPermission
                 } else {
-                    false //hasDeleteUserFeedPostPermission
+                    hasDeleteUserFeedPostPermission
                 }
             }
         }
@@ -174,9 +180,7 @@ fun AmityPostMenuBottomSheet(
                                     && target is AmityPost.Target.COMMUNITY
                                     && target.getCommunity()
                                         ?.getPostSettings() == AmityCommunityPostSettings.ADMIN_REVIEW_POST_REQUIRED
-                                    && !AmityCoreClient.hasPermission(AmityPermission.EDIT_COMMUNITY_POST)
-                                        .atCommunity(target.getCommunityId()).check()
-                                        .blockingFirst()
+                                    && !hasEditCommunityPostPermission
                                     && post.getReviewStatus() == AmityReviewStatus.PUBLISHED
                                 ) {
                                     viewModel.updateDialogUIState(

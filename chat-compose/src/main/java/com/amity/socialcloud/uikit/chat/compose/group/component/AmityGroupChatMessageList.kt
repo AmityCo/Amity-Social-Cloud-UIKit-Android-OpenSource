@@ -109,7 +109,7 @@ fun AmityGroupChatMessageList(
     modifier: Modifier = Modifier,
     pageScope: AmityComposePageScope? = null,
     viewModel: AmityGroupChatPageViewModel,
-    isModerator: Boolean = false,
+    canDeleteMessage: Boolean = false,
     memberRoles: Map<String, List<String>> = emptyMap(),
     isUserMuted: Boolean = false,
     jumpToMessageId: String? = null,
@@ -375,7 +375,7 @@ fun AmityGroupChatMessageList(
                                         AmityUIKitSnackbar.publishSnackbarMessage(copiedMsg)
                                     }
                                 },
-                                onDelete = if (isOwnMessage || isModerator) {
+                                onDelete = if (isOwnMessage || canDeleteMessage) {
                                     {
                                         viewModel.showDeleteConfirmation(message)
                                     }
@@ -405,9 +405,9 @@ fun AmityGroupChatMessageList(
                                     is AmityMessage.Data.IMAGE -> {
                                         { scope.launch { saveImageToGallery(context, message) } }
                                     }
-                                    // Video save is intentionally omitted, not an oversight.
-                                    // Re-enable it together with the media-preview dialog's
-                                    // own video-save gate, or the two surfaces disagree.
+                                    is AmityMessage.Data.VIDEO -> {
+                                        { scope.launch { saveVideoToGallery(context, message) } }
+                                    }
                                     else -> null
                                 },
                             ),

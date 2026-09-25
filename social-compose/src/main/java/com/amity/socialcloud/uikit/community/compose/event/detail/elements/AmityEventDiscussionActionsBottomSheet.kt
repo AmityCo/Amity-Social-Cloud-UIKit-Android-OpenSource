@@ -14,7 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem
+import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.common.R as CommonR
@@ -29,6 +31,7 @@ fun AmityEventDiscussionActionsBottomSheet(
     modifier: Modifier = Modifier,
     community: AmityCommunity,
     shouldShow: Boolean,
+    pageScope: AmityComposePageScope? = null,
     showPollTypeSelectionSheet: () -> Unit = {},
     onDismiss: () -> Unit,
 ) {
@@ -46,6 +49,7 @@ fun AmityEventDiscussionActionsBottomSheet(
             AmityEventDiscussionActionsContainer(
                 modifier = modifier,
                 community = community,
+                pageScope = pageScope,
                 showPollTypeSelectionSheet = {
                     showPollTypeSelectionSheet()
                 }
@@ -66,6 +70,7 @@ fun AmityEventDiscussionActionsBottomSheet(
 fun AmityEventDiscussionActionsContainer(
     modifier: Modifier = Modifier,
     community: AmityCommunity,
+    pageScope: AmityComposePageScope? = null,
     showPollTypeSelectionSheet: () -> Unit = {},
     onDismiss: () -> Unit,
 ) {
@@ -84,43 +89,58 @@ fun AmityEventDiscussionActionsContainer(
             contract = ActivityResultContracts.StartActivityForResult()
         ) {}
 
-        AmityBottomSheetActionItem(
-            icon = CommonR.drawable.amity_ic_post_create,
-            text = amitySocialString("amity_social_button_social_home_create_post_button"),
-            modifier = modifier,
+        AmityBaseElement(
+            pageScope = pageScope,
+            elementId = "create_post_button"
         ) {
-            onDismiss()
-            behavior.goToPostComposerPage(
-                AmityCommunityProfilePageBehavior.Context(
-                    pageContext = context,
-                    activityLauncher = launcher,
-                    community = community,
+            AmityBottomSheetActionItem(
+                icon = CommonR.drawable.amity_ic_post_create,
+                text = amitySocialString("amity_social_button_social_home_create_post_button"),
+                modifier = modifier,
+            ) {
+                onDismiss()
+                behavior.goToPostComposerPage(
+                    AmityCommunityProfilePageBehavior.Context(
+                        pageContext = context,
+                        activityLauncher = launcher,
+                        community = community,
+                    )
                 )
-            )
+            }
         }
 
-        AmityBottomSheetActionItem(
-            icon = CommonR.drawable.ic_amity_ic_poll_create,
-            text = amitySocialString("amity_social_button_poll"),
-            modifier = modifier,
+        AmityBaseElement(
+            pageScope = pageScope,
+            elementId = "create_poll_button"
         ) {
-            onDismiss()
-            showPollTypeSelectionSheet()
+            AmityBottomSheetActionItem(
+                icon = CommonR.drawable.ic_amity_ic_poll_create,
+                text = amitySocialString("amity_social_button_poll"),
+                modifier = modifier,
+            ) {
+                onDismiss()
+                showPollTypeSelectionSheet()
+            }
         }
 
-        AmityBottomSheetActionItem(
-            icon = CommonR.drawable.ic_amity_ic_live_stream_create,
-            text = amitySocialString("amity_social_status_live_stream"),
-            modifier = modifier,
+        AmityBaseElement(
+            pageScope = pageScope,
+            elementId = "create_livestream_button"
         ) {
-            onDismiss()
-            behavior.goToCreateLivestreamPage(
-                AmityCommunityProfilePageBehavior.Context(
-                    pageContext = context,
-                    activityLauncher = launcher,
-                    community = community,
+            AmityBottomSheetActionItem(
+                icon = CommonR.drawable.ic_amity_ic_live_stream_create,
+                text = amitySocialString("amity_social_status_live_stream"),
+                modifier = modifier,
+            ) {
+                onDismiss()
+                behavior.goToCreateLivestreamPage(
+                    AmityCommunityProfilePageBehavior.Context(
+                        pageContext = context,
+                        activityLauncher = launcher,
+                        community = community,
+                    )
                 )
-            )
+            }
         }
     }
 }

@@ -27,7 +27,6 @@ import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.core.error.AmityException
 import com.amity.socialcloud.sdk.model.core.flag.AmityContentFlagReason
 import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
-import com.amity.socialcloud.sdk.model.core.search.AmitySearchUserBy
 import com.amity.socialcloud.uikit.chat.compose.live.mention.AmityMentionSuggestion
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
@@ -147,7 +146,20 @@ class AmityGroupChatPageViewModel(
             .catch { }
     }
 
-    fun isChannelModerator(): Flow<Boolean> {
+    // Deleting other users' messages is gated on DELETE_MESSAGE.
+    fun canDeleteMessage(): Flow<Boolean> {
+        return AmityCoreClient.hasPermission(AmityPermission.DELETE_MESSAGE)
+            .atChannel(channelId)
+            .check()
+            .distinctUntilChanged()
+            .subscribeOn(Schedulers.io())
+            .asFlow()
+            .catch { }
+    }
+
+    // Typing while the CHANNEL is muted is gated on MUTE_CHANNEL. A member's own personal mute
+    // (member.isMuted) always blocks typing regardless of this — handled in the composer.
+    fun canBypassChannelMute(): Flow<Boolean> {
         return AmityCoreClient.hasPermission(AmityPermission.MUTE_CHANNEL)
             .atChannel(channelId)
             .check()
@@ -187,7 +199,6 @@ class AmityGroupChatPageViewModel(
             .membership(channelId)
             .searchMembers(keyword)
             .membershipFilter(listOf(AmityChannelMembership.MEMBER, AmityChannelMembership.MUTED))
-            .searchBy(listOf(AmitySearchUserBy.DISPLAY_NAME))
             .build()
             .query()
             .debounce(500, TimeUnit.MILLISECONDS)

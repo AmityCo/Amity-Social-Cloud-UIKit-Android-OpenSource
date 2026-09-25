@@ -35,6 +35,9 @@ open class AmityPostMenuViewModel : AmityBaseViewModel() {
     private val _hasDeleteUserFeedPostPermission = MutableStateFlow<Boolean>(false)
     open val hasDeleteUserFeedPostPermission get() = _hasDeleteUserFeedPostPermission.asStateFlow()
 
+    private val _hasEditCommunityPostPermission = MutableStateFlow<Boolean>(false)
+    open val hasEditCommunityPostPermission get() = _hasEditCommunityPostPermission.asStateFlow()
+
     fun updateSheetUIState(uiState: AmityPostMenuSheetUIState) {
         viewModelScope.launch {
             _sheetUIState.value = uiState
@@ -106,6 +109,27 @@ open class AmityPostMenuViewModel : AmityBaseViewModel() {
                     { error ->
                         error.printStackTrace()
                         _hasDeleteCommunityPostPermission.update { false }
+                    }
+                )
+        )
+    }
+
+    fun checkEditCommunityPostPermission(communityId: String) {
+        addDisposable(
+            AmityCoreClient
+                .hasPermission(AmityPermission.EDIT_COMMUNITY_POST)
+                .atCommunity(communityId)
+                .check()
+                .firstOrError()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { result ->
+                        _hasEditCommunityPostPermission.update { result }
+                    },
+                    { error ->
+                        error.printStackTrace()
+                        _hasEditCommunityPostPermission.update { false }
                     }
                 )
         )

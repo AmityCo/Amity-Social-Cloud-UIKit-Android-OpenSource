@@ -406,9 +406,9 @@ fun AmityChatMessageList(
                                         is AmityMessage.Data.IMAGE -> {
                                             { scope.launch { saveImageToGallery(context, message) } }
                                         }
-                                        // Video save is intentionally omitted, not an oversight.
-                                        // Re-enable it together with the media-preview dialog's
-                                        // own video-save gate, or the two surfaces disagree.
+                                        is AmityMessage.Data.VIDEO -> {
+                                            { scope.launch { saveVideoToGallery(context, message) } }
+                                        }
                                         else -> null
                                     },
                                 ),

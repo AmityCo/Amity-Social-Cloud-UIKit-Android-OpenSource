@@ -14,6 +14,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import com.amity.socialcloud.uikit.community.compose.livestream.chat.amityLiveChatFeedHeight
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -139,6 +140,7 @@ import com.amity.socialcloud.uikit.community.compose.livestream.chat.AmityLivest
 import com.amity.socialcloud.uikit.community.compose.livestream.chat.ChatOverlay
 import com.amity.socialcloud.uikit.community.compose.livestream.chat.FloatingReaction
 import com.amity.socialcloud.uikit.community.compose.livestream.chat.FloatingReactionsOverlay
+import com.amity.socialcloud.uikit.community.compose.livestream.chat.amityLiveChatHiddenByKeyboard
 import com.amity.socialcloud.uikit.community.compose.livestream.chat.ReactionPicker
 import com.amity.socialcloud.uikit.community.compose.livestream.create.element.AmityCreateLivestreamNoInternetView
 import com.amity.socialcloud.uikit.community.compose.livestream.create.element.AmityCreateLivestreamPendingApprovalView
@@ -757,7 +759,9 @@ fun AmityRoomPlayerPage(
                 val isUnavailable = uiState.error != null || uiState.room?.isDeleted() == true || roomId == null
                 val isDisconnected =
                     connection == NetworkConnectionEvent.Disconnected && roomStatus == AmityRoomStatus.LIVE
-                val isTerminalState = terminateLabels.isNotEmpty()
+                val isTerminated = terminateLabels.isNotEmpty()
+                    || roomStatus == AmityRoomStatus.TERMINATED
+                val isTerminalState = isTerminated
                     || roomStatus == AmityRoomStatus.ENDED
                     || (roomStatus != AmityRoomStatus.LIVE && wasLive)
                     || isUnavailable
@@ -779,7 +783,7 @@ fun AmityRoomPlayerPage(
                         pageScope = getPageScope(),
                         elementId = if (roomId == null) {
                             "stream_loading"
-                        } else if (terminateLabels.isNotEmpty()) {
+                        } else if (isTerminated) {
                             "stream_terminated"
                         } else if (roomStatus == AmityRoomStatus.ENDED) {
                             "stream_ended"
@@ -797,7 +801,7 @@ fun AmityRoomPlayerPage(
                         ) {
                             if (roomId == null) {
                                 AmityLivestreamLoadingView()
-                            } else if (terminateLabels.isNotEmpty()) {
+                            } else if (isTerminated) {
                                 closePageWithLivestreamError(
                                     context,
                                     LivestreamErrorScreenType.TERMINATED
@@ -1439,11 +1443,12 @@ fun AmityRoomPlayerPage(
                                         }
                                     }
 
-                                    liveKitRoomState == Room.State.CONNECTED -> {
+                                    liveKitRoomState == Room.State.CONNECTED ||
+                                            (liveKitRoomState == Room.State.RECONNECTING && !isStarting) -> {
                                         isStarting = false
                                         Box(modifier = Modifier.fillMaxSize()) {
 
-                                            if (liveKitRoomState == Room.State.DISCONNECTED) {
+                                            if (liveKitRoomState == Room.State.RECONNECTING) {
                                                 AmityCreateLivestreamNoInternetView()
                                             } else if (uiState.isPendingApproval == true) {
                                                 AmityCreateLivestreamPendingApprovalView()
@@ -1627,13 +1632,16 @@ fun AmityRoomPlayerPage(
                             .align(Alignment.BottomStart)
                             .fillMaxSize()
                     ) {
-                        // Floating reactions animation
-                        FloatingReactionsOverlay(
-                            reactions = floatingReactions,
-                            modifier = Modifier
-                                .height(182.dp)
-                                .width(120.dp),
-                        )
+                        // Floating reactions animation. Hidden while the keyboard is open,
+                        // so a reaction never flies over the keyboard while the user types.
+                        if (!amityLiveChatHiddenByKeyboard()) {
+                            FloatingReactionsOverlay(
+                                reactions = floatingReactions,
+                                modifier = Modifier
+                                    .height(182.dp)
+                                    .width(120.dp),
+                            )
+                        }
                         Spacer(modifier = Modifier.height(12.dp))
                         // Chat overlay — only render when the room has a chat channel.
                         // Rooms without one (e.g. some event-linked rooms) would otherwise
@@ -1644,11 +1652,12 @@ fun AmityRoomPlayerPage(
                                 ChatOverlay(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .fillMaxHeight(0.5f),
+                                        .height(amityLiveChatFeedHeight()),
                                     pageScope = getPageScope(),
                                     channelId = chatChannelId,
                                     streamHostUserId = uiState.hostUserId,
                                     coHostUserId = uiState.cohostUserId,
+                                    isLive = uiState.room?.getStatus() == AmityRoomStatus.LIVE,
                                     onReactionClick = { showReactionPicker = true }
                                 )
                             }

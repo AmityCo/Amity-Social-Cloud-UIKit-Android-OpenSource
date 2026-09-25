@@ -1,0 +1,51 @@
+# Viewer POV, PDT-4981 / PDT-4982. Run while a host is live in the community with a
+# message already pinned:
+#   maestro --device <viewer> test -e USER_ID=brezy .maestro/pin-message/00-login.yaml
+#   maestro --device <viewer> test .maestro/pin-message/02-viewer-pin.yaml
+#
+# The account must be a plain member — no host, co-host or channel-moderator role —
+# or the unpin control renders and the negative checks prove nothing.
+appId: com.amity.sample.ascuikit
+---
+- launchApp
+- tapOn: "Social"
+- extendedWaitUntil:
+    visible: "Community"
+    timeout: 60000
+- tapOn: "Communities"
+- extendedWaitUntil:
+    visible: "Rezyception"
+    timeout: 60000
+- tapOn: "Rezyception"
+- extendedWaitUntil:
+    visible: "LIVE"
+    timeout: 60000
+- tapOn:
+    point: "50%,83%"          # play button on the live post
+- extendedWaitUntil:
+    visible:
+      id: "\\*/livestream_chat_feed/pinned_message_banner"
+    timeout: 60000
+
+# ---- the banner reaches a viewer, without the unpin control (UC1-03, UC2-02) ----
+- assertVisible: "Pinned"
+- assertNotVisible:
+    id: "\\*/livestream_chat_feed/unpin_message_button"
+- takeScreenshot: 01-viewer-sees-banner
+
+# ---- no pin entry in the viewer's message menu (UC1-02) ----
+- tapOn: "message options"
+- extendedWaitUntil:
+    visible: "Report message"
+    timeout: 15000
+- assertNotVisible: "Pin message"
+- takeScreenshot: 02-viewer-menu-has-no-pin
+- back
+
+# ---- expand and collapse are not permission gated (REQ-024) ----
+- tapOn:
+    id: "\\*/livestream_chat_feed/pinned_message_banner"
+- takeScreenshot: 03-viewer-expanded
+- tapOn:
+    id: "\\*/livestream_chat_feed/pinned_message_banner"
+- takeScreenshot: 04-viewer-recollapsed

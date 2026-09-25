@@ -492,6 +492,11 @@ object AmitySocialStrings {
         "amity_social_label_declining_a_join_request_is_irreversible_the_user_must_" to R.string.amity_social_label_declining_a_join_request_is_irreversible_the_user_must_,
         "amity_social_button_delete_event" to R.string.amity_social_button_delete_event,
         "amity_social_button_delete_message" to R.string.amity_social_button_delete_message,
+        "amity_social_button_pin_message" to R.string.amity_social_button_pin_message,
+        "amity_social_button_unpin_message" to R.string.amity_social_button_unpin_message,
+        "amity_social_label_pinned_message_badge" to R.string.amity_social_label_pinned_message_badge,
+        "amity_social_label_pinned_message_more" to R.string.amity_social_label_pinned_message_more,
+        "amity_social_label_pinned_message_less" to R.string.amity_social_label_pinned_message_less,
         "amity_social_button_delete_post" to R.string.amity_social_button_delete_post,
         "amity_social_button_delete_story" to R.string.amity_social_button_delete_story,
         "amity_social_label_demote_to_member" to R.string.amity_social_label_demote_to_member,
@@ -536,6 +541,7 @@ object AmitySocialStrings {
         "amity_social_label_name_your_event" to R.string.amity_social_label_name_your_event,
         "amity_social_label_new_follow_requests" to R.string.amity_social_label_new_follow_requests,
         "amity_social_button_next" to R.string.amity_social_button_next,
+        "amity_social_button_previous" to R.string.amity_social_button_previous,
         "amity_social_empty_state_no_comments_yet" to R.string.amity_social_empty_state_no_comments_yet,
         "amity_social_label_no_community_yet" to R.string.amity_social_label_no_community_yet,
         "amity_social_label_no_events_yet" to R.string.amity_social_label_no_events_yet,
@@ -923,6 +929,7 @@ object AmitySocialStrings {
 
         // Comment count (plural/singular)
         "amity_social_button_feed_comment_count_plural" to R.string.amity_social_button_feed_comment_count_plural,
+        "amity_social_label_reaction_count_plural" to R.string.amity_social_label_reaction_count_plural,
         "amity_social_button_feed_comment_count_singular" to R.string.amity_social_button_feed_comment_count_singular,
 
         // Comment compose hint

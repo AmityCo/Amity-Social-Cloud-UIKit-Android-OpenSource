@@ -31,6 +31,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -374,8 +376,10 @@ fun AmityCreateGroupChatPage(
                         BasicTextField(
                             value = groupName,
                             onValueChange = { newValue ->
-                                groupName = newValue.take(100)
+                                // Wraps on width, but a return key must not break the line.
+                                groupName = newValue.filterNot { it == '\n' || it == '\r' }.take(100)
                             },
+                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                             modifier = Modifier.fillMaxWidth(),
                             textStyle = AmityTheme.typography.bodyLegacy.copy(
                                 fontSize = 15.sp,

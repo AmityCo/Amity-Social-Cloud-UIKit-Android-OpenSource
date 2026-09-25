@@ -39,8 +39,8 @@ class AmityGroupSettingPageViewModel(
             .catch { }
     }
 
-    fun isModerator(): Flow<Boolean> {
-        return AmityCoreClient.hasPermission(AmityPermission.MUTE_CHANNEL)
+    private fun channelPermission(permission: AmityPermission): Flow<Boolean> {
+        return AmityCoreClient.hasPermission(permission)
             .atChannel(channelId)
             .check()
             .distinctUntilChanged()
@@ -48,6 +48,15 @@ class AmityGroupSettingPageViewModel(
             .asFlow()
             .catch { }
     }
+
+    /** Edit group profile / notifications, and view the member list. */
+    fun canEditChannel(): Flow<Boolean> = channelPermission(AmityPermission.EDIT_CHANNEL)
+
+    /** Member permissions tile (rate limit / channel mute toggles). */
+    fun canMuteChannel(): Flow<Boolean> = channelPermission(AmityPermission.MUTE_CHANNEL)
+
+    /** Banned members tile. */
+    fun canBanUser(): Flow<Boolean> = channelPermission(AmityPermission.BAN_USER_FROM_CHANNEL)
 
     fun getMembers(): Flow<List<AmityChannelMember>> {
         return AmityChatClient.newChannelRepository()

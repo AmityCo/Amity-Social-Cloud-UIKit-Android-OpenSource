@@ -8,6 +8,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import com.amity.socialcloud.sdk.api.chat.AmityChatClient
+import com.amity.socialcloud.sdk.api.core.events.AmityTopicSubscription
+import com.amity.socialcloud.sdk.model.core.events.AmityUserEvents
 import com.amity.socialcloud.sdk.api.chat.message.query.AmityMessageQuerySortOption
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.api.core.reaction.reference.AmityReactionReference
@@ -16,6 +18,8 @@ import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.model.chat.channel.AmityChannel
 import com.amity.socialcloud.sdk.model.chat.member.AmityChannelMember
 import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
+import com.amity.socialcloud.sdk.model.chat.message.AmityPinnedMessage
+import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.core.flag.AmityContentFlagReason
 import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
@@ -38,6 +42,55 @@ class AmityLivestreamChatViewModel constructor(private val channelId: String) : 
 
     var showDeleteDialog = mutableStateOf(false)
     var targetDeletedMessage = mutableStateOf<AmityMessage?>(null)
+
+    /** Held so the same topic is released in [onCleared]. */
+    private var currentUserSubscription: AmityTopicSubscription? = null
+
+    init {
+        subscribeCurrentUserTopic()
+    }
+
+    /**
+     * Subscribes the signed-in user's own topic, which carries `user.updated`.
+     *
+     * PIN_MESSAGE can be granted at network level from the Console. That change reaches the
+     * client only on `user.updated`, and nothing subscribes to the user's topic otherwise, so a
+     * revoked viewer kept being offered the pin action until the app restarted (PDT-5548).
+     * The SDK already handles the event: it writes the permissions onto the user row, and
+     * `hasPinPermission` observes that row, so `canPin` recomputes with no further wiring.
+     *
+     * Scoped to this screen rather than the whole session, matching how the livestream pages
+     * already take and release their room, channel and post topics.
+     *
+     * Not restored after an MQTT reconnect. Nothing records a manual subscription, so none of
+     * the livestream topics come back either. A reconnect while the stream is open leaves the
+     * pin action as stale as it was before this fix.
+     */
+    private fun subscribeCurrentUserTopic() {
+        AmityCoreClient.getCurrentUser()
+            .firstOrError()
+            .flatMapCompletable { user ->
+                val subscription = user.subscription(AmityUserEvents.USER)
+                currentUserSubscription = subscription
+                subscription.subscribeTopic()
+            }
+            .subscribeOn(Schedulers.io())
+            .onErrorComplete()
+            .subscribe()
+            .let(::addDisposable)
+    }
+
+    override fun onCleared() {
+        // Deliberately not added to the composite: super disposes it, which would cancel the
+        // unsubscribe before the broker sees it.
+        currentUserSubscription
+            ?.unsubscribeTopic()
+            ?.subscribeOn(Schedulers.io())
+            ?.onErrorComplete()
+            ?.subscribe()
+        currentUserSubscription = null
+        super.onCleared()
+    }
 
     private val _sheetUIState by lazy {
         MutableStateFlow<AmityLiveStreamSheetUIState>(AmityLiveStreamSheetUIState.CloseSheet)
@@ -104,8 +157,12 @@ class AmityLivestreamChatViewModel constructor(private val channelId: String) : 
             .newChannelRepository()
             .getChannel(channelId)
             .distinctUntilChanged { old, new ->
-                // Only emit if metadata actually changed
-                old.getMetadata() == new.getMetadata() && old.isMuted() == new.isMuted()
+                // Only emit if metadata, mute or the pinned message actually changed. The pin is
+                // its own channel field: leaving it out of this comparison swallows every
+                // pin / unpin, since neither touches metadata.
+                old.getMetadata() == new.getMetadata()
+                        && old.isMuted() == new.isMuted()
+                        && old.getPinnedMessage()?.getMessageId() == new.getPinnedMessage()?.getMessageId()
             }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -113,6 +170,92 @@ class AmityLivestreamChatViewModel constructor(private val channelId: String) : 
             .catch {
 
             }
+    }
+
+    fun getMutedMemberIdsFlow(): Flow<List<String>> {
+        return getChannelFlow().map { channel ->
+            channel.getMetadata()
+                ?.getAsJsonArray("mutedMembers")
+                ?.mapNotNull { it.asString }
+                ?: emptyList()
+        }
+    }
+
+    fun getPinnedMessageFlow(): Flow<AmityPinnedMessage?> {
+        return getChannelFlow().map { it.getPinnedMessage() }
+    }
+
+    /**
+     * The permission arm of `canPin`. Re-emits when the current user's channel membership row is
+     * rewritten, so a revoked role hides the controls without waiting for a 403.
+     */
+    fun hasPinPermission(): Flow<Boolean> {
+        return AmityCoreClient.hasPermission(AmityPermission.PIN_MESSAGE)
+            .atChannel(channelId)
+            .check()
+            .distinctUntilChanged()
+            .subscribeOn(Schedulers.io())
+            .asFlow()
+            .catch { }
+    }
+
+    /**
+     * Re-reads the channel from the server so the cached membership row — and with it the
+     * channel-scoped permissions `canPin` is derived from — matches what the server enforces.
+     *
+     * This is the REQ-086 backstop, not the mechanism. A role change normally reaches the client
+     * on `channel.roleAdded` / `channel.roleRemoved`, which the SDK writes straight into the
+     * membership row, and `hasPinPermission` re-emits off that. This covers the window before
+     * that event lands, and an SDK build that does not handle it yet — without it a revoked
+     * user keeps being offered pin and unpin until the page is reopened.
+     */
+    private fun refreshMyChannelPermissions() {
+        AmityChatClient.newChannelRepository()
+            .getChannel(channelId)
+            .firstOrError()
+            .subscribeOn(Schedulers.io())
+            .ignoreElement()
+            .onErrorComplete()
+            .subscribe()
+            .let(::addDisposable)
+    }
+
+    /**
+     * No error UI on failure by design (Plan 39 Open Question 4): the banner keeps rendering
+     * whatever the channel live object holds. A 403 refreshes the membership row so `canPin`
+     * recomputes and both controls disappear (REQ-086); [onPermissionDenied] lets a caller hook
+     * anything further onto that.
+     */
+    fun pinMessage(messageId: String, onPermissionDenied: () -> Unit = {}) {
+        AmityChatClient.newMessageRepository()
+            .pinMessage(messageId)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnError {
+                if (AmityError.from(it) == AmityError.PERMISSION_DENIED) {
+                    refreshMyChannelPermissions()
+                    onPermissionDenied()
+                }
+            }
+            .onErrorComplete()
+            .subscribe()
+            .let(::addDisposable)
+    }
+
+    fun unpinMessage(messageId: String, onPermissionDenied: () -> Unit = {}) {
+        AmityChatClient.newMessageRepository()
+            .unpinMessage(messageId)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnError {
+                if (AmityError.from(it) == AmityError.PERMISSION_DENIED) {
+                    refreshMyChannelPermissions()
+                    onPermissionDenied()
+                }
+            }
+            .onErrorComplete()
+            .subscribe()
+            .let(::addDisposable)
     }
 
     fun isChannelModerator(): Flow<Boolean> {

@@ -22,7 +22,6 @@ import com.amity.socialcloud.sdk.model.chat.channel.AmityChannel
 import com.amity.socialcloud.sdk.model.chat.member.AmityChannelMember
 import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
 import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
-import com.amity.socialcloud.sdk.model.core.search.AmitySearchUserBy
 import com.amity.socialcloud.uikit.chat.compose.live.mention.AmityMentionSuggestion
 import com.amity.socialcloud.uikit.common.eventbus.NetworkConnectionEventBus
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -121,7 +120,6 @@ class AmityLiveChatPageViewModel constructor(private val channelId: String) : Vi
             .searchMembers(keyword)
             .membershipFilter(listOf(AmityChannelMembership.MEMBER, AmityChannelMembership.MUTED))
             .includeDeleted(false)
-            .searchBy(listOf(AmitySearchUserBy.DISPLAY_NAME))
             .build()
             .query()
             .debounce(500, TimeUnit.MILLISECONDS)
@@ -143,9 +141,11 @@ class AmityLiveChatPageViewModel constructor(private val channelId: String) : Vi
     }
 
     fun getChannelMembers(): Flow<PagingData<AmityMentionSuggestion>> {
-        val hasPermissionFlowable = AmityCoreClient.hasPermission(AmityPermission.MUTE_CHANNEL)
-            .atChannel(channelId)
-            .check()
+        // @all is gated on the network mention-channel setting only — not on a permission
+        // (confirmed 2026-09-04). Matches group chat; the old MUTE_CHANNEL proxy is dropped.
+        val isMentionChannelEnabledFlowable = AmityChatClient.getSettings()
+            .map { it.isMentionChannelEnabled() }
+            .onErrorReturn { true }
         val membersFlowable = AmityChatClient.newChannelRepository()
             .membership(channelId)
             .getMembers()
@@ -159,13 +159,13 @@ class AmityLiveChatPageViewModel constructor(private val channelId: String) : Vi
                     it.getUser() != null
                 }
             }
-        return Flowable.zip(hasPermissionFlowable, membersFlowable) { hasPermission, members ->
+        return Flowable.combineLatest(isMentionChannelEnabledFlowable, membersFlowable) { isMentionChannelEnabled, members ->
             members.map { channelMember ->
                 AmityMentionSuggestion.USER(
                     user = channelMember.getUser()!!
                 ) as AmityMentionSuggestion
             }.let {
-                if (hasPermission) {
+                if (isMentionChannelEnabled) {
                     it.insertHeaderItem(
                         TerminalSeparatorType.SOURCE_COMPLETE,
                         AmityMentionSuggestion.CHANNEL(channelId)
@@ -192,6 +192,18 @@ class AmityLiveChatPageViewModel constructor(private val channelId: String) : Vi
             .catch {
 
             }
+    }
+
+    // Deleting other users' messages is gated on DELETE_MESSAGE, not the MUTE_CHANNEL
+    // moderator proxy. (Mute-bypass in the composer keeps MUTE_CHANNEL — see isChannelModerator.)
+    fun canDeleteMessage(): Flow<Boolean> {
+        return AmityCoreClient.hasPermission(AmityPermission.DELETE_MESSAGE)
+            .atChannel(channelId)
+            .check()
+            .distinctUntilChanged()
+            .subscribeOn(Schedulers.io())
+            .asFlow()
+            .catch { }
     }
 
     fun getMessage(messageId: String): Flow<AmityMessage> {

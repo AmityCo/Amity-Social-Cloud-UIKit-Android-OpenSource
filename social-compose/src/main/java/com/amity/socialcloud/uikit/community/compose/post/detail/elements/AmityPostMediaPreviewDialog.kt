@@ -95,6 +95,7 @@ fun AmityPostMediaPreviewDialog(
     isPostCreator: Boolean = false,
     onDismiss: () -> Unit,
     onPageChanged: (String) -> Unit = {},
+    onProductTagClick: ((AmityPost) -> Unit)? = null,
 ) {
     val imageMap = remember { mutableMapOf<String, AmityImage>() }
     val context = LocalContext.current
@@ -265,7 +266,7 @@ fun AmityPostMediaPreviewDialog(
                                         )
                                     }
 
-                                    MediaProductTagBadge(childPost)
+                                    MediaProductTagBadge(childPost, onProductTagClick)
                                 }
                             }
                             if (openMenu) {
@@ -311,7 +312,7 @@ fun AmityPostMediaPreviewDialog(
                                     isVisible = pagerState.currentPage == index,
                                 )
 
-                                MediaProductTagBadge(childPost)
+                                MediaProductTagBadge(childPost, onProductTagClick)
                             }
                         }
 
@@ -419,7 +420,10 @@ fun AmityPostMediaPreviewDialog(
 }
 
 @Composable
-private fun BoxScope.MediaProductTagBadge(childPost: AmityPost) {
+private fun BoxScope.MediaProductTagBadge(
+    childPost: AmityPost,
+    onProductTagClick: ((AmityPost) -> Unit)? = null,
+) {
     val productTagCount = remember(childPost.getPostId(), childPost.getUpdatedAt()) {
         getProductTagCount(childPost)
     }
@@ -428,7 +432,8 @@ private fun BoxScope.MediaProductTagBadge(childPost: AmityPost) {
             count = productTagCount,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(end = 12.dp, bottom = 12.dp)
+                .padding(end = 12.dp, bottom = 12.dp),
+            onClick = onProductTagClick?.let { { it(childPost) } }
         )
     }
 }

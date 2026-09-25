@@ -57,6 +57,7 @@ fun AmityCommentActionsBottomSheet(
     commentId: String,
     isReplyComment: Boolean,
     isCommentCreatedByMe: Boolean,
+    canDeleteComment: Boolean = false,
     isFlaggedByMe: Boolean,
     isFailed: Boolean,
     fromNonMemberCommunity: Boolean,
@@ -163,6 +164,7 @@ fun AmityCommentActionsBottomSheet(
                         commentId = commentId,
                         isReplyComment = isReplyComment,
                         isCommentCreatedByMe = isCommentCreatedByMe,
+                        canDeleteComment = canDeleteComment,
                         isFlaggedByMe = isFlaggedByMe,
                         isFailed = isFailed,
                         onEdit = onEdit,
@@ -292,6 +294,7 @@ fun AmityCommentActionsContainer(
     commentId: String,
     isReplyComment: Boolean,
     isCommentCreatedByMe: Boolean,
+    canDeleteComment: Boolean = false,
     isFlaggedByMe: Boolean,
     isFailed: Boolean,
     onEdit: () -> Unit,
@@ -350,6 +353,22 @@ fun AmityCommentActionsContainer(
                 modifier = modifier.testTag("comment_tray_component/bottom_sheet_report_comment_button"),
             ) {
                 onReportClick()
+            }
+
+            // Moderator delete: a non-author who holds the target's delete permission can remove
+            // this comment. Uses the same delete flow (confirm dialog -> viewModel.deleteComment).
+            if (canDeleteComment && !isFailed) {
+                AmityBottomSheetActionItem(
+                    icon = CommonR.drawable.amity_ic_delete_story,
+                    text = DefaultAmitySocialStringProvider.getInstance().getString(
+                        if (isReplyComment) "amity_social_button_delete_reply"
+                        else "amity_social_button_delete_comment"
+                    ),
+                    color = AmityTheme.colors.alert,
+                    modifier = modifier.testTag("comment_tray_component/bottom_sheet_delete_comment_button"),
+                ) {
+                    onDeleteClick()
+                }
             }
         }
     }

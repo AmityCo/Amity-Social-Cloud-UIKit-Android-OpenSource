@@ -896,6 +896,79 @@
       }
     },
     "livestream_player_page/*/live_viewer_count_element": {},
+    "livestream_player_page/livestream_chat_feed/*": {
+      "theme": {
+        "light": {
+          "primary_color": "#1054DE",
+          "primary_shade1_color": "#4A82F2",
+          "secondary_color": "#292B32",
+          "secondary_shade3_color": "#40434E",
+          "secondary_shade4_color": "#292B32",
+          "base_color": "#EBECEF",
+          "base_shade1_color": "#A5A9B5",
+          "base_shade2_color": "#6E7487",
+          "base_shade3_color": "#40434E",
+          "base_shade4_color": "#292B32",
+          "base_inverse_color": "#FFFFFF",
+          "alert_color": "#FA4D30",
+          "background_color": "#191919",
+          "background_shade1_color": "#40434E"
+        },
+        "dark": {
+          "primary_color": "#1054DE",
+          "primary_shade1_color": "#4A82F2",
+          "secondary_color": "#292B32",
+          "secondary_shade3_color": "#40434E",
+          "secondary_shade4_color": "#292B32",
+          "base_color": "#EBECEF",
+          "base_shade1_color": "#A5A9B5",
+          "base_shade2_color": "#6E7487",
+          "base_shade3_color": "#40434E",
+          "base_shade4_color": "#292B32",
+          "base_inverse_color": "#FFFFFF",
+          "alert_color": "#FA4D30",
+          "background_color": "#191919",
+          "background_shade1_color": "#40434E"
+        }
+      }
+    },
+    "create_livestream_page/livestream_chat_feed/*": {
+      "theme": {
+        "light": {
+          "primary_color": "#1054DE",
+          "primary_shade1_color": "#4A82F2",
+          "secondary_color": "#292B32",
+          "secondary_shade3_color": "#40434E",
+          "base_color": "#EBECEF",
+          "base_shade1_color": "#A5A9B5",
+          "base_shade2_color": "#6E7487",
+          "base_shade3_color": "#40434E",
+          "base_shade4_color": "#292B32",
+          "base_inverse_color": "#FFFFFF",
+          "alert_color": "#FA4D30",
+          "background_color": "#191919",
+          "background_shade1_color": "#40434E"
+        },
+        "dark": {
+          "primary_color": "#1054DE",
+          "primary_shade1_color": "#4A82F2",
+          "secondary_color": "#292B32",
+          "secondary_shade3_color": "#40434E",
+          "base_color": "#EBECEF",
+          "base_shade1_color": "#A5A9B5",
+          "base_shade2_color": "#6E7487",
+          "base_shade3_color": "#40434E",
+          "base_shade4_color": "#292B32",
+          "base_inverse_color": "#FFFFFF",
+          "alert_color": "#FA4D30",
+          "background_color": "#191919",
+          "background_shade1_color": "#40434E"
+        }
+      }
+    },
+    "*/livestream_chat_feed/pin_message_button": {},
+    "*/livestream_chat_feed/pinned_message_banner": {},
+    "*/livestream_chat_feed/unpin_message_button": {},
     "livestream_player_page/*/livestream_pinned_product": {
       "image": "closeCircleButton",
       "theme": {

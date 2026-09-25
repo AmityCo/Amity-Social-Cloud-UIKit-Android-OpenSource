@@ -8,7 +8,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.offset
 import androidx.compose.ui.draw.alpha
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -54,6 +53,7 @@ import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.common.isNotEmptyOrBlank
 import com.amity.socialcloud.uikit.common.behavior.AmityGlobalBehavior
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
@@ -178,6 +178,35 @@ fun AmityChildPostMediaElement(
     }
     val onMediaDialogPageChanged: (String) -> Unit = { fileId -> lastViewedFileId = fileId }
 
+    // Callback for product tag badge click
+    val onProductTagClick: (AmityPost) -> Unit = { childPost ->
+        val mediaTags = childPost.getProductTags().filterIsInstance<AmityProductTag.Media>()
+        val productIds = mediaTags.map { it.productId }
+
+        if (productIds.isNotEmpty()) {
+            // Query products from productIds
+            val disposable = io.reactivex.rxjava3.core.Observable.fromIterable(productIds)
+                .flatMapSingle { productId ->
+                    AmityCoreClient.newProductRepository()
+                        .getProduct(productId)
+                        .firstOrError()
+                }
+                .toList()
+                .subscribeOn(io.reactivex.rxjava3.schedulers.Schedulers.io())
+                .observeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
+                .subscribe(
+                    { products ->
+                        selectedProducts = products
+                        showProductTagSheet = true
+                    },
+                    { error ->
+                        android.util.Log.e("ProductTagBadge", "Error fetching products", error)
+                    }
+                )
+            disposables.add(disposable)
+        }
+    }
+
     if (showMediaDialog.value && selectedFileId.value.isNotEmptyOrBlank()) {
         if (isVideoPost) {
             // Use AmityVideoPlayerPage for video posts
@@ -197,6 +226,7 @@ fun AmityChildPostMediaElement(
                 selectedFileId = selectedFileId.value,
                 onDismiss = onMediaDialogDismiss,
                 onPageChanged = onMediaDialogPageChanged,
+                onProductTagClick = onProductTagClick,
             )
         }
     }
@@ -228,35 +258,6 @@ fun AmityChildPostMediaElement(
                 selectedProduct = null
             }
         )
-    }
-
-    // Callback for product tag badge click
-    val onProductTagClick: (AmityPost) -> Unit = { childPost ->
-        val mediaTags = childPost.getProductTags().filterIsInstance<AmityProductTag.Media>()
-        val productIds = mediaTags.map { it.productId }
-
-        if (productIds.isNotEmpty()) {
-            // Query products from productIds
-            val disposable = io.reactivex.rxjava3.core.Observable.fromIterable(productIds)
-                .flatMapSingle { productId ->
-                    AmityCoreClient.newProductRepository()
-                        .getProduct(productId)
-                        .firstOrError()
-                }
-                .toList()
-                .subscribeOn(io.reactivex.rxjava3.schedulers.Schedulers.io())
-                .observeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
-                .subscribe(
-                    { products ->
-                        selectedProducts = products
-                        showProductTagSheet = true
-                    },
-                    { error ->
-                        android.util.Log.e("ProductTagBadge", "Error fetching products", error)
-                    }
-                )
-            disposables.add(disposable)
-        }
     }
 
     val onFrameClick: (AmityPost) -> Unit = {
@@ -633,7 +634,7 @@ fun AmityProductTagBadge(
         modifier = modifier
             .then(
                 if (onClick != null) {
-                    Modifier.clickable { onClick() }
+                    Modifier.clickableWithoutRipple { onClick() }
                 } else {
                     Modifier
                 }

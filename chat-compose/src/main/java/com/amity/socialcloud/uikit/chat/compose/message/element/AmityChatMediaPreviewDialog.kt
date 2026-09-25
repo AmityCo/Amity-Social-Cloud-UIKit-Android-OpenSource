@@ -77,6 +77,8 @@ import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonVariant
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonStyle
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityButtonHierarchy
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityIconButtonSize
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityToast
+import com.amity.socialcloud.uikit.common.ui.atoms.AmityToastVariant
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.getVideoUrlWithFallbackQuality
@@ -94,6 +96,7 @@ fun AmityChatMediaPreviewDialog(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val isVideoMedia = media.any { it is AmityVideo }
+    var saveResult by remember { mutableStateOf<Pair<String, Boolean>?>(null) }
 
     val exoPlayer = remember {
         ExoPlayer.Builder(context)
@@ -260,10 +263,7 @@ fun AmityChatMediaPreviewDialog(
             ) {
                 val (saveBtn, deleteBtn) = createRefs()
 
-                // Save button — bottom right. Hidden for videos for now — remove this gate
-                // to restore.
-                val currentPageItem = media.getOrNull(pagerState.currentPage)
-                if (currentPageItem !is AmityVideo) AmityButton(
+                AmityButton(
                     variant = AmityButtonVariant.ICON,
                     style = AmityButtonStyle.TRANSPARENT,
                     hierarchy = AmityButtonHierarchy.PRIMARY,
@@ -271,12 +271,12 @@ fun AmityChatMediaPreviewDialog(
                     icon = CommonComposeR.drawable.amity_ic_arrow_down_to_bracket_r,
                     contentDescription = "Save",
                     onClick = {
-                        val currentItem = media.getOrNull(pagerState.currentPage)
-                        scope.launch {
-                            when (currentItem) {
-                                is AmityImage -> saveImageToGallery(context, currentItem)
-                                is AmityVideo -> saveVideoToGallery(context, currentItem)
-                            }
+                        val onResult: (String, Boolean) -> Unit = { message, isError ->
+                            saveResult = message to isError
+                        }
+                        when (val currentItem = media.getOrNull(pagerState.currentPage)) {
+                            is AmityImage -> saveImageToGalleryDetached(context, currentItem, onResult)
+                            is AmityVideo -> saveVideoToGalleryDetached(context, currentItem, onResult)
                         }
                     },
                     modifier = Modifier.constrainAs(saveBtn) {
@@ -300,6 +300,26 @@ fun AmityChatMediaPreviewDialog(
                         },
                     )
                 }
+            }
+
+            saveResult?.let { (message, isError) ->
+                AmityToast(
+                    message = message,
+                    variant = if (isError) {
+                        AmityToastVariant.ERROR
+                    } else {
+                        AmityToastVariant.SUCCESS
+                    },
+                    icon = if (isError) {
+                        CommonComposeR.drawable.amity_ic_exclamation_circle_r
+                    } else {
+                        CommonComposeR.drawable.amity_ic_check_circle_r
+                    },
+                    onDismiss = { saveResult = null },
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 88.dp),
+                )
             }
 
             DisposableEffect(Unit) {

@@ -234,6 +234,11 @@
     <string name="amity_social_button_delete_comment_warning_message">This comment will be permanently deleted.</string>
     <string name="amity_social_button_delete_event">Delete event</string>
     <string name="amity_social_button_delete_message">Delete message</string>
+    <string name="amity_social_button_pin_message">Pin message</string>
+    <string name="amity_social_button_unpin_message">Unpin message</string>
+    <string name="amity_social_label_pinned_message_badge">Pinned</string>
+    <string name="amity_social_label_pinned_message_more">more</string>
+    <string name="amity_social_label_pinned_message_less">less</string>
     <string name="amity_social_button_delete_message_failed">Unable to delete message. Please try again.</string>
     <string name="amity_social_button_delete_post">Delete post</string>
     <string name="amity_social_button_delete_post_title">Delete this post?</string>
@@ -275,6 +280,7 @@
     <string name="amity_social_button_social_home_explore_button">Explore Community</string>
     <string name="amity_social_button_featured">Featured</string>
     <string name="amity_social_button_feed_comment_count_plural">%d comments</string>
+    <string name="amity_social_label_reaction_count_plural">%s reactions</string>
     <string name="amity_social_button_feed_comment_count_singular">%d comment</string>
     <string name="amity_social_button_followers">Followers</string>
     <string name="amity_social_button_user_following_button">Following</string>
@@ -326,6 +332,7 @@
     <string name="amity_social_button_my_communities">My Communities</string>
     <string name="amity_social_button_my_timeline">My timeline</string>
     <string name="amity_social_button_next">Next</string>
+    <string name="amity_social_button_previous">Previous</string>
     <string name="amity_social_button_no">No</string>
     <string name="amity_social_button_image_poll_no_votes">No votes</string>
     <string name="amity_social_button_not_going">Not going</string>

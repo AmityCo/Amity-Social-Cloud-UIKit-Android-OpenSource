@@ -1,0 +1,126 @@
+# Host POV, PDT-4981: pin a message in live chat, expand / collapse it, unpin it.
+#
+# Requires: 00-login has run (the session survives app restarts), the network is
+# backfilled with PIN_MESSAGE, and the user is host or holds the permission in
+# the live chat channel. Ends the stream on the way out.
+appId: com.amity.sample.ascuikit
+---
+- launchApp
+# The app resumes wherever the last run left it. A half-filled create page asks to discard
+# before it will let go, and Social is already behind us when it resumes inside the feed.
+- tapOn:
+    text: "Discard"
+    optional: true
+- tapOn:
+    text: "Social"
+    optional: true
+- extendedWaitUntil:
+    visible: "Community"
+    timeout: 60000
+
+# ---- go live ----
+# The "Live on" target picker sometimes opens with an empty community list and no
+# shimmer (pre-existing app bug, not pin-related). Re-entering populates it, so
+# retry the open-picker step instead of waiting on a list that never loads.
+- retry:
+    maxRetries: 3
+    commands:
+      - tapOn:
+          text: "Discard"
+          optional: true      # a failed attempt leaves a draft title on the create page
+      - runFlow:                  # only when the picker is the thing on screen: the same
+          when:                   # glyph is the create page's close button, and tapping that
+            visible: "My Timeline"  # raises "Unsaved changes" and blocks everything after it
+          commands:
+            - tapOn: "✕"
+      - tapOn:
+          point: "92%,9%"
+      - extendedWaitUntil:
+          visible: "Live stream"
+          timeout: 15000
+      - tapOn: "Live stream"
+      - extendedWaitUntil:
+          visible: "Rezyception"
+          timeout: 20000
+- tapOn: "Rezyception"
+- extendedWaitUntil:
+    visible:
+      id: "create_livestream_page/\\*/start_livestream_button"
+    timeout: 30000
+- tapOn:
+    point: "50%,16%"          # "Add live stream title…"
+- inputText: "Pin message test"
+# Not hideKeyboard: it presses back, and with a title typed the create page treats that as
+# leaving and puts up "Unsaved changes", which then blocks everything after it.
+- tapOn:
+    point: "50%,45%"
+- tapOn:
+    id: "create_livestream_page/\\*/start_livestream_button"
+- extendedWaitUntil:
+    visible:
+      id: "message_composer_text_field"
+    timeout: 120000
+
+# ---- send a message long enough to overflow one line ----
+- tapOn:
+    id: "message_composer_text_field"
+- inputText: "Promo code SPRING2026 is valid until the end of the stream, use it at checkout for 20 percent off"
+- hideKeyboard
+# The send button only reaches 91% of the screen once the keyboard has finished animating out.
+# Tapping straight after hideKeyboard lands on the keyboard and the message is never sent.
+- waitForAnimationToEnd
+- tapOn:
+    point: "93%,91%"          # send
+# Not the message text: a failed send leaves it sitting in the composer, where it is still
+# "visible", so that assertion passes either way and the run continues into a menu that does
+# not exist. The row's own ⋮ only exists once the message is in the feed.
+- extendedWaitUntil:
+    visible: "message options"
+    timeout: 30000
+- assertVisible: "Promo code SPRING2026 is valid until the end of the stream, use it at checkout for 20 percent off"
+
+# ---- pin it (UC1-01, UC1-03) ----
+- assertNotVisible:
+    id: "\\*/livestream_chat_feed/pinned_message_banner"
+- tapOn: "message options"
+- extendedWaitUntil:
+    visible: "Pin message"
+    timeout: 15000
+- takeScreenshot: 00-message-actions-sheet
+- tapOn: "Pin message"
+- extendedWaitUntil:
+    visible:
+      id: "\\*/livestream_chat_feed/pinned_message_banner"
+    timeout: 30000
+- assertVisible: "Pinned"
+# The more / less label renders but never reaches the accessibility tree on this
+# emulator, so the collapsed / expanded states are captured as screenshots for
+# review rather than asserted. Everything else here is a hard assertion.
+- assertVisible:
+    id: "\\*/livestream_chat_feed/unpin_message_button"   # pinner sees the X (UC1-06)
+- takeScreenshot: 01-pinned-collapsed
+
+# ---- expand and collapse by tapping the bubble (UC1-09, UC1-10) ----
+- tapOn:
+    id: "\\*/livestream_chat_feed/pinned_message_banner"
+- takeScreenshot: 02-pinned-expanded
+- tapOn:
+    id: "\\*/livestream_chat_feed/pinned_message_banner"
+- takeScreenshot: 03-pinned-recollapsed
+
+# ---- unpin (UC2-03) ----
+- tapOn:
+    id: "\\*/livestream_chat_feed/unpin_message_button"
+- extendedWaitUntil:
+    notVisible:
+      id: "\\*/livestream_chat_feed/pinned_message_banner"
+    timeout: 30000
+- assertVisible: "Promo code SPRING2026 is valid until the end of the stream, use it at checkout for 20 percent off"              # message keeps its place in the feed (UC2-04)
+- takeScreenshot: 04-unpinned
+
+# ---- leave no live stream behind ----
+- tapOn: "end_livestream_button"
+- extendedWaitUntil:
+    visible: "End"
+    timeout: 15000
+- tapOn: "End"

@@ -169,7 +169,8 @@ fun AmityCommentComposerBar(
                     .background(color = AmityTheme.colors.baseShade4)
                     .testTag("comment_tray_component/comment_composer_text_field"),
                 value = commentText,
-                hintText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_share_to"),
+                hintText = DefaultAmitySocialStringProvider.getInstance()
+                    .getString("amity_social_placeholder_comment_text_field_placeholder"),
                 mentionedUser = selectedUserToMention,
                 mentionMetadata = mentionedUsers,
                 mentionees = listOf(),

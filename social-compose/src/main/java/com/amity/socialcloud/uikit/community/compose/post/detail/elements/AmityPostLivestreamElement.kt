@@ -550,7 +550,8 @@ fun AmityChildRoomPostElement(
 
     // Determine room state (priority order matters)
     val isDeleted = room?.isDeleted() == true
-    val isTerminated = room?.getModeration()?.terminateLabels?.isNotEmpty() == true
+    val isTerminated = room?.getModeration()?.terminateLabels?.isNotEmpty() == true ||
+            room?.getStatus() == AmityRoomStatus.TERMINATED
     val roomStatus = room?.getStatus()
 
     // Compute thumbnail fallback chain

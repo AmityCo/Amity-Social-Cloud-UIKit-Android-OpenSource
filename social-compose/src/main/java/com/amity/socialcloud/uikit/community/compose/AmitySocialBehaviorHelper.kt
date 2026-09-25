@@ -27,6 +27,7 @@ import com.amity.socialcloud.uikit.community.compose.search.global.AmitySocialGl
 import com.amity.socialcloud.uikit.community.compose.socialhome.AmitySocialHomePageBehavior
 import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmityCreatePostMenuComponentBehavior
 import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmityExploreComponentBehavior
+import com.amity.socialcloud.uikit.community.compose.discoverywidget.AmityDiscoveryWidgetComponentBehavior
 import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmityGlobalFeedComponentBehavior
 import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmityMyCommunitiesComponentBehavior
 import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmitySocialHomeTopNavigationComponentBehavior
@@ -137,6 +138,9 @@ object AmitySocialBehaviorHelper {
 
     var globalFeedComponentBehavior: AmityGlobalFeedComponentBehavior =
         AmityGlobalFeedComponentBehavior()
+
+    var discoveryWidgetComponentBehavior: AmityDiscoveryWidgetComponentBehavior =
+        AmityDiscoveryWidgetComponentBehavior()
 
     var communitySearchResultComponentBehavior: AmityCommunitySearchResultComponentBehavior =
         AmityCommunitySearchResultComponentBehavior()

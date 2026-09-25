@@ -23,6 +23,8 @@ import androidx.compose.foundation.layout.waterfall
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -327,8 +329,10 @@ fun AmityEditGroupProfilePage(
                 BasicTextField(
                     value = displayName,
                     onValueChange = {
-                        displayName = it.take(GROUP_NAME_MAX_LENGTH)
+                        // Wraps on width, but a return key must not break the line.
+                        displayName = it.filterNot { c -> c == '\n' || c == '\r' }.take(GROUP_NAME_MAX_LENGTH)
                     },
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     modifier = Modifier.fillMaxWidth(),
                     textStyle = AmityTheme.typography.bodyLegacy.copy(
                         fontSize = 16.sp,
