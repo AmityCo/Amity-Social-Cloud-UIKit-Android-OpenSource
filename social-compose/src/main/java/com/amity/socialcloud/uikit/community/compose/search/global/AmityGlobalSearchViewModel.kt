@@ -23,6 +23,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.debounce
 import java.util.concurrent.TimeUnit
+import com.amity.socialcloud.uikit.common.config.AmityUIKitDataGate
+import com.amity.socialcloud.uikit.common.config.AmityUIKitFeature
+import com.amity.socialcloud.uikit.community.compose.dropGatedPostTypes
 
 class AmityGlobalSearchViewModel : AmityBaseViewModel() {
 
@@ -75,8 +78,9 @@ class AmityGlobalSearchViewModel : AmityBaseViewModel() {
         _postListState.value = state
     }
 
-    fun searchCommunities(): Flow<PagingData<AmityCommunity>> {
-        return AmitySocialClient.newCommunityRepository()
+    fun searchCommunities(): Flow<PagingData<AmityCommunity>> =
+        AmityUIKitDataGate.paging(AmityUIKitFeature.COMMUNITY) {
+        AmitySocialClient.newCommunityRepository()
             .searchCommunities(_keyword.value, includeDiscoverablePrivateCommunity = true)
             .run {
                 if (_searchType.value == AmityGlobalSearchType.MY_COMMUNITY) {
@@ -124,6 +128,7 @@ class AmityGlobalSearchViewModel : AmityBaseViewModel() {
                     targetType = null
                 )
         }
+                .dropGatedPostTypes()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .throttleLatest(300, TimeUnit.MILLISECONDS)

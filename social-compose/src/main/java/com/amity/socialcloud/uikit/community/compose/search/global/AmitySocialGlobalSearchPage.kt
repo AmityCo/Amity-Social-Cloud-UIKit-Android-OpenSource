@@ -1,5 +1,7 @@
 package com.amity.socialcloud.uikit.community.compose.search.global
 
+import com.amity.socialcloud.uikit.common.config.AmityUIKitDataGate
+import com.amity.socialcloud.uikit.common.config.AmityUIKitFeature
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -38,19 +40,38 @@ fun AmitySocialGlobalSearchPage(
     val viewModel =
         viewModel<AmityGlobalSearchViewModel>(viewModelStoreOwner = viewModelStoreOwner)
 
-    val tabs = listOf(
-        AmityTabRowItem(title = amitySocialString("amity_social_tab_tab_posts")),
-        AmityTabRowItem(title = amitySocialString("amity_social_tab_tab_communities")),
-        AmityTabRowItem(title = amitySocialString("amity_social_tab_tab_users")),
-    )
+    // A tab searching for something this build cannot display is an offer the app
+    // cannot keep: with `post` off the Posts tab opened selected and permanently
+    // empty. Users has no module of its own beyond `discovery`, which owns the
+    // whole page, so it is always here.
+    val searchTypes = remember {
+        listOfNotNull(
+            AmityGlobalSearchType.POST
+                .takeIf { AmityUIKitDataGate.isOn(AmityUIKitFeature.POST) },
+            AmityGlobalSearchType.COMMUNITY
+                .takeIf { AmityUIKitDataGate.isOn(AmityUIKitFeature.COMMUNITY) },
+            AmityGlobalSearchType.USER,
+        )
+    }
+    val tabs = searchTypes.map { type ->
+        AmityTabRowItem(
+            title = when (type) {
+                AmityGlobalSearchType.POST -> amitySocialString("amity_social_tab_tab_posts")
+                AmityGlobalSearchType.COMMUNITY -> amitySocialString("amity_social_tab_tab_communities")
+                // MY_COMMUNITY belongs to the my-communities search page, and is
+                // never in this list.
+                else -> amitySocialString("amity_social_tab_tab_users")
+            }
+        )
+    }
     var selectedTabIndex by remember { mutableIntStateOf(0) }
 
-    LaunchedEffect(selectedTabIndex) {
-        when (selectedTabIndex) {
-            0 -> viewModel.setSearchType(AmityGlobalSearchType.POST)
-            1 -> viewModel.setSearchType(AmityGlobalSearchType.COMMUNITY)
-            2 -> viewModel.setSearchType(AmityGlobalSearchType.USER)
-        }
+    // Keyed on the type, not the position: dropping a tab shifts every index
+    // after it, and an index-based `when` would then open the wrong pane.
+    val selectedType = searchTypes.getOrElse(selectedTabIndex) { searchTypes.first() }
+
+    LaunchedEffect(selectedType) {
+        viewModel.setSearchType(selectedType)
     }
 
     AmityBasePage(
@@ -76,8 +97,8 @@ fun AmitySocialGlobalSearchPage(
 
             Spacer(modifier.height(8.dp))
 
-            when (selectedTabIndex) {
-                0 -> {
+            when (selectedType) {
+                AmityGlobalSearchType.POST -> {
                     AmityPostSearchResultComponent(
                         modifier = modifier,
                         pageScope = getPageScope(),
@@ -85,7 +106,7 @@ fun AmitySocialGlobalSearchPage(
                     )
                 }
 
-                1 -> {
+                AmityGlobalSearchType.COMMUNITY -> {
                     AmityBaseComponent(
                         pageScope = getPageScope(),
                         componentId = "community_search_result"
@@ -99,7 +120,7 @@ fun AmitySocialGlobalSearchPage(
                     }
                 }
 
-                2 -> AmityUserSearchResultComponent(
+                else -> AmityUserSearchResultComponent(
                     modifier = modifier,
                     pageScope = getPageScope(),
                     viewModel = viewModel

@@ -1,3 +1,5 @@
+@file:OptIn(com.amity.socialcloud.uikit.common.config.AmityUIKitInternalApi::class)
+
 package com.amity.socialcloud.uikit.community.compose
 
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
@@ -47,19 +49,28 @@ import com.amity.socialcloud.uikit.community.compose.user.profile.AmityUserProfi
 import com.amity.socialcloud.uikit.community.compose.user.profile.components.AmityUserFeedComponentBehavior
 import com.amity.socialcloud.uikit.community.compose.user.profile.components.AmityUserProfileHeaderComponentBehavior
 import com.amity.socialcloud.uikit.community.compose.user.relationship.AmityUserRelationshipPageBehavior
+import com.amity.socialcloud.uikit.common.config.AmityUIKitDataGate
+import com.amity.socialcloud.uikit.common.config.AmityUIKitFeature
 
 object AmitySocialBehaviorHelper {
 
-    val supportedPostTypes = listOf(
-        AmityPost.DataType.TEXT,
-        AmityPost.DataType.IMAGE,
-        AmityPost.DataType.VIDEO,
-        AmityPost.DataType.POLL,
-        AmityPost.DataType.LIVE_STREAM,
-        AmityPost.DataType.CLIP,
-        AmityPost.DataType.ROOM,
-        AmityPost.DataType.EVENT,
-    )
+    // Nine feeds ask for these types. A request that names dataTypes[]=clip is
+    // asking the backend for clips, so with clip switched off the list has to
+    // drop it - otherwise every one of those feeds makes a clip request, and an
+    // error response about clips reaches a UI that cannot show clips at all.
+    // Computed on each read, not stored: overrides arrive after this object is
+    // first touched.
+    val supportedPostTypes: List<AmityPost.DataType>
+        get() = listOfNotNull(
+            AmityPost.DataType.TEXT,
+            AmityPost.DataType.IMAGE,
+            AmityPost.DataType.VIDEO,
+            AmityPost.DataType.POLL.takeIf { AmityUIKitDataGate.isOn(AmityUIKitFeature.POLL) },
+            AmityPost.DataType.LIVE_STREAM.takeIf { AmityUIKitDataGate.isOn(AmityUIKitFeature.LIVE) },
+            AmityPost.DataType.CLIP.takeIf { AmityUIKitDataGate.isClipOn() },
+            AmityPost.DataType.ROOM.takeIf { AmityUIKitDataGate.isOn(AmityUIKitFeature.LIVE) },
+            AmityPost.DataType.EVENT.takeIf { AmityUIKitDataGate.isOn(AmityUIKitFeature.EVENTS) },
+        )
 
     val supportedStructureTypes = listOf(
         AmityPost.StructureType.TEXT,

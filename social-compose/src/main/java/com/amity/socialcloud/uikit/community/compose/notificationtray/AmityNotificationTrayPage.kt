@@ -239,6 +239,19 @@ fun AmityNotificationTrayPage(
                                         AmityNotificationTrayItemView(
                                             modifier = Modifier.clickableWithoutRipple {
                                                 viewModel.markNotificationItemAsSeen(listItem.item)
+                                                // Gated per item: the tray belongs to no module, so
+                                                // an item whose page or subject is withheld says so
+                                                // rather than opening a page that is gone.
+                                                fun openOrSay(pageId: String?, open: () -> Unit) {
+                                                    if (listItem.item.canOpen(pageId)) {
+                                                        open()
+                                                    } else {
+                                                        getPageScope().showSnackbar(
+                                                            DefaultAmitySocialStringProvider.getInstance()
+                                                                .getString("amity_social_button_livestream_unavailable_desc")
+                                                        )
+                                                    }
+                                                }
                                                 var postId: String? = null
                                                 var commentId: String? = null
                                                 var parentId: String? = null
@@ -247,9 +260,11 @@ fun AmityNotificationTrayPage(
                                                 var userId: String? = null
 
                                                 if (listItem.item.getTrayItemCategory() == "user_profile_reset") {
-                                                    behavior.goToEditUserPage(
-                                                        context = context,
-                                                    )
+                                                    openOrSay("edit_user_profile_page") {
+                                                        behavior.goToEditUserPage(
+                                                            context = context,
+                                                        )
+                                                    }
                                                     return@clickableWithoutRipple
                                                 }
 
@@ -261,27 +276,33 @@ fun AmityNotificationTrayPage(
                                                     "invitation" -> {
                                                         if (listItem.item.getTargetType() == "room") {
                                                             val roomId = listItem.item.getTargetId()
-                                                            behavior.goToLiveRoomDetailPage(
-                                                                context = context,
-                                                                roomId = roomId
-                                                            )
+                                                            openOrSay(null) {
+                                                                behavior.goToLiveRoomDetailPage(
+                                                                    context = context,
+                                                                    roomId = roomId
+                                                                )
+                                                            }
                                                         }
                                                         return@clickableWithoutRipple
                                                     }
                                                     "event" -> {
                                                         val eventId = listItem.item.getActionReferenceId()
-                                                        behavior.goToEventDetailPage(
-                                                            context = context,
-                                                            eventId = eventId
-                                                        )
+                                                        openOrSay("event_detail_page") {
+                                                            behavior.goToEventDetailPage(
+                                                                context = context,
+                                                                eventId = eventId
+                                                            )
+                                                        }
                                                         return@clickableWithoutRipple
                                                     }
 
                                                     "user_profile_reset" -> {
-                                                        behavior.goToUserProfilePage(
-                                                            context = context,
-                                                            userId = AmityCoreClient.getUserId()
-                                                        )
+                                                        openOrSay("user_profile_page") {
+                                                            behavior.goToUserProfilePage(
+                                                                context = context,
+                                                                userId = AmityCoreClient.getUserId()
+                                                            )
+                                                        }
                                                         return@clickableWithoutRipple
                                                     }
 
@@ -378,7 +399,9 @@ fun AmityNotificationTrayPage(
                                                     }
 
                                                     "user" -> {
-                                                        behavior.goToEditProfilePage(context = context)
+                                                        openOrSay("edit_user_profile_page") {
+                                                            behavior.goToEditProfilePage(context = context)
+                                                        }
                                                         return@clickableWithoutRipple
                                                     }
 
@@ -388,24 +411,30 @@ fun AmityNotificationTrayPage(
                                                 }
 
                                                 if (postId == null && communityId != null) {
-                                                    behavior.goToCommunityProfilePage(
-                                                        context = context,
-                                                        communityId = listItem.item.getTargetId()
-                                                    )
+                                                    openOrSay("community_profile_page") {
+                                                        behavior.goToCommunityProfilePage(
+                                                            context = context,
+                                                            communityId = listItem.item.getTargetId()
+                                                        )
+                                                    }
                                                 } else {
                                                     userId?.let { uId ->
-                                                        behavior.goToUserProfilePage(
-                                                            context = context,
-                                                            userId = uId
-                                                        )
+                                                        openOrSay("user_profile_page") {
+                                                            behavior.goToUserProfilePage(
+                                                                context = context,
+                                                                userId = uId
+                                                            )
+                                                        }
                                                     } ?: postId?.let { pId ->
-                                                        behavior.goToPostDetailPage(
-                                                            context = context,
-                                                            postId = pId,
-                                                            commentId = commentId,
-                                                            parentId = parentId,
-                                                            rootId = rootId,
-                                                        )
+                                                        openOrSay("post_detail_page") {
+                                                            behavior.goToPostDetailPage(
+                                                                context = context,
+                                                                postId = pId,
+                                                                commentId = commentId,
+                                                                parentId = parentId,
+                                                                rootId = rootId,
+                                                            )
+                                                        }
                                                     }
                                                 }
                                             },

@@ -28,6 +28,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.sdk.model.social.event.AmityEventType
 import com.amity.socialcloud.uikit.common.common.views.AmityColorShade
+import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
+import com.amity.socialcloud.uikit.common.config.AmityUIKitFeature
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.elements.AmityBasicTextField
 import com.amity.socialcloud.uikit.common.ui.elements.AmityTextField
@@ -67,11 +69,17 @@ fun AmityLocationBottomSheet(
     )
     val scope = rememberCoroutineScope()
 
+    // Live stream is the one platform Live owns; an external link is somebody
+    // else's video call. So Live withheld takes that option and leaves External
+    // as the only platform, and the sheet opens on it rather than on a value
+    // nothing on screen can select.
+    val isLiveStreamOffered = AmityUIKitConfigController.isFeatureEnabled(AmityUIKitFeature.LIVE)
+
     var selectedEventType by remember(initialData) {
         mutableStateOf(initialData.eventType ?: AmityEventType.VIRTUAL)
     }
-    var selectedPlatform by remember(initialData) {
-        mutableStateOf(initialData.platform ?: EventPlatform.LIVE_STREAM)
+    var selectedPlatform by remember(initialData, isLiveStreamOffered) {
+        mutableStateOf(initialPlatform(initialData.platform, isLiveStreamOffered))
     }
     var address by remember(initialData) { mutableStateOf(initialData.address) }
     var eventLink by remember(initialData) { mutableStateOf(initialData.eventLink) }
@@ -438,90 +446,92 @@ fun AmityLocationBottomSheet(
                             modifier = Modifier.padding(bottom = 16.dp)
                         )
 
-                        // Live Stream Option
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickableWithoutRipple {
-                                    selectedPlatform = EventPlatform.LIVE_STREAM
-                                }
-                                .padding(vertical = 12.dp),
-                            verticalAlignment = Alignment.Top
-                        ) {
-                            Box(
+                        if (isLiveStreamOffered) {
+                            // Live Stream Option
+                            Row(
                                 modifier = Modifier
-                                    .size(40.dp)
-                                    .background(
-                                        AmityTheme.colors.baseShade4,
-                                        CircleShape
-                                    ),
-                                contentAlignment = Alignment.Center
+                                    .fillMaxWidth()
+                                    .clickableWithoutRipple {
+                                        selectedPlatform = EventPlatform.LIVE_STREAM
+                                    }
+                                    .padding(vertical = 12.dp),
+                                verticalAlignment = Alignment.Top
                             ) {
-                                Icon(
-                                    painter = painterResource(CommonR.drawable.amity_ic_event_livestream),
-                                    contentDescription = amitySocialString("amity_social_status_live_stream"),
-                                    tint = AmityTheme.colors.base,
-                                    modifier = Modifier.size(24.dp)
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.width(12.dp))
-
-                            Column(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .padding(end = 8.dp)
-                            ) {
-                                Text(
-                                    text = amitySocialString("amity_social_status_live_stream"),
-                                    style = AmityTheme.typography.body.copy(
-                                        fontWeight = FontWeight.SemiBold
-                                    ),
-                                    color = AmityTheme.colors.base
-                                )
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(
-                                    text = amitySocialString("amity_social_label_event_platform_livestream_description"),
-                                    style = AmityTheme.typography.caption,
-                                    color = AmityTheme.colors.baseShade1
-                                )
-                            }
-
-                            // Radio Button
-                            val strokeColor = AmityTheme.colors.baseShade3
-                            Box(
-                                modifier = Modifier
-                                    .size(24.dp)
-                                    .background(
-                                        if (selectedPlatform == EventPlatform.LIVE_STREAM)
-                                            AmityTheme.colors.primary
-                                        else
-                                            Color.Transparent,
-                                        CircleShape
-                                    ),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                if (selectedPlatform == EventPlatform.LIVE_STREAM) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(8.dp)
-                                            .background(amityColorWhite, CircleShape)
+                                Box(
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .background(
+                                            AmityTheme.colors.baseShade4,
+                                            CircleShape
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        painter = painterResource(CommonR.drawable.amity_ic_event_livestream),
+                                        contentDescription = amitySocialString("amity_social_status_live_stream"),
+                                        tint = AmityTheme.colors.base,
+                                        modifier = Modifier.size(24.dp)
                                     )
-                                } else {
-                                    androidx.compose.foundation.Canvas(
-                                        modifier = Modifier.fillMaxSize()
-                                    ) {
-                                        drawCircle(
-                                            color = strokeColor,
-                                            radius = size.minDimension / 2,
-                                            style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2.dp.toPx())
+                                }
+
+                                Spacer(modifier = Modifier.width(12.dp))
+
+                                Column(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .padding(end = 8.dp)
+                                ) {
+                                    Text(
+                                        text = amitySocialString("amity_social_status_live_stream"),
+                                        style = AmityTheme.typography.body.copy(
+                                            fontWeight = FontWeight.SemiBold
+                                        ),
+                                        color = AmityTheme.colors.base
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = amitySocialString("amity_social_label_event_platform_livestream_description"),
+                                        style = AmityTheme.typography.caption,
+                                        color = AmityTheme.colors.baseShade1
+                                    )
+                                }
+
+                                // Radio Button
+                                val strokeColor = AmityTheme.colors.baseShade3
+                                Box(
+                                    modifier = Modifier
+                                        .size(24.dp)
+                                        .background(
+                                            if (selectedPlatform == EventPlatform.LIVE_STREAM)
+                                                AmityTheme.colors.primary
+                                            else
+                                                Color.Transparent,
+                                            CircleShape
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    if (selectedPlatform == EventPlatform.LIVE_STREAM) {
+                                        Box(
+                                            modifier = Modifier
+                                                .size(8.dp)
+                                                .background(amityColorWhite, CircleShape)
                                         )
+                                    } else {
+                                        androidx.compose.foundation.Canvas(
+                                            modifier = Modifier.fillMaxSize()
+                                        ) {
+                                            drawCircle(
+                                                color = strokeColor,
+                                                radius = size.minDimension / 2,
+                                                style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2.dp.toPx())
+                                            )
+                                        }
                                     }
                                 }
                             }
-                        }
 
-                        Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
 
                         // External Platform Option
                         Row(
@@ -785,3 +795,10 @@ private fun AmityEventTypeSelectionSheet(
         }
     }
 }
+
+/**
+ * The platform the sheet opens on. A saved External link stays External, and
+ * with Live withheld so does everything else: Live stream is not an option then.
+ */
+internal fun initialPlatform(saved: EventPlatform?, isLiveStreamOffered: Boolean): EventPlatform =
+    if (isLiveStreamOffered) saved ?: EventPlatform.LIVE_STREAM else EventPlatform.EXTERNAL_PLATFORM

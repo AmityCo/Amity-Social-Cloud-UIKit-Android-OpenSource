@@ -51,31 +51,41 @@ fun AmityCommunityInfoView(
 				.padding(horizontal = 16.dp, vertical = 4.dp),
 			verticalAlignment = Alignment.CenterVertically,
 		) {
-			Text(
-				text = getNumberAbbreveation(community?.getPostCount() ?: 0),
-				style = TextStyle(
-					fontSize = 15.sp,
-					lineHeight = 20.sp,
-					fontWeight = FontWeight(600),
-					color = AmityTheme.colors.base,
+			// The post count is Post's, not Community's: module-availability-spec
+			// gives `community_info_posts` to post. Under `community_info` alone it
+			// survived Post being switched off. The divider goes with it, or the
+			// member count would sit behind an orphaned rule.
+			AmityBaseElement(
+				pageScope = pageScope,
+				componentScope = componentScope,
+				elementId = "community_info_posts"
+			) {
+				Text(
+					text = getNumberAbbreveation(community?.getPostCount() ?: 0),
+					style = TextStyle(
+						fontSize = 15.sp,
+						lineHeight = 20.sp,
+						fontWeight = FontWeight(600),
+						color = AmityTheme.colors.base,
+					)
 				)
-			)
-			Spacer(modifier = Modifier.width(4.dp))
-			Text(
-				text = amitySocialString("amity_social_label_community_posts_label"),
-				style = TextStyle(
-					fontSize = 13.sp,
-					lineHeight = 18.sp,
-					fontWeight = FontWeight(400),
-					color = AmityTheme.colors.baseShade2,
+				Spacer(modifier = Modifier.width(4.dp))
+				Text(
+					text = amitySocialString("amity_social_label_community_posts_label"),
+					style = TextStyle(
+						fontSize = 13.sp,
+						lineHeight = 18.sp,
+						fontWeight = FontWeight(400),
+						color = AmityTheme.colors.baseShade2,
+					)
 				)
-			)
-			Box(modifier = Modifier
-				.padding(horizontal = 16.dp)
-				.width(1.dp)
-				.height(20.dp)
-				.background(color = AmityTheme.colors.baseShade4)
-            ) {}
+				Box(modifier = Modifier
+					.padding(horizontal = 16.dp)
+					.width(1.dp)
+					.height(20.dp)
+					.background(color = AmityTheme.colors.baseShade4)
+				) {}
+			}
 			Row(
 				verticalAlignment = Alignment.CenterVertically,
 				modifier = Modifier.clickable {

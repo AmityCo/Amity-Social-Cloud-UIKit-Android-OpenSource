@@ -73,12 +73,21 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
+import com.amity.socialcloud.uikit.common.config.AmityUIKitDataGate
+import com.amity.socialcloud.uikit.common.config.AmityUIKitFeature
 
 @Composable
 fun AmityPostLivestreamElement(
     modifier: Modifier = Modifier,
     post: AmityPost,
 ) {
+    // A livestream post carries a player, and a player fetches its manifest and
+    // segments through ExoPlayer rather than through the SDK's http client — so
+    // this is the one surface whose traffic no api trace can see. It also has no
+    // id in the module graph, which means no view gate reaches it either. Ask
+    // here, or Live switched off still renders a live post and still plays it.
+    if (!AmityUIKitDataGate.isOn(AmityUIKitFeature.LIVE)) return
+
     val postChildren = remember(post.getPostId(), post.getUpdatedAt()) {
         post.getChildren()
     }

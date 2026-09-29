@@ -20,6 +20,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import com.amity.socialcloud.uikit.common.config.AmityUIKitDataGate
+import com.amity.socialcloud.uikit.common.config.AmityUIKitFeature
 
 class AmityChatHomePageViewModel : AmityBaseViewModel() {
 
@@ -39,6 +41,10 @@ class AmityChatHomePageViewModel : AmityBaseViewModel() {
     }
 
     private fun loadChatNotificationSettings() {
+        // Runs from the view model's init, so the chat home page constructing is
+        // enough to read it — no screen has to be drawn. With Push Notification
+        // off there is nothing this can be used for.
+        if (!AmityUIKitDataGate.isOn(AmityUIKitFeature.PUSH_NOTIFICATION)) return
         addDisposable(
             AmityCoreClient.notifications().user()
                 .getSettings()

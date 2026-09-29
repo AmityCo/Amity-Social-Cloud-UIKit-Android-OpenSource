@@ -8,6 +8,8 @@ import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.flow.Flow
+import com.amity.socialcloud.uikit.common.config.AmityUIKitDataGate
+import com.amity.socialcloud.uikit.common.config.AmityUIKitFeature
 
 /**
  * ViewModel for product mention suggestions.
@@ -18,6 +20,12 @@ import kotlinx.coroutines.flow.Flow
 class AmityProductMentionViewModel : AmityBaseViewModel() {
 
     fun searchProducts(keyword: String): Flow<PagingData<AmityProduct>> {
+        return AmityUIKitDataGate.paging(AmityUIKitFeature.PRODUCT) {
+            searchProductsUngated(keyword)
+        }
+    }
+
+    private fun searchProductsUngated(keyword: String): Flow<PagingData<AmityProduct>> {
         return AmityCoreClient
             .newProductRepository()
             .searchProduct(keyword)

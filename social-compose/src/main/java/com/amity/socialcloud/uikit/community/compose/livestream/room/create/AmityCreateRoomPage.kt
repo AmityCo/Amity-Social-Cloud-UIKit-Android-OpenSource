@@ -110,6 +110,7 @@ import com.amity.socialcloud.uikit.common.model.AmityMessageReactions
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
+import com.amity.socialcloud.uikit.common.ui.scope.isElementExcludedOnPage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAvatarView
 import com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem
@@ -453,7 +454,15 @@ fun AmityCreateRoomPage(
     var messageText by remember { mutableStateOf("") }
 
 
-    val reactions by remember(uiState.createPostId) {  viewModel.observeLiveReactions(uiState.createPostId ?: "") }.collectAsState(emptyList())
+    // Rule 6: a module switched off makes no request. The live-reaction stream is
+    // opened above AmityBasePage, so the overlay's own wrapper cannot stop it —
+    // and the overlay reserves 182dp whether or not a reaction ever arrives, which
+    // is the band rule 3 forbids. One question, asked once, answers both.
+    val liveReactionVisible = !isElementExcludedOnPage("create_livestream_page", "livestream_reaction")
+    val reactions by remember(liveReactionVisible, uiState.createPostId) {
+        if (liveReactionVisible) viewModel.observeLiveReactions(uiState.createPostId ?: "")
+        else flowOf(emptyList())
+    }.collectAsState(emptyList())
 
     var userEnabledCamera by rememberSaveable { mutableStateOf(true) }
     var userEnabledMic by rememberSaveable { mutableStateOf(true) }
@@ -1437,7 +1446,7 @@ fun AmityCreateRoomPage(
                     ) {
                         // Floating reactions animation. Hidden while the keyboard is open,
                         // so a reaction never flies over the keyboard while the user types.
-                        if (!amityLiveChatHiddenByKeyboard()) {
+                        if (liveReactionVisible && !amityLiveChatHiddenByKeyboard()) {
                             FloatingReactionsOverlay(
                                 reactions = floatingReactions,
                                 modifier = Modifier

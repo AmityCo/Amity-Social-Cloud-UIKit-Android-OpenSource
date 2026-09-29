@@ -17,6 +17,9 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import com.amity.socialcloud.uikit.common.config.AmityUIKitDataGate
+import com.amity.socialcloud.uikit.common.config.AmityUIKitFeature
+import com.amity.socialcloud.uikit.community.compose.dropGatedPostTypes
 
 class AmityPendingRequestPageViewModel(val communityId: String) : AmityBaseViewModel() {
 
@@ -29,8 +32,9 @@ class AmityPendingRequestPageViewModel(val communityId: String) : AmityBaseViewM
         _requestListState.value = state
     }
 
-    fun getPendingPosts(): Flow<PagingData<AmityPost>> {
-        return AmitySocialClient.newPostRepository()
+    fun getPendingPosts(): Flow<PagingData<AmityPost>> =
+        AmityUIKitDataGate.paging(AmityUIKitFeature.POST) {
+        AmitySocialClient.newPostRepository()
             .getPosts()
             .targetCommunity(communityId)
             .dataTypes(AmitySocialBehaviorHelper.supportedPostTypes)
@@ -39,6 +43,7 @@ class AmityPendingRequestPageViewModel(val communityId: String) : AmityBaseViewM
             .includeDeleted(false)
             .build()
             .query()
+            .dropGatedPostTypes()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .asFlow()

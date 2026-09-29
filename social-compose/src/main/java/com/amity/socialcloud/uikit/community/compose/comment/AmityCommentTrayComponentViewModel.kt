@@ -44,6 +44,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import java.util.concurrent.TimeUnit
 import kotlin.collections.firstOrNull
+import com.amity.socialcloud.uikit.common.config.AmityUIKitDataGate
+import com.amity.socialcloud.uikit.common.config.AmityUIKitFeature
 
 open class AmityCommentTrayComponentViewModel : AmityBaseViewModel() {
 
@@ -304,6 +306,16 @@ open class AmityCommentTrayComponentViewModel : AmityBaseViewModel() {
         referenceType: AmityCommentReferenceType,
         communityId: String?,
         includeDeleted: Boolean = true
+    ): Flow<PagingData<AmityListItem>> =
+        AmityUIKitDataGate.paging(AmityUIKitFeature.COMMENT) {
+            getCommentsUngated(referenceId, referenceType, communityId, includeDeleted)
+        }
+
+    private fun getCommentsUngated(
+        referenceId: String,
+        referenceType: AmityCommentReferenceType,
+        communityId: String?,
+        includeDeleted: Boolean,
     ): Flow<PagingData<AmityListItem>> {
         val injector = AmityAdInjector<AmityComment>(
             AmityAdPlacement.COMMENT,

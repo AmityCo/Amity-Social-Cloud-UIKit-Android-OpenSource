@@ -35,6 +35,7 @@ import com.amity.socialcloud.sdk.model.social.comment.AmityCommentReferenceType
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
+import com.amity.socialcloud.uikit.common.ui.scope.isElementExcluded
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
 import com.amity.socialcloud.uikit.common.ui.elements.AmityPostPreviewLinkView
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
@@ -415,7 +416,12 @@ fun AmityPostContentComponent(
                 }
             )
 
-            if (!isPostDetailPage && post.getCommentCount() > 0) {
+            // The latest-comment preview under a post in the feed. It renders a
+            // comment, its reactions and a Reply, and none of that carried an id
+            // — with Comment switched off the button went and the preview stayed.
+            if (!isPostDetailPage && post.getCommentCount() > 0 &&
+                !getComponentScope().isElementExcluded("comment_button")
+            ) {
                 post.getLatestComments()
                     .firstOrNull { !it.isDeleted() && it.getFlagCount() == 0 }
                     ?.let { latestComment ->

@@ -12,6 +12,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlin.collections.orEmpty
+import com.amity.socialcloud.uikit.common.config.AmityUIKitDataGate
+import com.amity.socialcloud.uikit.common.config.AmityUIKitFeature
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.common.eventbus.NetworkConnectionEventBus
 import com.amity.socialcloud.sdk.core.session.model.NetworkConnectionEvent
@@ -28,6 +30,9 @@ class AmityVideoPlayerViewModel : AmityBaseViewModel() {
     val isProductCatalogueEnabled = _isProductCatalogueEnabled.asStateFlow()
 
     fun fetchProductCatalogueSettings() {
+        // Same pairing as the composer: the console setting answers "does this
+        // network sell", the module answers "does this build show product UI".
+        if (!AmityUIKitDataGate.isOn(AmityUIKitFeature.PRODUCT)) return
         AmityCoreClient.getProductCatalogueSetting()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

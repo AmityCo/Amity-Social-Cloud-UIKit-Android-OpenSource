@@ -13,6 +13,10 @@ import com.amity.socialcloud.uikit.community.compose.paging.feed.community.amity
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.flow.catch
+import com.amity.socialcloud.uikit.common.config.AmityUIKitDataGate
+import com.amity.socialcloud.uikit.common.config.AmityUIKitFeature
+import androidx.paging.PagingData
+import kotlinx.coroutines.flow.flowOf
 
 @Composable
 fun AmityCommunityImageFeedComponent(
@@ -21,7 +25,9 @@ fun AmityCommunityImageFeedComponent(
     shouldRefresh: Boolean = false,
 ) {
     val imagePosts = remember(communityId) {
-        AmitySocialClient.newPostRepository()
+        if (!AmityUIKitDataGate.isOn(AmityUIKitFeature.POST)) {
+            flowOf(PagingData.empty())
+        } else AmitySocialClient.newPostRepository()
             .getPosts()
             .targetCommunity(communityId)
             .dataTypes(listOf(AmityPost.DataType.IMAGE))

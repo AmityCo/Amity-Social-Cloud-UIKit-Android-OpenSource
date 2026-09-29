@@ -40,6 +40,7 @@ import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
 import com.amity.socialcloud.uikit.common.ui.elements.AmityMenuButton
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
+import com.amity.socialcloud.uikit.common.ui.scope.isComponentExcluded
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
@@ -97,6 +98,8 @@ import org.joda.time.DateTime
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
+import com.amity.socialcloud.uikit.community.compose.dropGatedPostTypes
+import com.amity.socialcloud.uikit.community.compose.dropGatedPinnedPostTypes
 
 private fun android.content.Context.closePage() {
     (this as? Activity)?.finish()
@@ -290,6 +293,7 @@ fun AmityEventDetailPage(
                     communityId = communityId!!,
                     placement = AmityPinnedPost.PinPlacement.ANNOUNCEMENT.value
                 )
+                .dropGatedPinnedPostTypes()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .asFlow()
@@ -306,6 +310,7 @@ fun AmityEventDetailPage(
                     communityId = communityId!!,
                     placement = AmityPinnedPost.PinPlacement.DEFAULT.value
                 )
+                .dropGatedPinnedPostTypes()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .asFlow()
@@ -329,6 +334,7 @@ fun AmityEventDetailPage(
                 .matchingOnlyParentPosts(true)
                 .build()
                 .query()
+                .dropGatedPostTypes()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .onBackpressureBuffer()
@@ -354,6 +360,10 @@ fun AmityEventDetailPage(
     }
 
     AmityBasePage(pageId = "event_detail_page") {
+        // With Discussion withheld the row is About alone, and a selection left on
+        // Discussion (the module can be withdrawn while the page is open) falls
+        // back to About rather than to a feed nothing can reach.
+        val activeTabIndex = if (isEventDiscussionAvailable(getPageScope())) selectedTabIndex else 0
         Scaffold(
             modifier = modifier.fillMaxSize(),
             containerColor = AmityTheme.colors.background
@@ -488,7 +498,8 @@ fun AmityEventDetailPage(
                                         } else null
                                     )
                                     EventTabRow(
-                                        selectedIndex = selectedTabIndex,
+                                        pageScope = getPageScope(),
+                                        selectedIndex = activeTabIndex,
                                         onTabSelected = { selectedTabIndex = it }
                                     )
                                 }
@@ -533,14 +544,15 @@ fun AmityEventDetailPage(
                         item {
                             if (event != null) {
                                 EventTabRow(
-                                    selectedIndex = selectedTabIndex,
+                                    pageScope = getPageScope(),
+                                    selectedIndex = activeTabIndex,
                                     onTabSelected = { selectedTabIndex = it }
                                 )
                             }
                         }
 
                         // Conditional content based on selected tab
-                        when (selectedTabIndex) {
+                        when (activeTabIndex) {
                             0 -> {
                                 // About tab
                                 item {
@@ -599,7 +611,7 @@ fun AmityEventDetailPage(
                 } // Close else block
 
                 // FAB for creating posts (only show in Discussion tab)
-                if (selectedTabIndex == 1 && event != null && !hasError) {
+                if (activeTabIndex == 1 && event != null && !hasError) {
                     AmityBaseElement(
                         pageScope = pageScope,
                         elementId = "event_discussion_create_post_button",
@@ -1342,10 +1354,12 @@ private fun EventExpandedHeader(
 }
 
 @Composable
-private fun EventTabRow(
+internal fun EventTabRow(
+    pageScope: AmityComposePageScope? = null,
     selectedIndex: Int,
     onTabSelected: (Int) -> Unit
 ) {
+    val showDiscussion = isEventDiscussionAvailable(pageScope)
     Column(
         modifier = Modifier
             .background(color = AmityTheme.colors.background)
@@ -1392,37 +1406,39 @@ private fun EventTabRow(
             }
 
             // Discussion tab
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .weight(1f)
-                    .clickableWithoutRipple {
-                        onTabSelected(1)
-                    }
-            ) {
-                Box(
-                    modifier = Modifier.padding(bottom = 12.dp),
-                    contentAlignment = Alignment.Center
+            if (showDiscussion) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickableWithoutRipple {
+                            onTabSelected(1)
+                        }
                 ) {
-                    Icon(
-                        painter = painterResource(CommonR.drawable.amity_ic_event_detail_discussion_feed),
-                        contentDescription = "Discussion",
-                        tint = if (selectedIndex == 1) AmityTheme.colors.base else AmityTheme.colors.secondaryShade3,
-                        modifier = Modifier.size(24.dp)
+                    Box(
+                        modifier = Modifier.padding(bottom = 12.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            painter = painterResource(CommonR.drawable.amity_ic_event_detail_discussion_feed),
+                            contentDescription = "Discussion",
+                            tint = if (selectedIndex == 1) AmityTheme.colors.base else AmityTheme.colors.secondaryShade3,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(2.dp)
+                            .background(
+                                color = if (selectedIndex == 1) AmityTheme.colors.primary else Color.Transparent,
+                                shape = RoundedCornerShape(
+                                    topStart = 1.dp,
+                                    topEnd = 1.dp
+                                )
+                            )
                     )
                 }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(2.dp)
-                        .background(
-                            color = if (selectedIndex == 1) AmityTheme.colors.primary else Color.Transparent,
-                            shape = RoundedCornerShape(
-                                topStart = 1.dp,
-                                topEnd = 1.dp
-                            )
-                        )
-                )
             }
         }
 
@@ -1432,6 +1448,17 @@ private fun EventTabRow(
         )
     }
 }
+
+/**
+ * Whether the Discussion tab is shown.
+ *
+ * Discussion is the event's post feed, the `event_discussion` component, which
+ * Post owns. The page is Events', so the page gate never asks about Post: the
+ * tab has to. Only its composer was gated before, which left a tab that could
+ * never hold a post.
+ */
+internal fun isEventDiscussionAvailable(pageScope: AmityComposePageScope?): Boolean =
+    !isComponentExcluded(componentId = "event_discussion", pageScope = pageScope)
 
 @Composable
 private fun EventTitleSection(event: AmityEvent) {

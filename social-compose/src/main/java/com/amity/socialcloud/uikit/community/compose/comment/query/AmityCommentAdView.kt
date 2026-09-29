@@ -47,6 +47,7 @@ import com.amity.socialcloud.uikit.common.ad.AmityAdInfoSheet
 import com.amity.socialcloud.uikit.common.asset.ImageFromAsset
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAvatarView
 import com.amity.socialcloud.uikit.common.ui.elements.AmityExpandableText
+import com.amity.socialcloud.uikit.common.ui.scope.isComponentExcluded
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
@@ -62,6 +63,9 @@ fun AmityCommentAdView(
     componentScope: AmityComposeComponentScope? = null,
     ad: AmityAd
 ) {
+    if (isComponentExcluded(componentId = "comment_ad")) {
+        return
+    }
     var showAdInfoSheet by remember { mutableStateOf(false) }
     val uriHandler = LocalUriHandler.current
     var isVisible by remember {

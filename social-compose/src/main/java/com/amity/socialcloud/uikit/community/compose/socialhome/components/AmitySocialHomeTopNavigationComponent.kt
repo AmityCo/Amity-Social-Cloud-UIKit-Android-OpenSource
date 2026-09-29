@@ -161,7 +161,11 @@ fun AmitySocialHomeTopNavigationComponent(
                 }
 
                 var expanded by remember { mutableStateOf(false) }
-                if (AmityCoreClient.isSignedIn()) {
+                // The "+" and its menu belong to no module (PDT-5867): the "+" is
+                // drawn while the menu has a row to show, read from the list the
+                // menu draws, so it neither goes with Post nor opens an empty menu.
+                val createMenuItems = rememberCreatePostMenuItems(pageScope)
+                if (AmityCoreClient.isSignedIn() && createMenuItems.isNotEmpty()) {
                     Spacer(modifier = Modifier.width(10.dp))
 
                     when (selectedTab) {

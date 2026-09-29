@@ -263,8 +263,13 @@ fun AmityPostDetailPage(
     AmityBasePage(pageId = "post_detail_page") {
         AmityBaseComponent(
             pageScope = getPageScope(),
-            componentId = "comment_tray_component"
+            componentId = "comment_tray_component",
+            // The post is not part of the comment tray. Letting the tray's own
+            // exclusion hide this whole block turned "Comment is off" into a
+            // blank Post Detail page, post and all.
+            hideWhenExcluded = false,
         ) {
+            val showComments = !isExcluded()
             if ((post != null && ((post?.isDeleted() == true
                         || !AmitySocialBehaviorHelper.supportedStructureTypes.contains(post?.getStructureType())) || postErrorState) || error != null)
                 ) {
@@ -375,14 +380,15 @@ fun AmityPostDetailPage(
                             }
                         }
 
-                        item(key = "scroll_anchor") {
-                            Spacer(
-                                modifier = Modifier
-                                    .height(8.dp)
-                            )
-                        }
+                        if (showComments) {
+                            item(key = "scroll_anchor") {
+                                Spacer(
+                                    modifier = Modifier
+                                        .height(8.dp)
+                                )
+                            }
 
-                        amityCommentListLLS(
+                            amityCommentListLLS(
                             modifier = Modifier,
                             componentScope = getComponentScope(),
                             comments = comments,
@@ -409,12 +415,13 @@ fun AmityPostDetailPage(
                             fromNonMemberCommunity = isNotMember
                         )
 
-                        item {
-                            Box(Modifier.height(commentComposeBarBottomOffset.unaryMinus()))
+                            item {
+                                Box(Modifier.height(commentComposeBarBottomOffset.unaryMinus()))
+                            }
                         }
                     }
 
-                    if (post != null && !isNotMember && editingCommentId == null && AmityCoreClient.isSignedIn()) {
+                    if (showComments && post != null && !isNotMember && editingCommentId == null && AmityCoreClient.isSignedIn()) {
                         AmityCommentComposerBar(
                             modifier = Modifier.offset(y = commentComposeBarBottomOffset),
                             componentScope = getComponentScope(),

@@ -95,6 +95,8 @@ import com.amity.socialcloud.sdk.model.core.product.AmityProduct
 import com.amity.socialcloud.sdk.model.core.producttag.AmityProductTag
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
+import com.amity.socialcloud.uikit.common.config.AmityUIKitDataGate
+import com.amity.socialcloud.uikit.common.config.AmityUIKitFeature
 import com.amity.socialcloud.uikit.common.eventbus.AmityUIKitSnackbar
 import com.amity.socialcloud.uikit.common.extionsions.extractUrls
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
@@ -219,8 +221,13 @@ fun AmityPostComposerPage(
         viewModel.setComposerOptions(options)
     }
 
-    // Fetch product catalogue settings once when page opens
+    // Fetch product catalogue settings once when page opens.
+    // The console setting is only half the answer: `product` is also a UIKit
+    // module the customer can switch off, and reading the setting alone left the
+    // product tab in the mention sheet — and the tagging affordances that share
+    // this flag — on a build with the module off. Off means no request either.
     LaunchedEffect(Unit) {
+        if (!AmityUIKitDataGate.isOn(AmityUIKitFeature.PRODUCT)) return@LaunchedEffect
         AmityCoreClient.getProductCatalogueSetting()
             .subscribe(
                 { settings -> isProductCatalogueEnabled = settings.enabled },
@@ -1568,9 +1575,12 @@ fun AmityPostComposerPage(
     } // Close Column
 
     val allDistinctTags by viewModel.allDistinctProductTags.collectAsState(initial = emptyList())
+    // Gated like the other tagging affordances in this composer: isProductCatalogueEnabled is
+    // false while the product module is off, and the tags are dropped on submit in that case.
     val productTagCount =
-        if (options is AmityPostComposerOptions.AmityPostComposerCreateOptions ||
-            options is AmityPostComposerOptions.AmityPostComposerEditOptions
+        if (isProductCatalogueEnabled &&
+            (options is AmityPostComposerOptions.AmityPostComposerCreateOptions ||
+                options is AmityPostComposerOptions.AmityPostComposerEditOptions)
         ) allDistinctTags.size else 0
 
     // Attachment bar - positioned at bottom center (OUTSIDE Column, INSIDE root Box).

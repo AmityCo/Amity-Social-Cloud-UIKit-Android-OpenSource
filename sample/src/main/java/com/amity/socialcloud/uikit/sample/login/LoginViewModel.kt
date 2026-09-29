@@ -1,3 +1,5 @@
+@file:OptIn(com.amity.socialcloud.uikit.common.config.AmityUIKitInternalApi::class)
+
 package com.amity.socialcloud.uikit.sample.login
 
 import android.app.Application
@@ -7,6 +9,8 @@ import com.amity.socialcloud.sdk.api.core.endpoint.AmityEndpoint
 import com.amity.socialcloud.sdk.core.session.AccessTokenRenewal
 import com.amity.socialcloud.sdk.model.core.session.SessionHandler
 import com.amity.socialcloud.uikit.AmityUIKit4Manager
+import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
+import com.amity.socialcloud.uikit.common.config.AmityUIKitFeature
 import com.amity.socialcloud.uikit.sample.SampleRetrofitProvider
 import com.amity.socialcloud.uikit.sample.env.SampleAPIKey
 import com.amity.socialcloud.uikit.sample.env.SampleBroker
@@ -29,6 +33,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 import retrofit2.http.Url
 import java.util.concurrent.TimeUnit
+import io.reactivex.rxjava3.core.Completable
 
 class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -273,13 +278,28 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
         } else {
             _loginState.value = LoginState.Success
         }
-        AmityCoreClient.registerPushNotification()
-            .subscribeOn(Schedulers.io())
-            .subscribe({}, {})
+        // Registering the device is the host's call, not the UIKit's — there is no
+        // UIKit surface to gate. With the module off the host touches neither
+        // side of it: no register, and no unregister either.
+        if (pushNotificationOn()) {
+            AmityCoreClient.registerPushNotification()
+                .subscribeOn(Schedulers.io())
+                .subscribe({}, {})
+        }
     }
 
+    private fun pushNotificationOn(): Boolean =
+        AmityUIKitConfigController.isFeatureEnabled(AmityUIKitFeature.PUSH_NOTIFICATION)
+
+    private fun unregisterIfPushOn(): Completable =
+        if (pushNotificationOn()) {
+            AmityCoreClient.unregisterPushNotification()
+        } else {
+            Completable.complete()
+        }
+
     fun logout() {
-        val d = AmityCoreClient.unregisterPushNotification()
+        val d = unregisterIfPushOn()
             .andThen(AmityCoreClient.logout())
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -294,7 +314,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun secureLogout() {
-        val d = AmityCoreClient.unregisterPushNotification()
+        val d = unregisterIfPushOn()
             .andThen(AmityCoreClient.secureLogout())
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

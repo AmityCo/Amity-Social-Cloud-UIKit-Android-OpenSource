@@ -10,8 +10,12 @@ object AmityChatConfigHelper {
         return AmityChatComposerConfig.fromConfig(config)
     }
 
+    /**
+     * The row's config switch — and for Block, the `userRelationship` module
+     * too. Report never reads the module (chat user action REQ-008a).
+     */
     fun isConversationUserActionEnabled(actionName: String): Boolean {
-        return AmityUIKitConfigController.isConversationUserActionEnabled(actionName)
+        return AmityUIKitConfigController.isChatUserActionAvailable(actionName)
     }
 
     fun hasAnyEnabledChatUserAction(): Boolean {

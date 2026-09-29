@@ -15,11 +15,14 @@ import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import com.amity.socialcloud.uikit.common.config.AmityUIKitDataGate
+import com.amity.socialcloud.uikit.common.config.AmityUIKitFeature
 
 class AmityStoryCommunityTabViewModel : AmityBaseViewModel() {
 
-    fun observeStoryTarget(communityId: String): Flowable<AmityStoryTarget> {
-        return AmitySocialClient.newStoryRepository()
+    fun observeStoryTarget(communityId: String): Flowable<AmityStoryTarget> =
+        AmityUIKitDataGate.stream(AmityUIKitFeature.STORY) {
+        AmitySocialClient.newStoryRepository()
             .getStoryTarget(AmityStory.TargetType.COMMUNITY, communityId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -33,8 +36,9 @@ class AmityStoryCommunityTabViewModel : AmityBaseViewModel() {
             .observeOn(AndroidSchedulers.mainThread())
     }
 
-    fun getStories(communityId: String): Flow<PagingData<AmityStory>> {
-        return AmitySocialClient.newStoryRepository()
+    fun getStories(communityId: String): Flow<PagingData<AmityStory>> =
+        AmityUIKitDataGate.paging(AmityUIKitFeature.STORY) {
+        AmitySocialClient.newStoryRepository()
             .getActiveStories(
                 targetType = AmityStory.TargetType.COMMUNITY,
                 targetId = communityId
@@ -45,8 +49,9 @@ class AmityStoryCommunityTabViewModel : AmityBaseViewModel() {
 
     }
 
-    fun getLives(communityId: String): Flow<List<AmityPost>> {
-        return AmitySocialClient.newPostRepository()
+    fun getLives(communityId: String): Flow<List<AmityPost>> =
+        AmityUIKitDataGate.flow(AmityUIKitFeature.LIVE, emptyList()) {
+        AmitySocialClient.newPostRepository()
             .getCommunityLiveRoomPosts(listOf(communityId))
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

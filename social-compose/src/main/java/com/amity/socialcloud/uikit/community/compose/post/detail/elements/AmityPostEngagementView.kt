@@ -66,6 +66,7 @@ import com.amity.socialcloud.uikit.common.reaction.picker.AmityReactionPicker
 import com.amity.socialcloud.uikit.common.reaction.picker.getReactionIndexByX
 import com.amity.socialcloud.uikit.common.reaction.preview.AmityReactionPreview
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
+import com.amity.socialcloud.uikit.common.ui.scope.isElementExcluded
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
@@ -169,6 +170,20 @@ fun AmityPostEngagementView(
         localReactionsState.value = post.getReactionMap()
     }
 
+    // Hiding only the buttons left the bar behind: a divider with nothing above
+    // it and a 12dp band with nothing in it. The container asks what its
+    // children will render and goes when the last one does.
+    val showReaction = !componentScope.isElementExcluded("reaction_button")
+    val showComment = !componentScope.isElementExcluded("comment_button")
+    val showShare = post.getTarget() !is AmityPost.Target.COMMUNITY ||
+            (post.getTarget() as AmityPost.Target.COMMUNITY).getCommunity()?.isPublic() == true
+    val showSummary = (showReaction && localReactionCount > 0) || (showComment && commentCount > 0)
+    val showActions = showReaction || showComment || showShare
+
+    if (!showSummary && !showActions) {
+        return
+    }
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -179,6 +194,7 @@ fun AmityPostEngagementView(
                 top = if (isPostDetailPage) 8.dp else 0.dp
             )
     ) {
+        if (showSummary) {
         Row(
             modifier = modifier
                 .fillMaxWidth()
@@ -186,7 +202,7 @@ fun AmityPostEngagementView(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            if (localReactionCount > 0) {
+            if (showReaction && localReactionCount > 0) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
@@ -212,7 +228,7 @@ fun AmityPostEngagementView(
 
 
 
-            if (commentCount > 0) {
+            if (showComment && commentCount > 0) {
                 Text(
                     text = if (commentCount == 1)
                         amitySocialString("amity_social_button_feed_comment_count_singular").format(commentCount)
@@ -225,11 +241,15 @@ fun AmityPostEngagementView(
                 )
             }
         }
+        }
 
-        HorizontalDivider(
-            color = AmityTheme.colors.divider,
-        )
+        if (showSummary && showActions) {
+            HorizontalDivider(
+                color = AmityTheme.colors.divider,
+            )
+        }
 
+        if (showActions) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
@@ -469,7 +489,9 @@ fun AmityPostEngagementView(
                     }
                 }
 
-                Spacer(modifier = modifier.width(8.dp))
+                if (showReaction && showComment) {
+                    Spacer(modifier = modifier.width(8.dp))
+                }
                 AmityBaseElement(
                     componentScope = componentScope,
                     elementId = "comment_button"
@@ -532,6 +554,7 @@ fun AmityPostEngagementView(
                     )
                 }
             }
+        }
 
             /*
                 AmityBaseElement(

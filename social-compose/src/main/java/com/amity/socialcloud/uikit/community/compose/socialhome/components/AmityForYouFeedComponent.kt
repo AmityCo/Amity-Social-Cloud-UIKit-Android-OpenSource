@@ -36,6 +36,7 @@ import com.amity.socialcloud.sdk.model.core.error.AmityForYouFeedDisabledError
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.ad.AmityListItem
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
+import com.amity.socialcloud.uikit.common.ui.scope.isComponentExcluded
 import com.amity.socialcloud.uikit.common.ui.elements.AmityNewsFeedDivider
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
@@ -100,6 +101,11 @@ fun AmityForYouFeedComponent(
 
     val isRefreshing by viewModel.isGlobalFeedRefreshing.collectAsState()
     val isStoryTabVisible by viewModel.isStoryTabVisible.collectAsState()
+    // The story tab reports its own visibility through a callback. Excluded, it
+    // renders nothing and the callback never fires, so the 130dp box it sits in
+    // kept its height — a blank band at the top of the feed where the rings had
+    // been.
+    val isStoryModuleOn = !isComponentExcluded(componentId = "story_tab_component")
 
     val refreshLoadState = posts.loadState.refresh
     val appendLoadState = posts.loadState.append
@@ -252,7 +258,7 @@ fun AmityForYouFeedComponent(
             ) {
                 item(key = "foryou_story_tab") {
                     LocalPinnableContainer.current?.pin()
-                    val storyTabHeight = if (isStoryTabVisible) 130.dp else 0.dp
+                    val storyTabHeight = if (isStoryTabVisible && isStoryModuleOn) 130.dp else 0.dp
                     Box(
                         modifier = Modifier.height(storyTabHeight)
                     ) {

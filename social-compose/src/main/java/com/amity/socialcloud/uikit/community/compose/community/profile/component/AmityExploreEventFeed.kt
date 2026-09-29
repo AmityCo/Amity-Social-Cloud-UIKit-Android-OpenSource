@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import com.amity.socialcloud.sdk.model.social.event.AmityEvent
+import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
@@ -35,161 +36,166 @@ fun AmityExploreEventFeedComponent(
     onEventClick: (AmityEvent) -> Unit = {},
     onViewAllClick: () -> Unit = {}
 ) {
-    // Happening now events
-    val happeningNowEvents = liveEvents.itemSnapshotList.items
-    
-    // Recommended events - show only first 5 upcoming events
-    val recommendedEvents = upcomingEvents.itemSnapshotList.items.take(5)
-    
-    val listState = rememberLazyListState()
-    val isLiveEventsLoading = liveEvents.loadState.refresh is LoadState.Loading
-    val isUpcomingEventsLoading = upcomingEvents.loadState.refresh is LoadState.Loading
-    
-    LazyColumn(
-        state = listState,
-        modifier = modifier.fillMaxSize()
+    AmityBaseComponent(
+        pageScope = pageScope,
+        componentId = "explore_event_feed_component",
     ) {
+        // Happening now events
+        val happeningNowEvents = liveEvents.itemSnapshotList.items
+    
+        // Recommended events - show only first 5 upcoming events
+        val recommendedEvents = upcomingEvents.itemSnapshotList.items.take(5)
+    
+        val listState = rememberLazyListState()
+        val isLiveEventsLoading = liveEvents.loadState.refresh is LoadState.Loading
+        val isUpcomingEventsLoading = upcomingEvents.loadState.refresh is LoadState.Loading
+    
+        LazyColumn(
+            state = listState,
+            modifier = modifier.fillMaxSize()
+        ) {
         
-        // Happening Now Section
-        if (isLiveEventsLoading) {
-            item {
-                Text(
-                    text = amitySocialString("amity_social_button_happening_now"),
-                    style = AmityTheme.typography.title.copy(fontWeight = FontWeight.Bold),
-                    color = AmityTheme.colors.base,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
-                )
-            }
-            item {
-                AmityEventCardShimmer(
-                    style = EventCardStyle.Large,
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
-            }
-            item {
-                Spacer(modifier = Modifier.height(24.dp))
-            }
-        } else if (happeningNowEvents.isNotEmpty()) {
-            item {
-                Text(
-                    text = amitySocialString("amity_social_button_happening_now"),
-                    style = AmityTheme.typography.title.copy(fontWeight = FontWeight.Bold),
-                    color = AmityTheme.colors.base,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
-                )
-            }
-            
-            // Use Large card if only 1 event, otherwise use horizontal scroll with Medium cards
-            if (happeningNowEvents.size == 1) {
+            // Happening Now Section
+            if (isLiveEventsLoading) {
                 item {
-                    val event = happeningNowEvents.firstOrNull()
-                    EventCardItem(
-                        event = event,
+                    Text(
+                        text = amitySocialString("amity_social_button_happening_now"),
+                        style = AmityTheme.typography.title.copy(fontWeight = FontWeight.Bold),
+                        color = AmityTheme.colors.base,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
+                    )
+                }
+                item {
+                    AmityEventCardShimmer(
                         style = EventCardStyle.Large,
-                        onClick = { event?.let { onEventClick(it) } },
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
                 }
-            } else {
                 item {
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        contentPadding = PaddingValues(horizontal = 16.dp),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        items(happeningNowEvents.size) { index ->
-                            val event = happeningNowEvents.getOrNull(index)
-                            EventCardItem(
-                                event = event,
-                                style = EventCardStyle.Medium,
-                                onClick = { event?.let { onEventClick(it) } }
-                            )
+                    Spacer(modifier = Modifier.height(24.dp))
+                }
+            } else if (happeningNowEvents.isNotEmpty()) {
+                item {
+                    Text(
+                        text = amitySocialString("amity_social_button_happening_now"),
+                        style = AmityTheme.typography.title.copy(fontWeight = FontWeight.Bold),
+                        color = AmityTheme.colors.base,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
+                    )
+                }
+            
+                // Use Large card if only 1 event, otherwise use horizontal scroll with Medium cards
+                if (happeningNowEvents.size == 1) {
+                    item {
+                        val event = happeningNowEvents.firstOrNull()
+                        EventCardItem(
+                            event = event,
+                            style = EventCardStyle.Large,
+                            onClick = { event?.let { onEventClick(it) } },
+                            modifier = Modifier.padding(horizontal = 16.dp)
+                        )
+                    }
+                } else {
+                    item {
+                        LazyRow(
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            contentPadding = PaddingValues(horizontal = 16.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            items(happeningNowEvents.size) { index ->
+                                val event = happeningNowEvents.getOrNull(index)
+                                EventCardItem(
+                                    event = event,
+                                    style = EventCardStyle.Medium,
+                                    onClick = { event?.let { onEventClick(it) } }
+                                )
+                            }
                         }
                     }
                 }
-            }
             
-            item {
-                Spacer(modifier = Modifier.height(24.dp))
+                item {
+                    Spacer(modifier = Modifier.height(24.dp))
+                }
             }
-        }
         
-        // Recommended for you Section
-        item {
-            Text(
-                text = amitySocialString("amity_social_label_recommended_for_you"),
-                style = AmityTheme.typography.title.copy(fontWeight = FontWeight.Bold),
-                color = AmityTheme.colors.base,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
-            )
-        }
-        
-        // Show shimmer while loading upcoming events
-        if (isUpcomingEventsLoading) {
+            // Recommended for you Section
             item {
-                AmityEventCardListShimmer(
-                    style = EventCardStyle.List,
-                    count = 3
+                Text(
+                    text = amitySocialString("amity_social_label_recommended_for_you"),
+                    style = AmityTheme.typography.title.copy(fontWeight = FontWeight.Bold),
+                    color = AmityTheme.colors.base,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
                 )
             }
-        } else if (recommendedEvents.isEmpty()) {
-            // Empty state
-            item {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 80.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Image(
-                        painter = painterResource(id = com.amity.socialcloud.uikit.common.R.drawable.amity_ic_event_empty),
-                        contentDescription = null,
-                        modifier = Modifier.size(80.dp),
-                        colorFilter = ColorFilter.tint(AmityTheme.colors.baseShade4)
+        
+            // Show shimmer while loading upcoming events
+            if (isUpcomingEventsLoading) {
+                item {
+                    AmityEventCardListShimmer(
+                        style = EventCardStyle.List,
+                        count = 3
                     )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = amitySocialString("amity_social_label_no_events_yet"),
-                        style = AmityTheme.typography.title.copy(fontWeight = FontWeight.Bold),
-                        color = AmityTheme.colors.baseShade3
+                }
+            } else if (recommendedEvents.isEmpty()) {
+                // Empty state
+                item {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 80.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Image(
+                            painter = painterResource(id = com.amity.socialcloud.uikit.common.R.drawable.amity_ic_event_empty),
+                            contentDescription = null,
+                            modifier = Modifier.size(80.dp),
+                            colorFilter = ColorFilter.tint(AmityTheme.colors.baseShade4)
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = amitySocialString("amity_social_label_no_events_yet"),
+                            style = AmityTheme.typography.title.copy(fontWeight = FontWeight.Bold),
+                            color = AmityTheme.colors.baseShade3
+                        )
+                    }
+                }
+            }
+            // Event List - showing upcoming events (limit 5)
+            else {
+                items(recommendedEvents.size) { index ->
+                    val event = recommendedEvents.getOrNull(index)
+                    EventCardItem(
+                        event = event,
+                        style = EventCardStyle.List,
+                        onClick = { event?.let { onEventClick(it) } }
                     )
                 }
             }
-        }
-        // Event List - showing upcoming events (limit 5)
-        else {
-            items(recommendedEvents.size) { index ->
-                val event = recommendedEvents.getOrNull(index)
-                EventCardItem(
-                    event = event,
-                    style = EventCardStyle.List,
-                    onClick = { event?.let { onEventClick(it) } }
-                )
-            }
-        }
         
-        // View All button - positioned after the list, only show if there are 5 or more events
-        if (upcomingEvents.itemCount >= 5) {
-            item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 16.dp)
-                        .border(
-                            width = 1.dp,
-                            color = AmityTheme.colors.baseShade3,
-                            shape = RoundedCornerShape(8.dp)
+            // View All button - positioned after the list, only show if there are 5 or more events
+            if (upcomingEvents.itemCount >= 5) {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 16.dp)
+                            .border(
+                                width = 1.dp,
+                                color = AmityTheme.colors.baseShade3,
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .clip(RoundedCornerShape(8.dp))
+                            .clickableWithoutRipple { onViewAllClick() }
+                            .padding(vertical = 12.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = amitySocialString("amity_social_button_view_all"),
+                            style = AmityTheme.typography.body.copy(fontWeight = FontWeight.Medium),
+                            color = AmityTheme.colors.base
                         )
-                        .clip(RoundedCornerShape(8.dp))
-                        .clickableWithoutRipple { onViewAllClick() }
-                        .padding(vertical = 12.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = amitySocialString("amity_social_button_view_all"),
-                        style = AmityTheme.typography.body.copy(fontWeight = FontWeight.Medium),
-                        color = AmityTheme.colors.base
-                    )
+                    }
                 }
             }
         }

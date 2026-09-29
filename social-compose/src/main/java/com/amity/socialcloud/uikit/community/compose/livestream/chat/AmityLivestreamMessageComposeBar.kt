@@ -58,6 +58,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.core.error.AmityError
 import com.amity.socialcloud.sdk.model.core.error.AmityException
+import com.amity.socialcloud.uikit.common.config.AmityUIKitDataGate
+import com.amity.socialcloud.uikit.common.ui.scope.isElementExcluded
+import com.amity.socialcloud.uikit.common.config.AmityUIKitFeature
 import com.amity.socialcloud.uikit.common.model.AmityMessageReactions
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
@@ -266,11 +269,21 @@ fun AmityLivestreamMessageComposeBar(
                     }
                 }
                 val maxChar: Int = 200
+                // Both halves of the same question iOS asks as
+                // `viewConfig.isHidden(elementId: .livestreamReaction)`: the module can be
+                // off, or the host can have hidden the element in config.
+                val reactionExcluded = !AmityUIKitDataGate.isOn(AmityUIKitFeature.REACTION) ||
+                        pageScope.isElementExcluded("livestream_reaction")
                 val defaultReaction =
                     AmityMessageReactions.getList().getOrNull(0) ?: AmityMessageReactions.getList()
                         .firstOrNull()
                 if (isPendingApproval) {
                     Box {}
+                } else if (reactionExcluded && messageText.isEmpty()) {
+                    // Nothing belongs in this slot: with `reaction` switched off the like
+                    // button does nothing, and the send button only has work once there is
+                    // text. Emitting neither — rather than an inert button — lets the
+                    // weighted text field take the width back.
                 } else if (messageText.isNotEmpty() || defaultReaction == null) {
                     Button(
                         onClick = {

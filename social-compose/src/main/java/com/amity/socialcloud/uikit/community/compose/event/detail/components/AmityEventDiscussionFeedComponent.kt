@@ -34,6 +34,8 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.flow.catch
 import java.util.concurrent.TimeUnit
+import com.amity.socialcloud.uikit.community.compose.dropGatedPostTypes
+import com.amity.socialcloud.uikit.community.compose.dropGatedPinnedPostTypes
 
 @Composable
 fun AmityEventDiscussionFeedComponent(
@@ -60,6 +62,7 @@ fun AmityEventDiscussionFeedComponent(
                     communityId = communityId!!,
                     placement = AmityPinnedPost.PinPlacement.ANNOUNCEMENT.value
                 )
+                .dropGatedPinnedPostTypes()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .asFlow()
@@ -76,6 +79,7 @@ fun AmityEventDiscussionFeedComponent(
                     communityId = communityId!!,
                     placement = AmityPinnedPost.PinPlacement.DEFAULT.value
                 )
+                .dropGatedPinnedPostTypes()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .asFlow()
@@ -99,6 +103,7 @@ fun AmityEventDiscussionFeedComponent(
                 .matchingOnlyParentPosts(true)
                 .build()
                 .query()
+                .dropGatedPostTypes()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .onBackpressureBuffer()

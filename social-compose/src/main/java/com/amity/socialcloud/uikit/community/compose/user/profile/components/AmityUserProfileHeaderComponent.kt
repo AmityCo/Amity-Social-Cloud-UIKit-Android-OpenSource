@@ -44,6 +44,7 @@ import com.amity.socialcloud.uikit.common.common.isNotEmptyOrBlank
 import com.amity.socialcloud.uikit.common.compose.R
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
+import com.amity.socialcloud.uikit.common.ui.scope.anyElementVisible
 import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
 import com.amity.socialcloud.uikit.common.ui.elements.AmityExpandableText
 import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
@@ -198,6 +199,11 @@ fun AmityUserProfileHeaderComponent(
                 componentScope = getComponentScope(),
                 elementId = "user_profile_action",
             ) {
+                // Rule 3: user_profile_action has no owner, so this wrapper
+                // survives User Relationship being switched off while both counts
+                // inside it disappear — the Row kept its own vertical padding and
+                // left a band of empty space where the numbers had been.
+                if (anyElementVisible("user_following", "user_follower")) {
                 Row(
                     modifier = Modifier.padding(vertical = 4.dp)
                 ) {
@@ -284,6 +290,7 @@ fun AmityUserProfileHeaderComponent(
                             )
                         }
                     }
+                }
                 }
             }
             Spacer(modifier.height(12.dp))

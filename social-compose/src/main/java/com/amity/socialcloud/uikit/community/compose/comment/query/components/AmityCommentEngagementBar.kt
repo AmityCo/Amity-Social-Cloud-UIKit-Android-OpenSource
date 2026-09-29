@@ -56,6 +56,7 @@ import com.amity.socialcloud.uikit.common.model.AmitySocialReactions
 import com.amity.socialcloud.uikit.common.reaction.picker.AmityReactionPicker
 import com.amity.socialcloud.uikit.common.reaction.picker.getReactionIndexByX
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
+import com.amity.socialcloud.uikit.common.ui.scope.isElementExcluded
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.AmityConstants.POST_REACTION
 import com.amity.socialcloud.uikit.common.utils.isVisitor
@@ -149,7 +150,11 @@ fun AmityCommentEngagementBar(
                 ),
                 modifier = modifier.testTag("comment_list/comment_bubble_timestamp")
             )
-            if (allowInteraction) {
+            // Reaction can be switched off while Comment stays on - it needs only
+            // one of post/comment/chat/story. The Like control here carries no
+            // wrapper of its own, so it survived until the row was asked.
+            val showReaction = !componentScope.isElementExcluded("reaction_button")
+            if (allowInteraction && showReaction) {
                 val resolvedReactionKey = reacting
                     .first
                     .ifEmpty { myReaction }
@@ -303,7 +308,11 @@ fun AmityCommentEngagementBar(
                         }
                         .testTag("comment_list/comment_bubble_reaction_button")
                 )
-
+            }
+            // Reply and the more-actions menu are NOT reaction surfaces - they
+            // must survive reaction-off (spec negative control "Reply must
+            // remain"). They stay gated only by interaction being allowed.
+            if (allowInteraction) {
                 Text(
                     text = amitySocialString("amity_social_button_reply"),
                     style = AmityTheme.typography.captionLegacy.copy(

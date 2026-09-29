@@ -19,6 +19,7 @@ import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostCatego
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.flow.catch
+import com.amity.socialcloud.uikit.community.compose.dropGatedPinnedPostTypes
 
 @Composable
 fun AmityCommunityPinnedPostComponent(
@@ -37,6 +38,7 @@ fun AmityCommunityPinnedPostComponent(
                 communityId = communityId,
                 placement = AmityPinnedPost.PinPlacement.ANNOUNCEMENT.value
             )
+            .dropGatedPinnedPostTypes()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .asFlow()
@@ -49,6 +51,7 @@ fun AmityCommunityPinnedPostComponent(
                 communityId = communityId,
                 placement = AmityPinnedPost.PinPlacement.DEFAULT.value
             )
+            .dropGatedPinnedPostTypes()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .asFlow()

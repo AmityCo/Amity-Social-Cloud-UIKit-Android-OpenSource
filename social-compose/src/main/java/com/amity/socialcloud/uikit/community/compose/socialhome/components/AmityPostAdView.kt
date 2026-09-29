@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.sdk.model.core.ad.AmityAd
 import com.amity.socialcloud.sdk.model.core.ad.AmityAdPlacement
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
+import com.amity.socialcloud.uikit.common.ui.scope.isComponentExcluded
 import com.amity.socialcloud.uikit.common.ad.AmityAdBadge
 import com.amity.socialcloud.uikit.common.ad.AmityAdEngine
 import com.amity.socialcloud.uikit.common.ad.AmityAdInfoSheet
@@ -55,6 +56,11 @@ fun AmityPostAdView(
     modifier: Modifier = Modifier,
     ad: AmityAd
 ) {
+    // Ads owned one component, story_ad, and the feed and comment ads rendered
+    // without one — Ads switched off still filled a scrolling feed with them.
+    if (isComponentExcluded(componentId = "post_ad")) {
+        return
+    }
     val uriHandler = LocalUriHandler.current
 
     var showAdInfoSheet by remember { mutableStateOf(false) }

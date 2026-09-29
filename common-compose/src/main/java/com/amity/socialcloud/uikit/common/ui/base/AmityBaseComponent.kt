@@ -43,6 +43,16 @@ fun AmityBaseComponent(
     pageScope: AmityComposePageScope? = null,
     componentId: String,
     needScaffold: Boolean = false,
+    /**
+     * Whether excluding this component removes what it wraps.
+     *
+     * A page that nests its whole body in one component's scope answers "yes"
+     * with a blank screen: Post Detail wrapped the post itself in
+     * comment_tray_component, so switching Comment off emptied a page Post
+     * owns. Such a host passes false and gates the parts that really belong to
+     * the component, reading [AmityComposeComponentScope.isExcluded] itself.
+     */
+    hideWhenExcluded: Boolean = true,
     // Scaffold consumes the system-bar insets it applies, which turns any statusBarsPadding()
     // inside the content into a no-op. Full-bleed content that insets its own overlays must
     // pass WindowInsets(0) so those insets reach it unconsumed.
@@ -74,7 +84,7 @@ fun AmityBaseComponent(
         componentScope = comp,
         sessionState = sessionState
     ) {
-        if (!comp.isExcluded()) {
+        if (!hideWhenExcluded || !comp.isExcluded()) {
             if (needScaffold) {
                 Scaffold(
                     containerColor = AmityTheme.colors.background,

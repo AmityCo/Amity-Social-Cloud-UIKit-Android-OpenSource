@@ -5,6 +5,7 @@ import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.core.curatedcontent.AmityCuratedContentTopic
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
+import com.amity.socialcloud.uikit.community.compose.isTypeAvailable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -79,6 +80,9 @@ class AmityDiscoveryWidgetViewModel(
      * A post the card cannot draw is dropped rather than rendered as a broken tile, and dropped
      * before the threshold is counted — so a pool can fall below threshold on post types alone.
      *
+     * A post whose module is switched off (a poll with Poll off, a clip with Clip off) is dropped
+     * the same way, as every feed drops it at its query.
+     *
      * Polls became renderable once the pool was confirmed to carry its polls collection: the
      * persister writes them to the cache, so the card's poll stream emits without a second fetch.
      */
@@ -90,7 +94,7 @@ class AmityDiscoveryWidgetViewModel(
         is AmityPost.Data.POLL -> true
 
         else -> false
-    }
+    } && post.isTypeAvailable()
 
     fun onWidgetVisible(topic: AmityCuratedContentTopic) {
         if (widgetImpressionFired) return

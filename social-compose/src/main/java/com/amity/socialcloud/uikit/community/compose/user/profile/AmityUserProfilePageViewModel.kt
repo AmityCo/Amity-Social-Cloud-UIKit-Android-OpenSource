@@ -1,3 +1,5 @@
+@file:OptIn(com.amity.socialcloud.uikit.common.config.AmityUIKitInternalApi::class)
+
 package com.amity.socialcloud.uikit.community.compose.user.profile
 
 import androidx.lifecycle.viewModelScope
@@ -24,6 +26,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import com.amity.socialcloud.uikit.common.config.AmityUIKitDataGate
+import com.amity.socialcloud.uikit.common.config.AmityUIKitFeature
+import com.amity.socialcloud.uikit.community.compose.dropGatedPostTypes
 
 class AmityUserProfilePageViewModel(val userId: String) : AmityBaseViewModel() {
 
@@ -183,61 +188,67 @@ class AmityUserProfilePageViewModel(val userId: String) : AmityBaseViewModel() {
         }
     }
 
-    fun getUserPosts(): Flow<PagingData<AmityPost>> {
-        return AmitySocialClient.newFeedRepository()
-            .getUserFeed(userId)
-            .includeDeleted(false)
-            .feedSources(filter)
-            .dataTypes(AmitySocialBehaviorHelper.supportedPostTypes)
-            .build()
-            .query()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .asFlow()
-            .catch {}
-    }
+    fun getUserPosts(): Flow<PagingData<AmityPost>> =
+        AmityUIKitDataGate.paging(AmityUIKitFeature.POST) {
+            AmitySocialClient.newFeedRepository()
+                .getUserFeed(userId)
+                .includeDeleted(false)
+                .feedSources(filter)
+                .dataTypes(AmitySocialBehaviorHelper.supportedPostTypes)
+                .build()
+                .query()
+                .dropGatedPostTypes()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .asFlow()
+                .catch {}
+        }
 
-    fun getUserImagePosts(): Flow<PagingData<AmityPost>> {
-        return AmitySocialClient.newFeedRepository()
-            .getUserFeed(userId)
-            .dataTypes(listOf(AmityPost.DataType.IMAGE))
-            .feedSources(filter)
-            .includeDeleted(false)
-            .build()
-            .query()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .asFlow()
-            .catch {}
-    }
+    fun getUserImagePosts(): Flow<PagingData<AmityPost>> =
+        AmityUIKitDataGate.paging(AmityUIKitFeature.POST) {
+            AmitySocialClient.newFeedRepository()
+                .getUserFeed(userId)
+                .dataTypes(listOf(AmityPost.DataType.IMAGE))
+                .feedSources(filter)
+                .includeDeleted(false)
+                .build()
+                .query()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .asFlow()
+                .catch {}
+        }
 
-    fun getUserVideoPosts(): Flow<PagingData<AmityPost>> {
-        return AmitySocialClient.newFeedRepository()
-            .getUserFeed(userId)
-            .dataTypes(listOf(AmityPost.DataType.VIDEO))
-            .feedSources(filter)
-            .includeDeleted(false)
-            .build()
-            .query()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .asFlow()
-            .catch {}
-    }
+    fun getUserVideoPosts(): Flow<PagingData<AmityPost>> =
+        AmityUIKitDataGate.paging(AmityUIKitFeature.POST) {
+            AmitySocialClient.newFeedRepository()
+                .getUserFeed(userId)
+                .dataTypes(listOf(AmityPost.DataType.VIDEO))
+                .feedSources(filter)
+                .includeDeleted(false)
+                .build()
+                .query()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .asFlow()
+                .catch {}
+        }
 
-    fun getUserClipPosts(): Flow<PagingData<AmityPost>> {
-        return AmitySocialClient.newFeedRepository()
-            .getUserFeed(userId)
-            .dataTypes(listOf(AmityPost.DataType.CLIP))
-            .feedSources(filter)
-            .includeDeleted(false)
-            .build()
-            .query()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .asFlow()
-            .catch {}
-    }
+    fun getUserClipPosts(): Flow<PagingData<AmityPost>> =
+        AmityUIKitDataGate.clipPaging {
+            AmitySocialClient.newFeedRepository()
+                .getUserFeed(userId)
+                .dataTypes(listOf(AmityPost.DataType.CLIP))
+                .feedSources(filter)
+                .includeDeleted(false)
+                .build()
+                .query()
+                .dropGatedPostTypes()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .asFlow()
+                .catch {}
+        }
 
     fun followUser(
         targetUserId: String,
@@ -320,7 +331,10 @@ class AmityUserProfilePageViewModel(val userId: String) : AmityBaseViewModel() {
         }
     }
 
-    private fun getMyFollowInfo(): Flowable<AmityMyFollowInfo> {
+    private fun getMyFollowInfo(): Flowable<AmityMyFollowInfo> =
+        AmityUIKitDataGate.stream(AmityUIKitFeature.USER_RELATIONSHIP) { getMyFollowInfoUngated() }
+
+    private fun getMyFollowInfoUngated(): Flowable<AmityMyFollowInfo> {
         return if (AmityCoreClient.isSignedIn()) {
             AmityCoreClient.newUserRepository()
                 .relationship()
@@ -332,7 +346,10 @@ class AmityUserProfilePageViewModel(val userId: String) : AmityBaseViewModel() {
         }
     }
 
-    private fun getUserFollowInfo(): Flowable<AmityUserFollowInfo> {
+    private fun getUserFollowInfo(): Flowable<AmityUserFollowInfo> =
+        AmityUIKitDataGate.stream(AmityUIKitFeature.USER_RELATIONSHIP) { getUserFollowInfoUngated() }
+
+    private fun getUserFollowInfoUngated(): Flowable<AmityUserFollowInfo> {
         return AmityCoreClient.newUserRepository()
                 .relationship()
                 .getFollowInfo(userId)

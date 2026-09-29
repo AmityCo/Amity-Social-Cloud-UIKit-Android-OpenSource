@@ -17,6 +17,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.update
+import com.amity.socialcloud.uikit.common.config.AmityUIKitDataGate
+import com.amity.socialcloud.uikit.common.config.AmityUIKitFeature
 
 open class AmityProductSelectionViewModel(
     selectedProducts: List<AmityProduct> = emptyList(),
@@ -138,7 +140,10 @@ open class AmityProductSelectionViewModel(
         keywordFlow.value = ""
     }
 
-    private fun searchProducts(keyword: String): Flow<PagingData<AmityProduct>> {
+    private fun searchProducts(keyword: String): Flow<PagingData<AmityProduct>> =
+        AmityUIKitDataGate.paging(AmityUIKitFeature.PRODUCT) { searchProductsUngated(keyword) }
+
+    private fun searchProductsUngated(keyword: String): Flow<PagingData<AmityProduct>> {
         return searchProductsFlowable(keyword)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

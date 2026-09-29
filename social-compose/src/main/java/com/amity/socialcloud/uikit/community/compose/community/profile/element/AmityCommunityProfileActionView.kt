@@ -65,6 +65,11 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
+import com.amity.socialcloud.uikit.common.config.AmityUIKitDataGate
+import com.amity.socialcloud.uikit.common.config.AmityUIKitFeature
+import androidx.paging.PagingData
+import kotlinx.coroutines.flow.flowOf
+import com.amity.socialcloud.uikit.community.compose.dropGatedPostTypes
 
 //@Composable
 //fun AmityCommunityProfileActionView(
@@ -119,7 +124,9 @@ fun AmityCommunityPendingPost(
             .collectAsState(initial = false)
 
         val pendingPosts = remember {
-            AmitySocialClient.newFeedRepository()
+            if (!AmityUIKitDataGate.isOn(AmityUIKitFeature.POST)) {
+                flowOf(PagingData.empty())
+            } else AmitySocialClient.newFeedRepository()
                 .getCommunityFeed(community.getCommunityId())
                 .reviewStatus(AmityReviewStatus.UNDER_REVIEW)
                 .dataTypes(AmitySocialBehaviorHelper.supportedPostTypes)
@@ -127,6 +134,7 @@ fun AmityCommunityPendingPost(
                 .matchingOnlyParentPosts(true)
                 .build()
                 .query()
+                .dropGatedPostTypes()
                 .asFlow()
         }.collectAsLazyPagingItems()
 

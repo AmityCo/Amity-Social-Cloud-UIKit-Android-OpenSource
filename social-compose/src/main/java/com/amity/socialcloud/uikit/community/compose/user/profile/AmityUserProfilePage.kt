@@ -192,7 +192,7 @@ fun AmityUserProfilePage(
     val isPrivateFeed = postListState == AmityUserProfilePageViewModel.PostListState.ERROR &&
             isFeedUnauthorized
 
-    var selectedTabIndex by remember { mutableIntStateOf(0) }
+
     val feedFilter = listOf(
         DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_user_profile_all_post_title"),
         DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_user_profile_feed_option_community"),
@@ -219,6 +219,13 @@ fun AmityUserProfilePage(
     val mediaTabTitles = listOf(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_image"), DefaultAmitySocialStringProvider.getInstance().getString("amity_social_tab_tab_videos"), DefaultAmitySocialStringProvider.getInstance().getString("amity_social_tab_tab_clips"))
 
     AmityBasePage("user_profile_page") {
+        val visibleTabs = visibleUserProfileTabs(pageScope = getPageScope())
+        var selectedTab by remember(visibleTabs) {
+            mutableStateOf(visibleTabs.firstOrNull() ?: AmityUserProfilePageTab.FEED)
+        }
+        if (selectedTab !in visibleTabs) {
+            selectedTab = visibleTabs.firstOrNull() ?: AmityUserProfilePageTab.FEED
+        }
         val isUserProfileContentVisible = remember {
             !AmityUIKitConfigController.isExcluded(
                 "${getPageScope().getId()}/*/user_profile_content"
@@ -309,9 +316,10 @@ fun AmityUserProfilePage(
                         }
 
                         AmityUserProfileTabRow(
-                            selectedIndex = selectedTabIndex,
+                            tabs = visibleTabs,
+                            selected = selectedTab,
                             onSelect = {
-                                selectedTabIndex = it
+                                selectedTab = it
                             },
                             currentFilter = feedFilter[selectedFilterIndex],
                             onFilterLaunch = {
@@ -366,9 +374,10 @@ fun AmityUserProfilePage(
                         elementId = "user_profile_content",
                     ) {
                         AmityUserProfileTabRow(
-                            selectedIndex = selectedTabIndex,
+                            tabs = visibleTabs,
+                            selected = selectedTab,
                             onSelect = { it ->
-                                selectedTabIndex = it
+                                selectedTab = it
                             },
                             currentFilter = feedFilter[selectedFilterIndex],
                             onFilterLaunch = {
@@ -380,8 +389,8 @@ fun AmityUserProfilePage(
                     }
                 }
                 if (isUserProfileContentVisible) {
-                    when (selectedTabIndex) {
-                    0 -> {
+                    when (selectedTab) {
+                    AmityUserProfilePageTab.FEED -> {
                         AmityUserProfilePageViewModel.PostListState.from(
                             loadState = userPosts.loadState.refresh,
                             itemCount = userPosts.itemCount
@@ -405,7 +414,7 @@ fun AmityUserProfilePage(
                         )
                     }
 
-                    1 -> {
+                    AmityUserProfilePageTab.MEDIA -> {
                         item {
                             AmityBaseComponent(
                                 componentId = "user_video_feed",

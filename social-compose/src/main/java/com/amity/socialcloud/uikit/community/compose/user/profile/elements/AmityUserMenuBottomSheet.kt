@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.user.profile.elements
 
+import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -88,25 +89,29 @@ fun AmityUserMenuBottomSheet(
                     )
                 }
 
-                AmityBottomSheetActionItem(
-                    icon = R.drawable.amity_ic_blocked_user,
-                    text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_manage_blocked_users"),
-                    modifier = modifier.testTag("bottom_sheet_manage_blocked_users"),
-                ) {
-                    onCloseSheet()
-                    behavior.goToBlockedUsersPage(
-                        context = context,
-                    )
+                AmityBaseElement(pageScope = pageScope, elementId = "manage_blocked_users_button") {
+                    AmityBottomSheetActionItem(
+                        icon = R.drawable.amity_ic_blocked_user,
+                        text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_label_manage_blocked_users"),
+                        modifier = modifier.testTag("bottom_sheet_manage_blocked_users"),
+                    ) {
+                        onCloseSheet()
+                        behavior.goToBlockedUsersPage(
+                            context = context,
+                        )
+                    }
                 }
             } else {
                 if (isFollowedByMe) {
-                    AmityBottomSheetActionItem(
-                        icon = CommonR.drawable.amity_ic_user_unfollow,
-                        text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_unfollow"),
-                        modifier = modifier,
-                    ) {
-                        onCloseSheet()
-                        onUnfollow(user)
+                    AmityBaseElement(pageScope = pageScope, elementId = "unfollow_user_button") {
+                        AmityBottomSheetActionItem(
+                            icon = CommonR.drawable.amity_ic_user_unfollow,
+                            text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_unfollow"),
+                            modifier = modifier,
+                        ) {
+                            onCloseSheet()
+                            onUnfollow(user)
+                        }
                     }
                 }
 
@@ -166,25 +171,29 @@ fun AmityUserMenuBottomSheet(
                 }
 
                 if (isBlockedByMe) {
-                    AmityBottomSheetActionItem(
-                        icon = R.drawable.amity_ic_blocked_user,
-                        text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_unblock_user"),
-                        modifier = modifier.testTag("bottom_sheet_unblock_user"),
-                    ) {
-                        onCloseSheet()
-                        onUnblockUser()
+                    AmityBaseElement(pageScope = pageScope, elementId = "unblock_user_button") {
+                        AmityBottomSheetActionItem(
+                            icon = R.drawable.amity_ic_blocked_user,
+                            text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_unblock_user"),
+                            modifier = modifier.testTag("bottom_sheet_unblock_user"),
+                        ) {
+                            onCloseSheet()
+                            onUnblockUser()
+                        }
                     }
                 } else {
-                    AmityBottomSheetActionItem(
-                        icon = R.drawable.amity_ic_blocked_user,
-                        text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_block_user"),
-                        modifier = modifier.testTag("bottom_sheet_block_user"),
-                    ) {
-                        onCloseSheet()
-                        if (AmityCoreClient.isVisitor()) {
-                            behavior.handleVisitorUserAction()
-                        } else {
-                            onBlockUser()
+                    AmityBaseElement(pageScope = pageScope, elementId = "block_user_button") {
+                        AmityBottomSheetActionItem(
+                            icon = R.drawable.amity_ic_blocked_user,
+                            text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_block_user"),
+                            modifier = modifier.testTag("bottom_sheet_block_user"),
+                        ) {
+                            onCloseSheet()
+                            if (AmityCoreClient.isVisitor()) {
+                                behavior.handleVisitorUserAction()
+                            } else {
+                                onBlockUser()
+                            }
                         }
                     }
                 }

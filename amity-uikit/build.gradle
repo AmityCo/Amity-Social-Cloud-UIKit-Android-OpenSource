@@ -49,6 +49,13 @@ android {
 dependencies {
     api project(path: ':social-compose')
     api project(path: ':chat-compose')
+    // AmityUIKitFeature is the argument type of a public method on
+    // AmityUIKit4Manager, so it has to be on a consumer's compile classpath from
+    // this module's own declaration. It reaches one today only because
+    // chat-compose happens to use `api project(':common-compose')` where
+    // social-compose uses `implementation` — a public type must not depend on
+    // another module's choice.
+    api project(path: ':common-compose')
 
     api "$amitySDKDependency:amity-sdk:$amityMessagingSdkVersion"
     // Previously reached transitively via the v3 :social module's api deps.

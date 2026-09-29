@@ -29,23 +29,26 @@ import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
-import com.amity.socialcloud.uikit.common.R as CommonR
+import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.user.profile.AmityUserProfilePageTab
 
 
 @Composable
 fun AmityUserProfileTabRow(
     modifier: Modifier = Modifier,
     pageScope: AmityComposePageScope? = null,
-    selectedIndex: Int,
-    onSelect: (Int) -> Unit,
+    tabs: List<AmityUserProfilePageTab>,
+    selected: AmityUserProfilePageTab,
+    onSelect: (AmityUserProfilePageTab) -> Unit,
     currentFilter: String,
     onFilterLaunch: () -> Unit,
     showFilter: Boolean = true
 ) {
-//    AmityBaseElement(
-//        pageScope = pageScope,
-//        elementId = "community_profile_tab",
-//    ) {
+    // Both tabs belong to Feed. With none left there is no row to head, no rule
+    // to draw under it and nothing for the filter to filter.
+    if (tabs.isEmpty()) {
+        return
+    }
     Column(
         modifier = modifier
             .background(AmityTheme.colors.background)
@@ -56,72 +59,45 @@ fun AmityUserProfileTabRow(
             modifier = modifier.fillMaxWidth()
                 .padding(horizontal = 16.dp)
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = modifier
-                    .weight(1f)
-                    .clickableWithoutRipple {
-                        onSelect(0)
-                    }
-            ) {
-                Box(
-                    modifier = Modifier.padding(bottom = 12.dp),
-                    contentAlignment = Alignment.Center,
+            tabs.forEach { tab ->
+                val isSelected = tab == selected
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = modifier
+                        .weight(1f)
+                        .clickableWithoutRipple {
+                            onSelect(tab)
+                        }
                 ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_community_feed),
-                        contentDescription = "",
-                        tint = if (selectedIndex == 0) AmityTheme.colors.base else AmityTheme.colors.secondaryShade3,
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(2.dp)
-                        .background(
-                            color = if (selectedIndex == 0) AmityTheme.colors.primary else Color.Transparent,
-                            shape = RoundedCornerShape(
-                                topStart = 1.dp,
-                                topEnd = 1.dp
-                            )
+                    Box(
+                        modifier = Modifier.padding(bottom = 12.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(id = tab.iconRes),
+                            contentDescription = "",
+                            tint = if (isSelected) AmityTheme.colors.base else AmityTheme.colors.secondaryShade3,
+                            modifier = Modifier
+                                .size(24.dp)
+                                .then(
+                                    if (tab == AmityUserProfilePageTab.MEDIA) Modifier.padding(2.dp)
+                                    else Modifier
+                                )
                         )
-                )
-            }
-
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = modifier
-                    .weight(1f)
-                    .clickableWithoutRipple {
-                        onSelect(1)
                     }
-            ) {
-                Box(
-                    modifier = Modifier.padding(bottom = 12.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_community_media_tab),
-                        contentDescription = "",
-                        tint = if (selectedIndex == 1) AmityTheme.colors.base else AmityTheme.colors.secondaryShade3,
+                    Box(
                         modifier = Modifier
-                            .size(24.dp)
-                            .padding(2.dp)
+                            .fillMaxWidth()
+                            .height(2.dp)
+                            .background(
+                                color = if (isSelected) AmityTheme.colors.primary else Color.Transparent,
+                                shape = RoundedCornerShape(
+                                    topStart = 1.dp,
+                                    topEnd = 1.dp
+                                )
+                            )
                     )
                 }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(2.dp)
-                        .background(
-                            color = if (selectedIndex == 1) AmityTheme.colors.primary else Color.Transparent,
-                            shape = RoundedCornerShape(
-                                topStart = 1.dp,
-                                topEnd = 1.dp
-                            )
-                        )
-                )
             }
         }
 
@@ -165,4 +141,3 @@ fun AmityUserProfileTabRow(
         )
     }
 }
-//}

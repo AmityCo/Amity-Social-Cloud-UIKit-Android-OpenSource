@@ -18,6 +18,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import com.amity.socialcloud.uikit.common.config.AmityUIKitDataGate
+import com.amity.socialcloud.uikit.common.config.AmityUIKitFeature
 
 class AmityStoryGlobalTabViewModel : AmityBaseViewModel() {
 
@@ -34,8 +36,9 @@ class AmityStoryGlobalTabViewModel : AmityBaseViewModel() {
         _targetListState.value = state
     }
 
-    fun getTargets(): Flow<PagingData<AmityStoryTarget>> {
-        return AmitySocialClient.newStoryRepository()
+    fun getTargets(): Flow<PagingData<AmityStoryTarget>> =
+        AmityUIKitDataGate.paging(AmityUIKitFeature.STORY) {
+        AmitySocialClient.newStoryRepository()
             .getGlobalStoryTargets(
                 queryOption = AmityGlobalStoryTargetsQueryOption.SMART
             )
@@ -49,6 +52,13 @@ class AmityStoryGlobalTabViewModel : AmityBaseViewModel() {
 
     fun getLives() {
         livePostDisposable?.dispose()
+        // The live-room ring is Live's. It sits in the story tab, so with Story on
+        // and Live off this kept asking /api/v1/rooms/lives for rooms it would
+        // never draw.
+        if (!AmityUIKitDataGate.isOn(AmityUIKitFeature.LIVE)) {
+            _livePosts.value = emptyList()
+            return
+        }
         livePostDisposable = AmitySocialClient.newPostRepository()
             .getLiveRoomPosts()
             .subscribeOn(Schedulers.io())
@@ -62,6 +72,7 @@ class AmityStoryGlobalTabViewModel : AmityBaseViewModel() {
 
     fun prefetchStoriesFromTargets(targets: List<AmityStoryTarget>) {
         compositeDisposable.clear()
+        if (!AmityUIKitDataGate.isOn(AmityUIKitFeature.STORY)) return
         targets.chunked(10)
             .map {
                 AmitySocialClient.newStoryRepository()

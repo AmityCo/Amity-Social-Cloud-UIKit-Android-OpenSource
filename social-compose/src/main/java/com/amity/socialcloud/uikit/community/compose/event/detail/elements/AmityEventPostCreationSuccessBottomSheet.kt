@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.amity.socialcloud.uikit.common.ui.scope.isElementExcludedOnPage
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
@@ -47,6 +48,11 @@ import com.amity.socialcloud.uikit.community.compose.localization.amitySocialStr
  * "event created" toast. Nudges them to share the event to a feed so more people can find it.
  * The primary action reuses the same "post to feed" routing as the 3-dot menu item; the
  * secondary action just dismisses.
+ *
+ * Everything under the title is that nudge, so it goes with Post: asked on
+ * `create_event_post_button`, the id the menu item uses, since both are doors
+ * onto the same composer. With Post off the sheet is the title alone and is
+ * dismissed by swipe or tap outside, as on Web.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,6 +62,11 @@ fun AmityEventPostCreationSuccessBottomSheet(
     onPostToFeed: () -> Unit,
 ) {
     if (!shouldShow) return
+
+    val showPostToFeedPrompt = !isElementExcludedOnPage(
+        pageId = "event_detail_page",
+        elementId = "create_event_post_button",
+    )
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -105,59 +116,65 @@ fun AmityEventPostCreationSuccessBottomSheet(
                 textAlign = TextAlign.Center,
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            if (showPostToFeedPrompt) {
+                Spacer(modifier = Modifier.height(8.dp))
 
-            Text(
-                text = amitySocialString("amity_social_label_event_post_creation_success_description"),
-                style = AmityTheme.typography.body,
-                color = AmityTheme.colors.baseShade1,
-                textAlign = TextAlign.Center,
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Button(
-                onClick = onPostToFeed,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = AmityTheme.colors.primary
-                ),
-                shape = RoundedCornerShape(8.dp),
-            ) {
                 Text(
-                    text = amitySocialString("amity_social_button_post_to_feed"),
-                    style = AmityTheme.typography.bodyBold.copy(
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 15.sp,
-                    ),
-                    color = amityColorWhite,
-                )
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            OutlinedButton(
-                colors = ButtonDefaults.outlinedButtonColors(
-                    containerColor = Color.Transparent,
-                    disabledContainerColor = AmityTheme.colors.primaryShade2,
-                ),
-                shape = RoundedCornerShape(8.dp),
-                modifier = Modifier.fillMaxWidth()
-                    .height(48.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
-                border = BorderStroke(width = 1.dp, color = AmityTheme.colors.secondaryShade3),
-                onClick = {
-                    onDismiss()
-                }
-            ) {
-                Text(
-                    text = amitySocialString("amity_social_button_maybe_later"),
-                    style = AmityTheme.typography.bodyBold,
-                    color = AmityTheme.colors.secondary,
+                    text = amitySocialString("amity_social_label_event_post_creation_success_description"),
+                    style = AmityTheme.typography.body,
+                    color = AmityTheme.colors.baseShade1,
                     textAlign = TextAlign.Center,
                 )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Button(
+                    onClick = onPostToFeed,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = AmityTheme.colors.primary
+                    ),
+                    shape = RoundedCornerShape(8.dp),
+                ) {
+                    Text(
+                        text = amitySocialString("amity_social_button_post_to_feed"),
+                        style = AmityTheme.typography.bodyBold.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 15.sp,
+                        ),
+                        color = amityColorWhite,
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                OutlinedButton(
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        containerColor = Color.Transparent,
+                        disabledContainerColor = AmityTheme.colors.primaryShade2,
+                    ),
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier.fillMaxWidth()
+                        .height(48.dp),
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
+                    border = BorderStroke(width = 1.dp, color = AmityTheme.colors.secondaryShade3),
+                    onClick = {
+                        onDismiss()
+                    }
+                ) {
+                    Text(
+                        text = amitySocialString("amity_social_button_maybe_later"),
+                        style = AmityTheme.typography.bodyBold,
+                        color = AmityTheme.colors.secondary,
+                        textAlign = TextAlign.Center,
+                    )
+                }
+            } else {
+                // The button block carried the sheet's bottom spacing. Put it back
+                // so the title does not sit on the sheet's edge.
+                Spacer(modifier = Modifier.height(24.dp))
             }
         }
     }

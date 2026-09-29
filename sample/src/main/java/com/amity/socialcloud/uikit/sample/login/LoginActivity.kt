@@ -71,6 +71,10 @@ class LoginActivity : ComponentActivity() {
                     var currentScreen by rememberSaveable { mutableStateOf(
                         if (hasSession) Screen.SELECT_MODULE else Screen.ENVIRONMENT_SETUP
                     ) }
+                    // The module screen is reachable from before and after login, so
+                    // Back has to return where it was opened from rather than to a
+                    // fixed screen.
+                    var moduleFlagsOrigin by rememberSaveable { mutableStateOf(Screen.ADVANCED) }
 
                     when (currentScreen) {
                         Screen.ENVIRONMENT_SETUP -> EnvironmentSetupScreen(
@@ -84,6 +88,13 @@ class LoginActivity : ComponentActivity() {
                             viewModel = viewModel,
                             onBack = { currentScreen = Screen.ENVIRONMENT_SETUP },
                             onLoginSuccess = { currentScreen = Screen.SELECT_MODULE },
+                            onModuleFlagsClick = {
+                                moduleFlagsOrigin = Screen.ADVANCED
+                                currentScreen = Screen.MODULE_FLAGS
+                            },
+                        )
+                        Screen.MODULE_FLAGS -> ModuleFlagsScreen(
+                            onBack = { currentScreen = moduleFlagsOrigin },
                         )
                         Screen.CHAT_MODULE -> ChatModuleScreen(
                             onChatV4Click = {
@@ -108,6 +119,10 @@ class LoginActivity : ComponentActivity() {
                             },
                             onChangeUser = { currentScreen = Screen.ENVIRONMENT_SETUP },
                             onLoggedOut = { currentScreen = Screen.ENVIRONMENT_SETUP },
+                            onModuleFlagsClick = {
+                                moduleFlagsOrigin = Screen.SELECT_MODULE
+                                currentScreen = Screen.MODULE_FLAGS
+                            },
                             onDiscoveryWidgetClick = {
                                 startActivity(
                                     AmityDiscoveryWidgetTestActivity.newIntent(this@LoginActivity)
@@ -149,5 +164,6 @@ class LoginActivity : ComponentActivity() {
         ADVANCED,
         SELECT_MODULE,
         CHAT_MODULE,
+        MODULE_FLAGS,
     }
 }

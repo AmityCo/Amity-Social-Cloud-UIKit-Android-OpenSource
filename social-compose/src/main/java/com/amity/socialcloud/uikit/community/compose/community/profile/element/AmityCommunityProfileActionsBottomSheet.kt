@@ -17,6 +17,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
+import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
@@ -94,6 +95,13 @@ fun AmityCommunityProfileActionsContainer(
     onDismiss: () -> Unit,
 ) {
     val context = LocalContext.current
+    val actions = communityCreateActions(
+        pageScope = pageScope,
+        componentScope = componentScope,
+        canCreatePost = shouldShowPostCreationButton,
+        canCreateStory = shouldShowStoryCreationButton,
+        canCreateEvent = shouldShowEventCreationButton,
+    )
 
     AmityBaseElement(
         componentScope = componentScope,
@@ -112,7 +120,7 @@ fun AmityCommunityProfileActionsContainer(
                 contract = ActivityResultContracts.StartActivityForResult()
             ) {}
 
-            if (shouldShowPostCreationButton) {
+            if (AmityCommunityCreateAction.POST in actions) {
                 AmityBaseElement(
                     elementId = "create_post_button",
                     pageScope = pageScope
@@ -134,7 +142,7 @@ fun AmityCommunityProfileActionsContainer(
                 }
             }
 
-            if (shouldShowPostCreationButton) {
+            if (AmityCommunityCreateAction.POLL in actions) {
                 AmityBaseElement(
                     elementId = "create_poll_button",
                     pageScope = pageScope
@@ -150,7 +158,7 @@ fun AmityCommunityProfileActionsContainer(
                 }
             }
 
-            if (shouldShowPostCreationButton) {
+            if (AmityCommunityCreateAction.LIVESTREAM in actions) {
                 AmityBaseElement(
                     pageScope = pageScope,
                     elementId = "create_livestream_button"
@@ -172,7 +180,7 @@ fun AmityCommunityProfileActionsContainer(
                 }
             }
 
-            if (shouldShowStoryCreationButton) {
+            if (AmityCommunityCreateAction.STORY in actions) {
                 AmityBaseElement(
                     pageScope = pageScope,
                     elementId = "create_story_button"
@@ -194,7 +202,7 @@ fun AmityCommunityProfileActionsContainer(
                 }
             }
 
-            if (shouldShowPostCreationButton) {
+            if (AmityCommunityCreateAction.CLIP in actions) {
                 AmityBaseElement(
                     pageScope = pageScope,
                     elementId = "create_clip_button"
@@ -218,7 +226,7 @@ fun AmityCommunityProfileActionsContainer(
                 }
             }
 
-            if (shouldShowEventCreationButton) {
+            if (AmityCommunityCreateAction.EVENT in actions) {
                 AmityBaseElement(
                     pageScope = pageScope,
                     elementId = "create_event_button"
@@ -240,6 +248,56 @@ fun AmityCommunityProfileActionsContainer(
                 }
             }
         }
+    }
+}
+
+/**
+ * The rows [AmityCommunityProfileActionsContainer] can draw, in order, by element id.
+ *
+ * The community page's floating "+" (`community_create_post_button`) that opens
+ * them belongs to no module (module-availability-spec §10, PDT-5617); each row
+ * keeps its own owner.
+ */
+internal enum class AmityCommunityCreateAction(val elementId: String) {
+    POST("create_post_button"),
+    POLL("create_poll_button"),
+    LIVESTREAM("create_livestream_button"),
+    STORY("create_story_button"),
+    CLIP("create_clip_button"),
+    EVENT("create_event_button"),
+}
+
+/**
+ * The rows the community create sheet shows: the one list both the sheet and
+ * the page's floating "+" read, so the "+" is drawn exactly when the sheet would
+ * have something in it.
+ *
+ * A row shows when the gate leaves it — its module, the customer's excludes, and
+ * the sheet's `community_profile_actions` wrapper — and when the page's per-user
+ * check for it passes: [canCreatePost] for post, poll, livestream and clip,
+ * [canCreateStory] for story, [canCreateEvent] for event. The page's permission
+ * reads start false, so a "+" whose only rows wait on them stays hidden until
+ * they answer rather than appearing and vanishing.
+ */
+internal fun communityCreateActions(
+    pageScope: AmityComposePageScope?,
+    componentScope: AmityComposeComponentScope?,
+    canCreatePost: Boolean,
+    canCreateStory: Boolean,
+    canCreateEvent: Boolean,
+): List<AmityCommunityCreateAction> {
+    // The ids the sheet's own elements resolve to: the wrapper is scoped to the
+    // component only, the rows to the page only.
+    val wrapper = "*/${componentScope?.getId() ?: "*"}/community_profile_actions"
+    if (AmityUIKitConfigController.isExcluded(wrapper)) return emptyList()
+    val page = pageScope?.getId() ?: "*"
+    return AmityCommunityCreateAction.entries.filter { action ->
+        val allowed = when (action) {
+            AmityCommunityCreateAction.STORY -> canCreateStory
+            AmityCommunityCreateAction.EVENT -> canCreateEvent
+            else -> canCreatePost
+        }
+        allowed && !AmityUIKitConfigController.isExcluded("$page/*/${action.elementId}")
     }
 }
 

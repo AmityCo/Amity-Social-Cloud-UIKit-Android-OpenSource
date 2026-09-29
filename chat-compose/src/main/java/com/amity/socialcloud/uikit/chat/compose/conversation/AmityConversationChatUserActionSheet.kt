@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.chat.compose.conversation
 
+import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -85,20 +86,26 @@ fun AmityConversationChatUserActionSheet(
             }
 
             // Block / Unblock User
+            // Declared under the ids User Profile uses for the same job, so
+            // `userRelationship` owns the row here too (§10.2).
             if (AmityChatConfigHelper.isConversationUserActionEnabled("block")) {
-                ActionSheetItem(
-                    iconResId = CommonComposeR.drawable.amity_ic_user_slash_r,
-                    text = amityChatString(
-                        key = if (isUserBlocked) "chat.action.unblock.user"
-                        else "chat.action.block.user"
-                    ),
-                    // Block is intentionally NON-destructive (neutral, not red)
-                    isDestructive = false,
-                    onClick = {
-                        onDismiss()
-                        onBlockToggle()
-                    },
-                )
+                AmityBaseElement(
+                    elementId = if (isUserBlocked) "unblock_user_button" else "block_user_button",
+                ) {
+                    ActionSheetItem(
+                        iconResId = CommonComposeR.drawable.amity_ic_user_slash_r,
+                        text = amityChatString(
+                            key = if (isUserBlocked) "chat.action.unblock.user"
+                            else "chat.action.block.user"
+                        ),
+                        // Block is intentionally NON-destructive (neutral, not red)
+                        isDestructive = false,
+                        onClick = {
+                            onDismiss()
+                            onBlockToggle()
+                        },
+                    )
+                }
             }
         }
     }

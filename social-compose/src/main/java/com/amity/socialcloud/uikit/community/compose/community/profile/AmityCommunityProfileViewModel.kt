@@ -1,3 +1,5 @@
+@file:OptIn(com.amity.socialcloud.uikit.common.config.AmityUIKitInternalApi::class)
+
 package com.amity.socialcloud.uikit.community.compose.community.profile
 
 import androidx.lifecycle.viewModelScope
@@ -35,6 +37,10 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
+import com.amity.socialcloud.uikit.common.config.AmityUIKitDataGate
+import com.amity.socialcloud.uikit.common.config.AmityUIKitFeature
+import com.amity.socialcloud.uikit.community.compose.dropGatedPostTypes
+import com.amity.socialcloud.uikit.community.compose.dropGatedPinnedPostTypes
 
 class AmityCommunityProfileViewModel(private val communityId: String) :
     AmityBaseViewModel() {
@@ -112,6 +118,7 @@ class AmityCommunityProfileViewModel(private val communityId: String) :
                 communityId = communityId,
                 placement = AmityPinnedPost.PinPlacement.ANNOUNCEMENT.value
             )
+            .dropGatedPinnedPostTypes()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .asFlow()
@@ -124,25 +131,28 @@ class AmityCommunityProfileViewModel(private val communityId: String) :
                 communityId = communityId,
                 placement = AmityPinnedPost.PinPlacement.DEFAULT.value
             )
+            .dropGatedPinnedPostTypes()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .asFlow()
             .catch {}
     }
 
-    fun getCommunityPosts(): Flow<PagingData<AmityListItem>> {
+    fun getCommunityPosts(): Flow<PagingData<AmityListItem>> =
+        AmityUIKitDataGate.paging(AmityUIKitFeature.POST) {
         val injector = AmityAdInjector<AmityPost>(
             placement = AmityAdPlacement.FEED,
             communityId = communityId,
         )
 
-        return AmitySocialClient.newFeedRepository()
+        AmitySocialClient.newFeedRepository()
             .getCommunityFeed(communityId)
             .dataTypes(AmitySocialBehaviorHelper.supportedPostTypes)
             .includeDeleted(false)
             .matchingOnlyParentPosts(true)
             .build()
             .query()
+            .dropGatedPostTypes()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .onBackpressureBuffer()
@@ -171,8 +181,9 @@ class AmityCommunityProfileViewModel(private val communityId: String) :
         }
     }
 
-    fun getCommunityImagePosts(): Flow<PagingData<AmityPost>> {
-        return AmitySocialClient.newPostRepository()
+    fun getCommunityImagePosts(): Flow<PagingData<AmityPost>> =
+        AmityUIKitDataGate.paging(AmityUIKitFeature.POST) {
+        AmitySocialClient.newPostRepository()
             .getPosts()
             .targetCommunity(communityId)
             .dataTypes(listOf(AmityPost.DataType.IMAGE))
@@ -185,8 +196,9 @@ class AmityCommunityProfileViewModel(private val communityId: String) :
             .catch {}
     }
 
-    fun getCommunityVideoPosts(): Flow<PagingData<AmityPost>> {
-        return AmitySocialClient.newPostRepository()
+    fun getCommunityVideoPosts(): Flow<PagingData<AmityPost>> =
+        AmityUIKitDataGate.paging(AmityUIKitFeature.POST) {
+        AmitySocialClient.newPostRepository()
             .getPosts()
             .targetCommunity(communityId)
             .dataTypes(listOf(AmityPost.DataType.VIDEO))
@@ -199,21 +211,24 @@ class AmityCommunityProfileViewModel(private val communityId: String) :
             .catch {}
     }
 
-    fun getCommunityClipPosts(): Flow<PagingData<AmityPost>> {
-        return AmitySocialClient.newPostRepository()
+    fun getCommunityClipPosts(): Flow<PagingData<AmityPost>> =
+        AmityUIKitDataGate.clipPaging {
+        AmitySocialClient.newPostRepository()
             .getPosts()
             .targetCommunity(communityId)
             .dataTypes(listOf(AmityPost.DataType.CLIP))
             .includeDeleted(false)
             .build()
             .query()
+            .dropGatedPostTypes()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .asFlow()
             .catch {}
     }
 
-    fun getCommunityEvents(status: AmityEventStatus? = null): Flow<PagingData<AmityEvent>> {
+    fun getCommunityEvents(status: AmityEventStatus? = null): Flow<PagingData<AmityEvent>> =
+        AmityUIKitDataGate.paging(AmityUIKitFeature.EVENTS) {
         val query = AmitySocialClient.newEventRepository()
             .getEvents()
             .originId(communityId)
@@ -231,7 +246,7 @@ class AmityCommunityProfileViewModel(private val communityId: String) :
             }
         }
 
-        return query
+        query
             .build()
             .query()
             .subscribeOn(Schedulers.io())

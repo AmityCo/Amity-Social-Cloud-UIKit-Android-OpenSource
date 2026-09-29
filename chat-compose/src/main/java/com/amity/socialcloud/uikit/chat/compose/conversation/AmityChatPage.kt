@@ -1,5 +1,7 @@
 package com.amity.socialcloud.uikit.chat.compose.conversation
 
+import com.amity.socialcloud.uikit.common.config.AmityUIKitFeature
+import com.amity.socialcloud.uikit.common.config.AmityUIKitDataGate
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -85,10 +87,12 @@ fun AmityChatPage(
     val headerAvatarUrl = otherMembers.firstOrNull()?.getUser()?.resolvedAvatarUrl(AmityImage.Size.LARGE)
         ?: channel?.getAvatar()?.getUrl(AmityImage.Size.LARGE)
 
-    // Fetch follow/block info when other member is known
+    // Fetch follow/block info when other member is known. getFollowInfo is a
+    // userRelationship call: with the module withheld there is no Block row to
+    // label, and under enforce the backend would refuse it on every open (R6).
     val otherUserId = otherMembers.firstOrNull()?.getUserId()
     LaunchedEffect(otherUserId) {
-        if (otherUserId != null) {
+        if (otherUserId != null && AmityUIKitDataGate.isOn(AmityUIKitFeature.USER_RELATIONSHIP)) {
             viewModel.fetchFollowInfo(otherUserId)
         }
     }

@@ -19,6 +19,7 @@ import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.social.event.AmityEventOriginType
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
+import com.amity.socialcloud.uikit.common.ui.scope.isComponentExcluded
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
@@ -44,7 +45,15 @@ fun AmityEventsComponent(
     }
 
     val viewModel: AmityEventsComponentViewModel = viewModel()
-    
+
+    // R6: the five queries below are built during composition, and the module
+    // that sells them is the one being switched off. The tab button is already
+    // gated, but a container that still asks is a switched-off module that
+    // errors rather than one that is absent.
+    val exploreVisible = !isComponentExcluded(pageScope, "explore_event_feed_component")
+    val myEventsVisible = !isComponentExcluded(pageScope, "my_event_feed_component")
+    if (!exploreVisible && !myEventsVisible) return
+
     // Explore tab excludes the current user's own events, so it needs its own streams
     // separate from the My event tab's.
     val exploreLiveEvents = remember {
@@ -60,7 +69,18 @@ fun AmityEventsComponent(
 
     var selectedTabIndex by remember { mutableStateOf(0) }
     val isVisitor = remember { AmityCoreClient.isVisitor() }
-    val tabTitles = listOf(amitySocialString("amity_social_tab_tab_explore"), amitySocialString("amity_social_tab_tab_my_event"))
+    // Built from what survives, not indexed. Dropping a tab must not renumber
+    // the one after it — selectedTabIndex addresses this list, not the enum.
+    val tabs = listOfNotNull(
+        (0 to amitySocialString("amity_social_tab_tab_explore")).takeIf { exploreVisible },
+        (1 to amitySocialString("amity_social_tab_tab_my_event")).takeIf { myEventsVisible },
+    )
+
+    // R5: a module can take the landing tab with it. Correct it here, inside the
+    // component, because this is what re-reads the config after it loads.
+    if (tabs.none { it.first == selectedTabIndex }) {
+        tabs.firstOrNull()?.let { selectedTabIndex = it.first }
+    }
 
     Column(modifier = modifier.fillMaxSize()) {
         if (!isVisitor) {
@@ -74,23 +94,26 @@ fun AmityEventsComponent(
                     divider = {},
                     indicator = { tabPositions ->
                         TabRowDefaults.SecondaryIndicator(
-                            modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
+                            modifier = Modifier.tabIndicatorOffset(
+                                tabPositions[tabs.indexOfFirst { it.first == selectedTabIndex }
+                                    .coerceAtLeast(0)]
+                            ),
                             color = AmityTheme.colors.primary,
                             height = 2.dp
                         )
                     }
                 ) {
-                    tabTitles.forEachIndexed { index, title ->
+                    tabs.forEach { (slot, title) ->
                         Tab(
-                            selected = selectedTabIndex == index,
-                            onClick = { selectedTabIndex = index },
+                            selected = selectedTabIndex == slot,
+                            onClick = { selectedTabIndex = slot },
                             text = {
                                 Text(
                                     text = title,
                                     style = AmityTheme.typography.body.copy(
                                         fontWeight = FontWeight.Bold
                                     ),
-                                    color = if (selectedTabIndex == index) AmityTheme.colors.primary else AmityTheme.colors.baseShade1
+                                    color = if (selectedTabIndex == slot) AmityTheme.colors.primary else AmityTheme.colors.baseShade1
                                 )
                             }
                         )

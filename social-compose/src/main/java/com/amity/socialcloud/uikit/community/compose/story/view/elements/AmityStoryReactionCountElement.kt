@@ -38,6 +38,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 import com.amity.socialcloud.uikit.common.ui.theme.amityStoryEngagementBackground
 import com.amity.socialcloud.uikit.common.ui.theme.amityStoryEngagementIcon
 import com.amity.socialcloud.uikit.common.ui.theme.isUIKitInDarkTheme
+import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.isSignedIn
 import com.amity.socialcloud.uikit.common.utils.isVisitor
@@ -52,61 +53,69 @@ fun AmityStoryReactionCountElement(
     isReactedByMe: Boolean = false,
     onReactChange: (Boolean) -> Unit
 ) {
-    val behavior = remember {
-        AmitySocialBehaviorHelper.viewStoryPageBehavior
-    }
-    val context = LocalContext.current
-    val haptics = LocalHapticFeedback.current
-
-    var isReacted by remember { mutableStateOf(isReactedByMe) }
-    var reactionCount by remember { mutableIntStateOf(count) }
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-            .height(40.dp)
-            .clip(MaterialTheme.shapes.extraLarge)
-            .background(amityStoryEngagementBackground)
-            .clickableWithoutRipple {
-                haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                if (isCommunityJoined) {
-                    isReacted = !isReacted
-                    onReactChange(isReacted)
-                    reactionCount = if (isReacted) reactionCount + 1 else reactionCount - 1
-                } else if (AmityCoreClient.isSignedIn()) {
-                    behavior.handleNonMemberAction()
-                } else {
-                    behavior.handleVisitorUserAction()
-                }
-            }
-            .padding(horizontal = 10.dp, vertical = 8.dp)
-            .testTag("reaction_button")
+    // The story reaction carried no gate. Reaction needs only one of post,
+    // comment, chat or story, so it can be switched off while Story stays on —
+    // and this count and its tap target stayed. Same id iOS and Web use.
+    AmityBaseElement(
+        pageScope = pageScope,
+        elementId = "story_reaction_button"
     ) {
-        Icon(
-            imageVector = if (isReacted) ImageVector.vectorResource(id = R.drawable.amity_ic_story_liked_pressed)
-            else ImageVector.vectorResource(id = R.drawable.amity_ic_story_like_normal),
-            contentDescription = "Story Reaction Count",
-            modifier = Modifier.size(20.dp)
-                .then(if (isReacted && isUIKitInDarkTheme()){
-                    Modifier.border(
-                        width = 1.dp,
-                        color = amityColorWhite,
-                        shape = CircleShape
-                    )
-                } else {
-                    Modifier
-                }),
-            tint = if (isReacted) Color.Unspecified else amityStoryEngagementIcon,
-        )
-        Text(
-            text = reactionCount.readableNumber(),
-            color = amityColorWhite,
+        val behavior = remember {
+            AmitySocialBehaviorHelper.viewStoryPageBehavior
+        }
+        val context = LocalContext.current
+        val haptics = LocalHapticFeedback.current
+
+        var isReacted by remember { mutableStateOf(isReactedByMe) }
+        var reactionCount by remember { mutableIntStateOf(count) }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
             modifier = modifier
-                .height(20.dp)
-                .padding(start = 4.dp)
-                .widthIn(min = 16.dp)
-                .testTag("reaction_button_text_view")
-        )
+                .height(40.dp)
+                .clip(MaterialTheme.shapes.extraLarge)
+                .background(amityStoryEngagementBackground)
+                .clickableWithoutRipple {
+                    haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                    if (isCommunityJoined) {
+                        isReacted = !isReacted
+                        onReactChange(isReacted)
+                        reactionCount = if (isReacted) reactionCount + 1 else reactionCount - 1
+                    } else if (AmityCoreClient.isSignedIn()) {
+                        behavior.handleNonMemberAction()
+                    } else {
+                        behavior.handleVisitorUserAction()
+                    }
+                }
+                .padding(horizontal = 10.dp, vertical = 8.dp)
+                .testTag("reaction_button")
+        ) {
+            Icon(
+                imageVector = if (isReacted) ImageVector.vectorResource(id = R.drawable.amity_ic_story_liked_pressed)
+                else ImageVector.vectorResource(id = R.drawable.amity_ic_story_like_normal),
+                contentDescription = "Story Reaction Count",
+                modifier = Modifier.size(20.dp)
+                    .then(if (isReacted && isUIKitInDarkTheme()){
+                        Modifier.border(
+                            width = 1.dp,
+                            color = amityColorWhite,
+                            shape = CircleShape
+                        )
+                    } else {
+                        Modifier
+                    }),
+                tint = if (isReacted) Color.Unspecified else amityStoryEngagementIcon,
+            )
+            Text(
+                text = reactionCount.readableNumber(),
+                color = amityColorWhite,
+                modifier = modifier
+                    .height(20.dp)
+                    .padding(start = 4.dp)
+                    .widthIn(min = 16.dp)
+                    .testTag("reaction_button_text_view")
+            )
+        }
     }
 }
 

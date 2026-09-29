@@ -1,3 +1,5 @@
+@file:OptIn(com.amity.socialcloud.uikit.common.config.AmityUIKitInternalApi::class)
+
 package com.amity.socialcloud.uikit.community.compose.clip.view
 
 import androidx.lifecycle.viewModelScope
@@ -31,6 +33,9 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
+import com.amity.socialcloud.uikit.common.config.AmityUIKitDataGate
+import com.amity.socialcloud.uikit.common.config.AmityUIKitFeature
+import com.amity.socialcloud.uikit.community.compose.dropGatedPostTypes
 
 class AmityClipFeedPageViewModel : AmityBaseViewModel() {
 
@@ -118,6 +123,7 @@ class AmityClipFeedPageViewModel : AmityBaseViewModel() {
                 )
                 .build()
                 .query()
+                .dropGatedPostTypes()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext { pagingData ->
@@ -167,6 +173,7 @@ class AmityClipFeedPageViewModel : AmityBaseViewModel() {
     }
 
     fun queryPagingClipOnUserFeed(singlePost: AmityPost) {
+        if (!AmityUIKitDataGate.isClipOn()) return
         viewModelScope.launch {
             AmitySocialClient.newPostRepository()
                 .getPosts()
@@ -200,6 +207,7 @@ class AmityClipFeedPageViewModel : AmityBaseViewModel() {
     }
 
     private fun queryPagingClipOnCommunityFeed(communityId: String) {
+        if (!AmityUIKitDataGate.isClipOn()) return
         viewModelScope.launch {
             AmitySocialClient.newPostRepository()
                 .getPosts()

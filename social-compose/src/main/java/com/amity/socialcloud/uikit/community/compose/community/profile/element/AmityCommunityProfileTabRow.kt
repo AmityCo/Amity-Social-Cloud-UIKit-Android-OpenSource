@@ -23,15 +23,27 @@ import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
-import com.amity.socialcloud.uikit.common.R as CommonR
+import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageTab
 
+/**
+ * Renders exactly the tabs it is given.
+ *
+ * The caller decides which tabs exist — see
+ * [com.amity.socialcloud.uikit.community.compose.community.profile.visibleCommunityProfileTabs].
+ * A row with one tab left is still a row of one; a row with none does not
+ * render, rather than leaving a divider under an empty strip.
+ */
 @Composable
 fun AmityCommunityProfileTabRow(
     modifier: Modifier = Modifier,
     pageScope: AmityComposePageScope? = null,
-    selectedIndex: Int,
-    onSelect: (Int) -> Unit
+    tabs: List<AmityCommunityProfilePageTab>,
+    selected: AmityCommunityProfilePageTab,
+    onSelect: (AmityCommunityProfilePageTab) -> Unit,
 ) {
+    if (tabs.isEmpty()) {
+        return
+    }
     AmityBaseElement(
         pageScope = pageScope,
         elementId = "community_profile_tab",
@@ -45,138 +57,45 @@ fun AmityCommunityProfileTabRow(
                 horizontalArrangement = Arrangement.spacedBy(20.dp),
                 modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp),
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = modifier
-                        .weight(1f)
-                        .clickableWithoutRipple {
-                            onSelect(0)
-                        }
-                ) {
-                    Box(
-                        modifier = Modifier.padding(bottom = 12.dp),
-                        contentAlignment = Alignment.Center,
+                tabs.forEach { tab ->
+                    val isSelected = tab == selected
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = modifier
+                            .weight(1f)
+                            .clickableWithoutRipple {
+                                onSelect(tab)
+                            }
                     ) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_community_feed),
-                            contentDescription = "",
-                            tint = if (selectedIndex == 0) AmityTheme.colors.base else AmityTheme.colors.secondaryShade3,
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(2.dp)
-                            .background(
-                                color = if (selectedIndex == 0) AmityTheme.colors.primary else Color.Transparent,
-                                shape = RoundedCornerShape(
-                                    topStart = 1.dp,
-                                    topEnd = 1.dp
-                                )
+                        Box(
+                            modifier = Modifier.padding(bottom = 12.dp),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(id = tab.iconRes),
+                                contentDescription = "",
+                                tint = if (isSelected) AmityTheme.colors.base else AmityTheme.colors.secondaryShade3,
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .then(
+                                        if (tab == AmityCommunityProfilePageTab.MEDIA) Modifier.padding(2.dp)
+                                        else Modifier
+                                    )
                             )
-                    )
-                }
-
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = modifier
-                        .weight(1f)
-                        .clickableWithoutRipple {
-                            onSelect(1)
                         }
-                ) {
-                    Box(
-                        modifier = Modifier.padding(bottom = 12.dp),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_community_pin),
-                            contentDescription = "",
-                            tint = if (selectedIndex == 1) AmityTheme.colors.base else AmityTheme.colors.secondaryShade3,
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(2.dp)
-                            .background(
-                                color = if (selectedIndex == 1) AmityTheme.colors.primary else Color.Transparent,
-                                shape = RoundedCornerShape(
-                                    topStart = 1.dp,
-                                    topEnd = 1.dp
-                                )
-                            )
-                    )
-                }
-
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = modifier
-                        .weight(1f)
-                        .clickableWithoutRipple {
-                            onSelect(2)
-                        }
-                ) {
-                    Box(
-                        modifier = Modifier.padding(bottom = 12.dp),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(id = com.amity.socialcloud.uikit.common.R.drawable.amity_ic_create_event),
-                            contentDescription = "",
-                            tint = if (selectedIndex == 2) AmityTheme.colors.base else AmityTheme.colors.secondaryShade3,
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(2.dp)
-                            .background(
-                                color = if (selectedIndex == 2) AmityTheme.colors.primary else Color.Transparent,
-                                shape = RoundedCornerShape(
-                                    topStart = 1.dp,
-                                    topEnd = 1.dp
-                                )
-                            )
-                    )
-                }
-
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = modifier
-                        .weight(1f)
-                        .clickableWithoutRipple {
-                            onSelect(3)
-                        }
-                ) {
-                    Box(
-                        modifier = Modifier.padding(bottom = 12.dp),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(id = CommonR.drawable.amity_ic_community_media_tab),
-                            contentDescription = "",
-                            tint = if (selectedIndex == 3) AmityTheme.colors.base else AmityTheme.colors.secondaryShade3,
+                        Box(
                             modifier = Modifier
-                                .size(24.dp)
-                                .padding(2.dp)
+                                .fillMaxWidth()
+                                .height(2.dp)
+                                .background(
+                                    color = if (isSelected) AmityTheme.colors.primary else Color.Transparent,
+                                    shape = RoundedCornerShape(
+                                        topStart = 1.dp,
+                                        topEnd = 1.dp
+                                    )
+                                )
                         )
                     }
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(2.dp)
-                            .background(
-                                color = if (selectedIndex == 3) AmityTheme.colors.primary else Color.Transparent,
-                                shape = RoundedCornerShape(
-                                    topStart = 1.dp,
-                                    topEnd = 1.dp
-                                )
-                            )
-                    )
                 }
             }
 

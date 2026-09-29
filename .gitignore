@@ -105,3 +105,7 @@ captures/
 
 # written by .scripts/upload-internal-store.sh
 output.json
+
+# Agent worktrees and the remember plugin's local session memory
+.claude/worktrees/
+.remember/

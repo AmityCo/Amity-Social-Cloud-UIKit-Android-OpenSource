@@ -71,7 +71,10 @@ import com.amity.socialcloud.uikit.community.compose.community.profile.component
 import com.amity.socialcloud.uikit.community.compose.community.profile.component.AmityCommunityHeaderStyle
 import com.amity.socialcloud.uikit.community.compose.community.profile.element.AmityCommunityModalBottomSheet
 import com.amity.socialcloud.uikit.community.compose.community.profile.element.AmityCommunityProfileActionsBottomSheet
+import com.amity.socialcloud.uikit.community.compose.community.profile.element.communityCreateActions
 import com.amity.socialcloud.uikit.community.compose.community.profile.element.AmityCommunityProfileShimmer
+import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageTab
+import com.amity.socialcloud.uikit.community.compose.community.profile.visibleCommunityProfileTabs
 import com.amity.socialcloud.uikit.community.compose.community.profile.element.AmityCommunityProfileTabRow
 import com.amity.socialcloud.uikit.community.compose.community.profile.element.AmityVideoAndClipChipSelector
 import com.amity.socialcloud.uikit.community.compose.livestream.errorhandling.AmityPostErrorPage
@@ -151,7 +154,6 @@ fun AmityCommunityProfilePage(
     val clipPosts =
         remember(communityId) { viewModel.getCommunityClipPosts() }.collectAsLazyPagingItems()
 
-    var selectedTabIndex by remember { mutableIntStateOf(0) }
     var eventFilterSelection by remember { mutableStateOf("Upcoming") }
 
     // Query events based on filter selection
@@ -330,6 +332,16 @@ fun AmityCommunityProfilePage(
     }
 
     AmityBasePage(pageId = "community_profile_page") {
+        val visibleTabs = visibleCommunityProfileTabs(pageScope = getPageScope())
+        var selectedTab by remember(visibleTabs) {
+            mutableStateOf(visibleTabs.firstOrNull() ?: AmityCommunityProfilePageTab.FEED)
+        }
+        // A tab can vanish under the selection — a host that flips a module at
+        // runtime, or a config that arrives after the first composition. Landing
+        // on the first tab still there beats rendering a body with no tab.
+        if (selectedTab !in visibleTabs) {
+            selectedTab = visibleTabs.firstOrNull() ?: AmityCommunityProfilePageTab.FEED
+        }
         Scaffold { padding ->
             if (isCommunityClosed || state.error != null) {
                 AmityPostErrorPage()
@@ -378,9 +390,10 @@ fun AmityCommunityProfilePage(
                                     )
                                     AmityCommunityProfileTabRow(
                                         pageScope = getPageScope(),
-                                        selectedIndex = selectedTabIndex,
-                                    ) { index ->
-                                        selectedTabIndex = index
+                                        tabs = visibleTabs,
+                                        selected = selectedTab,
+                                    ) { tab ->
+                                        selectedTab = tab
                                     }
                                 }
                             }
@@ -396,9 +409,10 @@ fun AmityCommunityProfilePage(
                         item {
                             AmityCommunityProfileTabRow(
                                 pageScope = getPageScope(),
-                                selectedIndex = selectedTabIndex,
-                            ) { index ->
-                                selectedTabIndex = index
+                                tabs = visibleTabs,
+                                selected = selectedTab,
+                            ) { tab ->
+                                selectedTab = tab
                             }
                         }
                         val hasAnnouncementPin = announcementPosts
@@ -414,7 +428,8 @@ fun AmityCommunityProfilePage(
                                     .contains(announcementId)
                             } ?: false
                         val shouldShowAnnouncement = announcementPosts.itemCount > 0
-                                && (selectedTabIndex == 0 || (selectedTabIndex == 1 && hasAnnouncementPin))
+                                && (selectedTab == AmityCommunityProfilePageTab.FEED
+                                || (selectedTab == AmityCommunityProfilePageTab.PIN && hasAnnouncementPin))
                         // Gate on !state.isMember (genuine membership), not isRefreshing.
                         // Keying on isRefreshing made the private view blink out during any
                         // refresh; isMember is set true optimistically on accept, so the
@@ -452,8 +467,8 @@ fun AmityCommunityProfilePage(
                                     refreshKey = refreshKey,
                                 )
                             }
-                            when (selectedTabIndex) {
-                                0 -> {
+                            when (selectedTab) {
+                                AmityCommunityProfilePageTab.FEED -> {
                                     if (communityPosts.loadState.refresh == LoadState.Loading && communityPosts.itemCount == 0) {
                                         repeat(4) {
                                             item {
@@ -496,7 +511,7 @@ fun AmityCommunityProfilePage(
                                     }
                                 }
 
-                                1 -> {
+                                AmityCommunityProfilePageTab.PIN -> {
                                     amityCommunityPinnedFeedLLS(
                                         modifier = Modifier,
                                         pageScope = getPageScope(),
@@ -516,7 +531,7 @@ fun AmityCommunityProfilePage(
                                     )
                                 }
 
-                                2 -> {
+                                AmityCommunityProfilePageTab.EVENTS -> {
                                     amityCommunityEventFeed(
                                         modifier = Modifier,
                                         pageScope = getPageScope(),
@@ -539,7 +554,7 @@ fun AmityCommunityProfilePage(
                                     )
                                 }
 
-                                3 -> {
+                                AmityCommunityProfilePageTab.MEDIA -> {
                                     item {
                                         AmityBaseComponent(
                                             componentId = "community_video_feed",
@@ -650,7 +665,18 @@ fun AmityCommunityProfilePage(
                         pageScope = getPageScope(),
                         elementId = "community_create_post_button",
                     ) {
-                        if (shouldShowPostCreationButton || shouldShowStoryCreationButton) {
+                        // The "+" belongs to no module (PDT-5617): it is drawn while
+                        // the sheet it opens has a row, read from the list the sheet
+                        // draws. Checking post and story alone left an Event-only
+                        // community with no way in, and a "+" over an empty sheet.
+                        val createActions = communityCreateActions(
+                            pageScope = getPageScope(),
+                            componentScope = null,
+                            canCreatePost = shouldShowPostCreationButton,
+                            canCreateStory = shouldShowStoryCreationButton,
+                            canCreateEvent = hasEventCreationPermission,
+                        )
+                        if (createActions.isNotEmpty()) {
 
                             FloatingActionButton(
                                 onClick = {

@@ -2,9 +2,12 @@ package com.amity.socialcloud.uikit.common.config
 
 import android.content.Context
 import android.util.Log
+import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.mutableStateOf
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.core.session.model.SessionState
+import com.amity.socialcloud.sdk.model.core.module.AmityModuleEnforcementMode
+import com.amity.socialcloud.sdk.model.core.module.AmityModuleSettings
 import com.amity.socialcloud.sdk.model.core.shareablelink.AmityShareableLinkConfiguration
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
 import com.amity.socialcloud.sdk.model.social.community.AmityCommunity
@@ -26,6 +29,40 @@ object AmityUIKitConfigController {
 
     private val GSON = GsonBuilder().create()
     private lateinit var config: AmityUIKitConfig
+
+    /**
+     * isExcluded answers the same question for the same config id on every
+     * recomposition, and measured at 1.7–2.4 microseconds a call on a desktop
+     * JVM — several times that on a mid-range device, times every element on a
+     * scrolling feed. The answer only changes when the config does, and the
+     * config is assigned in exactly one place, so the cache is cleared there.
+     */
+    private val excludedCache = java.util.concurrent.ConcurrentHashMap<String, Boolean>()
+
+    /**
+     * One entry per [AmityUIKitFeature], rebuilt whenever the entitlement changes.
+     *
+     * The bundle walk happens here rather than per read. Every gated page,
+     * component and element asks this question while views are being built, and
+     * this UIKit has already measured what recursing per call costs — 2,435ns
+     * against 25ns for a map lookup. Since the entitlements now live in the
+     * SDK's row rather than in its memory, a per-read walk would also be a
+     * database query per gated surface, on the main thread.
+     *
+     * Behind an atomic reference because it is written from setup and read from
+     * the main thread at view-build time; a torn read of a half-rebuilt
+     * snapshot would gate inconsistently inside one frame.
+     */
+    private val moduleSnapshot =
+        java.util.concurrent.atomic.AtomicReference<Map<String, AmityUIKitModuleAvailability>>(emptyMap())
+
+    /**
+     * What the network was granted, or null when no row has been written for it
+     * — a genuine first launch, a log-out, or a network switch. Null resolves
+     * every module available with no prerequisite cascade (REQ-012).
+     */
+    @Volatile
+    private var entitlement: AmityModuleSettings? = null
 
     private val uiKitTheme: AmityUIKitTheme by lazy {
         AmityUIKitTheme.enumOf(config.preferredTheme)
@@ -53,6 +90,8 @@ object AmityUIKitConfigController {
             _shareableLinkPattern.value = value
         }
 
+    private var entitlementDisposable: Disposable? = null
+    private var entitlementSessionDisposable: Disposable? = null
     private var shareableLinkSessionDisposable: Disposable? = null
     private var shareableLinkFetchDisposable: Disposable? = null
 
@@ -82,6 +121,66 @@ object AmityUIKitConfigController {
                 { shareableLink -> shareableLinkPattern = shareableLink },
                 { /* keep the last known pattern; the next session establishment refetches */ }
             )
+    }
+
+    /**
+     * Follow the entitlement row, the way every other consumer of a persisted
+     * network setting does.
+     *
+     * `AmitySocialClient.getSettings()` is a Room Flowable and its callers are
+     * pushed each write; this is the same read. It matters here because the
+     * row is written after `setup()` has returned — a gate that read once at
+     * setup holds "no entitlements" for the whole of a first launch.
+     *
+     * Replaces any previous subscription, because setup() runs again when the
+     * network changes.
+     *
+     * Forgets what it held first, and again on every log-out. The row goes with
+     * the store on log-out, and a single-row Room query emits nothing for a row
+     * that is absent — so a gate that only listened kept the last network's
+     * grants for the next user, until that network's own fetch landed, or for
+     * the rest of the process if it never did.
+     */
+    fun readModuleEntitlements() {
+        forgetEntitlement()
+        entitlementSessionDisposable?.dispose()
+        entitlementSessionDisposable = AmityCoreClient.observeSessionState()
+            .distinctUntilChanged()
+            // The state at subscription is where the app already is, not a
+            // log-out; only a transition into NotLoggedIn is one.
+            .skip(1)
+            .filter { it == SessionState.NotLoggedIn }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { forgetEntitlement() },
+                { /* session stream errors are non-actionable here */ }
+            )
+    }
+
+    private fun forgetEntitlement() {
+        onEntitlement(null)
+        // A fresh subscription, not the old one: distinctUntilChanged would
+        // swallow the same row written again by a login to the same network.
+        entitlementDisposable?.dispose()
+        entitlementDisposable = AmityCoreClient.getModuleSettings()
+            .distinctUntilChanged()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { settings -> onEntitlement(settings) },
+                { /* no row, no entitlements: every module resolves available */ }
+            )
+    }
+
+    private fun onEntitlement(settings: AmityModuleSettings?) {
+        entitlement = settings
+        rebuildModuleSnapshot()
+        // The gate memoises exclusion per config id, and every answer it holds
+        // was computed under the old grants — for exactly the ids nobody would
+        // think to re-check.
+        excludedCache.clear()
+        AmityUIKitRealtimeSubscriptions.sync()
+        callbacks.values.forEach { it.invoke() }
     }
 
     fun registerChangeCallback(id: String, callback: () -> Unit) {
@@ -138,7 +237,221 @@ object AmityUIKitConfigController {
         }
     }
 
-    fun isExcluded(configId: String): Boolean {
+    /**
+     * Whether a module is available: granted by the network's plan, with its
+     * prerequisites available too (REQ-010, REQ-011).
+     *
+     * The one question every gated surface asks (REQ-007). Answered from the
+     * snapshot, so it is synchronous and touches no store (REQ-019, REQ-027).
+     */
+    fun isFeatureEnabled(feature: AmityUIKitFeature): Boolean {
+        return isFeatureEnabled(feature.key)
+    }
+
+    fun isFeatureEnabled(key: String): Boolean {
+        moduleSnapshot.get()[key]?.let { return it.isAvailable }
+        // A key with no entry is a module this build's enum does not name — an
+        // owner map pointing at one the catalog gained server-side. Resolve it
+        // directly rather than defaulting; the walk is pure and touches no I/O.
+        return verdict(key, entitlement, emptySet()).isAvailable
+    }
+
+    fun moduleAvailability(feature: AmityUIKitFeature): AmityUIKitModuleAvailability {
+        return moduleSnapshot.get()[feature.key]
+            ?: verdict(feature.key, entitlement, emptySet()).toAvailability(feature)
+    }
+
+    /**
+     * Every module this UIKit gates, for a host rendering a settings screen.
+     *
+     * `kind: setting` catalog entries are Console and Dashboard capabilities
+     * with no UIKit surface; none of them is an [AmityUIKitFeature], so none of
+     * them can appear here.
+     */
+    fun moduleAvailabilities(): List<AmityUIKitModuleAvailability> {
+        val held = moduleSnapshot.get()
+        return AmityUIKitFeature.values().map { feature ->
+            held[feature.key] ?: AmityUIKitModuleAvailability.Available(feature)
+        }
+    }
+
+    /**
+     * Test seam. `config` is assigned in exactly one place in production, and
+     * that place also rebuilds the snapshot and clears the memo; a test that
+     * poked the field directly got a stale answer from both.
+     */
+    @VisibleForTesting
+    internal fun setConfigForTesting(newConfig: AmityUIKitConfig) {
+        config = newConfig
+        rebuildModuleSnapshot()
+        excludedCache.clear()
+    }
+
+    /**
+     * Test seam: stands in for the SDK's row, through the same path the row
+     * takes. Visible so other modules' tests can fake the network's answer, and
+     * behind [AmityUIKitInternalApi] so no host compiles a call to it without an
+     * explicit opt-in: a host that could hand the gate its own answer would have
+     * the lever this gate no longer has. The network's module settings, read
+     * through `getModuleSettings()`, are the only source that withholds a module.
+     */
+    @VisibleForTesting
+    @AmityUIKitInternalApi
+    fun setModuleEntitlementForTesting(settings: AmityModuleSettings?) = onEntitlement(settings)
+
+    private fun rebuildModuleSnapshot() {
+        // Once, not per key: a snapshot whose entries were resolved against two
+        // different payloads is a snapshot nobody can reason about.
+        val entitlement = this.entitlement
+        moduleSnapshot.set(
+            AmityUIKitFeature.values().associate { feature ->
+                feature.key to verdict(feature.key, entitlement, emptySet())
+                    .toAvailability(feature)
+            }
+        )
+    }
+
+    /**
+     * The network's plan is the one source that withholds a module (§1).
+     *
+     * One walk, over the resolved answer: the entitlement contributes the leaf
+     * — is this module granted, given the enforcement mode — and the chain is
+     * walked here, because the id tables it has to act on are the UIKit's
+     * (REQ-011). A module granted but held off by its own prerequisite cannot
+     * satisfy a dependent either.
+     */
+    private fun verdict(
+        key: String,
+        entitlement: AmityModuleSettings?,
+        visiting: Set<String>,
+    ): Verdict {
+        // A cycle reads as unavailable rather than recursing, and still names
+        // the whole requirement — an empty reason reads as "no prerequisites",
+        // the opposite of what a cycle means.
+        if (key in visiting) return Verdict.PrerequisiteUnavailable(requiresOf(key, entitlement))
+        // The grant before the chain, so a revoked module is reported as itself
+        // and not through a prerequisite that fell with it (REQ-010).
+        if (!isModuleGranted(key, entitlement)) return Verdict.NotGranted
+
+        // Any one entry satisfies it: the catalog's `requires` is any-of (REQ-017).
+        val requires = requiresOf(key, entitlement)
+        val seen = visiting + key
+        if (requires.isNotEmpty() && requires.none { verdict(it, entitlement, seen).isAvailable }) {
+            // The whole list: any one of them would have done (REQ-023).
+            return Verdict.PrerequisiteUnavailable(requires)
+        }
+        return Verdict.Available
+    }
+
+    /**
+     * The prerequisites, from the network's catalog and nowhere else (§3.3).
+     *
+     * No payload means no prerequisites (REQ-012): a cascade the network has not
+     * stated is one the client has no authority to invent. `features.json` keeps
+     * its own table for apollo, and no client reads it.
+     */
+    private fun requiresOf(key: String, entitlement: AmityModuleSettings?): List<String> =
+        entitlement?.catalog?.get(key)?.requires ?: emptyList()
+
+    /**
+     * Why a module resolved the way it did, in keys rather than features: a
+     * prerequisite can be a catalog key this build's enum does not name.
+     */
+    private sealed class Verdict {
+        object Available : Verdict()
+        object NotGranted : Verdict()
+        data class PrerequisiteUnavailable(val unsatisfied: List<String>) : Verdict()
+
+        val isAvailable: Boolean get() = this is Available
+
+        fun toAvailability(feature: AmityUIKitFeature): AmityUIKitModuleAvailability =
+            when (this) {
+                is Available -> AmityUIKitModuleAvailability.Available(feature)
+                is NotGranted -> AmityUIKitModuleAvailability.NotGranted(feature)
+                // Raw keys, carried not filtered: dropping the ones this build's
+                // enum lacks would hide the very prerequisite that is missing.
+                is PrerequisiteUnavailable ->
+                    AmityUIKitModuleAvailability.PrerequisiteUnavailable(feature, unsatisfied)
+            }
+    }
+
+    /**
+     * The entitlement the gate is holding — diagnostics only, never a gate.
+     *
+     * Nothing may decide availability from this (REQ-007); that is
+     * [isFeatureEnabled]'s job. It exists so a debug screen can say why the gate
+     * answered as it did. Not a fresh read from the SDK: on the launch that
+     * first fetches a payload the two differ, and a screen reporting the fresh
+     * one showed twelve modules withheld above rows that were all on.
+     */
+    @AmityUIKitInternalApi
+    fun heldEntitlement(): AmityModuleSettings? = entitlement
+
+    /** The prerequisites the gate itself applied for a module — catalog only. */
+    @AmityUIKitInternalApi
+    fun moduleRequires(key: String): List<String> = requiresOf(key, entitlement)
+
+    /**
+     * Clip is part of Post, so Post's availability governs it (§6.2), as on Web.
+     * Never looked up in the grants — the network is never asked to grant clip —
+     * and in no public API. Kept as its own question because clip queries ask it
+     * by name ([AmityUIKitDataGate.isClipOn]).
+     */
+    @AmityUIKitInternalApi
+    fun isClipEnabled(): Boolean = isFeatureEnabled(AmityUIKitFeature.POST)
+
+    /**
+     * The leaf grant: is this module granted, given what the network is under.
+     *
+     * Nothing held means no row has been written for this network — a genuine
+     * first launch, a log-out, a network switch — and that reads as granted: the
+     * gate is asked while views are being built, long before a round trip can
+     * finish, and failing closed would blank paid surfaces on every cold start.
+     * Under `enforce` the backend refuses the calls anyway, so the exposure is a
+     * revoked module that is visible but not usable.
+     */
+    private fun isModuleGranted(key: String, entitlement: AmityModuleSettings?): Boolean {
+        val settings = entitlement ?: return true
+        // `off` and `shadow` both record the grants and withhold nothing;
+        // shadow is a dry run that core logs server-side.
+        if (settings.enforcement != AmityModuleEnforcementMode.ENFORCE) return true
+        // A key the catalog does not carry is not an entitlement: the network is
+        // never asked to grant it, so an absent grant says nothing about it.
+        if (!settings.catalog.containsKey(key)) return true
+        return settings.modules[key] == true
+    }
+
+    /**
+     * A configId is always "pageId/componentId/elementId", and every page,
+     * component and element in the UIKit resolves through here. So a withheld
+     * module excludes the pages it owns — and with them everything nested under
+     * those pages — by the route the customer's own `excludes` list already
+     * takes. No per-page guard to add, and none to forget when the next page
+     * lands.
+     */
+    fun isExcluded(configId: String): Boolean =
+        excludedCache.getOrPut(configId) { computeExcluded(configId) }
+
+    @OptIn(AmityUIKitInternalApi::class)
+    private fun computeExcluded(configId: String): Boolean {
+        // Both, not the first that matches: a component can belong to a different
+        // module than the page hosting it — Chat's feed renders inside Live's
+        // player — and falling back only when the page is unowned left every such
+        // component ungated.
+        // All three segments. Reading only the first two emptied a module's
+        // pages and left every door into them standing — the Clips tab, the
+        // Create Story button and the follow button are elements, and they sit
+        // on pages owned by other modules.
+        val id = configId.split('/')
+        val owners = listOfNotNull(
+            AMITY_PAGE_MODULE[id.getOrNull(0)],
+            AMITY_COMPONENT_MODULE[id.getOrNull(1)],
+            AMITY_ELEMENT_MODULE[id.getOrNull(2)],
+        )
+        if (owners.any { !isFeatureEnabled(it) }) {
+            return true
+        }
+        if (!::config.isInitialized) return false
         return config.excludes.find { it.asString == configId } != null
     }
 
@@ -155,8 +468,19 @@ object AmityUIKitConfigController {
         return true // default: enabled if not listed
     }
 
+    /**
+     * Whether a 1-on-1 chat user action is shown: its config switch, and for
+     * Block its module too. Blocking is a user relationship, so withholding
+     * `userRelationship` removes the row whichever label it carries; Report is
+     * moderation and never reads the module (chat user action REQ-008, REQ-008a).
+     */
+    fun isChatUserActionAvailable(actionName: String): Boolean {
+        if (!isConversationUserActionEnabled(actionName)) return false
+        return actionName != "block" || isFeatureEnabled(AmityUIKitFeature.USER_RELATIONSHIP)
+    }
+
     fun hasAnyEnabledChatUserAction(): Boolean {
-        return listOf("mute", "report", "block").any { isConversationUserActionEnabled(it) }
+        return listOf("mute", "report", "block").any { isChatUserActionAvailable(it) }
     }
 
     fun getEnabledChannelTypes(): List<String> {
@@ -180,10 +504,20 @@ object AmityUIKitConfigController {
         return result
     }
 
-    private fun parseConfig(context: Context) {
+    @VisibleForTesting
+    internal fun parseConfig(context: Context) {
         val configStr = readConfigFromAssets(context)
         val type = object : TypeToken<AmityUIKitConfig>() {}.type
         config = GSON.fromJson(configStr, type)
+        // The config is assigned in exactly one place, so the snapshot and the
+        // exclusion memo are rebuilt in exactly one place.
+        rebuildModuleSnapshot()
+        excludedCache.clear()
+        // The realtime handles are reconciled on every parse as well as on every
+        // entitlement change, so a setup() that runs again cannot leave a
+        // withheld module's subscriptions open.
+        AmityUIKitRealtimeSubscriptions.sync()
+        AmityUIKitRealtimeSubscriptions.watchSession()
         var networkJson: JsonObject? = null
         try {
             val cachedConfig = AmityNetworkConfigService.getNetworkConfig()?.config

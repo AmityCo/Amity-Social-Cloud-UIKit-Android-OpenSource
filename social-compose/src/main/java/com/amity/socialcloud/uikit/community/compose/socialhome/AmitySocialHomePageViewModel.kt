@@ -42,6 +42,10 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
+import com.amity.socialcloud.uikit.common.config.AmityUIKitDataGate
+import com.amity.socialcloud.uikit.common.config.AmityUIKitFeature
+import com.amity.socialcloud.uikit.community.compose.dropGatedPostTypes
+import com.amity.socialcloud.uikit.community.compose.dropGatedPinnedPosts
 
 class AmitySocialHomePageViewModel : AmityBaseViewModel() {
 
@@ -194,8 +198,9 @@ class AmitySocialHomePageViewModel : AmityBaseViewModel() {
             .catch {}
     }
 
-    fun getMyCommunities(): Flow<PagingData<AmityCommunity>> {
-        return AmitySocialClient.newCommunityRepository()
+    fun getMyCommunities(): Flow<PagingData<AmityCommunity>> =
+        AmityUIKitDataGate.paging(AmityUIKitFeature.COMMUNITY) {
+        AmitySocialClient.newCommunityRepository()
             .getCommunities()
             .filter(AmityCommunityFilter.MEMBER)
             .sortBy(AmityCommunitySortOption.DISPLAY_NAME)
@@ -208,12 +213,13 @@ class AmitySocialHomePageViewModel : AmityBaseViewModel() {
             .catch {}
     }
 
-    fun getForYouFeed(): Flow<PagingData<AmityListItem>> {
+    fun getForYouFeed(): Flow<PagingData<AmityListItem>> =
+        AmityUIKitDataGate.paging(AmityUIKitFeature.FEED) {
         val injector = AmityAdInjector<AmityPost>(
             placement = AmityAdPlacement.FEED,
             communityId = null,
         )
-        return AmitySocialClient.newFeedRepository()
+        AmitySocialClient.newFeedRepository()
             .getForYouFeed()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -224,16 +230,22 @@ class AmitySocialHomePageViewModel : AmityBaseViewModel() {
             .cachedIn(viewModelScope)
     }
 
-    fun getGlobalFeed(): Flow<PagingData<AmityListItem>> {
+    fun getGlobalFeed(): Flow<PagingData<AmityListItem>> =
+        AmityUIKitDataGate.paging(AmityUIKitFeature.FEED) {
         val injector = AmityAdInjector<AmityPost>(
             placement = AmityAdPlacement.FEED,
             communityId = null,
         )
 
-        return AmitySocialClient.newFeedRepository()
+        AmitySocialClient.newFeedRepository()
             .getGlobalFeed()
+            // No dataTypes here on purpose. /api/v4/me/global-feeds takes a
+            // media-type filter, not a post-type filter: naming the full list
+            // returns 422, and the list cannot name TEXT, so there is no way to
+            // say "everything except clip" without dropping every text post.
             .build()
             .query()
+            .dropGatedPostTypes()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .onBackpressureBuffer()
@@ -246,6 +258,7 @@ class AmitySocialHomePageViewModel : AmityBaseViewModel() {
     private fun queryGlobalPinnedPosts(): Flow<List<AmityPinnedPost>> {
         return AmitySocialClient.newPostRepository()
             .getGlobalPinnedPosts()
+            .dropGatedPinnedPosts()
             .onBackpressureBuffer()
             .throttleLatest(2000, TimeUnit.MILLISECONDS)
             .subscribeOn(Schedulers.io())
@@ -280,6 +293,10 @@ class AmitySocialHomePageViewModel : AmityBaseViewModel() {
     }
 
     fun scheduleNotificationTraySeen() {
+        // The tray belongs to Feed. The bell disappears with the module, but this
+        // poll is started by the page and would otherwise keep asking the server
+        // once a minute for a badge nothing can draw.
+        if (!AmityUIKitDataGate.isOn(AmityUIKitFeature.FEED)) return
         viewModelScope.launch {
             while (true) {
                 getNotificationTraySeen()

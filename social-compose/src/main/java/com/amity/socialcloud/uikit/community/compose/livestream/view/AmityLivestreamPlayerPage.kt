@@ -74,6 +74,8 @@ import com.amity.socialcloud.uikit.common.model.AmityMessageReactions
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseComponent
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
+import com.amity.socialcloud.uikit.common.ui.scope.isElementExcludedOnPage
+import kotlinx.coroutines.flow.flowOf
 import com.amity.socialcloud.uikit.common.ui.elements.AmityBottomSheetActionItem
 import com.amity.socialcloud.uikit.common.ui.elements.DisposableEffectWithLifeCycle
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
@@ -144,7 +146,15 @@ fun AmityLivestreamPlayerPage(
     var showBottomSheet by remember { mutableStateOf(false) }
 
 
-    val reactions by viewModel.observeLiveReactions(post.getPostId()).collectAsState(emptyList())
+    // Rule 6: a module switched off makes no request. The live-reaction stream is
+    // opened above AmityBasePage, so the overlay's own wrapper cannot stop it —
+    // and the overlay reserves 182dp whether or not a reaction ever arrives, which
+    // is the band rule 3 forbids. One question, asked once, answers both.
+    val liveReactionVisible = !isElementExcludedOnPage("livestream_player_page", "livestream_reaction")
+    val reactions by remember(liveReactionVisible, post.getPostId()) {
+        if (liveReactionVisible) viewModel.observeLiveReactions(post.getPostId())
+        else flowOf(emptyList())
+    }.collectAsState(emptyList())
     LaunchedEffect(reactions) {
         reactions.map {
             AmityMessageReactions.toReaction(it.getReactionName())?.let { reaction ->
@@ -166,7 +176,7 @@ fun AmityLivestreamPlayerPage(
 
     DisposableEffect(Unit) {
         val disposables = CompositeDisposable()
-        if (AmityCoreClient.isVisitor() && isTargetCommunity) {
+        if (liveReactionVisible && AmityCoreClient.isVisitor() && isTargetCommunity) {
             val reactionList = AmityMessageReactions.getList()
             val random = java.util.Random()
             val disposable = io.reactivex.rxjava3.core.Observable
@@ -353,7 +363,7 @@ fun AmityLivestreamPlayerPage(
                     ) {
                         // Floating reactions animation. Hidden while the keyboard is open,
                         // so a reaction never flies over the keyboard while the user types.
-                        if (!amityLiveChatHiddenByKeyboard()) {
+                        if (liveReactionVisible && !amityLiveChatHiddenByKeyboard()) {
                             FloatingReactionsOverlay(
                                 reactions = floatingReactions,
                                 modifier = Modifier

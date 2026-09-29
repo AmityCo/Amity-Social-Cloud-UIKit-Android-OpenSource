@@ -44,6 +44,7 @@ import com.amity.socialcloud.uikit.common.behavior.AmityGlobalBehavior
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
+import com.amity.socialcloud.uikit.common.ui.scope.isElementExcluded
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
@@ -90,10 +91,13 @@ fun AmityProductCarousel(
     // Skip rendering if no products
     if (products.isEmpty()) return
 
-    var showAllProductsSheet by remember { mutableStateOf(false) }
+    // The gate was only on the cards inside, so Product off emptied the row and
+    // left this Column, its "Products tagged" header and its 12dp of top padding
+    // drawing above the engagement bar. Rule 3: the container goes with its last
+    // visible child, and takes its header with it.
+    if (pageScope.isElementExcluded("product_tag_element")) return
 
-    // Skip rendering if no products fetched
-    if (products.isEmpty()) return
+    var showAllProductsSheet by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
     val visibleProducts = products.take(MAX_VISIBLE_PRODUCTS)

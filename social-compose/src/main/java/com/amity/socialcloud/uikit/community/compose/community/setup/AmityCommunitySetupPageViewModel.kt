@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import com.amity.socialcloud.uikit.community.compose.dropGatedPinnedPosts
 
 
 class AmityCommunitySetupPageViewModel : AmityBaseViewModel() {
@@ -225,6 +226,7 @@ class AmityCommunitySetupPageViewModel : AmityBaseViewModel() {
     fun observeGlobalFeaturedPost(communityId: String) {
         AmitySocialClient.newPostRepository()
             .getGlobalPinnedPosts()
+            .dropGatedPinnedPosts()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext {

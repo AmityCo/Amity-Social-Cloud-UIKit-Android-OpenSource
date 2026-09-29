@@ -10,6 +10,8 @@ import com.amity.socialcloud.sdk.model.core.ad.AmityAdsSettings
 import com.amity.socialcloud.sdk.model.core.ad.AmityNetworkAds
 import com.amity.socialcloud.sdk.model.core.ad.analytics
 import com.amity.socialcloud.uikit.common.infra.db.entity.AmityAdAsset
+import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
+import com.amity.socialcloud.uikit.common.config.AmityUIKitFeature
 import com.amity.socialcloud.uikit.common.infra.download.AmityDownloader
 import com.amity.socialcloud.uikit.common.utils.isSignedIn
 import com.amity.socialcloud.uikit.common.utils.isVisitor
@@ -67,6 +69,13 @@ object AmityAdEngine {
     }
 
     private fun setup() {
+        // Ads off means no ad request. This sits here rather than at the render
+        // site because the fetch is driven by the session, not by a screen: with
+        // no gate the app asked the server for ads it would never be allowed to
+        // show, on every login.
+        if (!AmityUIKitConfigController.isFeatureEnabled(AmityUIKitFeature.ADS)) {
+            return
+        }
         AmityCoreClient.newAdRepository()
             .getNetworkAds()
             .subscribeOn(Schedulers.io())

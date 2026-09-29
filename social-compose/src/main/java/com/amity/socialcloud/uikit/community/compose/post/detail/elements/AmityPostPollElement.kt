@@ -72,6 +72,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityExpandableText
 import com.amity.socialcloud.uikit.common.ui.elements.AmityRoundCheckbox
 import com.amity.socialcloud.uikit.common.ui.elements.AmityUserAvatarView
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposeComponentScope
+import com.amity.socialcloud.uikit.common.ui.scope.isElementExcluded
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
@@ -126,6 +127,12 @@ fun AmityPostPollElement(
     onMentionedUserClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
 ) {
+    // Poll's declared surface was the composer and the target picker — the way
+    // in. The poll itself, rendered inside a post that already exists, carried
+    // no id, so a customer without Poll still saw polls and could still vote.
+    if (componentScope.isElementExcluded("post_poll")) {
+        return
+    }
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
     }

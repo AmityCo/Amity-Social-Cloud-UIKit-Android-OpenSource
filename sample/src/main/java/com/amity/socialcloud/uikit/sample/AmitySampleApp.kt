@@ -1,3 +1,5 @@
+@file:OptIn(com.amity.socialcloud.uikit.common.config.AmityUIKitInternalApi::class)
+
 package com.amity.socialcloud.uikit.sample
 
 import android.app.Application
@@ -14,6 +16,12 @@ class AmitySampleApp : Application()  {
     override fun onCreate() {
         super.onCreate()
         APP = this
+
+        // ponytail: temporary — records what the SDK actually sends, so a module
+        // switched off can be checked against the wire. Started before setup
+        // because the SDK connects during it, and anything sent in that window
+        // would otherwise be invisible. Remove with ApiTrace.kt.
+        ApiTrace.start(this)
 
         // V4 setup
         AmityUIKit4Manager.setup(

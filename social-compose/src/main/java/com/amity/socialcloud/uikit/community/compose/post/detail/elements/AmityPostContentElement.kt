@@ -28,6 +28,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityExpandableText
 import com.amity.socialcloud.uikit.common.ui.elements.HashtagMetadataGetter
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityProductWebViewBottomSheet
+import com.amity.socialcloud.uikit.common.ui.scope.isElementExcludedOnPage
 import com.amity.socialcloud.uikit.community.compose.post.detail.components.AmityPostContentComponentStyle
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -44,10 +45,16 @@ fun AmityPostContentElement(
 ) {
     val mentionGetter = AmityMentionMetadataGetter(post.getMetadata() ?: JsonObject())
     val hashtagGetter = AmityHashtagMetadataGetter(post.getMetadata() ?: JsonObject())
-    val productTags = remember(post.getPostId(), post.getEditedAt(), post.getUpdatedAt()) {
-        val tags = post.getProductTags().filterIsInstance<AmityProductTag.Text>()
-        Log.d("AmityPostContentElement", "Post ${post.getPostId()} has ${tags.size} product tags: ${tags.map { "index=${it.index}, length=${it.length}, text=${it.text}" }}")
-        tags
+    // Product off leaves the words, not the tag: the run stays in the sentence as
+    // plain text rather than a blue tappable link into a module that is gone.
+    // The carousel below is gated at its own element; this is the same surface
+    // spelled in the body, and it was not.
+    // This element takes no scope, and the owner of product_tag_element answers
+    // the same on every page, so the page segment is a wildcard.
+    val productTagsEnabled = !isElementExcludedOnPage("*", "product_tag_element")
+    val productTags = remember(post.getPostId(), post.getEditedAt(), post.getUpdatedAt(), productTagsEnabled) {
+        if (!productTagsEnabled) emptyList()
+        else post.getProductTags().filterIsInstance<AmityProductTag.Text>()
     }
     // Get products list from post to lookup product by id
     val products = remember(post.getPostId(), post.getEditedAt(), post.getUpdatedAt()) {
