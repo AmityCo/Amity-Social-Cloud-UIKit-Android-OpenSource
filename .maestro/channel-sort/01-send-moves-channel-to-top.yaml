@@ -1,0 +1,65 @@
+# PDT-5753, the ordering the feature exists for: sending a message moves that channel to the top
+# of the chat list, and it moves at send time, not when the realtime echo lands.
+#
+# This is new behaviour on Android. Before this change the Android SDK did not update the channel
+# row on the user's own send at all (it waited for the message.created echo); the row now moves
+# through ChannelActivityService.updateActivityTimestamps, which writes lastActivity and
+# lastMessageAt in one transaction.
+#
+# Requires: the account has AT LEAST TWO chat channels, where ${LOWER_CHANNEL} is NOT the top row
+# when the flow starts. Pass the account and both names:
+#   -e USER_ID=<id> -e TOP_CHANNEL="<name of the top row>" -e LOWER_CHANNEL="<name below it>"
+#
+# Logs in inline rather than relying on 00-login: the sample app's session does not survive a
+# relaunch, so a bare launchApp lands back on the login screen.
+appId: com.amity.sample.ascuikit
+---
+- runFlow: 00-login.yaml
+- tapOn: "Chat"
+- tapOn: "Chat V4"
+- extendedWaitUntil:
+    visible: "Direct"
+    timeout: 40000
+
+# ---- the starting order ----
+# Both rows are present, and the lower one really is below the top one. If this assertion fails
+# the account is not seeded the way the flow needs; it is not a product failure.
+- assertVisible: "${TOP_CHANNEL}"
+- assertVisible:
+    text: "${LOWER_CHANNEL}"
+    below: "${TOP_CHANNEL}"
+- takeScreenshot: 01-order-before
+
+# ---- send a message in the lower channel ----
+- tapOn: "${LOWER_CHANNEL}"
+- extendedWaitUntil:
+    visible: "${LOWER_CHANNEL}"
+    timeout: 30000
+- tapOn:
+    point: "50%,94%"
+- inputText: "pdt-5753 sort probe"
+# Gboard asks for the microphone the first time it is used on a fresh install.
+- tapOn:
+    text: "Don't allow"
+    optional: true
+# Close the keyboard before tapping send. Android's back closes the IME without leaving the
+# screen, and with the keyboard down the composer sits at a known place.
+#
+# Not a relative selector: the send button carries no text or id, and `rightOf` the composer text
+# matches the keyboard's microphone key while the keyboard covers that side of the screen.
+- pressKey: Back
+- tapOn:
+    point: "92%,94%"
+- extendedWaitUntil:
+    visible: "pdt-5753 sort probe"
+    timeout: 30000
+
+# ---- back to the list: the order has flipped ----
+- back
+- extendedWaitUntil:
+    visible: "Direct"
+    timeout: 30000
+- assertVisible:
+    text: "${TOP_CHANNEL}"
+    below: "${LOWER_CHANNEL}"
+- takeScreenshot: 01-order-after

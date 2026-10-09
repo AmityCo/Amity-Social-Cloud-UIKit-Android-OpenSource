@@ -8,6 +8,8 @@
     <string name="amity_chat_tab_groups">Groups</string>
     <string name="amity_chat_home_empty_title">No conversation yet</string>
     <string name="amity_chat_home_empty_description">Let\'s create chat to get started.</string>
+    <string name="amity_chat_home_error_title">Couldn\'t load chats</string>
+    <string name="amity_chat_home_error_description">Something went wrong. Please try again later.</string>
     <string name="amity_chat_home_menu_archived">Archived</string>
     <string name="amity_chat_group_notifications_title">Group Notifications</string>
     <string name="amity_chat_create_direct">Direct chat</string>

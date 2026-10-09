@@ -22,6 +22,7 @@ import com.amity.socialcloud.sdk.model.chat.channel.AmityChannel
 import com.amity.socialcloud.sdk.model.chat.member.AmityChannelMember
 import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
 import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
+import com.amity.socialcloud.sdk.model.core.search.AmitySearchUserBy
 import com.amity.socialcloud.uikit.chat.compose.live.mention.AmityMentionSuggestion
 import com.amity.socialcloud.uikit.common.eventbus.NetworkConnectionEventBus
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -120,6 +121,7 @@ class AmityLiveChatPageViewModel constructor(private val channelId: String) : Vi
             .searchMembers(keyword)
             .membershipFilter(listOf(AmityChannelMembership.MEMBER, AmityChannelMembership.MUTED))
             .includeDeleted(false)
+            .searchBy(listOf(AmitySearchUserBy.DISPLAY_NAME))
             .build()
             .query()
             .debounce(500, TimeUnit.MILLISECONDS)

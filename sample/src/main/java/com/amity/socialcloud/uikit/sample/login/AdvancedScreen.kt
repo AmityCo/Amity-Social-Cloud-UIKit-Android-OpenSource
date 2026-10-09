@@ -225,6 +225,21 @@ fun AdvancedScreen(
                 )
             }
 
+            // DEBUG section
+            GroupLabel("Debug")
+            Card(
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(containerColor = CardBg),
+                modifier = Modifier.padding(horizontal = 14.dp),
+            ) {
+                ToggleRow(
+                    label = "Network Log Button",
+                    subtitle = "Floating button that opens the network log. Capture keeps running when hidden.",
+                    checked = config.networkLogVisible,
+                    onCheckedChange = { viewModel.updateNetworkLogVisible(it) },
+                )
+            }
+
             // APPEARANCE section
             GroupLabel("Appearance")
             Card(

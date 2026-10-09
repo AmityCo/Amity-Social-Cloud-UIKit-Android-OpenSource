@@ -28,7 +28,6 @@ import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.sdk.model.social.event.AmityEvent
 import com.amity.socialcloud.sdk.model.social.event.AmityEventOriginType
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
@@ -72,10 +71,9 @@ fun AmityPastEventsPage(
     
     // Get events based on selected tab and showAllEvents parameter
     val events = remember(selectedTabIndex, showAllEvents) {
-        val currentUserId = AmityCoreClient.getUserId()
         when (selectedTabIndex) {
-            0 -> if (showAllEvents) viewModel.getPastEvents(AmityEventOriginType.COMMUNITY) else viewModel.getPastEvents(AmityEventOriginType.USER, currentUserId)
-            1 -> viewModel.getPastEvents(AmityEventOriginType.COMMUNITY, currentUserId)
+            0 -> if (showAllEvents) viewModel.getPastEvents(AmityEventOriginType.COMMUNITY) else viewModel.getMyPastEvents(AmityEventOriginType.USER)
+            1 -> viewModel.getHostingPastEvents(AmityEventOriginType.COMMUNITY)
             else -> viewModel.getPastEvents(AmityEventOriginType.COMMUNITY)
         }
     }.collectAsLazyPagingItems()

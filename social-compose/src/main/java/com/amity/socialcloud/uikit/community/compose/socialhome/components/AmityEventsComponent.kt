@@ -65,7 +65,7 @@ fun AmityEventsComponent(
 
     val liveEvents = remember { viewModel.getLiveEvents(AmityEventOriginType.COMMUNITY) }.collectAsLazyPagingItems()
     val myUpcomingEvents = remember { viewModel.getMyUpcomingEvents(AmityEventOriginType.COMMUNITY) }.collectAsLazyPagingItems()
-    val pastEvents = remember { viewModel.getPastEvents(AmityEventOriginType.COMMUNITY, AmityCoreClient.getUserId()) }.collectAsLazyPagingItems()
+    val pastEvents = remember { viewModel.getMyPastEvents(AmityEventOriginType.COMMUNITY) }.collectAsLazyPagingItems()
 
     var selectedTabIndex by remember { mutableStateOf(0) }
     val isVisitor = remember { AmityCoreClient.isVisitor() }

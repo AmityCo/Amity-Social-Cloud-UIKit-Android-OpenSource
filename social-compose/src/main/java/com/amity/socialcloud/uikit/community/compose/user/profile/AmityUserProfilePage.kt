@@ -98,6 +98,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
+// The social home feed holds its pull-to-refresh indicator this long
+// (AmitySocialHomePageViewModel.setGlobalFeedRefreshing).
+private const val PULL_REFRESH_INDICATOR_DURATION_MS = 1500L
+
 @OptIn(
     ExperimentalFoundationApi::class,
     ExperimentalMaterial3Api::class
@@ -133,10 +137,6 @@ fun AmityUserProfilePage(
         context.closePageWithResult(Activity.RESULT_OK)
     }
 
-    LaunchedEffect(userId) {
-        viewModel.refresh()
-    }
-
     val state by viewModel.userProfileState.collectAsState()
     val user by remember(state) { derivedStateOf { state.user } }
     val isBlockedByMe by remember(state) { derivedStateOf { state.userFollowInfo?.getStatus() == AmityFollowStatus.BLOCKED } }
@@ -145,10 +145,7 @@ fun AmityUserProfilePage(
 
     var isHeaderSticky by remember { mutableStateOf(false) }
     var refreshKey by remember { mutableIntStateOf(0) }
-    val onRefresh = {
-        refreshKey++
-        viewModel.refresh()
-    }
+    var isPullRefreshing by remember { mutableStateOf(false) }
     var showAvatarPopupDialog by remember { mutableStateOf(false) }
 
     var showMenuSheet by remember { mutableStateOf(false) }
@@ -161,19 +158,26 @@ fun AmityUserProfilePage(
     var showUnfollowErrorDialog by remember { mutableStateOf(false) }
     var showUnfollowSheet by remember { mutableStateOf(false) }
 
-    val userPosts = remember(userId, user?.getUpdatedAt(), selectedFilterIndex) {
+    // PDT-6162: keyed on user.getUpdatedAt() before, so a refresh that returned a newer
+    // user built a new, empty pager while refresh() went to the old one, and the feed
+    // went blank. The follow status is what changes which posts the viewer may see.
+    val followStatus = state.userFollowInfo?.getStatus()
+    val userPosts = remember(userId, followStatus, selectedFilterIndex) {
         viewModel.getUserPosts()
     }.collectAsLazyPagingItems()
     val imagePosts = remember(
         userId,
+        followStatus,
         selectedFilterIndex
     ) { viewModel.getUserImagePosts() }.collectAsLazyPagingItems()
     val videoPosts = remember(
         userId,
+        followStatus,
         selectedFilterIndex
     ) { viewModel.getUserVideoPosts() }.collectAsLazyPagingItems()
     val clipPosts = remember(
         userId,
+        followStatus,
         selectedFilterIndex
     ) { viewModel.getUserClipPosts() }.collectAsLazyPagingItems()
 
@@ -203,15 +207,22 @@ fun AmityUserProfilePage(
         viewModel.getFetchErrorState()
     }.collectAsState()
 
-    LaunchedEffect(userId) {
+    // PDT-6162: reload every feed here. The feeds used to reload from a LaunchedEffect
+    // on state.isRefreshing, which missed the clip feed. Follow, block and unblock now
+    // rebuild the feeds through the followStatus key instead.
+    val onRefresh: () -> Unit = {
+        refreshKey++
         viewModel.refresh()
-    }
-
-    LaunchedEffect(state.isRefreshing) {
-        if (state.isRefreshing) {
-            userPosts.refresh()
-            imagePosts.refresh()
-            videoPosts.refresh()
+        userPosts.refresh()
+        imagePosts.refresh()
+        videoPosts.refresh()
+        clipPosts.refresh()
+        // Hold the indicator as long as the social home feed does; it is dropped
+        // after a fixed time there too, not on load completion.
+        isPullRefreshing = true
+        coroutineScope.launch {
+            delay(PULL_REFRESH_INDICATOR_DURATION_MS)
+            isPullRefreshing = false
         }
     }
 
@@ -233,7 +244,7 @@ fun AmityUserProfilePage(
         }
 
         PullToRefreshBox(
-            isRefreshing = state.isRefreshing,
+            isRefreshing = isPullRefreshing,
             onRefresh = onRefresh,
             modifier = modifier
                 .fillMaxSize()

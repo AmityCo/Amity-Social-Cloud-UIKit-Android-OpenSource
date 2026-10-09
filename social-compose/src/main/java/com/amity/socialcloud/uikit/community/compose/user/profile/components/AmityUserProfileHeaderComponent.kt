@@ -86,6 +86,9 @@ fun AmityUserProfileHeaderComponent(
 
     val viewModel =
         viewModel<AmityUserProfilePageViewModel>(
+            // PDT-6162: the page's key, so the header shares the page's view model. With
+            // no key it got a second instance that pull-to-refresh never refreshed.
+            key = "profile_${user.getUserId()}",
             factory = object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
                     return AmityUserProfilePageViewModel(user.getUserId()) as T

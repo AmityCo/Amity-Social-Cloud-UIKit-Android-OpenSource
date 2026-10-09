@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.chat.compose.home
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import androidx.paging.LoadState
 import androidx.paging.PagingData
@@ -12,6 +13,7 @@ import com.amity.socialcloud.sdk.model.chat.channel.AmityChannel
 import com.amity.socialcloud.sdk.model.chat.channel.AmityChannelFilter
 import com.amity.socialcloud.sdk.model.chat.member.AmityChannelMember
 import com.amity.socialcloud.sdk.model.core.notification.AmityUserNotificationModule
+import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
 import com.amity.socialcloud.uikit.common.eventbus.NetworkConnectionEventBus
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -116,13 +118,21 @@ class AmityChatHomePageViewModel : AmityBaseViewModel() {
             .getChannels()
             .types(types)
             .filter(AmityChannelFilter.MEMBER)
+            // PDT-5753. All three tabs share one order. The key defaults to lastActivity, so an
+            // integrator who does not set it sees no change. lastMessage needs the backend flag
+            // on for that environment; while it is off the query fails with 422 / 500000 and the
+            // list shows its error state. We deliberately do not retry with lastActivity: an
+            // automatic fallback hides the misconfiguration and makes the order look intermittent.
+            .sortBy(AmityUIKitConfigController.getChannelListSortBy())
             .includeDeleted(false)
             .excludeArchived(true)
             .build()
             .query()
             .subscribeOn(Schedulers.io())
             .asFlow()
-            .catch { }
+            .catch { error ->
+                Log.e(TAG, "channel list query failed for types=$types", error)
+            }
     }
 
     fun archiveChannel(
@@ -137,6 +147,10 @@ class AmityChatHomePageViewModel : AmityBaseViewModel() {
             .doOnComplete { onSuccess() }
             .doOnError { onError(it) }
             .subscribe()
+    }
+
+    private companion object {
+        const val TAG = "AmityChatHomePage"
     }
 
     sealed class ChannelListState {

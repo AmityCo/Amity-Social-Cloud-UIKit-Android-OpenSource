@@ -39,6 +39,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlin.math.abs
 import com.amity.socialcloud.sdk.model.chat.channel.AmityChannel
+import org.joda.time.DateTime
+import com.amity.socialcloud.uikit.common.config.AmityUIKitConfigController
+import com.amity.socialcloud.sdk.model.chat.channel.AmityChannelSortBy
 import com.amity.socialcloud.sdk.model.chat.member.AmityChannelMember
 import com.amity.socialcloud.sdk.model.chat.message.AmityMessage
 import com.amity.socialcloud.sdk.model.core.file.AmityImage
@@ -215,7 +218,7 @@ fun AmityChatListItem(
             verticalArrangement = Arrangement.Center,
         ) {
             Text(
-                text = channel.getLastActivity().readableChatTimeDiff(),
+                text = channel.rowTimestamp().readableChatTimeDiff(),
                 style = AmityTheme.typography.bodyLegacy.copy(
                     fontSize = 12.sp,
                     color = AmityTheme.token(AmityColorToken.TextListTrailingSubtextDefault),
@@ -522,5 +525,21 @@ private fun buildMentionHighlightedText(
         if (cursor < text.length) {
             withStyle(SpanStyle(color = normalColor)) { append(text.substring(cursor)) }
         }
+    }
+}
+
+
+/**
+ * PDT-5753. The row time follows the sort, so the list never shows a time that contradicts the
+ * order (AmityChatHomePage v3 REQ-023).
+ *
+ * With `lastMessage`, a member joining neither moves the row nor changes its time. `lastMessageAt`
+ * is null until the backend backfill reaches the channel, so it falls back to `createdAt` — the
+ * same value that sort orders such a channel by.
+ */
+private fun AmityChannel.rowTimestamp(): DateTime {
+    return when (AmityUIKitConfigController.getChannelListSortBy()) {
+        AmityChannelSortBy.LAST_MESSAGE -> getLastMessageAt() ?: getCreatedAt()
+        else -> getLastActivity()
     }
 }

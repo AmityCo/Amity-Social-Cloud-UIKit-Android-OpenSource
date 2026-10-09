@@ -10,18 +10,14 @@ import com.amity.socialcloud.uikit.AmityUIKit4Manager
 import com.amity.socialcloud.uikit.sample.env.SamplePreferences
 import com.amity.socialcloud.uikit.sample.localization.AmityLocaleHelper
 import com.amity.socialcloud.uikit.sample.behavior.SampleGlobalBehavior
+import com.amity.socialcloud.uikit.sample.login.LoginPreferences
+import com.amity.socialcloud.uikit.sample.networklog.AmityNetworkLogOverlay
 
 class AmitySampleApp : Application()  {
 
     override fun onCreate() {
         super.onCreate()
         APP = this
-
-        // ponytail: temporary — records what the SDK actually sends, so a module
-        // switched off can be checked against the wire. Started before setup
-        // because the SDK connects during it, and anything sent in that window
-        // would otherwise be invisible. Remove with ApiTrace.kt.
-        ApiTrace.start(this)
 
         // V4 setup
         AmityUIKit4Manager.setup(
@@ -42,6 +38,11 @@ class AmitySampleApp : Application()  {
 
         // OPTIONAL: Set the default file access type for uploaded files
         AmityCoreClient.setUploadedFileAccessType(AmityFileAccessType.PUBLIC)
+
+        // Network log (sample app only — never ships in a released UIKit artifact).
+        // Enabled at init, not when the viewer opens: the SDK stream has no replay, so a
+        // late subscription would silently lose the whole login burst.
+        AmityNetworkLogOverlay.enable(this, LoginPreferences.isNetworkLogVisible(this))
 
     }
 

@@ -68,7 +68,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.DefaultHttpDataSource
+import androidx.media3.datasource.HttpDataSource
+import com.amity.socialcloud.uikit.community.compose.networklog.AmityMediaDataSourceFactory
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.hls.HlsMediaSource
 import androidx.media3.exoplayer.source.ConcatenatingMediaSource
@@ -1107,13 +1108,8 @@ private fun getRecordedMediaSource(urls: List<String>): ConcatenatingMediaSource
 }
 
 @UnstableApi
-private fun getAuthenticatedDataSource(): DefaultHttpDataSource.Factory {
-    return DefaultHttpDataSource.Factory()
-        .setAllowCrossProtocolRedirects(true)
-        .let { factory ->
-            AmityCoreClient.getAccessToken()
-                ?.let { token -> mapOf("Authorization" to "Bearer $token") }
-                ?.let(factory::setDefaultRequestProperties)
-                ?: factory
-        }
+private fun getAuthenticatedDataSource(): HttpDataSource.Factory {
+    val headers = AmityCoreClient.getAccessToken()
+        ?.let { token -> mapOf("Authorization" to "Bearer $token") }
+    return AmityMediaDataSourceFactory.create(headers)
 }

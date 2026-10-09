@@ -1,0 +1,31 @@
+# Logs in on staging. Pass the account with -e USER_ID=<id>.
+#
+# PDT-5753: sortBy=lastMessage is behind a backend flag, turned on per environment. It is on for
+# staging (PDT-5751 reached "Deployed to Staging" on 2026-09-28), so the region must stay
+# "staging". On an environment with the flag off the channel query returns 422 / 500000 and the
+# chat list renders its error state, which is an empty screen.
+appId: com.amity.sample.ascuikit
+---
+- launchApp:
+    clearState: true
+    permissions:
+      all: allow
+- assertVisible: "Android UI-Kit"
+- assertVisible: "staging"
+- tapOn: "android-test"
+- eraseText
+- inputText: "${USER_ID}"
+# Not hideKeyboard: on this screen it presses back, which leaves the app entirely. The log-in
+# button is pinned to the bottom behind the keyboard and the form will not scroll past it, so
+# the keyboard has to go before the tap can land. This is the IME's own done key.
+- tapOn:
+    point: "92%,91%"
+- extendedWaitUntil:
+    visible: ".*Log in.*"
+    timeout: 15000
+- tapOn:
+    text: ".*Log in.*"     # "Apply & Log in →" when the region changed, "Log in →" otherwise
+- extendedWaitUntil:
+    notVisible: "Android UI-Kit"
+    timeout: 60000
+- takeScreenshot: after-login

@@ -2,6 +2,8 @@ package com.amity.socialcloud.uikit.chat.compose.live.composer
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,13 +25,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
+import com.amity.socialcloud.uikit.chat.compose.R
 import com.amity.socialcloud.uikit.chat.compose.live.AmityLiveChatPageViewModel
 import com.amity.socialcloud.uikit.chat.compose.live.elements.AmityAvatarType
 import com.amity.socialcloud.uikit.chat.compose.live.elements.AmityMessageAvatarView
 import com.amity.socialcloud.uikit.chat.compose.live.mention.AmityMentionSuggestion
+import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 
@@ -48,6 +53,34 @@ fun AmityMentionSuggestionView(
             viewModel.searchChannelMembers(keyword)
         }
     }.collectAsLazyPagingItems()
+
+    val isNoResultsState = suggestions.loadState.refresh is LoadState.NotLoading &&
+            suggestions.itemCount == 0
+
+    if (isNoResultsState) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = modifier
+                .background(color = AmityTheme.colors.baseShade4)
+                .fillMaxWidth()
+                .height(156.dp)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.amity_ic_empty_search),
+                contentDescription = null,
+                modifier = Modifier.size(32.dp),
+            )
+            Text(
+                text = amityChatString("chat.search.no.results"),
+                style = AmityTheme.typography.bodyLegacy.copy(
+                    color = AmityTheme.token(AmityColorToken.TextEmptyStateDescriptionDefault),
+                ),
+                modifier = Modifier.padding(top = 12.dp),
+            )
+        }
+        return
+    }
 
     LazyColumn(
         modifier = modifier

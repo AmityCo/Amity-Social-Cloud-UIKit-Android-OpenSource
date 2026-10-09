@@ -76,7 +76,7 @@ fun AmityUpcomingEventsPage(
             // showAllEvents is the "View all" entry from the Explore feed, which excludes
             // the current user's own events.
             0 -> if (showAllEvents) viewModel.getUpcomingEvents(AmityEventOriginType.COMMUNITY, excludeOwnEvents = true) else viewModel.getMyUpcomingEvents(AmityEventOriginType.COMMUNITY)
-            1 -> viewModel.getMyUpcomingEvents(AmityEventOriginType.COMMUNITY)
+            1 -> viewModel.getHostingUpcomingEvents(AmityEventOriginType.COMMUNITY)
             else -> viewModel.getUpcomingEvents(AmityEventOriginType.COMMUNITY, excludeOwnEvents = true)
         }
     }.collectAsLazyPagingItems()

@@ -58,8 +58,10 @@ class AmityChannelCreateConversationPageViewModel : AmityBaseViewModel() {
         onError: (Throwable) -> Unit = {},
     ) {
         _creationState.value = CreationState.Loading
+        // No displayName: the server then searches the members' names. Passing the userId here
+        // made the chat match the userId and not the user's display name (PDT-6120).
         AmityChatClient.newChannelRepository()
-            .createChannel(userId)
+            .createChannel()
             .conversation(userId = userId)
             .build()
             .create()

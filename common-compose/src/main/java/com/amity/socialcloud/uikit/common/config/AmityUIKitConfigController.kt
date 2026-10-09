@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.common.config
 
+import com.amity.socialcloud.sdk.model.chat.channel.AmityChannelSortBy
 import android.content.Context
 import android.util.Log
 import androidx.annotation.VisibleForTesting
@@ -491,6 +492,31 @@ object AmityUIKitConfigController {
         return types.ifEmpty { listOf("conversation", "community") }
     }
 
+    /**
+     * Order of the chat home page channel list. PDT-5753.
+     *
+     * [AmityChannelSortBy.LAST_ACTIVITY] is the default, the same as the SDK's, so an integrator
+     * who does not set the key sees no change. `"lastMessage"` is the opt-in, and it needs the
+     * backend flag on for that environment; while it is off the channel query fails with HTTP 422
+     * / code 500000 and the page shows its error state, with no fallback. The config is the
+     * integrator's opt-in and back-out, which is why there is no fallback.
+     *
+     * Only `"lastMessage"` selects [AmityChannelSortBy.LAST_MESSAGE]. Every other value falls back,
+     * including `lastCreated`, `firstCreated` and `displayName`: they are valid [AmityChannelSortBy]
+     * values on every SDK, but the chat home page does not offer them. Deliberately not
+     * [AmityChannelSortBy.enumOf], which accepts all five.
+     *
+     * The fallback lives here, not only in the Kotlin default: Gson does not apply Kotlin default
+     * values to a field the JSON omits, so the property can be null whatever its declared type.
+     */
+    fun getChannelListSortBy(): AmityChannelSortBy {
+        if (!::config.isInitialized) return AmityChannelSortBy.LAST_ACTIVITY
+        return when (config.featureFlags.chat.channelListSortBy) {
+            AmityChannelSortBy.LAST_MESSAGE.apiKey -> AmityChannelSortBy.LAST_MESSAGE
+            else -> AmityChannelSortBy.LAST_ACTIVITY
+        }
+    }
+
     fun getConversationChatUserActions(): List<Pair<String, Boolean>> {
         if (!::config.isInitialized) return emptyList()
         val result = mutableListOf<Pair<String, Boolean>>()
@@ -536,6 +562,13 @@ object AmityUIKitConfigController {
                 }
                 networkConfig?.globalTheme?.darkTheme?.let {
                     config.globalTheme.darkTheme = it
+                }
+                // PDT-5753. parseConfig copies named fields rather than deep-merging, so a branch
+                // it does not name is dropped. Without this line the remote config could not turn
+                // the chat list sort on, and an integrator would have to ship a new build — while
+                // iOS, which deep-merges the whole document, picks the same key up remotely.
+                networkConfig?.featureFlags?.chat?.channelListSortBy?.let {
+                    config.featureFlags.chat.channelListSortBy = it
                 }
             } else {
                 Log.d("UIKitConfig", "No network config, rely on configuratio file")

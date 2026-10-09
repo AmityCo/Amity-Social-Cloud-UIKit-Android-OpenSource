@@ -2,6 +2,8 @@
 
 package com.amity.socialcloud.uikit.sample.login
 
+import com.amity.socialcloud.uikit.sample.networklog.AmityNetworkLogOverlay
+
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
@@ -91,6 +93,14 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     fun updateSocialCommunityCreation(value: Boolean) = _config.update { it.copy(socialCommunityCreationButtonVisible = value) }
     fun updateTheme(value: AppTheme) = _config.update { it.copy(theme = value) }
     fun updateSyncNetworkConfig(value: Boolean) = _config.update { it.copy(syncNetworkConfig = value) }
+
+    fun updateNetworkLogVisible(value: Boolean) {
+        _config.update { it.copy(networkLogVisible = value) }
+        // Applied and persisted immediately rather than on login, so the toggle is
+        // verifiable without leaving the screen and survives backing out.
+        LoginPreferences.setNetworkLogVisible(getApplication(), value)
+        AmityNetworkLogOverlay.setVisible(value)
+    }
 
     fun envHasChanged(): Boolean {
         val c = _config.value

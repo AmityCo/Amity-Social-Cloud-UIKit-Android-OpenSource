@@ -65,6 +65,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
 import coil3.request.CachePolicy
@@ -788,7 +789,10 @@ internal fun GroupMentionSuggestionView(
         }
     }.collectAsLazyPagingItems()
 
-    if (suggestions.itemCount == 0) return
+    val isNoResultsState = suggestions.loadState.refresh is LoadState.NotLoading &&
+            suggestions.itemCount == 0
+
+    if (suggestions.itemCount == 0 && !isNoResultsState) return
 
     Box(
         modifier = modifier
@@ -798,6 +802,29 @@ internal fun GroupMentionSuggestionView(
         // `Modifier.fillMaxWidth()` overrides AmityPopover's default fixed width so the suggestion
         // card spans this composer's full width.
         AmityPopover(modifier = Modifier.fillMaxWidth()) {
+            if (isNoResultsState) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(120.dp)
+                        .background(color = AmityTheme.token(AmityColorToken.SurfacePopoverListsDefault))
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.amity_ic_empty_search),
+                        contentDescription = null,
+                        modifier = Modifier.size(32.dp),
+                    )
+                    Text(
+                        text = amityChatString("chat.search.no.results"),
+                        style = AmityTheme.typography.bodyLegacy.copy(
+                            color = AmityTheme.token(AmityColorToken.TextEmptyStateDescriptionDefault),
+                        ),
+                        modifier = Modifier.padding(top = 12.dp),
+                    )
+                }
+            } else {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -891,6 +918,7 @@ internal fun GroupMentionSuggestionView(
                 }
             }
         }
+            }
             }
         }
 

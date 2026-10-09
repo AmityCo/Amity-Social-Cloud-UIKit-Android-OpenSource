@@ -10,6 +10,7 @@ import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.sdk.api.social.post.query.AmityFeedSource
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.sdk.model.core.error.AmityError
+import com.amity.socialcloud.sdk.model.core.events.AmityUserEvents
 import com.amity.socialcloud.sdk.model.core.follow.AmityMyFollowInfo
 import com.amity.socialcloud.sdk.model.core.follow.AmityUserFollowInfo
 import com.amity.socialcloud.sdk.model.core.user.AmityUser
@@ -79,8 +80,38 @@ class AmityUserProfilePageViewModel(val userId: String) : AmityBaseViewModel() {
 
     var filter = listOf(AmityFeedSource.USER, AmityFeedSource.COMMUNITY)
 
+    // The user whose real-time topics this view model holds. Set once, on the first
+    // emission, so a refresh does not subscribe again; released in onCleared().
+    private var realtimeUser: AmityUser? = null
+
     init {
         refresh()
+    }
+
+    // PDT-6162: the page subscribed to no topic, so nothing on it updated live.
+    // USER carries the user (follower counts, name, avatar); POSTS_AND_COMMENTS
+    // carries the posts on the user's feed and their comments.
+    private fun subscribeRealtime(user: AmityUser) {
+        if (realtimeUser != null) return
+        realtimeUser = user
+        REALTIME_EVENTS.forEach { event ->
+            user.subscription(event)
+                .subscribeTopic()
+                .subscribeOn(Schedulers.io())
+                .subscribe({}, {})
+        }
+    }
+
+    override fun onCleared() {
+        realtimeUser?.let { user ->
+            REALTIME_EVENTS.forEach { event ->
+                user.subscription(event)
+                    .unsubscribeTopic()
+                    .subscribeOn(Schedulers.io())
+                    .subscribe({}, {})
+            }
+        }
+        super.onCleared()
     }
 
     fun refresh() {
@@ -105,13 +136,18 @@ class AmityUserProfilePageViewModel(val userId: String) : AmityBaseViewModel() {
                             isRefreshing = false,
                         )
                     }
+                    subscribeRealtime(it)
                 }
                 .doOnError {
                     viewModelScope.launch {
                         fetchUserError.emit(it)
+                        // PDT-6162: an error left isRefreshing true for good.
+                        _userProfileState.value = _userProfileState.value.copy(
+                            isRefreshing = false,
+                        )
                     }
                 }
-                .subscribe()
+                .subscribe({}, {})
                 .let(compositeDisposable::add)
 
             getMyFollowInfo()
@@ -143,13 +179,18 @@ class AmityUserProfilePageViewModel(val userId: String) : AmityBaseViewModel() {
                             isRefreshing = false,
                         )
                     }
+                    subscribeRealtime(it)
                 }
                 .doOnError {
                     viewModelScope.launch {
                         fetchUserError.emit(it)
+                        // PDT-6162: an error left isRefreshing true for good.
+                        _userProfileState.value = _userProfileState.value.copy(
+                            isRefreshing = false,
+                        )
                     }
                 }
-                .subscribe()
+                .subscribe({}, {})
                 .let(compositeDisposable::add)
 
             getMyFollowInfo()
@@ -357,6 +398,13 @@ class AmityUserProfilePageViewModel(val userId: String) : AmityBaseViewModel() {
                 .observeOn(AndroidSchedulers.mainThread())
     }
 
+
+    companion object {
+        private val REALTIME_EVENTS = listOf(
+            AmityUserEvents.USER,
+            AmityUserEvents.POSTS_AND_COMMENTS,
+        )
+    }
 
     sealed class PostListState {
         object LOADING : PostListState()

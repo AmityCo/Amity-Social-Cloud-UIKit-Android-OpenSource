@@ -8,6 +8,8 @@ import coil3.disk.directory
 import coil3.memory.MemoryCache
 import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.model.core.network.AmityNetworkActivityType
+import com.amity.socialcloud.uikit.common.infra.networklog.AmityNetworkCaptureInterceptor
 import okhttp3.OkHttpClient
 
 
@@ -43,6 +45,8 @@ object AmityUIKitInitializer {
                 }
                 chain.proceed(newRequest)
             }
+            // Inert unless the network-log collector has attached a sink (NFR-1).
+            .addInterceptor(AmityNetworkCaptureInterceptor(AmityNetworkActivityType.IMAGE))
             .build()
 
         // setSafe only sets the loader if Coil hasn't been initialized yet.

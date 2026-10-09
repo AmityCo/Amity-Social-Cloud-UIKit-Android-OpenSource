@@ -44,6 +44,8 @@ data class AmityUIKitConfig(
         val enabledChannelTypes: List<String> = listOf("conversation", "community"),
         @SerializedName("conversation_chat_user_actions")
         val conversationChatUserActions: JsonArray = JsonArray(),
+        @SerializedName("channel_list_sort_by")
+        var channelListSortBy: String? = null,
     )
 
     data class UIKitTheme(

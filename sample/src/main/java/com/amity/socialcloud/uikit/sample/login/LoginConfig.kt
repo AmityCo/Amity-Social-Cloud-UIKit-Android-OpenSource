@@ -36,4 +36,5 @@ data class LoginConfig(
     val inAppPipTesting: Boolean = false,
     val theme: AppTheme = AppTheme.DEFAULT,
     val syncNetworkConfig: Boolean = false,
+    val networkLogVisible: Boolean = true,
 )

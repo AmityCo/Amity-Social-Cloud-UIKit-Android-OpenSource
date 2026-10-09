@@ -49,13 +49,16 @@ class AmityEventsComponentViewModel : ViewModel() {
     /**
      * Get upcoming events
      * @param originType Filter by origin type (COMMUNITY or USER) - required
-     * @param userId Filter by user ID to get events created by specific user
+     * @param userId Filter by user ID. On its own this means events that user CREATED.
      * @param excludeOwnEvents Exclude events created by the current user
+     * @param onlyAttendee Together with [userId], switch the filter from events that user created
+     * to events that user attends, which includes an event created by someone else and accepted.
      */
     fun getUpcomingEvents(
         originType: AmityEventOriginType,
         userId: String? = null,
-        excludeOwnEvents: Boolean = false
+        excludeOwnEvents: Boolean = false,
+        onlyAttendee: Boolean = false
     ): Flow<PagingData<AmityEvent>> {
         val query = AmitySocialClient.newEventRepository()
             .getEvents()
@@ -65,6 +68,7 @@ class AmityEventsComponentViewModel : ViewModel() {
             .orderBy(AmityEventOrderOption.ASCENDING)
 
         userId?.let { query.userId(it) }
+        if (onlyAttendee) query.onlyAttendee(true)
         //        if (excludeOwnEvents) query.excludeOwnEvents(true)  // TEMP: local SDK lacks it
 
         return query.build()
@@ -79,22 +83,43 @@ class AmityEventsComponentViewModel : ViewModel() {
      * Get upcoming events for the current user only
      * @param originType Filter by origin type (COMMUNITY or USER) - required
      */
+    /**
+     * Upcoming events the current user attends: ones they created AND ones created by someone
+     * else that they accepted.
+     *
+     * PDT-5966: this passed only [userId], which the SDK documents as "events created by specific
+     * user", so an accepted event never reached My event. iOS has always sent onlyAttendee
+     * alongside userId, which is why it was correct there.
+     */
     fun getMyUpcomingEvents(originType: AmityEventOriginType): Flow<PagingData<AmityEvent>> {
-        val currentUserId = AmityCoreClient.getUserId()
         return getUpcomingEvents(
             originType = originType,
-            userId = currentUserId
+            userId = AmityCoreClient.getUserId(),
+            onlyAttendee = true
+        )
+    }
+
+    /**
+     * Upcoming events the current user created. Backs the "Hosting" tab, which means authorship,
+     * not attendance, so it deliberately does not pass onlyAttendee.
+     */
+    fun getHostingUpcomingEvents(originType: AmityEventOriginType): Flow<PagingData<AmityEvent>> {
+        return getUpcomingEvents(
+            originType = originType,
+            userId = AmityCoreClient.getUserId()
         )
     }
 
     /**
      * Get past events (ended events)
      * @param originType Filter by origin type (COMMUNITY or USER) - required
-     * @param userId Filter by user ID to get events created by specific user
+     * @param userId Filter by user ID. On its own this means events that user CREATED.
+     * @param onlyAttendee Together with [userId], switch to events that user attends (PDT-5966).
      */
     fun getPastEvents(
         originType: AmityEventOriginType,
-        userId: String? = null
+        userId: String? = null,
+        onlyAttendee: Boolean = false
     ): Flow<PagingData<AmityEvent>> {
         val query = AmitySocialClient.newEventRepository()
             .getEvents()
@@ -104,12 +129,34 @@ class AmityEventsComponentViewModel : ViewModel() {
             .orderBy(AmityEventOrderOption.DESCENDING)
         
         userId?.let { query.userId(it) }
-        
+        if (onlyAttendee) query.onlyAttendee(true)
+
         return query.build()
             .query()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .asFlow()
             .catch {}
+    }
+
+    /**
+     * Past events the current user attended: ones they created AND ones they accepted (PDT-5966).
+     */
+    fun getMyPastEvents(originType: AmityEventOriginType): Flow<PagingData<AmityEvent>> {
+        return getPastEvents(
+            originType = originType,
+            userId = AmityCoreClient.getUserId(),
+            onlyAttendee = true
+        )
+    }
+
+    /**
+     * Past events the current user created. Backs the "Hosting" tab; authorship, not attendance.
+     */
+    fun getHostingPastEvents(originType: AmityEventOriginType): Flow<PagingData<AmityEvent>> {
+        return getPastEvents(
+            originType = originType,
+            userId = AmityCoreClient.getUserId()
+        )
     }
 }

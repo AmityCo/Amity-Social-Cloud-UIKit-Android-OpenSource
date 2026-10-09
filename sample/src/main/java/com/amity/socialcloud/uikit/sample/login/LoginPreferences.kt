@@ -23,6 +23,7 @@ object LoginPreferences {
     private const val KEY_IN_APP_PIP_TESTING = "in_app_pip_testing"
     private const val KEY_THEME = "theme"
     private const val KEY_SYNC_NETWORK_CONFIG = "sync_network_config"
+    private const val KEY_NETWORK_LOG_VISIBLE = "network_log_visible"
     private const val KEY_LAST_SETUP_API_KEY = "last_setup_api_key"
     private const val KEY_LAST_SETUP_REGION = "last_setup_region"
     private const val KEY_LAST_SETUP_UPLOAD_URL = "last_setup_upload_url"
@@ -46,6 +47,7 @@ object LoginPreferences {
             putBoolean(KEY_SOCIAL_COMMUNITY_CREATION, config.socialCommunityCreationButtonVisible)
             putString(KEY_THEME, config.theme.name)
             putBoolean(KEY_SYNC_NETWORK_CONFIG, config.syncNetworkConfig)
+            putBoolean(KEY_NETWORK_LOG_VISIBLE, config.networkLogVisible)
             apply()
         }
     }
@@ -80,7 +82,20 @@ object LoginPreferences {
                 AppTheme.DEFAULT
             },
             syncNetworkConfig = p.getBoolean(KEY_SYNC_NETWORK_CONFIG, false),
+            networkLogVisible = p.getBoolean(KEY_NETWORK_LOG_VISIBLE, true),
         )
+    }
+
+    fun isNetworkLogVisible(context: Context): Boolean =
+        prefs(context).getBoolean(KEY_NETWORK_LOG_VISIBLE, true)
+
+    /**
+     * Written on toggle rather than only inside saveConfig, which runs on login. A tester
+     * who flips this and backs out without logging in would otherwise lose the setting,
+     * and the live overlay would disagree with what is stored.
+     */
+    fun setNetworkLogVisible(context: Context, value: Boolean) {
+        prefs(context).edit().putBoolean(KEY_NETWORK_LOG_VISIBLE, value).apply()
     }
 
     fun saveLastSetupEnv(context: Context, apiKey: String, region: String, uploadUrl: String) {

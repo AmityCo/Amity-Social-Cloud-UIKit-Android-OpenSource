@@ -61,12 +61,16 @@ class AmityCommunityProfileViewModel(private val communityId: String) :
         refresh()
     }
 
+    // The community whose real-time topics this view model holds. Set once, on the first
+    // emission, so a refresh does not subscribe again; released in onCleared().
+    private var realtimeCommunity: AmityCommunity? = null
+
     fun refresh() {
         disposable.clear()
-        viewModelScope.launch {
-            _communityProfileState.value = _communityProfileState.value.copy(
-                isRefreshing = true
-            )
+        // PDT-6162: clear the last error, or one failed load keeps the error page up
+        // through every later refresh.
+        _communityProfileState.update {
+            it.copy(isRefreshing = true, error = null)
         }
 
         Flowable.combineLatest(
@@ -86,30 +90,50 @@ class AmityCommunityProfileViewModel(private val communityId: String) :
                     isMember = community.isJoined(),
                     isModerator = isModerator
                 )
-                viewModelScope.launch {
-                    community.subscription(AmityCommunityEvents.POSTS)
-                        .subscribeTopic()
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe()
-                }
+                subscribeRealtime(community)
             }
             .doOnError { error ->
-                if (error is AmityException) {
-                    _communityProfileState.update {
-                        // Store the thrown error (not it.error, which was a no-op) so the
-                        // error page shows instead of an infinite shimmer on load failure.
-                        it.copy(
-                            error = AmityError.from(error),
-                            isRefreshing = false,
-                        )
-                    }
+                _communityProfileState.update {
+                    // Store the thrown error (not it.error, which was a no-op) so the
+                    // error page shows instead of an infinite shimmer on load failure.
+                    // PDT-6162: clear isRefreshing for every error, not only AmityException.
+                    it.copy(
+                        error = if (error is AmityException) AmityError.from(error) else it.error,
+                        isRefreshing = false,
+                    )
                 }
             }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe()
+            .subscribe({}, {})
             .let { disposable.add(it) }
+    }
+
+    // PDT-6162: POSTS alone ("community/post/+") carried post events only, so the
+    // member count and comments never updated live. COMMUNITY carries the community
+    // itself; POSTS_AND_COMMENTS ("community/post/#") carries posts and their comments.
+    private fun subscribeRealtime(community: AmityCommunity) {
+        if (realtimeCommunity != null) return
+        realtimeCommunity = community
+        REALTIME_EVENTS.forEach { event ->
+            community.subscription(event)
+                .subscribeTopic()
+                .subscribeOn(Schedulers.io())
+                .subscribe({}, {})
+        }
+    }
+
+    override fun onCleared() {
+        realtimeCommunity?.let { community ->
+            REALTIME_EVENTS.forEach { event ->
+                community.subscription(event)
+                    .unsubscribeTopic()
+                    .subscribeOn(Schedulers.io())
+                    .subscribe({}, {})
+            }
+        }
+        disposable.dispose()
+        super.onCleared()
     }
 
     fun getAnnouncement(): Flow<PagingData<AmityPinnedPost>> {
@@ -320,6 +344,11 @@ class AmityCommunityProfileViewModel(private val communityId: String) :
 
 
     companion object {
+        private val REALTIME_EVENTS = listOf(
+            AmityCommunityEvents.COMMUNITY,
+            AmityCommunityEvents.POSTS_AND_COMMENTS,
+        )
+
         fun create(communityId: String): AmityCommunityProfileViewModel {
             return AmityCommunityProfileViewModel(communityId)
         }

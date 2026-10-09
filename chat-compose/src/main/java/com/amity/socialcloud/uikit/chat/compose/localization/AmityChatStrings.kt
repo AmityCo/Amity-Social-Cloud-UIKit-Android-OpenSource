@@ -11,6 +11,8 @@ object AmityChatStrings {
         "chat.tab.direct" to R.string.amity_chat_tab_direct,
         "chat.tab.groups" to R.string.amity_chat_tab_groups,
         "chat.home.empty.title" to R.string.amity_chat_home_empty_title,
+        "chat.home.error.title" to R.string.amity_chat_home_error_title,
+        "chat.home.error.description" to R.string.amity_chat_home_error_description,
         "chat.home.empty.description" to R.string.amity_chat_home_empty_description,
         "chat.list.timestamp.now" to R.string.amity_chat_list_timestamp_now,
         "chat.create.direct" to R.string.amity_chat_create_direct,

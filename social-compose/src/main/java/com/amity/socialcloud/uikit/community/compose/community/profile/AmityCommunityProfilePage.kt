@@ -99,6 +99,10 @@ import kotlin.text.compareTo
 import kotlin.text.get
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
+// The social home feed holds its pull-to-refresh indicator this long
+// (AmitySocialHomePageViewModel.setGlobalFeedRefreshing).
+private const val PULL_REFRESH_INDICATOR_DURATION_MS = 1500L
+
 @OptIn(
     ExperimentalFoundationApi::class,
     ExperimentalLayoutApi::class,
@@ -167,14 +171,32 @@ fun AmityCommunityProfilePage(
         remember(communityId) { viewModel.getCommunityEvents() }.collectAsLazyPagingItems()
 
     var refreshKey by remember { mutableIntStateOf(0) }
+    var isPullRefreshing by remember { mutableStateOf(false) }
 
+    // PDT-6162: reload every feed here. The post feeds used to reload from a
+    // LaunchedEffect on state.isRefreshing, but refresh() flips that true and back to
+    // false before the next frame when the community comes from cache, so the effect
+    // never ran and the pull did not reload posts, comments or reactions.
     val onRefresh: () -> Unit = {
         refreshKey++
         viewModel.refresh()
-        // Refresh event feeds
+        announcementPosts.refresh()
+        communityPosts.refresh()
+        pinPosts.refresh()
+        imagePosts.refresh()
+        videoPosts.refresh()
+        clipPosts.refresh()
         liveEvents.refresh()
         upcomingEvents.refresh()
         pastEvents.refresh()
+        allEvents.refresh()
+        // Hold the indicator as long as the social home feed does; it is dropped
+        // after a fixed time there too, not on load completion.
+        isPullRefreshing = true
+        coroutineScope.launch {
+            delay(PULL_REFRESH_INDICATOR_DURATION_MS)
+            isPullRefreshing = false
+        }
     }
 
 
@@ -277,16 +299,6 @@ fun AmityCommunityProfilePage(
         }
     }
 
-    LaunchedEffect(state.isRefreshing) {
-        if (state.isRefreshing) {
-            announcementPosts.refresh()
-            communityPosts.refresh()
-            pinPosts.refresh()
-            imagePosts.refresh()
-            videoPosts.refresh()
-        }
-    }
-
     // Reload the feeds when the user transitions to a member (invitation accepted OR
     // join request approved). Private-community posts are inaccessible before joining,
     // so the paging sources must re-query once membership flips true. Covers both join
@@ -301,6 +313,7 @@ fun AmityCommunityProfilePage(
                 pinPosts.refresh()
                 imagePosts.refresh()
                 videoPosts.refresh()
+                clipPosts.refresh()
             }
             previouslyJoined = joined
         }
@@ -343,11 +356,30 @@ fun AmityCommunityProfilePage(
             selectedTab = visibleTabs.firstOrNull() ?: AmityCommunityProfilePageTab.FEED
         }
         Scaffold { padding ->
-            if (isCommunityClosed || state.error != null) {
+            if (isCommunityClosed) {
                 AmityPostErrorPage()
+            } else if (state.error != null) {
+                // PDT-6162: a failed load is recoverable, so the error page must take a
+                // pull. PullToRefreshBox reads the pull from a scrolling child, hence the
+                // one-item LazyColumn.
+                PullToRefreshBox(
+                    isRefreshing = isPullRefreshing,
+                    onRefresh = onRefresh,
+                    modifier = modifier
+                        .padding(PaddingValues(bottom = padding.calculateBottomPadding()))
+                        .fillMaxSize(),
+                ) {
+                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+                        item {
+                            Box(modifier = Modifier.fillParentMaxSize()) {
+                                AmityPostErrorPage()
+                            }
+                        }
+                    }
+                }
             } else {
                 PullToRefreshBox(
-                    isRefreshing = state.isRefreshing,
+                    isRefreshing = isPullRefreshing,
                     onRefresh = onRefresh,
                     modifier = modifier
                         .padding(PaddingValues(bottom = padding.calculateBottomPadding()))

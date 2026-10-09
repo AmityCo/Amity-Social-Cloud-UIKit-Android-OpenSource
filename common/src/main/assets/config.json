@@ -1491,6 +1491,7 @@
         "conversation",
         "community"
       ],
+      "channel_list_sort_by": "lastActivity",
       "conversation_chat_user_actions": [
         {
           "name": "mute",

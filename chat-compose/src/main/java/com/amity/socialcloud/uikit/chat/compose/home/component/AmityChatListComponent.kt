@@ -19,6 +19,7 @@ import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import android.util.Log
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -37,6 +38,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.amity.socialcloud.sdk.model.chat.channel.AmityChannel
 import com.amity.socialcloud.sdk.model.chat.member.AmityChannelMember
 import com.amity.socialcloud.uikit.chat.compose.home.AmityChatHomePageViewModel
+import com.amity.socialcloud.uikit.chat.compose.home.element.AmityChatListErrorState
 import com.amity.socialcloud.uikit.chat.compose.home.element.AmityChatListEmptyState
 import com.amity.socialcloud.uikit.chat.compose.home.element.AmityChatListItem
 import com.amity.socialcloud.uikit.chat.compose.home.element.AmityChatListSkeleton
@@ -116,6 +118,23 @@ fun AmityChatListComponent(
             )
         }
 
+        // PDT-5753 REQ-022. Paging delivers a failed channel query as LoadState.Error, not as an
+        // exception on the flow, so the view model's catch never sees it. Log it here, once per
+        // error, naming the config key to change: code 500000 on a lastMessage query means the
+        // backend flag is off for this environment.
+        val refreshError = (channels.loadState.refresh as? LoadState.Error)?.error
+        LaunchedEffect(refreshError) {
+            refreshError?.let {
+                Log.e(
+                    "AmityChatHomePage",
+                    "channel list query failed. If this is code 500000, sortBy=lastMessage is not " +
+                        "enabled for this environment; set feature_flags.chat.channel_list_sort_by " +
+                        "back to \"lastActivity\".",
+                    it,
+                )
+            }
+        }
+
         // Debounce EMPTY/LOADING to avoid flashing states during background refreshes.
         var hasEverHadData by remember { mutableStateOf(false) }
         var debouncedState by remember {
@@ -183,8 +202,10 @@ fun AmityChatListComponent(
             }
 
             AmityChatHomePageViewModel.ChannelListState.ERROR -> {
-                // Renders nothing by design: the empty state's "create a chat" call to action
-                // would be misleading when the list merely failed to load.
+                // PDT-5753 REQ-022. Was deliberately blank; it now renders the error state, which
+                // reuses the empty state's container and styles but drops the "create a chat" call
+                // to action, since creating a chat does not fix a list that failed to load.
+                AmityChatListErrorState(modifier = modifier)
             }
 
             AmityChatHomePageViewModel.ChannelListState.SUCCESS -> {
