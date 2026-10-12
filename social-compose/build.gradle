@@ -4,7 +4,6 @@ plugins {
     id 'org.jetbrains.kotlin.kapt'
     id 'kotlin-parcelize'
     id 'org.jetbrains.kotlin.plugin.compose'
-    id "io.github.takahirom.roborazzi"
 }
 
 apply from: "../buildsystem/activity.gradle"

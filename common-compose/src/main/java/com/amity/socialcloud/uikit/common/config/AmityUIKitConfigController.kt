@@ -453,7 +453,15 @@ object AmityUIKitConfigController {
             return true
         }
         if (!::config.isInitialized) return false
-        return config.excludes.find { it.asString == configId } != null
+        // `*` in an entry stands for any page or component, as on iOS. Matching
+        // only the exact id made `*` hit just elements that had no page scope, so
+        // giving an element its page scope silently broke integrators' entries.
+        val candidates = if (id.size == 3) {
+            setOf(configId, "*/${id[1]}/*", "*/${id[1]}/${id[2]}", "*/*/${id[2]}")
+        } else {
+            setOf(configId)
+        }
+        return config.excludes.any { it.asString in candidates }
     }
 
     fun isConversationUserActionEnabled(actionName: String): Boolean {
