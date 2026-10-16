@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -21,14 +22,22 @@ import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.core.session.model.SessionState
+import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
 import com.amity.socialcloud.uikit.chat.compose.home.AmityChatHomePageActivity
 import com.amity.socialcloud.uikit.community.compose.socialhome.AmitySocialHomePageActivity
 import com.amity.socialcloud.uikit.sample.discoverywidget.AmityDiscoveryWidgetTestActivity
 import com.amity.socialcloud.uikit.community.compose.user.profile.AmityUserProfilePageActivity
 import com.amity.socialcloud.uikit.community.compose.visitor.AmityVisitorUsageLimitPageActivity
 import com.amity.socialcloud.uikit.sample.liveChat.AmityLiveChatListActivity
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withTimeoutOrNull
 
 class LoginActivity : ComponentActivity() {
+
+    private companion object {
+        const val LAUNCH_STATE_TIMEOUT_MS = 3_000L
+    }
 
     private lateinit var viewModel: LoginViewModel
 
@@ -71,6 +80,30 @@ class LoginActivity : ComponentActivity() {
                     var currentScreen by rememberSaveable { mutableStateOf(
                         if (hasSession) Screen.SELECT_MODULE else Screen.ENVIRONMENT_SETUP
                     ) }
+                    // getUserId() only reads the stored account row. A login that was
+                    // interrupted before its token arrived leaves a userId behind, and the
+                    // SDK cannot establish a session from it. The first state the SDK
+                    // publishes after launch says whether it restored the session. When it
+                    // did not, log in again as the stored user, like the iOS sample does.
+                    // A restored session needs no login, so a normal restart sends nothing.
+                    // The SDK can also publish no state at all after launch, so a missing
+                    // state counts as "not restored".
+                    LaunchedEffect(Unit) {
+                        if (hasSession) {
+                            val launchState = withTimeoutOrNull(LAUNCH_STATE_TIMEOUT_MS) {
+                                AmityCoreClient.observeSessionState().asFlow().first()
+                            }
+                            if (launchState != SessionState.Established) {
+                                viewModel.restoreSession { message ->
+                                    Toast.makeText(
+                                        this@LoginActivity,
+                                        "Could not restore the session: $message",
+                                        Toast.LENGTH_LONG,
+                                    ).show()
+                                }
+                            }
+                        }
+                    }
                     // The module screen is reachable from before and after login, so
                     // Back has to return where it was opened from rather than to a
                     // fixed screen.

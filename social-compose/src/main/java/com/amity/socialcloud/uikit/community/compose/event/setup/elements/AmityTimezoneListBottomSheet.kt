@@ -49,6 +49,7 @@ fun AmityTimezoneListBottomSheet(
             onDismissRequest = onDismiss,
             sheetState = sheetState,
             containerColor = AmityTheme.colors.background,
+            contentWindowInsets = { eventSetupSheetContentInsets() },
             dragHandle = {
                 Box(
                     modifier = Modifier
@@ -76,6 +77,7 @@ fun AmityTimezoneListBottomSheet(
                     modifier = modifier
                         .fillMaxWidth()
                         .fillMaxHeight(0.9f)
+                        .consumeUpwardOverscroll()
                 ) {
                     items(timezones) { timezone ->
                         Column(modifier = Modifier.fillMaxWidth()) {

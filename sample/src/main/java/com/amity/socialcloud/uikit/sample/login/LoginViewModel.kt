@@ -164,13 +164,13 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private fun performLogin(c: LoginConfig) {
-        val sessionHandler = object : SessionHandler {
-            override fun sessionWillRenewAccessToken(renewal: AccessTokenRenewal) {
-                renewal.renew()
-            }
+    private val sessionHandler = object : SessionHandler {
+        override fun sessionWillRenewAccessToken(renewal: AccessTokenRenewal) {
+            renewal.renew()
         }
+    }
 
+    private fun performLogin(c: LoginConfig) {
         val userId = resolvedUserId()
         val displayName = c.displayName.trim().ifEmpty { null }
 
@@ -201,6 +201,47 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
                 disposables.add(d)
             }
         }
+    }
+
+    private var restoreStarted = false
+
+    /**
+     * Logs in again as the user the SDK has stored, without any input from the user.
+     *
+     * An interrupted login leaves a stored user without a token. The SDK cannot establish
+     * a session from it, so every authenticated call fails with "Please login to use SDK".
+     * A login with the same user ID reuses a valid token and fetches a new one when the
+     * token is missing. The iOS sample app restores its session the same way at launch.
+     *
+     * This does not touch [loginState]. The login screens read that state, and a restore
+     * that finished while they were hidden would otherwise move them forward later.
+     * Visitor and secure mode sessions are not restored here, because the sample login
+     * does not support a signed-in secure login either.
+     */
+    fun restoreSession(onFailure: (String) -> Unit) {
+        val c = _config.value
+        val userId = AmityCoreClient.getUserId()
+        if (restoreStarted || userId.isEmpty() || c.userType != UserType.SIGNED_IN || c.secureMode) {
+            return
+        }
+        restoreStarted = true
+
+        val d = AmityCoreClient.login(userId, sessionHandler)
+            .build()
+            .submit()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                _loggedInUserId.value = userId
+                if (pushNotificationOn()) {
+                    AmityCoreClient.registerPushNotification()
+                        .subscribeOn(Schedulers.io())
+                        .subscribe({}, {})
+                }
+            }, { e ->
+                onFailure(e.message ?: "Login failed")
+            })
+        disposables.add(d)
     }
 
     private fun loginAsVisitor(c: LoginConfig, sessionHandler: SessionHandler) {

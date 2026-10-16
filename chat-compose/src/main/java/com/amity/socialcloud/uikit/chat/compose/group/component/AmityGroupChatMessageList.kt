@@ -82,6 +82,8 @@ import com.amity.socialcloud.uikit.chat.compose.message.element.saveImageToGalle
 import com.amity.socialcloud.uikit.chat.compose.message.element.saveVideoToGallery
 import com.amity.socialcloud.uikit.chat.compose.message.report.AmityChatReportOtherReasonContent
 import com.amity.socialcloud.uikit.chat.compose.message.report.AmityChatReportMessageDeletedErrorContent
+import com.amity.socialcloud.uikit.chat.compose.message.report.consumeUpwardOverscroll
+import com.amity.socialcloud.uikit.chat.compose.message.report.reportSheetContentInsets
 import com.amity.socialcloud.uikit.chat.compose.live.elements.ConfirmDeletePopup
 import com.amity.socialcloud.uikit.chat.compose.localization.DefaultAmityChatStringProvider
 import com.amity.socialcloud.uikit.chat.compose.message.element.reaction.AmityChatMessageReactionSheet
@@ -499,6 +501,7 @@ fun AmityGroupChatMessageList(
                     messageToReport = null
                 },
                 sheetState = reportSheetState,
+                contentWindowInsets = { reportSheetContentInsets() },
             ) {
                 AmityGroupChatMessageReportContent(
                     isMessageDeleted = isMessageDeleted,
@@ -609,6 +612,7 @@ private fun AmityGroupChatMessageReportReasonList(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
+                .consumeUpwardOverscroll()
         ) {
             item {
                 Text(

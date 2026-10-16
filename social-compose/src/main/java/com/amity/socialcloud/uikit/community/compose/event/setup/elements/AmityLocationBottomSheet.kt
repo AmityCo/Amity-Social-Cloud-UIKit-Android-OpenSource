@@ -91,6 +91,7 @@ fun AmityLocationBottomSheet(
             onDismissRequest = onDismiss,
             sheetState = sheetState,
             containerColor = AmityTheme.colors.background,
+            contentWindowInsets = { eventSetupSheetContentInsets() },
             dragHandle = {
                 Box(
                     modifier = Modifier
@@ -120,6 +121,7 @@ fun AmityLocationBottomSheet(
                     modifier = modifier
                         .fillMaxWidth()
                         .fillMaxHeight(0.92f)
+                        .consumeUpwardOverscroll()
                         .verticalScroll(scrollState)
                         .padding(horizontal = 16.dp)
                 ) {
