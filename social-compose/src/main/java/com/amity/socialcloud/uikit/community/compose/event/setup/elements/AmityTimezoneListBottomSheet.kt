@@ -1,5 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.event.setup.elements
 
+import android.icu.text.TimeZoneNames
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,7 +23,9 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import kotlinx.coroutines.launch
+import org.joda.time.DateTimeZone
 import java.util.*
+import android.icu.util.TimeZone as IcuTimeZone
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,8 +42,10 @@ fun AmityTimezoneListBottomSheet(
     val scope = rememberCoroutineScope()
 
     val timezones = remember {
-        TimeZone.getAvailableIDs()
-            .map { TimeZone.getTimeZone(it) }
+        // Location zones only: getAvailableIDs() also returns every alias (US/Samoa, Pacific/Samoa,
+        // Etc/UTC...), which showed the same zone several times.
+        IcuTimeZone.getAvailableIDs(IcuTimeZone.SystemTimeZoneType.CANONICAL_LOCATION, null, null)
+            .map { TimeZone.getTimeZone(ianaId(it)) }
             .sortedBy { it.rawOffset }
     }
 
@@ -117,6 +122,13 @@ fun AmityTimezoneListBottomSheet(
     }
 }
 
+// ICU names each location by its first-ever ID, which can be outdated (Asia/Calcutta). Save the
+// current IANA name (Asia/Kolkata) instead, as iOS and Web do, unless it belongs to another location.
+private fun ianaId(cldrId: String): String {
+    val current = runCatching { DateTimeZone.forID(cldrId).id }.getOrNull() ?: return cldrId
+    return if (IcuTimeZone.getCanonicalID(current) == cldrId) current else cldrId
+}
+
 object TimezoneFormatter {
     fun format(timezone: TimeZone): String {
         val offsetMillis = timezone.rawOffset
@@ -134,9 +146,12 @@ object TimezoneFormatter {
         // Get a readable name for the timezone
         val name = timezone.getDisplayName(false, TimeZone.LONG, Locale.getDefault())
         
-        // Get city from identifier (e.g., "Asia/Shanghai" -> "Shanghai")
-        val city = timezone.id.split("/").lastOrNull() ?: timezone.id
-        
+        // The zone's exemplar city, localized ("Kolkata", "Ho Chi Minh City"); the ID's last
+        // segment can be an outdated or underscored name.
+        val city = IcuTimeZone.getCanonicalID(timezone.id)
+            ?.let { TimeZoneNames.getInstance(Locale.getDefault()).getExemplarLocationName(it) }
+            ?: timezone.id.substringAfterLast('/').replace('_', ' ')
+
         return "(GMT $offset) $name - $city"
     }
 }

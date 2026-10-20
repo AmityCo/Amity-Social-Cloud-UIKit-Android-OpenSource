@@ -139,10 +139,15 @@ fun AmityMediaAttachmentComponent(
                 }
             }
 
-            AmityProductTagAttachmentButton(
-                count = productTagCount,
-                onClick = onProductTagClick,
-            )
+            // PDT-6266: the button opens a read-only list of tags already on the post, so with
+            // none it opens an empty sheet. Gated like the detailed sheet's row and like iOS;
+            // tagging itself starts from the media preview and the product mention.
+            if (productTagCount > 0) {
+                AmityProductTagAttachmentButton(
+                    count = productTagCount,
+                    onClick = onProductTagClick,
+                )
+            }
         }
     }
 }
