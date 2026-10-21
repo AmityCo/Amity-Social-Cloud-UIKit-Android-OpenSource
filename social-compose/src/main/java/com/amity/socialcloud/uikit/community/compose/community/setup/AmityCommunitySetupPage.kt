@@ -256,6 +256,7 @@ fun AmityCommunitySetupPage(
 
     var isCapturedImageReady by remember { mutableStateOf(false) }
     var avatarUri by remember { mutableStateOf(Uri.EMPTY) }
+    var isCreating by remember { mutableStateOf(false) }
 
     val joinRequestFlow = remember(communityToEdit) {
         if (isInEditMode) {
@@ -1072,7 +1073,7 @@ fun AmityCommunitySetupPage(
                     ),
                     shape = RoundedCornerShape(8.dp),
                     contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
-                    enabled = shouldActionButtonEnable,
+                    enabled = shouldActionButtonEnable && !isCreating,
                     modifier = Modifier
                         .height(40.dp)
                         .fillMaxWidth()
@@ -1104,6 +1105,8 @@ fun AmityCommunitySetupPage(
                                 )
                             }
                         } else {
+                            if (isCreating) return@Button
+                            isCreating = true
                             viewModel.createCommunity(
                                 avatarUri = avatarUri,
                                 displayName = name,
@@ -1125,7 +1128,8 @@ fun AmityCommunitySetupPage(
                                     )
                                 },
                                 onError = {
-                                    AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_community_setup_toast_create_failed"))
+                                    isCreating = false
+                                    AmityUIKitSnackbar.publishSnackbarErrorMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_community_setup_toast_create_failed"))
                                 }
                             )
                         }

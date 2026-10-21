@@ -14,6 +14,7 @@ import com.amity.socialcloud.sdk.model.social.community.AmityJoinRequest
 import com.amity.socialcloud.sdk.model.social.community.AmityJoinRequestStatus
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
 import com.amity.socialcloud.uikit.common.base.AmityBaseViewModel
+import com.amity.socialcloud.uikit.common.infra.initializer.AmityAppContext
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
@@ -24,6 +25,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import com.amity.socialcloud.uikit.community.compose.dropGatedPinnedPosts
+import java.io.FileNotFoundException
 
 
 class AmityCommunitySetupPageViewModel : AmityBaseViewModel() {
@@ -132,8 +134,11 @@ class AmityCommunitySetupPageViewModel : AmityBaseViewModel() {
         onSuccess: (AmityImage) -> Unit,
         onError: (String) -> Unit,
     ) {
-        AmityCoreClient.newFileRepository()
-            .uploadImage(uri)
+        Completable.fromAction {
+            AmityAppContext.getContext().contentResolver.openInputStream(uri)?.close()
+                ?: throw FileNotFoundException(uri.toString())
+        }
+            .andThen(AmityCoreClient.newFileRepository().uploadImage(uri))
             .doOnNext { uploadStatus ->
                 when (uploadStatus) {
                     is AmityUploadResult.COMPLETE -> onSuccess(uploadStatus.getFile())
