@@ -29,6 +29,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
 import com.amity.socialcloud.uikit.common.R as CommonR
@@ -45,6 +46,9 @@ import com.amity.socialcloud.uikit.community.compose.community.membership.list.A
 import com.amity.socialcloud.uikit.community.compose.search.components.AmityEmptySearchResultComponent
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityUserListShimmer
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
+import kotlinx.coroutines.delay
+
+private const val EMPTY_RESULT_GRACE_MS = 1_000L
 
 @Composable
 fun AmityCommunityMembersMembershipComponent(
@@ -65,6 +69,28 @@ fun AmityCommunityMembersMembershipComponent(
         viewModel.searchMembers(keyword)
     }.collectAsLazyPagingItems()
 
+    // PDT-6353: the combined refresh state reads NotLoading while the local query or the network
+    // refresh is still running (it defers to the network side, which has not started yet on the
+    // first event), so either one still loading counts as loading. The SDK's network refresh can
+    // also finish before the local query re-runs with its rows; a real "no match" looks exactly
+    // the same, so the empty state is held back until it has stood for a moment.
+    // ponytail: time-based guard, a device slower than this still flashes; the real fix is in the
+    // SDK (finish the refresh only after the local query has seen the new rows).
+    val combinedLoadState = lazyPagingItems.loadState
+    val isAnyRefreshLoading = combinedLoadState.refresh is LoadState.Loading ||
+        combinedLoadState.source.refresh is LoadState.Loading ||
+        combinedLoadState.mediator?.refresh is LoadState.Loading
+    val listState = AmityCommunityMembershipPageViewModel.MembershipListState.from(
+        loadState = if (isAnyRefreshLoading) LoadState.Loading else combinedLoadState.refresh,
+        itemCount = lazyPagingItems.itemCount,
+    )
+    LaunchedEffect(listState) {
+        if (listState == AmityCommunityMembershipPageViewModel.MembershipListState.EMPTY) {
+            delay(EMPTY_RESULT_GRACE_MS)
+        }
+        viewModel.setMemberListState(listState)
+    }
+
     val triggerPagingRefresh by viewModel.triggerPagingRefresh.collectAsState()
 
     LaunchedEffect(triggerPagingRefresh) {
@@ -77,11 +103,6 @@ fun AmityCommunityMembersMembershipComponent(
         }
 
         LazyColumn {
-            AmityCommunityMembershipPageViewModel.MembershipListState.from(
-                loadState = lazyPagingItems.loadState.refresh,
-                itemCount = lazyPagingItems.itemCount,
-            ).let(viewModel::setMemberListState)
-
             when (loadState) {
                 AmityCommunityMembershipPageViewModel.MembershipListState.EMPTY -> {
                     item {

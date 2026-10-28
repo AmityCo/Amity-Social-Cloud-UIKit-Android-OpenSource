@@ -82,6 +82,9 @@ class AmityGlobalSearchViewModel : AmityBaseViewModel() {
         AmityUIKitDataGate.paging(AmityUIKitFeature.COMMUNITY) {
         AmitySocialClient.newCommunityRepository()
             .searchCommunities(_keyword.value, includeDiscoverablePrivateCommunity = true)
+            // The SDK includes soft-deleted (closed) communities by default; opening one only
+            // shows "content unavailable", so they must never appear in search (PDT-6352).
+            .includeDeleted(false)
             .run {
                 if (_searchType.value == AmityGlobalSearchType.MY_COMMUNITY) {
                     filter(AmityCommunityFilter.MEMBER)
