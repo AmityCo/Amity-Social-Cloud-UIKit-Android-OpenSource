@@ -54,11 +54,9 @@ fun AmityEventsComponent(
     val myEventsVisible = !isComponentExcluded(pageScope, "my_event_feed_component")
     if (!exploreVisible && !myEventsVisible) return
 
-    // Explore tab excludes the current user's own events, so it needs its own streams
-    // separate from the My event tab's.
-    val exploreLiveEvents = remember {
-        viewModel.getLiveEvents(AmityEventOriginType.COMMUNITY, excludeOwnEvents = true)
-    }.collectAsLazyPagingItems()
+    // Explore's Recommended for you excludes the current user's own events (PDT-4179), so it needs
+    // its own upcoming stream separate from the My event tab's. Happening now keeps them, as iOS does,
+    // and shares the live stream with My event.
     val exploreUpcomingEvents = remember {
         viewModel.getUpcomingEvents(AmityEventOriginType.COMMUNITY, excludeOwnEvents = true)
     }.collectAsLazyPagingItems()
@@ -128,7 +126,7 @@ fun AmityEventsComponent(
                 // Explore tab - shows all events
                 AmityExploreEventFeedComponent(
                     pageScope = pageScope,
-                    liveEvents = exploreLiveEvents,
+                    liveEvents = liveEvents,
                     upcomingEvents = exploreUpcomingEvents,
                     onEventClick = { event ->
                         context.startActivity(AmityEventDetailPageActivity.newIntent(context, event.getEventId()))

@@ -142,7 +142,7 @@ fun AmityMyEventFeedComponent(
             // Past Events Section
             item {
                 Text(
-                    text = amitySocialString("amity_social_button_past_events"),
+                    text = amitySocialString("amity_social_my_event_feed_past"),
                     style = AmityTheme.typography.title.copy(fontWeight = FontWeight.Bold),
                     color = AmityTheme.colors.base,
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)

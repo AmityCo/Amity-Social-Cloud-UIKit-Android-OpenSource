@@ -28,29 +28,38 @@ import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
+import com.amity.socialcloud.sdk.model.core.permission.AmityPermission
 import com.amity.socialcloud.sdk.model.social.event.AmityEvent
 import com.amity.socialcloud.sdk.model.social.event.AmityEventOriginType
 import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.utils.isSignedIn
+import com.amity.socialcloud.uikit.common.utils.isVisitor
 import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.community.profile.component.EventCardItem
 import com.amity.socialcloud.uikit.community.compose.community.profile.component.EventCardStyle
 import com.amity.socialcloud.uikit.community.compose.socialhome.components.AmityEventsComponentViewModel
 import com.amity.socialcloud.uikit.community.compose.ui.shimmer.AmityEventCardListShimmer
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
+import kotlinx.coroutines.flow.catch
 
 /**
  * Page displaying all past events in a list format.
  * Shown when user clicks "View all" under past events section.
- * 
- * @param showAllEvents If true, shows all events in "All" tab. If false, shows user's events in "All" tab.
+ * The "All" and "Hosting" tabs are only shown to users with the global create event permission;
+ * everyone else sees the "All" list without tabs.
+ *
+ * @param showAllEvents If true, the "All" tab shows every community's past events. If false (default),
+ * it shows the past events the user hosted or RSVP'd to, same as iOS and web.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AmityPastEventsPage(
     modifier: Modifier = Modifier,
-    showAllEvents: Boolean = true,
+    showAllEvents: Boolean = false,
     pageScope: AmityComposePageScope? = null,
     onBackClick: () -> Unit = {},
     onEventClick: (AmityEvent) -> Unit = {}
@@ -65,14 +74,29 @@ fun AmityPastEventsPage(
 
     val listState = rememberLazyListState()
 
+    val hasCreateEventPermission by if (!AmityCoreClient.isSignedIn() || AmityCoreClient.isVisitor()) {
+        remember { mutableStateOf(false) }
+    } else {
+        remember {
+            AmityCoreClient.hasPermission(AmityPermission.CREATE_EVENT)
+                .atGlobal()
+                .check()
+                .asFlow()
+                .catch { emit(false) }
+        }.collectAsState(initial = false)
+    }
+
     // Tab state
     var selectedTabIndex by remember { mutableStateOf(0) }
+    LaunchedEffect(hasCreateEventPermission) {
+        if (!hasCreateEventPermission) selectedTabIndex = 0
+    }
     val tabTitles = listOf(amitySocialString("amity_social_tab_tab_all"), amitySocialString("amity_social_tab_tab_hosting"))
     
     // Get events based on selected tab and showAllEvents parameter
     val events = remember(selectedTabIndex, showAllEvents) {
         when (selectedTabIndex) {
-            0 -> if (showAllEvents) viewModel.getPastEvents(AmityEventOriginType.COMMUNITY) else viewModel.getMyPastEvents(AmityEventOriginType.USER)
+            0 -> if (showAllEvents) viewModel.getPastEvents(AmityEventOriginType.COMMUNITY) else viewModel.getMyPastEvents(AmityEventOriginType.COMMUNITY)
             1 -> viewModel.getHostingPastEvents(AmityEventOriginType.COMMUNITY)
             else -> viewModel.getPastEvents(AmityEventOriginType.COMMUNITY)
         }
@@ -113,34 +137,36 @@ fun AmityPastEventsPage(
                     .padding(paddingValues)
             ) {
                 // Tab Row
-                ScrollableTabRow(
-                    selectedTabIndex = selectedTabIndex,
-                    containerColor = AmityTheme.colors.background,
-                    contentColor = AmityTheme.colors.primary,
-                    edgePadding = 0.dp,
-                    divider = {},
-                    indicator = { tabPositions ->
-                        TabRowDefaults.SecondaryIndicator(
-                            modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                            color = AmityTheme.colors.primary,
-                            height = 2.dp
-                        )
-                    }
-                ) {
-                    tabTitles.forEachIndexed { index, title ->
-                        Tab(
-                            selected = selectedTabIndex == index,
-                            onClick = { selectedTabIndex = index },
-                            text = {
-                                Text(
-                                    text = title,
-                                    style = AmityTheme.typography.body.copy(
-                                        fontWeight = FontWeight.Bold
-                                    ),
-                                    color = if (selectedTabIndex == index) AmityTheme.colors.primary else AmityTheme.colors.baseShade1
-                                )
-                            }
-                        )
+                if (hasCreateEventPermission) {
+                    ScrollableTabRow(
+                        selectedTabIndex = selectedTabIndex,
+                        containerColor = AmityTheme.colors.background,
+                        contentColor = AmityTheme.colors.primary,
+                        edgePadding = 0.dp,
+                        divider = {},
+                        indicator = { tabPositions ->
+                            TabRowDefaults.SecondaryIndicator(
+                                modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
+                                color = AmityTheme.colors.primary,
+                                height = 2.dp
+                            )
+                        }
+                    ) {
+                        tabTitles.forEachIndexed { index, title ->
+                            Tab(
+                                selected = selectedTabIndex == index,
+                                onClick = { selectedTabIndex = index },
+                                text = {
+                                    Text(
+                                        text = title,
+                                        style = AmityTheme.typography.body.copy(
+                                            fontWeight = FontWeight.Bold
+                                        ),
+                                        color = if (selectedTabIndex == index) AmityTheme.colors.primary else AmityTheme.colors.baseShade1
+                                    )
+                                }
+                            )
+                        }
                     }
                 }
 

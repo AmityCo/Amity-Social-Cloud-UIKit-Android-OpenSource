@@ -345,7 +345,8 @@
     <string name="amity_social_button_option_number">Option %d</string>
     <string name="amity_social_button_options">Options</string>
     <string name="amity_social_button_others">Others</string>
-    <string name="amity_social_button_past_events">Past</string>
+    <string name="amity_social_button_past_events">Past events</string>
+    <string name="amity_social_my_event_feed_past">Past</string>
     <string name="amity_social_button_pending">Pending</string>
     <string name="amity_social_button_pending_invitation">Pending invitation</string>
     <string name="amity_social_button_pending_posts">Pending posts</string>

@@ -73,11 +73,11 @@ fun AmityUpcomingEventsPage(
     // Get events based on selected tab and showAllEvents parameter
     val events = remember(selectedTabIndex, showAllEvents) {
         when (selectedTabIndex) {
-            // showAllEvents is the "View all" entry from the Explore feed, which excludes
-            // the current user's own events.
-            0 -> if (showAllEvents) viewModel.getUpcomingEvents(AmityEventOriginType.COMMUNITY, excludeOwnEvents = true) else viewModel.getMyUpcomingEvents(AmityEventOriginType.COMMUNITY)
+            // showAllEvents is the "View all" entry from the Explore feed. Like iOS and web, it lists
+            // every upcoming event, the current user's own included.
+            0 -> if (showAllEvents) viewModel.getUpcomingEvents(AmityEventOriginType.COMMUNITY) else viewModel.getMyUpcomingEvents(AmityEventOriginType.COMMUNITY)
             1 -> viewModel.getHostingUpcomingEvents(AmityEventOriginType.COMMUNITY)
-            else -> viewModel.getUpcomingEvents(AmityEventOriginType.COMMUNITY, excludeOwnEvents = true)
+            else -> viewModel.getUpcomingEvents(AmityEventOriginType.COMMUNITY)
         }
     }.collectAsLazyPagingItems()
 

@@ -3,6 +3,7 @@ package com.amity.socialcloud.uikit.community.compose.ui.components.mentions
 import androidx.paging.PagingData
 import androidx.paging.map
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.api.core.user.search.AmityUserSearchMatchType
 import com.amity.socialcloud.sdk.api.core.user.search.AmityUserSortOption
 import com.amity.socialcloud.sdk.api.social.AmitySocialClient
 import com.amity.socialcloud.sdk.helper.core.coroutines.asFlow
@@ -23,6 +24,7 @@ class AmityMentionViewModel : AmityBaseViewModel() {
         return AmityCoreClient.newUserRepository()
             .searchUsers(keyword)
             .sortBy(AmityUserSortOption.DISPLAYNAME)
+            .matchType(AmityUserSearchMatchType.PARTIAL)
             .searchBy(listOf(AmitySearchUserBy.DISPLAY_NAME))
             .build()
             .query()

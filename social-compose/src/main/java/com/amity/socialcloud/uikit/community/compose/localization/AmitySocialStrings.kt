@@ -554,6 +554,7 @@ object AmitySocialStrings {
         "amity_social_button_options" to R.string.amity_social_button_options,
         "amity_social_button_others" to R.string.amity_social_button_others,
         "amity_social_button_past_events" to R.string.amity_social_button_past_events,
+        "amity_social_my_event_feed_past" to R.string.amity_social_my_event_feed_past,
         "amity_social_button_pending" to R.string.amity_social_button_pending,
         "amity_social_button_pending_invitation" to R.string.amity_social_button_pending_invitation,
         "amity_social_button_poll" to R.string.amity_social_button_poll,
