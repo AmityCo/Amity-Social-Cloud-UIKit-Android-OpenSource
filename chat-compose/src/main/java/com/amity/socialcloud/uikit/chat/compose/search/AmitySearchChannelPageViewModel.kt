@@ -58,6 +58,8 @@ class AmitySearchChannelPageViewModel : AmityBaseViewModel() {
             _searchState.update { it.copy(query = keyword) }
             return
         }
+        // PDT-6753: show loading during the debounce, so an empty list is not read as "no results".
+        _searchState.update { it.copy(isLoading = true) }
         searchJob = viewModelScope.launch {
             delay(300)
             searchChannels(keyword.trim())
@@ -187,6 +189,7 @@ class AmitySearchChannelPageViewModel : AmityBaseViewModel() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ channels ->
+                if (isStaleResponse(query, append)) return@subscribe
                 val nextToken = if (channels.size >= PAGE_SIZE) deriveNextToken(token, channels.size) else null
                 _searchState.update { state ->
                     val updatedChannels = if (append) state.channels + channels else channels
@@ -202,6 +205,7 @@ class AmitySearchChannelPageViewModel : AmityBaseViewModel() {
                 // (ChannelQueryPersister), so members are readable from cache here.
                 fetchChannelMembers(channels)
             }, {
+                if (isStaleResponse(query, append)) return@subscribe
                 _searchState.update { it.copy(isLoading = false, isLoadingMore = false) }
             })
     }
@@ -215,6 +219,7 @@ class AmitySearchChannelPageViewModel : AmityBaseViewModel() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ messages ->
+                if (isStaleResponse(query, append)) return@subscribe
                 val nextToken = if (messages.size >= PAGE_SIZE) deriveNextToken(token, messages.size) else null
                 val filteredMessages = messages.filter { message ->
                     val text = (message.getData() as? AmityMessage.Data.TEXT)?.getText()
@@ -250,8 +255,15 @@ class AmitySearchChannelPageViewModel : AmityBaseViewModel() {
                     )
                 }
             }, {
+                if (isStaleResponse(query, append)) return@subscribe
                 _searchState.update { it.copy(isLoading = false, isLoadingMore = false) }
             })
+    }
+
+    // A response for an older keyword can arrive after a new keyword is typed. It must not replace
+    // the loading state of the new search (PDT-6753).
+    private fun isStaleResponse(query: String, append: Boolean): Boolean {
+        return !append && query != _searchKeyword.value.trim()
     }
 
     private fun loadMoreChannels(query: String, token: String) {

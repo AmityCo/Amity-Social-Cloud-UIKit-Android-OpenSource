@@ -239,7 +239,7 @@ fun AmityGroupMemberListPage(
             val currentUserId = AmityCoreClient.getUserId()
 
             // Always fetch current user's membership independently so it can be pinned
-            // regardless of whether it appears in the search/paging results.
+            // without a search, even when it is not in the loaded paging results.
             val currentUserMember by remember {
                 viewModel.getMyMembership()
             }.collectAsState(initial = null)
@@ -306,9 +306,14 @@ fun AmityGroupMemberListPage(
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
                     ) {
-                        // Always pin current user at the top
+                        // Pin current user at the top. While searching, pin only if present in results
                         if (membersItems.itemSnapshotList.items.isNotEmpty()) {
-                            currentUserMember?.let { self ->
+                            val pinnedSelf = if (searchKeyword.isEmpty()) {
+                                currentUserMember
+                            } else {
+                                membersItems.itemSnapshotList.items.find { it.getUserId() == currentUserId }
+                            }
+                            pinnedSelf?.let { self ->
                                 item(key = "self_${self.getUserId()}") {
                                     MemberListItem(
                                         member = self,

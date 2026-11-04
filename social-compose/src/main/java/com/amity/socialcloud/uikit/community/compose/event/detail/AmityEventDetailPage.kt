@@ -156,8 +156,9 @@ fun AmityEventDetailPage(
     // Phase 4: link recipient has no access to a private/hidden community event
     val isPrivateAccess = eventDetailState is AmityEventDetailViewModel.EventDetailState.PrivateAccess
 
-    val event by viewModel.getEvent()
-        .collectAsState(initial = null)
+    // Remembered so recomposition does not open a new live object each time (PDT-6738).
+    val eventFlow = remember(viewModel) { viewModel.getEvent() }
+    val event by eventFlow.collectAsState(initial = null)
 
     // Fetch the room post linked to this event (used by AmityEventInfoComponent)
     val eventPost by remember(event?.getPostId()) {

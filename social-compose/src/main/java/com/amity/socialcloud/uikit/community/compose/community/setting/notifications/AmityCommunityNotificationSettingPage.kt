@@ -143,7 +143,8 @@ fun AmityCommunityNotificationSettingPage(
                 )
             }
 
-            if (!isNotificationEnabled) {
+            // Wait for the user settings to load, so the message does not show while they are null
+            if (userNotificationSettings != null && !isNotificationEnabled) {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically,

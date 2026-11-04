@@ -75,12 +75,7 @@ class AmityCommunityMembershipPageViewModel(val communityId: String) : AmityBase
             .getMembers()
             .filter(AmityCommunityMembershipFilter.MEMBER)
             .sortBy(AmityCommunityMembershipSortOption.DISPLAY_NAME)
-            .roles(
-                listOf(
-                    AmityConstants.CHANNEL_MODERATOR_ROLE,
-                    AmityConstants.COMMUNITY_MODERATOR_ROLE
-                )
-            )
+            .roles(listOf(AmityConstants.COMMUNITY_MODERATOR_ROLE))
             .includeDeleted(false)
             .build()
             .query()
@@ -158,11 +153,11 @@ class AmityCommunityMembershipPageViewModel(val communityId: String) : AmityBase
     ) {
         AmitySocialClient.newCommunityRepository()
             .moderation(communityId)
+            // community-moderator only, like iOS and Flutter. The backend rejects the whole
+            // request when the caller lacks any permission of a role being granted, and
+            // channel-moderator holds chat permissions that custom roles often lack (PDT-6733).
             .addRoles(
-                roles = listOf(
-                    AmityConstants.CHANNEL_MODERATOR_ROLE,
-                    AmityConstants.COMMUNITY_MODERATOR_ROLE
-                ),
+                roles = listOf(AmityConstants.COMMUNITY_MODERATOR_ROLE),
                 userIds = listOf(userId)
             )
             .subscribeOn(Schedulers.io())
@@ -194,6 +189,7 @@ class AmityCommunityMembershipPageViewModel(val communityId: String) : AmityBase
     ) {
         AmitySocialClient.newCommunityRepository()
             .moderation(communityId)
+            // Removes both roles: members promoted by older clients also hold channel-moderator.
             .removeRoles(
                 roles = listOf(
                     AmityConstants.CHANNEL_MODERATOR_ROLE,

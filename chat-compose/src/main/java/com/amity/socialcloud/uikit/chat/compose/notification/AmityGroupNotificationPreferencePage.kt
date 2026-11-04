@@ -140,28 +140,31 @@ fun AmityGroupNotificationPreferencePage(
                         ),
                     )
                 }
-                AmityToggle(
-                    isOn = notificationsEnabled,
-                    isDisabled = isSilent,
-                    onChange = { checked ->
-                        notificationsEnabled = checked
-                        if (notificationsEnabled) {
-                            viewModel.enableNotifications(
-                                onSuccess = { },
-                                onError = { err ->
-                                    AmityUIKitSnackbar.publishSnackbarErrorMessage(errorUpdateNotification)
-                                }
-                            )
-                        } else {
-                            viewModel.disableNotifications(
-                                onSuccess = { },
-                                onError = { err ->
-                                    AmityUIKitSnackbar.publishSnackbarErrorMessage(errorUpdateNotification)
-                                }
-                            )
-                        }
-                    },
-                )
+                // Hide the toggle until the server setting loads, so it does not flip from on to off
+                notificationsEnabled?.let { isOn ->
+                    AmityToggle(
+                        isOn = isOn,
+                        isDisabled = isSilent,
+                        onChange = { checked ->
+                            notificationsEnabled = checked
+                            if (checked) {
+                                viewModel.enableNotifications(
+                                    onSuccess = { },
+                                    onError = { err ->
+                                        AmityUIKitSnackbar.publishSnackbarErrorMessage(errorUpdateNotification)
+                                    }
+                                )
+                            } else {
+                                viewModel.disableNotifications(
+                                    onSuccess = { },
+                                    onError = { err ->
+                                        AmityUIKitSnackbar.publishSnackbarErrorMessage(errorUpdateNotification)
+                                    }
+                                )
+                            }
+                        },
+                    )
+                }
             }
         }
     }

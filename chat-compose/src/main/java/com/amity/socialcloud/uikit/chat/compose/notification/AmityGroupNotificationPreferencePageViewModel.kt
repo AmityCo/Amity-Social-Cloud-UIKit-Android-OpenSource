@@ -13,8 +13,9 @@ import kotlinx.coroutines.reactive.asFlow
 
 class AmityGroupNotificationPreferencePageViewModel(private val channelId: String) : ViewModel() {
 
-    private val _notificationsEnabled = MutableStateFlow(true)
-    val notificationsEnabled: StateFlow<Boolean> = _notificationsEnabled
+    // null until getSettings() returns, so the page does not show a guessed value
+    private val _notificationsEnabled = MutableStateFlow<Boolean?>(null)
+    val notificationsEnabled: StateFlow<Boolean?> = _notificationsEnabled
 
     fun getChannelFlow(): Flow<AmityChannel?> {
         return try {

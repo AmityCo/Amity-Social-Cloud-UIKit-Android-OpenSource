@@ -58,7 +58,7 @@ fun AmityMyEventFeedComponent(
             // Upcoming Events Section
             item {
                 Text(
-                    text = amitySocialString("amity_social_status_upcoming_events"),
+                    text = amitySocialString("amity_social_my_event_feed_upcoming"),
                     style = AmityTheme.typography.title.copy(fontWeight = FontWeight.Bold),
                     color = AmityTheme.colors.base,
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
