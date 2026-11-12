@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.utils.clearFocusOnTapOutside
 import com.amity.socialcloud.uikit.community.compose.livestream.create.element.AmityNoOutlineTextField
 import kotlinx.coroutines.delay
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
@@ -66,6 +67,7 @@ fun AmityReportOtherReasonScreen(
         modifier = modifier
             .fillMaxWidth()
             .imePadding()
+            .clearFocusOnTapOutside()
     ) {
         // Header
         Box(

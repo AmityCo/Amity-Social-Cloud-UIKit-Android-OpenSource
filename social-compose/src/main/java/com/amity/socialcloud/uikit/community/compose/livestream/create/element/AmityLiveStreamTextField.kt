@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.utils.keyboardTapOutsideSkip
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,7 +40,7 @@ fun AmityNoOutlineTextField(
 ) {
     BasicTextField(
         value = value,
-        modifier = modifier
+        modifier = modifier.keyboardTapOutsideSkip()
             .fillMaxWidth()
             .background(Color.Transparent),
         onValueChange = {

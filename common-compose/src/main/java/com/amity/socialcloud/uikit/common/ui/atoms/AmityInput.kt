@@ -34,6 +34,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.amity.socialcloud.uikit.common.compose.R
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.utils.keyboardTapOutsideSkip
+import androidx.compose.ui.platform.testTag
 
 /**
  * AmityInput — the atomic text-field family.
@@ -293,14 +295,24 @@ private fun BoxedInput(
         boxMod = boxMod.border(1.dp, border, shape)
     }
 
+    // A boxed input with the search glyph is a search bar. A tap anywhere on the box keeps the
+    // keyboard open, and its test ids match the other search bars.
+    val isSearchBar = leadingIcon == R.drawable.amity_ic_search_r
+    if (isSearchBar) boxMod = boxMod.keyboardTapOutsideSkip()
+
     Row(
         modifier = boxMod.padding(vertical = geometry.paddingVertical, horizontal = geometry.paddingHorizontal),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(INPUT_ICON_GAP),
     ) {
-        InputIcon(leadingIcon, "Icon/Input/TextInput/" + state.toIconLineSegment())
+        InputIcon(
+            leadingIcon,
+            "Icon/Input/TextInput/" + state.toIconLineSegment(),
+            if (isSearchBar) Modifier.testTag("search_bar/search_icon") else Modifier,
+        )
         InlineTextField(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(1f)
+                .then(if (isSearchBar) Modifier.testTag("search_bar/text_field") else Modifier),
             value = value,
             placeholder = placeholder,
             state = state,
@@ -624,13 +636,13 @@ private fun UserInput(
 /* ------------------------------------------------------------------------------------- helpers */
 
 @Composable
-private fun InputIcon(@DrawableRes icon: Int?, tokenPath: String) {
+private fun InputIcon(@DrawableRes icon: Int?, tokenPath: String, modifier: Modifier = Modifier) {
     if (icon == null) return
     Icon(
         imageVector = ImageVector.vectorResource(id = icon),
         contentDescription = null,
         tint = AmityTheme.token(tokenPath),
-        modifier = Modifier.size(20.dp),
+        modifier = modifier.size(20.dp),
     )
 }
 
@@ -670,7 +682,7 @@ private fun InlineTextField(
     BasicTextField(
         value = value,
         onValueChange = onChangeText,
-        modifier = modifier.onFocusChangedCompat(onFocus, onBlur),
+        modifier = modifier.keyboardTapOutsideSkip().onFocusChangedCompat(onFocus, onBlur),
         enabled = enabled,
         singleLine = singleLine,
         textStyle = AmityTheme.typography.body.copy(color = valueColor, fontSize = 15.sp),

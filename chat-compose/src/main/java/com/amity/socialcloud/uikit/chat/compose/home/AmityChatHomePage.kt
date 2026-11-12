@@ -337,6 +337,7 @@ private fun AmityChatHomeTopNavigationBar(
             iconSize = AmityIconButtonSize.SIZE32,
             icon = CommonComposeR.drawable.amity_ic_search_r,
             onClick = onSearchClick,
+            modifier = Modifier.testTag("chat_home/search_button"),
         )
 
         Spacer(modifier = Modifier.width(12.dp))
@@ -420,6 +421,7 @@ private fun AmityCreateChatButton(
             hierarchy = AmityButtonHierarchy.SECONDARY,
             iconSize = AmityIconButtonSize.SIZE32,
             icon = CommonComposeR.drawable.amity_ic_plus_r,
+            modifier = Modifier.testTag("chat_home/create_button"),
             onClick = {
                 when {
                     onlyConversation -> onCreateDirectChatClick()

@@ -31,6 +31,8 @@ import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.utils.keyboardTapOutsideSkip
+import androidx.compose.ui.platform.testTag
 
 /**
  * Search bar ATOM — the design-token search input. Features still on the legacy color system keep
@@ -78,6 +80,7 @@ fun AmitySearchBar(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier
                 .weight(1f)
+                .keyboardTapOutsideSkip()
                 .then(if (height != null) Modifier.heightIn(min = height) else Modifier)
                 .background(
                     color = containerColor,
@@ -89,6 +92,7 @@ fun AmitySearchBar(
                 painter = painterResource(id = CommonComposeR.drawable.amity_ic_search_r),
                 tint = iconTint,
                 contentDescription = null,
+                modifier = Modifier.testTag("search_bar/search_icon"),
             )
 
             BasicTextField(
@@ -102,10 +106,11 @@ fun AmitySearchBar(
                     color = textColor,
                 ),
                 cursorBrush = SolidColor(cursorColor),
-                modifier = Modifier
+                modifier = Modifier.keyboardTapOutsideSkip()
                     .weight(1f)
                     .focusRequester(focusRequester)
-                    .padding(vertical = textVerticalPadding),
+                    .padding(vertical = textVerticalPadding)
+                    .testTag("search_bar/text_field"),
                 decorationBox = { innerTextField ->
                     if (keyword.text.isEmpty()) {
                         Text(

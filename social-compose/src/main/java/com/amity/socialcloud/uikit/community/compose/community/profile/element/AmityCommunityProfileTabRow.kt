@@ -24,6 +24,7 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityProfilePageTab
+import androidx.compose.ui.platform.testTag
 
 /**
  * Renders exactly the tabs it is given.
@@ -63,6 +64,14 @@ fun AmityCommunityProfileTabRow(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = modifier
                             .weight(1f)
+                            .testTag(
+                                when (tab) {
+                                    AmityCommunityProfilePageTab.FEED -> "community_feed_tab_button"
+                                    AmityCommunityProfilePageTab.PIN -> "community_pin_tab_button"
+                                    AmityCommunityProfilePageTab.EVENTS -> "event_button"
+                                    AmityCommunityProfilePageTab.MEDIA -> "community_media_tab_button"
+                                }
+                            )
                             .clickableWithoutRipple {
                                 onSelect(tab)
                             }

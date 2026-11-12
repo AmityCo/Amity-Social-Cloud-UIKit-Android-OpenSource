@@ -136,6 +136,7 @@ import org.joda.time.DateTimeZone
 import org.joda.time.format.DateTimeFormat
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.utils.keyboardTapOutsideSkip
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -292,6 +293,8 @@ fun AmityPollPostComposerPage(
                 Box(
                     modifier = modifier
                         .fillMaxWidth()
+                        .testTag("navigation_bar/title")
+                        .keyboardTapOutsideSkip()
                         .background(AmityTheme.colors.background)
                         .padding(start = 12.dp, end = 16.dp)
                         .onGloballyPositioned { coordinates ->
@@ -587,6 +590,7 @@ fun AmityPollPostComposerPage(
                                     )
                                     .padding(horizontal = 4.dp),
                                 value = question,
+                                textFieldTestTag = "poll_composer/question_field",
                                 hintText = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_placeholder_hint_poll_question"),
                                 maxLines = 30,
                                 maxChar = QUESTION_MAX_CHAR,
@@ -720,6 +724,7 @@ fun AmityPollPostComposerPage(
                                             modifier = Modifier
                                                 .weight(1f)
                                                 .heightIn(max = 160.dp)
+                                                .testTag("poll_composer/option_field")
                                                 .onFocusChanged { focus ->
                                                     isFocused = focus.isFocused
                                                 }

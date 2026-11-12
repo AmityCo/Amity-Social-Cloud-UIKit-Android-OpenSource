@@ -69,6 +69,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 import com.amity.socialcloud.uikit.common.utils.AmityConstants
 import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
+import androidx.compose.ui.platform.testTag
 
 @Composable
 fun AmityGroupSettingPage(
@@ -230,6 +231,7 @@ fun AmityGroupSettingPage(
                     // Member list — EDIT_CHANNEL (previously visible to all members)
                     if (canEditChannel) {
                         SettingItem(
+                            modifier = Modifier.testTag("group_setting/all_members"),
                             text = amityChatString("chat.group.members.label"),
                             iconResId = CommonComposeR.drawable.amity_ic_user_group_s,
                             onClick = {
@@ -243,6 +245,7 @@ fun AmityGroupSettingPage(
                     // Banned members — BAN_USER_FROM_CHANNEL
                     if (canBanUser) {
                         SettingItem(
+                            modifier = Modifier.testTag("group_setting/banned_users"),
                             text = amityChatString("chat.group.banned.members"),
                             iconResId = CommonComposeR.drawable.amity_ic_ban_s,
                             onClick = {
@@ -357,6 +360,7 @@ private fun SectionHeader(text: String) {
 @Composable
 private fun SettingItem(
     text: String,
+    modifier: Modifier = Modifier,
     iconResId: Int? = null,
     textColor: androidx.compose.ui.graphics.Color = AmityTheme.token(AmityColorToken.TextListHeaderDefaultDefault),
     showArrow: Boolean = true,
@@ -364,7 +368,7 @@ private fun SettingItem(
     onClick: () -> Unit,
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 14.dp),

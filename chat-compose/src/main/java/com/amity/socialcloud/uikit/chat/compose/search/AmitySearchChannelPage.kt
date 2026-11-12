@@ -52,6 +52,7 @@ import com.amity.socialcloud.uikit.common.ui.base.AmityBasePage
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.utils.keyboardTapOutsideSkip
 
 @Composable
 fun AmitySearchChannelPage(
@@ -124,6 +125,7 @@ fun AmitySearchChannelPage(
                                 .align(Alignment.CenterEnd)
                                 .height(48.dp)
                                 .width(32.dp)
+                                .keyboardTapOutsideSkip()
                                 .clickableWithoutRipple {
                                     viewModel.onSearchKeywordChanged("")
                                 },

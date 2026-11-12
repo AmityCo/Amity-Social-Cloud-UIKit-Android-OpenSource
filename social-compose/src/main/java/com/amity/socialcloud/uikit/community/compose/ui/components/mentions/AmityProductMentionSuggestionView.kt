@@ -47,6 +47,7 @@ import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.shimmerBackground
 import com.amity.socialcloud.uikit.community.compose.R
 import kotlinx.coroutines.flow.flowOf
+import com.amity.socialcloud.uikit.common.utils.keyboardTapOutsideSkip
 
 private const val MIN_SEARCH_LENGTH = 2
 
@@ -85,6 +86,7 @@ fun AmityProductMentionSuggestionView(
     Box(
         modifier = modifier
             .fillMaxWidth()
+            .keyboardTapOutsideSkip()
             .heightIn(max = heightIn)
             .clip(shape)
             .background(AmityTheme.colors.background)

@@ -65,6 +65,12 @@ fun AmityUserProfileTabRow(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = modifier
                         .weight(1f)
+                        .testTag(
+                            when (tab) {
+                                AmityUserProfilePageTab.FEED -> "user_feed_tab_button"
+                                AmityUserProfilePageTab.MEDIA -> "user_image_feed_tab_button"
+                            }
+                        )
                         .clickableWithoutRipple {
                             onSelect(tab)
                         }

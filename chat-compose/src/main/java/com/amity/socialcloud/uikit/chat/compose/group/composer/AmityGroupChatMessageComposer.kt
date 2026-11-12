@@ -112,6 +112,8 @@ import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
 import java.io.File
 import kotlinx.coroutines.delay
+import com.amity.socialcloud.uikit.common.utils.keyboardTapOutsideSkip
+import androidx.compose.ui.platform.testTag
 
 @Composable
 fun AmityGroupChatMessageComposer(
@@ -140,6 +142,7 @@ fun AmityGroupChatMessageComposer(
         Column(
             modifier = modifier
                 .fillMaxWidth()
+                .keyboardTapOutsideSkip()
                 .imePadding()
                 .navigationBarsPadding(),
         ) {
@@ -413,6 +416,7 @@ private fun ComposerContent(
             modifier = Modifier
                 .weight(1f)
                 .heightIn(min = 40.dp, max = 120.dp),
+            testTag = "message_composer/text_field",
             value = messageText,
             hint = amityChatString("chat.composer.placeholder"),
             maxLines = 8,
@@ -445,7 +449,7 @@ private fun ComposerContent(
             Spacer(modifier = Modifier.width(12.dp))
 
             AmityButton(
-                modifier = Modifier.padding(bottom = 8.dp),
+                modifier = Modifier.padding(bottom = 8.dp).testTag("message_composer/send_button"),
                 variant = AmityButtonVariant.ICON,
                 style = AmityButtonStyle.FILLED,
                 hierarchy = if (isSendButtonEnabled) AmityButtonHierarchy.PRIMARY else AmityButtonHierarchy.SECONDARY,
@@ -852,6 +856,7 @@ internal fun GroupMentionSuggestionView(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp)
+                    .testTag("mention_suggestion/user_row")
                     .background(color = AmityTheme.token(AmityColorToken.SurfacePopoverListsDefault))
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },

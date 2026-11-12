@@ -139,6 +139,7 @@ import com.amity.socialcloud.uikit.community.compose.localization.amitySocialCon
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
+import com.amity.socialcloud.uikit.common.utils.keyboardTapOutsideSkip
 
 /**
  * The EVENT child's data on an event post (dataType "event"), or null when this post isn't an
@@ -833,6 +834,8 @@ fun AmityPostComposerPage(
                 Box(
                     modifier = modifier
                         .fillMaxWidth()
+                        .testTag("navigation_bar/title")
+                        .keyboardTapOutsideSkip()
                         .background(AmityTheme.colors.background)
                         .padding(start = 12.dp, end = 16.dp)
                 ) {
@@ -1101,7 +1104,7 @@ fun AmityPostComposerPage(
                         }
                         innerTextField()
                     },
-                    modifier = modifier
+                    modifier = modifier.keyboardTapOutsideSkip()
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
                         .padding(top = 12.dp)
@@ -1180,6 +1183,7 @@ fun AmityPostComposerPage(
                         modifier = modifier
                             .fillMaxSize()
                             .padding(horizontal = 16.dp, vertical = 20.dp),
+                        textFieldTestTag = "post_composer/text_field",
                         value = localPostText,
                         maxLines = 30,
                         maxChar = if (isEditClipMode) maxClipCaptionChar else Int.MAX_VALUE,
@@ -1300,6 +1304,7 @@ fun AmityPostComposerPage(
                     modifier = modifier
                         .fillMaxSize()
                         .padding(horizontal = 16.dp, vertical = 20.dp),
+                    textFieldTestTag = "post_composer/text_field",
                     value = localPostText,
                     maxLines = 30,
                     maxChar = if (isCreateClipMode) maxClipCaptionChar else Int.MAX_VALUE,

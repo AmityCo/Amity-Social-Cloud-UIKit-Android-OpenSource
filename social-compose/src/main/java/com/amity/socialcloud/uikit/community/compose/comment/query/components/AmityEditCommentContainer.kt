@@ -175,6 +175,7 @@ fun AmityEditCommentContainer(
                     modifier = modifier,
                     community = viewModel.community,
                     keyword = queryToken,
+                    rowTestTag = "comment_mention_list/user_row",
                 ) {
                     selectedUserToMention = it
                     shouldShowSuggestion = false

@@ -45,6 +45,7 @@ import com.amity.socialcloud.uikit.community.compose.search.global.AmityGlobalSe
 import com.amity.socialcloud.uikit.community.compose.search.global.AmityGlobalSearchViewModel
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.common.utils.keyboardTapOutsideSkip
 
 @Composable
 fun AmityTopSearchBarComponent(
@@ -113,6 +114,7 @@ fun AmityTopSearchBarComponent(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = modifier
                     .weight(1f)
+                    .keyboardTapOutsideSkip()
                     .background(
                         color = AmityTheme.colors.baseShade4,
                         shape = RoundedCornerShape(8.dp)
@@ -142,7 +144,7 @@ fun AmityTopSearchBarComponent(
                         color = AmityTheme.colors.base,
                     ),
                     cursorBrush = SolidColor(AmityTheme.colors.primary),
-                    modifier = modifier
+                    modifier = modifier.keyboardTapOutsideSkip()
                         .weight(1f)
                         .padding(vertical = 14.dp)
                         .focusRequester(focusRequester),

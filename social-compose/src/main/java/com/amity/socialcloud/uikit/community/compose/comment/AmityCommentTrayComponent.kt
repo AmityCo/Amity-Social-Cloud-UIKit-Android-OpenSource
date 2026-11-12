@@ -1,7 +1,6 @@
 package com.amity.socialcloud.uikit.community.compose.comment
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -23,8 +22,6 @@ import androidx.compose.runtime.rxjava3.subscribeAsState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
@@ -39,6 +36,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityPagingErrorItem
 import com.amity.socialcloud.uikit.common.ui.elements.AmityPagingLoadingItem
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.isSignedIn
+import com.amity.socialcloud.uikit.common.utils.clearFocusOnTapOutside
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import com.amity.socialcloud.uikit.community.compose.comment.create.AmityCommentComposerBar
@@ -57,7 +55,6 @@ fun AmityCommentTrayComponent(
     includeDeleted : Boolean = true,
     fromNonMemberCommunity: Boolean = false,
 ) {
-    val focusManager = LocalFocusManager.current
 
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
@@ -99,11 +96,7 @@ fun AmityCommentTrayComponent(
         Box(
             modifier = modifier
                 .background(AmityTheme.colors.background)
-                .pointerInput(Unit) {
-                    detectTapGestures(onTap = {
-                        focusManager.clearFocus()
-                    })
-                }
+                .clearFocusOnTapOutside()
         ) {
             Column(modifier = modifier.fillMaxWidth()) {
                 if (referenceType == AmityCommentReferenceType.STORY || referenceType == AmityCommentReferenceType.POST) {

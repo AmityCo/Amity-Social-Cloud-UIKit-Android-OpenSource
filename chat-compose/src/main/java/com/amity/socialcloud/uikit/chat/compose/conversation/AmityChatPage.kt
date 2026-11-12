@@ -63,6 +63,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 import com.amity.socialcloud.uikit.chat.compose.message.element.LocalSentVideoUris
 import androidx.compose.runtime.CompositionLocalProvider
 import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
+import com.amity.socialcloud.uikit.common.utils.keyboardTapOutsideSkip
 
 @Composable
 fun AmityChatPage(
@@ -341,6 +342,7 @@ private fun ConversationChatHeader(
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .keyboardTapOutsideSkip()
             // The header is a Banner-family row per the design.
             .background(AmityTheme.token(AmityColorToken.SurfaceBannerDefaultGeneral))
             .height(64.dp)

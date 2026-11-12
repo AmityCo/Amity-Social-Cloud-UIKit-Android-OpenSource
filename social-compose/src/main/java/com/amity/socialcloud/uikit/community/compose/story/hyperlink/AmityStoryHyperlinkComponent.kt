@@ -46,6 +46,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityAlertDialog
 import com.amity.socialcloud.uikit.common.ui.elements.AmityTextField
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.utils.clearFocusOnTapOutside
 import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.community.compose.localization.AmitySocialStrings
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialConfigString
@@ -148,6 +149,7 @@ fun AmityStoryHyperlinkComponent(
                 .fillMaxSize()
                 .background(AmityTheme.colors.background)
                 .testTag("hyper_link_config_component/*")
+                .clearFocusOnTapOutside()
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,

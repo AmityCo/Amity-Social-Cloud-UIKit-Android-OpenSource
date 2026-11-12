@@ -47,6 +47,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalContext
 import com.amity.socialcloud.uikit.common.ui.theme.AmityComposeTheme
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.utils.clearFocusOnTapOutside
 import org.joda.time.DateTime
 import java.util.UUID
 
@@ -202,9 +203,12 @@ fun AmityBasePage(
                         }
                     }
                 },
-                modifier = Modifier.semantics {
-                    testTagsAsResourceId = true
-                }
+                modifier = Modifier
+                    .semantics {
+                        testTagsAsResourceId = true
+                    }
+                    // A tap on an area that no child handles closes the keyboard on every page.
+                    .clearFocusOnTapOutside()
             ) {
                 content(comp)
             }

@@ -63,6 +63,8 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
+import com.amity.socialcloud.uikit.common.utils.keyboardTapOutsideSkip
+import androidx.compose.ui.platform.testTag
 
 /**
  * A pure Compose implementation of mention text field
@@ -109,6 +111,8 @@ fun AmityMentionTextField(
     contentPadding: PaddingValues = PaddingValues(vertical = verticalPadding, horizontal = horizontalPadding),
     backgroundColor: Color = Color.Transparent,
     hintColor: Color = AmityTheme.colors.baseShade2,
+    // Test id for the inner text field. The modifier above goes to the outer box.
+    textFieldTestTag: String? = null,
     mentionColor: Color = AmityTheme.colors.primary,
     hashtagColor: Color = AmityTheme.colors.primary,
     cursorColor: Color = AmityTheme.colors.primary,
@@ -629,9 +633,10 @@ fun AmityMentionTextField(
                     textFieldValue = limitedValue
                 }
             },
-            modifier = Modifier
+            modifier = Modifier.keyboardTapOutsideSkip()
                 .fillMaxWidth()
-                .focusRequester(focusRequester),
+                .focusRequester(focusRequester)
+                .then(if (textFieldTestTag != null) Modifier.testTag(textFieldTestTag) else Modifier),
             enabled = isEnabled,
             textStyle = textStyle,
             keyboardOptions = keyboardOptions,

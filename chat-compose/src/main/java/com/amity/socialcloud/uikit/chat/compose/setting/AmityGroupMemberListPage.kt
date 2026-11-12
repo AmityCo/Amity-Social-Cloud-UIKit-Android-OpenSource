@@ -101,6 +101,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.amity.socialcloud.uikit.common.localization.amityCommonString
+import com.amity.socialcloud.uikit.common.utils.keyboardTapOutsideSkip
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -206,7 +207,7 @@ fun AmityGroupMemberListPage(
                                 AmityAddGroupMemberPageActivity.newIntent(context, channelId)
                             )
                         },
-                        modifier = Modifier.align(Alignment.CenterEnd),
+                        modifier = Modifier.align(Alignment.CenterEnd).testTag("group_member_list/add_button"),
                     )
                 }
             }
@@ -274,6 +275,7 @@ fun AmityGroupMemberListPage(
                             .align(Alignment.CenterEnd)
                             .height(48.dp)
                             .width(32.dp)
+                            .keyboardTapOutsideSkip()
                             .clickableWithoutRipple {
                                 searchText = ""
                                 viewModel.onSearchKeywordChanged("")

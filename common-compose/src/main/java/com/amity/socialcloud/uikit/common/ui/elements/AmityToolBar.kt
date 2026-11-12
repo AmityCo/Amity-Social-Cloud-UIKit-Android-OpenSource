@@ -22,6 +22,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.getIcon
 import com.amity.socialcloud.uikit.common.utils.getText
+import com.amity.socialcloud.uikit.common.utils.keyboardTapOutsideSkip
 
 @Composable
 fun AmityToolBar(
@@ -34,6 +35,7 @@ fun AmityToolBar(
     Box(
         modifier = modifier
             .fillMaxWidth()
+            .keyboardTapOutsideSkip()
             .background(AmityTheme.colors.background)
             .padding(horizontal = 12.dp, vertical = 16.dp)
     ) {

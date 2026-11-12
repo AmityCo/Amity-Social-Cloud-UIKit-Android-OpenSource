@@ -347,6 +347,7 @@ fun AmityCommentEngagementBar(
                         tint = AmityTheme.colors.secondaryShade2,
                         modifier = modifier
                             .size(20.dp)
+                            .testTag("comment_list/comment_bubble_menu_button")
                             .clickable {
                                 viewModel.updateSheetUIState(
                                     CommentBottomSheetState.OpenSheet(

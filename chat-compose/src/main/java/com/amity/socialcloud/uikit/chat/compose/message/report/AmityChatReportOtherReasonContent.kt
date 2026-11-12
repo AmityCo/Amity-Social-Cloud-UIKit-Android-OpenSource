@@ -46,6 +46,8 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import kotlinx.coroutines.delay
+import com.amity.socialcloud.uikit.common.utils.keyboardTapOutsideSkip
+import com.amity.socialcloud.uikit.common.utils.clearFocusOnTapOutside
 
 @Composable
 fun AmityChatReportOtherReasonContent(
@@ -68,6 +70,7 @@ fun AmityChatReportOtherReasonContent(
         modifier = Modifier
             .fillMaxHeight(fraction = 0.95f)
             .fillMaxWidth()
+            .clearFocusOnTapOutside()
     ) {
         // Header
         Box(
@@ -149,7 +152,7 @@ fun AmityChatReportOtherReasonContent(
                         customReason = it
                     }
                 },
-                modifier = Modifier
+                modifier = Modifier.keyboardTapOutsideSkip()
                     .fillMaxWidth()
                     .focusRequester(focusRequester),
                 textStyle = AmityTheme.typography.body.copy(

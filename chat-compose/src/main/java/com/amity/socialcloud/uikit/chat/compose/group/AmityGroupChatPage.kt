@@ -29,6 +29,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -66,6 +68,8 @@ import com.amity.socialcloud.uikit.common.utils.AmityConstants
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlin.collections.any
 import kotlin.text.contains
+import com.amity.socialcloud.uikit.common.utils.keyboardTapOutsideSkip
+import androidx.compose.ui.platform.testTag
 
 @Composable
 fun AmityGroupChatPage(
@@ -79,6 +83,8 @@ fun AmityGroupChatPage(
     val channel by viewModel.getChannelFlow().collectAsState(initial = null)
     val isFetching by viewModel.isFetching.collectAsState()
     val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     val behavior = remember {
         AmityChatBehaviorHelper.groupChatPageBehavior
@@ -220,13 +226,15 @@ fun AmityGroupChatPage(
 
                     // Floating mention suggestion (overlays bottom of message list with gap)
                     if (showMentionSuggestion) {
-                        // Tap interceptor: dismiss mention suggestion when tapping message list area
+                        // Tap interceptor: dismiss mention suggestion and keyboard when tapping message list area
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .pointerInput(Unit) {
                                     detectTapGestures {
                                         showMentionSuggestion = false
+                                        keyboardController?.hide()
+                                        focusManager.clearFocus()
                                     }
                                 }
                         )
@@ -234,6 +242,7 @@ fun AmityGroupChatPage(
                         GroupMentionSuggestionView(
                             modifier = Modifier
                                 .align(Alignment.BottomCenter)
+                                .keyboardTapOutsideSkip()
                                 .padding(bottom = 8.dp),
                             keyword = mentionQueryToken,
                             viewModel = viewModel,
@@ -290,6 +299,7 @@ private fun GroupChatHeader(
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .keyboardTapOutsideSkip()
             .height(56.dp)
             .padding(horizontal = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -310,6 +320,7 @@ private fun GroupChatHeader(
         Row(
             modifier = Modifier
                 .weight(1f)
+                .testTag("group_chat_header/settings_button")
                 .clickable(onClick = onHeaderTap),
             verticalAlignment = Alignment.CenterVertically,
         ) {

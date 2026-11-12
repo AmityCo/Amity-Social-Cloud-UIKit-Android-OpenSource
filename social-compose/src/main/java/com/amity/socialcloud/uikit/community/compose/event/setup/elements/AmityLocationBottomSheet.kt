@@ -36,6 +36,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityTextField
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.utils.clearFocusOnTapOutside
 import com.amity.socialcloud.uikit.common.utils.shade
 import com.amity.socialcloud.uikit.common.R as CommonR
 import kotlinx.coroutines.launch
@@ -121,6 +122,7 @@ fun AmityLocationBottomSheet(
                     modifier = modifier
                         .fillMaxWidth()
                         .fillMaxHeight(0.92f)
+                        .clearFocusOnTapOutside()
                         .consumeUpwardOverscroll()
                         .verticalScroll(scrollState)
                         .padding(horizontal = 16.dp)

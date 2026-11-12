@@ -113,6 +113,7 @@ import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import com.amity.socialcloud.uikit.common.utils.keyboardTapOutsideSkip
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -380,7 +381,7 @@ fun AmityCreateGroupChatPage(
                                 groupName = newValue.filterNot { it == '\n' || it == '\r' }.take(100)
                             },
                             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier.keyboardTapOutsideSkip().fillMaxWidth(),
                             textStyle = AmityTheme.typography.bodyLegacy.copy(
                                 fontSize = 15.sp,
                                 color = AmityTheme.token(AmityColorToken.TextInputTextInputPlaceholderEnabledFilled),

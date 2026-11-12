@@ -44,6 +44,7 @@ import com.amity.socialcloud.uikit.community.compose.comment.AmityCommentTrayCom
 import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.AmityMentionSuggestionView
 import com.amity.socialcloud.uikit.community.compose.ui.components.mentions.AmityMentionTextField
 import kotlinx.coroutines.delay
+import com.amity.socialcloud.uikit.common.utils.keyboardTapOutsideSkip
 
 @Composable
 fun AmityCommentComposerBar(
@@ -119,6 +120,7 @@ fun AmityCommentComposerBar(
     Column(
         modifier = modifier
             .fillMaxWidth()
+            .keyboardTapOutsideSkip()
             .background(AmityTheme.colors.background)
     ) {
         if (replyComment != null && isReplyingToComment) {
@@ -137,6 +139,7 @@ fun AmityCommentComposerBar(
                 keyword = queryToken,
                 heightIn = 220.dp,
                 shape = RoundedCornerShape(8.dp),
+                rowTestTag = "comment_mention_list/user_row",
             ) {
                 selectedUserToMention = it
                 shouldShowSuggestion = false

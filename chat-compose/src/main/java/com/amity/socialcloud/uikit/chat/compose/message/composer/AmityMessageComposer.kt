@@ -98,6 +98,8 @@ import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 import java.io.File
+import com.amity.socialcloud.uikit.common.utils.keyboardTapOutsideSkip
+import androidx.compose.ui.platform.testTag
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -279,6 +281,7 @@ fun AmityMessageComposer(
         Column(
             modifier = modifier
                 .fillMaxWidth()
+                .keyboardTapOutsideSkip()
                 .imePadding()
                 .navigationBarsPadding(),
         ) {
@@ -353,8 +356,9 @@ fun AmityMessageComposer(
                             messageText = it
                             if (showMediaSection) showMediaSection = false
                         },
-                        modifier = Modifier.fillMaxWidth()
-                            .focusRequester(focusRequester),
+                        modifier = Modifier.keyboardTapOutsideSkip().fillMaxWidth()
+                            .focusRequester(focusRequester)
+                            .testTag("message_composer/text_field"),
                         textStyle = AmityTheme.typography.bodyLegacy.copy(
                             fontSize = 17.sp,
                             color = AmityTheme.token(AmityColorToken.TextInputTextInputPlaceholderEnabledFilled),
@@ -367,7 +371,7 @@ fun AmityMessageComposer(
                     Spacer(modifier = Modifier.width(12.dp))
 
                     AmityButton(
-                        modifier = Modifier.padding(bottom = 8.dp),
+                        modifier = Modifier.padding(bottom = 8.dp).testTag("message_composer/send_button"),
                         variant = AmityButtonVariant.ICON,
                         style = AmityButtonStyle.FILLED,
                         hierarchy = if (isSendButtonEnabled) AmityButtonHierarchy.PRIMARY else AmityButtonHierarchy.SECONDARY,

@@ -54,6 +54,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.getValue
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import com.amity.socialcloud.uikit.common.utils.keyboardTapOutsideSkip
 
 
 @Composable
@@ -131,7 +132,9 @@ fun AmityLiveChatMessageComposeBar(
             componentId = "message_composer"
         ) {
             Column(
-                modifier = modifier.fillMaxWidth()
+                modifier = modifier
+                    .fillMaxWidth()
+                    .keyboardTapOutsideSkip()
             ) {
 
                 if (showComposeErrorDialog.value) {

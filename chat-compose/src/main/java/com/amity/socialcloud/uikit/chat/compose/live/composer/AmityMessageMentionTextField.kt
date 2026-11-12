@@ -12,6 +12,10 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.widget.addTextChangedListener
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.getSystemService
+import android.view.View
+import androidx.core.view.AccessibilityDelegateCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionMetadata
 import com.amity.socialcloud.sdk.helper.core.mention.AmityMentionee
 import com.amity.socialcloud.uikit.chat.compose.live.elements.AmityChannelMention
@@ -42,7 +46,9 @@ fun AmityMessageMentionTextField(
     onQueryToken: (String?) -> Unit = {},
     onMention: (List<AmityMentionMetadata>) -> Unit = {},
     onMentionLimitReached: () -> Unit = {},
-    shouldRequestFocus: Boolean = false
+    shouldRequestFocus: Boolean = false,
+    // Test id for the EditText. A Compose testTag on the modifier does not reach a View.
+    testTag: String? = null,
 ) {
     val textColor = AmityTheme.colors.base.toArgb()
     val hintColor = AmityTheme.token(AmityColorToken.TextInputTextInputPlaceholderEnabled).toArgb()
@@ -56,6 +62,17 @@ fun AmityMessageMentionTextField(
             .padding(horizontal = 12.dp),
         factory = {
             AmityMessageComposeView(it).apply {
+                if (testTag != null) {
+                    ViewCompat.setAccessibilityDelegate(this, object : AccessibilityDelegateCompat() {
+                        override fun onInitializeAccessibilityNodeInfo(
+                            host: View,
+                            info: AccessibilityNodeInfoCompat,
+                        ) {
+                            super.onInitializeAccessibilityNodeInfo(host, info)
+                            info.viewIdResourceName = testTag
+                        }
+                    })
+                }
                 this.maxLines = maxLines
                 setMaxChars(maxChar)
                 setTextCompose(value)

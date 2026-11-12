@@ -41,6 +41,7 @@ import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.shimmerBackground
 import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.common.utils.keyboardTapOutsideSkip
 
 @Composable
 fun AmityMentionSuggestionView(
@@ -49,6 +50,7 @@ fun AmityMentionSuggestionView(
     keyword: String = "",
     heightIn: Dp = 200.dp,
     shape: RoundedCornerShape = RoundedCornerShape(0.dp),
+    rowTestTag: String = "mention_list/user_row",
     onUserSelected: (AmityUser) -> Unit = {}
 ) {
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
@@ -72,6 +74,7 @@ fun AmityMentionSuggestionView(
     Box(
         modifier = modifier
             .fillMaxWidth()
+            .keyboardTapOutsideSkip()
             .heightIn(max = heightIn)
             .clip(shape)
             .background(AmityTheme.colors.background)
@@ -114,6 +117,7 @@ fun AmityMentionSuggestionView(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 12.dp, vertical = 6.dp)
+                                .testTag(rowTestTag)
                                 .clickableWithoutRipple {
                                     onUserSelected(user)
                                 },
@@ -132,6 +136,7 @@ fun AmityMentionSuggestionView(
                                     text = user.getDisplayName() ?: "",
                                     overflow = TextOverflow.Ellipsis,
                                     style = AmityTheme.typography.bodyLegacy,
+                                    modifier = Modifier.testTag("mention_list/user_display_name"),
                                 )
 
                                 val isBrandUser = user.isBrand()

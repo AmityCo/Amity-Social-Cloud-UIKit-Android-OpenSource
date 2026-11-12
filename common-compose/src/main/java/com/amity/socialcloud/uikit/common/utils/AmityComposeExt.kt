@@ -3,6 +3,7 @@ package com.amity.socialcloud.uikit.common.utils
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
+import android.view.View
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.annotation.StringRes
@@ -14,6 +15,9 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.interaction.Interaction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.WindowInsets
@@ -33,6 +37,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.PointerId
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -42,11 +49,16 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.paging.LoadState
 import androidx.palette.graphics.Palette.Swatch
 import com.amity.socialcloud.uikit.common.common.toDp
@@ -115,6 +127,50 @@ fun Modifier.clickableWithoutRipple(
     ) {
         onClick()
     }
+}
+
+// The down event of the last tap that landed on a keyboardTapOutsideSkip() area.
+// Pointer input runs on the main thread, so a plain object is enough.
+private object KeyboardTapSkip {
+    var pointerId: PointerId? = null
+    var uptimeMillis: Long = -1L
+}
+
+// Closes the keyboard and clears focus when the user taps anywhere except a
+// keyboardTapOutsideSkip() area. It reads taps in the Initial pass and does not consume them,
+// so the tapped button still works. A scroll or a drag does not close the keyboard.
+// Hiding the keyboard directly also covers View-based inputs, which clearFocus() does not close.
+fun Modifier.clearFocusOnTapOutside(): Modifier = composed {
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val view = LocalView.current
+    this.pointerInput(Unit) {
+        awaitEachGesture {
+            val down = awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
+            waitForUpOrCancellation(pass = PointerEventPass.Initial) ?: return@awaitEachGesture
+            val skipped = KeyboardTapSkip.pointerId == down.id &&
+                KeyboardTapSkip.uptimeMillis == down.uptimeMillis
+            if (skipped || !view.isKeyboardOpen()) return@awaitEachGesture
+            keyboardController?.hide()
+            focusManager.clearFocus()
+        }
+    }
+}
+
+// Marks an area where a tap keeps the keyboard open: an input, a toolbar, a composer bar
+// or a search bar. It does not consume the tap.
+fun Modifier.keyboardTapOutsideSkip(): Modifier = this.pointerInput(Unit) {
+    awaitEachGesture {
+        val down = awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
+        KeyboardTapSkip.pointerId = down.id
+        KeyboardTapSkip.uptimeMillis = down.uptimeMillis
+    }
+}
+
+// Returns true when the window reports no insets, so the caller still closes the keyboard.
+private fun View.isKeyboardOpen(): Boolean {
+    val insets = ViewCompat.getRootWindowInsets(this) ?: return true
+    return insets.isVisible(WindowInsetsCompat.Type.ime())
 }
 
 fun LazyListScope.pagingLoadStateItem(

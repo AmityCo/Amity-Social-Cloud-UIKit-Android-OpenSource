@@ -57,6 +57,7 @@ import com.amity.socialcloud.uikit.common.ui.elements.AmityTextField
 import com.amity.socialcloud.uikit.common.ui.scope.AmityComposePageScope
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.utils.clearFocusOnTapOutside
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.community.compose.post.composer.AmityPostComposerPageViewModel
@@ -128,6 +129,7 @@ fun AmityAltTextConfigComponent(
                     .fillMaxWidth()
                     .background(AmityTheme.colors.background)
                     .navigationBarsPadding()
+                    .clearFocusOnTapOutside()
             ) {
                 Column(
                     modifier = modifier

@@ -19,6 +19,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
+import com.amity.socialcloud.uikit.common.utils.keyboardTapOutsideSkip
 
 @Composable
 fun AmityTextField(
@@ -50,7 +51,7 @@ fun AmityTextField(
         maxLines = maxLines,
         textStyle = textStyle,
         keyboardOptions = keyboardOptions,
-        modifier = modifier
+        modifier = modifier.keyboardTapOutsideSkip()
             .fillMaxWidth()
             .background(Color.Transparent),
         cursorBrush = androidx.compose.ui.graphics.SolidColor(AmityTheme.colors.primary),

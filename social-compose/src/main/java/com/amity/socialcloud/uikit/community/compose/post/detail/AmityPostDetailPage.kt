@@ -84,6 +84,7 @@ import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostM
 import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostMenuViewModel
 import kotlinx.coroutines.delay
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
+import com.amity.socialcloud.uikit.common.utils.keyboardTapOutsideSkip
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -279,7 +280,8 @@ fun AmityPostDetailPage(
                     LazyColumn(
                         state = scrollState,
                         verticalArrangement = Arrangement.Top,
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier
+                            .weight(1f)
                     ) {
                         AmityCommentTrayComponentViewModel.CommentListState.from(
                             loadState = comments.loadState.refresh,
@@ -291,6 +293,7 @@ fun AmityPostDetailPage(
                                 modifier = Modifier
                                     .height(58.dp)
                                     .fillMaxWidth()
+                                    .keyboardTapOutsideSkip()
                                     .background(AmityTheme.colors.background)
                                     .padding(horizontal = 16.dp)
                                     .onGloballyPositioned { coordinates ->
@@ -325,6 +328,7 @@ fun AmityPostDetailPage(
                                     modifier = Modifier
                                         .padding(horizontal = 48.dp)
                                         .align(Alignment.CenterStart)
+                                        .testTag("navigation_bar/title")
                                 )
 
                                 AmityBaseElement(

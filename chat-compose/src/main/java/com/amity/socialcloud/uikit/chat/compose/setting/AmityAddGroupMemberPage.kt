@@ -63,6 +63,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.ui.theme.AmityColorToken
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.utils.resolvedAvatarUrl
+import com.amity.socialcloud.uikit.common.utils.keyboardTapOutsideSkip
 
 @Composable
 fun AmityAddGroupMemberPage(
@@ -144,6 +145,7 @@ fun AmityAddGroupMemberPage(
                             .align(Alignment.CenterEnd)
                             .height(48.dp)
                             .width(32.dp)
+                            .keyboardTapOutsideSkip()
                             .clickableWithoutRipple {
                                 searchKeyword = ""
                             },

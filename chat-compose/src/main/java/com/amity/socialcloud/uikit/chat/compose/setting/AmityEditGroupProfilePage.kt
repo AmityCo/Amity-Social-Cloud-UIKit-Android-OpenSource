@@ -82,6 +82,7 @@ import com.amity.socialcloud.uikit.common.ui.atoms.AmityDividerVariant
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityLoader
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityLoaderSize
 import com.amity.socialcloud.uikit.common.ui.atoms.AmityLoaderVariant
+import com.amity.socialcloud.uikit.common.utils.keyboardTapOutsideSkip
 
 private const val GROUP_NAME_MAX_LENGTH = 100
 
@@ -333,7 +334,7 @@ fun AmityEditGroupProfilePage(
                         displayName = it.filterNot { c -> c == '\n' || c == '\r' }.take(GROUP_NAME_MAX_LENGTH)
                     },
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.keyboardTapOutsideSkip().fillMaxWidth(),
                     textStyle = AmityTheme.typography.bodyLegacy.copy(
                         fontSize = 16.sp,
                         color = AmityTheme.token(AmityColorToken.TextInputTextInputPlaceholderEnabledFilled),

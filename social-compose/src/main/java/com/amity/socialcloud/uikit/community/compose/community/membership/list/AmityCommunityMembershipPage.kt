@@ -44,6 +44,7 @@ import com.amity.socialcloud.uikit.community.compose.community.membership.elemen
 import com.amity.socialcloud.uikit.community.compose.community.membership.invite.AmityCommunityInviteMemberPageActivity
 import kotlinx.coroutines.launch
 import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
+import androidx.compose.ui.platform.testTag
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -147,6 +148,7 @@ fun AmityCommunityMembershipPage(
                         tint = AmityTheme.colors.base,
                         modifier = modifier
                             .size(24.dp)
+                            .testTag("community_member/add_member_button")
                             .clickableWithoutRipple {
                                 if (membershipAcceptance.value == AmityMembershipAcceptanceType.INVITATION) {
                                     behavior.goToInviteMemberPage(

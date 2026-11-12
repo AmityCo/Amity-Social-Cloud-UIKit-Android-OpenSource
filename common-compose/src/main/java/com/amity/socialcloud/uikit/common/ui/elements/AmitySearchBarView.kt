@@ -36,6 +36,8 @@ import com.amity.socialcloud.uikit.common.R
 import com.amity.socialcloud.uikit.common.ui.theme.AmityTheme
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
+import com.amity.socialcloud.uikit.common.utils.keyboardTapOutsideSkip
+import androidx.compose.ui.platform.testTag
 
 
 @Composable
@@ -86,6 +88,7 @@ fun AmitySearchBarView(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier
                 .weight(1f)
+                .keyboardTapOutsideSkip()
                 .then(if (height != null) Modifier.heightIn(min = height) else Modifier)
                 .background(
                     color = resolvedContainerColor,
@@ -97,6 +100,7 @@ fun AmitySearchBarView(
                 painter = painterResource(id = searchIcon),
                 tint = iconTint,
                 contentDescription = null,
+                modifier = Modifier.testTag("search_bar/search_icon"),
             )
 
             BasicTextField(
@@ -110,10 +114,11 @@ fun AmitySearchBarView(
                     color = textColor,
                 ),
                 cursorBrush = SolidColor(cursorColor),
-                modifier = Modifier
+                modifier = Modifier.keyboardTapOutsideSkip()
                     .weight(1f)
                     .focusRequester(focusRequester)
-                    .padding(vertical = textVerticalPadding),
+                    .padding(vertical = textVerticalPadding)
+                    .testTag("search_bar/text_field"),
                 decorationBox = { innerTextField ->
                     if (keyword.text.isEmpty()) {
                         Text(
