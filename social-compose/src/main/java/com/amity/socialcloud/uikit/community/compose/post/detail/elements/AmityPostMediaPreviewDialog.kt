@@ -431,8 +431,8 @@ private fun BoxScope.MediaProductTagBadge(
         AmityProductTagBadge(
             count = productTagCount,
             modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(end = 12.dp, bottom = 12.dp),
+                .align(Alignment.BottomStart)
+                .padding(start = 12.dp, bottom = 12.dp),
             onClick = onProductTagClick?.let { { it(childPost) } }
         )
     }

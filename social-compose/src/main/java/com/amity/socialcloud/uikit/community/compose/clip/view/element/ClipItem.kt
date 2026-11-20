@@ -63,6 +63,9 @@ import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupPositionProvider
 import androidx.compose.ui.window.PopupProperties
 import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import com.amity.socialcloud.uikit.community.compose.post.autoplay.AmityFeedAutoPlayPositions
+import kotlinx.coroutines.delay
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
@@ -212,11 +215,30 @@ fun ClipItem(
         }
     }
 
+    // The feed's key for this clip: the clip child post. The clip feed continues from the point the
+    // feed reached and hands its own point back (SOL-PDT-3429 R-TAP-PLAYS, R-RESUME).
+    val autoPlayKey = remember(post.getPostId()) {
+        if (post.getData() is AmityPost.Data.CLIP) {
+            post.getPostId()
+        } else {
+            post.getChildren().firstOrNull { it.getData() is AmityPost.Data.CLIP }?.getPostId()
+        }
+    }
+
     // Only set media item when URL is available AND this is the current playing item
     LaunchedEffect(clipUrl, isCurrentlyPlaying) {
         if (clipUrl.isNotBlank() && isCurrentlyPlaying) {
             exoPlayer.clearMediaItems()
             exoPlayer.setMediaItem(MediaItem.fromUri(clipUrl))
+            // An ended clip plays from the start.
+            autoPlayKey
+                ?.takeUnless(AmityFeedAutoPlayPositions::hasEnded)
+                ?.let(AmityFeedAutoPlayPositions::positionOf)
+                ?.takeIf { it > 0L }
+                ?.let {
+                    exoPlayer.seekTo(it)
+                    android.util.Log.d("AmityFeedAutoPlay", "clip feed resume $autoPlayKey at ${it}ms")
+                }
             exoPlayer.prepare()
             if (isMuted) {
                 exoPlayer.volume = 0f // Mute the player if isMuted is true
@@ -224,6 +246,24 @@ fun ClipItem(
                 exoPlayer.volume = 1f // Unmute the player
             }
             exoPlayer.playWhenReady = true
+        }
+    }
+
+    // The clip feed's player is released with the page, so the point is saved while the clip plays,
+    // not only when it is left.
+    LaunchedEffect(autoPlayKey, clipUrl, isCurrentlyPlaying) {
+        val key = autoPlayKey ?: return@LaunchedEffect
+        if (!isCurrentlyPlaying || clipUrl.isBlank()) return@LaunchedEffect
+        while (true) {
+            delay(CLIP_POSITION_SAVE_INTERVAL_MS)
+            val isThisClip = exoPlayer.currentMediaItem?.localConfiguration?.uri?.toString() == clipUrl
+            if (isThisClip && exoPlayer.playbackState != Player.STATE_IDLE) {
+                AmityFeedAutoPlayPositions.save(
+                    key = key,
+                    positionMs = exoPlayer.currentPosition,
+                    hasEnded = exoPlayer.playbackState == Player.STATE_ENDED,
+                )
+            }
         }
     }
 
@@ -825,3 +865,5 @@ fun ClipItem(
 }
 
 private const val CaptionExpandedHeightFraction = 0.4f
+
+private const val CLIP_POSITION_SAVE_INTERVAL_MS = 500L

@@ -41,6 +41,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rxjava3.subscribeAsState
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.width
 import androidx.compose.ui.Alignment
 import com.amity.socialcloud.uikit.common.utils.getActivity
@@ -54,6 +55,9 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.semantics.text
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -65,6 +69,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.media3.common.AudioAttributes
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
@@ -87,6 +93,7 @@ import com.amity.socialcloud.uikit.common.utils.clickableWithoutRipple
 import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.community.compose.R
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
 import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityAddProductBottomSheet
 import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityProductTaggingBottomSheet
 import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityProductWebViewBottomSheet
@@ -116,6 +123,10 @@ import com.amity.socialcloud.uikit.common.behavior.AmityGlobalBehavior
 import com.amity.socialcloud.uikit.community.compose.AmitySocialBehaviorHelper
 import com.amity.socialcloud.sdk.core.session.model.NetworkConnectionEvent
 import com.amity.socialcloud.uikit.community.compose.livestream.room.util.AmityPipSessionRegistry
+import com.amity.socialcloud.uikit.community.compose.post.autoplay.AmityFeedAutoPlayGate
+import com.amity.socialcloud.uikit.community.compose.post.autoplay.AmityFeedAutoPlayPositions
+import com.amity.socialcloud.uikit.community.compose.post.autoplay.AmityFeedAudioFocus
+import com.amity.socialcloud.uikit.community.compose.post.autoplay.AmityFeedAutoPlaySession
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
@@ -207,9 +218,42 @@ fun AmityVideoPlayerPage(
         }
     }
 
-    var isAudioMuted by remember { mutableStateOf(false) }
+    // While feed autoplay runs, the full player and the recorded live player share the feed's
+    // session sound state: they open muted if the feed was muted, and a mute or unmute here
+    // carries back to the feed. The live room player keeps its own sound.
+    val sharesFeedSound = AmityFeedAutoPlayGate.isAllowed.value
+    var isAudioMuted by remember {
+        mutableStateOf(sharesFeedSound && AmityFeedAutoPlaySession.isMuted.value)
+    }
     var isPlaying by remember { mutableStateOf(true) }
+    // True while the player plays or waits for data to play. A buffering pause keeps the focus.
+    var isPlayRequested by remember { mutableStateOf(false) }
+    LaunchedEffect(exoPlayer, isAudioMuted) {
+        exoPlayer.volume = if (isAudioMuted) 0f else 1f
+    }
+    // The player holds transient audio focus only while it plays with sound. On mute, pause or
+    // close it gives the focus back, and the viewer's music plays again (SOL-PDT-3429
+    // R-NO-AUDIO-INTERRUPT, PDT-7114). ExoPlayer would take full focus, and the music would stay
+    // paused, so AmityFeedAudioFocus handles it.
+    LaunchedEffect(exoPlayer) {
+        exoPlayer.setAudioAttributes(PLAYER_AUDIO_ATTRIBUTES, false)
+    }
+    DisposableEffect(exoPlayer, isAudioMuted, isPlayRequested) {
+        val token = "player-${System.identityHashCode(exoPlayer)}"
+        if (!isAudioMuted && isPlayRequested) {
+            AmityFeedAudioFocus.request(context, token) {
+                // Another app took the sound, so this player goes silent.
+                isAudioMuted = true
+                if (sharesFeedSound) AmityFeedAutoPlaySession.setMuted(true)
+            }
+        } else {
+            AmityFeedAudioFocus.release(token)
+        }
+        onDispose { AmityFeedAudioFocus.release(token) }
+    }
     var playerState by remember { mutableIntStateOf(ExoPlayer.STATE_IDLE) }
+    // The video reached its end, by playing or by +10. The centre control then shows Watch again.
+    var hasEnded by remember { mutableStateOf(false) }
     // Media controls are revealed by tapping the video and auto-hide while playing.
     var showControls by remember { mutableStateOf(false) }
     // Bumped on every control interaction to restart the auto-hide countdown.
@@ -305,6 +349,12 @@ fun AmityVideoPlayerPage(
 
     val isHost = AmityCoreClient.getUserId() == roomChildPost?.getCreatorId()
 
+    // The feed's key for this recorded room, so this player continues from the recording and the
+    // point the feed reached, and hands its own point back (SOL-PDT-3429 R-RESUME).
+    val recordedKey = remember(roomChildPost) {
+        (roomChildPost?.getData() as? AmityPost.Data.ROOM)?.getRoomId()?.let { "room_$it" }
+    }
+
     val pagerState = rememberPagerState {
         if (isRecordedRoomPost) 1 else videoPosts.size
     }
@@ -346,6 +396,15 @@ fun AmityVideoPlayerPage(
             // Use HlsMediaSource with authentication for recorded room posts
             val mediaSource = getRecordedMediaSource(recordedUrls)
             exoPlayer.setMediaSource(mediaSource)
+            // An ended recording plays from the start, like an ended video.
+            recordedKey
+                ?.takeUnless(AmityFeedAutoPlayPositions::hasEnded)
+                ?.let { key ->
+                    val itemIndex = AmityFeedAutoPlayPositions.itemIndexOf(key).coerceAtMost(recordedUrls.lastIndex)
+                    val positionMs = AmityFeedAutoPlayPositions.positionOf(key)
+                    if (itemIndex > 0 || positionMs > 0L) exoPlayer.seekTo(itemIndex, positionMs)
+                    android.util.Log.d("AmityFeedAutoPlay", "recorded player resume $key at recording $itemIndex, ${positionMs}ms")
+                }
             exoPlayer.prepare()
             exoPlayer.playWhenReady = true
         } else if (videos.isNotEmpty()) {
@@ -358,6 +417,12 @@ fun AmityVideoPlayerPage(
         if (!isRecordedRoomPost && videos.isNotEmpty()) {
             delay(100)
             AmityPostVideoPlayerHelper.playMediaItem(pagerState.currentPage)
+            // Continue from the point the feed video reached, if it autoplayed there.
+            videoPosts.getOrNull(pagerState.currentPage)?.getPostId()
+                ?.takeUnless(AmityFeedAutoPlayPositions::hasEnded)
+                ?.let(AmityFeedAutoPlayPositions::positionOf)
+                ?.takeIf { it > 0L }
+                ?.let { exoPlayer.seekTo(pagerState.currentPage, it) }
             exoPlayer.play()
         }
     }
@@ -414,6 +479,22 @@ fun AmityVideoPlayerPage(
                 isPlaying = exoPlayer.isPlaying
             }
 
+            override fun onEvents(player: Player, events: Player.Events) {
+                isPlayRequested = player.playWhenReady &&
+                    player.playbackState != Player.STATE_IDLE &&
+                    player.playbackState != Player.STATE_ENDED
+                // This player pauses at the end of each item (setPauseAtEndOfMediaItems), so an end
+                // shows as a paused player at the item's duration, not always as STATE_ENDED.
+                // A recorded room has one item per recording: only the last one ends it.
+                val duration = player.duration
+                val atEnd = player.playbackState == Player.STATE_ENDED ||
+                    (!player.playWhenReady && duration != C.TIME_UNSET && duration > 0 &&
+                        player.currentPosition >= duration - END_TOLERANCE_MS)
+                val ended = atEnd && (!isRecordedRoomPost || !player.hasNextMediaItem())
+                if (ended && !hasEnded) showControls = true
+                hasEnded = ended
+            }
+
             override fun onPlayerError(error: androidx.media3.common.PlaybackException) {
                 // A dropped connection lands here and leaves the player idle; ExoPlayer never
                 // retries on its own, and a floating window never resumes, so nothing else would
@@ -428,6 +509,45 @@ fun AmityVideoPlayerPage(
             exoPlayer.release()
             AmityPostVideoPlayerHelper.clear()
             disposables.clear()
+        }
+    }
+
+    // Hand the point this player reached back to the feed, so the feed continues from there.
+    // Declared after the release effect so it is disposed first, while the player still holds it.
+    DisposableEffect(exoPlayer, isRecordedRoomPost) {
+        onDispose {
+            if (isRecordedRoomPost) {
+                if (recordedKey != null && exoPlayer.playbackState != Player.STATE_IDLE) {
+                    val duration = exoPlayer.duration
+                    val hasEnded = !exoPlayer.hasNextMediaItem() &&
+                        (exoPlayer.playbackState == Player.STATE_ENDED ||
+                            (duration != C.TIME_UNSET && exoPlayer.currentPosition >= duration - END_TOLERANCE_MS))
+                    AmityFeedAutoPlayPositions.save(
+                        key = recordedKey,
+                        positionMs = exoPlayer.currentPosition,
+                        hasEnded = hasEnded,
+                        itemIndex = exoPlayer.currentMediaItemIndex,
+                    )
+                    android.util.Log.d(
+                        "AmityFeedAutoPlay",
+                        "recorded player saved $recordedKey at recording ${exoPlayer.currentMediaItemIndex}, " +
+                            "${exoPlayer.currentPosition}ms${if (hasEnded) ", ended" else ""}",
+                    )
+                }
+            } else {
+                videoPosts.getOrNull(pagerState.currentPage)?.getPostId()?.let { id ->
+                    // This player pauses at the end of each video (setPauseAtEndOfMediaItems), so
+                    // the end shows as READY at the video's duration, not as STATE_ENDED.
+                    val duration = exoPlayer.duration
+                    val hasEnded = exoPlayer.playbackState == Player.STATE_ENDED ||
+                        (duration != C.TIME_UNSET && exoPlayer.currentPosition >= duration)
+                    AmityFeedAutoPlayPositions.save(
+                        key = id,
+                        positionMs = exoPlayer.currentPosition,
+                        hasEnded = hasEnded,
+                    )
+                }
+            }
         }
     }
 
@@ -555,6 +675,41 @@ fun AmityVideoPlayerPage(
                                     color = amityColorWhite,
                                     strokeWidth = 2.dp,
                                 )
+                            } else if (hasEnded) {
+                                // SOL-PDT-3429 R-NO-LOOP, Figma 220:2087: Watch again in place of play.
+                                // The label hangs below the circle, so the skip buttons stay level with it.
+                                val watchAgainLabel = amitySocialString("amity_social_feed_video_replay")
+                                Box(
+                                    modifier = Modifier
+                                        .size(48.dp)
+                                        .clip(CircleShape)
+                                        .background(amityColorBlack.copy(alpha = 0.5f))
+                                        .testTag("video_player_page/replay_button")
+                                        .semantics { contentDescription = watchAgainLabel }
+                                        .clickableWithoutRipple {
+                                            // A recorded room replays from its first recording.
+                                            val item = if (isRecordedRoomPost) 0 else exoPlayer.currentMediaItemIndex
+                                            exoPlayer.seekTo(item, 0L)
+                                            exoPlayer.play()
+                                            controlsInteraction++
+                                        },
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.amity_ic_feed_video_watch_again),
+                                        contentDescription = null,
+                                        tint = amityColorWhite,
+                                        modifier = Modifier.size(24.dp),
+                                    )
+                                }
+                                Text(
+                                    text = watchAgainLabel,
+                                    style = AmityTheme.typography.captionLegacy.copy(color = amityColorWhite),
+                                    softWrap = false,
+                                    modifier = Modifier
+                                        .wrapContentSize(unbounded = true)
+                                        .offset(y = 40.dp),
+                                )
                             } else {
                                 Image(
                                     painter = painterResource(
@@ -644,9 +799,18 @@ fun AmityVideoPlayerPage(
                                 top.linkTo(parent.top)
                                 end.linkTo(if (showMenuButton && (isProductCatalogueEnabled || isHost)) menuBtn.start else parent.end, margin = 8.dp)
                             }
+                            .testTag("video_player/sound_button")
+                            .semantics {
+                                stateDescription = context.getString(
+                                    if (isAudioMuted) R.string.amity_social_feed_video_sound_off
+                                    else R.string.amity_social_feed_video_sound_on
+                                )
+                                text = AnnotatedString(if (isAudioMuted) "muted" else "sound_on")
+                            }
                             .clickableWithoutRipple {
                                 isAudioMuted = !isAudioMuted
                                 exoPlayer.volume = if (isAudioMuted) 0f else 1f
+                                if (sharesFeedSound) AmityFeedAutoPlaySession.setMuted(isAudioMuted)
                                 controlsInteraction++
                             },
                         colorFilter = ColorFilter.tint(amityColorWhite)
@@ -676,7 +840,7 @@ fun AmityVideoPlayerPage(
                         .navigationBarsPadding()
                         .padding(bottom = 16.dp)
                 ) {
-                    // Product Tag Badge at bottom-right
+                    // Product Tag Badge at bottom-left
                     val currentProductTagCount by remember {
                         derivedStateOf {
                             if (isRecordedRoomPost) {
@@ -694,7 +858,7 @@ fun AmityVideoPlayerPage(
                     ) {
                         AmityProductTagBadge(
                             count = currentProductTagCount,
-                            modifier = Modifier.align(Alignment.CenterEnd),
+                            modifier = Modifier.align(Alignment.CenterStart),
                             onClick = {
                                 if (isRecordedRoomPost) {
                                     if (selectedProducts.isNotEmpty()) {
@@ -1113,3 +1277,11 @@ private fun getAuthenticatedDataSource(): HttpDataSource.Factory {
         ?.let { token -> mapOf("Authorization" to "Bearer $token") }
     return AmityMediaDataSourceFactory.create(headers)
 }
+
+// An item paused this close to its duration counts as ended.
+private const val END_TOLERANCE_MS = 250L
+
+private val PLAYER_AUDIO_ATTRIBUTES: AudioAttributes = AudioAttributes.Builder()
+    .setUsage(C.USAGE_MEDIA)
+    .setContentType(C.AUDIO_CONTENT_TYPE_MOVIE)
+    .build()

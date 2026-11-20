@@ -1231,4 +1231,23 @@
     <string name="amity_social_visitor_limit_subtitle">Create an account or sign in to keep exploring the community.</string>
     <string name="amity_social_visitor_limit_sign_in">Sign in</string>
     <string name="amity_social_visitor_limit_toast">Create an account or sign in to continue.</string>
+
+    <!-- Feed video autoplay (PDT-3429) -->
+    <string name="amity_social_feed_video_unmute">Turn sound on</string>
+    <string name="amity_social_feed_video_mute">Turn sound off</string>
+    <string name="amity_social_feed_video_replay">Watch again</string>
+    <string name="amity_social_feed_video_loading">Loading video</string>
+    <string name="amity_social_feed_video_label">Video</string>
+    <string name="amity_social_feed_video_playing_muted">Playing, sound off</string>
+    <string name="amity_social_feed_video_playing_sound">Playing, sound on</string>
+    <string name="amity_social_feed_video_ended">Ended</string>
+    <string name="amity_social_feed_video_sound_off">Sound off</string>
+    <string name="amity_social_feed_video_sound_on">Sound on</string>
+    <string name="amity_social_label_playback_unavailable">Playback unavailable</string>
+    <string name="amity_social_autoplay_setting_account_section">Account</string>
+    <string name="amity_social_autoplay_setting_section">Settings</string>
+    <string name="amity_social_autoplay_setting_row">Autoplay in feed</string>
+    <string name="amity_social_autoplay_setting_wifi_and_data">on Wi-Fi and mobile data</string>
+    <string name="amity_social_autoplay_setting_wifi_only">on Wi-Fi only</string>
+    <string name="amity_social_autoplay_setting_never">Never</string>
 </resources>

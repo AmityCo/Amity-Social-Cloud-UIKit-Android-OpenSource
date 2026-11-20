@@ -15,8 +15,13 @@ import androidx.compose.foundation.layout.waterfall
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,6 +33,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -60,6 +68,7 @@ import com.amity.socialcloud.uikit.common.ui.theme.amityMediaSurface
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorBase
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorBaseShade4
+import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -96,6 +105,26 @@ fun AmityProfileImageFeedItem(
         }
     }
 
+    // Join the Images tab viewer, so it can swipe through every loaded image (PDT-7237).
+    val viewerRegistry = LocalAmityImageFeedViewerRegistry.current
+    if (viewerRegistry != null) {
+        val entryKey = remember { Any() }
+        val image = data?.getImage()
+        SideEffect {
+            if (image != null) {
+                viewerRegistry.register(
+                    entryKey,
+                    AmityImageFeedViewerEntry(image, postId, productTagCount) { showBottomSheet = true }
+                )
+            } else {
+                viewerRegistry.unregister(entryKey)
+            }
+        }
+        DisposableEffect(viewerRegistry) {
+            onDispose { viewerRegistry.unregister(entryKey) }
+        }
+    }
+
     Box(
         modifier = modifier
             .aspectRatio(1f)
@@ -126,8 +155,8 @@ fun AmityProfileImageFeedItem(
             AmityProductTagBadge(
                 count = productTagCount,
                 modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(end = 8.dp, bottom = 8.dp),
+                    .align(Alignment.BottomStart)
+                    .padding(start = 8.dp, bottom = 8.dp),
                 onClick = onProductTagClick
             )
         }
@@ -202,17 +231,40 @@ fun AmityProfileImageFeedItemPreviewDialog(
     onProductTagClick: (() -> Unit)? = null,
     onDismiss: () -> Unit,
 ) {
-    val painter = rememberAsyncImagePainter(
-        model = ImageRequest
-            .Builder(LocalContext.current)
-            .data(data?.getUrl(AmityImage.Size.LARGE))
-            .crossfade(true)
-            .diskCachePolicy(CachePolicy.ENABLED)
-            .memoryCachePolicy(CachePolicy.ENABLED)
-            .build()
+    AmityProfileImageFeedPagerPreviewDialog(
+        modifier = modifier,
+        entries = listOf(
+            AmityImageFeedViewerEntry(data, postId, productTagCount) {
+                if (postId != null && onPostClick != null) onPostClick(postId)
+            }
+        ),
+        initialIndex = 0,
+        onProductTagClick = onProductTagClick?.let { click -> { _ -> click() } },
+        onDismiss = onDismiss,
     )
+}
 
-    val painterState by painter.state.collectAsState()
+/**
+ * Full-screen viewer for the Images tab. Swipes through [entries] and shows "n / total" when
+ * there is more than one image, the same as iOS (PDT-7236). The menu and the product tag badge
+ * act on the image on screen.
+ */
+@Composable
+fun AmityProfileImageFeedPagerPreviewDialog(
+    modifier: Modifier = Modifier,
+    entries: List<AmityImageFeedViewerEntry>,
+    initialIndex: Int = 0,
+    onProductTagClick: ((AmityImageFeedViewerEntry) -> Unit)? = null,
+    onDismiss: () -> Unit,
+) {
+    if (entries.isEmpty()) {
+        onDismiss()
+        return
+    }
+    val pagerState = rememberPagerState(
+        initialPage = initialIndex.coerceIn(0, entries.lastIndex)
+    ) { entries.size }
+    val currentEntry = entries.getOrNull(pagerState.currentPage) ?: entries.last()
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -228,37 +280,16 @@ fun AmityProfileImageFeedItemPreviewDialog(
                     .fillMaxSize()
                     .background(amityMediaSurface)
             ) {
-                val mediaAspectRatio = painter.intrinsicSize.let { size ->
-                    if (size.width > 0f && size.height > 0f) size.width / size.height else null
-                }
-                Box(
-                    modifier = if (mediaAspectRatio != null) {
-                        Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(mediaAspectRatio)
-                            .align(Alignment.Center)
-                    } else {
-                        Modifier.fillMaxSize()
-                    }
-                ) {
-                    Image(
-                        painter = painter,
-                        contentDescription = "Image Post",
-                        contentScale = ContentScale.Fit,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .zoomable(rememberZoomState()),
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier.fillMaxSize(),
+                    key = { index -> entries.getOrNull(index)?.let { "${it.postId}_${it.image?.getFileId()}" } ?: index },
+                ) { page ->
+                    val entry = entries.getOrNull(page) ?: return@HorizontalPager
+                    AmityProfileImageFeedPreviewPage(
+                        entry = entry,
+                        onProductTagClick = onProductTagClick?.let { click -> { click(entry) } },
                     )
-
-                    if (productTagCount > 0) {
-                        AmityProductTagBadge(
-                            count = productTagCount,
-                            modifier = Modifier
-                                .align(Alignment.BottomEnd)
-                                .padding(end = 12.dp, bottom = 12.dp),
-                            onClick = onProductTagClick
-                        )
-                    }
                 }
 
                 ConstraintLayout(
@@ -267,7 +298,7 @@ fun AmityProfileImageFeedItemPreviewDialog(
                         .height(64.dp)
                         .background(amityColorBlack.copy(alpha = 0.5f)),
                 ) {
-                    val (closeBtn, menuBtn) = createRefs()
+                    val (closeBtn, counter, menuBtn) = createRefs()
 
                     AmityMenuButton(
                         icon = CommonR.drawable.amity_ic_close2,
@@ -285,6 +316,26 @@ fun AmityProfileImageFeedItemPreviewDialog(
                         }
                     )
 
+                    if (entries.size > 1) {
+                        Text(
+                            text = "${pagerState.currentPage + 1} / ${entries.size}",
+                            style = AmityTheme.typography.titleLegacy.copy(
+                                fontWeight = FontWeight.Normal,
+                                color = amityColorWhite
+                            ),
+                            modifier = Modifier
+                                .semantics {
+                                    contentDescription = "Photo ${pagerState.currentPage + 1} of ${entries.size}"
+                                }
+                                .constrainAs(counter) {
+                                    start.linkTo(parent.start)
+                                    end.linkTo(parent.end)
+                                    top.linkTo(closeBtn.top)
+                                    bottom.linkTo(closeBtn.bottom)
+                                }
+                        )
+                    }
+
                     AmityMenuButton(
                         icon = CommonR.drawable.amity_ic_more_horiz,
                         size = 32.dp,
@@ -294,20 +345,8 @@ fun AmityProfileImageFeedItemPreviewDialog(
                             end.linkTo(parent.end, margin = 16.dp)
                         },
                         onClick = {
-                            if (postId != null && onPostClick != null) {
-                                onPostClick(postId)
-                            }
+                            currentEntry.onBottomSheetRequest?.invoke()
                         }
-                    )
-                }
-
-                if (painterState !is AsyncImagePainter.State.Success) {
-                    Box(
-                        modifier = modifier
-                            .fillMaxWidth()
-                            .aspectRatio(0.75f)
-                            .background(AmityTheme.colors.baseShade4)
-                            .align(Alignment.Center)
                     )
                 }
             }
@@ -319,6 +358,69 @@ fun AmityProfileImageFeedItemPreviewDialog(
                     .background(amityMediaSurface)
             )
 
+        }
+    }
+}
+
+@Composable
+private fun AmityProfileImageFeedPreviewPage(
+    entry: AmityImageFeedViewerEntry,
+    onProductTagClick: (() -> Unit)?,
+) {
+    val painter = rememberAsyncImagePainter(
+        model = ImageRequest
+            .Builder(LocalContext.current)
+            .data(entry.image?.getUrl(AmityImage.Size.LARGE))
+            .crossfade(true)
+            .diskCachePolicy(CachePolicy.ENABLED)
+            .memoryCachePolicy(CachePolicy.ENABLED)
+            .build()
+    )
+
+    val painterState by painter.state.collectAsState()
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        val mediaAspectRatio = painter.intrinsicSize.let { size ->
+            if (size.width > 0f && size.height > 0f) size.width / size.height else null
+        }
+        Box(
+            modifier = if (mediaAspectRatio != null) {
+                Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(mediaAspectRatio)
+                    .align(Alignment.Center)
+            } else {
+                Modifier.fillMaxSize()
+            }
+        ) {
+            Image(
+                painter = painter,
+                contentDescription = "Image Post",
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .zoomable(rememberZoomState()),
+            )
+
+            if (entry.productTagCount > 0) {
+                AmityProductTagBadge(
+                    count = entry.productTagCount,
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(start = 12.dp, bottom = 12.dp),
+                    onClick = onProductTagClick
+                )
+            }
+        }
+
+        if (painterState !is AsyncImagePainter.State.Success) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(0.75f)
+                    .background(AmityTheme.colors.baseShade4)
+                    .align(Alignment.Center)
+            )
         }
     }
 }

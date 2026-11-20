@@ -48,6 +48,7 @@ import com.amity.socialcloud.uikit.community.compose.story.target.AmityStoryTabC
 import com.amity.socialcloud.uikit.community.compose.story.target.AmityStoryTabComponentType
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import com.amity.socialcloud.uikit.community.compose.post.autoplay.AmityFeedAutoPlayHost
 
 @Composable
 fun AmityNewsFeedComponent(
@@ -167,94 +168,96 @@ fun AmityNewsFeedComponent(
             },
             modifier = Modifier.fillMaxSize(),
         ) {
-            LazyColumn(
-                state = lazyListState,
-                modifier = modifier.fillMaxSize()
-            ) {
-                item(key = "story_tab") {
-                    LocalPinnableContainer.current?.pin()
-                    val storyTabHeight = if (isStoryTabVisible && isStoryModuleOn) 130.dp else 0.dp
-                    Box(
-                        modifier = Modifier.height(storyTabHeight)
-                    ) {
-                        AmityStoryTabComponent(
-                            type = AmityStoryTabComponentType.GlobalFeed(
-                                refreshEventFlow = viewModel.isGlobalFeedRefreshing,
-                                onStateChanged = {
-                                    viewModel.setStoryTabState(it)
-                                }
+            AmityFeedAutoPlayHost {
+                LazyColumn(
+                    state = lazyListState,
+                    modifier = modifier.fillMaxSize()
+                ) {
+                    item(key = "story_tab") {
+                        LocalPinnableContainer.current?.pin()
+                        val storyTabHeight = if (isStoryTabVisible && isStoryModuleOn) 130.dp else 0.dp
+                        Box(
+                            modifier = Modifier.height(storyTabHeight)
+                        ) {
+                            AmityStoryTabComponent(
+                                type = AmityStoryTabComponentType.GlobalFeed(
+                                    refreshEventFlow = viewModel.isGlobalFeedRefreshing,
+                                    onStateChanged = {
+                                        viewModel.setStoryTabState(it)
+                                    }
+                                )
                             )
-                        )
+                        }
                     }
-                }
 
-                item {
-                    AmityNewsFeedDivider()
-                }
-
-                if (isRefreshing && renderableItemCount == 0) {
-                    items(4) {
-                        AmityPostShimmer()
+                    item {
                         AmityNewsFeedDivider()
                     }
-                } else {
-                    if (visiblePinnedPosts.isNotEmpty()) {
-                        amityGlobalPinnedFeedLLS(
-                            modifier = modifier,
-                            pageScope = pageScope,
-                            pinnedPosts = pinnedPosts,
-                            onClick = { post ->
-                                behavior.goToPostDetailPage(
-                                    context = AmityGlobalFeedComponentBehavior.Context(
-                                        pageContext = context,
-                                        target = post.getTarget()
-                                    ),
-                                    id = post.getPostId(),
-                                    category = AmityPostCategory.GLOBAL,
-                                    autoFocusCommentInput = true,
-                                )
-                            },
-                            onClipClicked = {
-                                behavior.goToClipFeedPage(
-                                    context = context,
-                                    postId = it.getPostId()
-                                )
-                            },
-                            refreshKey = refreshKey,
-                        )
-                    }
-                }
 
-                amityGlobalFeedLLS(
-                    modifier = modifier,
-                    pageScope = pageScope,
-                    globalPosts = posts,
-                    pinnedPosts = pinnedPosts,
-                    postListState = postListState,
-                    onClick = { post ->
-                        behavior.goToPostDetailPage(
-                            context = AmityGlobalFeedComponentBehavior.Context(
-                                pageContext = context,
-                                target = post.getTarget()
-                            ),
-                            id = post.getPostId(),
-                            autoFocusCommentInput = true,
-                        )
-                    },
-                    onClipClick = { childPost ->
-                        behavior.goToClipFeedPage(
-                            context = context,
-                            postId = childPost.getPostId()
-                        )
-                    },
-                    onCreateCommunityClicked = {
-                        behavior.goToCreateCommunityPage(context)
-                    },
-                    onExploreCommunityClicked = {
-                        onExploreRequested()
-                    },
-                    refreshKey = refreshKey,
-                )
+                    if (isRefreshing && renderableItemCount == 0) {
+                        items(4) {
+                            AmityPostShimmer()
+                            AmityNewsFeedDivider()
+                        }
+                    } else {
+                        if (visiblePinnedPosts.isNotEmpty()) {
+                            amityGlobalPinnedFeedLLS(
+                                modifier = modifier,
+                                pageScope = pageScope,
+                                pinnedPosts = pinnedPosts,
+                                onClick = { post ->
+                                    behavior.goToPostDetailPage(
+                                        context = AmityGlobalFeedComponentBehavior.Context(
+                                            pageContext = context,
+                                            target = post.getTarget()
+                                        ),
+                                        id = post.getPostId(),
+                                        category = AmityPostCategory.GLOBAL,
+                                        autoFocusCommentInput = true,
+                                    )
+                                },
+                                onClipClicked = {
+                                    behavior.goToClipFeedPage(
+                                        context = context,
+                                        postId = it.getPostId()
+                                    )
+                                },
+                                refreshKey = refreshKey,
+                            )
+                        }
+                    }
+
+                    amityGlobalFeedLLS(
+                        modifier = modifier,
+                        pageScope = pageScope,
+                        globalPosts = posts,
+                        pinnedPosts = pinnedPosts,
+                        postListState = postListState,
+                        onClick = { post ->
+                            behavior.goToPostDetailPage(
+                                context = AmityGlobalFeedComponentBehavior.Context(
+                                    pageContext = context,
+                                    target = post.getTarget()
+                                ),
+                                id = post.getPostId(),
+                                autoFocusCommentInput = true,
+                            )
+                        },
+                        onClipClick = { childPost ->
+                            behavior.goToClipFeedPage(
+                                context = context,
+                                postId = childPost.getPostId()
+                            )
+                        },
+                        onCreateCommunityClicked = {
+                            behavior.goToCreateCommunityPage(context)
+                        },
+                        onExploreCommunityClicked = {
+                            onExploreRequested()
+                        },
+                        refreshKey = refreshKey,
+                    )
+                }
             }
         }
     }

@@ -154,8 +154,8 @@ fun AmitySelectedMediaPreviewDialog(
                                     AmityProductTagBadge(
                                         count = pageTagCount,
                                         modifier = Modifier
-                                            .align(Alignment.BottomEnd)
-                                            .padding(end = 12.dp, bottom = 12.dp),
+                                            .align(Alignment.BottomStart)
+                                            .padding(start = 12.dp, bottom = 12.dp),
                                         onClick = { onTagProductClick(media) }
                                     )
                                 }

@@ -84,7 +84,15 @@ object AmityStoryCameraHelper {
         this.isFlashLightOn = isFlashLightOn
         val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
         cameraProviderFuture.addListener({
-            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+            // ProcessCameraProvider fails to initialize (ExecutionException wrapping
+            // InitializationException/CameraUnavailableException) when the device exposes
+            // no usable camera, e.g. "Available cameras: 0". Don't crash in that case.
+            val cameraProvider: ProcessCameraProvider = try {
+                cameraProviderFuture.get()
+            } catch (e: Exception) {
+                Log.e(TAG, "Unable to initialize camera provider: ${e.message}", e)
+                return@addListener
+            }
 
             val viewPort = previewView?.viewPort ?: return@addListener
 
@@ -98,6 +106,16 @@ object AmityStoryCameraHelper {
                 if (isBackCameraSelected) CameraSelector.DEFAULT_BACK_CAMERA
                 else CameraSelector.DEFAULT_FRONT_CAMERA
 
+            val hasSelectedCamera = try {
+                cameraProvider.hasCamera(cameraSelector)
+            } catch (e: Exception) {
+                false
+            }
+            if (!hasSelectedCamera) {
+                Log.e(TAG, "Requested camera is not available on this device")
+                return@addListener
+            }
+
             val useCaseGroup = UseCaseGroup.Builder()
                 .addUseCase(preview)
                 .addUseCase(
@@ -108,11 +126,20 @@ object AmityStoryCameraHelper {
                 .build()
 
             cameraProvider.unbindAll()
-            camera = cameraProvider.bindToLifecycle(
-                lifecycleOwner,
-                cameraSelector,
-                useCaseGroup
-            )
+            try {
+                camera = cameraProvider.bindToLifecycle(
+                    lifecycleOwner,
+                    cameraSelector,
+                    useCaseGroup
+                )
+            } catch (e: Exception) {
+                // Some OEM devices on API 33+ report vendor-specific dynamic range profiles
+                // (e.g. 8192) that CameraX cannot map, and stream-spec resolution throws an
+                // NPE from DynamicRangesCompatApi33Impl. Fail gracefully instead of crashing.
+                Log.e(TAG, "Unable to bind camera use cases: ${e.message}", e)
+                camera = null
+                cameraProvider.unbindAll()
+            }
         }, ContextCompat.getMainExecutor(context))
     }
 

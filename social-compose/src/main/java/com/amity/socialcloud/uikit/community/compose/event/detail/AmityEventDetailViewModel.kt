@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import org.joda.time.DateTime
@@ -55,6 +56,10 @@ class AmityEventDetailViewModel(
     val eventShareUrl: StateFlow<String?> = _eventShareUrl.asStateFlow()
 
     private val disposables = CompositeDisposable()
+
+    private var permissionCommunityId: String? = null
+    private var deletePermissionJob: Job? = null
+    private var updatePermissionJob: Job? = null
 
     init {
         _currentUserId.value = AmityCoreClient.getUserId()
@@ -96,8 +101,12 @@ class AmityEventDetailViewModel(
             _excludedPostIds.value = it.getPostId()?.let { postId -> listOf(postId) } ?: emptyList()
             _isEventCreator.value = it.getCreator()?.getUserId() == _currentUserId.value
             
-            // Check permissions
-            if (targetCommunityId.isNotEmpty()) {
+            // Check permissions. The event live object re-emits on every local update, so only
+            // (re)start the permission observers when the target community actually changes.
+            // Launching new collectors on every emission leaked RxJava IO workers until the
+            // process ran out of threads (OutOfMemoryError: pthread_create).
+            if (targetCommunityId.isNotEmpty() && targetCommunityId != permissionCommunityId) {
+                permissionCommunityId = targetCommunityId
                 checkDeleteEventPermission(targetCommunityId)
                 checkUpdateEventPermission(targetCommunityId)
             }
@@ -105,10 +114,13 @@ class AmityEventDetailViewModel(
     }
 
     private fun checkDeleteEventPermission(communityId: String) {
-        viewModelScope.launch {
+        deletePermissionJob?.cancel()
+        deletePermissionJob = viewModelScope.launch {
             AmityCoreClient.hasPermission(AmityPermission.DELETE_EVENT)
                 .atCommunity(communityId)
                 .check()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .asFlow()
                 .catch { _hasDeleteEventPermission.value = false }
                 .collect { hasPermission ->
@@ -118,10 +130,13 @@ class AmityEventDetailViewModel(
     }
 
     private fun checkUpdateEventPermission(communityId: String) {
-        viewModelScope.launch {
+        updatePermissionJob?.cancel()
+        updatePermissionJob = viewModelScope.launch {
             AmityCoreClient.hasPermission(AmityPermission.UPDATE_EVENT)
                 .atCommunity(communityId)
                 .check()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .asFlow()
                 .catch { _hasUpdateEventPermission.value = false }
                 .collect { hasPermission ->

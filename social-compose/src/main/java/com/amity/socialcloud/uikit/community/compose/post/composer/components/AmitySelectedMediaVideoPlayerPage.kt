@@ -299,7 +299,9 @@ fun AmitySelectedMediaVideoPlayerPage(
                     if (isProductCatalogueEnabled && currentTagCount > 0) {
                         AmityProductTagBadge(
                             count = currentTagCount,
-                            modifier = Modifier.padding(end = 12.dp, bottom = 16.dp),
+                            modifier = Modifier
+                                .align(Alignment.Start)
+                                .padding(start = 12.dp, bottom = 16.dp),
                             onClick = {
                                 mediaList.getOrNull(pagerState.currentPage)?.let(onTagProductClick)
                             }

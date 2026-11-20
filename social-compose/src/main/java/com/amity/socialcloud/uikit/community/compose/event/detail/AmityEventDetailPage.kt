@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -100,6 +101,8 @@ import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 import com.amity.socialcloud.uikit.community.compose.dropGatedPostTypes
 import com.amity.socialcloud.uikit.community.compose.dropGatedPinnedPostTypes
+import com.amity.socialcloud.uikit.community.compose.post.autoplay.AmityFeedAutoPlayHost
+import com.amity.socialcloud.uikit.community.compose.post.autoplay.amityFeedAutoPlayCover
 
 private fun android.content.Context.closePage() {
     (this as? Activity)?.finish()
@@ -480,24 +483,73 @@ fun AmityEventDetailPage(
                     }
                 } else {
                     // Single LazyColumn for both tabs
-                    LazyColumn(
-                        state = lazyListState,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(AmityTheme.colors.background)
-                    ) {
-                        stickyHeader {
-                            if (isHeaderSticky && event != null) {
-                                Column(
-                                    modifier = Modifier.background(AmityTheme.colors.background)
-                                ) {
-                                    EventCollapsedHeader(
+                    AmityFeedAutoPlayHost {
+                        LazyColumn(
+                            state = lazyListState,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(AmityTheme.colors.background)
+                        ) {
+                            stickyHeader {
+                                if (isHeaderSticky && event != null) {
+                                    Column(
+                                        modifier = Modifier
+                                            .background(AmityTheme.colors.background)
+                                            .amityFeedAutoPlayCover()
+                                    ) {
+                                        EventCollapsedHeader(
+                                            event = event!!,
+                                            onBackClick = onBackClick,
+                                            onMenuClick = if (showMenu) {
+                                                { showEventMenuBottomSheet = true }
+                                            } else null
+                                        )
+                                        EventTabRow(
+                                            pageScope = getPageScope(),
+                                            selectedIndex = activeTabIndex,
+                                            onTabSelected = { selectedTabIndex = it }
+                                        )
+                                    }
+                                }
+                            }
+
+                            item {
+                                if (event != null && !isRsvpLoading) {
+                                    EventExpandedHeader(
                                         event = event!!,
                                         onBackClick = onBackClick,
                                         onMenuClick = if (showMenu) {
                                             { showEventMenuBottomSheet = true }
                                         } else null
                                     )
+                                    EventTitleSection(event = event!!)
+                                    EventDetailsSection(
+                                        event = event!!,
+                                        isGoing = isGoing,
+                                        showRsvpBottomSheet = showRsvpBottomSheet,
+                                        onRsvpBottomSheetChange = { showRsvpBottomSheet = it },
+                                        showChangeRsvpBottomSheet = showChangeRsvpBottomSheet,
+                                        onChangeRsvpBottomSheetChange = {
+                                            showChangeRsvpBottomSheet = it
+                                        },
+                                        onJoinCommunityBottomSheetChange = {
+                                            showJoinCommunityBottomSheet = it
+                                        },
+                                        isMember = isMember,
+                                        hasPendingJoinRequest = hasPendingJoinRequest,
+                                        showPendingJoinDialog = showPendingJoinDialog,
+                                        onShowPendingJoinDialogChange = { showPendingJoinDialog = it },
+                                        onIsGoingChange = { isGoing = it },
+                                        viewModel = viewModel,
+                                        community = community
+                                    )
+                                } else {
+                                    AmityEventDetailShimmer()
+                                }
+                            }
+
+                            item {
+                                if (event != null) {
                                     EventTabRow(
                                         pageScope = getPageScope(),
                                         selectedIndex = activeTabIndex,
@@ -505,106 +557,61 @@ fun AmityEventDetailPage(
                                     )
                                 }
                             }
-                        }
 
-                        item {
-                            if (event != null && !isRsvpLoading) {
-                                EventExpandedHeader(
-                                    event = event!!,
-                                    onBackClick = onBackClick,
-                                    onMenuClick = if (showMenu) {
-                                        { showEventMenuBottomSheet = true }
-                                    } else null
-                                )
-                                EventTitleSection(event = event!!)
-                                EventDetailsSection(
-                                    event = event!!,
-                                    isGoing = isGoing,
-                                    showRsvpBottomSheet = showRsvpBottomSheet,
-                                    onRsvpBottomSheetChange = { showRsvpBottomSheet = it },
-                                    showChangeRsvpBottomSheet = showChangeRsvpBottomSheet,
-                                    onChangeRsvpBottomSheetChange = {
-                                        showChangeRsvpBottomSheet = it
-                                    },
-                                    onJoinCommunityBottomSheetChange = {
-                                        showJoinCommunityBottomSheet = it
-                                    },
-                                    isMember = isMember,
-                                    hasPendingJoinRequest = hasPendingJoinRequest,
-                                    showPendingJoinDialog = showPendingJoinDialog,
-                                    onShowPendingJoinDialogChange = { showPendingJoinDialog = it },
-                                    onIsGoingChange = { isGoing = it },
-                                    viewModel = viewModel,
-                                    community = community
-                                )
-                            } else {
-                                AmityEventDetailShimmer()
-                            }
-                        }
-
-                        item {
-                            if (event != null) {
-                                EventTabRow(
-                                    pageScope = getPageScope(),
-                                    selectedIndex = activeTabIndex,
-                                    onTabSelected = { selectedTabIndex = it }
-                                )
-                            }
-                        }
-
-                        // Conditional content based on selected tab
-                        when (activeTabIndex) {
-                            0 -> {
-                                // About tab
-                                item {
-                                    if (event != null) {
-                                        AmityEventInfoComponent(
-                                            event = event!!,
-                                            post = eventPost,
-                                            onAddressCopied = {
-                                                AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_address_copied"))
-                                            },
-                                            onLinkCopied = {
-                                                AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_link_copied"))
-                                            }
-                                        )
-                                    } else {
-                                        AmityEventAboutTabShimmer()
+                            // Conditional content based on selected tab
+                            when (activeTabIndex) {
+                                0 -> {
+                                    // About tab
+                                    item {
+                                        if (event != null) {
+                                            AmityEventInfoComponent(
+                                                event = event!!,
+                                                post = eventPost,
+                                                onAddressCopied = {
+                                                    AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_address_copied"))
+                                                },
+                                                onLinkCopied = {
+                                                    AmityUIKitSnackbar.publishSnackbarMessage(DefaultAmitySocialStringProvider.getInstance().getString("amity_social_toast_snackbar_link_copied"))
+                                                }
+                                            )
+                                        } else {
+                                            AmityEventAboutTabShimmer()
+                                        }
                                     }
                                 }
-                            }
 
-                            1 -> {
-                                // Discussion tab
-                                if (event != null && !communityId.isNullOrEmpty()) {
-                                    amityEventDiscussionFeedItems(
-                                        modifier = Modifier,
-                                        pageScope = pageScope,
-                                        announcementPosts = announcementPosts,
-                                        pinPosts = pinPosts,
-                                        communityPosts = communityPosts,
-                                        excludedPostIds = excludedPostIds,
-                                        // PDT-4606: the event host is its creator, same source the
-                                        // "Hosted by" section renders. Passing null here meant no
-                                        // Host badge ever surfaced on discussion posts or comments.
-                                        eventHostId = event?.getCreator()?.getUserId(),
-                                        isNonMemberOfCommunity = targetCommunity?.isJoined() == false,
-                                        onClick = { post, _ ->
-                                            val behavior =
-                                                AmitySocialBehaviorHelper.eventDetailPageBehavior
-                                            behavior.goToPostDetailPage(
-                                                AmityEventDetailPageBehavior.Context(
-                                                    pageContext = context,
-                                                ),
-                                                postId = post.getPostId(),
-                                                category = AmityPostCategory.GENERAL,
-                                                autoFocusCommentInput = true,
-                                                eventHostId = event?.getCreator()?.getUserId(),
-                                                eventTargetCommunityId = event?.getTargetCommunity()
-                                                    ?.getCommunityId(),
-                                            )
-                                        }
-                                    )
+                                1 -> {
+                                    // Discussion tab
+                                    if (event != null && !communityId.isNullOrEmpty()) {
+                                        amityEventDiscussionFeedItems(
+                                            modifier = Modifier,
+                                            pageScope = pageScope,
+                                            announcementPosts = announcementPosts,
+                                            pinPosts = pinPosts,
+                                            communityPosts = communityPosts,
+                                            excludedPostIds = excludedPostIds,
+                                            // PDT-4606: the event host is its creator, same source the
+                                            // "Hosted by" section renders. Passing null here meant no
+                                            // Host badge ever surfaced on discussion posts or comments.
+                                            eventHostId = event?.getCreator()?.getUserId(),
+                                            isNonMemberOfCommunity = targetCommunity?.isJoined() == false,
+                                            onClick = { post, _ ->
+                                                val behavior =
+                                                    AmitySocialBehaviorHelper.eventDetailPageBehavior
+                                                behavior.goToPostDetailPage(
+                                                    AmityEventDetailPageBehavior.Context(
+                                                        pageContext = context,
+                                                    ),
+                                                    postId = post.getPostId(),
+                                                    category = AmityPostCategory.GENERAL,
+                                                    autoFocusCommentInput = true,
+                                                    eventHostId = event?.getCreator()?.getUserId(),
+                                                    eventTargetCommunityId = event?.getTargetCommunity()
+                                                        ?.getCommunityId(),
+                                                )
+                                            }
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -1377,6 +1384,7 @@ internal fun EventTabRow(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .weight(1f)
+                    .testTag("event_detail/event_tab")
                     .clickableWithoutRipple {
                         onTabSelected(0)
                     }
@@ -1412,6 +1420,7 @@ internal fun EventTabRow(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .weight(1f)
+                        .testTag("event_detail/discussion_tab")
                         .clickableWithoutRipple {
                             onTabSelected(1)
                         }

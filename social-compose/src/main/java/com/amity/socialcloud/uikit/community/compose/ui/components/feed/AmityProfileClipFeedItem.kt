@@ -111,8 +111,8 @@ fun AmityProfileClipFeedItem(
                 color = amityColorWhite,
             ),
             modifier = Modifier
-                .align(Alignment.BottomStart)
-                .offset(8.dp, (-8).dp)
+                .align(Alignment.BottomEnd)
+                .offset((-8).dp, (-8).dp)
                 .background(
                     color = amityColorBlack.copy(alpha = 0.7f),
                     shape = RoundedCornerShape(4.dp)

@@ -149,8 +149,8 @@ fun AmityProfileVideoFeedItem(
                 color = amityColorWhite,
             ),
             modifier = Modifier
-                .align(Alignment.BottomStart)
-                .offset(8.dp, (-8).dp)
+                .align(Alignment.BottomEnd)
+                .offset((-8).dp, (-8).dp)
                 .background(
                     color = amityColorBlack.copy(alpha = 0.7f),
                     shape = RoundedCornerShape(4.dp)
@@ -162,8 +162,8 @@ fun AmityProfileVideoFeedItem(
             AmityProductTagBadge(
                 count = productTagCount,
                 modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(end = 8.dp, bottom = 8.dp),
+                    .align(Alignment.BottomStart)
+                    .padding(start = 8.dp, bottom = 8.dp),
                 onClick = { onProductTagClick?.invoke() }
             )
         }
@@ -291,8 +291,8 @@ fun AmityProfileVideoFeedItemPreviewDialog(
                         AmityProductTagBadge(
                             count = productTagCount,
                             modifier = Modifier
-                                .align(Alignment.BottomEnd)
-                                .padding(end = 12.dp, bottom = 12.dp)
+                                .align(Alignment.BottomStart)
+                                .padding(start = 12.dp, bottom = 12.dp)
                         )
                     }
                 }

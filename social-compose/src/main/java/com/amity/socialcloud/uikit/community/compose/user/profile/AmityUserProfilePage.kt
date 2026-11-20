@@ -46,6 +46,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -97,6 +98,8 @@ import com.amity.socialcloud.uikit.community.compose.user.profile.elements.Amity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.community.compose.post.autoplay.AmityFeedAutoPlayHost
+import com.amity.socialcloud.uikit.community.compose.post.autoplay.amityFeedAutoPlayCover
 
 // The social home feed holds its pull-to-refresh indicator this long
 // (AmitySocialHomePageViewModel.setGlobalFeedRefreshing).
@@ -262,279 +265,284 @@ fun AmityUserProfilePage(
                     }
             }
 
-            LazyColumn(
-                state = lazyListState,
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(
-                    top = 0.dp
-                )
-            ) {
-                stickyHeader {
-                    if (isHeaderSticky) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(AmityTheme.colors.background)
-                                .padding(horizontal = 12.dp, vertical = 16.dp)
-                        ) {
-                            Icon(
-                                painter = painterResource(CommonR.drawable.amity_ic_back),
-                                contentDescription = "Back",
-                                tint = AmityTheme.colors.base,
+            AmityFeedAutoPlayHost {
+                LazyColumn(
+                    state = lazyListState,
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(
+                        top = 0.dp
+                    )
+                ) {
+                    stickyHeader {
+                        if (isHeaderSticky) {
+                            Box(
                                 modifier = Modifier
-                                    .size(24.dp)
-                                    .align(Alignment.CenterStart)
-                                    .clickableWithoutRipple {
-                                        context.closePageWithResult(Activity.RESULT_CANCELED)
+                                    .fillMaxWidth()
+                                    .background(AmityTheme.colors.background)
+                                    .padding(horizontal = 12.dp, vertical = 16.dp)
+                            ) {
+                                Icon(
+                                    painter = painterResource(CommonR.drawable.amity_ic_back),
+                                    contentDescription = "Back",
+                                    tint = AmityTheme.colors.base,
+                                    modifier = Modifier
+                                        .size(24.dp)
+                                        .align(Alignment.CenterStart)
+                                        .clickableWithoutRipple {
+                                            context.closePageWithResult(Activity.RESULT_CANCELED)
+                                        }
+                                )
+
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center,
+                                    modifier = Modifier
+                                        .align(Alignment.Center)
+                                        .padding(horizontal = 48.dp)
+                                ) {
+                                    Text(
+                                        text = user?.getDisplayName() ?: "",
+                                        style = AmityTheme.typography.titleLegacy,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                        modifier = Modifier.weight(1f, fill = false)
+                                    )
+                                    if (user?.isBrand() == true) {
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Image(
+                                            painter = painterResource(id = CommonComposeR.drawable.amity_ic_brand_badge),
+                                            contentDescription = "Brand badge",
+                                            modifier = Modifier.size(16.dp)
+                                        )
                                     }
+                                }
+
+                                Icon(
+                                    painter = painterResource(CommonR.drawable.amity_ic_more_horiz),
+                                    contentDescription = "Menu",
+                                    tint = AmityTheme.colors.base,
+                                    modifier = Modifier
+                                        .size(24.dp)
+                                        .testTag("user_profile/menu_button")
+                                        .align(Alignment.CenterEnd)
+                                        .clickableWithoutRipple {
+                                            showMenuSheet = true
+                                        }
+                                )
+                            }
+
+                            AmityUserProfileTabRow(
+                                modifier = Modifier.amityFeedAutoPlayCover(),
+                                tabs = visibleTabs,
+                                selected = selectedTab,
+                                onSelect = {
+                                    selectedTab = it
+                                },
+                                currentFilter = feedFilter[selectedFilterIndex],
+                                onFilterLaunch = {
+                                    showFeedFilterSheet = true
+                                },
+                                showFilter = !isBlockedByMe && !isPrivateFeed
+                            )
+                        }
+                    }
+
+                    item {
+                        AmityToolBar(
+                            onBackClick = {
+                                context.closePageWithResult(Activity.RESULT_CANCELED)
+                            }
+                        ) {
+                            if (AmityCoreClient.isSignedIn()) {
+                                Icon(
+                                    painter = painterResource(CommonR.drawable.amity_ic_more_horiz),
+                                    contentDescription = "Close",
+                                    tint = AmityTheme.colors.base,
+                                    modifier = Modifier
+                                        .size(24.dp)
+                                        .testTag("user_profile/menu_button")
+                                        .clickableWithoutRipple {
+                                            showMenuSheet = true
+                                        }
+                                )
+                            }
+                        }
+                    }
+                    item {
+                        if (user == null) {
+                            AmityUserProfileHeaderShimmer()
+                        } else {
+                            AmityUserProfileHeaderComponent(
+                                pageScope = getPageScope(),
+                                user = user!!,
+                                onAvatarClick = {
+                                    if (user?.resolvedAvatarUrl() != null) {
+                                        showAvatarPopupDialog = true
+                                    }
+                                },
+                                onMenuClick = {
+                                    showMenuSheet = true
+                                }
+                            )
+                        }
+                    }
+                    item {
+                        AmityBaseElement(
+                            pageScope = getPageScope(),
+                            elementId = "user_profile_content",
+                        ) {
+                            AmityUserProfileTabRow(
+                                tabs = visibleTabs,
+                                selected = selectedTab,
+                                onSelect = { it ->
+                                    selectedTab = it
+                                },
+                                currentFilter = feedFilter[selectedFilterIndex],
+                                onFilterLaunch = {
+                                    showFeedFilterSheet = true
+                                },
+                                showFilter = !isBlockedByMe && !isPrivateFeed
                             )
 
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.Center,
-                                modifier = Modifier
-                                    .align(Alignment.Center)
-                                    .padding(horizontal = 48.dp)
-                            ) {
-                                Text(
-                                    text = user?.getDisplayName() ?: "",
-                                    style = AmityTheme.typography.titleLegacy,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    modifier = Modifier.weight(1f, fill = false)
-                                )
-                                if (user?.isBrand() == true) {
-                                    Spacer(modifier = Modifier.width(4.dp))
-                                    Image(
-                                        painter = painterResource(id = CommonComposeR.drawable.amity_ic_brand_badge),
-                                        contentDescription = "Brand badge",
-                                        modifier = Modifier.size(16.dp)
+                        }
+                    }
+                    if (isUserProfileContentVisible) {
+                        when (selectedTab) {
+                        AmityUserProfilePageTab.FEED -> {
+                            AmityUserProfilePageViewModel.PostListState.from(
+                                loadState = userPosts.loadState.refresh,
+                                itemCount = userPosts.itemCount
+                            ).let(viewModel::setPostListState)
+
+                            amityUserFeedLLS(
+                                modifier = Modifier,
+                                context = context,
+                                pageScope = getPageScope(),
+                                userPosts = userPosts,
+                                onClipClick = {
+                                    behavior.goToClipFeedPage(
+                                        context = context,
+                                        postId = it.getPostId(),
+                                        type = AmityClipFeedPageType.UserNewsFeed(it.getPostId())
+                                    )
+                                },
+                                postListState = postListState,
+                                isBlockedByMe = isBlockedByMe,
+                                refreshKey = refreshKey,
+                            )
+                        }
+
+                        AmityUserProfilePageTab.MEDIA -> {
+                            item {
+                                AmityBaseComponent(
+                                    componentId = "user_video_feed",
+                                    pageScope = getPageScope()
+                                ) {
+                                    AmityVideoAndClipChipSelector(
+                                        tabTitles = mediaTabTitles,
+                                        selectedTabIndex = selectedMediaTabIndex,
+                                        onTabSelected = { index ->
+                                            selectedMediaTabIndex = index
+                                        },
+                                        componentScope = getComponentScope()
                                     )
                                 }
                             }
 
-                            Icon(
-                                painter = painterResource(CommonR.drawable.amity_ic_more_horiz),
-                                contentDescription = "Menu",
-                                tint = AmityTheme.colors.base,
-                                modifier = Modifier
-                                    .size(24.dp)
-                                    .align(Alignment.CenterEnd)
-                                    .clickableWithoutRipple {
-                                        showMenuSheet = true
-                                    }
-                            )
-                        }
+                            when (selectedMediaTabIndex) {
+                                0 -> {
+                                    AmityUserProfilePageViewModel.PostListState.from(
+                                        loadState = imagePosts.loadState.refresh,
+                                        itemCount = imagePosts.itemCount
+                                    ).let(viewModel::setImagePostListState)
 
-                        AmityUserProfileTabRow(
-                            tabs = visibleTabs,
-                            selected = selectedTab,
-                            onSelect = {
-                                selectedTab = it
-                            },
-                            currentFilter = feedFilter[selectedFilterIndex],
-                            onFilterLaunch = {
-                                showFeedFilterSheet = true
-                            },
-                            showFilter = !isBlockedByMe && !isPrivateFeed
-                        )
-                    }
-                }
-
-                item {
-                    AmityToolBar(
-                        onBackClick = {
-                            context.closePageWithResult(Activity.RESULT_CANCELED)
-                        }
-                    ) {
-                        if (AmityCoreClient.isSignedIn()) {
-                            Icon(
-                                painter = painterResource(CommonR.drawable.amity_ic_more_horiz),
-                                contentDescription = "Close",
-                                tint = AmityTheme.colors.base,
-                                modifier = Modifier
-                                    .size(24.dp)
-                                    .clickableWithoutRipple {
-                                        showMenuSheet = true
-                                    }
-                            )
-                        }
-                    }
-                }
-                item {
-                    if (user == null) {
-                        AmityUserProfileHeaderShimmer()
-                    } else {
-                        AmityUserProfileHeaderComponent(
-                            pageScope = getPageScope(),
-                            user = user!!,
-                            onAvatarClick = {
-                                if (user?.resolvedAvatarUrl() != null) {
-                                    showAvatarPopupDialog = true
+                                    amityUserImageFeedLLS(
+                                        modifier = Modifier,
+                                        pageScope = getPageScope(),
+                                        imagePosts = imagePosts,
+                                        postListState = imagePostListState,
+                                        isBlockedByMe = isBlockedByMe,
+                                        onPostClick = { postId ->
+                                            behavior.goToPostDetailPage(
+                                                context = context,
+                                                postId = postId,
+                                            )
+                                        }
+                                    )
                                 }
-                            },
-                            onMenuClick = {
-                                showMenuSheet = true
-                            }
-                        )
-                    }
-                }
-                item {
-                    AmityBaseElement(
-                        pageScope = getPageScope(),
-                        elementId = "user_profile_content",
-                    ) {
-                        AmityUserProfileTabRow(
-                            tabs = visibleTabs,
-                            selected = selectedTab,
-                            onSelect = { it ->
-                                selectedTab = it
-                            },
-                            currentFilter = feedFilter[selectedFilterIndex],
-                            onFilterLaunch = {
-                                showFeedFilterSheet = true
-                            },
-                            showFilter = !isBlockedByMe && !isPrivateFeed
-                        )
 
-                    }
-                }
-                if (isUserProfileContentVisible) {
-                    when (selectedTab) {
-                    AmityUserProfilePageTab.FEED -> {
-                        AmityUserProfilePageViewModel.PostListState.from(
-                            loadState = userPosts.loadState.refresh,
-                            itemCount = userPosts.itemCount
-                        ).let(viewModel::setPostListState)
+                                1 -> {
+                                    AmityUserProfilePageViewModel.PostListState.from(
+                                        loadState = videoPosts.loadState.refresh,
+                                        itemCount = videoPosts.itemCount
+                                    ).let(viewModel::setVideoPostListState)
 
-                        amityUserFeedLLS(
-                            modifier = Modifier,
-                            context = context,
-                            pageScope = getPageScope(),
-                            userPosts = userPosts,
-                            onClipClick = {
-                                behavior.goToClipFeedPage(
-                                    context = context,
-                                    postId = it.getPostId(),
-                                    type = AmityClipFeedPageType.UserNewsFeed(it.getPostId())
-                                )
-                            },
-                            postListState = postListState,
-                            isBlockedByMe = isBlockedByMe,
-                            refreshKey = refreshKey,
-                        )
-                    }
+                                    amityUserVideoFeedLLS(
+                                        modifier = Modifier,
+                                        pageScope = getPageScope(),
+                                        videoPosts = videoPosts,
+                                        postListState = videoPostListState,
+                                        isBlockedByMe = isBlockedByMe,
+                                    )
+                                }
 
-                    AmityUserProfilePageTab.MEDIA -> {
-                        item {
-                            AmityBaseComponent(
-                                componentId = "user_video_feed",
-                                pageScope = getPageScope()
-                            ) {
-                                AmityVideoAndClipChipSelector(
-                                    tabTitles = mediaTabTitles,
-                                    selectedTabIndex = selectedMediaTabIndex,
-                                    onTabSelected = { index ->
-                                        selectedMediaTabIndex = index
-                                    },
-                                    componentScope = getComponentScope()
-                                )
-                            }
-                        }
+                                2 -> {
+                                    AmityUserProfilePageViewModel.PostListState.from(
+                                        loadState = clipPosts.loadState.refresh,
+                                        itemCount = clipPosts.itemCount
+                                    ).let(viewModel::setClipPostListState)
 
-                        when (selectedMediaTabIndex) {
-                            0 -> {
-                                AmityUserProfilePageViewModel.PostListState.from(
-                                    loadState = imagePosts.loadState.refresh,
-                                    itemCount = imagePosts.itemCount
-                                ).let(viewModel::setImagePostListState)
+                                    amityUserClipFeedLLS(
+                                        modifier = Modifier,
+                                        pageScope = getPageScope(),
+                                        clipPosts = clipPosts,
+                                        postListState = clipPostListState,
+                                        isBlockedByMe = isBlockedByMe,
+                                        // In AmityUserProfilePage onClipClick
+                                        onClipClick = { postId ->
+                                            coroutineScope.launch {
+                                                val selectedIndex =
+                                                    clipPosts.itemSnapshotList.items.indexOfFirst {
+                                                        it.getPostId() == postId
+                                                    }
 
-                                amityUserImageFeedLLS(
-                                    modifier = Modifier,
-                                    pageScope = getPageScope(),
-                                    imagePosts = imagePosts,
-                                    postListState = imagePostListState,
-                                    isBlockedByMe = isBlockedByMe,
-                                    onPostClick = { postId ->
-                                        behavior.goToPostDetailPage(
-                                            context = context,
-                                            postId = postId,
-                                        )
-                                    }
-                                )
-                            }
+                                                if (selectedIndex >= clipPosts.itemCount && selectedIndex >= 0) {
+                                                    // Wait for more data to load
+                                                    val targetPage = selectedIndex / 20
+                                                    val currentPage = clipPosts.itemCount / 20
 
-                            1 -> {
-                                AmityUserProfilePageViewModel.PostListState.from(
-                                    loadState = videoPosts.loadState.refresh,
-                                    itemCount = videoPosts.itemCount
-                                ).let(viewModel::setVideoPostListState)
-
-                                amityUserVideoFeedLLS(
-                                    modifier = Modifier,
-                                    pageScope = getPageScope(),
-                                    videoPosts = videoPosts,
-                                    postListState = videoPostListState,
-                                    isBlockedByMe = isBlockedByMe,
-                                )
-                            }
-
-                            2 -> {
-                                AmityUserProfilePageViewModel.PostListState.from(
-                                    loadState = clipPosts.loadState.refresh,
-                                    itemCount = clipPosts.itemCount
-                                ).let(viewModel::setClipPostListState)
-
-                                amityUserClipFeedLLS(
-                                    modifier = Modifier,
-                                    pageScope = getPageScope(),
-                                    clipPosts = clipPosts,
-                                    postListState = clipPostListState,
-                                    isBlockedByMe = isBlockedByMe,
-                                    // In AmityUserProfilePage onClipClick
-                                    onClipClick = { postId ->
-                                        coroutineScope.launch {
-                                            val selectedIndex =
-                                                clipPosts.itemSnapshotList.items.indexOfFirst {
-                                                    it.getPostId() == postId
-                                                }
-
-                                            if (selectedIndex >= clipPosts.itemCount && selectedIndex >= 0) {
-                                                // Wait for more data to load
-                                                val targetPage = selectedIndex / 20
-                                                val currentPage = clipPosts.itemCount / 20
-
-                                                if (targetPage > currentPage) {
-                                                    // Show loading indicator
-                                                    // Access items to trigger loading
-                                                    repeat(targetPage - currentPage) {
-                                                        val triggerIndex = clipPosts.itemCount
-                                                        if (triggerIndex < selectedIndex) {
-                                                            clipPosts[triggerIndex] // Trigger next page load
-                                                            delay(500) // Wait for load
+                                                    if (targetPage > currentPage) {
+                                                        // Show loading indicator
+                                                        // Access items to trigger loading
+                                                        repeat(targetPage - currentPage) {
+                                                            val triggerIndex = clipPosts.itemCount
+                                                            if (triggerIndex < selectedIndex) {
+                                                                clipPosts[triggerIndex] // Trigger next page load
+                                                                delay(500) // Wait for load
+                                                            }
                                                         }
                                                     }
                                                 }
+
+                                                behavior.goToClipFeedPage(
+                                                    context = context,
+                                                    postId = postId,
+                                                    userId = userId,
+                                                    clipPagingData = viewModel.getUserClipPosts(),
+                                                    selectedIndex = maxOf(
+                                                        0,
+                                                        minOf(selectedIndex, clipPosts.itemCount - 1)
+                                                    ),
+                                                    type = AmityClipFeedPageType.UserClipFeed(userId)
+                                                )
                                             }
-
-                                            behavior.goToClipFeedPage(
-                                                context = context,
-                                                postId = postId,
-                                                userId = userId,
-                                                clipPagingData = viewModel.getUserClipPosts(),
-                                                selectedIndex = maxOf(
-                                                    0,
-                                                    minOf(selectedIndex, clipPosts.itemCount - 1)
-                                                ),
-                                                type = AmityClipFeedPageType.UserClipFeed(userId)
-                                            )
                                         }
-                                    }
-                                )
+                                    )
+                                }
                             }
-                        }
 
-                    }
+                        }
+                        }
                     }
                 }
             }

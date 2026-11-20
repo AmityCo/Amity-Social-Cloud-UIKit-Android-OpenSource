@@ -530,8 +530,8 @@ fun AmitySelectedMediaElement(
         if (media.type == AmityPostMedia.Type.IMAGE && !isExistingMedia && media.uploadState == AmityFileUploadState.COMPLETE && media.uploadId != null) {
             Row(
                 modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(start = 8.dp, bottom = 8.dp)
+                    .align(Alignment.BottomEnd)
+                    .padding(end = 8.dp, bottom = 8.dp)
                     .height(24.dp)
                     .background(
                         color = amityColorBlack.copy(alpha = 0.53f),
@@ -584,8 +584,8 @@ fun AmitySelectedMediaElement(
                     count = productTagCount,
                     showWhenEmpty = !isGlobalTagLimitReached,
                     modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(end = productTagInset, bottom = productTagInset),
+                        .align(Alignment.BottomStart)
+                        .padding(start = productTagInset, bottom = productTagInset),
                     onClick = { onTagProductClick(media) }
                 )
             }

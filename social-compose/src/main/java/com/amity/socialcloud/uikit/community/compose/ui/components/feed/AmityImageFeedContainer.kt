@@ -13,7 +13,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,6 +39,41 @@ import com.amity.socialcloud.uikit.common.ui.theme.amityMediaSurface
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorBlack
 
+/**
+ * One image in a profile or community Images tab grid. The grid items register these with
+ * [AmityImageFeedContainer], so the viewer can swipe through every loaded image (PDT-7237).
+ */
+class AmityImageFeedViewerEntry(
+    val image: AmityImage?,
+    val postId: String?,
+    val productTagCount: Int,
+    val onBottomSheetRequest: (() -> Unit)?,
+)
+
+/**
+ * The grid images in the order the grid composes them. Grid items join on composition and
+ * leave on disposal, so the list follows the loaded paging items.
+ */
+class AmityImageFeedViewerRegistry {
+    private val keys = androidx.compose.runtime.mutableStateListOf<Any>()
+    private val entries = androidx.compose.runtime.mutableStateMapOf<Any, AmityImageFeedViewerEntry>()
+
+    fun register(key: Any, entry: AmityImageFeedViewerEntry) {
+        if (!entries.containsKey(key)) keys.add(key)
+        entries[key] = entry
+    }
+
+    fun unregister(key: Any) {
+        keys.remove(key)
+        entries.remove(key)
+    }
+
+    val orderedEntries: List<AmityImageFeedViewerEntry>
+        get() = keys.mapNotNull { entries[it] }
+}
+
+val LocalAmityImageFeedViewerRegistry = staticCompositionLocalOf<AmityImageFeedViewerRegistry?> { null }
+
 @Composable
 fun AmityImageFeedContainer(
     availablePostIds: Set<String> = emptySet(), // Pass current available post IDs
@@ -47,9 +84,12 @@ fun AmityImageFeedContainer(
 ) {
     // Tuple4: image, postId, productTagCount, onBottomSheetRequest
     var dialogData by remember { mutableStateOf<Array<Any?>?>(null) }
+    val registry = remember { AmityImageFeedViewerRegistry() }
 
-    content { image, postId, productTagCount, onBottomSheetRequest ->
-        dialogData = arrayOf(image, postId, productTagCount, onBottomSheetRequest)
+    CompositionLocalProvider(LocalAmityImageFeedViewerRegistry provides registry) {
+        content { image, postId, productTagCount, onBottomSheetRequest ->
+            dialogData = arrayOf(image, postId, productTagCount, onBottomSheetRequest)
+        }
     }
 
     dialogData?.let { data ->
@@ -70,16 +110,22 @@ fun AmityImageFeedContainer(
                 }
             )
         } else {
-            AmityProfileImageFeedItemPreviewDialog(
-                data = image,
-                postId = postId,
-                productTagCount = productTagCount,
-                onPostClick = { clickedPostId ->
-                    onBottomSheetRequest?.invoke()
-                },
-                onProductTagClick = if (postId != null && onProductTagClick != null) {
-                    { onProductTagClick(postId) }
-                } else null
+            // Every loaded grid image, so the viewer shows "n / total" and swipes through the
+            // grid. A deleted post leaves the grid, so its image leaves the viewer too.
+            val entries = registry.orderedEntries
+                .filter { it.postId == null || availablePostIds.isEmpty() || availablePostIds.contains(it.postId) }
+                .ifEmpty { listOf(AmityImageFeedViewerEntry(image, postId, productTagCount, onBottomSheetRequest)) }
+            val initialIndex = remember(dialogData) {
+                entries.indexOfFirst {
+                    it.postId == postId && it.image?.getFileId() == image?.getFileId()
+                }.coerceAtLeast(0)
+            }
+            AmityProfileImageFeedPagerPreviewDialog(
+                entries = entries,
+                initialIndex = initialIndex,
+                onProductTagClick = if (onProductTagClick != null) {
+                    { entry -> entry.postId?.let(onProductTagClick) }
+                } else null,
             ) {
                 dialogData = null
             }

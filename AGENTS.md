@@ -236,6 +236,7 @@ fun View.setSafeOnClickListener(action: (View) -> Unit) {
 #### RxJava
 - Always dispose subscriptions in `onCleared()` or use `addDisposable()`
 - Use appropriate schedulers (subscribeOn/observeOn)
+- Dispose live subscriptions (or cancel the collecting `Job`); never start a new one per emission. See `.agent/skills/uikit/common/rxjava-threading.md`
 
 ### Error Handling
 

@@ -47,6 +47,7 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.sdk.api.core.AmityCoreClient
+import com.amity.socialcloud.sdk.model.core.file.AmityClip
 import com.amity.socialcloud.sdk.model.core.product.AmityProduct
 import com.amity.socialcloud.sdk.model.core.producttag.AmityProductTag
 import com.amity.socialcloud.sdk.model.social.post.AmityPost
@@ -59,6 +60,10 @@ import com.amity.socialcloud.uikit.common.R as CommonR
 import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.community.compose.livestream.room.shared.AmityProductWebViewBottomSheet
 import com.amity.socialcloud.uikit.community.compose.post.AmityMediaRatio
+import com.amity.socialcloud.uikit.community.compose.post.autoplay.AmityFeedAutoPlayLayer
+import com.amity.socialcloud.uikit.community.compose.post.autoplay.AmityFeedAutoPlayPositions
+import com.amity.socialcloud.uikit.community.compose.post.autoplay.AmityFeedAutoPlaySource
+import com.amity.socialcloud.uikit.community.compose.post.autoplay.LocalAmityFeedAutoPlayController
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.AmityProductTagListComponent
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.RenderModeEnum
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
@@ -146,9 +151,18 @@ fun AmityChildPostMediaElement(
 
     // Carousel page, hoisted so the full-screen viewer can report back which frame it ended on
     // and the carousel can scroll to it on dismiss, instead of always landing on the entry frame.
-    // Keyed on refreshKey so a refresh starts a fresh pager state instead of restoring the old page.
+    // Keyed on refreshKey so a refresh starts a fresh pager state. Post detail and a refreshed feed
+    // open the carousel on the saved page: only logout clears it (SOL-PDT-3429 R-RESUME).
     val pagerState = key(refreshKey) {
-        rememberPagerState(pageCount = { postChildrenList.size })
+        rememberPagerState(
+            initialPage = AmityFeedAutoPlayPositions.carouselPageOf(post.getPostId())
+                .coerceIn(0, (postChildrenList.size - 1).coerceAtLeast(0)),
+            pageCount = { postChildrenList.size },
+        )
+    }
+    androidx.compose.runtime.LaunchedEffect(pagerState, post.getPostId()) {
+        androidx.compose.runtime.snapshotFlow { pagerState.settledPage }
+            .collect { AmityFeedAutoPlayPositions.saveCarouselPage(post.getPostId(), it) }
     }
     val coroutineScope = rememberCoroutineScope()
     var lastViewedFileId by remember { mutableStateOf<String?>(null) }
@@ -207,7 +221,18 @@ fun AmityChildPostMediaElement(
         }
     }
 
-    if (showMediaDialog.value && selectedFileId.value.isNotEmptyOrBlank()) {
+    // The full-screen player is a Dialog over the live feed, so the feed player must stop under it.
+    val autoPlayController = LocalAmityFeedAutoPlayController.current
+    val isMediaDialogOpen = showMediaDialog.value && selectedFileId.value.isNotEmptyOrBlank()
+    if (autoPlayController != null && isMediaDialogOpen) {
+        androidx.compose.runtime.DisposableEffect(autoPlayController, post.getPostId()) {
+            val token = "media_dialog_${post.getPostId()}"
+            autoPlayController.suspend(token)
+            onDispose { autoPlayController.resume(token) }
+        }
+    }
+
+    if (isMediaDialogOpen) {
         if (isVideoPost) {
             // Use AmityVideoPlayerPage for video posts
             AmityVideoPlayerPage(
@@ -316,7 +341,12 @@ fun AmityPostMediaImageChildrenOne(
             post = postChild,
             onClick = { onClick(postChild) }
         )
-        if (isVideoPost) {
+        val hidesPlayIcon = if (isVideoPost) {
+            AmityFeedAutoPlayVideoFrame(postChild = postChild, onClick = { onClick(postChild) })
+        } else {
+            false
+        }
+        if (isVideoPost && !hidesPlayIcon) {
             AmityPostMediaPlayButton(
                 modifier = Modifier.align(Alignment.Center)
             )
@@ -324,8 +354,8 @@ fun AmityPostMediaImageChildrenOne(
         AmityProductTagBadge(
             count = productTagCount,
             modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(end = 12.dp, bottom = 12.dp),
+                .align(Alignment.BottomStart)
+                .padding(start = 12.dp, bottom = 12.dp),
             onClick = { onProductTagClick(postChild) }
         )
     }
@@ -378,7 +408,17 @@ fun AmityPostMediaCarousel(
                         post = child,
                         onClick = { onClick(child) }
                     )
-                    if (isVideoPost) {
+                    // Only the settled page can play. The pages beside it are composed too.
+                    val hidesPlayIcon = if (isVideoPost) {
+                        AmityFeedAutoPlayVideoFrame(
+                            postChild = child,
+                            isEligible = page == pagerState.settledPage,
+                            onClick = { onClick(child) },
+                        )
+                    } else {
+                        false
+                    }
+                    if (isVideoPost && !hidesPlayIcon) {
                         AmityPostMediaPlayButton(
                             modifier = Modifier.align(Alignment.Center)
                         )
@@ -386,8 +426,8 @@ fun AmityPostMediaCarousel(
                     AmityProductTagBadge(
                         count = productTagCounts.getOrElse(page) { 0 },
                         modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(end = 12.dp, bottom = 12.dp),
+                            .align(Alignment.BottomStart)
+                            .padding(start = 12.dp, bottom = 12.dp),
                         onClick = { onProductTagClick(child) }
                     )
                 }
@@ -402,6 +442,9 @@ fun AmityPostMediaCarousel(
                         shape = RoundedCornerShape(999.dp)
                     )
                     .padding(horizontal = 12.dp, vertical = 6.dp)
+                    // The counter only shows the page. It takes the tap, so the page under it does
+                    // not open the full player (SOL-PDT-3429 R-OVERLAY-POSITIONS).
+                    .clickableWithoutRipple { }
             ) {
                 Text(
                     text = "${pagerState.currentPage + 1}/${postChildren.size}",
@@ -668,6 +711,33 @@ fun AmityProductTagBadge(
             )
         }
     }
+}
+
+/**
+ * Autoplay layer for a video or clip frame. Does nothing outside a feed that hosts autoplay.
+ * Returns true when the frame must hide its play icon (see [AmityFeedAutoPlayLayer]).
+ */
+@Composable
+private fun androidx.compose.foundation.layout.BoxScope.AmityFeedAutoPlayVideoFrame(
+    postChild: AmityPost,
+    isEligible: Boolean = true,
+    onClick: () -> Unit,
+): Boolean {
+    val source = remember(postChild.getPostId(), postChild.getUpdatedAt()) {
+        when (val data = postChild.getData()) {
+            is AmityPost.Data.VIDEO -> AmityFeedAutoPlaySource.Video(data)
+            is AmityPost.Data.CLIP -> AmityFeedAutoPlaySource.Clip(data)
+            else -> null
+        }
+    } ?: return false
+    val fitVideo = (postChild.getData() as? AmityPost.Data.CLIP)?.getDisplayMode() == AmityClip.DisplayMode.FIT
+    return AmityFeedAutoPlayLayer(
+        key = postChild.getPostId(),
+        source = source,
+        isEligible = isEligible,
+        fitVideo = fitVideo,
+        onClick = onClick,
+    )
 }
 
 @Composable

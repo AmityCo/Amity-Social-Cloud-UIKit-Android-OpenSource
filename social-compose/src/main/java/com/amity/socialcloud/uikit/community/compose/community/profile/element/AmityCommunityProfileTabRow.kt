@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.amity.socialcloud.uikit.common.ui.base.AmityBaseElement
@@ -68,7 +69,7 @@ fun AmityCommunityProfileTabRow(
                                 when (tab) {
                                     AmityCommunityProfilePageTab.FEED -> "community_feed_tab_button"
                                     AmityCommunityProfilePageTab.PIN -> "community_pin_tab_button"
-                                    AmityCommunityProfilePageTab.EVENTS -> "event_button"
+                                    AmityCommunityProfilePageTab.EVENTS -> "community_event_tab_button"
                                     AmityCommunityProfilePageTab.MEDIA -> "community_media_tab_button"
                                 }
                             )

@@ -69,6 +69,9 @@ import com.amity.socialcloud.uikit.community.compose.livestream.view.AmityLivest
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.AmityProductTagListComponent
 import com.amity.socialcloud.uikit.community.compose.post.composer.components.RenderModeEnum
 import com.amity.socialcloud.uikit.community.compose.post.detail.AmityPostDetailPageActivity.Companion.REQUEST_CODE_VIEW_LIVESTREAM
+import com.amity.socialcloud.uikit.community.compose.post.autoplay.AmityFeedAutoPlayLayer
+import com.amity.socialcloud.uikit.community.compose.post.autoplay.AmityFeedAutoPlaySource
+import com.amity.socialcloud.uikit.community.compose.post.autoplay.LocalAmityFeedAutoPlayController
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
@@ -271,6 +274,28 @@ fun AmityChildLivestreamPostElement(
                 }
             }
         }
+    }
+}
+
+/** Null unless the room has something to play. A recorded room plays all its segments in order. */
+private fun feedAutoPlayRoomSource(
+    room: AmityRoom?,
+    roomStatus: AmityRoomStatus?,
+    recordedUrls: List<String>,
+): AmityFeedAutoPlaySource.Room? {
+    if (room == null) return null
+    return when (roomStatus) {
+        // A reconnecting room stays the playing preview and shows the spinner (R-LIVE-STATUS).
+        AmityRoomStatus.LIVE, AmityRoomStatus.WAITING_RECONNECT -> room.getLivePlaybackUrl()
+            ?.takeIf { it.isNotBlank() }
+            ?.let { AmityFeedAutoPlaySource.Room(playbackUrls = listOf(it), isLive = true) }
+
+        AmityRoomStatus.RECORDED -> recordedUrls
+            .filter { it.isNotBlank() }
+            .takeIf { it.isNotEmpty() }
+            ?.let { AmityFeedAutoPlaySource.Room(playbackUrls = it, isLive = false) }
+
+        else -> null
     }
 }
 
@@ -696,32 +721,33 @@ fun AmityChildRoomPostElement(
 
             // 5. All other states: IDLE, LIVE, WAITING_RECONNECT, RECORDED
             else -> {
+                val openRoom: () -> Unit = {
+                    if (room != null && roomStatus != AmityRoomStatus.IDLE) {
+                        if (roomStatus == AmityRoomStatus.RECORDED) {
+                            // Recorded livestream now opens in its own Activity so it can
+                            // enter Picture-in-Picture (video posts still use the Dialog).
+                            context.startActivity(
+                                AmityVideoPlayerPageActivity.newIntent(
+                                    context = context,
+                                    post = post,
+                                    recordedUrls = recordedUrls,
+                                )
+                            )
+                        } else {
+                            AmityRoomPlayerPageActivity
+                                .newIntent(context = context, post = post)
+                                .let {
+                                    activity.startActivityForResult(
+                                        it,
+                                        REQUEST_CODE_VIEW_LIVESTREAM
+                                    )
+                                }
+                        }
+                    }
+                }
                 Box(
                     modifier = Modifier
-                        .clickable {
-                            if (room != null && roomStatus != AmityRoomStatus.IDLE) {
-                                if (roomStatus == AmityRoomStatus.RECORDED) {
-                                    // Recorded livestream now opens in its own Activity so it can
-                                    // enter Picture-in-Picture (video posts still use the Dialog).
-                                    context.startActivity(
-                                        AmityVideoPlayerPageActivity.newIntent(
-                                            context = context,
-                                            post = post,
-                                            recordedUrls = recordedUrls,
-                                        )
-                                    )
-                                } else {
-                                    AmityRoomPlayerPageActivity
-                                        .newIntent(context = context, post = post)
-                                        .let {
-                                            activity.startActivityForResult(
-                                                it,
-                                                REQUEST_CODE_VIEW_LIVESTREAM
-                                            )
-                                        }
-                                }
-                            }
-                        }
+                        .clickable { openRoom() }
                 ) {
                     // Thumbnail rendering with fallback chain
                     when {
@@ -781,8 +807,31 @@ fun AmityChildRoomPostElement(
                         }
                     }
 
+                    // Feed autoplay for a live room, or the first segment of a recorded one.
+                    val autoPlayController = LocalAmityFeedAutoPlayController.current
+                    val isAutoPlayFeed = autoPlayController != null
+                    val autoPlayKey = "room_${room?.getRoomId()}"
+                    val autoPlaySource = remember(isAutoPlayFeed, room?.getRoomId(), roomStatus, recordedUrls) {
+                        if (isAutoPlayFeed) feedAutoPlayRoomSource(room, roomStatus, recordedUrls) else null
+                    }
+                    val hidesPlayIcon = if (autoPlaySource != null) {
+                        AmityFeedAutoPlayLayer(
+                            key = autoPlayKey,
+                            source = autoPlaySource,
+                            isWaiting = roomStatus == AmityRoomStatus.WAITING_RECONNECT,
+                            onClick = openRoom,
+                        )
+                    } else {
+                        false
+                    }
+
+                    // In an autoplay feed the layer draws the reconnecting spinner on the live
+                    // preview that plays. A waiting live post shows no spinner (R-LIVE-STATUS).
+                    val isReconnectingInFeed = autoPlayController?.activeKey == autoPlayKey &&
+                        roomStatus == AmityRoomStatus.WAITING_RECONNECT
+
                     // Play button overlay (all states except IDLE)
-                    if (room != null && roomStatus != AmityRoomStatus.IDLE) {
+                    if (room != null && roomStatus != AmityRoomStatus.IDLE && !hidesPlayIcon && !isReconnectingInFeed) {
                         Image(
                             painter = painterResource(id = CommonComposeR.drawable.amity_ic_play_v4),
                             contentDescription = null,
@@ -823,8 +872,9 @@ fun AmityChildRoomPostElement(
                         AmityProductTagBadge(
                             count = roomPostProducts.size,
                             modifier = Modifier
-                                .align(Alignment.BottomEnd)
-                                .padding(end = 12.dp, bottom = 12.dp),
+                                // Bottom-left, clear of the sound button in the bottom-right corner.
+                                .align(Alignment.BottomStart)
+                                .padding(start = 12.dp, bottom = 12.dp),
                             onClick = { showProductTagSheet = true }
                         )
                     }

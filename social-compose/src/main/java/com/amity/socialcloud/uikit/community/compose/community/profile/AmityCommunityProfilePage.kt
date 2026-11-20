@@ -98,6 +98,8 @@ import kotlin.div
 import kotlin.text.compareTo
 import kotlin.text.get
 import com.amity.socialcloud.uikit.common.ui.theme.amityColorWhite
+import com.amity.socialcloud.uikit.community.compose.post.autoplay.AmityFeedAutoPlayHost
+import com.amity.socialcloud.uikit.community.compose.post.autoplay.amityFeedAutoPlayCover
 
 // The social home feed holds its pull-to-refresh indicator this long
 // (AmitySocialHomePageViewModel.setGlobalFeedRefreshing).
@@ -397,158 +399,93 @@ fun AmityCommunityProfilePage(
                             }
                     }
 
-                    LazyColumn(
-                        state = lazyListState,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(AmityTheme.colors.background),
-                    ) {
-                        // Only show the full-page shimmer during the genuine initial load
-                        // (no community data yet). Gating it on isRefreshing too made the
-                        // whole page flash to shimmer on every state change / refresh
-                        // (e.g. accepting an invitation). Refreshes keep the content and
-                        // use the pull-to-refresh spinner instead.
-                        if (community == null) {
-                            item {
-                                AmityCommunityProfileShimmer()
-                            }
-                        } else {
-                            stickyHeader {
-                                if (isHeaderSticky) {
+                    AmityFeedAutoPlayHost {
+                        LazyColumn(
+                            state = lazyListState,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(AmityTheme.colors.background),
+                        ) {
+                            // Only show the full-page shimmer during the genuine initial load
+                            // (no community data yet). Gating it on isRefreshing too made the
+                            // whole page flash to shimmer on every state change / refresh
+                            // (e.g. accepting an invitation). Refreshes keep the content and
+                            // use the pull-to-refresh spinner instead.
+                            if (community == null) {
+                                item {
+                                    AmityCommunityProfileShimmer()
+                                }
+                            } else {
+                                stickyHeader {
+                                    if (isHeaderSticky) {
+                                        AmityCommunityHeaderComponent(
+                                            pageScope = getPageScope(),
+                                            community = community!!,
+                                            style = AmityCommunityHeaderStyle.COLLAPSE,
+                                        )
+                                        AmityCommunityProfileTabRow(
+                                            modifier = Modifier.amityFeedAutoPlayCover(),
+                                            pageScope = getPageScope(),
+                                            tabs = visibleTabs,
+                                            selected = selectedTab,
+                                        ) { tab ->
+                                            selectedTab = tab
+                                        }
+                                    }
+                                }
+
+                                item {
                                     AmityCommunityHeaderComponent(
                                         pageScope = getPageScope(),
                                         community = community!!,
-                                        style = AmityCommunityHeaderStyle.COLLAPSE,
+                                        style = AmityCommunityHeaderStyle.EXPANDED,
                                     )
-                                    AmityCommunityProfileTabRow(
-                                        pageScope = getPageScope(),
-                                        tabs = visibleTabs,
-                                        selected = selectedTab,
-                                    ) { tab ->
-                                        selectedTab = tab
-                                    }
                                 }
                             }
-
                             item {
-                                AmityCommunityHeaderComponent(
+                                AmityCommunityProfileTabRow(
                                     pageScope = getPageScope(),
-                                    community = community!!,
-                                    style = AmityCommunityHeaderStyle.EXPANDED,
-                                )
-                            }
-                        }
-                        item {
-                            AmityCommunityProfileTabRow(
-                                pageScope = getPageScope(),
-                                tabs = visibleTabs,
-                                selected = selectedTab,
-                            ) { tab ->
-                                selectedTab = tab
-                            }
-                        }
-                        val hasAnnouncementPin = announcementPosts
-                            .itemSnapshotList
-                            .items
-                            .firstOrNull()
-                            ?.postId
-                            ?.let { announcementId ->
-                                pinPosts.itemSnapshotList.items
-                                    .map {
-                                        it.postId
-                                    }
-                                    .contains(announcementId)
-                            } ?: false
-                        val shouldShowAnnouncement = announcementPosts.itemCount > 0
-                                && (selectedTab == AmityCommunityProfilePageTab.FEED
-                                || (selectedTab == AmityCommunityProfilePageTab.PIN && hasAnnouncementPin))
-                        // Gate on !state.isMember (genuine membership), not isRefreshing.
-                        // Keying on isRefreshing made the private view blink out during any
-                        // refresh; isMember is set true optimistically on accept, so the
-                        // private view disappears immediately on join without a flash.
-                        if (!state.isMember && community?.isJoined() == false && community?.isPublic() == false) {
-                            item {
-                                Box(
-                                    modifier = Modifier
-                                        .height(360.dp),
-                                ) {
-                                    AmityCommunityPrivateView()
+                                    tabs = visibleTabs,
+                                    selected = selectedTab,
+                                ) { tab ->
+                                    selectedTab = tab
                                 }
                             }
-                        } else {
-                            if (shouldShowAnnouncement) {
-                                amityCommunityAnnouncementFeedLLS(
-                                    modifier = Modifier,
-                                    pageScope = getPageScope(),
-                                    announcementPosts = announcementPosts,
-                                    hasAnnouncementPin = hasAnnouncementPin,
-                                    onClick = {
-                                        behavior.goToPostDetailPage(
-                                            AmityCommunityProfilePageBehavior.Context(
-                                                pageContext = context,
-                                                community = community,
-                                            ),
-                                            postId = it.getPostId(),
-                                            category = if (hasAnnouncementPin) {
-                                                AmityPostCategory.PIN_AND_ANNOUNCEMENT
-                                            } else {
-                                                AmityPostCategory.ANNOUNCEMENT
-                                            }
-                                        )
-                                    },
-                                    refreshKey = refreshKey,
-                                )
-                            }
-                            when (selectedTab) {
-                                AmityCommunityProfilePageTab.FEED -> {
-                                    if (communityPosts.loadState.refresh == LoadState.Loading && communityPosts.itemCount == 0) {
-                                        repeat(4) {
-                                            item {
-                                                AmityPostShimmer()
-                                            }
+                            val hasAnnouncementPin = announcementPosts
+                                .itemSnapshotList
+                                .items
+                                .firstOrNull()
+                                ?.postId
+                                ?.let { announcementId ->
+                                    pinPosts.itemSnapshotList.items
+                                        .map {
+                                            it.postId
                                         }
-                                    } else {
-                                        amityCommunityFeedLLS(
-                                            modifier = Modifier,
-                                            pageScope = getPageScope(),
-                                            communityPosts = communityPosts,
-                                            pinPosts = pinPosts,
-                                            announcementPosts = announcementPosts,
-                                            onClipClick = {
-                                                behavior.goToClipFeedPage(
-                                                    AmityCommunityProfilePageBehavior.Context(
-                                                        pageContext = context,
-                                                    ),
-                                                    postId = it.getPostId(),
-                                                    communityId = communityId,
-                                                    type = AmityClipFeedPageType.CommunityFeed(
-                                                        postId = it.getPostId(),
-                                                        communityId = communityId
-                                                    )
-                                                )
-                                            },
-                                            onClick = { post, category ->
-                                                behavior.goToPostDetailPage(
-                                                    AmityCommunityProfilePageBehavior.Context(
-                                                        pageContext = context,
-                                                        community = community,
-                                                    ),
-                                                    postId = post.getPostId(),
-                                                    category = category,
-                                                    autoFocusCommentInput = true,
-                                                )
-                                            },
-                                            refreshKey = refreshKey,
-                                        )
+                                        .contains(announcementId)
+                                } ?: false
+                            val shouldShowAnnouncement = announcementPosts.itemCount > 0
+                                    && (selectedTab == AmityCommunityProfilePageTab.FEED
+                                    || (selectedTab == AmityCommunityProfilePageTab.PIN && hasAnnouncementPin))
+                            // Gate on !state.isMember (genuine membership), not isRefreshing.
+                            // Keying on isRefreshing made the private view blink out during any
+                            // refresh; isMember is set true optimistically on accept, so the
+                            // private view disappears immediately on join without a flash.
+                            if (!state.isMember && community?.isJoined() == false && community?.isPublic() == false) {
+                                item {
+                                    Box(
+                                        modifier = Modifier
+                                            .height(360.dp),
+                                    ) {
+                                        AmityCommunityPrivateView()
                                     }
                                 }
-
-                                AmityCommunityProfilePageTab.PIN -> {
-                                    amityCommunityPinnedFeedLLS(
+                            } else {
+                                if (shouldShowAnnouncement) {
+                                    amityCommunityAnnouncementFeedLLS(
                                         modifier = Modifier,
                                         pageScope = getPageScope(),
-                                        pinPosts = pinPosts,
                                         announcementPosts = announcementPosts,
+                                        hasAnnouncementPin = hasAnnouncementPin,
                                         onClick = {
                                             behavior.goToPostDetailPage(
                                                 AmityCommunityProfilePageBehavior.Context(
@@ -556,137 +493,205 @@ fun AmityCommunityProfilePage(
                                                     community = community,
                                                 ),
                                                 postId = it.getPostId(),
-                                                category = AmityPostCategory.PIN
+                                                category = if (hasAnnouncementPin) {
+                                                    AmityPostCategory.PIN_AND_ANNOUNCEMENT
+                                                } else {
+                                                    AmityPostCategory.ANNOUNCEMENT
+                                                }
                                             )
                                         },
                                         refreshKey = refreshKey,
                                     )
                                 }
-
-                                AmityCommunityProfilePageTab.EVENTS -> {
-                                    amityCommunityEventFeed(
-                                        modifier = Modifier,
-                                        pageScope = getPageScope(),
-                                        communityId = communityId,
-                                        liveEvents = liveEvents,
-                                        events = events,
-                                        selectedFilter = eventFilterSelection,
-                                        onFilterChange = { filter ->
-                                            eventFilterSelection = filter
-                                        },
-                                        onEventClick = { event ->
-                                            behavior.goToEventDetailPage(
-                                                AmityCommunityProfilePageBehavior.Context(
-                                                    pageContext = context,
-                                                    community = community,
-                                                ),
-                                                eventId = event.getEventId()
-                                            )
-                                        }
-                                    )
-                                }
-
-                                AmityCommunityProfilePageTab.MEDIA -> {
-                                    item {
-                                        AmityBaseComponent(
-                                            componentId = "community_video_feed",
-                                            pageScope = getPageScope()
-                                        ) {
-                                            AmityVideoAndClipChipSelector(
-                                                tabTitles = mediaTabTitles,
-                                                selectedTabIndex = selectedMediaTabIndex,
-                                                onTabSelected = { index ->
-                                                    selectedMediaTabIndex = index
-                                                },
-                                                componentScope = getComponentScope()
-                                            )
-                                        }
-                                    }
-                                    when (selectedMediaTabIndex) {
-                                        0 -> {
-                                            amityCommunityImageFeedLLS(
+                                when (selectedTab) {
+                                    AmityCommunityProfilePageTab.FEED -> {
+                                        if (communityPosts.loadState.refresh == LoadState.Loading && communityPosts.itemCount == 0) {
+                                            repeat(4) {
+                                                item {
+                                                    AmityPostShimmer()
+                                                }
+                                            }
+                                        } else {
+                                            amityCommunityFeedLLS(
                                                 modifier = Modifier,
-                                                imagePosts = imagePosts,
-                                                onViewPost = { postId, category ->
-                                                    behavior.goToPostDetailPage(
+                                                pageScope = getPageScope(),
+                                                communityPosts = communityPosts,
+                                                pinPosts = pinPosts,
+                                                announcementPosts = announcementPosts,
+                                                onClipClick = {
+                                                    behavior.goToClipFeedPage(
                                                         AmityCommunityProfilePageBehavior.Context(
                                                             pageContext = context,
                                                         ),
-                                                        postId = postId,
-                                                        category = category,
+                                                        postId = it.getPostId(),
+                                                        communityId = communityId,
+                                                        type = AmityClipFeedPageType.CommunityFeed(
+                                                            postId = it.getPostId(),
+                                                            communityId = communityId
+                                                        )
                                                     )
-                                                }
-                                            )
-                                        }
-
-                                        1 -> {
-                                            amityCommunityVideoFeedLLS(
-                                                modifier = Modifier,
-                                                videoPosts = videoPosts,
-                                                onViewPost = { postId, category ->
+                                                },
+                                                onClick = { post, category ->
                                                     behavior.goToPostDetailPage(
                                                         AmityCommunityProfilePageBehavior.Context(
                                                             pageContext = context,
                                                             community = community,
                                                         ),
-                                                        postId = postId,
+                                                        postId = post.getPostId(),
                                                         category = category,
+                                                        autoFocusCommentInput = true,
                                                     )
-                                                }
+                                                },
+                                                refreshKey = refreshKey,
                                             )
                                         }
+                                    }
 
-                                        2 -> {
-                                            amityCommunityClipFeedLLS(
-                                                modifier = Modifier,
-                                                clipPosts = clipPosts,
-                                                onClipClicked = { postId ->
-                                                    coroutineScope.launch {
-                                                        val selectedIndex =
-                                                            clipPosts.itemSnapshotList.items.indexOfFirst {
-                                                                it.getPostId() == postId
-                                                            }
+                                    AmityCommunityProfilePageTab.PIN -> {
+                                        amityCommunityPinnedFeedLLS(
+                                            modifier = Modifier,
+                                            pageScope = getPageScope(),
+                                            pinPosts = pinPosts,
+                                            announcementPosts = announcementPosts,
+                                            onClick = {
+                                                behavior.goToPostDetailPage(
+                                                    AmityCommunityProfilePageBehavior.Context(
+                                                        pageContext = context,
+                                                        community = community,
+                                                    ),
+                                                    postId = it.getPostId(),
+                                                    category = AmityPostCategory.PIN
+                                                )
+                                            },
+                                            refreshKey = refreshKey,
+                                        )
+                                    }
 
-                                                        if (selectedIndex >= clipPosts.itemCount && selectedIndex >= 0) {
-                                                            // Wait for more data to load
-                                                            val targetPage = selectedIndex / 20
-                                                            val currentPage =
-                                                                clipPosts.itemCount / 20
+                                    AmityCommunityProfilePageTab.EVENTS -> {
+                                        amityCommunityEventFeed(
+                                            modifier = Modifier,
+                                            pageScope = getPageScope(),
+                                            communityId = communityId,
+                                            liveEvents = liveEvents,
+                                            events = events,
+                                            selectedFilter = eventFilterSelection,
+                                            onFilterChange = { filter ->
+                                                eventFilterSelection = filter
+                                            },
+                                            onEventClick = { event ->
+                                                behavior.goToEventDetailPage(
+                                                    AmityCommunityProfilePageBehavior.Context(
+                                                        pageContext = context,
+                                                        community = community,
+                                                    ),
+                                                    eventId = event.getEventId()
+                                                )
+                                            }
+                                        )
+                                    }
 
-                                                            if (targetPage > currentPage) {
-                                                                // Access items to trigger loading
-                                                                repeat(targetPage - currentPage) {
-                                                                    val triggerIndex =
-                                                                        clipPosts.itemCount
-                                                                    if (triggerIndex < selectedIndex) {
-                                                                        clipPosts[triggerIndex] // Trigger next page load
-                                                                        delay(500) // Wait for load
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-
-                                                        behavior.goToClipFeedPage(
-                                                            context = AmityCommunityProfilePageBehavior.Context(
+                                    AmityCommunityProfilePageTab.MEDIA -> {
+                                        item {
+                                            AmityBaseComponent(
+                                                componentId = "community_video_feed",
+                                                pageScope = getPageScope()
+                                            ) {
+                                                AmityVideoAndClipChipSelector(
+                                                    tabTitles = mediaTabTitles,
+                                                    selectedTabIndex = selectedMediaTabIndex,
+                                                    onTabSelected = { index ->
+                                                        selectedMediaTabIndex = index
+                                                    },
+                                                    componentScope = getComponentScope()
+                                                )
+                                            }
+                                        }
+                                        when (selectedMediaTabIndex) {
+                                            0 -> {
+                                                amityCommunityImageFeedLLS(
+                                                    modifier = Modifier,
+                                                    imagePosts = imagePosts,
+                                                    onViewPost = { postId, category ->
+                                                        behavior.goToPostDetailPage(
+                                                            AmityCommunityProfilePageBehavior.Context(
                                                                 pageContext = context,
                                                             ),
                                                             postId = postId,
-                                                            communityId = communityId,
-                                                            clipPagingData = viewModel.getCommunityClipPosts(),
-                                                            selectedIndex = maxOf(
-                                                                0,
-                                                                minOf(
-                                                                    selectedIndex,
-                                                                    clipPosts.itemCount - 1
-                                                                )
-                                                            ),
-                                                            type = AmityClipFeedPageType.CommunityClipFeed(
-                                                                communityId
-                                                            )
+                                                            category = category,
                                                         )
                                                     }
-                                                }
-                                            )
+                                                )
+                                            }
+
+                                            1 -> {
+                                                amityCommunityVideoFeedLLS(
+                                                    modifier = Modifier,
+                                                    videoPosts = videoPosts,
+                                                    onViewPost = { postId, category ->
+                                                        behavior.goToPostDetailPage(
+                                                            AmityCommunityProfilePageBehavior.Context(
+                                                                pageContext = context,
+                                                                community = community,
+                                                            ),
+                                                            postId = postId,
+                                                            category = category,
+                                                        )
+                                                    }
+                                                )
+                                            }
+
+                                            2 -> {
+                                                amityCommunityClipFeedLLS(
+                                                    modifier = Modifier,
+                                                    clipPosts = clipPosts,
+                                                    onClipClicked = { postId ->
+                                                        coroutineScope.launch {
+                                                            val selectedIndex =
+                                                                clipPosts.itemSnapshotList.items.indexOfFirst {
+                                                                    it.getPostId() == postId
+                                                                }
+
+                                                            if (selectedIndex >= clipPosts.itemCount && selectedIndex >= 0) {
+                                                                // Wait for more data to load
+                                                                val targetPage = selectedIndex / 20
+                                                                val currentPage =
+                                                                    clipPosts.itemCount / 20
+
+                                                                if (targetPage > currentPage) {
+                                                                    // Access items to trigger loading
+                                                                    repeat(targetPage - currentPage) {
+                                                                        val triggerIndex =
+                                                                            clipPosts.itemCount
+                                                                        if (triggerIndex < selectedIndex) {
+                                                                            clipPosts[triggerIndex] // Trigger next page load
+                                                                            delay(500) // Wait for load
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+
+                                                            behavior.goToClipFeedPage(
+                                                                context = AmityCommunityProfilePageBehavior.Context(
+                                                                    pageContext = context,
+                                                                ),
+                                                                postId = postId,
+                                                                communityId = communityId,
+                                                                clipPagingData = viewModel.getCommunityClipPosts(),
+                                                                selectedIndex = maxOf(
+                                                                    0,
+                                                                    minOf(
+                                                                        selectedIndex,
+                                                                        clipPosts.itemCount - 1
+                                                                    )
+                                                                ),
+                                                                type = AmityClipFeedPageType.CommunityClipFeed(
+                                                                    communityId
+                                                                )
+                                                            )
+                                                        }
+                                                    }
+                                                )
+                                            }
                                         }
                                     }
                                 }

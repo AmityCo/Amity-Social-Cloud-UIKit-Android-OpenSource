@@ -85,6 +85,8 @@ import com.amity.socialcloud.uikit.community.compose.post.detail.menu.AmityPostM
 import kotlinx.coroutines.delay
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
 import com.amity.socialcloud.uikit.common.utils.keyboardTapOutsideSkip
+import com.amity.socialcloud.uikit.community.compose.post.autoplay.AmityFeedAutoPlayHost
+import com.amity.socialcloud.uikit.community.compose.post.autoplay.amityFeedAutoPlayCover
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -277,150 +279,152 @@ fun AmityPostDetailPage(
                 AmityPostErrorPage()
             } else {
                 Column(modifier = modifier.fillMaxSize()) {
-                    LazyColumn(
-                        state = scrollState,
-                        verticalArrangement = Arrangement.Top,
-                        modifier = Modifier
-                            .weight(1f)
-                    ) {
-                        AmityCommentTrayComponentViewModel.CommentListState.from(
-                            loadState = comments.loadState.refresh,
-                            itemCount = comments.itemCount,
-                        ).let(commentViewModel::setCommentListState)
+                    AmityFeedAutoPlayHost {
+                        LazyColumn(
+                            state = scrollState,
+                            verticalArrangement = Arrangement.Top,
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            AmityCommentTrayComponentViewModel.CommentListState.from(
+                                loadState = comments.loadState.refresh,
+                                itemCount = comments.itemCount,
+                            ).let(commentViewModel::setCommentListState)
 
-                        stickyHeader {
-                            Box(
-                                modifier = Modifier
-                                    .height(58.dp)
-                                    .fillMaxWidth()
-                                    .keyboardTapOutsideSkip()
-                                    .background(AmityTheme.colors.background)
-                                    .padding(horizontal = 16.dp)
-                                    .onGloballyPositioned { coordinates ->
-                                        stickyHeaderHeight = coordinates.size.height
-                                    }
-                            ) {
-                                AmityBaseElement(
-                                    pageScope = getPageScope(),
-                                    elementId = "back_button"
-                                ) {
-                                    Icon(
-                                        painter = painterResource(id = getConfig().getIcon()),
-                                        contentDescription = null,
-                                        tint = AmityTheme.colors.base,
-                                        modifier = Modifier
-                                            .size(24.dp)
-                                            .align(Alignment.CenterStart)
-                                            .clickableWithoutRipple {
-                                                behavior.closePage(
-                                                    context = AmityPostDetailPageBehavior.Context(
-                                                        pageContext = context,
-                                                    ),
-                                                )
-                                            }
-                                            .testTag(getAccessibilityId()),
-                                    )
-                                }
-
-                                Text(
-                                    text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_social_home_create_post_button"),
-                                    style = AmityTheme.typography.titleLegacy,
+                            stickyHeader {
+                                Box(
                                     modifier = Modifier
-                                        .padding(horizontal = 48.dp)
-                                        .align(Alignment.CenterStart)
-                                        .testTag("navigation_bar/title")
-                                )
-
-                                AmityBaseElement(
+                                        .height(58.dp)
+                                        .fillMaxWidth()
+                                        .keyboardTapOutsideSkip()
+                                        .background(AmityTheme.colors.background)
+                                        .padding(horizontal = 16.dp)
+                                        .onGloballyPositioned { coordinates ->
+                                            stickyHeaderHeight = coordinates.size.height
+                                        }
+                                        .amityFeedAutoPlayCover()
+                                ) {
+                                    AmityBaseElement(
                                         pageScope = getPageScope(),
-                                        elementId = "menu_button"
+                                        elementId = "back_button"
                                     ) {
-                                    Icon(
-                                        painter = painterResource(id = getConfig().getIcon()),
-                                        contentDescription = null,
-                                        tint = AmityTheme.colors.base,
-                                        modifier = Modifier
-                                            .size(24.dp)
-                                            .align(Alignment.CenterEnd)
-                                            .clickableWithoutRipple {
-                                                post?.let {
-                                                    sheetViewModel.updateSheetUIState(
-                                                        AmityPostMenuSheetUIState.OpenSheet(it.getPostId())
+                                        Icon(
+                                            painter = painterResource(id = getConfig().getIcon()),
+                                            contentDescription = null,
+                                            tint = AmityTheme.colors.base,
+                                            modifier = Modifier
+                                                .size(24.dp)
+                                                .align(Alignment.CenterStart)
+                                                .clickableWithoutRipple {
+                                                    behavior.closePage(
+                                                        context = AmityPostDetailPageBehavior.Context(
+                                                            pageContext = context,
+                                                        ),
                                                     )
                                                 }
-                                            }
-                                            .testTag(getAccessibilityId()),
+                                                .testTag(getAccessibilityId()),
+                                        )
+                                    }
+
+                                    Text(
+                                        text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_social_home_create_post_button"),
+                                        style = AmityTheme.typography.titleLegacy,
+                                        modifier = Modifier
+                                            .padding(horizontal = 48.dp)
+                                            .align(Alignment.CenterStart)
+                                            .testTag("navigation_bar/title")
+                                    )
+
+                                    AmityBaseElement(
+                                            pageScope = getPageScope(),
+                                            elementId = "menu_button"
+                                        ) {
+                                        Icon(
+                                            painter = painterResource(id = getConfig().getIcon()),
+                                            contentDescription = null,
+                                            tint = AmityTheme.colors.base,
+                                            modifier = Modifier
+                                                .size(24.dp)
+                                                .align(Alignment.CenterEnd)
+                                                .clickableWithoutRipple {
+                                                    post?.let {
+                                                        sheetViewModel.updateSheetUIState(
+                                                            AmityPostMenuSheetUIState.OpenSheet(it.getPostId())
+                                                        )
+                                                    }
+                                                }
+                                                .testTag(getAccessibilityId()),
+                                        )
+                                    }
+                                }
+                                if (hasScrolled) {
+                                    HorizontalDivider(
+                                        color = AmityTheme.colors.baseShade4,
                                     )
                                 }
                             }
-                            if (hasScrolled) {
-                                HorizontalDivider(
-                                    color = AmityTheme.colors.baseShade4,
-                                )
-                            }
-                        }
 
-                        item(key = "post_content") {
-                            if (post != null && post?.isDeleted() == false) {
-                                val isEventHost = eventHostId != null && post?.getCreator()?.getUserId() == eventHostId
-                                AmityPostContentComponent(
-                                    modifier = Modifier,
-                                    pageScope = getPageScope(),
-                                    post = post ?: return@item,
-                                    style = style,
-                                    category = category,
-                                    hideTarget = hideTarget,
-                                    hideMenuButton = true,
-                                    isEventHost = isEventHost,
-                                    eventHostId = eventHostId,
-                                    isNonMemberOfCommunity = isNotMember,
-                                )
-                                HorizontalDivider(
-                                    color = AmityTheme.colors.baseShade4,
-                                    modifier = Modifier
-                                )
-                            } else {
-                                AmityPostShimmer()
-                            }
-                        }
-
-                        if (showComments) {
-                            item(key = "scroll_anchor") {
-                                Spacer(
-                                    modifier = Modifier
-                                        .height(8.dp)
-                                )
+                            item(key = "post_content") {
+                                if (post != null && post?.isDeleted() == false) {
+                                    val isEventHost = eventHostId != null && post?.getCreator()?.getUserId() == eventHostId
+                                    AmityPostContentComponent(
+                                        modifier = Modifier,
+                                        pageScope = getPageScope(),
+                                        post = post ?: return@item,
+                                        style = style,
+                                        category = category,
+                                        hideTarget = hideTarget,
+                                        hideMenuButton = true,
+                                        isEventHost = isEventHost,
+                                        eventHostId = eventHostId,
+                                        isNonMemberOfCommunity = isNotMember,
+                                    )
+                                    HorizontalDivider(
+                                        color = AmityTheme.colors.baseShade4,
+                                        modifier = Modifier
+                                    )
+                                } else {
+                                    AmityPostShimmer()
+                                }
                             }
 
-                            amityCommentListLLS(
-                            modifier = Modifier,
-                            componentScope = getComponentScope(),
-                            comments = comments,
-                            commentTarget = commentTarget,
-                            commentListState = commentListState,
-                            referenceId = id,
-                            referenceType = AmityCommentReferenceType.POST,
-                            editingCommentId = editingCommentId,
-                            shouldAllowInteraction = true,
-                            showEngagementRow = true,
-                            eventHostId = eventHostId,
-                            onReply = { },
-                            onEdit = {
-                                editingCommentId = it
-                            },
-                            showBounceEffect = scrollAnimationComplete,
-                            replyTargetId = when {
-                                isL2 -> parentId    // L1 parent to sort to top and expand
-                                parentId != null -> commentId  // L1 reply to bounce
-                                else -> null
-                            },
-                            l2TargetId = if (isL2) commentId else null,
-                            expandReplies = parentId != null,
-                            fromNonMemberCommunity = isNotMember
-                        )
+                            if (showComments) {
+                                item(key = "scroll_anchor") {
+                                    Spacer(
+                                        modifier = Modifier
+                                            .height(8.dp)
+                                    )
+                                }
 
-                            item {
-                                Box(Modifier.height(commentComposeBarBottomOffset.unaryMinus()))
+                                amityCommentListLLS(
+                                modifier = Modifier,
+                                componentScope = getComponentScope(),
+                                comments = comments,
+                                commentTarget = commentTarget,
+                                commentListState = commentListState,
+                                referenceId = id,
+                                referenceType = AmityCommentReferenceType.POST,
+                                editingCommentId = editingCommentId,
+                                shouldAllowInteraction = true,
+                                showEngagementRow = true,
+                                eventHostId = eventHostId,
+                                onReply = { },
+                                onEdit = {
+                                    editingCommentId = it
+                                },
+                                showBounceEffect = scrollAnimationComplete,
+                                replyTargetId = when {
+                                    isL2 -> parentId    // L1 parent to sort to top and expand
+                                    parentId != null -> commentId  // L1 reply to bounce
+                                    else -> null
+                                },
+                                l2TargetId = if (isL2) commentId else null,
+                                expandReplies = parentId != null,
+                                fromNonMemberCommunity = isNotMember
+                            )
+
+                                item {
+                                    Box(Modifier.height(commentComposeBarBottomOffset.unaryMinus()))
+                                }
                             }
                         }
                     }

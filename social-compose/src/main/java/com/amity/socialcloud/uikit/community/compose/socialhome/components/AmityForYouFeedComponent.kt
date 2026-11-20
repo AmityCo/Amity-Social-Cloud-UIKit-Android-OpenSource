@@ -56,6 +56,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
+import com.amity.socialcloud.uikit.community.compose.post.autoplay.AmityFeedAutoPlayHost
 
 /**
  * For You Feed content component — sibling to [AmityNewsFeedComponent].
@@ -252,101 +253,103 @@ fun AmityForYouFeedComponent(
             },
             modifier = Modifier.fillMaxSize(),
         ) {
-            LazyColumn(
-                state = lazyListState,
-                modifier = modifier.fillMaxSize()
-            ) {
-                item(key = "foryou_story_tab") {
-                    LocalPinnableContainer.current?.pin()
-                    val storyTabHeight = if (isStoryTabVisible && isStoryModuleOn) 130.dp else 0.dp
-                    Box(
-                        modifier = Modifier.height(storyTabHeight)
-                    ) {
-                        AmityStoryTabComponent(
-                            type = AmityStoryTabComponentType.GlobalFeed(
-                                refreshEventFlow = viewModel.isGlobalFeedRefreshing,
-                                onStateChanged = {
-                                    viewModel.setStoryTabState(it)
-                                }
+            AmityFeedAutoPlayHost {
+                LazyColumn(
+                    state = lazyListState,
+                    modifier = modifier.fillMaxSize()
+                ) {
+                    item(key = "foryou_story_tab") {
+                        LocalPinnableContainer.current?.pin()
+                        val storyTabHeight = if (isStoryTabVisible && isStoryModuleOn) 130.dp else 0.dp
+                        Box(
+                            modifier = Modifier.height(storyTabHeight)
+                        ) {
+                            AmityStoryTabComponent(
+                                type = AmityStoryTabComponentType.GlobalFeed(
+                                    refreshEventFlow = viewModel.isGlobalFeedRefreshing,
+                                    onStateChanged = {
+                                        viewModel.setStoryTabState(it)
+                                    }
+                                )
                             )
-                        )
-                    }
-                }
-
-                item(key = "foryou_story_divider") {
-                    AmityNewsFeedDivider()
-                }
-
-                if (isLoadingFirstPage) {
-                    items(4) {
-                        AmityPostShimmer()
-                    }
-                } else {
-                    // Featured / globally pinned posts — always at the top (REQ-013 precursor).
-                    amityGlobalPinnedFeedLLS(
-                        modifier = modifier,
-                        pageScope = pageScope,
-                        pinnedPosts = pinnedPosts,
-                        onClick = { post ->
-                            behavior.goToPostDetailPage(
-                                context = AmityGlobalFeedComponentBehavior.Context(
-                                    pageContext = context,
-                                    target = post.getTarget(),
-                                ),
-                                id = post.getPostId(),
-                                category = AmityPostCategory.GLOBAL,
-                                autoFocusCommentInput = false,
-                            )
-                        },
-                        onClipClicked = {
-                            behavior.goToClipFeedPage(
-                                context = context,
-                                postId = it.getPostId()
-                            )
-                        },
-                        refreshKey = refreshKey,
-                    )
-
-                    // Created posts + ranked paginated feed + injected ads.
-                    amityForYouFeedLLS(
-                        modifier = modifier,
-                        pageScope = pageScope,
-                        forYouPosts = posts,
-                        pinnedPosts = pinnedPosts,
-                        onClick = { post ->
-                            behavior.goToPostDetailPage(
-                                context = AmityGlobalFeedComponentBehavior.Context(
-                                    pageContext = context,
-                                    target = post.getTarget(),
-                                ),
-                                id = post.getPostId(),
-                                category = AmityPostCategory.GENERAL,
-                                autoFocusCommentInput = false,
-                            )
-                        },
-                        onClipClick = { childPost ->
-                            behavior.goToClipFeedPage(
-                                context = context,
-                                postId = childPost.getPostId()
-                            )
-                        },
-                        refreshKey = refreshKey,
-                    )
-
-                    if (appendLoadState is LoadState.Loading) {
-                        item(key = "foryou_append_loading") {
-                            AmityPostShimmer()
                         }
                     }
 
-                    // REQ-015 / REQ-017 / REQ-018: caught-up cell at end of pagination.
-                    if (canShowCaughtUp) {
-                        item(key = "feed_caught_up") {
-                            AmityFeedCaughtUpComponent(
-                                modifier = modifier,
-                                pageScope = pageScope,
-                                onSwitchRequested = onSwitchToFollowingRequested,
-                            )
+                    item(key = "foryou_story_divider") {
+                        AmityNewsFeedDivider()
+                    }
+
+                    if (isLoadingFirstPage) {
+                        items(4) {
+                            AmityPostShimmer()
+                        }
+                    } else {
+                        // Featured / globally pinned posts — always at the top (REQ-013 precursor).
+                        amityGlobalPinnedFeedLLS(
+                            modifier = modifier,
+                            pageScope = pageScope,
+                            pinnedPosts = pinnedPosts,
+                            onClick = { post ->
+                                behavior.goToPostDetailPage(
+                                    context = AmityGlobalFeedComponentBehavior.Context(
+                                        pageContext = context,
+                                        target = post.getTarget(),
+                                    ),
+                                    id = post.getPostId(),
+                                    category = AmityPostCategory.GLOBAL,
+                                    autoFocusCommentInput = false,
+                                )
+                            },
+                            onClipClicked = {
+                                behavior.goToClipFeedPage(
+                                    context = context,
+                                    postId = it.getPostId()
+                                )
+                            },
+                            refreshKey = refreshKey,
+                        )
+
+                        // Created posts + ranked paginated feed + injected ads.
+                        amityForYouFeedLLS(
+                            modifier = modifier,
+                            pageScope = pageScope,
+                            forYouPosts = posts,
+                            pinnedPosts = pinnedPosts,
+                            onClick = { post ->
+                                behavior.goToPostDetailPage(
+                                    context = AmityGlobalFeedComponentBehavior.Context(
+                                        pageContext = context,
+                                        target = post.getTarget(),
+                                    ),
+                                    id = post.getPostId(),
+                                    category = AmityPostCategory.GENERAL,
+                                    autoFocusCommentInput = false,
+                                )
+                            },
+                            onClipClick = { childPost ->
+                                behavior.goToClipFeedPage(
+                                    context = context,
+                                    postId = childPost.getPostId()
+                                )
+                            },
+                            refreshKey = refreshKey,
+                        )
+
+                        if (appendLoadState is LoadState.Loading) {
+                            item(key = "foryou_append_loading") {
+                                AmityPostShimmer()
+                            }
+                        }
+
+                        // REQ-015 / REQ-017 / REQ-018: caught-up cell at end of pagination.
+                        if (canShowCaughtUp) {
+                            item(key = "feed_caught_up") {
+                                AmityFeedCaughtUpComponent(
+                                    modifier = modifier,
+                                    pageScope = pageScope,
+                                    onSwitchRequested = onSwitchToFollowingRequested,
+                                )
+                            }
                         }
                     }
                 }

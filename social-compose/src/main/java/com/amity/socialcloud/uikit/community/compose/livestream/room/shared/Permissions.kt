@@ -17,10 +17,13 @@
 package com.amity.socialcloud.uikit.community.compose.livestream.room.shared
 
 import android.Manifest
+import android.content.Context
+import android.hardware.camera2.CameraManager
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
@@ -45,17 +48,36 @@ fun requirePermission(enabled: Boolean, permission: String): PermissionState {
 }
 
 /**
- * @return true if both enabled is true and the camera permission is granted.
+ * @return true if enabled is true, the camera permission is granted and the device
+ * actually exposes a camera.
+ *
+ * LiveKit's LocalVideoTrack.createCameraTrack throws NotImplementedError (TODO) when no
+ * camera device can be found, so video must never be enabled on camera-less devices.
  */
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun rememberEnableCamera(enabled: Boolean): Boolean {
-    val permissionState = requirePermission(enabled = enabled, permission = Manifest.permission.CAMERA)
-    return remember(enabled, permissionState) {
+    val context = LocalContext.current
+    val hasCamera = remember(context) { hasAvailableCamera(context) }
+    val permissionState = requirePermission(
+        enabled = enabled && hasCamera,
+        permission = Manifest.permission.CAMERA
+    )
+    return remember(enabled, hasCamera, permissionState) {
         derivedStateOf {
-            enabled && permissionState.status.isGranted
+            enabled && hasCamera && permissionState.status.isGranted
         }
     }.value
+}
+
+internal fun hasAvailableCamera(context: Context): Boolean {
+    return try {
+        val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as? CameraManager
+        val cameraIds = cameraManager?.cameraIdList
+        cameraIds != null && cameraIds.isNotEmpty()
+    } catch (e: Exception) {
+        false
+    }
 }
 
 /**

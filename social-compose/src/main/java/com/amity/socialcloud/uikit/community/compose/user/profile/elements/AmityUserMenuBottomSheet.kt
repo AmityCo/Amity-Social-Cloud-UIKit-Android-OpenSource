@@ -9,9 +9,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.waterfall
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
@@ -36,6 +42,8 @@ import com.amity.socialcloud.uikit.common.compose.R as CommonComposeR
 import com.amity.socialcloud.uikit.community.compose.R
 import com.amity.socialcloud.uikit.community.compose.community.profile.AmityCommunityModalSheetUIState
 import com.amity.socialcloud.uikit.community.compose.localization.DefaultAmitySocialStringProvider
+import com.amity.socialcloud.uikit.community.compose.localization.amitySocialString
+import com.amity.socialcloud.uikit.community.compose.post.autoplay.AmityFeedAutoPlayGate
 import com.amity.socialcloud.uikit.community.compose.utils.sharePost
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlin.text.replace
@@ -60,6 +68,12 @@ fun AmityUserMenuBottomSheet(
     val clipboardManager = LocalClipboardManager.current
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val isOwnProfile = user.getUserId() == AmityCoreClient.getUserId()
+    var showAutoPlaySetting by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        AmityFeedAutoPlayGate.loadChoice(context)
+    }
 
     ModalBottomSheet(
         onDismissRequest = onCloseSheet,
@@ -77,7 +91,13 @@ fun AmityUserMenuBottomSheet(
                 .padding(start = 16.dp, end = 16.dp, bottom = 32.dp)
                 .navigationBarsPadding()
         ) {
-            if (user.getUserId() == AmityCoreClient.getUserId()) {
+            if (isOwnProfile) {
+                AmityUserMenuSectionTitle(
+                    text = amitySocialString("amity_social_autoplay_setting_account_section"),
+                )
+            }
+
+            if (isOwnProfile) {
                 AmityBottomSheetActionItem(
                     icon = CommonR.drawable.amity_ic_edit_profile,
                     text = DefaultAmitySocialStringProvider.getInstance().getString("amity_social_button_edit_profile"),
@@ -222,6 +242,19 @@ fun AmityUserMenuBottomSheet(
                     sharePost(context, userLink)
                 }
             }
+
+            if (isOwnProfile) {
+                HorizontalDivider(color = AmityTheme.colors.baseShade4)
+                AmityUserMenuSectionTitle(
+                    text = amitySocialString("amity_social_autoplay_setting_section"),
+                )
+                AmityFeedAutoPlaySettingRow(onClick = { showAutoPlaySetting = true })
+            }
+        }
+
+        // Opens over this sheet. Closing it returns here, where the row shows the new choice.
+        if (showAutoPlaySetting) {
+            AmityFeedAutoPlaySettingSheet(onDismiss = { showAutoPlaySetting = false })
         }
     }
 }
